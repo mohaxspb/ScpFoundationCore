@@ -4,6 +4,22 @@ ext {
 
         def pathToFileWithData = "config/" + variant.productFlavors[0].name + "/apiKeys.properties"
 
+        fillData(variant, pathToFileWithData)
+    }
+
+    fillApiArrays = { variant, fileIsInRoot ->
+        def pathToFileWithData
+        if(fileIsInRoot){
+            pathToFileWithData = "apiKeys.properties"
+        } else {
+            logger.lifecycle('variant.productFlavors[0].name: {}', variant.productFlavors[0].name)
+            pathToFileWithData = "config/" + variant.productFlavors[0].name + "/apiKeys.properties"
+        }
+
+        fillData(variant, pathToFileWithData)
+    }
+
+    fillData = { variant, pathToFileWithData ->
         //add market skus to buildConfig
         //there is a way to store it in res... but it's awful
         //http://stackoverflow.com/a/41655569/3212712
