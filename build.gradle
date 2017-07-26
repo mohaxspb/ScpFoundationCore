@@ -23,6 +23,8 @@ allprojects {
 
         //use jcenter when it will be ready
         maven { url 'https://dl.bintray.com/mohaxspb/scp-downloads' }
+        //use jcenter when it will be ready
+        maven { url 'https://dl.bintray.com/mohaxspb/scp-core' }
 
         maven { url "https://jitpack.io" }
 
