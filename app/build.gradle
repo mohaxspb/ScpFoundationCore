@@ -18,12 +18,6 @@ android {
         minSdkVersion 17
         targetSdkVersion 25
 
-        //play market refuses not hardcoded strings as intent filter
-        resValue('string', 'receiver_action_timer', '"ru.dante.scpfoundation.receivers.ReceiverTimer"')
-//        manifestPlaceholders = [receiver_action_timer: "ru.dante.scpfoundation.receivers.ReceiverTimer"]
-        resValue('string', 'receiver_action_boot', '"android.intent.action.BOOT_COMPLETED"')
-//        manifestPlaceholders = [receiver_action_boot: "android.intent.action.BOOT_COMPLETED"]
-
         // Enabling multidex support.
         multiDexEnabled true
     }
@@ -80,8 +74,8 @@ android {
         }
 
         applicationVariants.all { variant ->
-            fillArrays(variant)
-            fillApiArrays(variant)
+            fillArrays(variant, false)
+            fillApiArrays(variant, false)
 
             variant.mergedFlavor.versionCode = buildVersionCodeFromVariant(variant)
             variant.mergedFlavor.versionName = getVersionValueAsString(variant)

@@ -29,8 +29,8 @@ android {
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode buildVersionCodeFor3Numbers()
+        versionName version
 
         manifestPlaceholders = [debuggable: true]
         buildConfigField "boolean", "TIMBER_ENABLE", "true"
@@ -75,11 +75,8 @@ android {
         libraryVariants.all { variant ->
             println("variant: "+variant.getName())
 
-//            fillArrays(variant)
+            fillArrays(variant, true)
             fillApiArrays(variant, true)
-//
-//            variant.mergedFlavor.versionCode = buildVersionCodeFromVariant(variant)
-//            variant.mergedFlavor.versionName = getVersionValueAsString(variant)
         }
     }
 

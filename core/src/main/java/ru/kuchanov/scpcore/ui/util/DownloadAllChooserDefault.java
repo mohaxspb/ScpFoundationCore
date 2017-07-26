@@ -27,7 +27,7 @@ import timber.log.Timber;
  * <p>
  * for ScpFoundationRu
  */
-public class DownloadAllChooserDefault extends DialogUtils<Article> {
+public class DownloadAllChooserDefault extends ru.kuchanov.scp.downloads.DialogUtils<Article> {
 
     public DownloadAllChooserDefault(
             MyPreferenceManagerModel preferenceManager,

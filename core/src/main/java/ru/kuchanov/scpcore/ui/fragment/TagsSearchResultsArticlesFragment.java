@@ -12,6 +12,7 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.mvp.contract.TagsSearchResultsArticlesMvp;
+import ru.kuchanov.scpcore.ui.base.BaseActivity;
 import timber.log.Timber;
 
 /**
