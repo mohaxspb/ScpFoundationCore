@@ -1,0 +1,167 @@
+apply plugin: 'com.android.library'
+apply plugin: 'realm-android'
+apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'com.jakewharton.butterknife'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.3"
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
+    }
+
+    defaultConfig {
+        minSdkVersion 17
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+
+        manifestPlaceholders = [debuggable: true]
+        buildConfigField "boolean", "TIMBER_ENABLE", "true"
+
+        buildConfigField "String", "VK_API_VERSION", '"5.62"'
+
+        buildConfigField('int', 'TIMEOUT_SECONDS_CONNECT', '60')
+        buildConfigField('int', 'TIMEOUT_SECONDS_READ', '60')
+        buildConfigField('int', 'TIMEOUT_SECONDS_WRITE', '60')
+
+        buildConfigField('String', 'SCP_API_URL', '"https://scpfoundation.net/_api/wikidot_tags_search/"')
+
+        //play market refuses not hardcoded strings as intent filter
+        resValue('string', 'receiver_action_timer', '"ru.dante.scpfoundation.receivers.ReceiverTimer"')
+//        manifestPlaceholders = [receiver_action_timer: "ru.dante.scpfoundation.receivers.ReceiverTimer"]
+        resValue('string', 'receiver_action_boot', '"android.intent.action.BOOT_COMPLETED"')
+//        manifestPlaceholders = [receiver_action_boot: "android.intent.action.BOOT_COMPLETED"]
+
+        // Enabling multidex support.
+        multiDexEnabled true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    publishNonDefault true
+
+    productFlavors{
+        prod {
+            manifestPlaceholders = [myDebuggable: false]
+            buildConfigField "boolean", "TIMBER_ENABLE", "false"
+        }
+
+        dev {
+            manifestPlaceholders = [myDebuggable: true]
+        }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+        disable 'MissingTranslation'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    String supportLibraryVersion = '25.3.1'
+    String googleLibraryVersion = '11.0.2'
+
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    //support libs
+    compile "com.android.support:appcompat-v7:$supportLibraryVersion"
+    compile "com.android.support:recyclerview-v7:$supportLibraryVersion"
+    compile "com.android.support:design:$supportLibraryVersion"
+    compile "com.android.support:cardview-v7:$supportLibraryVersion"
+    //need this as gradle place warning on libs versions
+    compile "com.android.support:support-annotations:$supportLibraryVersion"
+    compile "com.android.support:customtabs:$supportLibraryVersion"
+    compile "com.android.support:animated-vector-drawable:$supportLibraryVersion"
+    compile "com.android.support:support-v13:$supportLibraryVersion"
+    compile "com.android.support:support-v4:$supportLibraryVersion"
+    compile "com.android.support:support-compat:$supportLibraryVersion"
+    //multidex to support more than 65K methods
+    compile 'com.android.support:multidex:1.0.1'
+    //rx
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'io.reactivex:rxjava:1.3.0'
+    // Retrofit
+    compile('com.squareup.retrofit2:retrofit:2.3.0') { exclude module: 'okhttp' }
+    compile 'com.squareup.okhttp3:okhttp:3.8.0'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.8.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.3.0'
+    //jsoup
+    compile 'org.jsoup:jsoup:1.10.2'
+    //logs
+    compile 'com.jakewharton.timber:timber:4.5.1'
+    //dagger2
+    compile 'com.google.dagger:dagger:2.8'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.8'
+    //butterKnife
+    compile 'com.jakewharton:butterknife:8.6.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
+    //image
+    compile 'com.github.bumptech.glide:glide:3.8.0'
+    compile 'com.github.chrisbanes:PhotoView:2.0.0'
+    compile 'de.hdodenhof:circleimageview:2.1.0'
+    //mvp
+    compile 'com.hannesdorfmann.mosby:mvp:2.0.1'
+    //vk
+    compile 'com.vk:androidsdk:1.6.8'
+    //facebook
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
+    //dialogs
+    compile 'com.afollestad.material-dialogs:core:0.9.4.5'
+    //fonts
+    compile 'uk.co.chrisjenx:calligraphy:2.3.0'
+    //firebase
+    compile "com.google.firebase:firebase-config:$googleLibraryVersion"
+    compile "com.google.firebase:firebase-crash:$googleLibraryVersion"
+    compile "com.google.firebase:firebase-core:$googleLibraryVersion"
+    compile "com.google.firebase:firebase-analytics:$googleLibraryVersion"
+    compile "com.google.firebase:firebase-invites:$googleLibraryVersion"
+    compile "com.google.firebase:firebase-ads:$googleLibraryVersion"
+    compile "com.google.firebase:firebase-database:$googleLibraryVersion"
+    compile "com.google.firebase:firebase-auth:$googleLibraryVersion"
+    //google login
+    compile "com.google.android.gms:play-services-auth:$googleLibraryVersion"
+    //appodeal
+    compile "com.google.android.gms:play-services-ads:$googleLibraryVersion"
+    compile "com.google.android.gms:play-services-location:$googleLibraryVersion"
+    compile project(':cheetah-mobile-3.4.7')
+    // AppMetrica
+    compile 'com.yandex.android:mobmetricalib:2.62'
+    //recyclerView fast scroller
+    compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'
+    //circular progress
+    compile 'com.github.jakob-grabner:Circle-Progress-View:v1.3'
+    //tags layout
+    compile 'com.google.android:flexbox:0.3.0-alpha3'
+    //range seekbar
+    compile 'com.crystal:crystalrangeseekbar:1.1.3'
+    //leakcanary
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+
+    //sub project modules
+    compile('ru.kuchanov.scp:scp-downloads:1.0.5@aar') { transitive = true }
+    compile('ru.kuchanov.utils:rate:1.0.1@aar') { transitive = true }
+}
+
+//add it only in project build.gradle, not in lib
+//apply plugin: 'com.google.gms.google-services'

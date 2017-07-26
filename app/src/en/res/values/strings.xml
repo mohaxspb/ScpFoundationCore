@@ -1,0 +1,5 @@
+<resources>
+    <!--no need to translate-->
+    <string name="app_name" translatable="false">SCP Foundation Database EN</string>
+    <!--end no need to translate-->
+</resources>

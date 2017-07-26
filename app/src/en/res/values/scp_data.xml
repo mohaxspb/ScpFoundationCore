@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="materials_titles">
+        <item>Joke SCPs</item>
+        <item>Archived SCPs</item>
+        <item>Explained SCPs</item>
+        <item>Log of Extranormal Events</item>
+    </string-array>
+
+</resources>

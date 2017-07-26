@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <item
+        android:id="@+id/menuItemSearch"
+        android:icon="@drawable/ic_search"
+        android:title="@string/search"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction"
+        />
+
+    <item
+        android:id="@+id/menuItemSort"
+        android:icon="@drawable/ic_sort"
+        android:title="@string/sort"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction"
+        />
+
+    <item
+        android:id="@+id/menuItemDownloadAll"
+        android:icon="@drawable/ic_download_white_24dp"
+        android:title="@string/download_all"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction"
+        />
+
+</menu>

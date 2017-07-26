@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/defaultMargin"
+    android:layout_marginLeft="@dimen/defaultMargin"
+    android:layout_marginRight="@dimen/defaultMargin"
+    app:cardBackgroundColor="?windowBackgroundDark"
+    app:cardCornerRadius="@dimen/cardview_default_radius"
+    app:cardElevation="@dimen/cardview_default_radius"
+    tools:layout_gravity="center"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:foreground="?selectableItemBackground"
+            android:minHeight="@dimen/listImageHeight"
+            android:scaleType="center"
+            android:src="?iconEmptyImage"
+            tools:ignore="ContentDescription"
+            />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="@dimen/defaultMarginSmall"
+            android:paddingLeft="@dimen/defaultMargin"
+            android:paddingRight="@dimen/defaultMargin"
+            android:paddingTop="@dimen/defaultMargin"
+            tools:text="Image description"
+            />
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

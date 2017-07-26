@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/subscribe"
+        android:icon="@drawable/ic_monetization_on_white_24dp"
+        android:title="@string/in_apps"
+        android:visible="false"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:id="@+id/settings"
+        android:icon="@drawable/ic_settings_white_24dp"
+        android:title="@string/settings"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:id="@+id/menuItemDownloadAll"
+        android:icon="@drawable/ic_download_white_24dp"
+        android:title="@string/download_all"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:id="@+id/night_mode_item"
+        android:title="@string/night_mode"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:id="@+id/text_size"
+        android:icon="@drawable/ic_text_size_white_24dp"
+        android:title="@string/text_size"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:id="@+id/faq"
+        android:icon="@drawable/ic_help_outline_white_24dp"
+        android:title="@string/faq"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:id="@+id/info"
+        android:icon="@drawable/ic_info_outline"
+        android:title="@string/app_info"
+        app:showAsAction="never"
+        />
+
+</menu>

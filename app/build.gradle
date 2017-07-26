@@ -1,0 +1,113 @@
+apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
+
+//here is script to generate version code from version name
+//which is set in gradle.properties as value of version var
+//which must be in format major, minor, patch, where patch goes from 0 to 99
+apply from: '../versioning.gradle'
+
+apply from: '../marketSkusCreator.gradle'
+apply from: '../apiKeysCreator.gradle'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.3"
+
+    defaultConfig {
+        applicationId "ru.kuchanov.scpcore.example"
+        minSdkVersion 17
+        targetSdkVersion 25
+
+        //play market refuses not hardcoded strings as intent filter
+        resValue('string', 'receiver_action_timer', '"ru.dante.scpfoundation.receivers.ReceiverTimer"')
+//        manifestPlaceholders = [receiver_action_timer: "ru.dante.scpfoundation.receivers.ReceiverTimer"]
+        resValue('string', 'receiver_action_boot', '"android.intent.action.BOOT_COMPLETED"')
+//        manifestPlaceholders = [receiver_action_boot: "android.intent.action.BOOT_COMPLETED"]
+
+        // Enabling multidex support.
+        multiDexEnabled true
+    }
+
+    signingConfigs {
+        release {
+            // Load keystore
+            if (rootProject.file('keystore.properties').exists()) {
+                def keystorePropertiesFile = rootProject.file("keystore.properties");
+                def keystoreProperties = new Properties()
+                keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (rootProject.file('keystore.properties').exists()) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    flavorDimensions "lang", "mode"
+
+    productFlavors {
+        prod {
+            dimension "mode"
+
+            manifestPlaceholders = [myDebuggable: false]
+        }
+
+        dev {
+            dimension "mode"
+
+            manifestPlaceholders = [myDebuggable: true]
+        }
+
+        ru {
+            dimension "lang"
+        }
+
+        en {
+            dimension "lang"
+
+            applicationIdSuffix ".eng"
+        }
+
+        applicationVariants.all { variant ->
+            fillArrays(variant)
+            fillApiArrays(variant)
+
+            variant.mergedFlavor.versionCode = buildVersionCodeFromVariant(variant)
+            variant.mergedFlavor.versionName = getVersionValueAsString(variant)
+        }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+        disable 'MissingTranslation'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    //dagger2
+    compile 'com.google.dagger:dagger:2.8'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.8'
+
+    //core module
+    compile project(path: ':core', configuration: 'devRelease')
+}
+
+apply plugin: 'com.google.gms.google-services'

@@ -1,0 +1,1 @@
+include ':app', ':core', ':cheetah-mobile-3.4.7'

@@ -1,0 +1,66 @@
+ext {
+    fillApiArrays = { variant ->
+        logger.lifecycle('variant.productFlavors[0].name: {}', variant.productFlavors[0].name)
+
+        def pathToFileWithData = "config/" + variant.productFlavors[0].name + "/apiKeys.properties"
+
+        //add market skus to buildConfig
+        //there is a way to store it in res... but it's awful
+        //http://stackoverflow.com/a/41655569/3212712
+        //Load market SKUs
+        if (rootProject.file(pathToFileWithData).exists()) {
+            def marketSkusPropertiesFile = rootProject.file(pathToFileWithData);
+            def properties = new Properties()
+            properties.load(new FileInputStream(marketSkusPropertiesFile))
+
+            variant.resValue('string', 'yandex_metrica_api_key', properties.get("yandexMetricaApiKey"))
+
+            //ads
+            variant.resValue('string', 'ads_app_id', properties.get("adMobAppId"))
+
+            variant.resValue('string', 'ad_unit_id_interstitial', properties.get("adsBannerIdInterstitial"))
+
+            variant.resValue('string', 'ad_unit_id_gallery_banner', properties.get("adsBannerIdGallery"))
+
+            variant.resValue('string', 'ad_unit_id_article_screen_banner', properties.get("adsBannerIdArticleScreen"))
+
+            variant.resValue('string', 'ad_unit_id_main_screen_banner', properties.get("adsBannerIdMainScreen"))
+
+            variant.resValue('string', 'appodeal_app_key', properties.get("appodealAppKey"))
+            //ads END
+
+            variant.resValue('integer', 'com_vk_sdk_AppId', properties.get("vkSdkAppId"))
+
+            //use string, as so in facebook docs...
+            variant.resValue('string', 'facebook_app_id', properties.get("facebookAppId"))
+
+            variant.resValue('string', 'firebase_db_url', properties.get("firebaseUri"))
+
+            variant.resValue('string', 'tools_api_url', properties.get("vpsApiAddress"))
+            variant.buildConfigField('String', 'TOOLS_API_URL', '"' + properties.get("vpsApiAddress") + '"')
+
+            variant.resValue('string', 'web_application_id', properties.get("webApplicationId"))
+
+            //TODO use firebase remote config for it
+            variant.resValue('string', 'non_cracked_user_uid', properties.get("nonCrackedUserUid"))
+
+            variant.resValue('integer', 'realm_version', properties.get("realmVersion"))
+
+            variant.resValue('bool', 'filter_by_type_enabled', properties.get("filterByTypeEnabled"))
+
+            variant.resValue('bool', 'social_login_vk_enabled', properties.get("socialLoginVkEnabled"))
+        } else {
+            logger.lifecycle('pathToFileWithData: {}', pathToFileWithData)
+            throw new GradleException("You need to have apiKeys.properties file in projectRoot/config/{FLAVOR_NAME} with " +
+                    "yandexMetricaApiKey," +
+                    "adMobAppId," +
+                    "adsBannerIdInterstitial," +
+                    "vkSdkAppId," +
+                    "firebaseUri," +
+                    "vpsApiAddress" +
+                    "webApplicationId" +
+                    "vpsApiAddress" +
+                    " variables to build project")
+        }
+    }
+}

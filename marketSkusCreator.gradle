@@ -1,0 +1,38 @@
+apply from: '../utils.gradle'
+
+ext {
+    fillArrays = { variant ->
+        def pathToFileWithData = "config/" + variant.productFlavors[0].name + "/marketSkus.properties"
+        def buildTypeName = variant.buildType.name
+        def flavorMergedName = variant.productFlavors[0].name + variant.productFlavors[1].name;
+//        logger.lifecycle('flavorMergedName/buildTypeName: {}/{}', flavorMergedName, buildTypeName)
+
+        if (getCurrentFlavor().equalsIgnoreCase(flavorMergedName) && buildTypeName.equalsIgnoreCase(getCurrentBuildType())) {
+            logger.lifecycle('flavorName/buildTypeName: {}/{}', flavorMergedName, buildTypeName)
+            //add market skus to buildConfig
+            //there is a way to store it in res... but it's awful
+            //http://stackoverflow.com/a/41655569/3212712
+            //Load market SKUs
+            if (rootProject.file(pathToFileWithData).exists()) {
+                def marketSkusPropertiesFile = rootProject.file(pathToFileWithData);
+                def properties = new Properties()
+                properties.load(new FileInputStream(marketSkusPropertiesFile))
+
+                variant.resValue('string', 'old_skus', properties.get("marketSkusOld"))
+                variant.resValue('string', 'ver_2_skus', properties.get("marketSkusVer2"))
+                variant.resValue('string', 'inapp_skus', properties.get("marketSkusInapp"))
+
+                //no ads subs
+                variant.resValue('string', 'subs_no_ads_old', properties.get("noAdsSkuOld"))
+
+                variant.resValue('string', 'subs_no_ads_ver_2', properties.get("noAdsSkuVer2"))
+            } else {
+                logger.lifecycle('pathToFileWithData: {}', pathToFileWithData)
+                throw new GradleException("You need to have marketSkus.properties file in root of project with " +
+                        "marketSkusOld," +
+                        "marketSkusVer2," +
+                        " variables to build project")
+            }
+        }
+    }
+}

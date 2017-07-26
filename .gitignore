@@ -1,0 +1,17 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+keystore.properties
+gradlew
+gradlew.bat
+*.keystore
+*.jks
+*.apk
+google-services.json
+apiKeys.properties
+*.log
+marketSkus.properties

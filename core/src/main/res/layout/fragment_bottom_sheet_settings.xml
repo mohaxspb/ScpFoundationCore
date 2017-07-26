@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:windowBackground"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/defaultMargin"
+                android:text="@string/settings_design"
+                android:textSize="21sp"
+                android:textStyle="bold"
+                />
+
+            <LinearLayout
+                android:id="@+id/listItemStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackground"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/defaultMargin"
+                android:paddingRight="@dimen/defaultMargin"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/settings_design_list_type"
+                    />
+
+                <Spinner
+                    android:id="@+id/listItemSpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:paddingLeft="@dimen/defaultMarginSmall"
+                    tools:ignore="RtlHardcoded,RtlSymmetry"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fontPrefered"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="?selectableItemBackground"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/defaultMarginSmall"
+                android:paddingLeft="@dimen/defaultMargin"
+                android:paddingRight="@dimen/defaultMargin"
+                android:paddingTop="@dimen/defaultMarginSmall"
+                >
+
+                <TextView
+                    android:id="@+id/fontPreferedTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/settings_design_font"
+                    />
+
+                <Spinner
+                    android:id="@+id/fontPreferedSpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/defaultMarginSmall"
+                    tools:ignore="RtlHardcoded,RtlSymmetry"
+                    />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/defaultMargin"
+                android:text="@string/settings_notification"
+                android:textSize="21sp"
+                android:textStyle="bold"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/defaultMargin"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_notif_on"
+                    />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/notifIsOnSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/defaultMargin"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_notif_led_on"
+                    />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/notifLedisOnSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/defaultMargin"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_notif_vibrate_on"
+                    />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/notifVibrateIsOnSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/defaultMargin"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_notif_sound_on"
+                    />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/notifSoundIsOnSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/defaultMargin"
+                android:text="@string/settings_data_sync"
+                android:textSize="21sp"
+                android:textStyle="bold"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+
+                <TextView
+                    android:id="@+id/sync"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="?selectableItemBackground"
+                    android:gravity="center"
+                    android:padding="@dimen/defaultMargin"
+                    android:text="@string/sync"
+                    />
+
+                <TextView
+                    android:id="@+id/buy"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="?selectableItemBackground"
+                    android:gravity="center"
+                    android:padding="@dimen/defaultMargin"
+                    android:text="@string/enable_auto_sync"
+                    android:textColor="@color/material_green_500"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.design.widget.CoordinatorLayout>

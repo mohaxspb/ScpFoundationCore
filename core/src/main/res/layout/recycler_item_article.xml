@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="?artListCardBackgroundColor"
+    app:cardCornerRadius="3dp"
+    tools:layout_gravity="center"
+    app:cardElevation="3dp"
+    app:cardUseCompatPadding="true"
+    >
+
+    <LinearLayout
+        android:id="@+id/root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foreground="?selectableItemBackground"
+        android:orientation="vertical"
+        tools:paddingTop="24dp"
+        >
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/listImageHeight"
+                android:contentDescription="@string/app_name"
+                android:scaleType="center"
+                android:src="@drawable/ic_scp_file"
+                />
+
+            <ImageView
+                android:id="@+id/typeIcon"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/defaultMargin"
+                android:contentDescription="@string/app_name"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/ic_scp_icon_new"
+                />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/defaultMargin"
+            android:paddingRight="@dimen/defaultMargin"
+            android:paddingTop="@dimen/defaultMargin"
+            android:textColor="?newArticlesTextColor"
+            android:textSize="21sp"
+            tools:text="Ахуеть какой завлекающий заголовок"
+            />
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/tags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/defaultMarginSmall"
+            android:paddingRight="@dimen/defaultMarginSmall"
+            app:alignContent="flex_start"
+            app:alignItems="flex_start"
+            app:flexWrap="wrap"
+            >
+
+            <TextView
+                android:id="@+id/tagsExpander"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/defaultMarginTiny"
+                android:layout_marginRight="@dimen/defaultMarginSmall"
+                android:layout_marginTop="@dimen/defaultMarginTiny"
+                android:gravity="center_vertical"
+                android:drawableRight="?iconArrowDown"
+                android:background="?selectableItemBackground"
+                android:padding="@dimen/defaultMarginSmall"
+                android:text="@string/tags"
+                android:textColor="?newArticlesTextColor"
+                android:textSize="11sp"
+                tools:ignore="RtlHardcoded,RtlSymmetry,SmallSp"
+                />
+        </com.google.android.flexbox.FlexboxLayout>
+
+        <TextView
+            android:id="@+id/preview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha=".7"
+            android:paddingLeft="@dimen/defaultMargin"
+            android:paddingRight="@dimen/defaultMargin"
+            android:paddingTop="@dimen/defaultMargin"
+            android:textColor="?newArticlesTextColor"
+            android:textSize="17sp"
+            android:visibility="gone"
+            tools:text="Тут какое-то превью, которое показывается только в поиске по сайту"
+            tools:visibility="visible"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <ImageView
+                android:id="@+id/favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@string/app_name"
+                android:paddingBottom="@dimen/defaultMarginSmall"
+                android:paddingLeft="@dimen/defaultMargin"
+                android:paddingRight="@dimen/defaultMargin"
+                android:paddingTop="@dimen/defaultMargin"
+                android:src="?favoriteIcon"
+                />
+
+            <TextView
+                android:id="@+id/rating"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingBottom="@dimen/defaultMarginSmall"
+                android:paddingTop="@dimen/defaultMargin"
+                android:textColor="?newArticlesTextColor"
+                android:textSize="14sp"
+                tools:text="Рейтинг +42"
+                />
+
+            <ImageView
+                android:id="@+id/read"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@string/app_name"
+                android:paddingBottom="@dimen/defaultMarginSmall"
+                android:paddingLeft="@dimen/defaultMargin"
+                android:paddingRight="@dimen/defaultMargin"
+                android:paddingTop="@dimen/defaultMargin"
+                android:src="?readIcon"
+                />
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingBottom="@dimen/defaultMarginSmall"
+                android:paddingTop="@dimen/defaultMargin"
+                android:textColor="?newArticlesTextColor"
+                android:textSize="14sp"
+                tools:text="25.12.12"
+                />
+
+            <ImageView
+                android:id="@+id/offline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@string/app_name"
+                android:paddingBottom="@dimen/defaultMarginSmall"
+                android:paddingLeft="@dimen/defaultMargin"
+                android:paddingRight="@dimen/defaultMargin"
+                android:paddingTop="@dimen/defaultMargin"
+                android:src="?iconOfflineAdd"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>

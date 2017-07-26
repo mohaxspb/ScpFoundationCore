@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <ImageView
+            android:id="@+id/typeIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="@dimen/defaultMarginSmall"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_none_small"
+            android:contentDescription="@string/app_name"
+            tools:ignore="RtlSymmetry"/>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:paddingBottom="@dimen/defaultMarginSmall"
+            android:paddingLeft="@dimen/defaultMarginSmall"
+            android:paddingTop="@dimen/defaultMarginSmall"
+            android:textColor="?newArticlesTextColor"
+            android:textSize="21sp"
+            tools:ignore="RtlHardcoded,RtlSymmetry"
+            tools:text="Старый ужасный заголовок статьи"/>
+
+        <ImageView
+            android:id="@+id/favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/app_name"
+            android:padding="@dimen/defaultMarginSmall"
+            android:src="?favoriteIcon"
+            />
+
+        <ImageView
+            android:id="@+id/read"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/app_name"
+            android:padding="@dimen/defaultMarginSmall"
+            android:src="?readIcon"
+            />
+
+        <ImageView
+            android:id="@+id/offline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/app_name"
+            android:padding="@dimen/defaultMarginSmall"
+            android:src="?iconOfflineAdd"
+            />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/preview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:alpha=".7"
+        android:paddingLeft="@dimen/defaultMarginSmall"
+        android:paddingRight="@dimen/defaultMarginSmall"
+        android:textColor="?newArticlesTextColor"
+        android:textSize="17sp"
+        android:visibility="gone"
+        tools:text="Тут какое-то превью, которое показывается только в поиске по сайту"
+        tools:visibility="visible"
+        />
+
+</LinearLayout>

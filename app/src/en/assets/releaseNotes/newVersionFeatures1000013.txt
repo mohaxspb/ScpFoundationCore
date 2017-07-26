@@ -1,0 +1,27 @@
+<b>Version 1.0.0.13</b>
+<br/><br/>
+<b>Main</b>
+<br/>
+ - We make global update. New design and new features, including cloud sync, massive articles downloads and other cool things)
+<br/><br/>
+<b>Improvements</b>
+<br/>
+ - Add objects from IV series.
+<br/>
+ - Add list of most rated articles.
+<br/>
+ - Add ability to open random article.
+<br/>
+ - Add ability to search articles by tag.
+<br/>
+ - Articles from lists now can be swiped to be able to read next, without returning to list.
+<br/><br/>
+<b>Bug fixes</b>
+<br/>
+ - Gallery now works
+<br/><br/>
+If you have any questions you can contact us via email:
+<br/>
+E-mail: <a href="mailto:neva.spb.rx@gmail.com">For any questions</a>
+<br/><br/>
+Thanks for using our app!

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="my_toolbar_style" format="reference"/>
+    <attr name="my_toolbar_PopUp_style" format="reference"/>
+    <!--navigationView-->
+    <attr name="navigation_view_style" format="reference"/>
+    <attr name="navigationViewItemTextColor" format="color|reference"/>
+    <attr name="navigationViewItemIconColor" format="color|reference"/>
+    <!---->
+    <attr name="colorFAB" format="color|reference"/>
+    <attr name="newArticlesTextColor" format="color|reference"/>
+    <attr name="readTextColor" format="color|reference"/>
+    <attr name="toolbarBackgroundGradient" format="reference"/>
+    <attr name="favoriteIcon" format="reference"/>
+    <attr name="readIcon" format="reference"/>
+    <attr name="favoriteIconUnselected" format="reference"/>
+    <attr name="readIconUnselected" format="reference"/>
+    <attr name="windowBackgroundDark" format="color|reference"/>
+    <attr name="quoteBackgroundColor" format="color|reference"/>
+    <attr name="spoilerColorTitle" format="color|reference"/>
+    <!--icons-->
+    <attr name="iconShare" format="reference"/>
+    <attr name="iconTextSizeDialog" format="reference"/>
+    <attr name="iconArrowUp" format="reference"/>
+    <attr name="iconArrowDown" format="reference"/>
+    <attr name="iconArrowUpSmall" format="reference"/>
+    <attr name="iconArrowDownSmall" format="reference"/>
+    <attr name="iconOfflineAdd" format="reference"/>
+    <attr name="iconOfflineRemove" format="reference"/>
+    <attr name="iconEmptyImage" format="reference"/>
+    <!---->
+    <attr name="windowbackgroundOverrided" format="color|reference"/>
+    <attr name="artListCardBackgroundColor" format="color|reference"/>
+
+    <attr name="scrollbar" format="reference"/>
+    <attr name="loadingIndicator" format="reference"/>
+
+    <attr name="spinnerStyle" format="reference"/>
+</resources>

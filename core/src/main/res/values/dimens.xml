@@ -1,0 +1,19 @@
+<resources>
+    <dimen name="headerHeight">200dp</dimen>
+    <dimen name="textSizeExampleTextViewHeight">48dp</dimen>
+    <dimen name="listImageHeight">200dp</dimen>
+
+    <dimen name="defaultMarginBig">24dp</dimen>
+    <dimen name="defaultMargin">16dp</dimen>
+    <dimen name="defaultMarginSmall">8dp</dimen>
+    <dimen name="defaultMarginTiny">4dp</dimen>
+
+    <dimen name="bottomSheetSize">30dp</dimen>
+
+    <dimen name="text_size_large">25sp</dimen>
+    <dimen name="text_size_primary">21sp</dimen>
+    <dimen name="text_size_secondary">19sp</dimen>
+    <dimen name="text_size_tertiary">17sp</dimen>
+
+    <dimen name="drawerHeaderHeight">164dp</dimen>
+</resources>

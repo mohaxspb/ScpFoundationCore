@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/headerHeight"
+    android:background="?toolbarBackgroundGradient"
+    tools:layout_gravity="center"
+    >
+
+    <LinearLayout
+        android:id="@+id/levelContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/defaultMarginSmall"
+        tools:ignore="UseCompoundDrawables"
+        >
+
+        <TextView
+            android:id="@+id/level"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/defaultMargin"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:textColor="@color/material_blue_gray_50"
+            android:textSize="17sp"
+            tools:text="3 уровень допуска"
+            />
+
+        <ImageView
+            android:id="@+id/levelUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="@dimen/defaultMarginSmall"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="@dimen/defaultMarginSmall"
+            android:src="@drawable/ic_arrow_upward_white_24dp"
+            android:tint="@color/material_green_500"
+            tools:ignore="ContentDescription"
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/levelContainer"
+        android:layout_gravity="bottom|start"
+        android:layout_marginBottom="@dimen/defaultMarginSmall"
+        android:layout_marginLeft="@dimen/defaultMargin"
+        android:textColor="@color/material_blue_gray_50"
+        android:textSize="19sp"
+        />
+
+    <FrameLayout
+        android:id="@+id/avatarContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/name"
+        android:layout_marginBottom="@dimen/defaultMarginSmall"
+        android:layout_marginLeft="@dimen/defaultMargin"
+        android:background="?selectableItemBackgroundBorderless"
+        >
+
+        <at.grabner.circleprogress.CircleProgressView
+            android:id="@+id/circleView"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center"
+            app:cpv_autoTextSize="true"
+            app:cpv_barColor="@color/material_green_500"
+            app:cpv_barWidth="8dp"
+            app:cpv_innerContourSize="0dp"
+            app:cpv_maxValue="100"
+            app:cpv_outerContourSize="0dp"
+            app:cpv_rimColor="@android:color/transparent"
+            app:cpv_rimWidth="8dp"
+            app:cpv_seekMode="false"
+            app:cpv_showUnit="false"
+            app:cpv_value="10"
+            />
+
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="center"
+            android:src="@drawable/scplogo"
+            tools:ignore="ContentDescription"
+            />
+
+        <TextView
+            android:id="@+id/levelNum"
+            android:layout_width="@dimen/defaultMarginBig"
+            android:layout_height="@dimen/defaultMarginBig"
+            android:layout_gravity="bottom|end"
+            android:background="@drawable/gradient_circle"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            tools:text="1"
+            />
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/logout"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignBottom="@id/avatarContainer"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="13dp"
+        android:layout_marginRight="@dimen/defaultMargin"
+        android:background="?selectableItemBackgroundBorderless"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_exit_to_app_white_48dp"
+        />
+
+    <ImageView
+        android:id="@+id/relogin"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_toStartOf="@id/logout"
+        android:tint="@color/material_red_500"
+        android:layout_alignBottom="@id/avatarContainer"
+        android:layout_marginRight="@dimen/defaultMargin"
+        android:background="?selectableItemBackgroundBorderless"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_new_releases"
+        />
+
+    <ImageView
+        android:id="@+id/inapp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignBottom="@id/avatarContainer"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="@dimen/defaultMargin"
+        android:layout_toRightOf="@id/avatarContainer"
+        android:background="?selectableItemBackgroundBorderless"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_monetization_on_white_24dp"
+        />
+
+</RelativeLayout>

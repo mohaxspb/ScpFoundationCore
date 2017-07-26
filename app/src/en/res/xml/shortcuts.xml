@@ -1,0 +1,43 @@
+<shortcuts xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:ignore="UnusedAttribute">
+
+    <shortcut
+        android:shortcutId="favorite_articles"
+        android:enabled="true"
+        android:shortcutShortLabel="@string/drawer_item_12"
+        android:shortcutLongLabel="@string/drawer_item_12"
+        android:icon="@drawable/ic_drawer_favorites">
+        <intent
+            android:action="ru.dante.scpfoundation.open.FAVORITES"
+            android:targetPackage="ru.dante.scpfoundation"
+            android:targetClass="ru.dante.scpfoundation.ui.activity.MainActivity" />
+        <categories android:name="android.shortcut.questions" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="random_article"
+        android:enabled="true"
+        android:shortcutShortLabel="@string/random_short"
+        android:shortcutLongLabel="@string/drawer_item_5"
+        android:icon="@drawable/ic_drawer_random">
+        <intent
+            android:action="ru.dante.scpfoundation.open.RANDOM"
+            android:targetPackage="ru.dante.scpfoundation"
+            android:targetClass="ru.dante.scpfoundation.ui.activity.MainActivity" />
+        <categories android:name="android.shortcut.questions" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="new_articles"
+        android:enabled="true"
+        android:shortcutShortLabel="@string/new_short"
+        android:shortcutLongLabel="@string/drawer_item_4"
+        android:icon="@drawable/ic_drawer_new">
+        <intent
+            android:action="ru.dante.scpfoundation.open.NEW"
+            android:targetPackage="ru.dante.scpfoundation"
+            android:targetClass="ru.dante.scpfoundation.ui.activity.MainActivity" />
+        <categories android:name="android.shortcut.questions" />
+    </shortcut>
+</shortcuts>

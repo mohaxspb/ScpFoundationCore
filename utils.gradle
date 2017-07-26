@@ -1,0 +1,46 @@
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
+ext {
+    getCurrentBuildType = {
+
+        Gradle gradle = getGradle()
+        String tskReqStr = gradle.getStartParameter().getTaskRequests().toString()
+
+        def buildType = ""
+
+        if (tskReqStr.contains("Release")) {
+            buildType = "release"
+        } else if (tskReqStr.contains("Debug")) {
+            buildType = "debug"
+        }
+        logger.lifecycle("getCurrentBuildType: {}", buildType)
+
+        return buildType;
+    }
+
+    getCurrentFlavor = {
+        Gradle gradle = getGradle()
+        String tskReqStr = gradle.getStartParameter().getTaskRequests().toString()
+
+        Pattern pattern;
+
+        if (tskReqStr.contains("assemble")) {
+            pattern = Pattern.compile("assemble(\\w+)(Release|Debug)")
+        } else {
+            pattern = Pattern.compile("generate(\\w+)(Release|Debug)")
+        }
+        Matcher matcher = pattern.matcher(tskReqStr)
+
+        def  curFlavor
+
+        if (matcher.find()) {
+            curFlavor = matcher.group(1).toLowerCase()
+        } else {
+            curFlavor = ""
+        }
+        logger.lifecycle("curFlavor: {}", curFlavor)
+
+        return curFlavor;
+    }
+}

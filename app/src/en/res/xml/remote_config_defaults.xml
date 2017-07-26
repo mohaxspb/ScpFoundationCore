@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<defaultsMap>
+    <!--app installs-->
+    <entry>
+        <key>free_apps_install_enabled</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>apps_to_install_json</key>
+        <value>{
+            "items": [
+            {
+            "id": "ru.spb.android.borscha",
+            "name": "Борщ",
+            "description": "Генератор юмора. Свежие шутки, приколы, гифки, cамый популярный паблик,
+            журнал.",
+            "imageUrl":
+            "https://lh3.googleusercontent.com/q1Xyzne1iSjQbf2YftlO9hprdmJbYAdcYsmxu3tDhlayvzwR0f3798Ov1s3EVkyNWg=w300-rw"
+            },
+            {
+            "id": "ru.spb.android.palata6",
+            "name": "Палата № 6",
+            "description": "Радость, грусть, сочувствие, любовь, страх, безразличие, удовольствие и
+            другие эмоции",
+            "imageUrl":
+            "https://lh3.googleusercontent.com/2oXjwIeltn-wSrZ8zQB3aGTFPW-w9ef-y2Yi_EeOTLLrTO6Jg9VtejzwDtM6iKPv3bh2=w300-rw"
+            },
+            {
+            "id": "ru.dante.scpfoundation.eng",
+            "name": "SCP Foundation EN On/Offline",
+            "description": "Англоязычное приложение для англоязычной части Фонда",
+            "imageUrl":
+            "https://lh3.googleusercontent.com/IQuXO0zOC1hBS6YUmBo91-G_2WcYPFc2pjIuxTXr_NvbiH-APDSk_rJcbJTijGxwwtcQ=w300-rw"
+            },
+            {
+            "id": "ru.kuchanov.vjux",
+            "name": "Котик Вжух - Кот волшебник Мем",
+            "description": "Вжух и ты волшебник, создай свой вжух взмахом руки.",
+            "imageUrl":
+            "https//lh3.googleusercontent.com/5P7o006Il-iA8e6TjNYvogcObxC0rHj69VljyLd0YvbC6YhvlDCh6BS0jaKmznWbUSk=w300-rw"
+            }
+            ]
+            }
+        </value>
+    </entry>
+    <entry>
+        <key>app_install_reward_in_millis</key>
+        <value>86400000</value>
+    </entry>
+    <!--invites-->
+    <entry>
+        <key>free_invites_enabled</key>
+        <value>false</value>
+    </entry>
+    <!--vk groups-->
+    <entry>
+        <key>free_vk_groups_enabled</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>vk_groups_to_join_json</key>
+        <value>{
+            "items": [
+            {
+            "id": "599638",
+            "name": "SCP Foundation RU/ENG. Приложение для Android",
+            "description": "Официальная группа приложения в ВК. Тут вы найдёте самые последние
+            новости о развитии приложения, а также разный контент по вселенной SCP",
+            "imageUrl": "https://pp.userapi.com/c604519/v604519296/46aa/i9Y7zDF_J5M.jpg"
+            },
+            {
+            "id": "54904072",
+            "name": "DeusEX Mohito",
+            "description": "Немного юмора, всякое интересное и т.д.",
+            "imageUrl": "https://pp.userapi.com/c639829/v639829296/5462/Chzn6rgbuL8.jpg"
+            }
+            ]
+            }
+        </value>
+    </entry>
+    <entry>
+        <key>free_vk_groups_join_reward</key>
+        <value>86400000</value>
+    </entry>
+    <!--ads-->
+    <entry>
+        <key>free_rewarded_video_enabled</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>period_between_interstitial_in_millis</key>
+        <value>3600000</value>
+    </entry>
+    <entry>
+        <key>rewarded_video_cooldown_in_millis</key>
+        <value>7200000</value>
+    </entry>
+    <entry>
+        <key>num_of_intersitial_between_rewarded</key>
+        <value>5</value>
+    </entry>
+    <entry>
+        <key>num_of_sync_attempts_before_call_to_action</key>
+        <!--for test use 1, for prod use i.e. 5-->
+        <value>5</value>
+    </entry>
+    <entry>
+        <key>num_of_gallery_photos_between_intersitial</key>
+        <value>20</value>
+    </entry>
+    <!--score-->
+    <entry>
+        <key>score_multiplier_subscription</key>
+        <value>3</value>
+    </entry>
+    <entry>
+        <key>score_multiplier_vk_group_app</key>
+        <value>2</value>
+    </entry>
+    <!---->
+    <entry>
+        <key>score_action_favorite</key>
+        <value>1</value>
+    </entry>
+    <entry>
+        <key>score_action_read</key>
+        <value>1</value>
+    </entry>
+    <entry>
+        <key>score_action_interstitial_shown</key>
+        <value>5</value>
+    </entry>
+    <entry>
+        <key>score_action_vk_group</key>
+        <value>50</value>
+    </entry>
+    <entry>
+        <key>score_action_our_app</key>
+        <value>50</value>
+    </entry>
+    <entry>
+        <key>score_action_rewarded_video</key>
+        <value>50</value>
+    </entry>
+    <entry>
+        <key>score_action_none</key>
+        <value>0</value>
+    </entry>
+    <entry>
+        <key>vk_app_group_id</key>
+        <value>599638</value>
+    </entry>
+    <entry>
+        <key>levels_json</key>
+        <value>{
+            "levels": [
+            {
+            "id": 0,
+            "title": "Level 0 (For Official Use Only)",
+            "score": 0
+            },
+            {
+            "id": 1,
+            "title": "Level 1 (Confidential)",
+            "score": 1000
+            },
+            {
+            "id": 2,
+            "title": "Level 2 (Restricted)",
+            "score": 2000
+            },
+            {
+            "id": 3,
+            "title": "Level 3 (Secret)",
+            "score": 3000
+            },
+            {
+            "id": 4,
+            "title": "Level 4 (Top Secret)",
+            "score": 6000
+            },
+            {
+            "id": 5,
+            "title": "Level 5 (Thaumiel)",
+            "score": 10000
+            }
+            ]
+            }
+        </value>
+    </entry>
+    <!--download all-->
+    <entry>
+        <key>download_all_enabled_for_free</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>download_free_articles_limit</key>
+        <value>10</value>
+    </entry>
+    <entry>
+        <key>download_score_per_article</key>
+        <value>50</value>
+    </entry>
+    <entry>
+        <key>gallery_banner_disabled</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>main_banner_disabled</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>article_banner_disabled</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>no_ads_subs_enabled</key>
+        <value>true</value>
+    </entry>
+</defaultsMap>

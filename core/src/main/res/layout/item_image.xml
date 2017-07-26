@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <com.github.chrisbanes.photoview.PhotoView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/app_name"
+        />
+
+    <ProgressBar
+        android:id="@+id/progressCenter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="gone"
+        />
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/descriptionContainer"
+        android:layout_width="wrap_content"
+        android:minWidth="200dp"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/defaultMargin"
+        android:layout_marginLeft="@dimen/defaultMargin"
+        android:layout_marginRight="@dimen/defaultMargin"
+        android:layout_marginBottom="40dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        app:cardBackgroundColor="?windowBackgroundDark"
+        app:cardCornerRadius="@dimen/cardview_default_radius"
+        app:cardElevation="@dimen/cardview_default_elevation"
+        >
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/defaultMargin"
+            android:linksClickable="true"
+            android:autoLink="web"
+            tools:text="test test test test test test test test test test test test test test test test"
+            android:textColor="?newArticlesTextColor"
+            android:textSize="16sp"
+            />
+    </android.support.v7.widget.CardView>
+
+</FrameLayout>

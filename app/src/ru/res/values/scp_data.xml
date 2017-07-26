@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="materials_titles">
+        <item>Протоколы экспериментов</item>
+        <item>Отчёты об инцидентах</item>
+        <item>Интервью с очевидцами</item>
+        <item>Шуточные SCP</item>
+        <item>Архивные SCP</item>
+        <item>Прочие материалы</item>
+        <item>За кадром</item>
+    </string-array>
+
+    <string name="materials_experiments">Протоколы экспериментов</string>
+    <string name="materials_incidents">Отчёты об инцидентах</string>
+    <string name="materials_interview">Интервью с очевидцами</string>
+    <string name="materials_jokes">Шуточные SCP</string>
+    <string name="materials_archive">Архивные SCP</string>
+    <string name="materials_others">Прочие материалы</string>
+    <string name="materials_kadr">За кадром</string>
+
+</resources>
