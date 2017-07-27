@@ -202,7 +202,7 @@ dependencies {
 
     //sub project modules
     compile('ru.kuchanov.scp:scp-downloads:1.0.5@aar') { transitive = true }
-    compile('ru.kuchanov.utils:rate:1.0.1@aar') { transitive = true }
+    compile('ru.kuchanov.utils:rate:1.0.2@aar') { transitive = true }
 }
 
 //add it only in project build.gradle, not in lib
