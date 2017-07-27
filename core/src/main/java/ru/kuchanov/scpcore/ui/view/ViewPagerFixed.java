@@ -12,7 +12,7 @@ import android.view.MotionEvent;
  * for scp_ru
  * <p>
  *
- * {@link "https://github.com/chrisbanes/PhotoView/issues/31#issuecomment-19803926"}
+ * @see <a href="https://github.com/chrisbanes/PhotoView/issues/31#issuecomment-19803926">en-SO</a>
  */
 public class ViewPagerFixed extends android.support.v4.view.ViewPager {
 

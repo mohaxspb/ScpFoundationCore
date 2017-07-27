@@ -67,12 +67,6 @@ public abstract class BaseApplication extends MultiDexApplication {
         YandexMetrica.enableActivityAutoTracking(this);
 
         sAppInstance = this;
-//        sAppComponent = DaggerAppComponent.builder()
-//                .storageModule(new StorageModule())
-//                .appModule(new AppModule(this))
-//                .presentersModule(new PresentersModule())
-//                .helpersModule(getHelpersModule())
-//                .build();
 
         sAppComponent = buildAppComponentImpl();
 
