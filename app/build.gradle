@@ -115,11 +115,11 @@ dependencies {
 //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
 //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
 //    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-//    //also we need to add this module
-//    //todo try https://stackoverflow.com/a/31558348/3212712
-//    compile project(':cheetah-mobile-3.4.7')
 //    //add core itself at last for each configuration
 //    ruDevReleaseCompile(group: 'ru.kuchanov.scp', name: 'core', version: '1.0.0', ext: 'aar', classifier: 'devRelease'){transitive = true}
+//    //or
+//    ruDevReleaseCompile('ru.kuchanov.scp:core:1.0.1:devRelease@aar') { transitive = true }
+
 }
 
 apply plugin: 'com.google.gms.google-services'
