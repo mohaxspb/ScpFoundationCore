@@ -12,9 +12,35 @@ apply from: '../versioning.gradle'
 apply from: '../marketSkusCreator.gradle'
 apply from: '../apiKeysCreator.gradle'
 
+ext {
+    bintrayRepo = 'scp-core'
+    bintrayName = 'scp-core'
+
+    publishedGroupId = 'ru.kuchanov.scp'
+    libraryName = 'core'
+    artifact = 'core'
+
+    libraryDescription = 'ScpFoundation android app core'
+
+    siteUrl = 'https://github.com/mohaxspb/ScpFoundationCore'
+    gitUrl = 'https://github.com/mohaxspb/ScpFoundationCore.git'
+
+    libraryVersion = version
+
+    developerId = 'mohaxspb'
+    developerName = 'Yuri K'
+    developerEmail = 'mohax.spb@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
+
+    compileOptions.encoding = 'utf-8'
 
     sourceSets {
         main {
@@ -62,7 +88,7 @@ android {
 
     publishNonDefault true
 
-    productFlavors{
+    productFlavors {
         prod {
             manifestPlaceholders = [myDebuggable: false]
             buildConfigField "boolean", "TIMBER_ENABLE", "false"
@@ -73,7 +99,7 @@ android {
         }
 
         libraryVariants.all { variant ->
-            println("variant: "+variant.getName())
+            println("variant: " + variant.getName())
 
             fillArrays(variant, true)
             fillApiArrays(variant, true)
@@ -176,8 +202,13 @@ dependencies {
 
     //sub project modules
     compile('ru.kuchanov.scp:scp-downloads:1.0.5@aar') { transitive = true }
-    compile('ru.kuchanov.utils:rate:1.0.1@aar') { transitive = true }
+    compile('ru.kuchanov.utils:rate:1.0.2@aar') { transitive = true }
 }
 
 //add it only in project build.gradle, not in lib
 //apply plugin: 'com.google.gms.google-services'
+
+// Place it at the end of the file for publishing to bintray
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+//apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
+apply from: '../bintrayv1.gradle'
