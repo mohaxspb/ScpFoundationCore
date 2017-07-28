@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.Html;
@@ -53,8 +55,11 @@ public class NewVersionDialogFragment extends DialogFragment {
         final MaterialDialog dialogTextSize;
         String newVersionFeatures = "";
         try {
-            newVersionFeatures = readFromAssets(getActivity(), "releaseNotes/newVersionFeatures" + BuildConfig.VERSION_CODE + ".txt");
-        } catch (IOException e) {
+            PackageManager manager = getActivity().getPackageManager();
+            PackageInfo info = manager.getPackageInfo(getActivity().getPackageName(), 0);
+
+            newVersionFeatures = readFromAssets(getActivity(), "releaseNotes/newVersionFeatures" + info.versionCode + ".txt");
+        } catch (Exception e) {
             Timber.e(e, "error while read newVersionFeatures from file");
         }
 
