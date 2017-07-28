@@ -85,6 +85,11 @@ public class MainActivity
             }
             adRequest.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
         }
+//        Timber.d("mMyPreferenceManager.isHasSubscription()/mMyPreferenceManager.isHasNoAdsSubscription()/FirebaseRemoteConfig.getInstance().getBoolean(MAIN_BANNER_DISABLED): %s/%s/%s",
+//                mMyPreferenceManager.isHasSubscription(), mMyPreferenceManager.isHasNoAdsSubscription(), FirebaseRemoteConfig.getInstance().getBoolean(MAIN_BANNER_DISABLED) );
+//        Timber.d("showBanner: %s", mMyPreferenceManager.isHasSubscription()
+//                || mMyPreferenceManager.isHasNoAdsSubscription()
+//                || FirebaseRemoteConfig.getInstance().getBoolean(MAIN_BANNER_DISABLED));
         if (mMyPreferenceManager.isHasSubscription()
                 || mMyPreferenceManager.isHasNoAdsSubscription()
                 || FirebaseRemoteConfig.getInstance().getBoolean(MAIN_BANNER_DISABLED)) {

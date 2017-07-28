@@ -169,6 +169,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         }
         super.onCreate(savedInstanceState);
 
+        //remote config
+        initAndUpdateRemoteConfig();
+
         setContentView(getLayoutResId());
         ButterKnife.bind(this);
 
@@ -214,8 +217,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
         //ads
         initAds();
-        //remote config
-        initAndUpdateRemoteConfig();
 
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
     }
