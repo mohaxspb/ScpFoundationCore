@@ -85,10 +85,9 @@ public class MainActivity
             }
             adRequest.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
         }
-        FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
         if (mMyPreferenceManager.isHasSubscription()
                 || mMyPreferenceManager.isHasNoAdsSubscription()
-                || remoteConfig.getBoolean(MAIN_BANNER_DISABLED)) {
+                || FirebaseRemoteConfig.getInstance().getBoolean(MAIN_BANNER_DISABLED)) {
             mAdView.setVisibility(View.GONE);
         } else {
             mAdView.setVisibility(View.VISIBLE);
@@ -346,9 +345,9 @@ public class MainActivity
             title = getString(R.string.drawer_item_13);
         } else if (id == R.id.siteSearch) {
             title = getString(R.string.drawer_item_15);
-        } else if (BuildConfig.FLAVOR.contains("ru") && id == R2.id.objects_RU) {
+        } else if (id == R2.id.objects_RU) {
             title = getString(R.string.drawer_item_9);
-        } else if (BuildConfig.FLAVOR.contains("ru") && id == R2.id.stories) {
+        } else if (id == R2.id.stories) {
             title = getString(R.string.drawer_item_11);
         } else {
             Timber.e("unexpected item ID");
