@@ -170,7 +170,6 @@ public class ArticleActivity
             link = Constants.Urls.SEARCH;
         } else if (id == R.id.tagsSearch) {
             startTagsSearchActivity();
-            return true;
         } else if (id == R2.id.objects_RU) {
             link = mConstantValues.getUrlsValues().getObjectsRu();
         } else if (id == R2.id.stories) {
