@@ -2,27 +2,21 @@ package ru.kuchanov.scpcore.ui.dialog;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.Html;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 import javax.inject.Inject;
 
 import ru.kuchanov.scpcore.BaseApplication;
-import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.util.MyHtmlTagHandler;
+import ru.kuchanov.scpcore.util.StorageUtils;
+import ru.kuchanov.scpcore.util.SystemUtils;
 import timber.log.Timber;
 
 public class NewVersionDialogFragment extends DialogFragment {
@@ -31,6 +25,9 @@ public class NewVersionDialogFragment extends DialogFragment {
 
     public static final String EXTRA_TITLE = NewVersionDialogFragment.class.getSimpleName();
 
+    @Inject
+    protected MyPreferenceManager mMyPreferenceManager;
+
     public static DialogFragment newInstance(String title) {
         DialogFragment fragment = new NewVersionDialogFragment();
         Bundle args = new Bundle();
@@ -38,9 +35,6 @@ public class NewVersionDialogFragment extends DialogFragment {
         fragment.setArguments(args);
         return fragment;
     }
-
-    @Inject
-    protected MyPreferenceManager mMyPreferenceManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,10 +49,8 @@ public class NewVersionDialogFragment extends DialogFragment {
         final MaterialDialog dialogTextSize;
         String newVersionFeatures = "";
         try {
-            PackageManager manager = getActivity().getPackageManager();
-            PackageInfo info = manager.getPackageInfo(getActivity().getPackageName(), 0);
-
-            newVersionFeatures = readFromAssets(getActivity(), "releaseNotes/newVersionFeatures" + info.versionCode + ".txt");
+            Timber.d("SystemUtils.getPackageInfo().versionCode: %s", SystemUtils.getPackageInfo().versionCode);
+            newVersionFeatures = StorageUtils.readFromAssets(getActivity(), "releaseNotes/newVersionFeatures" + SystemUtils.getPackageInfo().versionCode + ".txt");
         } catch (Exception e) {
             Timber.e(e, "error while read newVersionFeatures from file");
         }
@@ -76,24 +68,9 @@ public class NewVersionDialogFragment extends DialogFragment {
         return dialogTextSize;
     }
 
-    //TODO move to utils
-    public static String readFromAssets(Context context, String filename) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(context.getAssets().open(filename), "UTF-8"));
-
-        // do reading, usually loop until end of file reading
-        StringBuilder sb = new StringBuilder();
-        String mLine = reader.readLine();
-        while (mLine != null) {
-            sb.append(mLine); // process line
-            mLine = reader.readLine();
-        }
-        reader.close();
-        return sb.toString();
-    }
-
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-        mMyPreferenceManager.setCurAppVersion(BuildConfig.VERSION_CODE);
+        mMyPreferenceManager.setCurAppVersion(SystemUtils.getPackageInfo().versionCode);
     }
 }

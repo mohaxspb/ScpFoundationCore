@@ -63,4 +63,14 @@ public class SystemUtils {
         }
         return null;
     }
+
+    public static PackageInfo getPackageInfo() {
+        PackageManager manager = BaseApplication.getAppInstance().getPackageManager();
+        try {
+            return manager.getPackageInfo(BaseApplication.getAppInstance().getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            Timber.e(e);
+            return null;
+        }
+    }
 }
