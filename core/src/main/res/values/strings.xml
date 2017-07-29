@@ -9,6 +9,8 @@
 
     <string name="pref_favorites" translatable="false">pref_favorites</string>
     <string name="read_articles" translatable="false">read_articles</string>
+    <string name="restoring_data" translatable="false">Restoring data</string>
+    <string name="restored_data"  translatable="false">Restored data: read - %1$d, favorites - %2$d</string>
     <!--drawer items-->
     <string name="drawer_item_1">Об организации</string>
     <string name="drawer_item_2">Новости</string>
@@ -196,17 +198,16 @@
     <string name="faq">Справка</string>
     <string name="need_login">Требуется авторизация</string>
     <string name="need_login_content">Внимание агенты! Для добавления в избранное и отмечания статьи прочитанной требуется авторизация. Это позволит вам синхронизировать данные через облако на всех ваших устройствах, а также позволит вам получать очки и участвовать в рейтинге агентов!</string>
-    <string name="error_inapp">Ошибка при чтении данных.</string>
     <string name="sort">Сортировка</string>
     <string name="dialog_sort_title">Сортировка и фильтр</string>
     <string name="social_provider_vk_title">Вконтакте</string>
     <string name="dialog_social_login_title">Авторизация</string>
-    <string name="error_login_firebase_user_collision">Ошибка - на этот email уже зарегистрирован другой пользователь.</string>
     <string name="tags_search">Поиск по тегам</string>
     <string name="tags_choosen">Выбранные теги</string>
     <string name="tags_all">Все теги</string>
     <string name="tags_search_results">Результаты</string>
     <string name="tags">Теги:</string>
+
     <string name="filter_none">Без фильтра</string>
     <string name="filter_not_read">Непрочитанные</string>
     <string name="filter_read">Прочитанные</string>
@@ -217,6 +218,7 @@
     <string name="filter_euclid">Евклид</string>
     <string name="filter_keter">Кетер</string>
     <string name="filter_thaumiel">Таумиэль</string>
+
     <string name="feedback_title">Отзыв на SCP RU</string>
     <string name="notif_new_arts_title">Новые статьи: %1$d%2$s</string>
 
@@ -228,10 +230,6 @@
         <item quantity="many">%1$d очков</item>
         <item quantity="other">%1$d очков</item>
     </plurals>
-    <string name="download">Загрузить</string>
-
-    <string name="error_connection">Ошибка соединения</string>
-    <string name="error_parse">Ошибка парсинга HTML</string>
 
     <string-array name="materials_titles">
         <item>Протоколы экспериментов</item>
@@ -242,4 +240,14 @@
         <item>Прочие материалы</item>
         <item>За кадром</item>
     </string-array>
+
+    <string name="download">Загрузить</string>
+
+    <string name="error_login_firebase_user_collision">Ошибка - на этот email уже зарегистрирован другой пользователь.</string>
+    <string name="error_inapp">Ошибка при чтении данных.</string>
+    <string name="error_connection">Ошибка соединения</string>
+    <string name="error_parse">Ошибка парсинга HTML</string>
+
+    <!--ver 1.0.6-->
+    <string name="score_increased">Добавлено %s</string>
 </resources>

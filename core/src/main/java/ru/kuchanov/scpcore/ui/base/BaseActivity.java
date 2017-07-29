@@ -89,6 +89,7 @@ import ru.kuchanov.scpcore.ui.activity.GalleryActivity;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 import ru.kuchanov.scpcore.ui.activity.TagSearchActivity;
 import ru.kuchanov.scpcore.ui.adapter.SocialLoginAdapter;
+import ru.kuchanov.scpcore.ui.dialog.FreeAdsDisablingDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SetttingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
@@ -652,6 +653,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showMessage(String message) {
+        Timber.d("showMessage: %s", message);
         Snackbar.make(mRoot, message, Snackbar.LENGTH_SHORT).show();
     }
 
@@ -784,6 +786,12 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
+    public void showFreeAdsDisablePopup() {
+        android.support.v4.app.DialogFragment dialogFragment = FreeAdsDisablingDialogFragment.newInstance();
+        dialogFragment.show(getSupportFragmentManager(), FreeAdsDisablingDialogFragment.TAG);
     }
 
     @Override

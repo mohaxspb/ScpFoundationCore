@@ -1,5 +1,6 @@
 package ru.kuchanov.scpcore.mvp.base;
 
+import android.content.Context;
 import android.support.v4.util.Pair;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,6 +22,7 @@ import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
 import ru.kuchanov.scpcore.mvp.contract.LoginActions;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -62,7 +64,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                     }
                     onUserChanged(mUser);
                 },
-                error -> Timber.e(error, "error while get user from DB")
+                e -> Timber.e(e, "error while get user from DB")
         );
     }
 
@@ -319,36 +321,44 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         String action = ScoreAction.VK_GROUP;
         int totalScoreToAdd = getTotalScoreToAddFromAction(action, mMyPreferencesManager);
 
-        if (!mMyPreferencesManager.isHasSubscription()) {
-            long curNumOfAttempts = mMyPreferencesManager.getNumOfAttemptsToAutoSync();
-            long maxNumOfAttempts = FirebaseRemoteConfig.getInstance()
-                    .getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_SYNC_ATTEMPTS_BEFORE_CALL_TO_ACTION);
-
-            Timber.d("does not have subscription, so no auto sync: %s/%s", curNumOfAttempts, maxNumOfAttempts);
-
-            if (curNumOfAttempts >= maxNumOfAttempts) {
-                //show call to action
-                mMyPreferencesManager.setNumOfAttemptsToAutoSync(0);
-                getView().showSnackBarWithAction(Constants.Firebase.CallToActionReason.ENABLE_AUTO_SYNC);
-            } else {
-                mMyPreferencesManager.setNumOfAttemptsToAutoSync(curNumOfAttempts + 1);
-            }
-
-            //increment unsynced score to sync it later
-            mMyPreferencesManager.addUnsyncedVkGroup(id);
-            return;
-        }
+//        if (!mMyPreferencesManager.isHasSubscription()) {
+//            long curNumOfAttempts = mMyPreferencesManager.getNumOfAttemptsToAutoSync();
+//            long maxNumOfAttempts = FirebaseRemoteConfig.getInstance()
+//                    .getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_SYNC_ATTEMPTS_BEFORE_CALL_TO_ACTION);
+//
+//            Timber.d("does not have subscription, so no auto sync: %s/%s", curNumOfAttempts, maxNumOfAttempts);
+//
+//            if (curNumOfAttempts >= maxNumOfAttempts) {
+//                //show call to action
+//                mMyPreferencesManager.setNumOfAttemptsToAutoSync(0);
+//                getView().showSnackBarWithAction(Constants.Firebase.CallToActionReason.ENABLE_AUTO_SYNC);
+//            } else {
+//                mMyPreferencesManager.setNumOfAttemptsToAutoSync(curNumOfAttempts + 1);
+//            }
+//
+//            //increment unsynced score to sync it later
+//            mMyPreferencesManager.addUnsyncedVkGroup(id);
+//            return;
+//        }
 
         //increment scoreInFirebase
         mApiClient
                 .isUserJoinedVkGroup(id)
                 .flatMap(isUserJoinedVkGroup -> isUserJoinedVkGroup ?
                         Observable.empty() :
-                        mApiClient.incrementScoreInFirebaseObservable(totalScoreToAdd)
+                        mApiClient
+                                .incrementScoreInFirebaseObservable(totalScoreToAdd)
                                 .flatMap(newTotalScore -> mApiClient.addJoinedVkGroup(id).flatMap(aVoid -> Observable.just(newTotalScore)))
                 )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(newTotalScore -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
                 .subscribe(
-                        newTotalScore -> Timber.d("new total score is: %s", newTotalScore),
+                        newTotalScore -> {
+                            Timber.d("new total score is: %s", newTotalScore);
+                            Context context = BaseApplication.getAppInstance();
+                            getView().showMessage(context.getString(R.string.score_increased, context.getResources().getQuantityString(R.plurals.plurals_score, totalScoreToAdd, totalScoreToAdd)));
+                        },
                         e -> {
                             Timber.e(e, "error while increment userCore from action");
                             getView().showError(e);
@@ -377,7 +387,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 
         int totalScoreToAdd = getTotalScoreToAddFromAction(action, mMyPreferencesManager);
 
-        if (!mMyPreferencesManager.isHasSubscription()) {
+        if (!action.equals(ScoreAction.REWARDED_VIDEO) && !mMyPreferencesManager.isHasSubscription()) {
             long curNumOfAttempts = mMyPreferencesManager.getNumOfAttemptsToAutoSync();
             long maxNumOfAttempts = FirebaseRemoteConfig.getInstance()
                     .getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_SYNC_ATTEMPTS_BEFORE_CALL_TO_ACTION);
@@ -401,15 +411,27 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         }
 
         //increment scoreInFirebase
-        mApiClient.incrementScoreInFirebaseObservable(totalScoreToAdd).subscribe(
-                newTotalScore -> Timber.d("new total score is: %s", newTotalScore),
-                e -> {
-                    Timber.e(e, "error while increment userCore from action");
-                    getView().showError(e);
-                    //increment unsynced score to sync it later
-                    mMyPreferencesManager.addUnsyncedScore(totalScoreToAdd);
-                }
-        );
+        mApiClient.incrementScoreInFirebaseObservable(totalScoreToAdd)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(newTotalScore -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
+                .subscribe(
+                        newTotalScore -> {
+                            Timber.d("new total score is: %s", newTotalScore);
+                            Context context = BaseApplication.getAppInstance();
+                            if (action.equals(ScoreAction.REWARDED_VIDEO)
+                                    || action.equals(ScoreAction.VK_GROUP)
+                                    || action.equals(ScoreAction.OUR_APP)) {
+                                getView().showMessage(context.getString(R.string.score_increased, context.getResources().getQuantityString(R.plurals.plurals_score, totalScoreToAdd, totalScoreToAdd)));
+                            }
+                        },
+                        e -> {
+                            Timber.e(e, "error while increment userCore from action");
+                            getView().showError(e);
+                            //increment unsynced score to sync it later
+                            mMyPreferencesManager.addUnsyncedScore(totalScoreToAdd);
+                        }
+                );
     }
 
     @Override

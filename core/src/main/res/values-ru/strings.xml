@@ -223,16 +223,6 @@
     <string name="error_connection">Ошибка соединения</string>
     <string name="error_parse">Ошибка парсинга HTML</string>
 
-    <!--<string-array name="materials_titles">-->
-        <!--<item>Протоколы экспериментов</item>-->
-        <!--<item>Отчёты об инцидентах</item>-->
-        <!--<item>Интервью с очевидцами</item>-->
-        <!--<item>Шуточные SCP</item>-->
-        <!--<item>Архивные SCP</item>-->
-        <!--<item>Прочие материалы</item>-->
-        <!--<item>За кадром</item>-->
-    <!--</string-array>-->
-
     <string name="materials_experiments" translatable="false">Протоколы экспериментов</string>
     <string name="materials_incidents" translatable="false">Отчёты об инцидентах</string>
     <string name="materials_interview" translatable="false">Интервью с очевидцами</string>
@@ -240,4 +230,7 @@
     <string name="materials_archive" translatable="false">Архивные SCP</string>
     <string name="materials_others" translatable="false">Прочие материалы</string>
     <string name="materials_kadr" translatable="false">За кадром</string>
+
+    <!--ver 1.0.6-->
+    <string name="score_increased">Добавлено %s</string>
 </resources>

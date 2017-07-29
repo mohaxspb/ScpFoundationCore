@@ -216,11 +216,9 @@
     <string name="filter_keter">Keter</string>
     <string name="filter_thaumiel">Thaumiel</string>
 
-    <string name="restoring_data" translatable="false">Restoring data</string>
-    <string name="restored_data"  translatable="false">Restored data: read - %1$d, favorites - %2$d</string>
     <string name="notif_new_arts_title">New articles:  %1$d%2$s</string>
     <string name="enter">Log in</string>
-    <string name="feedback_title">Rewiew SCP Database</string>
+    <string name="feedback_title">Review SCP Database</string>
     <string name="stories">Tales</string>
     <string name="materials_archive">Archived SCPs</string>
     <string name="materials_jokes">Joke SCPs</string>
@@ -232,13 +230,9 @@
     <string name="error_connection">Connection error</string>
     <string name="error_parse">Error while HTML parsing</string>
 
-    <!--<string-array name="materials_titles">-->
-        <!--<item>Joke SCPs</item>-->
-        <!--<item>Archived SCPs</item>-->
-        <!--<item>Explained SCPs</item>-->
-        <!--<item>Log of Extranormal Events</item>-->
-    <!--</string-array>-->
-
     <string name="social_provider_vk_title">VK</string>
+
+    <!--ver 1.0.6-->
+    <string name="score_increased">Added %s</string>
 
 </resources>

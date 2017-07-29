@@ -55,13 +55,12 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
     Gson mGson;
     @Inject
     ApiClient mApiClient;
+    @Inject
+    protected MyPreferenceManager mMyPreferenceManager;
 
     public static DialogFragment newInstance() {
         return new FreeAdsDisablingDialogFragment();
     }
-
-    @Inject
-    protected MyPreferenceManager mMyPreferenceManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,7 +72,7 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Timber.d("onCreateDialog");
-        final MaterialDialog dialog;
+        MaterialDialog dialog;
 
         MaterialDialog.Builder dialogTextSizeBuilder = new MaterialDialog.Builder(getActivity());
         dialogTextSizeBuilder
@@ -188,8 +187,6 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
                                         .getLong(Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD);
                                 long hours = numOfMillis / 1000 / 60 / 60;
 
-                                getBaseActivity().createPresenter().updateUserScoreForVkGroup(vkGroupId);
-
                                 showNotificationSimple(getActivity(), getString(R.string.ads_reward_gained, hours), getString(R.string.thanks_for_supporting_us));
 
                                 data.remove(data1);
@@ -199,6 +196,8 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
                                 bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "group" + vkGroupId);
                                 FirebaseAnalytics.getInstance(getActivity()).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
+                                getBaseActivity().createPresenter().updateUserScoreForVkGroup(vkGroupId);
+                                dismiss();
                             } else {
                                 Timber.e("error group join");
                             }

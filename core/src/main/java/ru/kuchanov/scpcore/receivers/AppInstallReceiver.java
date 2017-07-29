@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,6 +25,7 @@ import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
@@ -31,6 +33,8 @@ import ru.kuchanov.scpcore.mvp.base.BasePresenter;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class AppInstallReceiver extends BroadcastReceiver {
@@ -43,6 +47,8 @@ public class AppInstallReceiver extends BroadcastReceiver {
     MyPreferenceManager mMyPreferencesManager;
     @Inject
     ApiClient mApiClient;
+    @Inject
+    DbProviderFactory mDbProviderFactory;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -94,25 +100,25 @@ public class AppInstallReceiver extends BroadcastReceiver {
         String action = DataSyncActions.ScoreAction.OUR_APP;
         int totalScoreToAdd = BasePresenter.getTotalScoreToAddFromAction(action, mMyPreferencesManager);
 
-        if (!mMyPreferencesManager.isHasSubscription()) {
-            long curNumOfAttempts = mMyPreferencesManager.getNumOfAttemptsToAutoSync();
-            long maxNumOfAttempts = FirebaseRemoteConfig.getInstance()
-                    .getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_SYNC_ATTEMPTS_BEFORE_CALL_TO_ACTION);
-
-            Timber.d("does not have subscription, so no auto sync: %s/%s", curNumOfAttempts, maxNumOfAttempts);
-
-            if (curNumOfAttempts >= maxNumOfAttempts) {
-                //show call to action
-                mMyPreferencesManager.setNumOfAttemptsToAutoSync(0);
-//                getView().showSnackBarWithAction(Constants.Firebase.CallToActionReason.ENABLE_AUTO_SYNC);
-            } else {
-                mMyPreferencesManager.setNumOfAttemptsToAutoSync(curNumOfAttempts + 1);
-            }
-
-            //increment unsynced score to sync it later
-            mMyPreferencesManager.addUnsyncedApp(packageName);
-            return;
-        }
+//        if (!mMyPreferencesManager.isHasSubscription()) {
+//            long curNumOfAttempts = mMyPreferencesManager.getNumOfAttemptsToAutoSync();
+//            long maxNumOfAttempts = FirebaseRemoteConfig.getInstance()
+//                    .getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_SYNC_ATTEMPTS_BEFORE_CALL_TO_ACTION);
+//
+//            Timber.d("does not have subscription, so no auto sync: %s/%s", curNumOfAttempts, maxNumOfAttempts);
+//
+//            if (curNumOfAttempts >= maxNumOfAttempts) {
+//                //show call to action
+//                mMyPreferencesManager.setNumOfAttemptsToAutoSync(0);
+////                getView().showSnackBarWithAction(Constants.Firebase.CallToActionReason.ENABLE_AUTO_SYNC);
+//            } else {
+//                mMyPreferencesManager.setNumOfAttemptsToAutoSync(curNumOfAttempts + 1);
+//            }
+//
+//            //increment unsynced score to sync it later
+//            mMyPreferencesManager.addUnsyncedApp(packageName);
+//            return;
+//        }
 
         //increment scoreInFirebase
         mApiClient
@@ -122,8 +128,19 @@ public class AppInstallReceiver extends BroadcastReceiver {
                         mApiClient.incrementScoreInFirebaseObservable(totalScoreToAdd)
                                 .flatMap(newTotalScore -> mApiClient.addInstalledApp(packageName).flatMap(aVoid -> Observable.just(newTotalScore)))
                 )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(newTotalScore -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
                 .subscribe(
-                        newTotalScore -> Timber.d("new total score is: %s", newTotalScore),
+                        newTotalScore -> {
+                            Timber.d("new total score is: %s", newTotalScore);
+                            Context context = BaseApplication.getAppInstance();
+                            Toast.makeText(
+                                    context,
+                                    context.getString(R.string.score_increased, context.getResources().getQuantityString(R.plurals.plurals_score, totalScoreToAdd, totalScoreToAdd))
+                                    , Toast.LENGTH_LONG
+                            ).show();
+                        },
                         e -> {
                             Timber.e(e, "error while increment userCore from action");
 //                            getView().showError(e);
