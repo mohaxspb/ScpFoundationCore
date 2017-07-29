@@ -190,7 +190,7 @@ public class MainActivity
         mNavigationView.setCheckedItem(mCurrentSelectedDrawerItemId);
         setToolbarTitleByDrawerItemId(mCurrentSelectedDrawerItemId);
 
-        if (mMyPreferenceManager.getCurAppVersion() != BuildConfig.VERSION_CODE) {
+        if (mMyPreferenceManager.getCurAppVersion() != SystemUtils.getPackageInfo().versionCode) {
             DialogFragment dialogFragment = NewVersionDialogFragment.newInstance(getString(R.string.new_version_features));
             dialogFragment.show(getFragmentManager(), NewVersionDialogFragment.TAG);
         }

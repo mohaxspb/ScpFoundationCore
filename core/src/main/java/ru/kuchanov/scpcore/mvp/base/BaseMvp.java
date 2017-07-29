@@ -37,6 +37,8 @@ public interface BaseMvp {
         void showSnackBarWithAction(Constants.Firebase.CallToActionReason reason);
 
         void showNeedLoginPopup();
+
+        void showFreeAdsDisablePopup();
     }
 
     interface Presenter<V extends MvpView> extends MvpPresenter<V>, DataSyncActions {

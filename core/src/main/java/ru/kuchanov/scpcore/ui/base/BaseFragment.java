@@ -227,6 +227,14 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
         getBaseActivity().showNeedLoginPopup();
     }
 
+    @Override
+    public void showFreeAdsDisablePopup() {
+        if (!isAdded()) {
+            return;
+        }
+        getBaseActivity().showFreeAdsDisablePopup();
+    }
+
     protected BaseActivity getBaseActivity() {
         if (!(getActivity() instanceof BaseActivity)) {
             throw new RuntimeException("Activity must extend BaseActivity");

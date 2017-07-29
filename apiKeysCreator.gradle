@@ -1,12 +1,4 @@
 ext {
-//    fillApiArrays = { variant ->
-//        logger.lifecycle('variant.productFlavors[0].name: {}', variant.productFlavors[0].name)
-//
-//        def pathToFileWithData = "config/" + variant.productFlavors[0].name + "/apiKeys.properties"
-//
-//        fillData(variant, pathToFileWithData)
-//    }
-
     fillApiArrays = { variant, fileIsInRoot ->
         def pathToFileWithData
         if(fileIsInRoot){
@@ -57,9 +49,6 @@ ext {
             variant.buildConfigField('String', 'TOOLS_API_URL', '"' + properties.get("vpsApiAddress") + '"')
 
             variant.resValue('string', 'web_application_id', properties.get("webApplicationId"))
-
-            //TODO use firebase remote config for it
-            variant.resValue('string', 'non_cracked_user_uid', properties.get("nonCrackedUserUid"))
 
             variant.resValue('integer', 'realm_version', properties.get("realmVersion"))
 
