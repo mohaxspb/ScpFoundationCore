@@ -9,6 +9,8 @@
 
     <string name="pref_favorites" translatable="false">pref_favorites</string>
     <string name="read_articles" translatable="false">read_articles</string>
+    <string name="restoring_data" translatable="false">Restoring data</string>
+    <string name="restored_data"  translatable="false">Restored data: read - %1$d, favorites - %2$d</string>
     <!--drawer items-->
     <string name="drawer_item_1">Об организации</string>
     <string name="drawer_item_2">Новости</string>
