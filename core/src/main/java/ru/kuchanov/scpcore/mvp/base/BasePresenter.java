@@ -356,7 +356,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                         newTotalScore -> {
                             Timber.d("new total score is: %s", newTotalScore);
                             Context context = BaseApplication.getAppInstance();
-                            getView().showMessage(context.getString(R.string.score_increased, context.getResources().getQuantityString(R.plurals.plurals_score, totalScoreToAdd)));
+                            getView().showMessage(context.getString(R.string.score_increased, context.getResources().getQuantityString(R.plurals.plurals_score, totalScoreToAdd, totalScoreToAdd)));
                         },
                         e -> {
                             Timber.e(e, "error while increment userCore from action");
