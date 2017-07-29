@@ -386,7 +386,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 
         int totalScoreToAdd = getTotalScoreToAddFromAction(action, mMyPreferencesManager);
 
-        if (!mMyPreferencesManager.isHasSubscription()) {
+        if (!action.equals(ScoreAction.REWARDED_VIDEO) && !mMyPreferencesManager.isHasSubscription()) {
             long curNumOfAttempts = mMyPreferencesManager.getNumOfAttemptsToAutoSync();
             long maxNumOfAttempts = FirebaseRemoteConfig.getInstance()
                     .getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_SYNC_ATTEMPTS_BEFORE_CALL_TO_ACTION);
@@ -411,7 +411,15 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 
         //increment scoreInFirebase
         mApiClient.incrementScoreInFirebaseObservable(totalScoreToAdd).subscribe(
-                newTotalScore -> Timber.d("new total score is: %s", newTotalScore),
+                newTotalScore -> {
+                    Timber.d("new total score is: %s", newTotalScore);
+                    Context context = BaseApplication.getAppInstance();
+                    if (action.equals(ScoreAction.REWARDED_VIDEO)
+                            || action.equals(ScoreAction.VK_GROUP)
+                            || action.equals(ScoreAction.OUR_APP)) {
+                        getView().showMessage(context.getString(R.string.score_increased, context.getResources().getQuantityString(R.plurals.plurals_score, totalScoreToAdd, totalScoreToAdd)));
+                    }
+                },
                 e -> {
                     Timber.e(e, "error while increment userCore from action");
                     getView().showError(e);

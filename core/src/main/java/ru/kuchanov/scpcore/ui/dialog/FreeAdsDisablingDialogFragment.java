@@ -62,7 +62,6 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
         return new FreeAdsDisablingDialogFragment();
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +72,7 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Timber.d("onCreateDialog");
-        final MaterialDialog dialog;
+        MaterialDialog dialog;
 
         MaterialDialog.Builder dialogTextSizeBuilder = new MaterialDialog.Builder(getActivity());
         dialogTextSizeBuilder

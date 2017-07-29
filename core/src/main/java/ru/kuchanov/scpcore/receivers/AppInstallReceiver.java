@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
@@ -94,25 +95,25 @@ public class AppInstallReceiver extends BroadcastReceiver {
         String action = DataSyncActions.ScoreAction.OUR_APP;
         int totalScoreToAdd = BasePresenter.getTotalScoreToAddFromAction(action, mMyPreferencesManager);
 
-        if (!mMyPreferencesManager.isHasSubscription()) {
-            long curNumOfAttempts = mMyPreferencesManager.getNumOfAttemptsToAutoSync();
-            long maxNumOfAttempts = FirebaseRemoteConfig.getInstance()
-                    .getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_SYNC_ATTEMPTS_BEFORE_CALL_TO_ACTION);
-
-            Timber.d("does not have subscription, so no auto sync: %s/%s", curNumOfAttempts, maxNumOfAttempts);
-
-            if (curNumOfAttempts >= maxNumOfAttempts) {
-                //show call to action
-                mMyPreferencesManager.setNumOfAttemptsToAutoSync(0);
-//                getView().showSnackBarWithAction(Constants.Firebase.CallToActionReason.ENABLE_AUTO_SYNC);
-            } else {
-                mMyPreferencesManager.setNumOfAttemptsToAutoSync(curNumOfAttempts + 1);
-            }
-
-            //increment unsynced score to sync it later
-            mMyPreferencesManager.addUnsyncedApp(packageName);
-            return;
-        }
+//        if (!mMyPreferencesManager.isHasSubscription()) {
+//            long curNumOfAttempts = mMyPreferencesManager.getNumOfAttemptsToAutoSync();
+//            long maxNumOfAttempts = FirebaseRemoteConfig.getInstance()
+//                    .getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_SYNC_ATTEMPTS_BEFORE_CALL_TO_ACTION);
+//
+//            Timber.d("does not have subscription, so no auto sync: %s/%s", curNumOfAttempts, maxNumOfAttempts);
+//
+//            if (curNumOfAttempts >= maxNumOfAttempts) {
+//                //show call to action
+//                mMyPreferencesManager.setNumOfAttemptsToAutoSync(0);
+////                getView().showSnackBarWithAction(Constants.Firebase.CallToActionReason.ENABLE_AUTO_SYNC);
+//            } else {
+//                mMyPreferencesManager.setNumOfAttemptsToAutoSync(curNumOfAttempts + 1);
+//            }
+//
+//            //increment unsynced score to sync it later
+//            mMyPreferencesManager.addUnsyncedApp(packageName);
+//            return;
+//        }
 
         //increment scoreInFirebase
         mApiClient
@@ -123,7 +124,15 @@ public class AppInstallReceiver extends BroadcastReceiver {
                                 .flatMap(newTotalScore -> mApiClient.addInstalledApp(packageName).flatMap(aVoid -> Observable.just(newTotalScore)))
                 )
                 .subscribe(
-                        newTotalScore -> Timber.d("new total score is: %s", newTotalScore),
+                        newTotalScore -> {
+                            Timber.d("new total score is: %s", newTotalScore);
+                            Context context = BaseApplication.getAppInstance();
+                            Toast.makeText(
+                                    context,
+                                    context.getString(R.string.score_increased, context.getResources().getQuantityString(R.plurals.plurals_score, totalScoreToAdd, totalScoreToAdd))
+                                    , Toast.LENGTH_LONG
+                            ).show();
+                        },
                         e -> {
                             Timber.e(e, "error while increment userCore from action");
 //                            getView().showError(e);
