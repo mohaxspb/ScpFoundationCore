@@ -25,6 +25,7 @@ import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
@@ -32,6 +33,8 @@ import ru.kuchanov.scpcore.mvp.base.BasePresenter;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class AppInstallReceiver extends BroadcastReceiver {
@@ -44,6 +47,8 @@ public class AppInstallReceiver extends BroadcastReceiver {
     MyPreferenceManager mMyPreferencesManager;
     @Inject
     ApiClient mApiClient;
+    @Inject
+    DbProviderFactory mDbProviderFactory;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -123,6 +128,9 @@ public class AppInstallReceiver extends BroadcastReceiver {
                         mApiClient.incrementScoreInFirebaseObservable(totalScoreToAdd)
                                 .flatMap(newTotalScore -> mApiClient.addInstalledApp(packageName).flatMap(aVoid -> Observable.just(newTotalScore)))
                 )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(newTotalScore -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
                 .subscribe(
                         newTotalScore -> {
                             Timber.d("new total score is: %s", newTotalScore);
