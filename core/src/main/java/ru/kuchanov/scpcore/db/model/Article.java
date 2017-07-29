@@ -2,6 +2,7 @@ package ru.kuchanov.scpcore.db.model;
 
 import android.support.annotation.StringDef;
 
+import java.io.Serializable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import ru.kuchanov.scp.downloads.ArticleModel;
  * <p>
  * for scp_ru
  */
-public class Article extends RealmObject implements ArticleModel{
+public class Article extends RealmObject implements ArticleModel, Serializable{
 
     public static final String FIELD_IS_IN_READEN = "isInReaden";
     public static final String FIELD_IS_IN_RECENT = "isInRecent";

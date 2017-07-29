@@ -50,6 +50,15 @@ public class DbProvider implements DbProviderModel<Article> {
         return user == null ? 0 : user.score;
     }
 
+    public Observable<RealmResults<Article>> getArticlesByIds(List<String> urls) {
+        return mRealm.where(Article.class)
+                .in(Article.FIELD_URL, urls.toArray(new String[0]))
+                .findAllAsync()
+                .asObservable()
+                .filter(RealmResults::isLoaded)
+                .filter(RealmResults::isValid);
+    }
+
     public Observable<RealmResults<Article>> getArticlesSortedAsync(String field, Sort order) {
         return mRealm.where(Article.class)
                 .notEqualTo(field, Article.ORDER_NONE)

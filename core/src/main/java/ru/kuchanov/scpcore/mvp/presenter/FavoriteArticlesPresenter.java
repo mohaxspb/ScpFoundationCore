@@ -22,7 +22,11 @@ public class FavoriteArticlesPresenter
         extends BaseListArticlesPresenter<FavoriteArticlesMvp.View>
         implements FavoriteArticlesMvp.Presenter {
 
-    public FavoriteArticlesPresenter(MyPreferenceManager myPreferencesManager, DbProviderFactory dbProviderFactory, ApiClient apiClient) {
+    public FavoriteArticlesPresenter(
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient
+    ) {
         super(myPreferencesManager, dbProviderFactory, apiClient);
     }
 

@@ -55,7 +55,7 @@ public class ArticleActivity
             mCurPosition = getIntent().getIntExtra(EXTRA_POSITION, 0);
         }
         ArticlesPagerAdapter adapter = new ArticlesPagerAdapter(getSupportFragmentManager());
-        adapter.setData(getIntent().getStringArrayListExtra(EXTRA_ARTICLES_URLS_LIST));
+        adapter.setData(mUrls);
         mViewPager.setAdapter(adapter);
 
         mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
