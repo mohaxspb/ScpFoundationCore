@@ -295,6 +295,5 @@ abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
                             getView().dismissProgressDialog();
                         }
                 );
-
     }
 }

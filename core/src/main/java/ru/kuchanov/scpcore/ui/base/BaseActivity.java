@@ -652,6 +652,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showMessage(String message) {
+        Timber.d("showMessage: %s", message);
         Snackbar.make(mRoot, message, Snackbar.LENGTH_SHORT).show();
     }
 

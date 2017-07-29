@@ -127,8 +127,10 @@ public class SubscriptionsFragmentDialog
     @OnClick(R2.id.removeAdsOneDay)
     void onRemoveAdsOneDayClicked() {
         Timber.d("onRemoveAdsFree");
+        //TODO move to base activities method
         DialogFragment dialogFragment = FreeAdsDisablingDialogFragment.newInstance();
         dialogFragment.show(getChildFragmentManager(), FreeAdsDisablingDialogFragment.TAG);
+        dismiss();
     }
 
     @OnClick(R2.id.refresh)
