@@ -331,7 +331,7 @@ public class PresentersModule {
     }
 
     @Provides
-    @Singleton
+//    @Singleton
     @NonNull
     TagsSearchResultsArticlesMvp.Presenter providesTagsSearchResultsPresenter(
             @NonNull MyPreferenceManager myPreferencesManager,

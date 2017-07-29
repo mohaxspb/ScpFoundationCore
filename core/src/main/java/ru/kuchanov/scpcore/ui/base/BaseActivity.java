@@ -949,15 +949,17 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     public void startArticleActivity(List<String> urls, int position) {
         Timber.d("startActivity: urls.size() %s, position: %s", urls.size(), position);
+
+        Intent intent = new Intent(this, getArticleActivityClass());
+        intent.putExtra(EXTRA_ARTICLES_URLS_LIST, new ArrayList<>(urls));
+        intent.putExtra(EXTRA_POSITION, position);
+
         if (isTimeToShowAds()) {
             if (isAdsLoaded()) {
                 showInterstitial(new MyAdListener() {
                     @Override
                     public void onAdClosed() {
                         super.onAdClosed();
-                        Intent intent = new Intent(BaseActivity.this, getArticleActivityClass());
-                        intent.putExtra(EXTRA_ARTICLES_URLS_LIST, new ArrayList<>(urls));
-                        intent.putExtra(EXTRA_POSITION, position);
                         intent.putExtra(EXTRA_SHOW_DISABLE_ADS, true);
                         startActivity(intent);
                     }
@@ -969,9 +971,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         } else {
             Timber.d("it's not time to showInterstitial ads");
         }
-        Intent intent = new Intent(this, getArticleActivityClass());
-        intent.putExtra(EXTRA_ARTICLES_URLS_LIST, new ArrayList<>(urls));
-        intent.putExtra(EXTRA_POSITION, position);
         startActivity(intent);
     }
 
@@ -982,13 +981,16 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     public void startMaterialsActivity() {
         Timber.d("startActivity");
+
+        Intent intent = new Intent(BaseActivity.this, getMaterialsActivityClass());
+
         if (isTimeToShowAds()) {
             if (isAdsLoaded()) {
                 showInterstitial(new MyAdListener() {
                     @Override
                     public void onAdClosed() {
                         super.onAdClosed();
-                        Intent intent = new Intent(BaseActivity.this, getMaterialsActivityClass());
+
                         intent.putExtra(EXTRA_SHOW_DISABLE_ADS, true);
                         startActivity(intent);
                     }
@@ -1000,19 +1002,20 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         } else {
             Timber.d("it's not time to showInterstitial ads");
         }
-        Intent intent = new Intent(this, getMaterialsActivityClass());
         startActivity(intent);
     }
 
     public void startGalleryActivity() {
         Timber.d("startActivity");
+
+        Intent intent = new Intent(this, getGalleryActivityClass());
+
         if (isTimeToShowAds()) {
             if (isAdsLoaded()) {
                 showInterstitial(new MyAdListener() {
                     @Override
                     public void onAdClosed() {
                         super.onAdClosed();
-                        Intent intent = new Intent(BaseActivity.this, getGalleryActivityClass());
                         intent.putExtra(EXTRA_SHOW_DISABLE_ADS, true);
                         startActivity(intent);
                     }
@@ -1024,20 +1027,21 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         } else {
             Timber.d("it's not time to showInterstitial ads");
         }
-        Intent intent = new Intent(this, getGalleryActivityClass());
         startActivity(intent);
     }
 
     public void startTagsSearchActivity(List<ArticleTag> tagList) {
         Timber.d("startActivity");
+
+        Intent intent = new Intent(BaseActivity.this, getTagsSearchActivityClass());
+        intent.putExtra(EXTRA_TAGS, new ArrayList<>(ArticleTag.getStringsFromTags(tagList)));
+
         if (isTimeToShowAds()) {
             if (isAdsLoaded()) {
                 showInterstitial(new MyAdListener() {
                     @Override
                     public void onAdClosed() {
                         super.onAdClosed();
-                        Intent intent = new Intent(BaseActivity.this, getTagsSearchActivityClass());
-                        intent.putExtra(EXTRA_TAGS, new ArrayList<>(ArticleTag.getStringsFromTags(tagList)));
                         intent.putExtra(EXTRA_SHOW_DISABLE_ADS, true);
                         startActivity(intent);
                     }
@@ -1049,20 +1053,20 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         } else {
             Timber.d("it's not time to showInterstitial ads");
         }
-        Intent intent = new Intent(BaseActivity.this, getTagsSearchActivityClass());
-        intent.putExtra(EXTRA_TAGS, new ArrayList<>(ArticleTag.getStringsFromTags(tagList)));
         startActivity(intent);
     }
 
     public void startTagsSearchActivity() {
         Timber.d("startActivity");
+
+        Intent intent = new Intent(this, getTagsSearchActivityClass());
+
         if (isTimeToShowAds()) {
             if (isAdsLoaded()) {
                 showInterstitial(new MyAdListener() {
                     @Override
                     public void onAdClosed() {
                         super.onAdClosed();
-                        Intent intent = new Intent(BaseActivity.this, getTagsSearchActivityClass());
                         intent.putExtra(EXTRA_SHOW_DISABLE_ADS, true);
                         startActivity(intent);
                     }
@@ -1074,7 +1078,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         } else {
             Timber.d("it's not time to showInterstitial ads");
         }
-        Intent intent = new Intent(this, getTagsSearchActivityClass());
         startActivity(intent);
     }
 

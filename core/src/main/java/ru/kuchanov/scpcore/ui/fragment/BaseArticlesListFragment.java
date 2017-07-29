@@ -36,6 +36,7 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
         implements BaseListMvp.View {
 
     private static final String EXTRA_SORT_TYPE = "EXTRA_SORT_TYPE";
+
     protected ArticlesListRecyclerAdapter mAdapter;
     private ArticlesListRecyclerAdapter.SortType mSortType = ArticlesListRecyclerAdapter.SortType.NONE;
 
