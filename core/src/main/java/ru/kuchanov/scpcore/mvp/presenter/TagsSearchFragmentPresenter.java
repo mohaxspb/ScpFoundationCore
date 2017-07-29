@@ -91,18 +91,19 @@ public class TagsSearchFragmentPresenter
         getView().showProgress(true);
 
         mApiClient.getArticlesByTags(tags)
+                .flatMap(articles -> mDbProviderFactory.getDbProvider().saveMultipleArticlesSync(articles))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        tagsSearchResponse -> {
-                            Timber.d("tagsSearchResponse: %s", tagsSearchResponse);
+                        articles -> {
+                            Timber.d("tagsSearchResponse: %s", articles);
                             alreadyRefreshFromApi = true;
                             getView().showProgress(false);
 
-                            if (tagsSearchResponse.isEmpty()) {
+                            if (articles.isEmpty()) {
                                 getView().showMessage(R.string.error_no_search_results);
                             } else {
-                                getView().showSearchResults(tagsSearchResponse);
+                                getView().showSearchResults(articles);
                             }
                         },
                         e -> {
