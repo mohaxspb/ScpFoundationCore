@@ -142,8 +142,6 @@ public class ArticleActivity
         String link = null;
         if (id == R.id.about) {
             link = mConstantValues.getUrlsValues().getAbout();
-        } else if (id == R.id.news) {
-            link = mConstantValues.getUrlsValues().getNews();
         } else if (id == R.id.mostRatedArticles) {
             link = mConstantValues.getUrlsValues().getMostRated();
         } else if (id == R.id.mostRecentArticles) {
@@ -156,8 +154,6 @@ public class ArticleActivity
             link = mConstantValues.getUrlsValues().getObjects2();
         } else if (id == R.id.objects_III) {
             link = mConstantValues.getUrlsValues().getObjects3();
-        } else if (id == R.id.objects_IV) {
-            link = mConstantValues.getUrlsValues().getObjects4();
         } else if (id == R.id.files) {
             startMaterialsActivity();
         } else if (id == R.id.favorite) {
@@ -170,9 +166,13 @@ public class ArticleActivity
             link = Constants.Urls.SEARCH;
         } else if (id == R.id.tagsSearch) {
             startTagsSearchActivity();
-        } else if (id == R2.id.objects_RU) {
+        } else if (id == R.id.objects_RU) {
             link = mConstantValues.getUrlsValues().getObjectsRu();
-        } else if (id == R2.id.stories) {
+        } else if (id == R.id.news) {
+            link = mConstantValues.getUrlsValues().getNews();
+        } else if (id == R.id.objects_IV) {
+            link = mConstantValues.getUrlsValues().getObjects4();
+        } else if (id == R.id.stories) {
             link = Constants.Urls.STORIES;
         } else {
             Timber.e("unexpected item ID");
