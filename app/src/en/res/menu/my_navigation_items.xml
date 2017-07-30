@@ -59,10 +59,24 @@
             android:title="@string/drawer_item_objects4"
             />
         <item
+            android:id="@+id/objects_RU"
+            android:checked="true"
+            android:visible="false"
+            android:icon="@drawable/ic_drawer_object_ru"
+            android:title="@string/drawer_item_9"
+            />
+        <item
             android:id="@+id/files"
             android:checked="true"
             android:icon="@drawable/ic_drawer_materials"
             android:title="@string/drawer_item_10"
+            />
+        <item
+            android:id="@+id/stories"
+            android:icon="@drawable/ic_drawer_stories"
+            android:checked="true"
+            android:visible="false"
+            android:title="@string/drawer_item_11"
             />
         <item
             android:id="@+id/favorite"

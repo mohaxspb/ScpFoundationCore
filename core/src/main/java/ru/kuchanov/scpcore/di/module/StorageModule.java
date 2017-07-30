@@ -18,6 +18,7 @@ import io.realm.RealmConfiguration;
 import io.realm.RealmMigration;
 import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
@@ -133,8 +134,9 @@ public class StorageModule {
     @Singleton
     DbProviderFactory providesDbProviderFactory(
             @NonNull RealmConfiguration configuration,
-            @NonNull MyPreferenceManager preferenceManager
+            @NonNull MyPreferenceManager preferenceManager,
+            @NonNull ConstantValues constantValues
     ) {
-        return new DbProviderFactory(configuration, preferenceManager);
+        return new DbProviderFactory(configuration, preferenceManager, constantValues);
     }
 }

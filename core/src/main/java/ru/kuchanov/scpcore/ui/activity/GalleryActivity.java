@@ -225,13 +225,13 @@ public class GalleryActivity
             link = Constants.Urls.SEARCH;
         } else if (id == R.id.tagsSearch) {
             startTagsSearchActivity();
-        } else if (id == R2.id.objects_RU) {
+        } else if (id == R.id.objects_RU) {
             link = mConstantValues.getUrlsValues().getObjectsRu();
-        } else if (id == R2.id.news) {
+        } else if (id == R.id.news) {
             link = mConstantValues.getUrlsValues().getNews();
-        } else if (id == R2.id.objects_IV) {
+        } else if (id == R.id.objects_IV) {
             link = mConstantValues.getUrlsValues().getObjects4();
-        } else if (id == R2.id.stories) {
+        } else if (id == R.id.stories) {
             link = mConstantValues.getUrlsValues().getStories();
         } else {
             Timber.e("unexpected item ID");
