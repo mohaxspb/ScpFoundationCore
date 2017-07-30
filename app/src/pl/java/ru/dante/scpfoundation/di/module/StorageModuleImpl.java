@@ -1,62 +1,28 @@
-package ru.kuchanov.scpcore.di.module;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-
-import com.google.gson.Gson;
+package ru.dante.scpfoundation.di.module;
 
 import java.util.Locale;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
-import dagger.Provides;
 import io.realm.FieldAttribute;
-import io.realm.RealmConfiguration;
 import io.realm.RealmMigration;
 import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
-import ru.kuchanov.scpcore.ConstantValues;
-import ru.kuchanov.scpcore.R;
-import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.SocialProviderModel;
 import ru.kuchanov.scpcore.db.model.User;
-import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.di.module.StorageModule;
 import timber.log.Timber;
 
 /**
- * Created by y.kuchanov on 22.12.16.
+ * Created by mohax on 10.07.2017.
  * <p>
- * for scp_ru
+ * for ScpFoundationRu
  */
-@Module
-public class StorageModule {
+@Module(includes = StorageModule.class)
+public class StorageModuleImpl extends StorageModule {
 
-    @Provides
-    @NonNull
-    @Singleton
-    SharedPreferences providesSharedPreferences(@NonNull Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context);
-    }
-
-    @Provides
-    @NonNull
-    @Singleton
-    MyPreferenceManager providesPreferencesManager(@NonNull Context context, @NonNull Gson gson) {
-        return new MyPreferenceManager(context, gson);
-    }
-
-    @Provides
-    @NonNull
-    @Singleton
-    RealmMigration providesRealmMigration() {
-        return getRealmMigration();
-    }
-
+    @Override
     protected RealmMigration getRealmMigration() {
         return (realm, oldVersion, newVersion) -> {
             RealmSchema schema = realm.getSchema();
@@ -117,26 +83,5 @@ public class StorageModule {
                 throw new IllegalStateException(String.format(Locale.ENGLISH, "Migration missing from v%d to v%d", oldVersion, newVersion));
             }
         };
-    }
-
-    @Provides
-    @NonNull
-    @Singleton
-    RealmConfiguration providesRealmConfiguration(@NonNull RealmMigration realmMigration, @NonNull Context context) {
-        return new RealmConfiguration.Builder()
-                .schemaVersion(context.getResources().getInteger(R.integer.realm_version))
-                .migration(realmMigration)
-                .build();
-    }
-
-    @Provides
-    @NonNull
-    @Singleton
-    DbProviderFactory providesDbProviderFactory(
-            @NonNull RealmConfiguration configuration,
-            @NonNull MyPreferenceManager preferenceManager,
-            @NonNull ConstantValues constantValues
-    ) {
-        return new DbProviderFactory(configuration, preferenceManager, constantValues);
     }
 }

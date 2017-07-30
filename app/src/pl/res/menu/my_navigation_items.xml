@@ -13,6 +13,7 @@
         <item
             android:id="@+id/news"
             android:checked="true"
+            android:visible="false"
             android:icon="@drawable/ic_drawer_news"
             android:title="@string/drawer_item_2"
             />
@@ -55,13 +56,13 @@
         <item
             android:id="@+id/objects_IV"
             android:checked="true"
+            android:visible="false"
             android:icon="@drawable/ic_drawer_object_4"
             android:title="@string/drawer_item_objects4"
             />
         <item
             android:id="@+id/objects_RU"
             android:checked="true"
-            android:visible="false"
             android:icon="@drawable/ic_drawer_object_ru"
             android:title="@string/drawer_item_9"
             />
