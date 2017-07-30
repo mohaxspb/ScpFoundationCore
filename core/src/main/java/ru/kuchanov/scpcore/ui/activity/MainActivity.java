@@ -219,16 +219,12 @@ public class MainActivity
     @Override
     public boolean onNavigationItemClicked(int id) {
         Timber.d("onNavigationItemClicked with id: %s", id);
+        Timber.d(" R2.id.objects_RU: %s",  R2.id.objects_RU);
         setToolbarTitleByDrawerItemId(id);
         if (id == R.id.about) {
             mCurrentSelectedDrawerItemId = id;
             showFragment(ArticleFragment.newInstance(mConstantValues.getUrlsValues().getAbout()),
                     ArticleFragment.TAG + "#" + mConstantValues.getUrlsValues().getAbout());
-            return true;
-        } else if (id == R.id.news) {
-            mCurrentSelectedDrawerItemId = id;
-            showFragment(ArticleFragment.newInstance(mConstantValues.getUrlsValues().getNews()),
-                    ArticleFragment.TAG + "#" + mConstantValues.getUrlsValues().getNews());
             return true;
         } else if (id == R.id.mostRatedArticles) {
             mCurrentSelectedDrawerItemId = id;
@@ -253,10 +249,6 @@ public class MainActivity
             mCurrentSelectedDrawerItemId = id;
             showFragment(Objects3ArticlesFragment.newInstance(), Objects3ArticlesFragment.TAG);
             return true;
-        } else if (id == R.id.objects_IV) {
-            mCurrentSelectedDrawerItemId = id;
-            showFragment(Objects4ArticlesFragment.newInstance(), Objects4ArticlesFragment.TAG);
-            return true;
         } else if (id == R.id.files) {
             startMaterialsActivity();
             return false;
@@ -278,11 +270,20 @@ public class MainActivity
         } else if (id == R.id.tagsSearch) {
             startTagsSearchActivity();
             return true;
-        } else if (id == R2.id.objects_RU) {
+        } else if (id == R.id.objects_RU) {
             mCurrentSelectedDrawerItemId = id;
             showFragment(ObjectsRuArticlesFragment.newInstance(), ObjectsRuArticlesFragment.TAG);
             return true;
-        } else if (id == R2.id.stories) {
+        } else if (id == R.id.news) {
+            mCurrentSelectedDrawerItemId = id;
+            showFragment(ArticleFragment.newInstance(mConstantValues.getUrlsValues().getNews()),
+                    ArticleFragment.TAG + "#" + mConstantValues.getUrlsValues().getNews());
+            return true;
+        } else if (id == R.id.objects_IV) {
+            mCurrentSelectedDrawerItemId = id;
+            showFragment(Objects4ArticlesFragment.newInstance(), Objects4ArticlesFragment.TAG);
+            return true;
+        } else if (id == R.id.stories) {
             mCurrentSelectedDrawerItemId = id;
             showFragment(ArticleFragment.newInstance(mConstantValues.getUrlsValues().getStories()),
                     ArticleFragment.TAG + "#" + mConstantValues.getUrlsValues().getStories());
@@ -325,13 +326,12 @@ public class MainActivity
     @Override
     public void setToolbarTitleByDrawerItemId(int id) {
         Timber.d("setToolbarTitleByDrawerItemId with id: %s", id);
+        Timber.d(" R2.id.objects_RU: %s",  R2.id.objects_RU);
         //TODO move to separate interface and inject correct impl for lang each flavor
         //or check so https://stackoverflow.com/a/40085939/3212712
         String title;
         if (id == R.id.about) {
             title = getString(R.string.drawer_item_1);
-        } else if (id == R.id.news) {
-            title = getString(R.string.drawer_item_2);
         } else if (id == R.id.mostRatedArticles) {
             title = getString(R.string.drawer_item_3);
         } else if (id == R.id.mostRecentArticles) {
@@ -342,8 +342,6 @@ public class MainActivity
             title = getString(R.string.drawer_item_7);
         } else if (id == R.id.objects_III) {
             title = getString(R.string.drawer_item_8);
-        } else if (id == R.id.objects_IV) {
-            title = getString(R.string.drawer_item_objects4);
         } else if (id == R.id.favorite) {
             title = getString(R.string.drawer_item_12);
         } else if (id == R.id.offline) {
@@ -352,6 +350,10 @@ public class MainActivity
             title = getString(R.string.drawer_item_15);
         } else if (id == R2.id.objects_RU) {
             title = getString(R.string.drawer_item_9);
+        } else if (id == R2.id.news) {
+            title = getString(R.string.drawer_item_2);
+        } else if (id == R2.id.objects_IV) {
+            title = getString(R.string.drawer_item_objects4);
         } else if (id == R2.id.stories) {
             title = getString(R.string.drawer_item_11);
         } else {

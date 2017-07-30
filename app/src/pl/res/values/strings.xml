@@ -1,0 +1,7 @@
+<resources>
+    <!--no need to translate-->
+    <string name="app_name" translatable="false">SCP Foundation Poland On/Offline</string>
+    <!--end no need to translate-->
+
+    <string name="drawer_item_9">Lista PL I</string>
+</resources>
