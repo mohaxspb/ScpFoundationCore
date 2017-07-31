@@ -233,4 +233,5 @@
 
     <!--ver 1.0.6-->
     <string name="score_increased">Добавлено %s</string>
+    <string name="random_article_warning">Новая случайная статья генерируется сервером раз в несколько минут.</string>
 </resources>

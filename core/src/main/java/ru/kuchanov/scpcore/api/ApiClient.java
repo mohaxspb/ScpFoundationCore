@@ -1891,10 +1891,6 @@ public class ApiClient implements ApiClientModel<Article> {
         return bindWithUtils(mVpsServer.getLeaderboard(getAppLang()));
     }
 
-    protected String getAppLang() {
-        return null;
-    }
-
     public Observable<List<Article>> getArticlesByTags(List<ArticleTag> tags) {
         return bindWithUtils(mScpServer.getArticlesByTags(getScpServerWiki(), ArticleTag.getStringsFromTags(tags)))
                 .map(ArticleFromSearchTagsOnSite::getArticlesFromSiteArticles)
@@ -1921,6 +1917,10 @@ public class ApiClient implements ApiClientModel<Article> {
                     }
                     return tags;
                 }));
+    }
+
+    public String getAppLang() {
+        return null;
     }
 
     protected String getScpServerWiki() {

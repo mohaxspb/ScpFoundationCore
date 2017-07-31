@@ -236,5 +236,5 @@
 
     <!--ver 1.0.6-->
     <string name="score_increased">Added %s</string>
-
+    <string name="random_article_warning">New random article generates by server every some minutes.</string>
 </resources>

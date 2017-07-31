@@ -228,7 +228,7 @@ public class ApiClientImpl extends ApiClient {
     }
 
     @Override
-    protected String getAppLang() {
+    public String getAppLang() {
         return "en";
     }
 }
