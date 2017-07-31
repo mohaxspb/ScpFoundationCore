@@ -200,7 +200,7 @@ dependencies {
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
 
     //sub project modules
-    compile('ru.kuchanov.scp:scp-downloads:1.0.6@aar') { transitive = true }
+    compile('ru.kuchanov.scp:scp-downloads:1.0.7@aar') { transitive = true }
     compile('ru.kuchanov.utils:rate:1.0.2@aar') { transitive = true }
 }
 

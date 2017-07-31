@@ -210,6 +210,14 @@
     <string name="feedback_title">Отзыв на SCP RU</string>
     <string name="notif_new_arts_title">Новые статьи: %1$d%2$s</string>
 
+    <string name="materials_experiments">Протоколы экспериментов</string>
+    <string name="materials_incidents">Отчёты об инцидентах</string>
+    <string name="materials_interview">Интервью с очевидцами</string>
+    <string name="materials_jokes">Шуточные SCP</string>
+    <string name="materials_archive">Архивные SCP</string>
+    <string name="materials_others">Прочие материалы</string>
+    <string name="materials_kadr">За кадром</string>
+
     <plurals name="plurals_score">
         <item quantity="zero">%1$d очков</item>
         <item quantity="one">%1$d очко</item>
@@ -223,14 +231,7 @@
     <string name="error_connection">Ошибка соединения</string>
     <string name="error_parse">Ошибка парсинга HTML</string>
 
-    <string name="materials_experiments" translatable="false">Протоколы экспериментов</string>
-    <string name="materials_incidents" translatable="false">Отчёты об инцидентах</string>
-    <string name="materials_interview" translatable="false">Интервью с очевидцами</string>
-    <string name="materials_jokes" translatable="false">Шуточные SCP</string>
-    <string name="materials_archive" translatable="false">Архивные SCP</string>
-    <string name="materials_others" translatable="false">Прочие материалы</string>
-    <string name="materials_kadr" translatable="false">За кадром</string>
-
     <!--ver 1.0.6-->
     <string name="score_increased">Добавлено %s</string>
+    <string name="random_article_warning">Новая случайная статья генерируется сервером раз в несколько минут.</string>
 </resources>

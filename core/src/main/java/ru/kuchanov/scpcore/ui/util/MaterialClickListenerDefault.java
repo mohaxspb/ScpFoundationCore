@@ -2,7 +2,7 @@ package ru.kuchanov.scpcore.ui.util;
 
 import android.support.v4.app.FragmentTransaction;
 
-import ru.kuchanov.scpcore.ConstantValues;
+import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 import ru.kuchanov.scpcore.ui.base.BaseActivity;
@@ -61,7 +61,7 @@ public class MaterialClickListenerDefault implements MaterialsActivity.MaterialC
                 fragmentTransaction.commit();
                 break;
             case 6:
-                activity.startArticleActivity(mConstantValues.getUrlsValues().getLeaks());
+                activity.startArticleActivity(mConstantValues.getLeaks());
                 break;
             default:
                 throw new RuntimeException("unexpected position in materials list");

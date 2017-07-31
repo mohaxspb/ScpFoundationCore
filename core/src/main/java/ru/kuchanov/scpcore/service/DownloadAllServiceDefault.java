@@ -7,11 +7,11 @@ import android.support.annotation.Nullable;
 import javax.inject.Inject;
 
 import ru.kuchanov.scp.downloads.ApiClientModel;
+import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scp.downloads.DbProviderModel;
 import ru.kuchanov.scp.downloads.DownloadAllService;
 import ru.kuchanov.scp.downloads.DownloadEntry;
 import ru.kuchanov.scpcore.BaseApplication;
-import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
@@ -65,7 +65,7 @@ public class DownloadAllServiceDefault extends DownloadAllService<Article> {
 
     @Override
     protected int getNumOfArticlesOnRecentPage() {
-        return mConstantValues.getApiValues().getNumOfArticlesOnRecentPage();
+        return mConstantValues.getNumOfArticlesOnRecentPage();
     }
 
     @Override
