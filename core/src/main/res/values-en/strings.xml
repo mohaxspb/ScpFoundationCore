@@ -219,7 +219,9 @@
     <string name="notif_new_arts_title">New articles:  %1$d%2$s</string>
     <string name="enter">Log in</string>
     <string name="feedback_title">Review SCP Database</string>
+
     <string name="stories">Tales</string>
+
     <string name="materials_archive">Archived SCPs</string>
     <string name="materials_jokes">Joke SCPs</string>
     <string name="materials_others">Other</string>
@@ -234,5 +236,5 @@
 
     <!--ver 1.0.6-->
     <string name="score_increased">Added %s</string>
-
+    <string name="random_article_warning">New random article generates by server every some minutes.</string>
 </resources>

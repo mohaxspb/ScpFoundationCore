@@ -14,8 +14,8 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
-import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import timber.log.Timber;
@@ -126,7 +126,7 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
                     return true;
                 }
                 if (!link.startsWith("http")) {
-                    link = mConstantValues.getUrlsValues().getBaseApiUrl() + link;
+                    link = mConstantValues.getBaseApiUrl() + link;
                 }
 
                 if (link.endsWith(".mp3")) {
@@ -136,7 +136,7 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
                     return true;
                 }
 
-                if (!link.startsWith(mConstantValues.getUrlsValues().getBaseApiUrl())) {
+                if (!link.startsWith(mConstantValues.getBaseApiUrl())) {
                     if (mTextItemsClickListener != null) {
                         mTextItemsClickListener.onExternalDomenUrlClicked(link);
                     }

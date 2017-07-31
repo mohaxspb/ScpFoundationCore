@@ -124,7 +124,7 @@ public class MainActivity
             setDrawerItemFromLink(intent.getStringExtra(EXTRA_LINK));
         } else if (intent.getAction() != null && intent.getAction().equals(Intent.ACTION_VIEW)) {
             String link = intent.getDataString();
-            for (String pressedLink : mConstantValues.getUrlsValues().getAllLinksArray()) {
+            for (String pressedLink : mConstantValues.getAllLinksArray()) {
                 if (link.equals(pressedLink)) {
                     setDrawerItemFromLink(link);
                     return;
@@ -136,26 +136,26 @@ public class MainActivity
 
     private void setDrawerItemFromLink(String link) {
         Timber.d("setDrawerItemFromLink: %s", link);
-        if (link.equals(mConstantValues.getUrlsValues().getAbout())) {
+        if (link.equals(mConstantValues.getAbout())) {
             mCurrentSelectedDrawerItemId = (R.id.about);
-        } else if (link.equals(mConstantValues.getUrlsValues().getNews())) {
+        } else if (link.equals(mConstantValues.getNews())) {
             mCurrentSelectedDrawerItemId = (R.id.news);
-        } else if (link.equals(mConstantValues.getUrlsValues().getMain())
-                || link.equals(mConstantValues.getUrlsValues().getMostRated())) {
+        } else if (link.equals(mConstantValues.getMain())
+                || link.equals(mConstantValues.getMostRated())) {
             mCurrentSelectedDrawerItemId = R.id.mostRatedArticles;
-        } else if (link.equals(mConstantValues.getUrlsValues().getNewArticles())) {
+        } else if (link.equals(mConstantValues.getNewArticles())) {
             mCurrentSelectedDrawerItemId = R.id.mostRecentArticles;
-        } else if (link.equals(mConstantValues.getUrlsValues().getObjects1())) {
+        } else if (link.equals(mConstantValues.getObjects1())) {
             mCurrentSelectedDrawerItemId = (R.id.objects_I);
-        } else if (link.equals(mConstantValues.getUrlsValues().getObjects2())) {
+        } else if (link.equals(mConstantValues.getObjects2())) {
             mCurrentSelectedDrawerItemId = (R.id.objects_II);
-        } else if (link.equals(mConstantValues.getUrlsValues().getObjects3())) {
+        } else if (link.equals(mConstantValues.getObjects3())) {
             mCurrentSelectedDrawerItemId = (R.id.objects_III);
-        } else if (link.equals(mConstantValues.getUrlsValues().getObjects4())) {
+        } else if (link.equals(mConstantValues.getObjects4())) {
             mCurrentSelectedDrawerItemId = (R.id.objects_IV);
-        } else if (link.equals(mConstantValues.getUrlsValues().getObjectsRu())) {
+        } else if (link.equals(mConstantValues.getObjectsRu())) {
             mCurrentSelectedDrawerItemId = (R.id.objects_RU);
-        } else if (link.equals(mConstantValues.getUrlsValues().getStories())) {
+        } else if (link.equals(mConstantValues.getStories())) {
             mCurrentSelectedDrawerItemId = (R.id.stories);
         } else if (link.equals(Constants.Urls.FAVORITES)) {
             mCurrentSelectedDrawerItemId = (R.id.favorite);
@@ -223,8 +223,8 @@ public class MainActivity
         setToolbarTitleByDrawerItemId(id);
         if (id == R.id.about) {
             mCurrentSelectedDrawerItemId = id;
-            showFragment(ArticleFragment.newInstance(mConstantValues.getUrlsValues().getAbout()),
-                    ArticleFragment.TAG + "#" + mConstantValues.getUrlsValues().getAbout());
+            showFragment(ArticleFragment.newInstance(mConstantValues.getAbout()),
+                    ArticleFragment.TAG + "#" + mConstantValues.getAbout());
             return true;
         } else if (id == R.id.mostRatedArticles) {
             mCurrentSelectedDrawerItemId = id;
@@ -276,8 +276,8 @@ public class MainActivity
             return true;
         } else if (id == R.id.news) {
             mCurrentSelectedDrawerItemId = id;
-            showFragment(ArticleFragment.newInstance(mConstantValues.getUrlsValues().getNews()),
-                    ArticleFragment.TAG + "#" + mConstantValues.getUrlsValues().getNews());
+            showFragment(ArticleFragment.newInstance(mConstantValues.getNews()),
+                    ArticleFragment.TAG + "#" + mConstantValues.getNews());
             return true;
         } else if (id == R.id.objects_IV) {
             mCurrentSelectedDrawerItemId = id;
@@ -285,8 +285,8 @@ public class MainActivity
             return true;
         } else if (id == R.id.stories) {
             mCurrentSelectedDrawerItemId = id;
-            showFragment(ArticleFragment.newInstance(mConstantValues.getUrlsValues().getStories()),
-                    ArticleFragment.TAG + "#" + mConstantValues.getUrlsValues().getStories());
+            showFragment(ArticleFragment.newInstance(mConstantValues.getStories()),
+                    ArticleFragment.TAG + "#" + mConstantValues.getStories());
             return true;
         } else {
             Timber.e("unexpected item ID");

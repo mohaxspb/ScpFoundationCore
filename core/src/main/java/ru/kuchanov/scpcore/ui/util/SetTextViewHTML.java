@@ -13,7 +13,7 @@ import android.text.style.URLSpan;
 import android.view.View;
 import android.widget.TextView;
 
-import ru.kuchanov.scpcore.ConstantValues;
+import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.util.AttributeGetter;
@@ -89,7 +89,7 @@ public class SetTextViewHTML {
                     return;
                 }
                 if (!link.startsWith("http")) {
-                    link = mConstantValues.getUrlsValues().getBaseApiUrl() + link;
+                    link = mConstantValues.getBaseApiUrl() + link;
                 }
 
                 if (link.endsWith(".mp3")) {
@@ -99,7 +99,7 @@ public class SetTextViewHTML {
                     return;
                 }
 
-                if (!link.startsWith(mConstantValues.getUrlsValues().getBaseApiUrl())) {
+                if (!link.startsWith(mConstantValues.getBaseApiUrl())) {
                     if (textItemsClickListener != null) {
                         textItemsClickListener.onExternalDomenUrlClicked(link);
                     }

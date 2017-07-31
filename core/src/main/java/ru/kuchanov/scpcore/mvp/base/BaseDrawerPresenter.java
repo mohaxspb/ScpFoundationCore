@@ -9,11 +9,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-/**
- * Created by y.kuchanov on 21.12.16.
- * <p>
- * for TappAwards
- */
 public abstract class BaseDrawerPresenter<V extends DrawerMvp.View>
         extends BaseActivityPresenter<V>
         implements DrawerMvp.Presenter<V> {
@@ -29,6 +24,9 @@ public abstract class BaseDrawerPresenter<V extends DrawerMvp.View>
     @Override
     public void getRandomArticleUrl() {
         Timber.d("getRandomArticle");
+        if (mApiClient.getAppLang() != null && !mApiClient.getAppLang().equals("ru")) {
+            getView().showMessage(R.string.random_article_warning);
+        }
         getView().showProgressDialog(true);
         mApiClient.getRandomUrl()
                 .subscribeOn(Schedulers.io())

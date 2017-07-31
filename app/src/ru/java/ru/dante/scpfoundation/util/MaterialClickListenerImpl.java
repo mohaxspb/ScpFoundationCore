@@ -2,7 +2,6 @@ package ru.dante.scpfoundation.util;
 
 import android.support.v4.app.FragmentTransaction;
 
-import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 import ru.kuchanov.scpcore.ui.base.BaseActivity;

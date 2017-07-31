@@ -6,7 +6,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import ru.kuchanov.scpcore.ConstantValues;
+import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
@@ -43,17 +43,19 @@ public class HelpersModule {
     ru.kuchanov.scp.downloads.DialogUtils<Article> providesDialogUtilsTest(
             @NonNull MyPreferenceManager preferenceManager,
             @NonNull DbProviderFactory dbProviderFactory,
-            @NonNull ApiClient apiClient
+            @NonNull ApiClient apiClient,
+            @NonNull ConstantValues constantValues
     ) {
-        return getDialogUtilsTest(preferenceManager, dbProviderFactory, apiClient);
+        return getDialogUtilsTest(preferenceManager, dbProviderFactory, apiClient, constantValues);
     }
 
     protected ru.kuchanov.scp.downloads.DialogUtils<Article> getDialogUtilsTest(
             @NonNull MyPreferenceManager preferenceManager,
             @NonNull DbProviderFactory dbProviderFactory,
-            @NonNull ApiClient apiClient
+            @NonNull ApiClient apiClient,
+            @NonNull ConstantValues constantValues
     ) {
-        return new DownloadAllChooserDefault(preferenceManager, dbProviderFactory, apiClient, DownloadAllServiceDefault.class);
+        return new DownloadAllChooserDefault(preferenceManager, dbProviderFactory, apiClient, constantValues, DownloadAllServiceDefault.class);
     }
 
     @Provides

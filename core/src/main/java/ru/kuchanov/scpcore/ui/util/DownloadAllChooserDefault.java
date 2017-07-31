@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.kuchanov.scp.downloads.ApiClientModel;
+import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scp.downloads.DbProviderFactoryModel;
 import ru.kuchanov.scp.downloads.DownloadEntry;
 import ru.kuchanov.scp.downloads.MyPreferenceManagerModel;
@@ -33,9 +34,10 @@ public class DownloadAllChooserDefault extends ru.kuchanov.scp.downloads.DialogU
             MyPreferenceManagerModel preferenceManager,
             DbProviderFactoryModel dbProviderFactory,
             ApiClientModel<Article> apiClient,
+            ConstantValues constantValues,
             Class clazz
     ) {
-        super(preferenceManager, dbProviderFactory, apiClient, clazz);
+        super(preferenceManager, dbProviderFactory, apiClient, constantValues, clazz);
     }
 
     @Override

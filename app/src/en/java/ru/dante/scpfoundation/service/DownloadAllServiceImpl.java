@@ -9,7 +9,6 @@ import ru.kuchanov.scp.downloads.ApiClientModel;
 import ru.kuchanov.scp.downloads.DbProviderModel;
 import ru.kuchanov.scp.downloads.DownloadAllService;
 import ru.kuchanov.scp.downloads.DownloadEntry;
-import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;

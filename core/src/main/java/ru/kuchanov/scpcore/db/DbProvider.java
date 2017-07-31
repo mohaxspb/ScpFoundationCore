@@ -17,8 +17,8 @@ import java.util.Locale;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
+import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scp.downloads.DbProviderModel;
-import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.api.model.firebase.ArticleInFirebase;
 import ru.kuchanov.scpcore.db.error.ScpNoArticleForIdError;
@@ -75,9 +75,9 @@ public class DbProvider implements DbProviderModel<Article> {
         return mRealm.where(Article.class)
                 .notEqualTo(Article.FIELD_TEXT, (String) null)
                 //remove articles from main activity
-                .notEqualTo(Article.FIELD_URL,mConstantValues.getUrlsValues().getAbout())
-                .notEqualTo(Article.FIELD_URL,mConstantValues.getUrlsValues().getNews())
-                .notEqualTo(Article.FIELD_URL,mConstantValues.getUrlsValues().getStories())
+                .notEqualTo(Article.FIELD_URL,mConstantValues.getAbout())
+                .notEqualTo(Article.FIELD_URL,mConstantValues.getNews())
+                .notEqualTo(Article.FIELD_URL,mConstantValues.getStories())
                 .findAllSortedAsync(field, order)
                 .asObservable()
                 .filter(RealmResults::isLoaded)
@@ -416,9 +416,9 @@ public class DbProvider implements DbProviderModel<Article> {
                 long numOfArtsInDb = realm.where(Article.class)
                         .notEqualTo(Article.FIELD_TEXT, (String) null)
                         //remove articles from main activity
-                        .notEqualTo(Article.FIELD_URL,mConstantValues.getUrlsValues().getAbout())
-                        .notEqualTo(Article.FIELD_URL,mConstantValues.getUrlsValues().getNews())
-                        .notEqualTo(Article.FIELD_URL,mConstantValues.getUrlsValues().getStories())
+                        .notEqualTo(Article.FIELD_URL,mConstantValues.getAbout())
+                        .notEqualTo(Article.FIELD_URL,mConstantValues.getNews())
+                        .notEqualTo(Article.FIELD_URL,mConstantValues.getStories())
                         .count();
                 Timber.d("numOfArtsInDb: %s", numOfArtsInDb);
 //                long limit = config.getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_FREE_ARTICLES_LIMIT);
@@ -440,9 +440,9 @@ public class DbProvider implements DbProviderModel<Article> {
                                 .notEqualTo(Article.FIELD_TEXT, (String) null)
                                 .notEqualTo(Article.FIELD_URL, article.url)
                                 //remove articles from main activity
-                                .notEqualTo(Article.FIELD_URL,mConstantValues.getUrlsValues().getAbout())
-                                .notEqualTo(Article.FIELD_URL,mConstantValues.getUrlsValues().getNews())
-                                .notEqualTo(Article.FIELD_URL,mConstantValues.getUrlsValues().getStories())
+                                .notEqualTo(Article.FIELD_URL,mConstantValues.getAbout())
+                                .notEqualTo(Article.FIELD_URL,mConstantValues.getNews())
+                                .notEqualTo(Article.FIELD_URL,mConstantValues.getStories())
                                 .findAllSorted(Article.FIELD_LOCAL_UPDATE_TIME_STAMP, Sort.ASCENDING);
                         if (!articlesToDelete.isEmpty()) {
                             Timber.d("delete text for: %s", articlesToDelete.first().title);
