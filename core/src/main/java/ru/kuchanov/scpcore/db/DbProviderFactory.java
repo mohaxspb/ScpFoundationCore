@@ -2,8 +2,8 @@ package ru.kuchanov.scpcore.db;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scp.downloads.DbProviderFactoryModel;
-import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 
 /**

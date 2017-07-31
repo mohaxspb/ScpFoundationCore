@@ -59,10 +59,10 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import ru.kuchanov.scp.downloads.ApiClientModel;
+import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scp.downloads.ScpParseException;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.BuildConfig;
-import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.error.ScpException;
@@ -139,7 +139,7 @@ public class ApiClient implements ApiClientModel<Article> {
     public Observable<String> getRandomUrl() {
         return bindWithUtils(Observable.unsafeCreate(subscriber -> {
             Request.Builder request = new Request.Builder();
-            request.url(mConstantValues.getApiValues().getRandomPageUrl());
+            request.url(mConstantValues.getRandomPageUrl());
             request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
             request.addHeader("Accept-Encoding", "gzip, deflate, br");
             request.addHeader("Accept-Language", "en-US,en;q=0.8,de-DE;q=0.5,de;q=0.3");
@@ -169,7 +169,7 @@ public class ApiClient implements ApiClientModel<Article> {
     public Observable<Integer> getRecentArticlesPageCountObservable() {
         return bindWithUtils(Observable.<Integer>unsafeCreate(subscriber -> {
             Request request = new Request.Builder()
-                    .url(mConstantValues.getUrlsValues().getBaseApiUrl() + mConstantValues.getApiValues().getMostRecentUrl() + 1)
+                    .url(mConstantValues.getBaseApiUrl() + mConstantValues.getMostRecentUrl() + 1)
                     .build();
 
             String responseBody = null;
@@ -204,14 +204,14 @@ public class ApiClient implements ApiClientModel<Article> {
     }
 
     public Observable<List<Article>> getRecentArticlesForOffset(int offset) {
-        int page = offset / mConstantValues.getApiValues().getNumOfArticlesOnRecentPage() + 1/*as pages are not zero based*/;
+        int page = offset / mConstantValues.getNumOfArticlesOnRecentPage() + 1/*as pages are not zero based*/;
         return getRecentArticlesForPage(page);
     }
 
     public Observable<List<Article>> getRecentArticlesForPage(int page) {
         return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
             Request request = new Request.Builder()
-                    .url(mConstantValues.getUrlsValues().getBaseApiUrl() + mConstantValues.getApiValues().getMostRecentUrl() + page)
+                    .url(mConstantValues.getBaseApiUrl() + mConstantValues.getMostRecentUrl() + page)
                     .build();
 
             String responseBody = null;
@@ -257,7 +257,7 @@ public class ApiClient implements ApiClientModel<Article> {
             Element firstTd = listOfTd.first();
             Element tagA = firstTd.getElementsByTag("a").first();
             String title = tagA.text();
-            String url = mConstantValues.getUrlsValues().getBaseApiUrl() + tagA.attr("href");
+            String url = mConstantValues.getBaseApiUrl() + tagA.attr("href");
             //rating
             Element ratingNode = listOfTd.get(1);
             int rating = Integer.parseInt(ratingNode.text());
@@ -291,10 +291,10 @@ public class ApiClient implements ApiClientModel<Article> {
 
     public Observable<List<Article>> getRatedArticles(int offset) {
         return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
-            int page = offset / mConstantValues.getApiValues().getNumOfArticlesOnRatedPage() + 1/*as pages are not zero based*/;
+            int page = offset / mConstantValues.getNumOfArticlesOnRatedPage() + 1/*as pages are not zero based*/;
 
             Request request = new Request.Builder()
-                    .url(mConstantValues.getUrlsValues().getBaseApiUrl() + mConstantValues.getApiValues().getMostRatedUrl() + page)
+                    .url(mConstantValues.getMostRatedUrl()+ "/p/" + page)
                     .build();
 
             String responseBody = null;
@@ -342,7 +342,7 @@ public class ApiClient implements ApiClientModel<Article> {
             Element tagP = element.getElementsByTag("p").first();
             Element tagA = tagP.getElementsByTag("a").first();
             String title = tagP.text().substring(0, tagP.text().indexOf(", рейтинг"));
-            String url = mConstantValues.getUrlsValues().getBaseApiUrl() + tagA.attr("href");
+            String url = mConstantValues.getBaseApiUrl() + tagA.attr("href");
             //remove a tag to leave only text with rating
             tagA.remove();
             tagP.text(tagP.text().replace(", рейтинг ", ""));
@@ -361,10 +361,10 @@ public class ApiClient implements ApiClientModel<Article> {
 
     public Observable<List<Article>> getSearchArticles(int offset, String searchQuery) {
         return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
-            int page = offset / mConstantValues.getApiValues().getNumOfArticlesOnSearchPage() + 1/*as pages are not zero based*/;
+            int page = offset / mConstantValues.getNumOfArticlesOnSearchPage() + 1/*as pages are not zero based*/;
 
             Request request = new Request.Builder()
-                    .url(mConstantValues.getUrlsValues().getBaseApiUrl() + String.format(Locale.ENGLISH, mConstantValues.getApiValues().getSearchSiteUrl(), searchQuery, page))
+                    .url(mConstantValues.getBaseApiUrl() + String.format(Locale.ENGLISH, mConstantValues.getSearchSiteUrl(), searchQuery, page))
                     .build();
 
             String responseBody = null;
@@ -499,7 +499,7 @@ public class ApiClient implements ApiClientModel<Article> {
             @Article.ObjectType
             String type = getObjectTypeByImageUrl(imageURL);
 
-            String url = mConstantValues.getUrlsValues().getBaseApiUrl() + doc.getElementsByTag("a").first().attr("href");
+            String url = mConstantValues.getBaseApiUrl() + doc.getElementsByTag("a").first().attr("href");
             String title = doc.text();
 
             Article article = new Article();
@@ -731,7 +731,7 @@ public class ApiClient implements ApiClientModel<Article> {
             //search for relative urls to add domain
             for (Element a : pageContent.getElementsByTag("a")) {
                 if (a.attr("href").startsWith("/")) {
-                    a.attr("href", mConstantValues.getUrlsValues().getBaseApiUrl() + a.attr("href"));
+                    a.attr("href", mConstantValues.getBaseApiUrl() + a.attr("href"));
                 }
             }
 
@@ -916,7 +916,7 @@ public class ApiClient implements ApiClientModel<Article> {
                     for (int u = 0; u < listOfLi.size(); u++) {
                         String url = listOfLi.get(u).getElementsByTag("a").first().attr("href");
                         if (!url.startsWith("http")) {
-                            url = mConstantValues.getUrlsValues().getBaseApiUrl() + url;
+                            url = mConstantValues.getBaseApiUrl() + url;
                         }
                         String text = listOfLi.get(u).text();
                         Article article = new Article();
@@ -938,7 +938,7 @@ public class ApiClient implements ApiClientModel<Article> {
     public Observable<List<Article>> getMaterialsArchiveArticles() {
         return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
             Request request = new Request.Builder()
-                    .url(mConstantValues.getUrlsValues().getArchive())
+                    .url(mConstantValues.getArchive())
                     .build();
 
             String responseBody = null;
@@ -991,7 +991,7 @@ public class ApiClient implements ApiClientModel<Article> {
                 for (String arrayItem : arrayOfArticles) {
                     doc = Jsoup.parse(arrayItem);
                     String imageURL = doc.getElementsByTag("img").first().attr("src");
-                    String url = mConstantValues.getUrlsValues().getBaseApiUrl() + doc.getElementsByTag("a").first().attr("href");
+                    String url = mConstantValues.getBaseApiUrl() + doc.getElementsByTag("a").first().attr("href");
                     String title = doc.text();
 
                     @Article.ObjectType
@@ -1016,7 +1016,7 @@ public class ApiClient implements ApiClientModel<Article> {
     public Observable<List<Article>> getMaterialsJokesArticles() {
         return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
             Request request = new Request.Builder()
-                    .url(mConstantValues.getUrlsValues().getJokes())
+                    .url(mConstantValues.getJokes())
                     .build();
 
             String responseBody = null;
@@ -1069,7 +1069,7 @@ public class ApiClient implements ApiClientModel<Article> {
                     if (img != null && !img.isEmpty()) {
                         imageURL = img.first().attr("src");
                     }
-                    String url = mConstantValues.getUrlsValues().getBaseApiUrl() + doc.getElementsByTag("a").first().attr("href");
+                    String url = mConstantValues.getBaseApiUrl() + doc.getElementsByTag("a").first().attr("href");
                     String title = doc.text();
 
                     @Article.ObjectType
@@ -1604,7 +1604,7 @@ public class ApiClient implements ApiClientModel<Article> {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
                 return;
             }
-            String url = article.url.replace(mConstantValues.getUrlsValues().getBaseApiUrl(), "");
+            String url = article.url.replace(mConstantValues.getBaseApiUrl(), "");
 
             //as firebase can't have dots or # in ref path we must replace it...
             url = url.replaceAll("#", "____");
@@ -1642,7 +1642,7 @@ public class ApiClient implements ApiClientModel<Article> {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
                 return;
             }
-            String url = article.url.replace(mConstantValues.getUrlsValues().getBaseApiUrl(), "");
+            String url = article.url.replace(mConstantValues.getBaseApiUrl(), "");
 
             //as firebase can't have dots or # in ref path we must replace it...
             url = url.replaceAll("#", "____");
@@ -1901,7 +1901,7 @@ public class ApiClient implements ApiClientModel<Article> {
                 .map(articles -> {
                     for (Article article : articles) {
                         if (!article.url.startsWith("http://")) {
-                            String start = mConstantValues.getUrlsValues().getBaseApiUrl();
+                            String start = mConstantValues.getBaseApiUrl();
                             if (!article.url.startsWith("/")) {
                                 start += "/";
                             }

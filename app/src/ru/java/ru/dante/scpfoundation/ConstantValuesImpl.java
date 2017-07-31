@@ -1,6 +1,5 @@
 package ru.dante.scpfoundation;
 
-import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import timber.log.Timber;
 

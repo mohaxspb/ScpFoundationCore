@@ -17,8 +17,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
-import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
@@ -99,7 +99,7 @@ public class ReceiverTimer extends BroadcastReceiver {
 
         // This intent is fired when notification is clicked
         Intent intent = new Intent(ctx, MainActivity.class);
-        intent.putExtra(MainActivity.EXTRA_LINK, mConstantValues.getUrlsValues().getNewArticles());
+        intent.putExtra(MainActivity.EXTRA_LINK, mConstantValues.getNewArticles());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
@@ -122,7 +122,7 @@ public class ReceiverTimer extends BroadcastReceiver {
         builder.setAutoCancel(true);
 
         NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-        if (dataFromWeb.size() == mConstantValues.getApiValues().getNumOfArticlesOnRecentPage()) {
+        if (dataFromWeb.size() == mConstantValues.getNumOfArticlesOnRecentPage()) {
             String[] events = new String[dataFromWeb.size()];
             inboxStyle.setBigContentTitle(ctx.getString(R.string.notif_new_arts_title, dataFromWeb.size(), "+"));
             // Moves events into the expanded layout

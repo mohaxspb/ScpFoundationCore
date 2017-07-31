@@ -6,7 +6,7 @@ import java.util.List;
 
 import io.realm.RealmResults;
 import io.realm.Sort;
-import ru.kuchanov.scpcore.ConstantValues;
+import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;

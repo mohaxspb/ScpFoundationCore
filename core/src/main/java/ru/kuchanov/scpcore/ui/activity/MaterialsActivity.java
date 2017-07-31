@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
-import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.mvp.contract.MaterialsScreenMvp;
 import ru.kuchanov.scpcore.ui.base.BaseActivity;
@@ -83,19 +82,19 @@ public class MaterialsActivity
         String link = null;
 
         if (id == R.id.about) {
-            link = mConstantValues.getUrlsValues().getAbout();
+            link = mConstantValues.getAbout();
         } else if (id == R.id.mostRatedArticles) {
-            link = mConstantValues.getUrlsValues().getMostRated();
+            link = mConstantValues.getMostRated();
         } else if (id == R.id.mostRecentArticles) {
-            link = mConstantValues.getUrlsValues().getNewArticles();
+            link = mConstantValues.getNewArticles();
         } else if (id == R.id.random_page) {
             mPresenter.getRandomArticleUrl();
         } else if (id == R.id.objects_I) {
-            link = mConstantValues.getUrlsValues().getObjects1();
+            link = mConstantValues.getObjects1();
         } else if (id == R.id.objects_II) {
-            link = mConstantValues.getUrlsValues().getObjects2();
+            link = mConstantValues.getObjects2();
         } else if (id == R.id.objects_III) {
-            link = mConstantValues.getUrlsValues().getObjects3();
+            link = mConstantValues.getObjects3();
         } else if (id == R.id.files) {
             getSupportFragmentManager().popBackStackImmediate(MaterialsAllFragment.TAG, 0);
             return false;
@@ -111,11 +110,11 @@ public class MaterialsActivity
             startTagsSearchActivity();
             return true;
         } else if (id == R.id.objects_RU) {
-            link = mConstantValues.getUrlsValues().getObjectsRu();
+            link = mConstantValues.getObjectsRu();
         } else if (id == R.id.news) {
-            link = mConstantValues.getUrlsValues().getNews();
+            link = mConstantValues.getNews();
         } else if (id == R.id.objects_IV) {
-            link = mConstantValues.getUrlsValues().getObjects4();
+            link = mConstantValues.getObjects4();
         } else if (id == R.id.stories) {
             link = Constants.Urls.STORIES;
         } else {

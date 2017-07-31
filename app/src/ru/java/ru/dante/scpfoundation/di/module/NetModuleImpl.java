@@ -11,7 +11,6 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import ru.dante.scpfoundation.ConstantValuesImpl;
 import ru.dante.scpfoundation.api.ApiClientImpl;
-import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.di.module.NetModule;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
