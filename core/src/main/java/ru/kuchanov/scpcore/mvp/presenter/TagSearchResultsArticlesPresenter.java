@@ -5,6 +5,7 @@ import android.util.Pair;
 import java.util.List;
 
 import io.realm.RealmResults;
+import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
@@ -23,7 +24,7 @@ public class TagSearchResultsArticlesPresenter
         implements TagsSearchResultsArticlesMvp.Presenter {
 
     private List<ArticleTag> mQueryTags;
-    private List<String> mSearchData;
+    private List<String> mArticlesUrls;
 //    private List<Article> mArticles;
 
     public TagSearchResultsArticlesPresenter(
@@ -36,7 +37,19 @@ public class TagSearchResultsArticlesPresenter
 
     @Override
     protected Observable<RealmResults<Article>> getDbObservable() {
-        return mDbProviderFactory.getDbProvider().getArticlesByIds(mSearchData);
+//        return mDbProviderFactory.getDbProvider().getArticlesByIds(mArticlesUrls);
+
+        return mArticlesUrls == null || mArticlesUrls.isEmpty() ?
+                Observable.<RealmResults<Article>>empty()
+                        .doOnCompleted(() -> {
+                            if (mArticlesUrls == null) {
+                                getDataFromApi(Constants.Api.ZERO_OFFSET);
+                            } else {
+                                getView().showSwipeProgress(false);
+                            }
+                        })
+                : mDbProviderFactory.getDbProvider().getArticlesByIds(mArticlesUrls);
+
 //        return Observable.<RealmResults<Article>>empty()
 //                .doOnCompleted(() -> {
 //                    if (mArticles == null) {
@@ -68,7 +81,14 @@ public class TagSearchResultsArticlesPresenter
 //            subscriber.onNext(new Pair<>(data.size(), offset));
 //            subscriber.onCompleted();
 //        });
-        return mDbProviderFactory.getDbProvider().saveMultipleArticlesSync(data).flatMap(articles -> Observable.just(new Pair<>(data.size(), offset)));
+        return mDbProviderFactory.getDbProvider()
+//                .saveMultipleArticlesSync(data)
+                .saveMultipleArticlesWithoutTextSync(data)
+                .doOnNext(articles -> {
+                    mArticlesUrls = Article.getListOfUrls(articles);
+                    getDataFromDb();
+                })
+                .flatMap(articles -> Observable.just(new Pair<>(data.size(), offset)));
     }
 
     @Override
@@ -81,133 +101,11 @@ public class TagSearchResultsArticlesPresenter
         return mQueryTags;
     }
 
-    @Override
-    public void setSearchData(List<String> articles) {
-        mSearchData = articles;
+    public void setArticlesUrls(List<String> articles) {
+        mArticlesUrls = articles;
     }
 
-    @Override
-    public List<String> getSearchData() {
-        return mSearchData;
+    public List<String> getArticlesUrls() {
+        return mArticlesUrls;
     }
-
-//    @Override
-//    public Subscriber<Article> getToggleFavoriteSubscriber() {
-//        return new Subscriber<Article>() {
-//            @Override
-//            public void onCompleted() {
-//
-//            }
-//
-//            @Override
-//            public void onError(Throwable e) {
-//                Timber.e(e);
-//                if (e instanceof ScpNoArticleForIdError) {
-//                    //we o not have this article in DB, so download it
-//                    toggleOfflineState(e.getMessage());
-//                    getView().showError(new Throwable(BaseApplication.getAppInstance().getString(R.string.start_download)));
-//                }
-//            }
-//
-//            @Override
-//            public void onNext(Article result) {
-//                Article article = new Article();
-//                article.url = result.url;
-//                if (mArticles.contains(article)) {
-//                    mArticles.get(mArticles.indexOf(article)).isInFavorite = result.isInFavorite;
-//                    getView().updateData(mArticles);
-//                }
-//            }
-//        };
-//    }
-//
-//    @Override
-//    public Subscriber<Article> getToggleReadSubscriber() {
-//        return new Subscriber<Article>() {
-//            @Override
-//            public void onCompleted() {
-//
-//            }
-//
-//            @Override
-//            public void onError(Throwable e) {
-//                Timber.e(e);
-//                if (e instanceof ScpNoArticleForIdError) {
-//                    //we do not have this article in DB, so download it
-//                    toggleOfflineState(e.getMessage());
-//                    getView().showError(new Throwable(BaseApplication.getAppInstance().getString(R.string.start_download)));
-//                }
-//            }
-//
-//            @Override
-//            public void onNext(Article stringBooleanPair) {
-//                Article article = new Article();
-//                article.url = stringBooleanPair.url;
-//                if (mArticles.contains(article)) {
-//                    mArticles.get(mArticles.indexOf(article)).isInReaden = stringBooleanPair.isInReaden;
-//                    getView().updateData(mArticles);
-//                }
-//            }
-//        };
-//    }
-//
-//    @Override
-//    public Subscriber<String> getDeleteArticlesTextSubscriber() {
-//        return new Subscriber<String>() {
-//            @Override
-//            public void onCompleted() {
-//
-//            }
-//
-//            @Override
-//            public void onError(Throwable e) {
-//                Timber.e(e);
-//                if (e instanceof ScpNoArticleForIdError) {
-//                    //we o not have this article in DB, so download it
-//                    toggleOfflineState(e.getMessage());
-//                    getView().showError(new Throwable(BaseApplication.getAppInstance().getString(R.string.start_download)));
-//                }
-//            }
-//
-//            @Override
-//            public void onNext(String url) {
-//                Article article = new Article();
-//                article.url = url;
-//                if (mArticles.contains(article)) {
-//                    mArticles.get(mArticles.indexOf(article)).text = null;
-//                    getView().updateData(mArticles);
-//                }
-//            }
-//        };
-//    }
-//
-//    @Override
-//    public Subscriber<Article> getDownloadArticleSubscriber() {
-//        return new Subscriber<Article>() {
-//            @Override
-//            public void onCompleted() {
-//
-//            }
-//
-//            @Override
-//            public void onError(Throwable e) {
-//                Timber.e(e);
-//                if (e instanceof ScpNoArticleForIdError) {
-//                    //we o not have this article in DB, so download it
-//                    toggleOfflineState(e.getMessage());
-//                    getView().showError(new Throwable(BaseApplication.getAppInstance().getString(R.string.start_download)));
-//                }
-//            }
-//
-//            @Override
-//            public void onNext(Article article) {
-//                if (mArticles.contains(article)) {
-//                    int indexOfArticle = mArticles.indexOf(article);
-//                    article.preview = mArticles.get(indexOfArticle).preview;
-//                    mArticles.set(mArticles.indexOf(article), article);
-//                    getView().updateData(mArticles);
-//                }
-//            }
-//        };
-//    }
 }

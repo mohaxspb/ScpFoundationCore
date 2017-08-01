@@ -108,9 +108,6 @@ public abstract class BaseApplication extends MultiDexApplication {
 
         Realm.init(this);
 
-        //print versionCode
-        Timber.d("VERSION_CODE: %s", BuildConfig.VERSION_CODE);
-
 //        //secure
 //        if (SecureUtils.checkCrack(this)) {
 //            MyPreferenceManager myPreferenceManager = new MyPreferenceManager(this, null);
