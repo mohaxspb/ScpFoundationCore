@@ -13,11 +13,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-/**
- * Created by y.kuchanov on 21.12.16.
- * <p>
- * for TappAwards
- */
 public class TagsSearchFragmentPresenter
         extends BasePresenter<TagsSearchMvp.View>
         implements TagsSearchMvp.Presenter {
@@ -91,7 +86,7 @@ public class TagsSearchFragmentPresenter
         getView().showProgress(true);
 
         mApiClient.getArticlesByTags(tags)
-                .flatMap(articles -> mDbProviderFactory.getDbProvider().saveMultipleArticlesSync(articles))
+                .flatMap(articles -> mDbProviderFactory.getDbProvider().saveMultipleArticlesWithoutTextSync(articles))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

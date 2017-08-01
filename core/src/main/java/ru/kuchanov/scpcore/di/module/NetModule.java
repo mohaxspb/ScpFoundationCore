@@ -57,7 +57,10 @@ public class NetModule {
     Interceptor providesLoggingInterceptor() {
 //        return new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(BuildConfig.DEBUG ?
 //                HttpLoggingInterceptor.Level.HEADERS : HttpLoggingInterceptor.Level.NONE);
-        return new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(HttpLoggingInterceptor.Level.BODY);
+//        return new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(HttpLoggingInterceptor.Level.BODY);
+        return new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(BuildConfig.FLAVOR.equals("dev")
+                ? HttpLoggingInterceptor.Level.BODY
+                : HttpLoggingInterceptor.Level.NONE);
     }
 
     @Provides
