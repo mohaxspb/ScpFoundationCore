@@ -46,10 +46,10 @@ public class HelpersModule {
             @NonNull ApiClient apiClient,
             @NonNull ConstantValues constantValues
     ) {
-        return getDwonloadAllDialogUtils(preferenceManager, dbProviderFactory, apiClient, constantValues);
+        return getDownloadAllDialogUtils(preferenceManager, dbProviderFactory, apiClient, constantValues);
     }
 
-    protected ru.kuchanov.scp.downloads.DialogUtils<Article> getDwonloadAllDialogUtils(
+    protected ru.kuchanov.scp.downloads.DialogUtils<Article> getDownloadAllDialogUtils(
             @NonNull MyPreferenceManager preferenceManager,
             @NonNull DbProviderFactory dbProviderFactory,
             @NonNull ApiClient apiClient,

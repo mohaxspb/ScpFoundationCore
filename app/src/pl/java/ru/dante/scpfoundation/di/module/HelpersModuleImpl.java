@@ -24,7 +24,7 @@ import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 public class HelpersModuleImpl extends HelpersModule {
 
     @Override
-    protected DialogUtils<Article> getDwonloadAllDialogUtils(
+    protected DialogUtils<Article> getDownloadAllDialogUtils(
             @NonNull MyPreferenceManager preferenceManager,
             @NonNull DbProviderFactory dbProviderFactory,
             @NonNull ApiClient apiClient,
