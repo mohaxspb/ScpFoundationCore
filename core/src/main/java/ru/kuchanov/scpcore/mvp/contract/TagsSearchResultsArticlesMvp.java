@@ -23,8 +23,8 @@ public interface TagsSearchResultsArticlesMvp {
 
         List<ArticleTag> getQueryTags();
 
-        void setSearchData(List<String> articlesUrls);
+        void setArticlesUrls(List<String> articlesUrls);
 
-        List<String> getSearchData();
+        List<String> getArticlesUrls();
     }
 }

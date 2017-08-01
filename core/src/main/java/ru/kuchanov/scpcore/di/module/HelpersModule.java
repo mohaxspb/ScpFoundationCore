@@ -40,16 +40,16 @@ public class HelpersModule {
     @Provides
     @NonNull
     @Singleton
-    ru.kuchanov.scp.downloads.DialogUtils<Article> providesDialogUtilsTest(
+    ru.kuchanov.scp.downloads.DialogUtils<Article> providesDownloadAllDialogUtils(
             @NonNull MyPreferenceManager preferenceManager,
             @NonNull DbProviderFactory dbProviderFactory,
             @NonNull ApiClient apiClient,
             @NonNull ConstantValues constantValues
     ) {
-        return getDialogUtilsTest(preferenceManager, dbProviderFactory, apiClient, constantValues);
+        return getDwonloadAllDialogUtils(preferenceManager, dbProviderFactory, apiClient, constantValues);
     }
 
-    protected ru.kuchanov.scp.downloads.DialogUtils<Article> getDialogUtilsTest(
+    protected ru.kuchanov.scp.downloads.DialogUtils<Article> getDwonloadAllDialogUtils(
             @NonNull MyPreferenceManager preferenceManager,
             @NonNull DbProviderFactory dbProviderFactory,
             @NonNull ApiClient apiClient,
