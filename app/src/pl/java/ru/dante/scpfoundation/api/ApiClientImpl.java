@@ -26,6 +26,7 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
 import timber.log.Timber;
@@ -220,6 +221,11 @@ public class ApiClientImpl extends ApiClient {
         }
 
         return articles;
+    }
+
+    @Override
+    public Observable<List<ArticleTag>> getTagsFromSite() {
+        return super.getTagsFromSite();
     }
 
     @Override
