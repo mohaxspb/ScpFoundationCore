@@ -17,7 +17,6 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import ru.dante.scpfoundation.BuildConfig;
 import ru.dante.scpfoundation.MyApplicationImpl;
 import ru.dante.scpfoundation.R;
 import ru.kuchanov.scp.downloads.ConstantValues;
@@ -52,14 +51,13 @@ public class ApiClientImpl extends ApiClient {
         Timber.d("getRandomUrl");
         return bindWithUtils(Observable.unsafeCreate(subscriber -> {
             Request.Builder request = new Request.Builder();
-            request.url(mConstantValues.getApiValues().getRandomPageUrl());
+            request.url(mConstantValues.getRandomPageUrl());
             request.get();
 
             try {
                 OkHttpClient client = new OkHttpClient.Builder()
                         .followRedirects(true)
-                        .addInterceptor(new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(BuildConfig.DEBUG
-                                ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE))
+                        .addInterceptor(new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(HttpLoggingInterceptor.Level.BODY))
                         .build();
                 Response response = client.newCall(request.build()).execute();
 
@@ -87,7 +85,7 @@ public class ApiClientImpl extends ApiClient {
     public Observable<Integer> getRecentArticlesPageCountObservable() {
         return bindWithUtils(Observable.<Integer>unsafeCreate(subscriber -> {
             Request request = new Request.Builder()
-                    .url(mConstantValues.getUrlsValues().getBaseApiUrl() + Constants.Api.MOST_RECENT_URL + 1)
+                    .url(mConstantValues.getBaseApiUrl() + Constants.Api.MOST_RECENT_URL + 1)
                     .build();
 
             String responseBody = null;
@@ -137,7 +135,7 @@ public class ApiClientImpl extends ApiClient {
             Element tagA = firstTd.getElementsByTag("a").first();
 
             String title = tagA.text();
-            String url = mConstantValues.getUrlsValues().getBaseApiUrl() + tagA.attr("href");
+            String url = mConstantValues.getBaseApiUrl() + tagA.attr("href");
             //4 Jun 2017, 22:25
             //createdDate
             Element createdDateNode = listOfTd.get(1);
@@ -170,7 +168,7 @@ public class ApiClientImpl extends ApiClient {
         for (String arrayItem : arrayOfArticles) {
             doc = Jsoup.parse(arrayItem);
             Element aTag = doc.getElementsByTag("a").first();
-            String url = mConstantValues.getUrlsValues().getBaseApiUrl() + aTag.attr("href");
+            String url = mConstantValues.getBaseApiUrl() + aTag.attr("href");
             String title = aTag.text();
 
             String rating = arrayItem.substring(arrayItem.indexOf("rating: ") + "rating: ".length());
@@ -210,7 +208,7 @@ public class ApiClientImpl extends ApiClient {
                     continue;
                 }
                 Article article = new Article();
-                article.url = mConstantValues.getUrlsValues().getBaseApiUrl() + li.getElementsByTag("a").first().attr("href");
+                article.url = mConstantValues.getBaseApiUrl() + li.getElementsByTag("a").first().attr("href");
                 article.title = li.text();
                 articles.add(article);
             }
@@ -225,7 +223,7 @@ public class ApiClientImpl extends ApiClient {
     }
 
     @Override
-    protected String getAppLang() {
+    public String getAppLang() {
         return "en";
     }
 }

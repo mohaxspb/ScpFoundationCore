@@ -28,15 +28,21 @@
         android:label="@string/app_name"
         android:supportsRtl="false"
         android:theme="@style/SCP.Theme.Light"
-        tools:replace="android:supportsRtl,android:allowBackup"
-        tools:ignore="GoogleAppIndexingWarning,HardcodedDebugMode">
+        tools:ignore="GoogleAppIndexingWarning,HardcodedDebugMode"
+        tools:replace="android:supportsRtl,android:allowBackup">
 
-        <activity android:name="ru.kuchanov.scpcore.ui.activity.MainActivity">
+        <activity
+            android:name="ru.kuchanov.scpcore.ui.activity.MainActivity"
+            tools:node="replace">
             <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" android:host="scpfoundation.ru" />
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:host="scpfoundation.ru"
+                    android:scheme="http"/>
             </intent-filter>
         </activity>
 
@@ -58,10 +64,10 @@
 
             <meta-data
                 android:name="android.app.shortcuts"
-                android:resource="@xml/shortcuts" />
+                android:resource="@xml/shortcuts"/>
         </activity>
 
-        <activity android:name="ru.kuchanov.scpcore.ui.activity.LicenceActivity" />
+        <activity android:name="ru.kuchanov.scpcore.ui.activity.LicenceActivity"/>
 
         <!--service-->
         <service android:name="ru.dante.scpfoundation.service.DownloadAllServiceImpl"/>
@@ -85,8 +91,9 @@
 
         <receiver android:name="ru.kuchanov.scpcore.receivers.AppInstallReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_INSTALL" />
-                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_INSTALL"/>
+                <action android:name="android.intent.action.PACKAGE_ADDED"/>
+
                 <data android:scheme="package"/>
             </intent-filter>
         </receiver>
@@ -98,7 +105,9 @@
             android:theme="@style/VK.Transparent"/>
 
         <!--facebook-->
-        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"/>
 
     </application>
 
