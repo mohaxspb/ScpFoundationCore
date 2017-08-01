@@ -4,7 +4,6 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
@@ -23,7 +22,6 @@ import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.mvp.contract.TagsSearchMvp;
-import ru.kuchanov.scpcore.ui.base.BaseActivity;
 import ru.kuchanov.scpcore.ui.base.BaseFragment;
 import ru.kuchanov.scpcore.ui.view.TagView;
 import ru.kuchanov.scpcore.util.DimensionUtils;
@@ -55,11 +53,8 @@ public class TagsSearchFragment
 
     private ShowTagsSearchResults mShowTagsSearchResults;
 
-    public static TagsSearchFragment newInstance(List<String> tags) {
-        TagsSearchFragment fragment = new TagsSearchFragment();
-        Bundle args = new Bundle();
-        args.putStringArrayList(BaseActivity.EXTRA_TAGS, (ArrayList<String>) tags);
-        return fragment;
+    public static TagsSearchFragment newInstance() {
+        return new TagsSearchFragment();
     }
 
     @Override
@@ -194,6 +189,21 @@ public class TagsSearchFragment
         @Override
         public void onTagClicked(TagView view, ArticleTag tag) {
             Timber.d("mAllTagsClickListener: %s", tag);
+
+            if(!getResources().getBoolean(R.bool.multiTagSearchEnabled)){
+                for (int i = 0; i < mSearchTagsContainer.getChildCount(); i++) {
+                    TagView tagViewToRemove = (TagView) mSearchTagsContainer.getChildAt(i);
+                    TagView tagView = new TagView(getActivity());
+                    tagView.setTag(tagViewToRemove.getTag());
+
+                    tagView.setOnTagClickListener(mAllTagsClickListener);
+
+                    mAllTagsContainer.addView(tagView);
+                }
+                mSearchTagsContainer.removeAllViews();
+                mQueryTags.clear();
+            }
+
             mAllTagsContainer.removeView(view);
             mSearchTagsContainer.addView(view);
 

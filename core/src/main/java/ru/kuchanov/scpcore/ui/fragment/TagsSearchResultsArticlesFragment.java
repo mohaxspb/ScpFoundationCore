@@ -55,7 +55,7 @@ public class TagsSearchResultsArticlesFragment
         Timber.d("articles: %s", articles);
         Timber.d("tags: %s", tags);
         mPresenter.setQueryTags(tags);
-        mPresenter.setSearchData(articles);
+        mPresenter.setArticlesUrls(articles);
 
 //        updateData(articles);
 
