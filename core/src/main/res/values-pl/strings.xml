@@ -76,7 +76,7 @@
     <string name="remove_ads_for_free_disabled_free_downloads">Wyłącz reklamy, Zwiększenie limitu artykułów i zdobywać okulary za darmo!</string>
     <string name="ads_reward_gained">Yay! Bez reklam dla %d godzin!</string>
     <string name="wait">Czekaj…</string>
-    <string name="ads_reward_error_loading">Nie można załadować. Próbuj ponownie...</string>
+    <string name="ads_reward_error_loading">Nie można załadować. Próbuj ponownie…</string>
     <string name="ads_reward_description_title">Instrukcja</string>
     <string name="ads_reward_description_content">Pokażemy Ci wideo i, Po obejrzeniu, Tymczasowo wyłącz reklamy. Można ją wyłączyć, jako tyle razy, ile chcesz.!</string>
     <string name="ads_reward_ok">Wszystko jasne!</string>
@@ -157,7 +157,7 @@
     <string name="all_data_already_synced">Danych jest już zsynchronizowane, są wymagane żadne dodatkowe czynności.</string>
     <string name="profile_score_info">Masz punkty %1$d. Do następnego poziomu %2$d punktów</string>
     <string name="profile_score_info_max_level">Masz punkty %1$d. Masz poziom maksymalnej tolerancji!</string>
-    <string name="image_loading">Ładowanie obrazu...</string>
+    <string name="image_loading">Ładowanie obrazu…</string>
     <string name="image_saved">Zapisany obraz</string>
     <string name="image_saving_error">Wystąpił błąd podczas zapisywania obrazu</string>
     <!--Shortcuts android 7.1-->
@@ -222,22 +222,4 @@
 
     <string name="error_connection">Błąd połączenia</string>
     <string name="error_parse">Błąd parsowania HTML</string>
-
-    <!--<string-array name="materials_titles">-->
-        <!--<item>Протоколы экспериментов</item>-->
-        <!--<item>Отчёты об инцидентах</item>-->
-        <!--<item>Интервью с очевидцами</item>-->
-        <!--<item>Шуточные SCP</item>-->
-        <!--<item>Архивные SCP</item>-->
-        <!--<item>Прочие материалы</item>-->
-        <!--<item>За кадром</item>-->
-    <!--</string-array>-->
-
-    <string name="materials_experiments" translatable="false">Protokoły eksperymentów</string>
-    <string name="materials_incidents" translatable="false">Raporty incydentalne</string>
-    <string name="materials_interview" translatable="false">Wywiady z naocznych świadków</string>
-    <string name="materials_jokes" translatable="false">Obiekty Joke SCP</string>
-    <string name="materials_archive" translatable="false">Obiekty zarchiwizowane SCP</string>
-    <string name="materials_others" translatable="false">Inne materiały</string>
-    <string name="materials_kadr" translatable="false">Za kulisami</string>
 </resources>
