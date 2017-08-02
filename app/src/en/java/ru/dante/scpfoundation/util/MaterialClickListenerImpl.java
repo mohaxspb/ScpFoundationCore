@@ -1,5 +1,6 @@
 package ru.dante.scpfoundation.util;
 
+import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 import ru.kuchanov.scpcore.ui.base.BaseActivity;
 
@@ -20,16 +21,16 @@ public class MaterialClickListenerImpl implements MaterialsActivity.MaterialClic
     public void onMaterialClick(int position, BaseActivity activity) {
         switch (position) {
             case 0:
-                activity.startArticleActivity(mConstantValues.getUrlsValues().getJokes());
+                activity.startArticleActivity(mConstantValues.getJokes());
                 break;
             case 1:
-                activity.startArticleActivity(mConstantValues.getUrlsValues().getArchive());
+                activity.startArticleActivity(mConstantValues.getArchive());
                 break;
             case 2:
-                activity.startArticleActivity(mConstantValues.getUrlsValues().getExperiments());
+                activity.startArticleActivity(mConstantValues.getExperiments());
                 break;
             case 3:
-                activity.startArticleActivity(mConstantValues.getUrlsValues().getInterviews());
+                activity.startArticleActivity(mConstantValues.getInterviews());
                 break;
             default:
                 throw new RuntimeException("unexpected position in materials list");

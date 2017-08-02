@@ -1,5 +1,6 @@
 package ru.kuchanov.scpcore.db;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Pair;
 
@@ -53,7 +54,10 @@ public class DbProvider implements DbProviderModel<Article> {
         return user == null ? 0 : user.score;
     }
 
-    public Observable<RealmResults<Article>> getArticlesByIds(List<String> urls) {
+    public Observable<RealmResults<Article>> getArticlesByIds(@NonNull List<String> urls) {
+        if(urls.isEmpty()){
+            throw new IllegalArgumentException("Can't query by empty data list");
+        }
         return mRealm.where(Article.class)
                 .in(Article.FIELD_URL, urls.toArray(new String[0]))
                 .findAllAsync()
@@ -75,9 +79,9 @@ public class DbProvider implements DbProviderModel<Article> {
         return mRealm.where(Article.class)
                 .notEqualTo(Article.FIELD_TEXT, (String) null)
                 //remove articles from main activity
-                .notEqualTo(Article.FIELD_URL,mConstantValues.getAbout())
-                .notEqualTo(Article.FIELD_URL,mConstantValues.getNews())
-                .notEqualTo(Article.FIELD_URL,mConstantValues.getStories())
+                .notEqualTo(Article.FIELD_URL, mConstantValues.getAbout())
+                .notEqualTo(Article.FIELD_URL, mConstantValues.getNews())
+                .notEqualTo(Article.FIELD_URL, mConstantValues.getStories())
                 .findAllSortedAsync(field, order)
                 .asObservable()
                 .filter(RealmResults::isLoaded)
@@ -357,6 +361,28 @@ public class DbProvider implements DbProviderModel<Article> {
         return mRealm.where(Article.class).equalTo(Article.FIELD_URL, url).findFirst();
     }
 
+    public Observable<List<Article>> saveMultipleArticlesWithoutTextSync(List<Article> data) {
+        mRealm.executeTransaction(realm -> {
+//            realm.insertOrUpdate(articles);
+            //check if we have app in db and update
+            for (int i = 0; i < data.size(); i++) {
+                Article applicationToWrite = data.get(i);
+                Article applicationInDb = realm.where(Article.class)
+                        .equalTo(Article.FIELD_URL, applicationToWrite.url)
+                        .findFirst();
+                if (applicationInDb != null) {
+//                    applicationInDb.isInMostRated = offset + i;
+//                    applicationInDb.rating = applicationToWrite.rating;
+                } else {
+//                    applicationToWrite.isInMostRated = offset + i;
+                    realm.insertOrUpdate(applicationToWrite);
+                }
+            }
+        });
+        mRealm.close();
+        return Observable.just(data);
+    }
+
     /**
      * @param article obj to save
      * @return Observable that emits unmanaged saved article on successful insert or throws error
@@ -393,6 +419,8 @@ public class DbProvider implements DbProviderModel<Article> {
     }
 
     /**
+     * Saves articles with text. Do not use it for saving articles lists without text
+     *
      * @param articles obj to save
      * @return Observable that emits unmanaged saved article on successful insert or throws error
      */
@@ -416,9 +444,9 @@ public class DbProvider implements DbProviderModel<Article> {
                 long numOfArtsInDb = realm.where(Article.class)
                         .notEqualTo(Article.FIELD_TEXT, (String) null)
                         //remove articles from main activity
-                        .notEqualTo(Article.FIELD_URL,mConstantValues.getAbout())
-                        .notEqualTo(Article.FIELD_URL,mConstantValues.getNews())
-                        .notEqualTo(Article.FIELD_URL,mConstantValues.getStories())
+                        .notEqualTo(Article.FIELD_URL, mConstantValues.getAbout())
+                        .notEqualTo(Article.FIELD_URL, mConstantValues.getNews())
+                        .notEqualTo(Article.FIELD_URL, mConstantValues.getStories())
                         .count();
                 Timber.d("numOfArtsInDb: %s", numOfArtsInDb);
 //                long limit = config.getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_FREE_ARTICLES_LIMIT);
@@ -440,9 +468,9 @@ public class DbProvider implements DbProviderModel<Article> {
                                 .notEqualTo(Article.FIELD_TEXT, (String) null)
                                 .notEqualTo(Article.FIELD_URL, article.url)
                                 //remove articles from main activity
-                                .notEqualTo(Article.FIELD_URL,mConstantValues.getAbout())
-                                .notEqualTo(Article.FIELD_URL,mConstantValues.getNews())
-                                .notEqualTo(Article.FIELD_URL,mConstantValues.getStories())
+                                .notEqualTo(Article.FIELD_URL, mConstantValues.getAbout())
+                                .notEqualTo(Article.FIELD_URL, mConstantValues.getNews())
+                                .notEqualTo(Article.FIELD_URL, mConstantValues.getStories())
                                 .findAllSorted(Article.FIELD_LOCAL_UPDATE_TIME_STAMP, Sort.ASCENDING);
                         if (!articlesToDelete.isEmpty()) {
                             Timber.d("delete text for: %s", articlesToDelete.first().title);

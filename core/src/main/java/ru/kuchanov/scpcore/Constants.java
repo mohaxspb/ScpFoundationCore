@@ -28,6 +28,9 @@ public interface Constants {
         //gallery
         int GALLERY_VK_GROUP_ID = -98801766;
         int GALLERY_VK_ALBUM_ID = 219430203;
+
+        String NOT_TRANSLATED_ARTICLE_UTIL_URL = "not_translated_yet_article_which_we_cant_show";
+        String NOT_TRANSLATED_ARTICLE_URL_DELIMITER = "___";
     }
 
     interface Urls {

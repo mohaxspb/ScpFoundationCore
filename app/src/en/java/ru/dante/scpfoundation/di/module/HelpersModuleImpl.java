@@ -7,6 +7,7 @@ import ru.dante.scpfoundation.util.DialogUtilsImpl;
 import ru.dante.scpfoundation.service.DownloadAllServiceImpl;
 import ru.dante.scpfoundation.util.MaterialClickListenerImpl;
 import ru.kuchanov.scp.downloads.DialogUtils;
+import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
@@ -23,15 +24,17 @@ import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 public class HelpersModuleImpl extends HelpersModule {
 
     @Override
-    protected DialogUtils<Article> getDialogUtilsTest(
+    protected DialogUtils<Article> getDwonloadAllDialogUtils(
             @NonNull MyPreferenceManager preferenceManager,
             @NonNull DbProviderFactory dbProviderFactory,
-            @NonNull ApiClient apiClient
+            @NonNull ApiClient apiClient,
+            @NonNull ConstantValues constantValues
     ) {
         return new DialogUtilsImpl(
                 preferenceManager,
                 dbProviderFactory,
                 apiClient,
+                constantValues,
                 DownloadAllServiceImpl.class
         );
     }

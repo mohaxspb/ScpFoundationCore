@@ -10,7 +10,6 @@ import java.util.List;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
-import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
@@ -53,7 +52,7 @@ public class TagSearchActivity
                 showResults(null, mTags);
             } else {
                 getSupportFragmentManager().beginTransaction()
-                        .add(R.id.content, TagsSearchFragment.newInstance(ArticleTag.getStringsFromTags(mTags)), TagsSearchFragment.TAG)
+                        .add(R.id.content, TagsSearchFragment.newInstance(), TagsSearchFragment.TAG)
                         .addToBackStack(MaterialsAllFragment.TAG)
                         .commit();
             }
@@ -114,7 +113,14 @@ public class TagSearchActivity
         } else if (id == R.id.siteSearch) {
             link = Constants.Urls.SEARCH;
         } else if (id == R.id.tagsSearch) {
-            getSupportFragmentManager().popBackStackImmediate(TagsSearchFragment.TAG, 0);
+            if (getSupportFragmentManager().findFragmentByTag(TagsSearchFragment.TAG) != null) {
+                getSupportFragmentManager().popBackStackImmediate(TagsSearchFragment.TAG, 0);
+            } else {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content, TagsSearchFragment.newInstance(), TagsSearchFragment.TAG)
+                        .commit();
+            }
         } else if (id == R.id.objects_RU) {
             link = mConstantValues.getObjectsRu();
         } else if (id == R.id.news) {

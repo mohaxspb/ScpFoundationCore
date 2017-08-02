@@ -4,4 +4,12 @@
     <!--end no need to translate-->
 
     <string name="drawer_item_9">Lista PL I</string>
+    <string name="type_ru">Lista PL I</string>
+
+    <string-array name="materials_titles">
+        <item>Joke SCP</item>
+        <item>Anomalne SCP</item>
+        <item>Nadnaturalne SCP</item>
+        <item>Lokacje niewyjaśnione</item>
+    </string-array>
 </resources>
