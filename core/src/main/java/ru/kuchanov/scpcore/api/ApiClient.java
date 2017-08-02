@@ -294,7 +294,7 @@ public class ApiClient implements ApiClientModel<Article> {
             int page = offset / mConstantValues.getNumOfArticlesOnRatedPage() + 1/*as pages are not zero based*/;
 
             Request request = new Request.Builder()
-                    .url(mConstantValues.getMostRatedUrl()+ "/p/" + page)
+                    .url(mConstantValues.getMostRatedUrl() + "/p/" + page)
                     .build();
 
             String responseBody = null;
@@ -730,7 +730,13 @@ public class ApiClient implements ApiClientModel<Article> {
 
             //search for relative urls to add domain
             for (Element a : pageContent.getElementsByTag("a")) {
-                if (a.attr("href").startsWith("/")) {
+                //replace all links to not translated articles
+                if (a.className().equals("newpage")) {
+                    a.attr("href", Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL
+                            + Constants.Api.NOT_TRANSLATED_ARTICLE_URL_DELIMITER
+                            + a.attr("href")
+                    );
+                } else if (a.attr("href").startsWith("/")) {
                     a.attr("href", mConstantValues.getBaseApiUrl() + a.attr("href"));
                 }
             }

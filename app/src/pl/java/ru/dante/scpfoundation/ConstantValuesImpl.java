@@ -1,7 +1,6 @@
 package ru.dante.scpfoundation;
 
 import ru.kuchanov.scp.downloads.ConstantValues;
-import ru.kuchanov.scpcore.Constants;
 
 /**
  * Created by mohax on 15.07.2017.
@@ -62,7 +61,7 @@ public class ConstantValuesImpl implements ConstantValues {
 
     @Override
     public String getIncidents() {
-        return Urls.INCEDENTS;
+        return null;
     }
 
     @Override
@@ -72,7 +71,7 @@ public class ConstantValuesImpl implements ConstantValues {
 
     @Override
     public String getJokes() {
-        return null;
+        return Urls.JOKES;
     }
 
     @Override
@@ -97,7 +96,7 @@ public class ConstantValuesImpl implements ConstantValues {
 
     @Override
     public String getNews() {
-        return Urls.NEWS;
+        return null;
     }
 
     @Override
@@ -147,7 +146,6 @@ public class ConstantValuesImpl implements ConstantValues {
 
     interface Api {
         String MOST_RECENT_URL = "/ostatnio-stworzone/p/";
-//        String MOST_RATED_URL = "/top-rated-pages/p/";
         /**
          * first arg is searchQuery with SPACEs replaced by "%20"
          * second - num of page
@@ -155,11 +153,11 @@ public class ConstantValuesImpl implements ConstantValues {
         String SEARCH_URL = "/search:site/a/p/q/%1$s/p/%2$s";
         String RANDOM_PAGE_SCRIPT_URL = Urls.BASE_API_URL + "/random:random-scp";
         int NUM_OF_ARTICLES_ON_RECENT_PAGE = 30;
-        int NUM_OF_ARTICLES_ON_RATED_PAGE = 100;
+        int NUM_OF_ARTICLES_ON_RATED_PAGE = 20;
         int NUM_OF_ARTICLES_ON_SEARCH_PAGE = 10;
     }
 
-    interface Urls {
+    public interface Urls {
         String BASE_API_URL = "http://scp-pl.wikidot.com";
 
         String MAIN = BASE_API_URL + "/";
@@ -177,19 +175,17 @@ public class ConstantValuesImpl implements ConstantValues {
         String OBJECTS_PL = BASE_API_URL + "/lista-pl";
 
         String SEARCH = "SEARCH";
-        String FAVORITES = "FAVORITES";
-        String OFFLINE = "OFFLINE";
-        String MATERIALS_ALL = "MATERIALS_ALL";
         //TODO catch this link from system
         String TAGS_SEARCH_ON_SITE = BASE_API_URL + "/tags";
-        String TAGS_SEARCH = "TAGS_SEARCH";
+
+        String JOKES = BASE_API_URL + "/joke";
 
         String ARCHIVE = BASE_API_URL + "/archived-scps";
-        String JOKES = BASE_API_URL + "/joke-scps";
         String SCP_EX = BASE_API_URL + "/scp-ex";
-        String LOCATIONS = BASE_API_URL + "/log-of-anomalous-locations";
+        String LOCATIONS = BASE_API_URL + "/niewyjasnione";
         String EVENTS = BASE_API_URL + "/log-of-extranormal-events";
-        String ANOMALS = BASE_API_URL + "/log-of-anomalous-items";
+        String ANOMALS = BASE_API_URL + "/anomalne";
+        String NADNATURALNE = BASE_API_URL + "/nadnaturalne";
         String INCEDENTS = BASE_API_URL + "/incident-reports-eye-witness-interviews-and-personal-logs";
 
         String[] ALL_LINKS_ARRAY = {MAIN, RATE, NEW_ARTICLES,
