@@ -25,8 +25,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.BindView;
+import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
-import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.Article;
@@ -71,6 +71,8 @@ public class ArticleFragment
 
     @Inject
     DialogUtils mDialogUtils;
+    @Inject
+    ConstantValues mConstantValues;
 
     //tabs
     private int mCurrentSelectedTab = 0;
@@ -272,7 +274,7 @@ public class ArticleFragment
     public void onLinkClicked(String link) {
         Timber.d("onLinkClicked: %s", link);
         //open predefined main activities link clicked
-        for (String pressedLink : Constants.Urls.ALL_LINKS_ARRAY) {
+        for (String pressedLink : mConstantValues.getAllLinksArray()) {
             if (link.equals(pressedLink)) {
                 MainActivity.startActivity(getActivity(), link);
                 return;
@@ -366,11 +368,17 @@ public class ArticleFragment
 
     @Override
     public void onUnsupportedLinkPressed(String link) {
+        if (!isAdded()) {
+            return;
+        }
         showMessage(R.string.unsupported_link);
     }
 
     @Override
     public void onMusicClicked(String link) {
+        if (!isAdded()) {
+            return;
+        }
         try {
             MediaPlayer mp = new MediaPlayer();
             mp.setDataSource(link);
@@ -385,12 +393,26 @@ public class ArticleFragment
 
     @Override
     public void onExternalDomenUrlClicked(String link) {
+        if (!isAdded()) {
+            return;
+        }
         IntentUtils.openUrl(link);
     }
 
     @Override
     public void onTagClicked(ArticleTag tag) {
+        if (!isAdded()) {
+            return;
+        }
         getBaseActivity().startTagsSearchActivity(Collections.singletonList(tag));
+    }
+
+    @Override
+    public void onNotTranslatedArticleClick(String link) {
+        if (!isAdded()) {
+            return;
+        }
+        showMessage(R.string.article_not_translated);
     }
 
     @Override
