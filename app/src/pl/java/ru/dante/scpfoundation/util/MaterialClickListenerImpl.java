@@ -2,6 +2,7 @@ package ru.dante.scpfoundation.util;
 
 import android.support.v4.app.FragmentTransaction;
 
+import ru.dante.scpfoundation.ConstantValuesImpl;
 import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
@@ -28,40 +29,18 @@ public class MaterialClickListenerImpl implements MaterialsActivity.MaterialClic
 
     @Override
     public void onMaterialClick(int position, BaseActivity activity) {
-        FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
         switch (position) {
             case 0:
-                fragmentTransaction.replace(R.id.content, MaterialsExperimentsFragment.newInstance());
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+                activity.startArticleActivity(mConstantValues.getJokes());
                 break;
             case 1:
-                fragmentTransaction.replace(R.id.content, MaterialsIncidentsFragment.newInstance());
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+                activity.startArticleActivity(ConstantValuesImpl.Urls.ANOMALS);
                 break;
             case 2:
-                fragmentTransaction.replace(R.id.content,  MaterialsInterviewsFragment.newInstance());
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+                activity.startArticleActivity(ConstantValuesImpl.Urls.NADNATURALNE);
                 break;
             case 3:
-                fragmentTransaction.replace(R.id.content, MaterialsJokesFragment.newInstance());
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-                break;
-            case 4:
-                fragmentTransaction.replace(R.id.content, MaterialsArchiveFragment.newInstance());
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-                break;
-            case 5:
-                fragmentTransaction.replace(R.id.content, MaterialsOtherFragment.newInstance());
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-                break;
-            case 6:
-                activity.startArticleActivity(mConstantValues.getLeaks());
+                activity.startArticleActivity(ConstantValuesImpl.Urls.LOCATIONS);
                 break;
             default:
                 throw new RuntimeException("unexpected position in materials list");

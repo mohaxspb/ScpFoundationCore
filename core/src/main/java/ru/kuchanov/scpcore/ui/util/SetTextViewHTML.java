@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.util.AttributeGetter;
@@ -88,7 +89,7 @@ public class SetTextViewHTML {
                     }
                     return;
                 }
-                if (!link.startsWith("http")) {
+                if (!link.startsWith("http") && !link.startsWith(Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL)) {
                     link = mConstantValues.getBaseApiUrl() + link;
                 }
 
@@ -99,7 +100,16 @@ public class SetTextViewHTML {
                     return;
                 }
 
-                if (!link.startsWith(mConstantValues.getBaseApiUrl())) {
+                if (link.startsWith(Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL)) {
+                    if (textItemsClickListener != null) {
+                        String url = link.split(Constants.Api.NOT_TRANSLATED_ARTICLE_URL_DELIMITER)[1];
+                        textItemsClickListener.onNotTranslatedArticleClick(url);
+                    }
+                    return;
+                }
+
+                if (!link.startsWith(mConstantValues.getBaseApiUrl())
+                        || link.startsWith(mConstantValues.getBaseApiUrl() + "/forum")) {
                     if (textItemsClickListener != null) {
                         textItemsClickListener.onExternalDomenUrlClicked(link);
                     }
@@ -190,5 +200,7 @@ public class SetTextViewHTML {
         void onExternalDomenUrlClicked(String link);
 
         void onTagClicked(ArticleTag tag);
+
+        void onNotTranslatedArticleClick(String link);
     }
 }
