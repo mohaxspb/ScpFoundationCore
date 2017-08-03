@@ -26,8 +26,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.android.gms.auth.api.Auth;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 
@@ -47,7 +45,6 @@ import ru.kuchanov.scpcore.ui.dialog.LeaderboardDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
 import ru.kuchanov.scpcore.ui.holder.HeaderViewHolderLogined;
 import ru.kuchanov.scpcore.ui.holder.HeaderViewHolderUnlogined;
-import ru.kuchanov.scpcore.util.SecureUtils;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -327,15 +324,6 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                     mPresenter.onAvatarClicked();
                 });
             }
-            if (mMyPreferenceManager.isAppCracked()) {
-                headerViewHolder.circleProgress.setMaxValue(42);
-                headerViewHolder.circleProgress.setValue(0);
-
-                headerViewHolder.level.setText(R.string.cracked_level_title);
-                headerViewHolder.levelNum.setText(String.valueOf(-1));
-
-                headerViewHolder.avatar.setOnClickListener(view -> showMessage(R.string.cracked_avatar_message));
-            }
         } else {
             for (int i = 0; i < mNavigationView.getHeaderCount(); i++) {
                 mNavigationView.removeHeaderView(mNavigationView.getHeaderView(i));
@@ -383,12 +371,6 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                 bundle.putFloat(FirebaseAnalytics.Param.VALUE, .5f);
                 FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.ECOMMERCE_PURCHASE, bundle);
 
-                if (SecureUtils.checkCrack(this)) {
-                    Bundle args = new Bundle();
-                    FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                    args.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "CRACK_" + item.productId + ((firebaseUser != null) ? firebaseUser.getUid() : ""));
-                    FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, args);
-                }
                 if (item.productId.equals(getString(R.string.inapp_skus).split(",")[0])) {
                     //levelUp 5
                     //add 10 000 score

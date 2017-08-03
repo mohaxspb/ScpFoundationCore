@@ -11,6 +11,7 @@ public interface BaseActivityMvp {
 
     interface View extends BaseMvp.View, LoginActions.View {
 
+        boolean isBannerEnabled();
     }
 
     interface Presenter<V extends View> extends BaseMvp.Presenter<V>, LoginActions.Presenter {
