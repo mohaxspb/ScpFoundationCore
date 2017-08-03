@@ -16,7 +16,6 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.List;
@@ -59,9 +58,6 @@ public class GalleryActivity
     View mPlaceHolder;
     @BindView(R2.id.refresh)
     Button mRefresh;
-
-    @BindView(R2.id.banner)
-    AdView mAdView;
 
     private ImagesPagerAdapter mAdapter;
     private ImagesRecyclerAdapter mRecyclerAdapter;

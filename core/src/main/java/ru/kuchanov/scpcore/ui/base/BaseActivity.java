@@ -126,13 +126,15 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @BindView(R2.id.root)
     protected View mRoot;
-
     @BindView(R2.id.content)
     protected View mContent;
-
     @Nullable
     @BindView(R2.id.toolBar)
     protected Toolbar mToolbar;
+    @Nullable
+    @BindView(R2.id.banner)
+    protected AdView mAdView;
+
     @Inject
     protected P mPresenter;
 
@@ -542,10 +544,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                             mMyPreferenceManager.setHasNoAdsSubscription(true);
                             mMyPreferenceManager.setHasSubscription(false);
                             //remove banner
-                            AdView banner = ButterKnife.findById(this, R.id.banner);
-                            if (banner != null) {
-                                banner.setEnabled(false);
-                                banner.setVisibility(View.GONE);
+                            if (mAdView != null) {
+                                mAdView.setEnabled(false);
+                                mAdView.setVisibility(View.GONE);
                             }
                             break;
                         }
@@ -778,6 +779,25 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         switch (key) {
             case MyPreferenceManager.Keys.NIGHT_MODE:
                 recreate();
+                break;
+            case MyPreferenceManager.Keys.TIME_FOR_WHICH_BANNERS_DISABLED:
+                //check if there is banner in layout
+                if (mAdView != null) {
+                    //check if banner is enabled for activity in remote config
+                    if (isBannerEnabled()) {
+                        //check if user does not have some subscription
+                        if (mMyPreferenceManager.isHasNoAdsSubscription()
+                                || mMyPreferenceManager.isHasSubscription()) {
+                            //do nothing?..
+                        } else {
+                            //at last check if we should hide banner
+                            if (mMyPreferenceManager.isTimeToShowBannerAds()) {
+                                mAdView.setEnabled(false);
+                                mAdView.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+                }
                 break;
             default:
                 break;
@@ -1096,5 +1116,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     protected Class getArticleActivityClass() {
         return ArticleActivity.class;
+    }
+
+    @Override
+    public boolean isBannerEnabled() {
+        return true;
     }
 }

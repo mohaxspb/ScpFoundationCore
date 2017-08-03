@@ -18,6 +18,11 @@ import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
 import ru.kuchanov.scpcore.ui.dialog.SetttingsBottomSheetDialogFragment;
 import timber.log.Timber;
 
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.APP_INSTALL_REWARD_IN_MILLIS;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS;
+
 /**
  * Created by y.kuchanov on 22.12.16.
  * <p>
@@ -65,6 +70,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String APP_VK_GROUP_JOINED_LAST_TIME_CHECKED = "APP_VK_GROUP_JOINED_LAST_TIME_CHECKED";
         String APP_VK_GROUP_JOINED = "APP_VK_GROUP_JOINED";
         String DATA_RESTORED = "DATA_RESTORED";
+        String TIME_FOR_WHICH_BANNERS_DISABLED = "TIME_FOR_WHICH_BANNERS_DISABLED";
 //        String NEED_RELOGIN_POPUP_LAST_TIME_CHECKED = "NEED_RELOGIN_POPUP_LAST_TIME_CHECKED";
     }
 
@@ -169,12 +175,15 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     //ads
     public boolean isTimeToShowAds() {
         return System.currentTimeMillis() - getLastTimeAdsShows() >=
-                FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS);
+                FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS);
     }
 
     public void applyRewardFromAds() {
-        setLastTimeAdsShows(System.currentTimeMillis() +
-                FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS));
+        long time = System.currentTimeMillis()
+                + FirebaseRemoteConfig.getInstance().getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
+        setLastTimeAdsShows(time);
+        //also set time for which we should disable banners
+        setTimeForWhichBannersDisabled(time);
     }
 
     public boolean isRewardedDescriptionShown() {
@@ -210,6 +219,19 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
                 FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_INTERSITIAL_BETWEEN_REWARDED);
     }
 
+    //banner disable from free ads disable options
+    public boolean isTimeToShowBannerAds() {
+        return System.currentTimeMillis() >= getTimeForWhichBannersDisabled();
+    }
+
+    private void setTimeForWhichBannersDisabled(long timeInMillis) {
+        mPreferences.edit().putLong(Keys.TIME_FOR_WHICH_BANNERS_DISABLED, timeInMillis).apply();
+    }
+
+    private long getTimeForWhichBannersDisabled() {
+        return mPreferences.getLong(Keys.TIME_FOR_WHICH_BANNERS_DISABLED, 0);
+    }
+
     //app installs
     public boolean isAppInstalledForPackage(String packageName) {
         return mPreferences.getBoolean(Keys.PACKAGE_INSTALLED + packageName, false);
@@ -220,8 +242,12 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     public void applyAwardForAppInstall() {
-        setLastTimeAdsShows((System.currentTimeMillis() +
-                FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.APP_INSTALL_REWARD_IN_MILLIS)));
+        long time = System.currentTimeMillis() +
+                FirebaseRemoteConfig.getInstance().getLong(APP_INSTALL_REWARD_IN_MILLIS);
+
+        setLastTimeAdsShows(time);
+        //also set time for which we should disable banners
+        setTimeForWhichBannersDisabled(time);
     }
 
     //vk groups join
@@ -245,8 +271,11 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     public void applyAwardVkGroupJoined() {
-        setLastTimeAdsShows((System.currentTimeMillis() +
-                FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD)));
+        long time = System.currentTimeMillis()
+                + FirebaseRemoteConfig.getInstance().getLong(FREE_VK_GROUPS_JOIN_REWARD);
+        setLastTimeAdsShows(time);
+        //also set time for which we should disable banners
+        setTimeForWhichBannersDisabled(time);
     }
 
     //subscription
