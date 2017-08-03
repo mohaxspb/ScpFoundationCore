@@ -260,4 +260,6 @@
     <string name="score_increased">Добавлено %s</string>
     <string name="random_article_warning">Новая случайная статья генерируется сервером раз в несколько минут.</string>
     <string name="article_not_translated">Эта статья ещё не переведена на сайте.</string>
+    <string name="offer_app_lang_version_content">Язык вашего девайса - %1$s, а у нас как раз есть это же приложение для %2$s языка. Хотите его установить?</string>
+    <string name="open_play_market">Открыть Play Market</string>
 </resources>

@@ -217,4 +217,30 @@
         <key>no_ads_subs_enabled</key>
         <value>false</value>
     </entry>
+    <entry>
+        <key>app_lang_versions</key>
+        <value>{
+            "langs": [
+            {
+            "code": "ru",
+            "title": "Русский филиал",
+            "package": "ru.dante.scpfoundation",
+            "icon": "https://lh3.googleusercontent.com/nxy_ouZM-1PTsve_PXDI9-CoErm1Q2XRwKML7_967K-eR5TmVlI5RHDUJsc4WhjsLaI=w300-rw"
+            },
+            {
+            "code": "en",
+            "title": "English version",
+            "package": "ru.dante.scpfoundation.eng",
+            "icon": "https://lh3.googleusercontent.com/dIv6quzx1zwwht9xZHje_vjCGx5zO6r0DxwukqiC1g-9_szMkfsEoFzXLpbxLS5hj4Q=w300-rw"
+            },
+            {
+            "code": "pl",
+            "title": "Polska Filia",
+            "package": "ru.dante.scpfoundation.pl",
+            "icon": "https://lh3.googleusercontent.com/rgAVhH8ouKmkn-Ne6dlJayCATeMoXw_205QYeJVa01bWeu1_iXDOvU9HNKenaiDCbQ=w300-rw"
+            }
+            ]
+            }
+        </value>
+    </entry>
 </defaultsMap>

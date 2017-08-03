@@ -1,5 +1,7 @@
 package ru.dante.scpfoundation.api;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.Gson;
 
 import org.jsoup.Jsoup;
@@ -330,6 +332,7 @@ public class ApiClientImpl extends ApiClient {
         return "scp-pl";
     }
 
+    @NonNull
     @Override
     public String getAppLang() {
         return "en";

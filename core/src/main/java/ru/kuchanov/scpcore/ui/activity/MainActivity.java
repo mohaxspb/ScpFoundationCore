@@ -9,15 +9,22 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.gson.GsonBuilder;
 
 import java.util.List;
+import java.util.Locale;
+
+import javax.inject.Inject;
 
 import ru.kuchanov.rate.PreRate;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
+import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.api.model.remoteconfig.AppLangVersionsJson;
 import ru.kuchanov.scpcore.mvp.contract.MainMvp;
 import ru.kuchanov.scpcore.ui.base.BaseDrawerActivity;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
@@ -33,15 +40,21 @@ import ru.kuchanov.scpcore.ui.fragment.OfflineArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.RatedArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.RecentArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.SiteSearchArticlesFragment;
+import ru.kuchanov.scpcore.util.IntentUtils;
 import ru.kuchanov.scpcore.util.SystemUtils;
 import timber.log.Timber;
 
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.APP_LANG_VERSIONS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED;
 import static ru.kuchanov.scpcore.ui.activity.LicenceActivity.EXTRA_SHOW_ABOUT;
 
 public class MainActivity
         extends BaseDrawerActivity<MainMvp.View, MainMvp.Presenter>
         implements MainMvp.View {
+
+    //TODO remove when we move app lang to constant values
+    @Inject
+    ApiClient mApiClient;
 
     public static final String EXTRA_LINK = "EXTRA_LINK";
     public static final String EXTRA_SHOW_DISABLE_ADS = "EXTRA_SHOW_DISABLE_ADS";
@@ -144,7 +157,34 @@ public class MainActivity
         mNavigationView.setCheckedItem(mCurrentSelectedDrawerItemId);
         setToolbarTitleByDrawerItemId(mCurrentSelectedDrawerItemId);
 
-        if (mMyPreferenceManager.getCurAppVersion() != SystemUtils.getPackageInfo().versionCode) {
+        //first time check for device locale and offer proper lang app version if it is
+        //else - show new version features
+        if (mMyPreferenceManager.getCurAppVersion() == 0) {
+            String deviceLang = Locale.getDefault().getLanguage();
+            AppLangVersionsJson appLangVersions = new GsonBuilder().create().fromJson(FirebaseRemoteConfig.getInstance().getString(APP_LANG_VERSIONS), AppLangVersionsJson.class);
+            for (AppLangVersionsJson.AppLangVersion version : appLangVersions.mAppLangVersions) {
+                String appToOfferLang = new Locale(version.code).getLanguage();
+                if (deviceLang.equals(appToOfferLang)) {
+                    if (mApiClient.getAppLang().equals(appToOfferLang)) {
+                        //proper lang version already installed, do nothing
+                        Timber.d("correct lang version already installed");
+                    } else {
+                        //TODO check if app is not installed yet
+                        //offer app install
+                        new MaterialDialog.Builder(this)
+                                .content(R.string.offer_app_lang_version_content)
+                                .title(version.title)
+                                .positiveText(R.string.open_play_market)
+                                .onPositive((dialog1, which) -> IntentUtils.tryOpenPlayMarket(this, version.appPackage))
+                                .build()
+                                .show();
+                    }
+                    break;
+                }
+            }
+            //set app version to show release notes on next update
+            mMyPreferenceManager.setCurAppVersion(SystemUtils.getPackageInfo().versionCode);
+        } else if (mMyPreferenceManager.getCurAppVersion() != SystemUtils.getPackageInfo().versionCode) {
             DialogFragment dialogFragment = NewVersionDialogFragment.newInstance(getString(R.string.new_version_features));
             dialogFragment.show(getFragmentManager(), NewVersionDialogFragment.TAG);
         }
@@ -173,7 +213,6 @@ public class MainActivity
     @Override
     public boolean onNavigationItemClicked(int id) {
         Timber.d("onNavigationItemClicked with id: %s", id);
-        Timber.d(" R2.id.objects_RU: %s",  R2.id.objects_RU);
         setToolbarTitleByDrawerItemId(id);
         if (id == R.id.about) {
             mCurrentSelectedDrawerItemId = id;
@@ -280,7 +319,6 @@ public class MainActivity
     @Override
     public void setToolbarTitleByDrawerItemId(int id) {
         Timber.d("setToolbarTitleByDrawerItemId with id: %s", id);
-        Timber.d(" R2.id.objects_RU: %s",  R2.id.objects_RU);
         //TODO move to separate interface and inject correct impl for lang each flavor
         //or check so https://stackoverflow.com/a/40085939/3212712
         String title;
@@ -314,8 +352,7 @@ public class MainActivity
             Timber.e("unexpected item ID");
             title = null;
         }
-        assert mToolbar != null;
-        if (title != null) {
+        if (title != null && mToolbar != null) {
             mToolbar.setTitle(title);
         }
     }
