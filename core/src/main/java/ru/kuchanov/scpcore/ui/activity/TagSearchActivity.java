@@ -181,4 +181,10 @@ public class TagSearchActivity
                 .addToBackStack(TagsSearchResultsArticlesFragment.TAG)
                 .commit();
     }
+
+    @Override
+    public boolean isBannerEnabled() {
+        //TODO think if should show banner here
+        return false;
+    }
 }

@@ -1,27 +1,20 @@
 package ru.kuchanov.scpcore.ui.activity;
 
-import android.annotation.SuppressLint;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
-import android.view.View;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.List;
 
-import butterknife.BindView;
 import ru.kuchanov.rate.PreRate;
 import ru.kuchanov.scpcore.BaseApplication;
-import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
@@ -53,51 +46,12 @@ public class MainActivity
     public static final String EXTRA_LINK = "EXTRA_LINK";
     public static final String EXTRA_SHOW_DISABLE_ADS = "EXTRA_SHOW_DISABLE_ADS";
 
-    @BindView(R2.id.banner)
-    AdView mAdView;
-
     public static void startActivity(Context context, String link) {
         Timber.d("startActivity: %s", link);
         Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(EXTRA_LINK, link);
         context.startActivity(intent);
-    }
-
-    @Override
-    public void initAds() {
-        super.initAds();
-
-        if (!isAdsLoaded()) {
-            requestNewInterstitial();
-        }
-
-        AdRequest.Builder adRequest = new AdRequest.Builder();
-
-        if (BuildConfig.DEBUG) {
-            @SuppressLint("HardwareIds")
-            String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-            String deviceId;
-            deviceId = SystemUtils.MD5(androidId);
-            if (deviceId != null) {
-                deviceId = deviceId.toUpperCase();
-                adRequest.addTestDevice(deviceId);
-            }
-            adRequest.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
-        }
-//        Timber.d("mMyPreferenceManager.isHasSubscription()/mMyPreferenceManager.isHasNoAdsSubscription()/FirebaseRemoteConfig.getInstance().getBoolean(MAIN_BANNER_DISABLED): %s/%s/%s",
-//                mMyPreferenceManager.isHasSubscription(), mMyPreferenceManager.isHasNoAdsSubscription(), FirebaseRemoteConfig.getInstance().getBoolean(MAIN_BANNER_DISABLED) );
-//        Timber.d("showBanner: %s", mMyPreferenceManager.isHasSubscription()
-//                || mMyPreferenceManager.isHasNoAdsSubscription()
-//                || FirebaseRemoteConfig.getInstance().getBoolean(MAIN_BANNER_DISABLED));
-        if (mMyPreferenceManager.isHasSubscription()
-                || mMyPreferenceManager.isHasNoAdsSubscription()
-                || FirebaseRemoteConfig.getInstance().getBoolean(MAIN_BANNER_DISABLED)) {
-            mAdView.setVisibility(View.GONE);
-        } else {
-            mAdView.setVisibility(View.VISIBLE);
-            mAdView.loadAd(adRequest.build());
-        }
     }
 
     @Override
@@ -389,5 +343,10 @@ public class MainActivity
         } else {
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean isBannerEnabled() {
+        return !FirebaseRemoteConfig.getInstance().getBoolean(MAIN_BANNER_DISABLED);
     }
 }

@@ -172,4 +172,10 @@ public class MaterialsActivity
     public interface MaterialClickListener {
         void onMaterialClick(int position, BaseActivity activity);
     }
+
+    @Override
+    public boolean isBannerEnabled() {
+        //TODO think if we should show banner here
+        return false;
+    }
 }

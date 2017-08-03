@@ -128,6 +128,7 @@ public class InappHelper {
                 subscriber.onError(e);
             }
         });
+        //todo add server check here every 6 hours
     }
 
     public static Observable<List<Item>> getOwnedInappsObserveble(IInAppBillingService mInAppBillingService) {

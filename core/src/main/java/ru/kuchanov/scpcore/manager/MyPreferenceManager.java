@@ -57,21 +57,16 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String DESIGN_FONT_PATH = "DESIGN_FONT_PATH";
         String PACKAGE_INSTALLED = "PACKAGE_INSTALLED";
         String VK_GROUP_JOINED = "VK_GROUP_JOINED";
-        //        String USER_UID = "USER_UID";
         String HAS_SUBSCRIPTION = "HAS_SUBSCRIPTION";
         String HAS_NO_ADS_SUBSCRIPTION = "HAS_NO_ADS_SUBSCRIPTION";
-        String APP_IS_CRACKED = "APP_IS_CRACKED";
         String AUTO_SYNC_ATTEMPTS = "AUTO_SYNC_ATTEMPTS";
-        //        String VK_GROUP_APP_JOINED = "VK_GROUP_APP_JOINED";
         String UNSYNCED_SCORE = "UNSYNCED_SCORE";
         String UNSYNCED_VK_GROUPS = "UNSYNCED_VK_GROUPS";
         String UNSYNCED_APPS = "UNSYNCED_APPS";
-        //        String HAS_LEVEL_UP_INAPP = "HAS_LEVEL_UP_INAPP";
         String APP_VK_GROUP_JOINED_LAST_TIME_CHECKED = "APP_VK_GROUP_JOINED_LAST_TIME_CHECKED";
         String APP_VK_GROUP_JOINED = "APP_VK_GROUP_JOINED";
         String DATA_RESTORED = "DATA_RESTORED";
         String TIME_FOR_WHICH_BANNERS_DISABLED = "TIME_FOR_WHICH_BANNERS_DISABLED";
-//        String NEED_RELOGIN_POPUP_LAST_TIME_CHECKED = "NEED_RELOGIN_POPUP_LAST_TIME_CHECKED";
     }
 
     private Gson mGson;
@@ -409,33 +404,6 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
 
     public boolean isTimeToCheckAppVkGroupJoined() {
         return System.currentTimeMillis() - getLastTimeAppVkGroupJoinedChecked() >= PERIOD_BETWEEN_APP_VK_GROUP_JOINED_CHECK_IN_MILLIS;
-    }
-
-//    public void setLastTimeNeedReloginPopupShown(long timeInMillis) {
-//        mPreferences.edit().putLong(Keys.NEED_RELOGIN_POPUP_LAST_TIME_CHECKED, timeInMillis).apply();
-//    }
-//
-//    private long getLastTimeNeedReloginPopupShown() {
-//        long timeFromLastShow = mPreferences.getLong(Keys.NEED_RELOGIN_POPUP_LAST_TIME_CHECKED, 0);
-//        if (timeFromLastShow == 0) {
-//            long curTime = System.currentTimeMillis();
-//            setLastTimeAdsShows(curTime);
-//            timeFromLastShow = curTime;
-//        }
-//        return timeFromLastShow;
-//    }
-//
-//    public boolean isTimeToShowNeedReloginPopup() {
-//        return System.currentTimeMillis() - getLastTimeNeedReloginPopupShown() >= PERIOD_BETWEEN_NEED_RELOGIN_POPUP_IN_MILLIS;
-//    }
-
-    // secure
-    public boolean isAppCracked() {
-        return mPreferences.getBoolean(Keys.APP_IS_CRACKED, false);
-    }
-
-    public void setAppCracked(boolean cracked) {
-        mPreferences.edit().putBoolean(Keys.APP_IS_CRACKED, cracked).apply();
     }
 
     //utils
