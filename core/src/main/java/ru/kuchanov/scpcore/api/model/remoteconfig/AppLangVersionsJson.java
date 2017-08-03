@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class AppLangVersionsJson {
 
-    public List<AppLangVersion> mAppLangVersions;
+    public List<AppLangVersion> langs;
 
     public static class AppLangVersion {
 
@@ -50,7 +50,7 @@ public class AppLangVersionsJson {
     @Override
     public String toString() {
         return "LevelsJson{" +
-                "mAppLangVersions=" + mAppLangVersions +
+                "mAppLangVersions=" + langs +
                 '}';
     }
 }

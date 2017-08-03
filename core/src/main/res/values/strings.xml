@@ -260,6 +260,7 @@
     <string name="score_increased">Добавлено %s</string>
     <string name="random_article_warning">Новая случайная статья генерируется сервером раз в несколько минут.</string>
     <string name="article_not_translated">Эта статья ещё не переведена на сайте.</string>
-    <string name="offer_app_lang_version_content">Язык вашего девайса - %1$s, а у нас как раз есть это же приложение для %2$s языка. Хотите его установить?</string>
+    <string name="offer_app_lang_version_content">Язык вашего девайса - <b>%1$s</b>, а у нас как раз есть это же приложение, где статьи переведены на <b>%2$s</b>. Хотите его установить?\n\nСписок приложений с переводами на разные языки доступен всегда в левом верхнем меню любого экрана.</string>
     <string name="open_play_market">Открыть Play Market</string>
+    <string name="menuAppLangVersions">Филиалы Фонда</string>
 </resources>

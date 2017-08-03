@@ -734,6 +734,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         } else if (i == R.id.faq) {
             mDialogUtils.showFaqDialog(this);
             return true;
+        } else if (i == R.id.appLangVersions) {
+            mDialogUtils.showFaqDialog(this);
+            mDialogUtils.showAllAppLangVariantsDialog(this);
+            return true;
         } else {
             Timber.wtf("unexpected id: %s", item.getItemId());
             return super.onOptionsItemSelected(item);

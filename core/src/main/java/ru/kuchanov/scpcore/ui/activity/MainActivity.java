@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.GsonBuilder;
 
@@ -162,24 +161,22 @@ public class MainActivity
         if (mMyPreferenceManager.getCurAppVersion() == 0) {
             String deviceLang = Locale.getDefault().getLanguage();
             AppLangVersionsJson appLangVersions = new GsonBuilder().create().fromJson(FirebaseRemoteConfig.getInstance().getString(APP_LANG_VERSIONS), AppLangVersionsJson.class);
-            for (AppLangVersionsJson.AppLangVersion version : appLangVersions.mAppLangVersions) {
+            for (AppLangVersionsJson.AppLangVersion version : appLangVersions.langs) {
                 String appToOfferLang = new Locale(version.code).getLanguage();
                 if (deviceLang.equals(appToOfferLang)) {
                     if (mApiClient.getAppLang().equals(appToOfferLang)) {
                         //proper lang version already installed, do nothing
-                        Timber.d("correct lang version already installed");
+                        Timber.d("It is the iterated version, do nothing");
                     } else {
-                        //TODO check if app is not installed yet
-                        //offer app install
-                        new MaterialDialog.Builder(this)
-                                .content(R.string.offer_app_lang_version_content)
-                                .title(version.title)
-                                .positiveText(R.string.open_play_market)
-                                .onPositive((dialog1, which) -> IntentUtils.tryOpenPlayMarket(this, version.appPackage))
-                                .build()
-                                .show();
+                        //check if app is not installed yet
+                        if (IntentUtils.isPackageInstalled(this, version.appPackage)) {
+                            Timber.d("correct lang version already installed");
+                        } else {
+                            //offer app install
+                            mDialogUtils.showAppLangVariantsDialog(this, version);
+                            break;
+                        }
                     }
-                    break;
                 }
             }
             //set app version to show release notes on next update

@@ -132,12 +132,12 @@ public class IntentUtils {
     }
 
     public static boolean isPackageInstalled(Context context, String packageName) {
-        final PackageManager packageManager = context.getPackageManager();
+        PackageManager packageManager = context.getPackageManager();
         Intent intent = packageManager.getLaunchIntentForPackage(packageName);
         if (intent == null) {
             return false;
         }
         List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        return list.size() > 0;
+        return !list.isEmpty();
     }
 }
