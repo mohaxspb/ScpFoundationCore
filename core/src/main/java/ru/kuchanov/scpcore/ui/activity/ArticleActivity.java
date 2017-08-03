@@ -1,22 +1,16 @@
 package ru.kuchanov.scpcore.ui.activity;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.view.ViewPager;
 import android.view.MenuItem;
-import android.view.View;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.List;
 
 import butterknife.BindView;
 import ru.kuchanov.scpcore.BaseApplication;
-import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
@@ -27,7 +21,6 @@ import ru.kuchanov.scpcore.ui.base.BaseDrawerActivity;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.fragment.ArticleFragment;
 import ru.kuchanov.scpcore.util.IntentUtils;
-import ru.kuchanov.scpcore.util.SystemUtils;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.ARTICLE_BANNER_DISABLED;
@@ -39,9 +32,6 @@ public class ArticleActivity
 
     @BindView(R2.id.content)
     ViewPager mViewPager;
-
-    @BindView(R2.id.banner)
-    AdView mAdView;
 
     private int mCurPosition;
     private List<String> mUrls;
@@ -81,38 +71,6 @@ public class ArticleActivity
             @DataSyncActions.ScoreAction
             String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
             mPresenter.updateUserScoreForScoreAction(action);
-        }
-    }
-
-    @Override
-    public void initAds() {
-        super.initAds();
-
-        if (!isAdsLoaded()) {
-            requestNewInterstitial();
-        }
-
-        AdRequest.Builder adRequest = new AdRequest.Builder();
-
-        if (BuildConfig.DEBUG) {
-            @SuppressLint("HardwareIds")
-            String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-            String deviceId;
-            deviceId = SystemUtils.MD5(androidId);
-            if (deviceId != null) {
-                deviceId = deviceId.toUpperCase();
-                adRequest.addTestDevice(deviceId);
-            }
-            adRequest.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
-        }
-        FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
-        if (mMyPreferenceManager.isHasSubscription()
-                || mMyPreferenceManager.isHasNoAdsSubscription()
-                || remoteConfig.getBoolean(ARTICLE_BANNER_DISABLED)) {
-            mAdView.setVisibility(View.GONE);
-        } else {
-            mAdView.setVisibility(View.VISIBLE);
-            mAdView.loadAd(adRequest.build());
         }
     }
 
@@ -227,5 +185,10 @@ public class ArticleActivity
     @Override
     protected void callInjections() {
         BaseApplication.getAppComponent().inject(this);
+    }
+
+    @Override
+    public boolean isBannerEnabled() {
+        return !FirebaseRemoteConfig.getInstance().getBoolean(ARTICLE_BANNER_DISABLED);
     }
 }

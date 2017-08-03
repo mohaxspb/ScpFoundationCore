@@ -1,9 +1,7 @@
 package ru.kuchanov.scpcore.ui.activity;
 
-import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,8 +13,6 @@ import android.widget.Toast;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.List;
@@ -24,7 +20,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import ru.kuchanov.scpcore.BaseApplication;
-import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
@@ -37,7 +32,6 @@ import ru.kuchanov.scpcore.ui.adapter.ImagesRecyclerAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseDrawerActivity;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import ru.kuchanov.scpcore.util.StorageUtils;
-import ru.kuchanov.scpcore.util.SystemUtils;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.GALLERY_BANNER_DISABLED;
@@ -59,9 +53,6 @@ public class GalleryActivity
     View mPlaceHolder;
     @BindView(R2.id.refresh)
     Button mRefresh;
-
-    @BindView(R2.id.banner)
-    AdView mAdView;
 
     private ImagesPagerAdapter mAdapter;
     private ImagesRecyclerAdapter mRecyclerAdapter;
@@ -142,39 +133,6 @@ public class GalleryActivity
     }
 
     @Override
-    public void initAds() {
-        super.initAds();
-
-        if (!isAdsLoaded()) {
-            requestNewInterstitial();
-        }
-
-        AdRequest.Builder adRequest = new AdRequest.Builder();
-
-        if (BuildConfig.DEBUG) {
-            @SuppressLint("HardwareIds")
-            String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-            String deviceId;
-            deviceId = SystemUtils.MD5(androidId);
-            if (deviceId != null) {
-                deviceId = deviceId.toUpperCase();
-                adRequest.addTestDevice(deviceId);
-            }
-            adRequest.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
-        }
-
-        FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
-        if (mMyPreferenceManager.isHasNoAdsSubscription()
-                || mMyPreferenceManager.isHasSubscription()
-                || remoteConfig.getBoolean(GALLERY_BANNER_DISABLED)) {
-            mAdView.setVisibility(View.GONE);
-        } else {
-            mAdView.setVisibility(View.VISIBLE);
-            mAdView.loadAd(adRequest.build());
-        }
-    }
-
-    @Override
     protected boolean isDrawerIndicatorEnabled() {
         return false;
     }
@@ -221,6 +179,7 @@ public class GalleryActivity
             link = Constants.Urls.OFFLINE;
         } else if (id == R.id.gallery) {
             //nothing to do
+            return true;
         } else if (id == R.id.siteSearch) {
             link = Constants.Urls.SEARCH;
         } else if (id == R.id.tagsSearch) {
@@ -305,5 +264,10 @@ public class GalleryActivity
     public void onRefreshClicked() {
         Timber.d("onRefreshClicked");
         mPresenter.updateData();
+    }
+
+    @Override
+    public boolean isBannerEnabled() {
+        return !FirebaseRemoteConfig.getInstance().getBoolean(GALLERY_BANNER_DISABLED);
     }
 }

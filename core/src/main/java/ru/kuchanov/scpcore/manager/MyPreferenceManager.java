@@ -18,6 +18,11 @@ import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
 import ru.kuchanov.scpcore.ui.dialog.SetttingsBottomSheetDialogFragment;
 import timber.log.Timber;
 
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.APP_INSTALL_REWARD_IN_MILLIS;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS;
+
 /**
  * Created by y.kuchanov on 22.12.16.
  * <p>
@@ -52,20 +57,16 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String DESIGN_FONT_PATH = "DESIGN_FONT_PATH";
         String PACKAGE_INSTALLED = "PACKAGE_INSTALLED";
         String VK_GROUP_JOINED = "VK_GROUP_JOINED";
-        //        String USER_UID = "USER_UID";
         String HAS_SUBSCRIPTION = "HAS_SUBSCRIPTION";
         String HAS_NO_ADS_SUBSCRIPTION = "HAS_NO_ADS_SUBSCRIPTION";
-        String APP_IS_CRACKED = "APP_IS_CRACKED";
         String AUTO_SYNC_ATTEMPTS = "AUTO_SYNC_ATTEMPTS";
-        //        String VK_GROUP_APP_JOINED = "VK_GROUP_APP_JOINED";
         String UNSYNCED_SCORE = "UNSYNCED_SCORE";
         String UNSYNCED_VK_GROUPS = "UNSYNCED_VK_GROUPS";
         String UNSYNCED_APPS = "UNSYNCED_APPS";
-        //        String HAS_LEVEL_UP_INAPP = "HAS_LEVEL_UP_INAPP";
         String APP_VK_GROUP_JOINED_LAST_TIME_CHECKED = "APP_VK_GROUP_JOINED_LAST_TIME_CHECKED";
         String APP_VK_GROUP_JOINED = "APP_VK_GROUP_JOINED";
         String DATA_RESTORED = "DATA_RESTORED";
-//        String NEED_RELOGIN_POPUP_LAST_TIME_CHECKED = "NEED_RELOGIN_POPUP_LAST_TIME_CHECKED";
+        String TIME_FOR_WHICH_BANNERS_DISABLED = "TIME_FOR_WHICH_BANNERS_DISABLED";
     }
 
     private Gson mGson;
@@ -169,12 +170,15 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     //ads
     public boolean isTimeToShowAds() {
         return System.currentTimeMillis() - getLastTimeAdsShows() >=
-                FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS);
+                FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS);
     }
 
     public void applyRewardFromAds() {
-        setLastTimeAdsShows(System.currentTimeMillis() +
-                FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS));
+        long time = System.currentTimeMillis()
+                + FirebaseRemoteConfig.getInstance().getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
+        setLastTimeAdsShows(time);
+        //also set time for which we should disable banners
+        setTimeForWhichBannersDisabled(time);
     }
 
     public boolean isRewardedDescriptionShown() {
@@ -210,6 +214,19 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
                 FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_INTERSITIAL_BETWEEN_REWARDED);
     }
 
+    //banner disable from free ads disable options
+    public boolean isTimeToShowBannerAds() {
+        return System.currentTimeMillis() >= getTimeForWhichBannersDisabled();
+    }
+
+    private void setTimeForWhichBannersDisabled(long timeInMillis) {
+        mPreferences.edit().putLong(Keys.TIME_FOR_WHICH_BANNERS_DISABLED, timeInMillis).apply();
+    }
+
+    private long getTimeForWhichBannersDisabled() {
+        return mPreferences.getLong(Keys.TIME_FOR_WHICH_BANNERS_DISABLED, 0);
+    }
+
     //app installs
     public boolean isAppInstalledForPackage(String packageName) {
         return mPreferences.getBoolean(Keys.PACKAGE_INSTALLED + packageName, false);
@@ -220,8 +237,12 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     public void applyAwardForAppInstall() {
-        setLastTimeAdsShows((System.currentTimeMillis() +
-                FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.APP_INSTALL_REWARD_IN_MILLIS)));
+        long time = System.currentTimeMillis() +
+                FirebaseRemoteConfig.getInstance().getLong(APP_INSTALL_REWARD_IN_MILLIS);
+
+        setLastTimeAdsShows(time);
+        //also set time for which we should disable banners
+        setTimeForWhichBannersDisabled(time);
     }
 
     //vk groups join
@@ -245,8 +266,11 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     public void applyAwardVkGroupJoined() {
-        setLastTimeAdsShows((System.currentTimeMillis() +
-                FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD)));
+        long time = System.currentTimeMillis()
+                + FirebaseRemoteConfig.getInstance().getLong(FREE_VK_GROUPS_JOIN_REWARD);
+        setLastTimeAdsShows(time);
+        //also set time for which we should disable banners
+        setTimeForWhichBannersDisabled(time);
     }
 
     //subscription
@@ -380,33 +404,6 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
 
     public boolean isTimeToCheckAppVkGroupJoined() {
         return System.currentTimeMillis() - getLastTimeAppVkGroupJoinedChecked() >= PERIOD_BETWEEN_APP_VK_GROUP_JOINED_CHECK_IN_MILLIS;
-    }
-
-//    public void setLastTimeNeedReloginPopupShown(long timeInMillis) {
-//        mPreferences.edit().putLong(Keys.NEED_RELOGIN_POPUP_LAST_TIME_CHECKED, timeInMillis).apply();
-//    }
-//
-//    private long getLastTimeNeedReloginPopupShown() {
-//        long timeFromLastShow = mPreferences.getLong(Keys.NEED_RELOGIN_POPUP_LAST_TIME_CHECKED, 0);
-//        if (timeFromLastShow == 0) {
-//            long curTime = System.currentTimeMillis();
-//            setLastTimeAdsShows(curTime);
-//            timeFromLastShow = curTime;
-//        }
-//        return timeFromLastShow;
-//    }
-//
-//    public boolean isTimeToShowNeedReloginPopup() {
-//        return System.currentTimeMillis() - getLastTimeNeedReloginPopupShown() >= PERIOD_BETWEEN_NEED_RELOGIN_POPUP_IN_MILLIS;
-//    }
-
-    // secure
-    public boolean isAppCracked() {
-        return mPreferences.getBoolean(Keys.APP_IS_CRACKED, false);
-    }
-
-    public void setAppCracked(boolean cracked) {
-        mPreferences.edit().putBoolean(Keys.APP_IS_CRACKED, cracked).apply();
     }
 
     //utils

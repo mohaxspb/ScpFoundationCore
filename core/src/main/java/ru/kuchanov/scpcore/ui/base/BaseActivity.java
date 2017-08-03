@@ -1,6 +1,5 @@
 package ru.kuchanov.scpcore.ui.base;
 
-import android.annotation.SuppressLint;
 import android.app.DialogFragment;
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,7 +9,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -33,7 +31,6 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
@@ -77,6 +74,7 @@ import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable;
 import ru.kuchanov.scpcore.manager.MyNotificationManager;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Item;
+import ru.kuchanov.scpcore.monetization.util.AdMobHelper;
 import ru.kuchanov.scpcore.monetization.util.InappHelper;
 import ru.kuchanov.scpcore.monetization.util.MyAdListener;
 import ru.kuchanov.scpcore.monetization.util.MyNonSkippableVideoCallbacks;
@@ -96,8 +94,6 @@ import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.SocialLoginHolder;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
-import ru.kuchanov.scpcore.util.SecureUtils;
-import ru.kuchanov.scpcore.util.SystemUtils;
 import timber.log.Timber;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -126,13 +122,15 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @BindView(R2.id.root)
     protected View mRoot;
-
     @BindView(R2.id.content)
     protected View mContent;
-
     @Nullable
     @BindView(R2.id.toolBar)
     protected Toolbar mToolbar;
+    @Nullable
+    @BindView(R2.id.banner)
+    protected AdView mAdView;
+
     @Inject
     protected P mPresenter;
 
@@ -289,11 +287,12 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         //appodeal
         Appodeal.disableLocationPermissionCheck();
         Appodeal.confirm(Appodeal.SKIPPABLE_VIDEO);
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.FLAVOR.equals("dev")) {
             Appodeal.setTesting(true);
 //            Appodeal.setLogLevel(Log.LogLevel.debug);
         }
         Appodeal.initialize(this, getString(R.string.appodeal_app_key), Appodeal.NON_SKIPPABLE_VIDEO | Appodeal.SKIPPABLE_VIDEO);
+        Appodeal.disableNetwork(this, "cheetah");
         Appodeal.setNonSkippableVideoCallbacks(new MyNonSkippableVideoCallbacks() {
             @Override
             public void onNonSkippableVideoFinished() {
@@ -322,6 +321,32 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 mPresenter.updateUserScoreForScoreAction(action);
             }
         });
+
+        if (!isAdsLoaded()) {
+            requestNewInterstitial();
+        }
+
+        setUpBanner();
+    }
+
+    private void setUpBanner() {
+        if (mMyPreferenceManager.isHasSubscription()
+                || mMyPreferenceManager.isHasNoAdsSubscription()
+                || !isBannerEnabled()
+                || !mMyPreferenceManager.isTimeToShowBannerAds()) {
+            if (mAdView != null) {
+                mAdView.setEnabled(false);
+                mAdView.setVisibility(View.GONE);
+            }
+        } else {
+            if (mAdView != null) {
+                mAdView.setEnabled(true);
+                mAdView.setVisibility(View.VISIBLE);
+                if (!mAdView.isLoading()) {
+                    mAdView.loadAd(AdMobHelper.buildAdRequest(this));
+                }
+            }
+        }
     }
 
     @Override
@@ -463,21 +488,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         if (mInterstitialAd.isLoading() || mInterstitialAd.isLoaded()) {
             Timber.d("loading already in progress or already done");
         } else {
-            AdRequest.Builder adRequest = new AdRequest.Builder();
-
-            if (BuildConfig.DEBUG) {
-                @SuppressLint("HardwareIds")
-                String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-                String deviceId;
-                deviceId = SystemUtils.MD5(androidId);
-                if (deviceId != null) {
-                    deviceId = deviceId.toUpperCase();
-                    adRequest.addTestDevice(deviceId);
-                }
-                adRequest.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
-            }
-
-            mInterstitialAd.loadAd(adRequest.build());
+            mInterstitialAd.loadAd(AdMobHelper.buildAdRequest(this));
         }
     }
 
@@ -513,21 +524,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 items -> {
                     Timber.d("market items: %s", items);
                     mOwnedMarketSubscriptions = items;
-//                    supportInvalidateOptionsMenu();
-//                    if (!mOwnedMarketSubscriptions.isEmpty()) {
-//                        if (!SecureUtils.checkCrack(this)) {
-//                            mMyPreferenceManager.setHasSubscription(true);
-//                        } else {
-//                            mMyPreferenceManager.setHasSubscription(false);
-//                            mMyPreferenceManager.setAppCracked(true);
-//                            mMyPreferenceManager.setLastTimeAdsShows(0);
-//
-//                            showMessage(R.string.app_cracked);
-//                            mPresenter.reactOnCrackEvent();
-//                        }
-//                    } else {
-//                        mMyPreferenceManager.setHasSubscription(false);
-//                    }
 
                     @InappHelper.SubscriptionType
                     int type = InappHelper.getSubscriptionTypeFromItemsList(mOwnedMarketSubscriptions);
@@ -541,10 +537,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                             mMyPreferenceManager.setHasNoAdsSubscription(true);
                             mMyPreferenceManager.setHasSubscription(false);
                             //remove banner
-                            AdView banner = ButterKnife.findById(this, R.id.banner);
-                            if (banner != null) {
-                                banner.setEnabled(false);
-                                banner.setVisibility(View.GONE);
+                            if (mAdView != null) {
+                                mAdView.setEnabled(false);
+                                mAdView.setVisibility(View.GONE);
                             }
                             break;
                         }
@@ -561,9 +556,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                         }
                         default:
                             throw new IllegalArgumentException("unexpected type: " + type);
-                    }
-                    if (SecureUtils.checkCrack(this)) {
-                        mPresenter.reactOnCrackEvent();
                     }
                 },
                 e -> Timber.e(e, "error while getting owned items")
@@ -751,7 +743,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     public void onResume() {
         super.onResume();
-        if (!BuildConfig.DEBUG) {
+        if (!BuildConfig.FLAVOR.equals("dev")) {
             YandexMetrica.onResumeActivity(this);
         }
 
@@ -759,12 +751,14 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             requestNewInterstitial();
         }
 
+        setUpBanner();
+
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     public void onPause() {
-        if (!BuildConfig.DEBUG) {
+        if (!BuildConfig.FLAVOR.equals("dev")) {
             YandexMetrica.onPauseActivity(this);
         }
         super.onPause();
@@ -778,11 +772,34 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             case MyPreferenceManager.Keys.NIGHT_MODE:
                 recreate();
                 break;
+            case MyPreferenceManager.Keys.TIME_FOR_WHICH_BANNERS_DISABLED:
+                //check if there is banner in layout
+                setUpBanner();
+//                if (mAdView != null) {
+//                    //check if banner is enabled for activity in remote config
+//                    if (isBannerEnabled()) {
+//                        //check if user does not have any subscription
+//                        if (!mMyPreferenceManager.isHasNoAdsSubscription() && !mMyPreferenceManager.isHasSubscription()) {
+//                            //at last check if we should hide or show banner
+//                            boolean showBanner = mMyPreferenceManager.isTimeToShowBannerAds();
+//                            mAdView.setEnabled(showBanner);
+//                            mAdView.setVisibility(showBanner ? View.VISIBLE : View.GONE);
+//                            if (showBanner) {
+//                                mAdView.loadAd(AdMobHelper.buildAdRequest(this));
+//                            }
+//                        }
+//                    }
+//                }
+                break;
+            //TODO think if we should react on subscriptions events
             default:
                 break;
         }
     }
 
+    /**
+     * we need this for calligraphy
+     */
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
@@ -868,37 +885,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         //nothing to do here
     }
 
-//    @Override
-//    public void showNeedReloginPopup() {
-//        Timber.d("showNeedReloginPopup");
-//
-//        final MaterialDialog authDialog = new MaterialDialog.Builder(this)
-//                .title(R.string.relogin_dialog_title)
-//                .content(R.string.relogin_dialog_content)
-////                .cancelable(true)
-//                .positiveText(R.string.relogin)
-//                .onPositive((dialog, which) -> {
-//                    dialog.dismiss();
-//                    startLogin(Constants.Firebase.SocialProvider.VK);
-//                })
-//                .negativeText(R.string.close)
-//                .onNegative((dialog1, which1) -> dialog1.dismiss())
-//                .build();
-//
-//        final MaterialDialog dialogInfo = new MaterialDialog.Builder(this)
-//                .title(R.string.need_relogin_dialog_title)
-//                .content(R.string.need_relogin_dialog_content)
-////                .cancelable(false)
-//                .positiveText(R.string.i_read_and_accept)
-//                .onPositive((dialog, which) -> {
-//                    dialog.dismiss();
-//                    authDialog.show();
-//                })
-//                .build();
-//
-//        dialogInfo.show();
-//    }
-
     private void initAndUpdateRemoteConfig() {
         //remote config
         FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
@@ -908,7 +894,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         // Enabling developer mode allows many more requests to be made per hour, so developers
         // can test different config values during development.
         FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
-                .setDeveloperModeEnabled(BuildConfig.DEBUG)
+                .setDeveloperModeEnabled(BuildConfig.FLAVOR.equals("dev"))
                 .build();
         mFirebaseRemoteConfig.setConfigSettings(configSettings);
 
