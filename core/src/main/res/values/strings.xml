@@ -12,255 +12,254 @@
     <string name="restoring_data" translatable="false">Restoring data</string>
     <string name="restored_data"  translatable="false">Restored data: read - %1$d, favorites - %2$d</string>
     <!--drawer items-->
-    <string name="drawer_item_1">Об организации</string>
-    <string name="drawer_item_2">Новости</string>
-    <string name="drawer_item_3">Статьи по рейтингу</string>
-    <string name="drawer_item_4">Новые статьи</string>
-    <string name="drawer_item_5">Случайная статья</string>
-    <string name="drawer_item_6">Объекты I</string>
-    <string name="drawer_item_7">Объекты II</string>
-    <string name="drawer_item_8">Объекты III</string>
-    <string name="drawer_item_9">Объекты RU</string>
-    <string name="drawer_item_10">Материалы</string>
-    <string name="drawer_item_11">Рассказы</string>
-    <string name="drawer_item_12">Избранное</string>
-    <string name="drawer_item_13">Статьи Offline</string>
-    <string name="drawer_item_14">Галерея</string>
-    <string name="drawer_item_15">Поиск</string>
-    <string name="drawer_item_objects4">Объекты IV</string>
+    <string name="drawer_item_1">About the SCP Foundation</string>
+    <string name="drawer_item_2">Site News Hub</string>
+    <string name="drawer_item_3">Rating articles</string>
+    <string name="drawer_item_4">New articles</string>
+    <string name="drawer_item_5">Random article</string>
+    <string name="drawer_item_6">Series I</string>
+    <string name="drawer_item_7">Series II</string>
+    <string name="drawer_item_8">Series III </string>
+    <string name="drawer_item_10">Other files</string>
+    <string name="drawer_item_12">Favorites</string>
+    <string name="drawer_item_13">Articles Offline</string>
+    <string name="drawer_item_14">Gallery</string>
+    <string name="drawer_item_15">Search</string>
+    <string name="drawer_item_objects4">Series IV</string>
+
+    <string name="drawer_item_11">Tales</string>
+    <string name="drawer_item_9">Series Ru</string>
     <!--настройки-->
-    <string name="enter">Войти</string>
-    <string name="settings">Настройки</string>
-    <string name="night_mode">Ночной режим</string>
-    <string name="text_size">Размер текста</string>
-    <string name="in_apps">Расширенная версия</string>
-    <string name="day_mode">Дневной режим</string>
-    <string name="unsupported_link">Эта ссылка не поддерживается</string>
-    <string name="share">Поделиться</string>
-    <string name="open_with">В браузер</string>
-    <string name="add_to_favorites">Добавить в избранное</string>
-    <string name="share_link_text">%1$s\n\nОтправлено с помощью приложения \"SCP Foundation\"\nhttps://play.google.com/store/apps/details?id=%2$s</string>
-    <string name="share_choser_text">Поделиться через…</string>
-    <string name="browser_choser_text">Открыть с помощью…</string>
-    <string name="favorites_add">Добавить в избранное</string>
-    <string name="favorites_remove">Удалить из избранного</string>
-    <string name="text_size_article">Размер текста в статьях</string>
-    <string name="text_size_lists">Размер текста в списках</string>
-    <string name="text_size_dialog_title">Настройки размера текста</string>
-    <string name="close">Закрыть</string>
-    <string name="delete">Удалить</string>
-    <string name="search">Поиск</string>
+    <string name="settings">Settings</string>
+    <string name="night_mode">Night mode</string>
+    <string name="text_size">Text size</string>
+    <string name="in_apps">Extended version</string>
+    <string name="day_mode">Day mode</string>
+    <string name="unsupported_link">This link is not supported</string>
+    <string name="share">Share</string>
+    <string name="open_with">Open in browser</string>
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="share_link_text">%1$s\n\nSent with application \"SCP Foundation\"\nhttps://play.google.com/store/apps/details?id=%2$s</string>
+    <string name="share_choser_text">Share through…</string>
+    <string name="browser_choser_text">Open with…</string>
+    <string name="favorites_add">Add to favorites</string>
+    <string name="favorites_remove">Remove from favorites</string>
+    <string name="text_size_article">Text size articles</string>
+    <string name="text_size_lists">Text size lists</string>
+    <string name="text_size_dialog_title">Text Size settings</string>
+    <string name="close">Close</string>
+    <string name="delete">Delete</string>
+    <string name="search">Search</string>
 
     <!--drawer items -->
     <!--TODO maybe use ut instead of upper ones?..-->
-    <string name="about_org">Об организации</string>
-    <string name="news">Новости</string>
-    <string name="stories">Рассказы</string>
+    <string name="about_org">About the SCP Foundation</string>
+    <string name="news">News</string>
 
     <!--utils-->
-    <string name="search_hint">Введите запрос</string>
-    <string name="error_no_search_results">По вашему запросу ничего не найдено</string>
-    <string name="start_download">Статьи нет в базе данных. Начинаю загрузку</string>
+    <string name="search_hint">Enter the request</string>
+    <string name="error_no_search_results">Nothing was found on your request</string>
+    <string name="start_download">The article is not in the database. Starting the download.</string>
 
-    <string name="settings_notif_on">Уведомления о новых статьях</string>
-    <string name="settings_notif_led_on">LED индикатор</string>
-    <string name="settings_notif_vibrate_on">Вибрация</string>
-    <string name="settings_notif_sound_on">Звук уведомления</string>
-    <string name="settings_notification">Настройки уведомлений</string>
-    <string name="dialog_title_subscriptions">Отключение рекламы, автоматическая облачная синхронизация и атмосферные шрифты</string>
-    <string name="dialog_title_subscriptions_disabled_free_downloads">Отключение рекламы, автоматическая облачная синхронизация, безлимитное скачивание статей и атмосферные шрифты</string>
-    <string name="current_subscription">Ваша текущая подписка</string>
-    <string name="no_subscriptions">Пусто</string>
-    <string name="refresh">Обновить</string>
-    <string name="i_accept">Я согласен</string>
-    <string name="error_read_licence">Не удалось открыть файл лицензии</string>
-    <string name="new_version_features">Новая версия</string>
-    <string name="hurray">Ура!</string>
-    <string name="in_progress">В разработке</string>
-    <string name="settings_design">Внешний вид</string>
-    <string name="settings_design_list_new">Новый дизайн в списках</string>
-    <string name="dialog_random_page_title">Подключаюсь к фонду</string>
-    <string name="dialog_random_page_message">Проверяю уровень допуска</string>
-    <string name="remove_ads">Отключить рекламу?</string>
-    <string name="yes_bliad">Да!</string>
-    <string name="app_info">О приложении</string>
-    <string name="remove_ads_for_free">Отключить рекламу и заработать очки бесплатно!</string>
-    <string name="remove_ads_for_free_disabled_free_downloads">Отключить рекламу, увеличить лимит статей и заработать очки бесплатно!</string>
-    <string name="ads_reward_gained">Ура! Никакой рекламы на %d часа!</string>
-    <string name="wait">Подождите…</string>
-    <string name="ads_reward_error_loading">Не удалось загрузить. Пробуйте ещё раз…</string>
-    <string name="ads_reward_description_title">Инструкция</string>
-    <string name="ads_reward_description_content">Мы покажем вам видео и, после просмотра, временно отключим рекламу. Вы можете отключать её сколько угодно раз!</string>
-    <string name="ads_reward_ok">Всё понятно!</string>
-    <string name="settings_design_list_type">Дизайн статьи в списке</string>
-    <string name="rating">Рейтинг %d</string>
-    <string name="yes_sir">Так точно!</string>
-    <string name="reward_not_loaded_yet">Ещё не загружено. Попробуйте ещё раз</string>
-    <string name="settings_design_font">Шрифт</string>
-    <string name="login_advantages">Внимание персонал! Авторизация не обязательна, но она нужна для облачной синхронизации избранных статей и статуса прочитанности оных. Также она позволяет участвовать в рейтинге агентов. Дальнейшие инструкции вы можете получить у руководителя зоны содержания.</string>
-    <string name="login_advantages_title">Зачем авторизация?</string>
-    <string name="login_greetings">Добро пожаловать, агент %s</string>
-    <string name="error_login_no_email">Невозможно авторизоваться без информации о e-mail</string>
-    <string name="materials">Материалы</string>
-    <string name="only_premium">Только для подписавшихся</string>
-    <string name="activate">Активировать</string>
-    <string name="info">Информация</string>
-    <string name="subs_info">В дополнительный функционал входит отключение рекламы, все шрифты без ограничения, умножение всех получаемых вами очков на 3, а также облачная синхронизация избранного и прочитанного. И самое главное - подписавшись, вы сильно промотивируете разработчиков всё быстрее и быстрее добавлять фичи и фиксить баги!</string>
-    <string name="subs_info_disabled_free_downloads">В дополнительный функционал входит отключение рекламы, безлимитное скачивание статей в оффлайн, все шрифты без ограничения, умножение всех получаемых вами очков на 3, а также облачная синхронизация избранного и прочитанного. И самое главное - подписавшись, вы сильно промотивируете разработчиков всё быстрее и быстрее добавлять фичи и фиксить баги!</string>
+    <string name="download">Download</string>
+
+    <string name="settings_notif_on">Notifications of new articles</string>
+    <string name="settings_notif_led_on">LED indicator</string>
+    <string name="settings_notif_vibrate_on">Vibration</string>
+    <string name="settings_notif_sound_on">Notification sound</string>
+    <string name="settings_notification">Notification preferences</string>
+    <string name="dialog_title_subscriptions">Disabling ads, automatic cloud Sync and atmospheric fonts.</string>
+    <string name="dialog_title_subscriptions_disabled_free_downloads">Disabling ads, automatic cloud sync, unlimited download articles and atmospheric fonts.</string>
+    <string name="current_subscription">Your current subscription.</string>
+    <string name="no_subscriptions">Empty</string>
+    <string name="refresh">Refresh</string>
+    <string name="i_accept">I agree</string>
+    <string name="error_read_licence">The license file could not be opened.</string>
+    <string name="new_version_features">New version</string>
+    <string name="hurray">Hooray!</string>
+    <string name="in_progress">In progress</string>
+    <string name="settings_design">Settings design</string>
+    <string name="settings_design_list_new">New design in the lists</string>
+    <string name="dialog_random_page_title">Connects to Foundation</string>
+    <string name="dialog_random_page_message">Checking the 	clearance level</string>
+    <string name="remove_ads">Disable ads?</string>
+    <string name="yes_bliad">Yes!</string>
+    <string name="app_info">About the application</string>
+    <string name="remove_ads_for_free">Disable ads and earn points for free!</string>
+    <string name="remove_ads_for_free_disabled_free_downloads">Disable ads, increase the limit articles and earn points for free!</string>
+    <string name="ads_reward_gained">Hooray! No ads for %d hours!</string>
+    <string name="wait">Wait…</string>
+    <string name="ads_reward_error_loading">Failed to load. Try again…</string>
+    <string name="ads_reward_description_title">Instruction</string>
+    <string name="ads_reward_description_content">We\'ll show you the video and, after watching, temporarily disable ads. You can disable it as many times as you want!</string>
+    <string name="ads_reward_ok">All clear!</string>
+    <string name="settings_design_list_type">Design articles in the list.</string>
+    <string name="rating">Rating %d</string>
+    <string name="yes_sir">Yes sir!</string>
+    <string name="reward_not_loaded_yet">Still doesn\'t load. Try again</string>
+    <string name="settings_design_font">Font</string>
+    <string name="login_advantages">Attention! Authorization is not required, but it needed for a cloud synch of the selected articles, and read status. It also allows you to participate in the agent ranking. You can get further instructions from the head of the content area.</string>
+    <string name="login_advantages_title">Why authorization?</string>
+    <string name="login_greetings">Welcome, Agent %s</string>
+    <string name="error_login_no_email">You cannot log-in without e-mail.</string>
+    <string name="materials">Other files</string>
+    <string name="only_premium">Only for subscribing.</string>
+    <string name="activate">Activate.</string>
+    <string name="info">Information</string>
+    <string name="subs_info">Optional feature includes disabling ads, all fonts without restriction, multiply all points you get by 3, and cloud synch of favorites and readings. And most importantly-subscribing, you\'re very motivating developers to quickly add features and fix bugs!</string>
+    <string name="subs_info_disabled_free_downloads">Optional feature includes disabling ads, unlimited download of articles to offline,all fonts without restriction, multiply all points you get by 3, and cloud synch of favorites and readings. And most importantly-subscribing, you\'re very motivating developers to quickly add features and fix bugs!</string>
 
     <string-array name="fag_items">
-        <item>Авторизация</item>
-        <item>Облачная синхронизация</item>
-        <item>Система рейтинга</item>
+        <item>Authorization</item>
+        <item>Cloud Sync</item>
+        <item>Rating system</item>
     </string-array>
 
     <string-array name="fag_items_content">
-        <item>1. Авторизоваться можно в левом выдвижном меню, сверху, кнопка \"Войти\".\n
-        2. Вход через соц.сети требует указанного в соц.сети e-mail, т.к. он используется как ID в БД сервера.\n
-        3. Авторизация нужна для сохранения прочитанности и избранности статей в облако и для участия в рейтинге агентов.\n</item>
-        <item>1. Работает только для авторизованных агентов.\n
-        2. Требует подключения к интернету.\n
-        3. Работает автоматически для агентов, имеющих подписку.\n
-        4. Для экономных агентов требует ручной синхронизации. См. \"Настройки\".\n
-        5. В облако сохраняется статус статьи - прочитанна ли она и добавлена ли в избранное.\n
-        6. При очистке данных приложения/выходе из аккаунта все несинхронизированные данные будут потеряны.\n</item>
-        <item>1. Работает только для авторизованных агентов.\n
-        2. Требует подключения к интернету.\n
-        3. Работает автоматически для агентов, имеющих подписку.\n
-        4. Для экономных агентов требует ручной синхронизации. См. "Настройки"\n
-        5. Очки начисляются за: добавление статей в избранное, прочтение оных, установку приложений, вступление в группы Вконтакте, просмотр рекламы, покупки в приложении. В дальнейшем список будет дополнен\n
-        6. Ко всем очкам применяются модификаторы - за подписку и нахождение в группе приложения во Вконтакте все получаемые очки будут увеличены\n
-        7. При очистке данных приложения/выходе из аккаунта все несинхронизированные данные будут потеряны.\n
-        8. По мере получения очков ваш уровень допуск будет расти. Внимание! Уровень допуска не даёт никаких дополнительных привелегий - это просто надпись под вашей аватаркой.\n
-        9. Прогресс до получения следующего уровня показан зелёной полосой вокруг аватарки.\n
-        10. Количество очков до следующего уровня показывается при нажатии на аватарку.\n
-        11. Таблица рейтинга агентов показывается при нажатии на аватарку. Она обновляется раз в несколько минут. Обычно 5 минут.</item>
+        <item>1. You can login in the left menu, moving above the button \"Login\".\n
+        2. The entrance through the network requires an e-mail specified in the network because it is used as an ID in the server\'s database..\n
+        3. Authorization is needed for keep read and favorites articles into the cloud and participate in ranking agents.\n</item>
+        <item>1. Works only for authorized agents.\n
+        2. Need Internet connection.\n
+        3. Works automatically for agents with a subscription.\n
+        4. For economical agents needed manual sync. see \"Settings\".\n
+        5. The status of the article is saved to the cloud and is read and added to the favorites.\n
+        6. If you clean up application any unsynchronized data will be lost.\n</item>
+        <item>1. Works only for authorized agents.\n
+        2. Need Internet connection.\n
+        3. Works automatically for agents with a subscription.\n
+        4. For economical agents needed manual sync. see \"Settings\"\n
+        5. Points are awarded for: adding articles to your Favorites, reading articles, installing app, view ads, purchase in an application. Further the list will be expanded.\n
+        6. All points apply modifiers - if you have subscription all received points will be increased\n
+        7. As you receive your points, your clearance level will grow.\n
+        8. Progress until the next level is shown by the green line around the Avatar.\n
+        9. Number points to the next level are shown when you click on the Avatar.\n
+        10. The Agent rating table is shown when you click on the avatar. t is updated every few minutes. Usually 5 minutes.</item>
     </string-array>
 
-    <string name="free">Бесплатно</string>
-    <string name="dialog_free_ads_disable_title">Отлючение рекламы</string>
-    <string name="start_market_error">Не удалось запустить PlayMarket</string>
-    <string name="thanks_for_supporting_us">Разработчики благодарны за вашу поддержку!</string>
-    <string name="invitation_message">Смотри какое крутое приложение я нашёл!</string>
-    <string name="invitation_cta">Прочти секретные документы!</string>
-    <string name="invitation_title">Секретные материалы фонда SCP!</string>
-    <string name="invite_friends">Пригласи 5 друзей в приложение!</string>
-    <string name="watch_video_to_disable_ads">Посмотри видео для отключения рекламы на %1$d часа и получения %2$d очков</string>
-    <string name="app_install_ads_disable_title">Установи другие наши приложения для отключения рекламы на %1$d часа и получения %2$d очков!</string>
-    <string name="vk_group_join_ads_disable_title">Вступи в группу ВК для отключения рекламы на %1$d часа и получения %2$d очков!</string>
-    <string name="need_vk_group_access">Требуется разрешение на доступ к группам. Авторизуйтесь заново.</string>
-    <string name="gallery">Галерея</string>
-    <string name="error_login_firebase_connection">Ошибка логина. Попробуйте ещё раз. %s</string>
-    <string name="on_user_logined">Приветствуем, агент %s</string>
-    <string name="login_in_progress_custom_token">Запрашиваю пароль на сервере Фонда</string>
-    <string name="error_while_sync">Не удалось сохранить статью в облаке</string>
-    <string name="sync_fav_success">Статья синхронизирована</string>
-    <string name="app_cracked">Зарегистрирована попытка взлома базы данных Фонда. Карантинный режим активирован.</string>
-    <string name="auto_sync_disabled">Автоматическая синхронизация отключена</string>
-    <string name="turn_on">Включить</string>
-    <string name="enable_auto_sync">Активировать автоматическую синхронизацию</string>
-    <string name="sync">Синхронизировать</string>
-    <string name="subscribe">Подписаться</string>
-    <string name="error_while_all_data_sync">Не удалось сохранить данные в облако. Ошибка: %s</string>
-    <string name="all_data_sync_success">Все данные сохранены с облако! Сохранено %1$d статей, добавлено %2$d очков.</string>
-    <string name="sync_need_auth">Требуется авторизация</string>
-    <string name="authorize">Авторизоваться</string>
-    <string name="settings_data_sync">Сохранение статей в облако</string>
-    <string name="all_data_already_synced">Данные уже синхронизированы, дополнительных действий не требуется.</string>
-    <string name="profile_score_info">У вас %1$d очков. До следующего уровня %2$d очков</string>
-    <string name="profile_score_info_max_level">У вас %1$d очков. У вас максимальный уровень допуска!</string>
-    <string name="image_loading">Изображение загружается…</string>
-    <string name="image_saved">Изображение сохранено</string>
-    <string name="image_saving_error">Произошла ошибка при сохранении изображения</string>
+    <string name="free">Free</string>
+    <string name="dialog_free_ads_disable_title">Remove Ads</string>
+    <string name="start_market_error">Failed to start Play Market</string>
+    <string name="thanks_for_supporting_us">Developers are grateful for your support!</string>
+    <string name="invitation_message">Look at the cool application I found!</string>
+    <string name="invitation_cta">Read the secret documents!</string>
+    <string name="invitation_title">SCP Foundation Secret Materials!</string>
+    <string name="invite_friends">Invite 5 friends to the app!</string>
+    <string name="watch_video_to_disable_ads">Watch video to disable ads for %1$d hours and get %2$d points</string>
+    <string name="app_install_ads_disable_title">Install our other apps to disable Ads %1$d hours and get %2$d points!</string>
+    <string name="vk_group_join_ads_disable_title">Join the VK group to disable %1$d hours and get %2$d points!</string>
+    <string name="need_vk_group_access">Permission to access groups is required. Log again.</string>
+    <string name="gallery">Gallery</string>
+    <string name="error_login_firebase_connection">Login error. Please try again. %s</string>
+    <string name="on_user_logined">Welcome, agent %s</string>
+    <string name="login_in_progress_custom_token">Requesting a password on the Server</string>
+    <string name="error_while_sync">The article could not be saved to the cloud.</string>
+    <string name="sync_fav_success">The article is synchronized.</string>
+    <string name="app_cracked">A hack attempt has been registered. Quarantine mode activated.</string>
+    <string name="auto_sync_disabled">Automatic cloud sync is disabled.</string>
+    <string name="turn_on">Turn ON</string>
+    <string name="enable_auto_sync">Activate automatic sync.</string>
+    <string name="sync">Synchronize.</string>
+    <string name="subscribe">Subscribe</string>
+    <string name="error_while_all_data_sync">The data could not be saved to the cloud. Error: %s</string>
+    <string name="all_data_sync_success">All data is saved to cloud! Saved %1$d articles, added %2$d points.</string>
+    <string name="sync_need_auth">Authorization is required.</string>
+    <string name="authorize">Log in</string>
+    <string name="settings_data_sync">Save articles to the cloud.</string>
+    <string name="all_data_already_synced">The data is already in sync,the data is already in sync,max level!</string>
+    <string name="image_loading">Image loading…</string>
+    <string name="image_saved">Image saved</string>
+    <string name="image_saving_error">An error occurred while saving the image.</string>
     <!--Shortcuts android 7.1-->
-    <string name="new_short">Новые</string>
-    <string name="random_short">Случайная</string>
-    <string name="dialog_level_up_title">Получение 5 уровня допуска</string>
-    <string name="dialog_level_up_content">Внимание персонал! Уровень допуска это чисто декоративная надпись. Она не позволит вам видеть удалённые данные и получить доступ к каким-то скрытым материалам. Вы получите лишь 3 вещи: 10000 очков, надпись \"5 уровень допуска\" и моральное удовлетворение от поддержки разработчиков, которые трудятся для улучшения приложения)</string>
-    <string name="dialog_level_up_ok_text">Я понял!</string>
-    <string name="cracked_level_title">Класс D</string>
-    <string name="cracked_avatar_message">Попытка взлома Фонда зарегистрирована, протокол ██████ активирован.</string>
-    <string name="leaderboard_dialog_title">Рейтинг агентов</string>
-    <string name="refreshed">Обновлено в %s</string>
-    <string name="progress_leaderboard">Связываюсь с отделом кадров Фонда…</string>
-    <string name="level">%d уровень</string>
-    <!--<string name="need_relogin_dialog_title">Требуется повторная авторизация</string>-->
-    <!--<string name="need_relogin_dialog_content">Внимание персонал! В связи с приказом [ДАННЫЕ УДАЛЕНЫ] требуется повторная авторизация. После повторной авторизации ваши данные будут сохраняться в облаке и более не потеряются. Также ваши достижения на должности агента Фонда будут заноситься в таблицу рекордов. Внимание! В случае выхода из аккаунта все несинхронизированные данные будут потеряны! Будьте внимательны и регулярно синхронизируйте ваши данные.</string>-->
-    <!--<string name="i_read_and_accept">Я прочитал и понял</string>-->
-    <!--<string name="relogin">Авторизоваться</string>-->
-    <!--<string name="relogin_dialog_title">Повторная авторизация</string>-->
-    <!--<string name="relogin_dialog_content">Авторизоваться повторно сейчас? Вы можете сделать это позже из левого меню (красная кнопка слева от кнопки выхода из профиля)</string>-->
-    <string name="warning">Внимание!</string>
-    <!--<string name="dialog_logout_content">При выходе из аккаунта все избранные и прочитанные статьи будут сброшены! Убедитесь, что вы всё синхронизировали. Синхронизацию можно произвести в Настройках.</string>-->
-    <string name="dialog_logout_content">Вы действительно хотите выйти? Для неавторизованных агентов система рейтинга отключена и вы не сможете зарабатывать очки и получать выгоду от уже накопленных</string>
-    <string name="logout">Выйти</string>
-    <string name="error_getting_path_to_image">Не удалось сохранить изображение. Попробуйте ещё раз.</string>
-    <string name="faq">Справка</string>
-    <string name="need_login">Требуется авторизация</string>
-    <string name="need_login_content">Внимание агенты! Для добавления в избранное и отмечания статьи прочитанной требуется авторизация. Это позволит вам синхронизировать данные через облако на всех ваших устройствах, а также позволит вам получать очки и участвовать в рейтинге агентов!</string>
-    <string name="sort">Сортировка</string>
-    <string name="dialog_sort_title">Сортировка и фильтр</string>
-    <string name="social_provider_vk_title">Вконтакте</string>
-    <string name="dialog_social_login_title">Авторизация</string>
-    <string name="tags_search">Поиск по тегам</string>
-    <string name="tags_choosen">Выбранные теги</string>
-    <string name="tags_all">Все теги</string>
-    <string name="tags_search_results">Результаты</string>
-    <string name="tags">Теги:</string>
+    <string name="new_short">New</string>
+    <string name="random_short">Random</string>
+    <string name="dialog_level_up_title">Gets the 5 level</string>
+    <string name="dialog_level_up_content">Attention, Staff! Clearance level l it\'s just a decorative inscription. It won\'t allow you to see remote data or access some hidden materials. You\'ll get only 3 things: 10000 points, the \"5 Clearance Level\" label and moral satisfaction from supporting developers, who work to improve the application)</string>
+    <string name="dialog_level_up_ok_text">OK!</string>
+    <string name="cracked_level_title">Class D</string>
+    <string name="cracked_avatar_message">Hack attempt recorded, Protocol ██████ activated.</string>
+    <string name="leaderboard_dialog_title">Agent ranking</string>
+    <string name="refreshed">Updated at %s</string>
+    <string name="progress_leaderboard">Contacting the HR Department of the Foundation…</string>
+    <string name="level">%d Level</string>
+    <!--<string name="i_read_and_accept">I\'ve read and understood</string>-->
+    <!--<string name="relogin">Log in</string>-->
+    <string name="warning">Attention!</string>
+    <!--<string name="dialog_logout_content">When you logout the account, all articles you have selected will be reset! Make sure you synchronized. You can perform the synchronization in Settings.</string>-->
+    <string name="dialog_logout_content">Are you sure want to logout? Rating system is disabled for unauthorized agents and you won\'t be able to use benefits of your already gained score or receive additional ones</string>
+    <string name="logout">Logout</string>
+    <string name="error_getting_path_to_image">The image could not be saved.Please try again.</string>
+    <string name="faq">FAQ</string>
+    <string name="need_login">Authorization is required</string>
+    <string name="need_login_content">Attention agents! You must be authorized to add and check a favorite article. This allows you to synchronize your data across the cloud on all your devices, also allows you to receive points and participate in the agent ranking!</string>
+    <string name="error_inapp">There was an error reading the data.</string>
+    <string name="sort">Sorting</string>
+    <string name="dialog_sort_title">Sort and filter.</string>
+    <string name="dialog_social_login_title">Authorization</string>
+    <string name="error_login_firebase_user_collision">Error-Another user has already registered with this email</string>
+    <string name="tags_search">Tag Search</string>
+    <string name="tags_choosen">Selected tags</string>
+    <string name="tags_all">All tags</string>
+    <string name="tags_search_results">Results</string>
+    <string name="tags">Tags:</string>
 
-    <string name="filter_none">Без фильтра</string>
-    <string name="filter_not_read">Непрочитанные</string>
-    <string name="filter_read">Прочитанные</string>
-    <string name="filter_rating">По рейтингу</string>
-    <string name="filter_title">По названию</string>
-    <string name="filter_neutral_or_not_added">Не назначен или нейтрализован</string>
-    <string name="filter_save">Безопасный</string>
-    <string name="filter_euclid">Евклид</string>
-    <string name="filter_keter">Кетер</string>
-    <string name="filter_thaumiel">Таумиэль</string>
-
-    <string name="feedback_title">Отзыв на SCP RU</string>
-    <string name="notif_new_arts_title">Новые статьи: %1$d%2$s</string>
-
-    <string name="materials_experiments">Протоколы экспериментов</string>
-    <string name="materials_incidents">Отчёты об инцидентах</string>
-    <string name="materials_interview">Интервью с очевидцами</string>
-    <string name="materials_jokes">Шуточные SCP</string>
-    <string name="materials_archive">Архивные SCP</string>
-    <string name="materials_others">Прочие материалы</string>
-    <string name="materials_kadr">За кадром</string>
+    <string name="profile_score_info">You have %1$d points. You need %2$d to achieve next level</string>
+    <string name="profile_score_info_max_level">You have %1$d points. You have maximum access level!</string>
 
     <plurals name="plurals_score">
-        <item quantity="zero">%1$d очков</item>
-        <item quantity="one">%1$d очко</item>
-        <item quantity="two">%1$d очка</item>
-        <item quantity="few">%1$d очка</item>
-        <item quantity="many">%1$d очков</item>
-        <item quantity="other">%1$d очков</item>
+        <item quantity="zero">%1$d points</item>
+        <item quantity="one">%1$d point</item>
+        <item quantity="two">%1$d poits</item>
+        <item quantity="few">%1$d points</item>
+        <item quantity="many">%1$d points</item>
+        <item quantity="other">%1$d points</item>
     </plurals>
 
+    <string name="filter_none">No filter</string>
+    <string name="filter_not_read">Not read only</string>
+    <string name="filter_read">Read only</string>
+    <string name="filter_rating">By rating</string>
+    <string name="filter_title">By title</string>
+
+    <string name="filter_neutral_or_not_added">Neutral or not added</string>
+    <string name="filter_save">Save</string>
+    <string name="filter_euclid">Euclid</string>
+    <string name="filter_keter">Keter</string>
+    <string name="filter_thaumiel">Thaumiel</string>
+
+    <string name="notif_new_arts_title">New articles:  %1$d%2$s</string>
+    <string name="enter">Log in</string>
+    <string name="feedback_title">Review SCP Database</string>
+
+    <string name="stories">Tales</string>
+
+    <!--just ignore it, we use it only in ru version-->
+    <string name="materials_archive">Archived SCPs</string>
+    <string name="materials_jokes">Joke SCPs</string>
+    <string name="materials_others">Other</string>
+    <string name="materials_interview">Interviews</string>
+    <string name="materials_incidents">Incidents</string>
+    <string name="materials_experiments">Experiments</string>
+    <string name="materials_kadr">Experiments</string>
+    <!--end of just ignore it, we use it only in ru version-->
+
+    <string name="error_connection">Connection error</string>
+    <string name="error_parse">Error while HTML parsing</string>
+
+    <string name="social_provider_vk_title">VK</string>
+
     <string-array name="materials_titles">
-        <item>Протоколы экспериментов</item>
-        <item>Отчёты об инцидентах</item>
-        <item>Интервью с очевидцами</item>
-        <item>Шуточные SCP</item>
-        <item>Архивные SCP</item>
-        <item>Прочие материалы</item>
-        <item>За кадром</item>
+        <item>Joke SCPs</item>
+        <item>Archived SCPs</item>
+        <item>Explained SCPs</item>
+        <item>Log of Extranormal Events</item>
     </string-array>
 
-    <string name="download">Загрузить</string>
-
-    <string name="error_login_firebase_user_collision">Ошибка - на этот email уже зарегистрирован другой пользователь.</string>
-    <string name="error_inapp">Ошибка при чтении данных.</string>
-    <string name="error_connection">Ошибка соединения</string>
-    <string name="error_parse">Ошибка парсинга HTML</string>
-
-    <!--ver 1.0.6-->
-    <string name="score_increased">Добавлено %s</string>
-    <string name="random_article_warning">Новая случайная статья генерируется сервером раз в несколько минут.</string>
-    <string name="article_not_translated">Эта статья ещё не переведена на сайте.</string>
-    <string name="offer_app_lang_version_content">Язык вашего девайса - <b>%1$s</b>, а у нас как раз есть это же приложение, где статьи переведены на <b>%2$s</b>. Хотите его установить?\n\nСписок приложений с переводами на разные языки доступен всегда в левом верхнем меню любого экрана.</string>
-    <string name="open_play_market">Открыть Play Market</string>
-    <string name="menuAppLangVersions">Филиалы Фонда</string>
+    <!--ver 1.0.6+-->
+    <string name="score_increased">Added %s</string>
+    <string name="random_article_warning">New random article generates by server every some minutes.</string>
+    <string name="article_not_translated">This article is not translated yet.</string>
+    <string name="offer_app_lang_version_content">Your device language - <b>%1$s</b>, an we have same app, where articles translated to <b>%2$s</b>. Want to install it?\n\nList of apps with different translates is always available in top right menu in any screen.</string>
+    <string name="open_play_market">Open Play Market</string>
+    <string name="menuAppLangVersions">Branches of the Fund</string>
 </resources>

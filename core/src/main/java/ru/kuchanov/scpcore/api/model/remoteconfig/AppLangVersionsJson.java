@@ -36,14 +36,19 @@ public class AppLangVersionsJson {
             return code.hashCode();
         }
 
+//        @Override
+//        public String toString() {
+//            return "AppLangVersion{" +
+//                    "id=" + code +
+//                    ", title='" + title + '\'' +
+//                    ", appPackage=" + appPackage +
+//                    ", icon=" + icon +
+//                    '}';
+//        }
+
         @Override
         public String toString() {
-            return "AppLangVersion{" +
-                    "id=" + code +
-                    ", title='" + title + '\'' +
-                    ", appPackage=" + appPackage +
-                    ", icon=" + icon +
-                    '}';
+            return title;
         }
     }
 

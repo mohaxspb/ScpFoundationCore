@@ -234,8 +234,11 @@
 
     <string name="social_provider_vk_title">VK</string>
 
-    <!--ver 1.0.6-->
+    <!--ver 1.0.6+-->
     <string name="score_increased">Added %s</string>
     <string name="random_article_warning">New random article generates by server every some minutes.</string>
     <string name="article_not_translated">This article is not translated yet.</string>
+    <string name="offer_app_lang_version_content">Your device language - <b>%1$s</b>, an we have same app, where articles translated to <b>%2$s</b>. Want to install it?\n\nList of apps with different translates is always available in top right menu in any screen.</string>
+    <string name="open_play_market">Open Play Market</string>
+    <string name="menuAppLangVersions">Branches of the Fund</string>
 </resources>

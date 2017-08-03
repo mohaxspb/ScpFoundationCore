@@ -735,7 +735,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             mDialogUtils.showFaqDialog(this);
             return true;
         } else if (i == R.id.appLangVersions) {
-            mDialogUtils.showFaqDialog(this);
             mDialogUtils.showAllAppLangVariantsDialog(this);
             return true;
         } else {
