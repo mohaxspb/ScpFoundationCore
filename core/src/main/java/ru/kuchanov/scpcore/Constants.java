@@ -148,6 +148,8 @@ public interface Constants {
             String ARTICLE_BANNER_DISABLED = "article_banner_disabled";
 
             String NO_ADS_SUBS_ENABLED = "no_ads_subs_enabled";
+
+            String APP_LANG_VERSIONS = "app_lang_versions";
         }
 
         int REQUEST_INVITE = 1024;

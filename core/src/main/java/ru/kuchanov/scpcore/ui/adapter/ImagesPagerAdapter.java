@@ -86,18 +86,6 @@ public class ImagesPagerAdapter extends PagerAdapter {
 
         description.setText(mData.get(position).description);
 
-//        PhotoViewAttacher attacher = new PhotoViewAttacher(imageView);
-//        attacher.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
-//            @Override
-//            public void onPhotoTap(View view, float x, float y) {
-//                cardView.setVisibility(cardView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-//            }
-//
-//            @Override
-//            public void onOutsidePhotoTap() {
-//
-//            }
-//        });
         imageView.setOnClickListener(v -> cardView.setVisibility(cardView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE));
 
         String url = mData.get(position).allUrls.get(mData.get(position).allUrls.size() - 1).getVal();

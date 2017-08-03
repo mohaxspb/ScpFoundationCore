@@ -8,9 +8,11 @@ package ru.kuchanov.scpcore.mvp.contract;
 public interface MainMvp extends DrawerMvp {
 
     interface View extends DrawerMvp.View {
+
         void setToolbarTitleByDrawerItemId(int id);
     }
 
     interface Presenter extends DrawerMvp.Presenter<View> {
+
     }
 }
