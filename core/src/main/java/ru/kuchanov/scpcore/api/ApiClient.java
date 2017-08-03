@@ -1,6 +1,7 @@
 package ru.kuchanov.scpcore.api;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -1925,8 +1926,9 @@ public class ApiClient implements ApiClientModel<Article> {
                 }));
     }
 
+    @NonNull
     public String getAppLang() {
-        return null;
+        return "ru";
     }
 
     protected String getScpServerWiki() {

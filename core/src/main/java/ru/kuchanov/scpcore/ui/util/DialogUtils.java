@@ -6,11 +6,19 @@ import android.content.Context;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.gson.GsonBuilder;
 
+import java.util.List;
+import java.util.Locale;
+
+import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.api.model.remoteconfig.AppLangVersionsJson;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
 /**
@@ -54,9 +62,9 @@ public class DialogUtils {
     }
 
     //TODO think how to restore image dialog Maybe use fragment dialog?..
-    public void showImageDialog(Context mContext, String imgUrl) {
+    public void showImageDialog(Context context, String imgUrl) {
         Timber.d("showImageDialog");
-        Dialog nagDialog = new Dialog(mContext, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        Dialog nagDialog = new Dialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         nagDialog.setCancelable(true);
         nagDialog.setContentView(R.layout.preview_image);
 
@@ -69,5 +77,32 @@ public class DialogUtils {
                 .into(photoView);
 
         nagDialog.show();
+    }
+
+    public void showAppLangVariantsDialog(Context context, AppLangVersionsJson.AppLangVersion version) {
+        String langName = new Locale(version.code).getDisplayLanguage();
+        new MaterialDialog.Builder(context)
+                .content(context.getString(R.string.offer_app_lang_version_content, langName, langName))
+                .title(version.title)
+                .positiveText(R.string.open_play_market)
+                .onPositive((dialog1, which) -> IntentUtils.tryOpenPlayMarket(context, version.appPackage))
+                .build()
+                .show();
+    }
+
+    public void showAllAppLangVariantsDialog(Context context) {
+        List<AppLangVersionsJson.AppLangVersion> appLangVersions = new GsonBuilder().create()
+                .fromJson(FirebaseRemoteConfig.getInstance()
+                                .getString(Constants.Firebase.RemoteConfigKeys.APP_LANG_VERSIONS),
+                        AppLangVersionsJson.class).langs;
+        new MaterialDialog.Builder(context)
+                .title(R.string.menuAppLangVersions)
+                .positiveText(R.string.close)
+                .items(appLangVersions)
+                .alwaysCallSingleChoiceCallback()
+                .itemsCallback((dialog, itemView, position, text) ->
+                        IntentUtils.tryOpenPlayMarket(context, appLangVersions.get(position).appPackage))
+                .build()
+                .show();
     }
 }
