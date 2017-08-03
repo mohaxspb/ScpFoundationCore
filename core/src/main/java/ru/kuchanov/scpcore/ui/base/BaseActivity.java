@@ -294,6 +294,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 //            Appodeal.setLogLevel(Log.LogLevel.debug);
         }
         Appodeal.initialize(this, getString(R.string.appodeal_app_key), Appodeal.NON_SKIPPABLE_VIDEO | Appodeal.SKIPPABLE_VIDEO);
+        Appodeal.disableNetwork(this, "cheetah");
         Appodeal.setNonSkippableVideoCallbacks(new MyNonSkippableVideoCallbacks() {
             @Override
             public void onNonSkippableVideoFinished() {
