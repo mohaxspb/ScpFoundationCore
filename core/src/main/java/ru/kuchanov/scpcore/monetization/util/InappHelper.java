@@ -17,6 +17,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -27,6 +28,10 @@ import java.util.List;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
+import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
+import ru.kuchanov.scpcore.db.DbProviderFactory;
+import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Item;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
 import rx.Observable;
@@ -65,8 +70,18 @@ public class InappHelper {
         int FULL_VERSION = 1;
     }
 
+    private ApiClient mApiClient;
+    private MyPreferenceManager mMyPreferenceManager;
+    private DbProviderFactory mDbProviderFactory;
+
+    public InappHelper(MyPreferenceManager preferenceManager, DbProviderFactory dbProviderFactory, ApiClient apiClient) {
+        mMyPreferenceManager = preferenceManager;
+        mDbProviderFactory = dbProviderFactory;
+        mApiClient = apiClient;
+    }
+
     @SubscriptionType
-    public static int getSubscriptionTypeFromItemsList(@NonNull List<Item> ownedItems) {
+    public int getSubscriptionTypeFromItemsList(@NonNull List<Item> ownedItems) {
         @SubscriptionType
         int type;
 
@@ -87,7 +102,7 @@ public class InappHelper {
         return type;
     }
 
-    private static List<String> getSkuListFromItemsList(@NonNull List<Item> ownedItems) {
+    private List<String> getSkuListFromItemsList(@NonNull List<Item> ownedItems) {
         List<String> skus = new ArrayList<>();
         for (Item item : ownedItems) {
             skus.add(item.sku);
@@ -95,8 +110,11 @@ public class InappHelper {
         return skus;
     }
 
-    public static Observable<List<Item>> getOwnedSubsObserveble(IInAppBillingService mInAppBillingService) {
-        return Observable.unsafeCreate(subscriber -> {
+    public Observable<List<Item>> getOwnedSubsObserveble(
+            IInAppBillingService mInAppBillingService,
+            boolean forceInvalidation
+    ) {
+        return Observable.<List<Item>>unsafeCreate(subscriber -> {
             try {
                 Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION, BaseApplication.getAppInstance().getPackageName(), "subs", null);
 
@@ -127,11 +145,48 @@ public class InappHelper {
                 Timber.e(e);
                 subscriber.onError(e);
             }
-        });
+        })
+                .map(items -> {
+                    if (forceInvalidation) {
+                        List<Item> validatedItems = new ArrayList<>();
+                        String packageName = BaseApplication.getAppInstance().getPackageName();
+                        for (Item item : items) {
+                            Timber.d("validate item: %s", item.sku);
+                            try {
+                                PurchaseValidateResponse purchaseValidateResponse = null;
+                                purchaseValidateResponse = mApiClient.validatePurchaseSync(false, packageName, item.sku, item.purchaseData.purchaseToken);
+
+                                @PurchaseValidateResponse.PurchaseValidationStatus
+                                int status = purchaseValidateResponse.getStatus();
+                                Timber.d("PurchaseValidationStatus: %s", status);
+                                switch (status) {
+                                    case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_VALID:
+                                        Timber.d("Item successfully validated: %s", item.sku);
+                                        validatedItems.add(item);
+                                        break;
+                                    case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_INVALID:
+                                        Timber.e("Item validation INVALID: %s", item.sku);
+                                        break;
+                                    case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_GOOGLE_SERVER_ERROR:
+                                        Timber.e("Item validation failed on google side: %s", item.sku);
+                                        break;
+                                    default:
+                                        Timber.e("Unexpected validation status: %s", status);
+                                        break;
+                                }
+                            } catch (IOException e) {
+                                Timber.e(e, "failed validation request to vps server");
+                            }
+                        }
+                        return validatedItems;
+                    } else {
+                        return items;
+                    }
+                });
         //todo add server check here every 6 hours
     }
 
-    public static Observable<List<Item>> getOwnedInappsObserveble(IInAppBillingService mInAppBillingService) {
+    public Observable<List<Item>> getOwnedInappsObserveble(IInAppBillingService mInAppBillingService) {
         return Observable.unsafeCreate(subscriber -> {
             try {
                 Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION, BaseApplication.getAppInstance().getPackageName(), "inapp", null);
@@ -167,7 +222,7 @@ public class InappHelper {
         });
     }
 
-    public static Observable<List<Subscription>> getSubsListToBuyObserveble(IInAppBillingService mInAppBillingService) {
+    public Observable<List<Subscription>> getSubsListToBuyObserveble(IInAppBillingService mInAppBillingService) {
         return Observable.unsafeCreate(subscriber -> {
             try {
                 //get all subs detailed info
@@ -175,7 +230,7 @@ public class InappHelper {
                 List<String> skuList = new ArrayList<>();
                 //get it from build config
                 Collections.addAll(skuList, BaseApplication.getAppInstance().getString(R.string.ver_2_skus).split(","));
-                if(FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
+                if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
                     skuList.add(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_ver_2));
                 }
                 Timber.d("skuList: %s", skuList);
@@ -213,7 +268,7 @@ public class InappHelper {
         });
     }
 
-    public static Observable<List<Subscription>> getInappsListToBuyObserveble(IInAppBillingService mInAppBillingService) {
+    public Observable<List<Subscription>> getInappsListToBuyObserveble(IInAppBillingService mInAppBillingService) {
         return Observable.unsafeCreate(subscriber -> {
             try {
                 //get all subs detailed info
@@ -256,19 +311,49 @@ public class InappHelper {
         });
     }
 
-    public static Observable<Integer> consumeInapp(
+//    public static Observable<Integer> consumeInapp(
+//            String token,
+//            IInAppBillingService mInAppBillingService
+//    ) {
+//        return Observable.unsafeCreate(subscriber -> {
+//            try {
+//                int response = mInAppBillingService.consumePurchase(API_VERSION, BaseApplication.getAppInstance().getPackageName(), token);
+//                subscriber.onNext(response);
+//                subscriber.onCompleted();
+//            } catch (RemoteException e) {
+//                subscriber.onError(e);
+//            }
+//        });
+//    }
+
+    public Observable<Integer> consumeInapp(
+            String sku,
             String token,
             IInAppBillingService mInAppBillingService
     ) {
-        return Observable.unsafeCreate(subscriber -> {
-            try {
-                int response = mInAppBillingService.consumePurchase(API_VERSION, BaseApplication.getAppInstance().getPackageName(), token);
-                subscriber.onNext(response);
-                subscriber.onCompleted();
-            } catch (RemoteException e) {
-                subscriber.onError(e);
-            }
-        });
+        String packageName = BaseApplication.getAppInstance().getPackageName();
+
+        return mApiClient.validatePurchase(false, packageName, sku, token)
+                .flatMap(purchaseValidateResponse -> {
+                    @PurchaseValidateResponse.PurchaseValidationStatus
+                    int status = purchaseValidateResponse.getStatus();
+                    Timber.d("PurchaseValidationStatus: %s", status);
+                    switch (status) {
+                        case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_VALID:
+                            try {
+                                int response = mInAppBillingService.consumePurchase(API_VERSION, packageName, token);
+                                return Observable.just(response);
+                            } catch (RemoteException e) {
+                                return Observable.error(e);
+                            }
+                        case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_INVALID:
+                            return Observable.error(new IllegalStateException("Purchase state is INVALID"));
+                        case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_GOOGLE_SERVER_ERROR:
+                            return Observable.error(new IllegalStateException("Purchase state cant be validated, as Google Servers sends error"));
+                        default:
+                            return Observable.error(new IllegalArgumentException("Unexpected validation status: " + status));
+                    }
+                });
     }
 
     public static void startSubsBuy(

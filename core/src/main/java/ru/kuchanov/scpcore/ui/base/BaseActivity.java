@@ -94,6 +94,8 @@ import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.SocialLoginHolder;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -144,6 +146,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     protected DialogUtils mDialogUtils;
     @Inject
     protected ru.kuchanov.scp.downloads.DialogUtils<Article> mDownloadAllChooser;
+    @Inject
+    protected InappHelper mInappHelper;
     //inapps and ads
     private IInAppBillingService mService;
     private List<Item> mOwnedMarketSubscriptions = new ArrayList<>();
@@ -509,7 +513,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             Timber.d("onServiceConnected");
             mService = IInAppBillingService.Stub.asInterface(service);
             InAppBillingServiceConnectionObservable.getInstance().getServiceStatusObservable().onNext(true);
-            updateOwnedMarketItems();
+            updateOwnedMarketItems(false);
 
             if (isTimeToShowAds()) {
                 requestNewInterstitial();
@@ -518,48 +522,52 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     };
 
     @Override
-    public void updateOwnedMarketItems() {
+    public void updateOwnedMarketItems(boolean forceSubsValidation) {
         Timber.d("updateOwnedMarketItems");
-        InappHelper.getOwnedSubsObserveble(mService).subscribe(
-                items -> {
-                    Timber.d("market items: %s", items);
-                    mOwnedMarketSubscriptions = items;
+        mInappHelper
+                .getOwnedSubsObserveble(mService, forceSubsValidation)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        items -> {
+                            Timber.d("market items: %s", items);
+                            mOwnedMarketSubscriptions = items;
 
-                    @InappHelper.SubscriptionType
-                    int type = InappHelper.getSubscriptionTypeFromItemsList(mOwnedMarketSubscriptions);
-                    Timber.d("subscription type: %s", type);
-                    switch (type) {
-                        case InappHelper.SubscriptionType.NONE:
-                            mMyPreferenceManager.setHasNoAdsSubscription(false);
-                            mMyPreferenceManager.setHasSubscription(false);
-                            break;
-                        case InappHelper.SubscriptionType.NO_ADS: {
-                            mMyPreferenceManager.setHasNoAdsSubscription(true);
-                            mMyPreferenceManager.setHasSubscription(false);
-                            //remove banner
-                            if (mAdView != null) {
-                                mAdView.setEnabled(false);
-                                mAdView.setVisibility(View.GONE);
+                            @InappHelper.SubscriptionType
+                            int type = mInappHelper.getSubscriptionTypeFromItemsList(mOwnedMarketSubscriptions);
+                            Timber.d("subscription type: %s", type);
+                            switch (type) {
+                                case InappHelper.SubscriptionType.NONE:
+                                    mMyPreferenceManager.setHasNoAdsSubscription(false);
+                                    mMyPreferenceManager.setHasSubscription(false);
+                                    break;
+                                case InappHelper.SubscriptionType.NO_ADS: {
+                                    mMyPreferenceManager.setHasNoAdsSubscription(true);
+                                    mMyPreferenceManager.setHasSubscription(false);
+                                    //remove banner
+                                    if (mAdView != null) {
+                                        mAdView.setEnabled(false);
+                                        mAdView.setVisibility(View.GONE);
+                                    }
+                                    break;
+                                }
+                                case InappHelper.SubscriptionType.FULL_VERSION: {
+                                    mMyPreferenceManager.setHasSubscription(true);
+                                    mMyPreferenceManager.setHasNoAdsSubscription(true);
+                                    //remove banner
+                                    AdView banner = ButterKnife.findById(this, R.id.banner);
+                                    if (banner != null) {
+                                        banner.setEnabled(false);
+                                        banner.setVisibility(View.GONE);
+                                    }
+                                    break;
+                                }
+                                default:
+                                    throw new IllegalArgumentException("unexpected type: " + type);
                             }
-                            break;
-                        }
-                        case InappHelper.SubscriptionType.FULL_VERSION: {
-                            mMyPreferenceManager.setHasSubscription(true);
-                            mMyPreferenceManager.setHasNoAdsSubscription(true);
-                            //remove banner
-                            AdView banner = ButterKnife.findById(this, R.id.banner);
-                            if (banner != null) {
-                                banner.setEnabled(false);
-                                banner.setVisibility(View.GONE);
-                            }
-                            break;
-                        }
-                        default:
-                            throw new IllegalArgumentException("unexpected type: " + type);
-                    }
-                },
-                e -> Timber.e(e, "error while getting owned items")
-        );
+                        },
+                        e -> Timber.e(e, "error while getting owned items")
+                );
         //also check if user joined app vk group
         //TODO do not check for non RU version
         mPresenter.checkIfUserJoinedAppVkGroup();

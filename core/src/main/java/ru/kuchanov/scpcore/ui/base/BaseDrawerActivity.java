@@ -39,7 +39,6 @@ import ru.kuchanov.scpcore.api.model.remoteconfig.LevelsJson;
 import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse;
 import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.monetization.model.PurchaseData;
-import ru.kuchanov.scpcore.monetization.util.InappHelper;
 import ru.kuchanov.scpcore.mvp.contract.DrawerMvp;
 import ru.kuchanov.scpcore.ui.dialog.LeaderboardDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
@@ -223,7 +222,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                 headerViewHolder.relogin.setVisibility(View.GONE);
 //            }
 
-            headerViewHolder.levelUp.setOnClickListener(view -> InappHelper.getInappsListToBuyObserveble(getIInAppBillingService()).subscribe(
+            headerViewHolder.levelUp.setOnClickListener(view -> mInappHelper.getInappsListToBuyObserveble(getIInAppBillingService()).subscribe(
                     items -> new MaterialDialog.Builder(view.getContext())
                             .title(R.string.dialog_level_up_title)
                             .content(R.string.dialog_level_up_content)
@@ -247,8 +246,8 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                                         startIntentSenderForResult(pendingIntent.getIntentSender(), REQUEST_CODE_INAPP, new Intent(), 0, 0, 0, null);
                                     } else {
                                         Timber.e("pendingIntent is NULL!");
-                                        InappHelper.getOwnedInappsObserveble(getIInAppBillingService())
-                                                .flatMap(itemsOwned -> InappHelper.consumeInapp(itemsOwned.get(0).purchaseData.purchaseToken, getIInAppBillingService()))
+                                        mInappHelper.getOwnedInappsObserveble(getIInAppBillingService())
+                                                .flatMap(itemsOwned -> mInappHelper.consumeInapp(itemsOwned.get(0).sku, itemsOwned.get(0).purchaseData.purchaseToken, getIInAppBillingService()))
                                                 .subscribeOn(Schedulers.io())
                                                 .observeOn(AndroidSchedulers.mainThread())
                                                 .subscribe(
@@ -374,7 +373,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                 if (item.productId.equals(getString(R.string.inapp_skus).split(",")[0])) {
                     //levelUp 5
                     //add 10 000 score
-                    InappHelper.consumeInapp(item.purchaseToken, getIInAppBillingService())
+                    mInappHelper.consumeInapp(item.productId, item.purchaseToken, getIInAppBillingService())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(

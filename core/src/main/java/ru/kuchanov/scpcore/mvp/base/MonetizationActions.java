@@ -24,7 +24,7 @@ public interface MonetizationActions {
 
     void requestNewInterstitial();
 
-    void updateOwnedMarketItems();
+    void updateOwnedMarketItems(boolean forceSubsValidation);
 
     void showRewardedVideo();
 

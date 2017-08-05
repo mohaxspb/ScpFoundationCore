@@ -90,9 +90,11 @@ public class SetttingsBottomSheetDialogFragment
     TextView mActivateAutoSync;
 
     @Inject
-    protected MyPreferenceManager mMyPreferenceManager;
+    MyPreferenceManager mMyPreferenceManager;
     @Inject
-    protected MyNotificationManager mMyNotificationManager;
+    MyNotificationManager mMyNotificationManager;
+    @Inject
+    InappHelper mInappHelper;
 
     public static BottomSheetDialogFragment newInstance() {
         return new SetttingsBottomSheetDialogFragment();
@@ -225,7 +227,7 @@ public class SetttingsBottomSheetDialogFragment
         });
 
         //hide activate subs for good users
-        boolean showActivateFullVersion = InappHelper.getSubscriptionTypeFromItemsList(getBaseActivity().getOwnedItems())
+        boolean showActivateFullVersion = mInappHelper.getSubscriptionTypeFromItemsList(getBaseActivity().getOwnedItems())
                 != InappHelper.SubscriptionType.FULL_VERSION;
         mActivateAutoSync.setVisibility(showActivateFullVersion ? View.VISIBLE : View.GONE);
     }
