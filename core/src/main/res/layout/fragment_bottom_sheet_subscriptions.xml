@@ -75,6 +75,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_gravity="center_vertical"
             android:paddingTop="@dimen/defaultMarginSmall"
             android:paddingBottom="@dimen/defaultMarginSmall"
             android:paddingLeft="@dimen/defaultMarginSmall"
@@ -87,7 +88,8 @@
         <ImageView
             android:id="@+id/refreshCurrentSubscriptions"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="36dp"
+            android:scaleType="centerInside"
             android:layout_gravity="center_vertical"
             android:background="?selectableItemBackgroundBorderless"
             android:src="?loadingIndicator"
