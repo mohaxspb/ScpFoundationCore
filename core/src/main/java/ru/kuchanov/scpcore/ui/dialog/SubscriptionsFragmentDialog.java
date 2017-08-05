@@ -67,6 +67,11 @@ public class SubscriptionsFragmentDialog
     @BindView(R2.id.freeActions)
     TextView freeActions;
 
+    //    @BindView(R2.id.refreshCurrentSubscriptions)
+//    ImageView refreshCurrentSubscriptions;
+    @BindView(R2.id.currentSubscriptionValue)
+    TextView currentSubscriptionValue;
+
     @Inject
     MyPreferenceManager mMyPreferenceManager;
     @Inject
@@ -122,14 +127,20 @@ public class SubscriptionsFragmentDialog
     }
 
     @OnClick(R2.id.removeAdsOneDay)
-    void onRemoveAdsOneDayClicked() {
+    void onRemoveAdsOneDayClick() {
         dismiss();
         getBaseActivity().showFreeAdsDisablePopup();
     }
 
     @OnClick(R2.id.refresh)
-    void onRefreshClicked() {
-        Timber.d("onRefreshClicked");
+    void onRefreshClick() {
+        Timber.d("onRefreshClick");
+        getMarketData();
+    }
+
+    @OnClick(R2.id.refreshCurrentSubscriptions)
+    void onRefreshCurrentSubscriptionsClick() {
+        Timber.d("onRefreshCurrentSubscriptionsClick");
         getMarketData();
     }
 
@@ -142,7 +153,7 @@ public class SubscriptionsFragmentDialog
         refresh.setVisibility(View.GONE);
         progressCenter.setVisibility(View.VISIBLE);
 
-        mInappHelper.getOwnedSubsObserveble(mInAppBillingService, false)
+        mInappHelper.getValidatedOwnedSubsObserveble(mInAppBillingService)
                 .flatMap(ownedItems -> mInappHelper.getSubsListToBuyObserveble(mInAppBillingService)
                         .flatMap(toBuy -> Observable.just(new Pair<>(ownedItems, toBuy))))
                 .subscribeOn(Schedulers.io())
@@ -159,11 +170,24 @@ public class SubscriptionsFragmentDialog
                             refresh.setVisibility(View.GONE);
                             progressCenter.setVisibility(View.GONE);
                             infoContainer.setVisibility(View.VISIBLE);
-//                            if (ownedItemsAndSubscriptions.first.isEmpty()) {
-//                                currentSubscriptionValue.setText(getString(R.string.no_subscriptions));
-//                            } else {
-//                                currentSubscriptionValue.setText(ownedItemsAndSubscriptions.first.get(0).sku);
-//                            }
+
+                            //show current subscription
+                            @InappHelper.SubscriptionType
+                            int type = mInappHelper.getSubscriptionTypeFromItemsList(ownedItemsAndSubscriptions.first);
+                            switch (type) {
+                                case InappHelper.SubscriptionType.NONE:
+                                    currentSubscriptionValue.setText(getString(R.string.no_subscriptions));
+                                    break;
+                                case InappHelper.SubscriptionType.NO_ADS:
+                                    currentSubscriptionValue.setText(getString(R.string.subscription_no_ads_title));
+                                    break;
+                                case InappHelper.SubscriptionType.FULL_VERSION:
+                                    currentSubscriptionValue.setText(getString(R.string.subscription_full_version_title));
+                                    break;
+                                default:
+                                    throw new IllegalArgumentException("unexected subs type: " + type);
+                            }
+
                             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                             recyclerView.setHasFixedSize(true);
                             SubscriptionsRecyclerAdapter adapter = new SubscriptionsRecyclerAdapter();
@@ -232,11 +256,13 @@ public class SubscriptionsFragmentDialog
 //                    bundle.putFloat(FirebaseAnalytics.Param.VALUE, .5f);
                     bundle.putFloat(FirebaseAnalytics.Param.PRICE, .5f);
                     FirebaseAnalytics.getInstance(getActivity()).logEvent(FirebaseAnalytics.Event.ECOMMERCE_PURCHASE, bundle);
+
+                    //validate subs list
+                    getBaseActivity().updateOwnedMarketItems();
                 } catch (JSONException e) {
                     Timber.e(e, "Failed to parse purchase data.");
+                    getBaseActivity().showError(e);
                 }
-                //remove ads item from menu via updating ownedItems list
-                getBaseActivity().updateOwnedMarketItems(true);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

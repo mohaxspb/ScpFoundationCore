@@ -24,11 +24,11 @@ public interface MonetizationActions {
 
     void requestNewInterstitial();
 
-    void updateOwnedMarketItems(boolean forceSubsValidation);
+    void updateOwnedMarketItems();
 
     void showRewardedVideo();
 
     void startRewardedVideoFlow();
 
-    List<Item> getOwnedItems();
+    boolean isBannerEnabled();
 }

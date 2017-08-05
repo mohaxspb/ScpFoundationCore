@@ -110,10 +110,7 @@ public class InappHelper {
         return skus;
     }
 
-    public Observable<List<Item>> getOwnedSubsObserveble(
-            IInAppBillingService mInAppBillingService,
-            boolean forceInvalidation
-    ) {
+    public Observable<List<Item>> getValidatedOwnedSubsObserveble(IInAppBillingService mInAppBillingService) {
         return Observable.<List<Item>>unsafeCreate(subscriber -> {
             try {
                 Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION, BaseApplication.getAppInstance().getPackageName(), "subs", null);
@@ -146,44 +143,39 @@ public class InappHelper {
                 subscriber.onError(e);
             }
         })
-                .map(items -> {
-                    if (forceInvalidation) {
-                        List<Item> validatedItems = new ArrayList<>();
-                        String packageName = BaseApplication.getAppInstance().getPackageName();
-                        for (Item item : items) {
-                            Timber.d("validate item: %s", item.sku);
-                            try {
-                                PurchaseValidateResponse purchaseValidateResponse = null;
-                                purchaseValidateResponse = mApiClient.validatePurchaseSync(false, packageName, item.sku, item.purchaseData.purchaseToken);
-
-                                @PurchaseValidateResponse.PurchaseValidationStatus
-                                int status = purchaseValidateResponse.getStatus();
-                                Timber.d("PurchaseValidationStatus: %s", status);
-                                switch (status) {
-                                    case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_VALID:
-                                        Timber.d("Item successfully validated: %s", item.sku);
-                                        validatedItems.add(item);
-                                        break;
-                                    case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_INVALID:
-                                        Timber.e("Item validation INVALID: %s", item.sku);
-                                        break;
-                                    case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_GOOGLE_SERVER_ERROR:
-                                        Timber.e("Item validation failed on google side: %s", item.sku);
-                                        break;
-                                    default:
-                                        Timber.e("Unexpected validation status: %s", status);
-                                        break;
-                                }
-                            } catch (IOException e) {
-                                Timber.e(e, "failed validation request to vps server");
+                .flatMap(items -> {
+                    List<Item> validatedItems = new ArrayList<>();
+                    for (Item item : items) {
+                        Timber.d("validate item: %s", item.sku);
+                        try {
+                            PurchaseValidateResponse purchaseValidateResponse = mApiClient.validatePurchaseSync(
+                                    true,
+                                    BaseApplication.getAppInstance().getPackageName(),
+                                    item.sku,
+                                    item.purchaseData.purchaseToken
+                            );
+                            switch (purchaseValidateResponse.getStatus()) {
+                                case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_VALID:
+                                    Timber.d("Item successfully validated: %s", item.sku);
+                                    validatedItems.add(item);
+                                    break;
+                                case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_INVALID:
+//                                    return Observable.error(new IllegalStateException("Purchase state is INVALID"));
+                                    Timber.e("Invalid subs: %s", item.sku);
+                                    break;
+                                case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_GOOGLE_SERVER_ERROR:
+                                    //if there is error we should cancel subs validating
+                                    return Observable.error(new IllegalStateException("Purchase state cant be validated, as Google Servers sends error"));
+                                default:
+                                    return Observable.error(new IllegalArgumentException("Unexpected validation status: " + purchaseValidateResponse.getStatus()));
                             }
+                        } catch (IOException e) {
+                            Timber.e(e, "failed validation request to vps server");
+                            return Observable.error(e);
                         }
-                        return validatedItems;
-                    } else {
-                        return items;
                     }
+                    return Observable.just(validatedItems);
                 });
-        //todo add server check here every 6 hours
     }
 
     public Observable<List<Item>> getOwnedInappsObserveble(IInAppBillingService mInAppBillingService) {

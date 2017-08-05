@@ -227,8 +227,7 @@ public class SetttingsBottomSheetDialogFragment
         });
 
         //hide activate subs for good users
-        boolean showActivateFullVersion = mInappHelper.getSubscriptionTypeFromItemsList(getBaseActivity().getOwnedItems())
-                != InappHelper.SubscriptionType.FULL_VERSION;
+        boolean showActivateFullVersion = mMyPreferenceManager.isHasSubscription();
         mActivateAutoSync.setVisibility(showActivateFullVersion ? View.VISIBLE : View.GONE);
     }
 

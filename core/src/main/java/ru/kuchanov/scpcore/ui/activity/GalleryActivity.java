@@ -96,7 +96,8 @@ public class GalleryActivity
             public void onPageSelected(int position) {
                 mCurPosition = position;
                 if (position % FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_GALLERY_PHOTOS_BETWEEN_INTERSITIAL) == 0) {
-                    if (getOwnedItems().isEmpty()) {
+                    boolean hasSubscription = mMyPreferenceManager.isHasSubscription() || mMyPreferenceManager.isHasNoAdsSubscription();
+                    if (!hasSubscription) {
                         if (isAdsLoaded()) {
                             showInterstitial(new MyAdListener() {
                                 @Override

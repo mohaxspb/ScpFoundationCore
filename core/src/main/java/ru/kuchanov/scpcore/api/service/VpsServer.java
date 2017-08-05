@@ -5,7 +5,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
-import ru.kuchanov.scpcore.api.model.response.SubscriptionValidateResponse;
 import rx.Observable;
 
 /**
@@ -17,20 +16,6 @@ public interface VpsServer {
 
     @GET("scp-ru-1/LeaderBoard")
     Observable<LeaderBoardResponse> getLeaderboard(@Query("lang") String lang);
-//
-//    @GET("purchaseValidation/validate?isSubscription=true")
-//    Observable<SubscriptionValidateResponse> validateSubscriptionPurchase(
-//            @Query("package") String packageName,
-//            @Query("sku") String sku,
-//            @Query("purchaseToken") String purchaseToken
-//    );
-//
-//    @GET("purchaseValidation/validate?isSubscription=false")
-//    Observable<SubscriptionValidateResponse> validateProductPurchase(
-//            @Query("package") String packageName,
-//            @Query("sku") String sku,
-//            @Query("purchaseToken") String purchaseToken
-//    );
 
     @GET("purchaseValidation/validate")
     Observable<PurchaseValidateResponse> validatePurchase(

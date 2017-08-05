@@ -70,7 +70,7 @@
     <string name="settings_notification">Notification preferences</string>
     <string name="dialog_title_subscriptions">Disabling ads, automatic cloud Sync and atmospheric fonts.</string>
     <string name="dialog_title_subscriptions_disabled_free_downloads">Disabling ads, automatic cloud sync, unlimited download articles and atmospheric fonts.</string>
-    <string name="current_subscription">Your current subscription.</string>
+    <string name="current_subscription">Your current subscription:</string>
     <string name="no_subscriptions">Empty</string>
     <string name="refresh">Refresh</string>
     <string name="i_accept">I agree</string>
@@ -262,4 +262,6 @@
     <string name="offer_app_lang_version_content">Your device language - <b>%1$s</b>, an we have same app, where articles translated to <b>%2$s</b>. Want to install it?\n\nList of apps with different translates is always available in top right menu in any screen.</string>
     <string name="open_play_market">Open Play Market</string>
     <string name="menuAppLangVersions">Branches of the Fund</string>
+    <string name="subscription_no_ads_title">Disable ads</string>
+    <string name="subscription_full_version_title">Full version</string>
 </resources>
