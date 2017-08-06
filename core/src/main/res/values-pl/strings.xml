@@ -231,8 +231,8 @@
     <string name="open_play_market"> Otwarte Play Market</string>
     <string name="menuAppLangVersions"> Oddziałów Funduszu </string>
 
-    <!--toDO-->
-    <string name="subscription_no_ads_title">Disable ads</string>
-    <string name="subscription_full_version_title">Full version</string>
-    <string name="attention">Attention!</string>
+    <!---->
+    <string name="subscription_no_ads_title">Wyłącz reklamy</string>
+    <string name="subscription_full_version_title">Pełna wersja</string>
+    <string name="attention">Uwaga!</string>
 </resources>
