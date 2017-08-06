@@ -13,9 +13,7 @@ import android.support.v4.app.FragmentActivity;
 
 import com.android.vending.billing.IInAppBillingService;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.lang.annotation.Retention;
@@ -239,12 +237,8 @@ public class InappHelper {
                     }
 
                     for (String thisResponse : responseList) {
-//                            Timber.d(thisResponse);
-                        JSONObject object = new JSONObject(thisResponse);
-                        String sku = object.getString("productId");
-                        String price = object.getString("price");
-                        String title = object.getString("title");
-                        allSubscriptions.add(new Subscription(sku, price, title));
+                        Subscription subscription = new GsonBuilder().create().fromJson(thisResponse, Subscription.class);
+                        allSubscriptions.add(subscription);
                     }
                     Collections.sort(allSubscriptions, Subscription.COMPARATOR_PRICE);
 
@@ -253,7 +247,7 @@ public class InappHelper {
                 } else {
                     subscriber.onError(new IllegalStateException("ownedItemsBundle.getInt(\"RESPONSE_CODE\") is not 0"));
                 }
-            } catch (RemoteException | JSONException e) {
+            } catch (RemoteException e) {
                 Timber.e(e);
                 subscriber.onError(e);
             }
@@ -283,12 +277,8 @@ public class InappHelper {
                     }
 
                     for (String thisResponse : responseList) {
-                        Timber.d(thisResponse);
-                        JSONObject object = new JSONObject(thisResponse);
-                        String sku = object.getString("productId");
-                        String price = object.getString("price");
-                        String title = object.getString("title");
-                        allSubscriptions.add(new Subscription(sku, price, title));
+                        Subscription subscription = new GsonBuilder().create().fromJson(thisResponse, Subscription.class);
+                        allSubscriptions.add(subscription);
                     }
                     Collections.sort(allSubscriptions, Subscription.COMPARATOR_PRICE);
 
@@ -297,7 +287,7 @@ public class InappHelper {
                 } else {
                     subscriber.onError(new IllegalStateException("ownedItemsBundle.getInt(\"RESPONSE_CODE\") is not 0"));
                 }
-            } catch (RemoteException | JSONException e) {
+            } catch (RemoteException e) {
                 subscriber.onError(e);
             }
         });
@@ -384,5 +374,10 @@ public class InappHelper {
         if (pendingIntent != null) {
             activity.startIntentSenderForResult(pendingIntent.getIntentSender(), REQUEST_CODE_SUBSCRIPTION, new Intent(), 0, 0, 0, null);
         }
+    }
+
+    public static int getMonthsFromSku(String sku){
+        String monthsString = sku.replaceAll("[^\\.0123456789]","");
+        return Integer.parseInt(monthsString);
     }
 }

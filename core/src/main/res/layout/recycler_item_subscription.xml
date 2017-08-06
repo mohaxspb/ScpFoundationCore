@@ -6,25 +6,43 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/defaultMarginSmall"
-    app:cardBackgroundColor="?artListCardBackgroundColor"
     android:foreground="?selectableItemBackground"
+    app:cardBackgroundColor="?artListCardBackgroundColor"
     app:cardCornerRadius="2dp"
     app:cardElevation="2dp"
     >
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:paddingBottom="@dimen/defaultMarginSmall"
             android:paddingLeft="@dimen/defaultMargin"
             android:paddingRight="@dimen/defaultMargin"
             android:paddingTop="@dimen/defaultMarginSmall"
             tools:text="@string/about_org"
             />
-    </FrameLayout>
+
+        <TextView
+            android:id="@+id/percent"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingBottom="@dimen/defaultMarginSmall"
+            android:paddingLeft="@dimen/defaultMargin"
+            android:paddingRight="@dimen/defaultMargin"
+            android:paddingTop="@dimen/defaultMarginSmall"
+            android:textColor="@color/material_green_500"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="-50%"
+            />
+    </LinearLayout>
 </android.support.v7.widget.CardView>

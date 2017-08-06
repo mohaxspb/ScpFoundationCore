@@ -74,12 +74,12 @@
             android:id="@+id/currentSubscription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_gravity="center_vertical"
-            android:paddingTop="@dimen/defaultMarginSmall"
+            android:layout_weight="1"
             android:paddingBottom="@dimen/defaultMarginSmall"
             android:paddingLeft="@dimen/defaultMarginSmall"
             android:paddingRight="@dimen/defaultMarginSmall"
+            android:paddingTop="@dimen/defaultMarginSmall"
             android:text="@string/current_subscription"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -89,14 +89,14 @@
             android:id="@+id/refreshCurrentSubscriptions"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
-            android:scaleType="centerInside"
             android:layout_gravity="center_vertical"
             android:background="?selectableItemBackgroundBorderless"
-            android:src="?loadingIndicator"
             android:paddingLeft="@dimen/defaultMargin"
             android:paddingRight="@dimen/defaultMargin"
-            tools:src="@drawable/ic_autorenew"
+            android:scaleType="centerInside"
+            android:src="?loadingIndicator"
             tools:ignore="ContentDescription"
+            tools:src="@drawable/ic_autorenew"
             />
 
     </LinearLayout>
@@ -111,9 +111,9 @@
         />
 
     <View
-        android:layout_margin="@dimen/defaultMarginSmall"
         android:layout_width="match_parent"
         android:layout_height="2dp"
+        android:layout_margin="@dimen/defaultMarginSmall"
         android:background="?windowBackgroundDark"
         />
 
