@@ -72,6 +72,7 @@ import ru.kuchanov.scpcore.api.model.ArticleFromSearchTagsOnSite;
 import ru.kuchanov.scpcore.api.model.firebase.ArticleInFirebase;
 import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser;
 import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse;
+import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
 import ru.kuchanov.scpcore.api.model.response.VkGalleryResponse;
 import ru.kuchanov.scpcore.api.model.response.VkGroupJoinResponse;
 import ru.kuchanov.scpcore.api.service.ScpServer;
@@ -1313,7 +1314,7 @@ public class ApiClient implements ApiClientModel<Article> {
         switch (provider) {
             case VK:
                 authToFirebaseObservable = Observable.<String>unsafeCreate(subscriber -> {
-                    String url = BuildConfig.TOOLS_API_URL + "MyServlet";
+                    String url = BuildConfig.TOOLS_API_URL + "scp-ru-1/MyServlet";
                     String params = "?provider=vk&token=" +
                             id +
                             "&email=" + VKAccessToken.currentToken().email +
@@ -1924,6 +1925,24 @@ public class ApiClient implements ApiClientModel<Article> {
                     }
                     return tags;
                 }));
+    }
+
+    public Observable<PurchaseValidateResponse> validatePurchase(
+            boolean isSubscription,
+            String packageName,
+            String sku,
+            String purchaseToken
+    ){
+        return bindWithUtils(mVpsServer.validatePurchase(isSubscription, packageName, sku, purchaseToken));
+    }
+
+    public PurchaseValidateResponse validatePurchaseSync(
+            boolean isSubscription,
+            String packageName,
+            String sku,
+            String purchaseToken
+    ) throws IOException {
+        return mVpsServer.validatePurchaseSync(isSubscription, packageName, sku, purchaseToken).execute().body();
     }
 
     @NonNull

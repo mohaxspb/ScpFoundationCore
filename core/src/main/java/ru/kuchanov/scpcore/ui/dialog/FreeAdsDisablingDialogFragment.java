@@ -74,8 +74,7 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
         Timber.d("onCreateDialog");
         MaterialDialog dialog;
 
-        MaterialDialog.Builder dialogTextSizeBuilder = new MaterialDialog.Builder(getActivity());
-        dialogTextSizeBuilder
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity())
                 .title(R.string.dialog_free_ads_disable_title)
                 .positiveText(android.R.string.cancel);
 
@@ -212,9 +211,9 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
             }
         });
 
-        dialogTextSizeBuilder.adapter(adapter, new LinearLayoutManager(getActivity()));
+        builder.adapter(adapter, new LinearLayoutManager(getActivity()));
 
-        dialog = dialogTextSizeBuilder.build();
+        dialog = builder.build();
 
         dialog.getRecyclerView().addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 

@@ -26,6 +26,7 @@ import ru.kuchanov.scpcore.ui.adapter.ArticleRecyclerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListRecyclerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SubscriptionsRecyclerAdapter;
+import ru.kuchanov.scpcore.ui.dialog.CC3LicenseDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.FreeAdsDisablingDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SetttingsBottomSheetDialogFragment;
@@ -130,6 +131,8 @@ public interface AppComponent {
     void inject(FreeAdsDisablingDialogFragment dialogFragment);
 
     void inject(SetttingsBottomSheetDialogFragment dialogFragment);
+
+    void inject(CC3LicenseDialogFragment dialogFragment);
 
     void inject(ArticlesListRecyclerAdapter adapter);
 

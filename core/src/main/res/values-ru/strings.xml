@@ -57,7 +57,7 @@
     <string name="settings_notification">Настройки уведомлений</string>
     <string name="dialog_title_subscriptions">Отключение рекламы, автоматическая облачная синхронизация и атмосферные шрифты</string>
     <string name="dialog_title_subscriptions_disabled_free_downloads">Отключение рекламы, автоматическая облачная синхронизация, безлимитное скачивание статей и атмосферные шрифты</string>
-    <string name="current_subscription">Ваша текущая подписка</string>
+    <string name="current_subscription">Ваша текущая подписка:</string>
     <string name="no_subscriptions">Пусто</string>
     <string name="refresh">Обновить</string>
     <string name="i_accept">Я согласен</string>
@@ -238,4 +238,8 @@
     <string name="offer_app_lang_version_content">Язык вашего девайса - <b>%1$s</b>, а у нас как раз есть это же приложение, где статьи переведены на <b>%2$s</b>. Хотите его установить?\n\nСписок приложений с переводами на разные языки доступен всегда в правом верхнем меню любого экрана.</string>
     <string name="open_play_market">Открыть Play Market</string>
     <string name="menuAppLangVersions">Филиалы Фонда</string>
+    <!---->
+    <string name="subscription_no_ads_title">Отключение рекламы</string>
+    <string name="subscription_full_version_title">Полная версия</string>
+    <string name="attention">Внимание!</string>
 </resources>

@@ -459,7 +459,11 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                 .flatMap(newTotalScore -> mApiClient.addRewardedInapp(sku).flatMap(aVoid -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore)))
                 //TODO need to realize it as we realize vk groups and apps - write inapps to json and check if we need to add score for it
                 .subscribe(
-                        newTotalScore -> Timber.d("new total score is: %s", newTotalScore),
+                        newTotalScore -> {
+                            Timber.d("new total score is: %s", newTotalScore);
+                            Context context = BaseApplication.getAppInstance();
+                            getView().showMessage(context.getString(R.string.score_increased, context.getResources().getQuantityString(R.plurals.plurals_score, totalScoreToAdd, totalScoreToAdd)));
+                        },
                         e -> {
                             Timber.e(e, "error while increment userCore from inapp");
                             getView().showError(e);

@@ -11,6 +11,7 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.InappHelper;
 import ru.kuchanov.scpcore.service.DownloadAllServiceDefault;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
@@ -74,5 +75,16 @@ public class HelpersModule {
 
     protected MaterialsActivity.MaterialClickListener getMaterialClickListenerImpl(@NonNull ConstantValues constantValues) {
         return new MaterialClickListenerDefault(constantValues);
+    }
+
+    @Provides
+    @NonNull
+    @Singleton
+    InappHelper providesInappHelper(
+            @NonNull MyPreferenceManager preferenceManager,
+            @NonNull DbProviderFactory dbProviderFactory,
+            @NonNull ApiClient apiClient
+    ) {
+        return new InappHelper(preferenceManager, dbProviderFactory, apiClient);
     }
 }

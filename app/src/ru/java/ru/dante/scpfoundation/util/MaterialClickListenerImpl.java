@@ -2,6 +2,7 @@ package ru.dante.scpfoundation.util;
 
 import android.support.v4.app.FragmentTransaction;
 
+import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 import ru.kuchanov.scpcore.ui.base.BaseActivity;
@@ -60,7 +61,7 @@ public class MaterialClickListenerImpl implements MaterialsActivity.MaterialClic
                 fragmentTransaction.commit();
                 break;
             case 6:
-                activity.startArticleActivity(mConstantValues.getUrlsValues().getLeaks());
+                activity.startArticleActivity(mConstantValues.getLeaks());
                 break;
             default:
                 throw new RuntimeException("unexpected position in materials list");

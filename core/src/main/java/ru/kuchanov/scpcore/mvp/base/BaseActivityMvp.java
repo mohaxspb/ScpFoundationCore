@@ -9,9 +9,8 @@ import ru.kuchanov.scpcore.mvp.contract.LoginActions;
  */
 public interface BaseActivityMvp {
 
-    interface View extends BaseMvp.View, LoginActions.View {
+    interface View extends BaseMvp.View, LoginActions.View, MonetizationActions {
 
-        boolean isBannerEnabled();
     }
 
     interface Presenter<V extends View> extends BaseMvp.Presenter<V>, LoginActions.Presenter {

@@ -8,7 +8,6 @@
         android:id="@+id/subscribe"
         android:icon="@drawable/ic_monetization_on_white_24dp"
         android:title="@string/in_apps"
-        android:visible="false"
         app:showAsAction="never"
         />
 
