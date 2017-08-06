@@ -6,11 +6,13 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.Html;
+import android.text.util.Linkify;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import javax.inject.Inject;
 
+import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
@@ -26,7 +28,9 @@ public class NewVersionDialogFragment extends DialogFragment {
     public static final String EXTRA_TITLE = NewVersionDialogFragment.class.getSimpleName();
 
     @Inject
-    protected MyPreferenceManager mMyPreferenceManager;
+    MyPreferenceManager mMyPreferenceManager;
+    @Inject
+    ConstantValues mConstantValues;
 
     public static DialogFragment newInstance(String title) {
         DialogFragment fragment = new NewVersionDialogFragment();
@@ -46,7 +50,7 @@ public class NewVersionDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Timber.d("onCreateDialog");
-        final MaterialDialog dialogTextSize;
+        MaterialDialog dialog;
         String newVersionFeatures = "";
         try {
             Timber.d("SystemUtils.getPackageInfo().versionCode: %s", SystemUtils.getPackageInfo().versionCode);
@@ -54,6 +58,8 @@ public class NewVersionDialogFragment extends DialogFragment {
         } catch (Exception e) {
             Timber.e(e, "error while read newVersionFeatures from file");
         }
+
+        newVersionFeatures = newVersionFeatures.concat("<br/><br/>").concat(getString(R.string.license_en, mConstantValues.getBaseApiUrl(), mConstantValues.getBaseApiUrl()));
 
         String title = getArguments().getString(EXTRA_TITLE, getString(R.string.app_name));
 
@@ -63,9 +69,13 @@ public class NewVersionDialogFragment extends DialogFragment {
                 .title(title)
                 .positiveText(R.string.yes_sir);
 
-        dialogTextSize = dialogTextSizeBuilder.build();
+        dialog = dialogTextSizeBuilder.build();
 
-        return dialogTextSize;
+        if (dialog.getContentView() != null) {
+            dialog.getContentView().setLinksClickable(true);
+            dialog.getContentView().setAutoLinkMask(Linkify.WEB_URLS);
+        }
+        return dialog;
     }
 
     @Override

@@ -71,6 +71,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String DATA_RESTORED = "DATA_RESTORED";
         String TIME_FOR_WHICH_BANNERS_DISABLED = "TIME_FOR_WHICH_BANNERS_DISABLED";
         String LAST_TIME_SUBSCRIPTIONS_INVALIDATED = "LAST_TIME_SUBSCRIPTIONS_INVALIDATED";
+        String PERSONAL_DATA_ACCEPTED = "PERSONAL_DATA_ACCEPTED";
     }
 
     private Gson mGson;
@@ -435,6 +436,14 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
 
     public void setLicenceAccepted(boolean accepted) {
         mPreferences.edit().putBoolean(Keys.LICENCE_ACCEPTED, accepted).apply();
+    }
+
+    public boolean isPersonalDataAccepted() {
+        return mPreferences.getBoolean(Keys.PERSONAL_DATA_ACCEPTED, false);
+    }
+
+    public void setPersonalDataAccepted(boolean accepted) {
+        mPreferences.edit().putBoolean(Keys.PERSONAL_DATA_ACCEPTED, accepted).apply();
     }
 
     public boolean isDataRestored() {

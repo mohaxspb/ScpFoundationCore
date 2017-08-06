@@ -73,8 +73,10 @@
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:linksClickable="true"
+        android:autoLink="web"
         android:padding="@dimen/defaultMargin"
-        android:text="@string/license_en"
+        tools:text="@string/license_en"
         />
 
 </LinearLayout>
