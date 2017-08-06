@@ -1,5 +1,7 @@
 package ru.dante.scpfoundation.api;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.Gson;
 
 import org.jsoup.Jsoup;
@@ -13,6 +15,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
+import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.*;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
@@ -110,8 +113,9 @@ public class ApiClientImpl extends ApiClient {
         return "scp-ru";
     }
 
+    @NonNull
     @Override
-    protected String getAppLang() {
-        return null;
+    public String getAppLang() {
+        return "ru";
     }
 }

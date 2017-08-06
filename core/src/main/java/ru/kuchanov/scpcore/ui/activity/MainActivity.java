@@ -26,6 +26,7 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.api.model.remoteconfig.AppLangVersionsJson;
 import ru.kuchanov.scpcore.mvp.contract.MainMvp;
 import ru.kuchanov.scpcore.ui.base.BaseDrawerActivity;
+import ru.kuchanov.scpcore.ui.dialog.CC3LicenseDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.fragment.ArticleFragment;
@@ -156,6 +157,13 @@ public class MainActivity
         mNavigationView.setCheckedItem(mCurrentSelectedDrawerItemId);
         setToolbarTitleByDrawerItemId(mCurrentSelectedDrawerItemId);
 
+        if(!mMyPreferenceManager.isPersonalDataAccepted()){
+            DialogFragment dialogFragment = CC3LicenseDialogFragment.newInstance();
+            dialogFragment.show(getFragmentManager(), CC3LicenseDialogFragment.TAG);
+        }
+    }
+
+    public void showAppLangOrVersionFeaturesDialog(){
         //first time check for device locale and offer proper lang app version if it is
         //else - show new version features
         if (mMyPreferenceManager.getCurAppVersion() == 0) {

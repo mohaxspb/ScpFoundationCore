@@ -30,5 +30,5 @@ public interface MonetizationActions {
 
     void startRewardedVideoFlow();
 
-    List<Item> getOwnedItems();
+    boolean isBannerEnabled();
 }

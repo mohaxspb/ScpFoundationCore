@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -15,10 +17,12 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
+import ru.kuchanov.scpcore.monetization.util.InappHelper;
 import timber.log.Timber;
 
 /**
@@ -75,23 +79,49 @@ public class SubscriptionsRecyclerAdapter extends RecyclerView.Adapter<Subscript
 
         @BindView(R2.id.title)
         TextView title;
+        @BindView(R2.id.percent)
+        TextView percent;
 
         ViewHolderText(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-        void bind(Subscription article) {
-            Timber.d("bind with date: %s", article);
+        void bind(Subscription subscription) {
+            Timber.d("bind with date: %s", subscription);
             Context context = itemView.getContext();
             float uiTextScale = mMyPreferenceManager.getUiTextScale();
             int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_primary);
 
-            itemView.setOnClickListener(v -> mArticleClickListener.onSubscriptionClicked(article));
+            itemView.setOnClickListener(v -> mArticleClickListener.onSubscriptionClicked(subscription));
 
             title.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiTextScale * textSizePrimary);
-            String text = article.title.replace("(" + context.getString(R.string.app_name) + ")", "") + " - " + article.price;
+            String text = subscription.title.replace("(" + context.getString(R.string.app_name) + ")", "") + " - " + subscription.price;
             title.setText(text);
+
+            //calculate percent
+            long initialMonthCostsInMicros;
+            if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
+                //do not show percent for no ads subs
+                if (subscription.productId.equals(mData.get(0).productId)) {
+                    percent.setVisibility(View.GONE);
+                    return;
+                } else {
+                    percent.setVisibility(View.VISIBLE);
+                }
+                initialMonthCostsInMicros = mData.get(1).price_amount_micros;
+            } else {
+                if (subscription.productId.equals(mData.get(0).productId)) {
+                    percent.setVisibility(View.GONE);
+                } else {
+                    percent.setVisibility(View.VISIBLE);
+                }
+                initialMonthCostsInMicros = mData.get(0).price_amount_micros;
+            }
+            int months = InappHelper.getMonthsFromSku(subscription.productId);
+            long oneMonthPriceForMonths = initialMonthCostsInMicros * months;
+            long percentCosts = 100L - subscription.price_amount_micros * 100L / oneMonthPriceForMonths;
+            percent.setText("-" + percentCosts + "%");
         }
     }
 

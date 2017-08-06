@@ -20,21 +20,21 @@
         <TextView
             android:id="@+id/dialogTitle"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:padding="@dimen/defaultMargin"
             android:text="@string/dialog_title_subscriptions"
-            android:textSize="21sp"
+            android:textSize="19sp"
             android:textStyle="bold"
             />
 
         <ImageView
             android:id="@+id/info"
-            android:src="@drawable/ic_info_outline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/defaultMargin"
             android:background="?selectableItemBackgroundBorderless"
+            android:padding="@dimen/defaultMargin"
+            android:src="@drawable/ic_info_outline"
             tools:ignore="ContentDescription"
             />
 
@@ -56,12 +56,66 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:padding="@dimen/defaultMargin"
+            android:padding="@dimen/defaultMarginSmall"
             android:text="@string/remove_ads_for_free"
             android:textColor="@color/material_green_500"
             android:textSize="17sp"
             />
     </android.support.v7.widget.CardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables"
+        >
+
+        <TextView
+            android:id="@+id/currentSubscription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:paddingBottom="@dimen/defaultMarginSmall"
+            android:paddingLeft="@dimen/defaultMarginSmall"
+            android:paddingRight="@dimen/defaultMarginSmall"
+            android:paddingTop="@dimen/defaultMarginSmall"
+            android:text="@string/current_subscription"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            />
+
+        <ImageView
+            android:id="@+id/refreshCurrentSubscriptions"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_gravity="center_vertical"
+            android:background="?selectableItemBackgroundBorderless"
+            android:paddingLeft="@dimen/defaultMargin"
+            android:paddingRight="@dimen/defaultMargin"
+            android:scaleType="centerInside"
+            android:src="?loadingIndicator"
+            tools:ignore="ContentDescription"
+            tools:src="@drawable/ic_autorenew"
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/currentSubscriptionValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/defaultMarginSmall"
+        android:textSize="16sp"
+        tools:text="@string/no_subscriptions"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_margin="@dimen/defaultMarginSmall"
+        android:background="?windowBackgroundDark"
+        />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -106,8 +160,8 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:scrollbars="vertical"
                 android:layout_height="match_parent"
+                android:scrollbars="vertical"
                 />
 
         </LinearLayout>

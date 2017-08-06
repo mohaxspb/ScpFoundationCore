@@ -34,7 +34,10 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
      * check if user joined app vk group each 2 hours
      */
     private static final long PERIOD_BETWEEN_APP_VK_GROUP_JOINED_CHECK_IN_MILLIS = 1000 * 60 * 60 * 2;
-//    private static final long PERIOD_BETWEEN_NEED_RELOGIN_POPUP_IN_MILLIS = 1000 * 60 * 5;
+    /**
+     * update user subs every 6 hours
+     */
+    private static final long PERIOD_BETWEEN_SUBSCRIPTIONS_INVALIDATION_IN_MILLIS = 1000 * 60 * 60 * 6;
 
     public interface Keys {
         String NIGHT_MODE = "NIGHT_MODE";
@@ -67,6 +70,8 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String APP_VK_GROUP_JOINED = "APP_VK_GROUP_JOINED";
         String DATA_RESTORED = "DATA_RESTORED";
         String TIME_FOR_WHICH_BANNERS_DISABLED = "TIME_FOR_WHICH_BANNERS_DISABLED";
+        String LAST_TIME_SUBSCRIPTIONS_INVALIDATED = "LAST_TIME_SUBSCRIPTIONS_INVALIDATED";
+        String PERSONAL_DATA_ACCEPTED = "PERSONAL_DATA_ACCEPTED";
     }
 
     private Gson mGson;
@@ -390,6 +395,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return mPreferences.getInt(Keys.UNSYNCED_SCORE, 0);
     }
 
+    //check vk group joined
     public void setLastTimeAppVkGroupJoinedChecked(long timeInMillis) {
         mPreferences.edit().putLong(Keys.APP_VK_GROUP_JOINED_LAST_TIME_CHECKED, timeInMillis).apply();
     }
@@ -397,13 +403,30 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     private long getLastTimeAppVkGroupJoinedChecked() {
         long timeFromLastShow = mPreferences.getLong(Keys.APP_VK_GROUP_JOINED_LAST_TIME_CHECKED, 0);
         if (timeFromLastShow == 0) {
-            setLastTimeAdsShows(System.currentTimeMillis());
+            setLastTimeAppVkGroupJoinedChecked(System.currentTimeMillis());
         }
         return timeFromLastShow;
     }
 
     public boolean isTimeToCheckAppVkGroupJoined() {
         return System.currentTimeMillis() - getLastTimeAppVkGroupJoinedChecked() >= PERIOD_BETWEEN_APP_VK_GROUP_JOINED_CHECK_IN_MILLIS;
+    }
+
+    //periodical update of subscriptions
+    public void setLastTimeSubscriptionsValidated(long timeInMillis) {
+        mPreferences.edit().putLong(Keys.LAST_TIME_SUBSCRIPTIONS_INVALIDATED, timeInMillis).apply();
+    }
+
+    private long getLastTimeSubscriptionsValidated() {
+        long timeFromLastShow = mPreferences.getLong(Keys.LAST_TIME_SUBSCRIPTIONS_INVALIDATED, 0);
+        if (timeFromLastShow == 0) {
+            setLastTimeSubscriptionsValidated(System.currentTimeMillis());
+        }
+        return timeFromLastShow;
+    }
+
+    public boolean isTimeToValidateSubscriptions() {
+        return System.currentTimeMillis() - getLastTimeSubscriptionsValidated() >= PERIOD_BETWEEN_SUBSCRIPTIONS_INVALIDATION_IN_MILLIS;
     }
 
     //utils
@@ -413,6 +436,14 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
 
     public void setLicenceAccepted(boolean accepted) {
         mPreferences.edit().putBoolean(Keys.LICENCE_ACCEPTED, accepted).apply();
+    }
+
+    public boolean isPersonalDataAccepted() {
+        return mPreferences.getBoolean(Keys.PERSONAL_DATA_ACCEPTED, false);
+    }
+
+    public void setPersonalDataAccepted(boolean accepted) {
+        mPreferences.edit().putBoolean(Keys.PERSONAL_DATA_ACCEPTED, accepted).apply();
     }
 
     public boolean isDataRestored() {

@@ -6,6 +6,7 @@ import ru.dante.scpfoundation.MyApplicationImpl;
 import ru.dante.scpfoundation.R;
 import ru.dante.scpfoundation.di.AppComponentImpl;
 import ru.kuchanov.scp.downloads.ApiClientModel;
+import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scp.downloads.DbProviderModel;
 import ru.kuchanov.scp.downloads.DownloadAllService;
 import ru.kuchanov.scp.downloads.DownloadEntry;
@@ -49,7 +50,7 @@ public class DownloadAllServiceImpl extends DownloadAllService<Article> {
 
     @Override
     protected int getNumOfArticlesOnRecentPage() {
-        return mConstantValues.getApiValues().getNumOfArticlesOnRecentPage();
+        return mConstantValues.getNumOfArticlesOnRecentPage();
     }
 
     @Override
