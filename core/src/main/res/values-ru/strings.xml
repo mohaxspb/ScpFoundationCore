@@ -238,7 +238,8 @@
     <string name="offer_app_lang_version_content">Язык вашего девайса - <b>%1$s</b>, а у нас как раз есть это же приложение, где статьи переведены на <b>%2$s</b>. Хотите его установить?\n\nСписок приложений с переводами на разные языки доступен всегда в правом верхнем меню любого экрана.</string>
     <string name="open_play_market">Открыть Play Market</string>
     <string name="menuAppLangVersions">Филиалы Фонда</string>
-
+    <!---->
     <string name="subscription_no_ads_title">Отключение рекламы</string>
     <string name="subscription_full_version_title">Полная версия</string>
+    <string name="attention">Внимание!</string>
 </resources>

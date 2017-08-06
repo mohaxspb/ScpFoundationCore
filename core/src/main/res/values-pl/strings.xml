@@ -234,4 +234,5 @@
     <!--toDO-->
     <string name="subscription_no_ads_title">Disable ads</string>
     <string name="subscription_full_version_title">Full version</string>
+    <string name="attention">Attention!</string>
 </resources>
