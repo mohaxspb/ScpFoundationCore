@@ -1,7 +1,6 @@
 package ru.kuchanov.scpcore.api;
 
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -171,7 +170,7 @@ public class ApiClient implements ApiClientModel<Article> {
     public Observable<Integer> getRecentArticlesPageCountObservable() {
         return bindWithUtils(Observable.<Integer>unsafeCreate(subscriber -> {
             Request request = new Request.Builder()
-                    .url(mConstantValues.getBaseApiUrl() + mConstantValues.getMostRecentUrl() + 1)
+                    .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();
 
             String responseBody = null;
@@ -213,7 +212,7 @@ public class ApiClient implements ApiClientModel<Article> {
     public Observable<List<Article>> getRecentArticlesForPage(int page) {
         return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
             Request request = new Request.Builder()
-                    .url(mConstantValues.getBaseApiUrl() + mConstantValues.getMostRecentUrl() + page)
+                    .url(mConstantValues.getNewArticles() + "/p/" + page)
                     .build();
 
             String responseBody = null;
@@ -296,7 +295,7 @@ public class ApiClient implements ApiClientModel<Article> {
             int page = offset / mConstantValues.getNumOfArticlesOnRatedPage() + 1/*as pages are not zero based*/;
 
             Request request = new Request.Builder()
-                    .url(mConstantValues.getMostRatedUrl() + "/p/" + page)
+                    .url(mConstantValues.getMostRated() + "/p/" + page)
                     .build();
 
             String responseBody = null;
@@ -1896,7 +1895,7 @@ public class ApiClient implements ApiClientModel<Article> {
     }
 
     public Observable<LeaderBoardResponse> getLeaderboard() {
-        return bindWithUtils(mVpsServer.getLeaderboard(getAppLang()));
+        return bindWithUtils(mVpsServer.getLeaderboard(mConstantValues.getAppLang()));
     }
 
     public Observable<List<Article>> getArticlesByTags(List<ArticleTag> tags) {
@@ -1932,7 +1931,7 @@ public class ApiClient implements ApiClientModel<Article> {
             String packageName,
             String sku,
             String purchaseToken
-    ){
+    ) {
         return bindWithUtils(mVpsServer.validatePurchase(isSubscription, packageName, sku, purchaseToken));
     }
 
@@ -1943,11 +1942,6 @@ public class ApiClient implements ApiClientModel<Article> {
             String purchaseToken
     ) throws IOException {
         return mVpsServer.validatePurchaseSync(isSubscription, packageName, sku, purchaseToken).execute().body();
-    }
-
-    @NonNull
-    public String getAppLang() {
-        return "ru";
     }
 
     protected String getScpServerWiki() {

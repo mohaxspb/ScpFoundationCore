@@ -227,8 +227,8 @@ public class SetttingsBottomSheetDialogFragment
         });
 
         //hide activate subs for good users
-        boolean showActivateFullVersion = mMyPreferenceManager.isHasSubscription();
-        mActivateAutoSync.setVisibility(showActivateFullVersion ? View.VISIBLE : View.GONE);
+        boolean noFullSubscription = !mMyPreferenceManager.isHasSubscription();
+        mActivateAutoSync.setVisibility(noFullSubscription ? View.VISIBLE : View.GONE);
     }
 
     @OnClick(R2.id.buy)

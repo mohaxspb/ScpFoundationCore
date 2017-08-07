@@ -61,6 +61,7 @@ public class NewVersionDialogFragment extends DialogFragment {
 
         newVersionFeatures = newVersionFeatures.concat("<br/><br/>").concat(getString(R.string.license_en, mConstantValues.getBaseApiUrl(), mConstantValues.getBaseApiUrl()));
 
+
         String title = getArguments().getString(EXTRA_TITLE, getString(R.string.app_name));
 
         MaterialDialog.Builder dialogTextSizeBuilder = new MaterialDialog.Builder(getActivity());
