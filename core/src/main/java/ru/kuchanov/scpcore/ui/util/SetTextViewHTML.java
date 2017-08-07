@@ -1,10 +1,12 @@
 package ru.kuchanov.scpcore.ui.util;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
@@ -54,6 +57,14 @@ public class SetTextViewHTML {
         int end = strBuilder.getSpanEnd(span);
         int flags = strBuilder.getSpanFlags(span);
         ClickableSpan clickable = new ClickableSpan() {
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+                if (span.getURL().startsWith(Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL)) {
+                    ds.setColor(ContextCompat.getColor(BaseApplication.getAppInstance(), R.color.material_red_500));
+                }
+            }
+
             @Override
             public void onClick(View view) {
                 Timber.d("Link clicked: %s", span.getURL());

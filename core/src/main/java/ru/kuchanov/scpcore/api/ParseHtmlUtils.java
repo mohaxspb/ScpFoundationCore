@@ -27,8 +27,8 @@ public class ParseHtmlUtils {
         String TABLE = "TABLE";
     }
 
-    public static ArrayList<String> getArticlesTextParts(String html) {
-        ArrayList<String> articlesTextParts = new ArrayList<>();
+    public static List<String> getArticlesTextParts(String html) {
+        List<String> articlesTextParts = new ArrayList<>();
         Document document = Jsoup.parse(html);
 //        Timber.d(document.outerHtml());
         Element contentPage = document.getElementById("page-content");
