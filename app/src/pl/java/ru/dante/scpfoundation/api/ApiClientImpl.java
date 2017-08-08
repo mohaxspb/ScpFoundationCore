@@ -174,9 +174,9 @@ public class ApiClientImpl extends ApiClient {
 
             Element pTag = element.getElementsByTag("p").first();
             String ratingString = pTag.text().substring(pTag.text().indexOf("Ocena: ") + "Ocena: ".length());
-            Timber.d("ratingString: %s", ratingString);
+//            Timber.d("ratingString: %s", ratingString);
             ratingString = ratingString.substring(0, ratingString.indexOf(", Komentarze"));
-            Timber.d("ratingString: %s", ratingString);
+//            Timber.d("ratingString: %s", ratingString);
             int rating = Integer.parseInt(ratingString);
             //TODO parse date
 
