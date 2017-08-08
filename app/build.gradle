@@ -10,13 +10,13 @@ apply from: '../marketSkusCreator.gradle'
 apply from: '../apiKeysCreator.gradle'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
 
     defaultConfig {
         applicationId "ru.dante.scpfoundation"
         minSdkVersion 17
-        targetSdkVersion 25
+        targetSdkVersion 26
 
         // Enabling multidex support.
         multiDexEnabled true
@@ -127,7 +127,6 @@ dependencies {
 //    ruDevReleaseCompile(group: 'ru.kuchanov.scp', name: 'core', version: '1.0.0', ext: 'aar', classifier: 'devRelease'){transitive = true}
 //    //or
 //    ruDevReleaseCompile('ru.kuchanov.scp:core:1.0.1:devRelease@aar') { transitive = true }
-
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -20,11 +20,11 @@ allprojects {
     repositories {
         jcenter()
         mavenCentral()
+        maven { url "https://maven.google.com" }
+        maven { url "https://jitpack.io" }
 
         //use jcenter when it will be ready
-        maven { url 'https://dl.bintray.com/mohaxspb/scp-downloads' }
-
-        maven { url "https://jitpack.io" }
+        maven { url 'https://dl.bintray.com/mohaxspb/scp-mass-downloads' }
 
         /** The repository required for AdColony 3.0 and above */
         maven { url "https://adcolony.bintray.com/AdColony" }

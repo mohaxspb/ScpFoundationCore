@@ -235,13 +235,13 @@
     <string name="score_increased">Hinzugefügt %s</string>
     <string name="random_article_warning"> Ein neuer zufälliger Artikel wird vom Server alle paar Minuten generiert.</string>
 
-    <!--todo ver 1.0.6+-->
-    <string name="article_not_translated">This article is not translated yet.</string>
-    <string name="offer_app_lang_version_content">Your device language - <b>%1$s</b>, an we have same app, where articles translated to <b>%2$s</b>. Want to install it?\n\nList of apps with different translates is always available in top right menu in any screen.</string>
-    <string name="open_play_market">Open Play Market</string>
-    <string name="menuAppLangVersions">Branches of the Fund</string>
+    <!--ver 1.0.6+-->
+    <string name="article_not_translated">Dieser Artikel ist noch nicht übersetzt.</string>
+    <string name="offer_app_lang_version_content">Die Sprache Ihres Geräts - <b>%1$s</b>, ein haben dieselbe app, wo Artikel übersetzt werden <b>%2$s</b>. Wollen Sie es installieren? \n\nListe der apps mit unterschiedlichen translates ist immer im oberen rechten Menü auf jedem möglichem Schirm vorhanden.</string>
+    <string name="open_play_market">Öffnen Sie das Play Market</string>
+    <string name="menuAppLangVersions">Zweige des Fonds</string>
     <!---->
-    <string name="subscription_no_ads_title">Disable ads</string>
-    <string name="subscription_full_version_title">Full version</string>
-    <string name="attention">Attention!</string>
+    <string name="subscription_no_ads_title">Werbung deaktivieren</string>
+    <string name="subscription_full_version_title">Vollversion</string>
+    <string name="attention">Achtung!</string>
 </resources>

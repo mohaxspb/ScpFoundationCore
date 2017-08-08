@@ -120,8 +120,10 @@ public class SubscriptionsRecyclerAdapter extends RecyclerView.Adapter<Subscript
             }
             int months = InappHelper.getMonthsFromSku(subscription.productId);
             long oneMonthPriceForMonths = initialMonthCostsInMicros * months;
-            long percentCosts = 100L - subscription.price_amount_micros * 100L / oneMonthPriceForMonths;
-            percent.setText("-" + percentCosts + "%");
+            if (oneMonthPriceForMonths != 0) {
+                long percentCosts = 100L - subscription.price_amount_micros * 100L / oneMonthPriceForMonths;
+                percent.setText("-" + percentCosts + "%");
+            }
         }
     }
 

@@ -324,7 +324,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             }
         });
 
-        if (!isAdsLoaded()) {
+        if (!isAdsLoaded() && mMyPreferenceManager.isTimeToLoadAds()) {
             requestNewInterstitial();
         }
 
@@ -734,7 +734,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             YandexMetrica.onResumeActivity(this);
         }
 
-        if (isTimeToShowAds() && !isAdsLoaded()) {
+        if (!isAdsLoaded()  && mMyPreferenceManager.isTimeToLoadAds()) {
             requestNewInterstitial();
         }
 
@@ -762,21 +762,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             case MyPreferenceManager.Keys.TIME_FOR_WHICH_BANNERS_DISABLED:
                 //check if there is banner in layout
                 setUpBanner();
-//                if (mAdView != null) {
-//                    //check if banner is enabled for activity in remote config
-//                    if (isBannerEnabled()) {
-//                        //check if user does not have any subscription
-//                        if (!mMyPreferenceManager.isHasNoAdsSubscription() && !mMyPreferenceManager.isHasSubscription()) {
-//                            //at last check if we should hide or show banner
-//                            boolean showBanner = mMyPreferenceManager.isTimeToShowBannerAds();
-//                            mAdView.setEnabled(showBanner);
-//                            mAdView.setVisibility(showBanner ? View.VISIBLE : View.GONE);
-//                            if (showBanner) {
-//                                mAdView.loadAd(AdMobHelper.buildAdRequest(this));
-//                            }
-//                        }
-//                    }
-//                }
                 break;
             //TODO think if we should react on subscriptions events
             default:
