@@ -76,8 +76,8 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.AdMobHelper;
 import ru.kuchanov.scpcore.monetization.util.InappHelper;
 import ru.kuchanov.scpcore.monetization.util.MyAdListener;
-import ru.kuchanov.scpcore.monetization.util.MyNonSkippableVideoCallbacks;
-import ru.kuchanov.scpcore.monetization.util.MySkippableVideoCallbacks;
+import ru.kuchanov.scpcore.monetization.util.MyAppodealInterstitialCallbacks;
+import ru.kuchanov.scpcore.monetization.util.MyRewardedVideoCallbacks;
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp;
 import ru.kuchanov.scpcore.mvp.base.MonetizationActions;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
@@ -288,17 +288,22 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
         //appodeal
         Appodeal.disableLocationPermissionCheck();
-        Appodeal.confirm(Appodeal.SKIPPABLE_VIDEO);
         if (BuildConfig.FLAVOR.equals("dev")) {
             Appodeal.setTesting(true);
 //            Appodeal.setLogLevel(Log.LogLevel.debug);
         }
-        Appodeal.initialize(this, getString(R.string.appodeal_app_key), Appodeal.NON_SKIPPABLE_VIDEO | Appodeal.SKIPPABLE_VIDEO);
-        Appodeal.disableNetwork(this, "cheetah");
-        Appodeal.setNonSkippableVideoCallbacks(new MyNonSkippableVideoCallbacks() {
+        Appodeal.initialize(this, getString(R.string.appodeal_app_key), Appodeal.REWARDED_VIDEO | Appodeal.INTERSTITIAL);
+
+        //user settings
+//        UserSettings userSettings = Appodeal.getUserSettings(this);
+        //we should get this data from each network while login and store it in i.e. prefs to set it here.
+        //also we should update it periodically
+
+        Appodeal.muteVideosIfCallsMuted(true);
+        Appodeal.setRewardedVideoCallbacks(new MyRewardedVideoCallbacks() {
             @Override
-            public void onNonSkippableVideoFinished() {
-                super.onNonSkippableVideoFinished();
+            public void onRewardedVideoFinished(int i, String s) {
+                super.onRewardedVideoFinished(i, s);
                 mMyPreferenceManager.applyRewardFromAds();
                 long numOfMillis = FirebaseRemoteConfig.getInstance()
                         .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
@@ -314,12 +319,12 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 mPresenter.updateUserScoreForScoreAction(action);
             }
         });
-        Appodeal.setSkippableVideoCallbacks(new MySkippableVideoCallbacks() {
+        Appodeal.setInterstitialCallbacks(new MyAppodealInterstitialCallbacks() {
             @Override
-            public void onSkippableVideoFinished() {
-                super.onSkippableVideoFinished();
+            public void onInterstitialClosed() {
+                super.onInterstitialClosed();
                 @DataSyncActions.ScoreAction
-                String action = DataSyncActions.ScoreAction.REWARDED_VIDEO;
+                String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
                 mPresenter.updateUserScoreForScoreAction(action);
             }
         });
@@ -353,11 +358,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void startRewardedVideoFlow() {
-        //analitics
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.EventType.REWARD_REQUESTED);
-        FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-
         if (mMyPreferenceManager.isRewardedDescriptionShown()) {
             showRewardedVideo();
         } else {
@@ -376,6 +376,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     public void showRewardedVideo() {
         if (Appodeal.isLoaded(Appodeal.NON_SKIPPABLE_VIDEO)) {
+            //analitics
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.EventType.REWARD_REQUESTED);
+            FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
             Appodeal.show(this, Appodeal.NON_SKIPPABLE_VIDEO);
         } else {
             showMessage(R.string.reward_not_loaded_yet);
@@ -418,9 +423,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
      */
     @Override
     public void showInterstitial(MyAdListener adListener, boolean showVideoIfNeedAndCan) {
-        if (mMyPreferenceManager.isTimeToShowVideoInsteadOfInterstitial() && Appodeal.isLoaded(Appodeal.SKIPPABLE_VIDEO)) {
+        if (mMyPreferenceManager.isTimeToShowVideoInsteadOfInterstitial() && Appodeal.isLoaded(Appodeal.INTERSTITIAL)) {
             //TODO we should redirect user to desired activity...
-            Appodeal.show(this, Appodeal.SKIPPABLE_VIDEO);
+            Appodeal.show(this, Appodeal.INTERSTITIAL);
         } else {
             //add score in activity, that will be shown from close callback of listener
             mInterstitialAd.setAdListener(adListener);
@@ -741,6 +746,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         setUpBanner();
 
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+
+        //TODO activate it when add Appodeal banner
+        Appodeal.onResume(this, Appodeal.BANNER);
     }
 
     @Override

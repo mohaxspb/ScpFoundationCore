@@ -1,7 +1,7 @@
 package ru.kuchanov.scpcore.monetization.util;
 
 
-import com.appodeal.ads.SkippableVideoCallbacks;
+import com.appodeal.ads.InterstitialCallbacks;
 
 import javax.inject.Inject;
 
@@ -14,42 +14,43 @@ import timber.log.Timber;
  * <p>
  * for scp_ru
  */
-public class MySkippableVideoCallbacks implements SkippableVideoCallbacks {
+public class MyAppodealInterstitialCallbacks implements InterstitialCallbacks {
 
     @Inject
     MyPreferenceManager mMyPreferenceManager;
 
-    public MySkippableVideoCallbacks() {
+    public MyAppodealInterstitialCallbacks() {
         BaseApplication.getAppComponent().inject(this);
     }
 
     @Override
-    public void onSkippableVideoLoaded() {
-        Timber.d("onSkippableVideoLoaded");
+    public void onInterstitialLoaded(boolean b) {
+        Timber.d("onInterstitialLoaded: %s", b);
     }
 
     @Override
-    public void onSkippableVideoFailedToLoad() {
-        Timber.d("onSkippableVideoFailedToLoad");
+    public void onInterstitialFailedToLoad() {
+        Timber.d("onInterstitialFailedToLoad");
     }
 
     @Override
-    public void onSkippableVideoShown() {
-        Timber.d("onSkippableVideoShown");
+    public void onInterstitialShown() {
+        Timber.d("onInterstitialShown");
         mMyPreferenceManager.setLastTimeAdsShows(System.currentTimeMillis());
         mMyPreferenceManager.setNumOfInterstitialsShown(0);
     }
 
     @Override
-    public void onSkippableVideoFinished() {
-        Timber.d("onSkippableVideoFinished");
+    public void onInterstitialClicked() {
+        //TODO pass event to analitics
+        Timber.d("onInterstitialClicked");
         mMyPreferenceManager.setLastTimeAdsShows(System.currentTimeMillis());
         mMyPreferenceManager.setNumOfInterstitialsShown(0);
     }
 
     @Override
-    public void onSkippableVideoClosed(boolean finished) {
-        Timber.d("onSkippableVideoClosed: %s", finished);
+    public void onInterstitialClosed() {
+        Timber.d("onInterstitialClicked");
         mMyPreferenceManager.setLastTimeAdsShows(System.currentTimeMillis());
         mMyPreferenceManager.setNumOfInterstitialsShown(0);
     }
