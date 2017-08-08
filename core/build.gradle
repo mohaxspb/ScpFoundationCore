@@ -209,5 +209,6 @@ dependencies {
 
 // Place it at the end of the file for publishing to bintray
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+//use own implimentation as we fix here issue with java doc generating
 //apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
 apply from: '../bintrayv1.gradle'

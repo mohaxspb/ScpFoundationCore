@@ -38,6 +38,10 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
      * update user subs every 6 hours
      */
     private static final long PERIOD_BETWEEN_SUBSCRIPTIONS_INVALIDATION_IN_MILLIS = 1000 * 60 * 60 * 6;
+    /**
+     * used to calculate is it time to request new Interstitial ads
+     */
+    private static final long PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS = 1000 * 60 * 5;
 
     public interface Keys {
         String NIGHT_MODE = "NIGHT_MODE";
@@ -176,6 +180,17 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     public boolean isTimeToShowAds() {
         return System.currentTimeMillis() - getLastTimeAdsShows() >=
                 FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS);
+    }
+
+    /**
+     * @return true if there is less then some minutes before we must show it
+     */
+    public boolean isTimeToLoadAds() {
+        //i.e. 1 hour - (17:56-17:00) = 4 min, which we compate to 5 min
+        return FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS) -
+                (System.currentTimeMillis() - getLastTimeAdsShows())
+                <= PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS;
+
     }
 
     public void applyRewardFromAds() {
