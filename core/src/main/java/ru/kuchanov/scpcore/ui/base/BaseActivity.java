@@ -705,6 +705,27 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
+    public void showOfferSubscriptionPopup() {
+        Timber.d("showOfferSubscriptionPopup");
+        new MaterialDialog.Builder(this)
+                .title(R.string.dialog_offer_subscription_title)
+                .content(R.string.dialog_offer_subscription_content)
+                .positiveText(R.string.yes_bliad)
+                .onPositive((dialog, which) -> {
+                    BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
+                    subsDF.show(getSupportFragmentManager(), subsDF.getTag());
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.StartScreen.AFTER_LEVEL_UP);
+                    FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                })
+                .negativeText(android.R.string.cancel)
+                .onNegative((dialog, which) -> dialog.dismiss())
+                .build()
+                .show();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
         if (i == R.id.settings) {
@@ -754,7 +775,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             YandexMetrica.onResumeActivity(this);
         }
 
-        if (!isAdsLoaded()  && mMyPreferenceManager.isTimeToLoadAds()) {
+        if (!isAdsLoaded() && mMyPreferenceManager.isTimeToLoadAds()) {
             requestNewInterstitial();
         }
 

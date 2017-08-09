@@ -174,6 +174,7 @@ public interface Constants {
                 String AUTO_SYNC_SNACKBAR = "AUTO_SYNC_SNACKBAR";
                 String AUTO_SYNC_FROM_SETTINGS = "AUTO_SYNC_FROM_SETTINGS";
                 String DOWNLOAD_DIALOG = "DOWNLOAD_DIALOG";
+                String AFTER_LEVEL_UP = "AFTER_LEVEL_UP";
             }
 
             String INVITED_FIVE_FRIENDS = "INVITED_FIVE_FRIENDS";

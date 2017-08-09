@@ -109,12 +109,6 @@ public abstract class BaseApplication extends MultiDexApplication {
         SystemUtils.printCertificateFingerprints();
 
         Realm.init(this);
-
-//        //secure
-//        if (SecureUtils.checkCrack(this)) {
-//            MyPreferenceManager myPreferenceManager = new MyPreferenceManager(this, null);
-//            myPreferenceManager.setAppCracked(true);
-//        }
     }
 
     @Override
