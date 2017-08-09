@@ -219,7 +219,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
 //                headerViewHolder.relogin.setVisibility(View.VISIBLE);
 //                headerViewHolder.relogin.setOnClickListener(view -> showNeedReloginPopup());
 //            } else {
-                headerViewHolder.relogin.setVisibility(View.GONE);
+            headerViewHolder.relogin.setVisibility(View.GONE);
 //            }
 
             headerViewHolder.levelUp.setOnClickListener(view -> mInappHelper.getInappsListToBuyObserveble(getIInAppBillingService()).subscribe(
@@ -380,6 +380,11 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                                     result -> {
                                         Timber.d("consume inapp successful, so update user score");
                                         mPresenter.updateUserScoreForInapp(item.productId);
+
+                                        boolean hasSubscription = mMyPreferenceManager.isHasSubscription() || mMyPreferenceManager.isHasNoAdsSubscription();
+                                        if (!hasSubscription) {
+                                            showOfferSubscriptionPopup();
+                                        }
                                     },
                                     e -> {
                                         Timber.e(e, "error while consume inapp... X3 what to do)))");

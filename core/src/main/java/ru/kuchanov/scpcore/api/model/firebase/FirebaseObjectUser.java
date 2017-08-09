@@ -32,6 +32,8 @@ public class FirebaseObjectUser implements Serializable{
 
     public Map<String, ArticleInFirebase> articles;
 
+    public boolean signInRewardGained;
+
     public User toRealmUser() {
         return new User(uid, fullName, avatar, email, score, new RealmList<SocialProviderModel>() {{
             addAll(socialProviders);

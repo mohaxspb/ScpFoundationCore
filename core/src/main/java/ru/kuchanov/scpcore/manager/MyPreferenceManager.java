@@ -19,6 +19,7 @@ import ru.kuchanov.scpcore.ui.dialog.SetttingsBottomSheetDialogFragment;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.APP_INSTALL_REWARD_IN_MILLIS;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.AUTH_COOLDOWN_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS;
@@ -76,6 +77,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String TIME_FOR_WHICH_BANNERS_DISABLED = "TIME_FOR_WHICH_BANNERS_DISABLED";
         String LAST_TIME_SUBSCRIPTIONS_INVALIDATED = "LAST_TIME_SUBSCRIPTIONS_INVALIDATED";
         String PERSONAL_DATA_ACCEPTED = "PERSONAL_DATA_ACCEPTED";
+        String AWARD_FROM_AUTH_GAINED = "AWARD_FROM_AUTH_GAINED";
     }
 
     private Gson mGson;
@@ -291,6 +293,24 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         setLastTimeAdsShows(time);
         //also set time for which we should disable banners
         setTimeForWhichBannersDisabled(time);
+    }
+
+    public void applyAwardSignIn() {
+        long time = System.currentTimeMillis()
+                + FirebaseRemoteConfig.getInstance().getLong(AUTH_COOLDOWN_IN_MILLIS);
+        setLastTimeAdsShows(time);
+        //also set time for which we should disable banners
+        setTimeForWhichBannersDisabled(time);
+
+        setUserAwardedFromAuth(true);
+    }
+
+    public void setUserAwardedFromAuth(boolean awardedFromAuth){
+        mPreferences.edit().putBoolean(Keys.AWARD_FROM_AUTH_GAINED, awardedFromAuth).apply();
+    }
+
+    public boolean isUserAwardedFromAuth(){
+       return mPreferences.getBoolean(Keys.AWARD_FROM_AUTH_GAINED, false);
     }
 
     //subscription

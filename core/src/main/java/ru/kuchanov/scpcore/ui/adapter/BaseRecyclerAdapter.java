@@ -7,11 +7,6 @@ import java.util.List;
 import ru.kuchanov.scpcore.monetization.model.BaseModel;
 import ru.kuchanov.scpcore.ui.holder.BaseHolder;
 
-/**
- * Created by y.kuchanov on 23.12.16.
- * <p>
- * for TappAwards
- */
 public abstract class BaseRecyclerAdapter<D extends BaseModel, A extends BaseAdapterClickListener<D>, H extends BaseHolder<D, A>>
         extends RecyclerView.Adapter<H> {
 

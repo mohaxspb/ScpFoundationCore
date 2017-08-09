@@ -1,21 +1,16 @@
 package ru.kuchanov.scpcore.ui.dialog;
 
 import android.app.Dialog;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 import com.vk.sdk.VKAccessToken;
@@ -31,16 +26,17 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.manager.MyNotificationManager;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.AppInstallHeader;
 import ru.kuchanov.scpcore.monetization.model.AppInviteModel;
 import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
 import ru.kuchanov.scpcore.monetization.model.BaseModel;
+import ru.kuchanov.scpcore.monetization.model.DisableAdsForAuth;
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
 import ru.kuchanov.scpcore.monetization.model.RewardedVideo;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
-import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import ru.kuchanov.scpcore.ui.adapter.FreeAdsDisableRecyclerAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseActivity;
 import ru.kuchanov.scpcore.util.IntentUtils;
@@ -56,7 +52,9 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
     @Inject
     ApiClient mApiClient;
     @Inject
-    protected MyPreferenceManager mMyPreferenceManager;
+    MyPreferenceManager mMyPreferenceManager;
+    @Inject
+    MyNotificationManager mMyNotificationManager;
 
     public static DialogFragment newInstance() {
         return new FreeAdsDisablingDialogFragment();
@@ -81,6 +79,16 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
         List<BaseModel> data = new ArrayList<>();
 
         FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        if (config.getBoolean(Constants.Firebase.RemoteConfigKeys.FREE_AUTH_ENABLED)
+                && FirebaseAuth.getInstance().getCurrentUser() == null
+                && !mMyPreferenceManager.isUserAwardedFromAuth()) {
+            long numOfMillis = FirebaseRemoteConfig.getInstance()
+                    .getLong(Constants.Firebase.RemoteConfigKeys.AUTH_COOLDOWN_IN_MILLIS);
+            long hours = numOfMillis / 1000 / 60 / 60;
+            int score = (int) FirebaseRemoteConfig.getInstance()
+                    .getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_AUTH);
+            data.add(new DisableAdsForAuth(getString(R.string.sign_in_to_disable_ads, hours, score)));
+        }
         if (config.getBoolean(Constants.Firebase.RemoteConfigKeys.FREE_REWARDED_VIDEO_ENABLED)) {
             long numOfMillis = FirebaseRemoteConfig.getInstance()
                     .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
@@ -159,12 +167,31 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
         adapter.setItemClickListener(data1 -> {
             Timber.d("Clicked data: %s", data1);
             if (data1 instanceof AppInviteModel) {
-                IntentUtils.firebaseInvite(getActivity());
+                if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+                    getBaseActivity().showOfferLoginPopup((dialog1, which) -> IntentUtils.firebaseInvite(getActivity()));
+                } else {
+                    IntentUtils.firebaseInvite(getActivity());
+                }
             } else if (data1 instanceof PlayMarketApplication) {
-                IntentUtils.tryOpenPlayMarket(getActivity(), ((PlayMarketApplication) data1).id);
+                if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+                    getBaseActivity().showOfferLoginPopup((dialog1, which) -> IntentUtils.tryOpenPlayMarket(getActivity(), ((PlayMarketApplication) data1).id));
+                } else {
+                    IntentUtils.tryOpenPlayMarket(getActivity(), ((PlayMarketApplication) data1).id);
+                }
             } else if (data1 instanceof RewardedVideo) {
+                if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+                    getBaseActivity().showOfferLoginPopup((dialog1, which) -> {
+                        getBaseActivity().startRewardedVideoFlow();
+                        dismiss();
+                    });
+                } else {
+                    dismiss();
+                    getBaseActivity().startRewardedVideoFlow();
+                }
+            } else if (data1 instanceof DisableAdsForAuth) {
                 dismiss();
-                getBaseActivity().startRewardedVideoFlow();
+                getBaseActivity().showLoginProvidersPopup();
+                //add score, disable ads while
             } else if (data1 instanceof VkGroupToJoin) {
                 String vkGroupId = ((VkGroupToJoin) data1).id;
                 Timber.d("VkGroupToJoin: %s", vkGroupId);
@@ -186,7 +213,11 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
                                         .getLong(Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD);
                                 long hours = numOfMillis / 1000 / 60 / 60;
 
-                                showNotificationSimple(getActivity(), getString(R.string.ads_reward_gained, hours), getString(R.string.thanks_for_supporting_us));
+                                mMyNotificationManager.showNotificationSimple(
+                                        getString(R.string.ads_reward_gained, hours),
+                                        getString(R.string.thanks_for_supporting_us),
+                                        NOTIFICATION_ID
+                                );
 
                                 data.remove(data1);
                                 adapter.notifyDataSetChanged();
@@ -222,18 +253,5 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
 
     protected BaseActivity getBaseActivity() {
         return (BaseActivity) getActivity();
-    }
-
-    private void showNotificationSimple(Context context, String title, String content) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT), 0);
-        builder.setContentTitle(title)
-                .setContentIntent(pendingIntent)
-                .setContentText(content)
-                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher))
-                .setSmallIcon(R.mipmap.ic_launcher);
-
-        NotificationManagerCompat manager = NotificationManagerCompat.from(context);
-        manager.notify(NOTIFICATION_ID, builder.build());
     }
 }
