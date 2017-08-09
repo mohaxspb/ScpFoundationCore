@@ -242,4 +242,6 @@
     <string name="subscription_no_ads_title">Отключение рекламы</string>
     <string name="subscription_full_version_title">Полная версия</string>
     <string name="attention">Внимание!</string>
+    <!---->
+    <string name="sign_in_to_disable_ads">Авторизуйтесь чтобы отключить рекламу на %1$d часа и получить %2$d очков, которые увеличат ваш лимит загружаемых статей!</string>
 </resources>

@@ -1721,6 +1721,36 @@ public class ApiClient implements ApiClientModel<Article> {
         });
     }
 
+    public Observable<Boolean> isUserRewardedForAuth() {
+        Timber.d("isUserRewardedForAuth");
+        return Observable.unsafeCreate(subscriber -> {
+            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (firebaseUser == null) {
+                subscriber.onError(new IllegalArgumentException("firebase user is null"));
+                return;
+            }
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference reference = database.getReference()
+                    .child(Constants.Firebase.Refs.USERS)
+                    .child(firebaseUser.getUid())
+                    .child(Constants.Firebase.Refs.SIGN_IN_REWARD_GAINED);
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Boolean data = dataSnapshot.getValue(Boolean.class);
+                    Timber.d("dataSnapshot.getValue(): %s", data);
+                    subscriber.onNext(data != null && data);
+                    subscriber.onCompleted();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    subscriber.onError(databaseError.toException());
+                }
+            });
+        });
+    }
+
     public Observable<Boolean> isUserJoinedVkGroup(String id) {
         Timber.d("isUserJoinedVkGroup id: %s", id);
         return Observable.unsafeCreate(subscriber -> {

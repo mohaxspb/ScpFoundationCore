@@ -4,10 +4,14 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.receivers.ReceiverTimer;
+import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import timber.log.Timber;
 
 public class MyNotificationManager {
@@ -90,5 +94,18 @@ public class MyNotificationManager {
 
         am.cancel(pendingIntent);
         pendingIntent.cancel();
+    }
+
+    public void showNotificationSimple(String title, String content, int notificationId) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, "free ads disable");
+        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, new Intent(mContext, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT), 0);
+        builder.setContentTitle(title)
+                .setContentIntent(pendingIntent)
+                .setContentText(content)
+                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_launcher))
+                .setSmallIcon(R.mipmap.ic_launcher);
+
+        NotificationManagerCompat manager = NotificationManagerCompat.from(mContext);
+        manager.notify(notificationId, builder.build());
     }
 }

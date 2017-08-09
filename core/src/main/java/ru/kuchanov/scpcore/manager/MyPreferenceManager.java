@@ -19,6 +19,7 @@ import ru.kuchanov.scpcore.ui.dialog.SetttingsBottomSheetDialogFragment;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.APP_INSTALL_REWARD_IN_MILLIS;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.AUTH_COOLDOWN_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS;
@@ -288,6 +289,14 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     public void applyAwardVkGroupJoined() {
         long time = System.currentTimeMillis()
                 + FirebaseRemoteConfig.getInstance().getLong(FREE_VK_GROUPS_JOIN_REWARD);
+        setLastTimeAdsShows(time);
+        //also set time for which we should disable banners
+        setTimeForWhichBannersDisabled(time);
+    }
+
+    public void applyAwardSignIn() {
+        long time = System.currentTimeMillis()
+                + FirebaseRemoteConfig.getInstance().getLong(AUTH_COOLDOWN_IN_MILLIS);
         setLastTimeAdsShows(time);
         //also set time for which we should disable banners
         setTimeForWhichBannersDisabled(time);

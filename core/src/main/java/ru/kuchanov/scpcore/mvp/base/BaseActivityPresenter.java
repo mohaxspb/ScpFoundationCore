@@ -11,6 +11,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -154,9 +155,17 @@ abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
                         userToWriteToDb.email = firebaseUser.getEmail();
                         userToWriteToDb.socialProviders = new ArrayList<>();
                         SocialProviderModel socialProviderModel = SocialProviderModel.getSocialProviderModelForProvider(provider);
-//                        socialProviderModel.id = id;
                         userToWriteToDb.socialProviders.add(socialProviderModel);
-                        //userToWriteToDb.socialProviders.put(provider.name(), SocialProviderModel.getSocialProviderModelForProvider(provider));
+
+                        //TODO in case of first login we should add score and disable ads temporary
+                        mMyPreferencesManager.applyAwardSignIn();
+
+                        int score = (int) FirebaseRemoteConfig.getInstance()
+                                .getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_AUTH);
+                        userToWriteToDb.score += score;
+
+                        userToWriteToDb.signInRewardGained = true;
+
                         return mApiClient.writeUserToFirebaseObservable(userToWriteToDb);
                     } else {
                         SocialProviderModel socialProviderModel = SocialProviderModel.getSocialProviderModelForProvider(provider);
@@ -167,6 +176,21 @@ abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
                             return mApiClient.updateFirebaseUsersSocialProvidersObservable(userObjectInFirebase.socialProviders)
                                     .flatMap(aVoid -> Observable.just(userObjectInFirebase));
                         }
+
+                        //TODO in case of unrewarded user we should add score and disable ads temporary too
+                        if(!userObjectInFirebase.signInRewardGained) {
+                            mMyPreferencesManager.applyAwardSignIn();
+
+                            int score = (int) FirebaseRemoteConfig.getInstance()
+                                    .getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_AUTH);
+
+                            //need to update score and isSignInRewarded flag
+
+                            userToWriteToDb.score += score;
+
+                            userToWriteToDb.signInRewardGained = true;
+                        }
+
                         return Observable.just(userObjectInFirebase);
                     }
                 })

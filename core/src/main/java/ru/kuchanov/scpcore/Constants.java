@@ -106,6 +106,7 @@ public interface Constants {
             String INAPP = "inapp";
             String CRACKED = "cracked";
             String SOCIAL_PROVIDER = "socialProviders";
+            String SIGN_IN_REWARD_GAINED = "signInRewardGained";
         }
 
         interface RemoteConfigKeys {
