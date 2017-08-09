@@ -28,7 +28,6 @@ import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.AttributeGetter;
-import ru.kuchanov.scpcore.util.DimensionUtils;
 import timber.log.Timber;
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
@@ -89,8 +88,8 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
 
 //                        width = DimensionUtils.getScreenWidth();
                         width = imageView.getMeasuredWidth();
-                        Timber.d("width: %s", width);
-                        Timber.d("DimensionUtils.getScreenWidth(): %s", DimensionUtils.getScreenWidth());
+//                        Timber.d("width: %s", width);
+//                        Timber.d("DimensionUtils.getScreenWidth(): %s", DimensionUtils.getScreenWidth());
 
                         height = (int) (width / multiplier);
 

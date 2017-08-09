@@ -64,12 +64,12 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                Timber.d("onPageFinished: %s", url);
+//                Timber.d("onPageFinished: %s", url);
 
                 int indexOfHashTag = url.lastIndexOf("#");
                 if (indexOfHashTag != -1) {
                     String link = url.substring(indexOfHashTag);
-                    Timber.d("link: %s", link);
+//                    Timber.d("link: %s", link);
 
                     if (checkUrl(link)) {
                         Timber.d("Link clicked: %s", link);
@@ -80,7 +80,7 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
             @SuppressWarnings("deprecation")
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String link) {
-                Timber.d("Link clicked: %s", link);
+//                Timber.d("Link clicked: %s", link);
 
                 return checkUrl(link);
             }
