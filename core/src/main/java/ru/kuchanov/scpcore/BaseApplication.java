@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore;
 
+import android.content.Context;
+import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
@@ -113,6 +115,12 @@ public abstract class BaseApplication extends MultiDexApplication {
 //            MyPreferenceManager myPreferenceManager = new MyPreferenceManager(this, null);
 //            myPreferenceManager.setAppCracked(true);
 //        }
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
     protected abstract AppComponent buildAppComponentImpl();
