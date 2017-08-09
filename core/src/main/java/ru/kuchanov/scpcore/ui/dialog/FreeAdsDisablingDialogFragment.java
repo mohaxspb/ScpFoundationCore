@@ -1,15 +1,9 @@
 package ru.kuchanov.scpcore.ui.dialog;
 
 import android.app.Dialog;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.widget.Toast;
@@ -43,7 +37,6 @@ import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
 import ru.kuchanov.scpcore.monetization.model.RewardedVideo;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
-import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import ru.kuchanov.scpcore.ui.adapter.FreeAdsDisableRecyclerAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseActivity;
 import ru.kuchanov.scpcore.util.IntentUtils;
@@ -87,7 +80,8 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
 
         FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         if (config.getBoolean(Constants.Firebase.RemoteConfigKeys.FREE_AUTH_ENABLED)
-                && FirebaseAuth.getInstance().getCurrentUser() == null) {
+                && FirebaseAuth.getInstance().getCurrentUser() == null
+                && !mMyPreferenceManager.isUserAwardedFromAuth()) {
             long numOfMillis = FirebaseRemoteConfig.getInstance()
                     .getLong(Constants.Firebase.RemoteConfigKeys.AUTH_COOLDOWN_IN_MILLIS);
             long hours = numOfMillis / 1000 / 60 / 60;
