@@ -244,4 +244,7 @@
     <string name="subscription_no_ads_title">Disable ads</string>
     <string name="subscription_full_version_title">Full version</string>
     <string name="attention">Attention!</string>
+    <!---->
+    <string name="sign_in_to_disable_ads">Sign in to disable ads for %1$d hours and get %2$d points, that will increase your offline articles limit!</string>
+
 </resources>

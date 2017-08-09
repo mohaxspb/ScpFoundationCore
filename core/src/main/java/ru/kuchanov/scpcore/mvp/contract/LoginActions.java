@@ -17,8 +17,6 @@ public interface LoginActions {
 
         void updateUser(User user);
 
-//        void showNeedReloginPopup();
-//
         void showLoginProvidersPopup();
     }
 

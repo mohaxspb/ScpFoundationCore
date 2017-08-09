@@ -119,7 +119,8 @@
         android:layout_marginRight="@dimen/defaultMargin"
         android:background="?selectableItemBackgroundBorderless"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/ic_exit_to_app_white_48dp"
+        android:tint="@android:color/white"
+        android:src="@drawable/ic_logout_variant"
         />
 
     <ImageView

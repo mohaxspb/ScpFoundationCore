@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 import com.vk.sdk.VKAccessToken;
@@ -36,6 +37,7 @@ import ru.kuchanov.scpcore.monetization.model.AppInstallHeader;
 import ru.kuchanov.scpcore.monetization.model.AppInviteModel;
 import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
 import ru.kuchanov.scpcore.monetization.model.BaseModel;
+import ru.kuchanov.scpcore.monetization.model.DisableAdsForAuth;
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
 import ru.kuchanov.scpcore.monetization.model.RewardedVideo;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
@@ -81,6 +83,15 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
         List<BaseModel> data = new ArrayList<>();
 
         FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        if (config.getBoolean(Constants.Firebase.RemoteConfigKeys.FREE_AUTH_ENABLED)
+                && FirebaseAuth.getInstance().getCurrentUser() == null) {
+            long numOfMillis = FirebaseRemoteConfig.getInstance()
+                    .getLong(Constants.Firebase.RemoteConfigKeys.AUTH_COOLDOWN_IN_MILLIS);
+            long hours = numOfMillis / 1000 / 60 / 60;
+            int score = (int) FirebaseRemoteConfig.getInstance()
+                    .getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_AUTH);
+            data.add(new DisableAdsForAuth(getString(R.string.sign_in_to_disable_ads, hours, score)));
+        }
         if (config.getBoolean(Constants.Firebase.RemoteConfigKeys.FREE_REWARDED_VIDEO_ENABLED)) {
             long numOfMillis = FirebaseRemoteConfig.getInstance()
                     .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
@@ -165,6 +176,10 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
             } else if (data1 instanceof RewardedVideo) {
                 dismiss();
                 getBaseActivity().startRewardedVideoFlow();
+            } else if (data1 instanceof DisableAdsForAuth) {
+                dismiss();
+                getBaseActivity().showLoginProvidersPopup();
+                //TODO add score, disable ads
             } else if (data1 instanceof VkGroupToJoin) {
                 String vkGroupId = ((VkGroupToJoin) data1).id;
                 Timber.d("VkGroupToJoin: %s", vkGroupId);
@@ -225,7 +240,7 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
     }
 
     private void showNotificationSimple(Context context, String title, String content) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "free ads disable");
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT), 0);
         builder.setContentTitle(title)
                 .setContentIntent(pendingIntent)
