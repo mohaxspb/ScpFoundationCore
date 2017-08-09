@@ -1622,6 +1622,48 @@ public class ApiClient implements ApiClientModel<Article> {
         });
     }
 
+    public Observable<Boolean> setUserRewardedForAuthInFirebaseObservable() {
+        return Observable.unsafeCreate(subscriber -> {
+            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (firebaseUser != null) {
+                //add, not rewrite
+                FirebaseDatabase.getInstance()
+                        .getReference(Constants.Firebase.Refs.USERS)
+                        .child(firebaseUser.getUid())
+                        .child(Constants.Firebase.Refs.SIGN_IN_REWARD_GAINED)
+                        .runTransaction(new Transaction.Handler() {
+                            @Override
+                            public Transaction.Result doTransaction(MutableData mutableData) {
+                                Boolean p = mutableData.getValue(Boolean.class);
+                                if (p == null) {
+                                    return Transaction.success(mutableData);
+                                }
+
+                                p = true;
+
+                                // Set value and report transaction success
+                                mutableData.setValue(p);
+                                return Transaction.success(mutableData);
+                            }
+
+                            @Override
+                            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                                if (databaseError == null) {
+                                    Timber.d("onComplete: %s", dataSnapshot.getValue());
+                                    subscriber.onNext(dataSnapshot.getValue(Boolean.class));
+                                    subscriber.onCompleted();
+                                } else {
+                                    Timber.e(databaseError.toException(), "onComplete with error: %s", databaseError.toString());
+                                    subscriber.onError(databaseError.toException());
+                                }
+                            }
+                        });
+            } else {
+                subscriber.onError(new IllegalStateException("firebase user is null"));
+            }
+        });
+    }
+
     public Observable<Article> writeArticleToFirebase(Article article) {
         return Observable.unsafeCreate(subscriber -> {
             FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();

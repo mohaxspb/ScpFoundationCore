@@ -157,7 +157,7 @@ abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
                         SocialProviderModel socialProviderModel = SocialProviderModel.getSocialProviderModelForProvider(provider);
                         userToWriteToDb.socialProviders.add(socialProviderModel);
 
-                        //TODO in case of first login we should add score and disable ads temporary
+                        //in case of first login we should add score and disable ads temporary
                         mMyPreferencesManager.applyAwardSignIn();
 
                         int score = (int) FirebaseRemoteConfig.getInstance()
@@ -177,18 +177,20 @@ abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
                                     .flatMap(aVoid -> Observable.just(userObjectInFirebase));
                         }
 
-                        //TODO in case of unrewarded user we should add score and disable ads temporary too
-                        if(!userObjectInFirebase.signInRewardGained) {
+                        //in case of unrewarded user we should add score and disable ads temporary too
+                        if (!userObjectInFirebase.signInRewardGained) {
                             mMyPreferencesManager.applyAwardSignIn();
 
                             int score = (int) FirebaseRemoteConfig.getInstance()
                                     .getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_AUTH);
 
-                            //need to update score and isSignInRewarded flag
-
-                            userToWriteToDb.score += score;
-
-                            userToWriteToDb.signInRewardGained = true;
+                            return mApiClient.incrementScoreInFirebaseObservable(score)
+                                    .flatMap(newTotalScore -> mApiClient.setUserRewardedForAuthInFirebaseObservable())
+                                    .flatMap(isUserRewardedForAuth -> {
+                                        userObjectInFirebase.score += score;
+                                        userObjectInFirebase.signInRewardGained = true;
+                                        return Observable.just(userObjectInFirebase);
+                                    });
                         }
 
                         return Observable.just(userObjectInFirebase);
