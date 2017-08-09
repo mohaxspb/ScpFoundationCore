@@ -246,5 +246,7 @@
     <string name="attention">Attention!</string>
     <!---->
     <string name="sign_in_to_disable_ads">Sign in to disable ads for %1$d hours and get %2$d points, that will increase your offline articles limit!</string>
+    <string name="dialog_offer_login_to_gain_score_title">Want to authorize?</string>
+    <string name="dialog_offer_login_to_gain_score_content">Do you want to authorize first? After authorizing you\'ll get not only ads disabling, but also score increasing, which allows you to load more articles to read them offline!</string>
 
 </resources>

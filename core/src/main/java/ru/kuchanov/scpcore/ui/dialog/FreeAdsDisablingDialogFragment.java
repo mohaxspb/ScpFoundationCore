@@ -167,12 +167,27 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
         adapter.setItemClickListener(data1 -> {
             Timber.d("Clicked data: %s", data1);
             if (data1 instanceof AppInviteModel) {
-                IntentUtils.firebaseInvite(getActivity());
+                if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+                    getBaseActivity().showOfferLoginPopup((dialog1, which) -> IntentUtils.firebaseInvite(getActivity()));
+                } else {
+                    IntentUtils.firebaseInvite(getActivity());
+                }
             } else if (data1 instanceof PlayMarketApplication) {
-                IntentUtils.tryOpenPlayMarket(getActivity(), ((PlayMarketApplication) data1).id);
+                if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+                    getBaseActivity().showOfferLoginPopup((dialog1, which) -> IntentUtils.tryOpenPlayMarket(getActivity(), ((PlayMarketApplication) data1).id));
+                } else {
+                    IntentUtils.tryOpenPlayMarket(getActivity(), ((PlayMarketApplication) data1).id);
+                }
             } else if (data1 instanceof RewardedVideo) {
-                dismiss();
-                getBaseActivity().startRewardedVideoFlow();
+                if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+                    getBaseActivity().showOfferLoginPopup((dialog1, which) -> {
+                        getBaseActivity().startRewardedVideoFlow();
+                        dismiss();
+                    });
+                } else {
+                    dismiss();
+                    getBaseActivity().startRewardedVideoFlow();
+                }
             } else if (data1 instanceof DisableAdsForAuth) {
                 dismiss();
                 getBaseActivity().showLoginProvidersPopup();
