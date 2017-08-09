@@ -15,14 +15,11 @@ import com.google.gson.GsonBuilder;
 import java.util.List;
 import java.util.Locale;
 
-import javax.inject.Inject;
-
 import ru.kuchanov.rate.PreRate;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
-import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.api.model.remoteconfig.AppLangVersionsJson;
 import ru.kuchanov.scpcore.mvp.contract.MainMvp;
 import ru.kuchanov.scpcore.ui.base.BaseDrawerActivity;
@@ -51,10 +48,6 @@ import static ru.kuchanov.scpcore.ui.activity.LicenceActivity.EXTRA_SHOW_ABOUT;
 public class MainActivity
         extends BaseDrawerActivity<MainMvp.View, MainMvp.Presenter>
         implements MainMvp.View {
-
-    //TODO remove when we move app lang to constant values
-    @Inject
-    ApiClient mApiClient;
 
     public static final String EXTRA_LINK = "EXTRA_LINK";
     public static final String EXTRA_SHOW_DISABLE_ADS = "EXTRA_SHOW_DISABLE_ADS";
@@ -107,7 +100,8 @@ public class MainActivity
             mCurrentSelectedDrawerItemId = (R.id.about);
         } else if (link.equals(mConstantValues.getNews())) {
             mCurrentSelectedDrawerItemId = (R.id.news);
-        } else if (link.equals(mConstantValues.getMain())
+        } else if (link.equals(mConstantValues.getBaseApiUrl())
+                || link.equals(mConstantValues.getBaseApiUrl() + "/")
                 || link.equals(mConstantValues.getMostRated())) {
             mCurrentSelectedDrawerItemId = R.id.mostRatedArticles;
         } else if (link.equals(mConstantValues.getNewArticles())) {
@@ -172,7 +166,7 @@ public class MainActivity
             for (AppLangVersionsJson.AppLangVersion version : appLangVersions.langs) {
                 String appToOfferLang = new Locale(version.code).getLanguage();
                 if (deviceLang.equals(appToOfferLang)) {
-                    if (mApiClient.getAppLang().equals(appToOfferLang)) {
+                    if (mConstantValues.getAppLang().equals(appToOfferLang)) {
                         //proper lang version already installed, do nothing
                         Timber.d("It is the iterated version, do nothing");
                     } else {

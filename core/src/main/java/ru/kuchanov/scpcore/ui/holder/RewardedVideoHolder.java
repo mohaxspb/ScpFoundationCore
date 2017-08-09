@@ -11,11 +11,6 @@ import ru.kuchanov.scpcore.monetization.model.BaseModel;
 import ru.kuchanov.scpcore.ui.adapter.BaseAdapterClickListener;
 import ru.kuchanov.scpcore.util.DimensionUtils;
 
-/**
- * Created by mohax on 25.02.2017.
- * <p>
- * for pacanskiypublic
- */
 public class RewardedVideoHolder extends BaseHolder<BaseModel, BaseAdapterClickListener<BaseModel>> {
 
     @BindView(R2.id.title)

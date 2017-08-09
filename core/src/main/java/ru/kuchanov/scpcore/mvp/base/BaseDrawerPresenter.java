@@ -24,7 +24,7 @@ public abstract class BaseDrawerPresenter<V extends DrawerMvp.View>
     @Override
     public void getRandomArticleUrl() {
         Timber.d("getRandomArticle");
-        if (!mApiClient.getAppLang().equals("ru")) {
+        if (!mApiClient.getConstantValues().getAppLang().equals("ru")) {
             getView().showMessage(R.string.random_article_warning);
         }
         getView().showProgressDialog(true);

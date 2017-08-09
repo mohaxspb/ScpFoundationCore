@@ -1,6 +1,8 @@
 package ru.kuchanov.scpcore.mvp.contract;
 
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.db.model.User;
 
@@ -17,9 +19,9 @@ public interface LoginActions {
 
         void updateUser(User user);
 
-//        void showNeedReloginPopup();
-//
         void showLoginProvidersPopup();
+
+        void showOfferLoginPopup(MaterialDialog.SingleButtonCallback cancelCallbak);
     }
 
     interface Presenter {

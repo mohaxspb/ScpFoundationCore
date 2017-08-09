@@ -1,7 +1,6 @@
 package ru.kuchanov.scpcore.api;
 
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -171,7 +170,7 @@ public class ApiClient implements ApiClientModel<Article> {
     public Observable<Integer> getRecentArticlesPageCountObservable() {
         return bindWithUtils(Observable.<Integer>unsafeCreate(subscriber -> {
             Request request = new Request.Builder()
-                    .url(mConstantValues.getBaseApiUrl() + mConstantValues.getMostRecentUrl() + 1)
+                    .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();
 
             String responseBody = null;
@@ -213,7 +212,7 @@ public class ApiClient implements ApiClientModel<Article> {
     public Observable<List<Article>> getRecentArticlesForPage(int page) {
         return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
             Request request = new Request.Builder()
-                    .url(mConstantValues.getBaseApiUrl() + mConstantValues.getMostRecentUrl() + page)
+                    .url(mConstantValues.getNewArticles() + "/p/" + page)
                     .build();
 
             String responseBody = null;
@@ -296,7 +295,7 @@ public class ApiClient implements ApiClientModel<Article> {
             int page = offset / mConstantValues.getNumOfArticlesOnRatedPage() + 1/*as pages are not zero based*/;
 
             Request request = new Request.Builder()
-                    .url(mConstantValues.getMostRatedUrl() + "/p/" + page)
+                    .url(mConstantValues.getMostRated() + "/p/" + page)
                     .build();
 
             String responseBody = null;
@@ -636,7 +635,7 @@ public class ApiClient implements ApiClientModel<Article> {
             //todo need to use one method for rimg/limg and add loopeing through multiple rimg/limg tags in article
             //parse multiple imgs in "rimg" tag
             Element rimg = pageContent.getElementsByClass("rimg").first();
-//                Timber.d("rimg: %s", rimg);
+//            Timber.d("rimg: %s", rimg);
             if (rimg != null) {
                 Elements imgs = rimg.getElementsByTag("img");
                 Elements descriptions = rimg.getElementsByTag("span");
@@ -658,7 +657,7 @@ public class ApiClient implements ApiClientModel<Article> {
                     rimg.remove();
                 }
             }
-//                Timber.d("pageContent.getElementsByClass(\"rimg\"): %s", pageContent.getElementsByClass("rimg"));
+//            Timber.d("pageContent.getElementsByClass(\"rimg\"): %s", pageContent.getElementsByClass("rimg"));
 
             //parse multiple imgs in "limg" tag
             Element limg = pageContent.getElementsByClass("limg").first();
@@ -727,6 +726,24 @@ public class ApiClient implements ApiClientModel<Article> {
                     element.before(element.childNode(0));
                     element.after(element.childNode(1));
                     element.remove();
+                }
+            }
+
+            //replace styles with underline and strike
+            Elements spans = pageContent.getElementsByTag("span");
+            for (Element element : spans) {
+                //<span style="text-decoration: underline;">PLEASE</span>
+                if (element.hasAttr("style") && element.attr("style").equals("text-decoration: underline;")) {
+//                    Timber.d("fix underline span: %s", element.outerHtml());
+                    Element uTag = new Element(Tag.valueOf("u"), "").text(element.text());
+                    element.replaceWith(uTag);
+//                    Timber.d("fixED underline span: %s", uTag.outerHtml());
+                }
+                //<span style="text-decoration: line-through;">условия содержания.</span>
+                if (element.hasAttr("style") && element.attr("style").equals("text-decoration: line-through;")) {
+//                    Timber.d("fix strike span");
+                    Element sTag = new Element(Tag.valueOf("s"), "");
+                    element.replaceWith(sTag);
                 }
             }
 
@@ -1605,6 +1622,31 @@ public class ApiClient implements ApiClientModel<Article> {
         });
     }
 
+    public Observable<Boolean> setUserRewardedForAuthInFirebaseObservable() {
+        return Observable.unsafeCreate(subscriber -> {
+            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (firebaseUser != null) {
+                //add, not rewrite
+                FirebaseDatabase.getInstance()
+                        .getReference(Constants.Firebase.Refs.USERS)
+                        .child(firebaseUser.getUid())
+                        .child(Constants.Firebase.Refs.SIGN_IN_REWARD_GAINED)
+                        .setValue(true, (databaseError, databaseReference) -> {
+                            if (databaseError == null) {
+                                Timber.d("onComplete");
+                                subscriber.onNext(true);
+                                subscriber.onCompleted();
+                            } else {
+                                Timber.e(databaseError.toException(), "onComplete with error: %s", databaseError.toString());
+                                subscriber.onError(databaseError.toException());
+                            }
+                        });
+            } else {
+                subscriber.onError(new IllegalStateException("firebase user is null"));
+            }
+        });
+    }
+
     public Observable<Article> writeArticleToFirebase(Article article) {
         return Observable.unsafeCreate(subscriber -> {
             FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -1693,6 +1735,36 @@ public class ApiClient implements ApiClientModel<Article> {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     subscriber.onNext(dataSnapshot.getValue(Integer.class));
+                    subscriber.onCompleted();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    subscriber.onError(databaseError.toException());
+                }
+            });
+        });
+    }
+
+    public Observable<Boolean> isUserRewardedForAuth() {
+        Timber.d("isUserRewardedForAuth");
+        return Observable.unsafeCreate(subscriber -> {
+            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (firebaseUser == null) {
+                subscriber.onError(new IllegalArgumentException("firebase user is null"));
+                return;
+            }
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference reference = database.getReference()
+                    .child(Constants.Firebase.Refs.USERS)
+                    .child(firebaseUser.getUid())
+                    .child(Constants.Firebase.Refs.SIGN_IN_REWARD_GAINED);
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Boolean data = dataSnapshot.getValue(Boolean.class);
+                    Timber.d("dataSnapshot.getValue(): %s", data);
+                    subscriber.onNext(data != null && data);
                     subscriber.onCompleted();
                 }
 
@@ -1896,7 +1968,7 @@ public class ApiClient implements ApiClientModel<Article> {
     }
 
     public Observable<LeaderBoardResponse> getLeaderboard() {
-        return bindWithUtils(mVpsServer.getLeaderboard(getAppLang()));
+        return bindWithUtils(mVpsServer.getLeaderboard(mConstantValues.getAppLang()));
     }
 
     public Observable<List<Article>> getArticlesByTags(List<ArticleTag> tags) {
@@ -1932,7 +2004,7 @@ public class ApiClient implements ApiClientModel<Article> {
             String packageName,
             String sku,
             String purchaseToken
-    ){
+    ) {
         return bindWithUtils(mVpsServer.validatePurchase(isSubscription, packageName, sku, purchaseToken));
     }
 
@@ -1943,11 +2015,6 @@ public class ApiClient implements ApiClientModel<Article> {
             String purchaseToken
     ) throws IOException {
         return mVpsServer.validatePurchaseSync(isSubscription, packageName, sku, purchaseToken).execute().body();
-    }
-
-    @NonNull
-    public String getAppLang() {
-        return "ru";
     }
 
     protected String getScpServerWiki() {

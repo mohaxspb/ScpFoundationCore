@@ -6,6 +6,7 @@ import android.text.Spanned;
 import android.text.style.BulletSpan;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.StrikethroughSpan;
+import android.text.style.UnderlineSpan;
 
 import org.xml.sax.XMLReader;
 
@@ -85,6 +86,9 @@ public class MyHtmlTagHandler implements TagHandler {
             case "strike":
             case "s":
                 processStrike(opening, output);
+                break;
+            case "u":
+                processU(opening, output);
                 break;
             case "ul":
             case "ol":
@@ -180,6 +184,23 @@ public class MyHtmlTagHandler implements TagHandler {
 
             if (where != len) {
                 output.setSpan(new StrikethroughSpan(), where, len, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        }
+    }
+
+    private void processU(boolean opening, Editable output) {
+        Timber.d("processU: %s", output);
+        int len = output.length();
+        if (opening) {
+            output.setSpan(new UnderlineSpan(), len, len, Spanned.SPAN_MARK_MARK);
+        } else {
+            Object obj = getLast(output, UnderlineSpan.class);
+            int where = output.getSpanStart(obj);
+
+            output.removeSpan(obj);
+
+            if (where != len) {
+                output.setSpan(new UnderlineSpan(), where, len, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
     }

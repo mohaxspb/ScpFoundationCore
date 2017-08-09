@@ -1,11 +1,8 @@
 package ru.kuchanov.scpcore.ui.holder;
 
-import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +13,6 @@ import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.monetization.model.BaseModel;
 import ru.kuchanov.scpcore.ui.adapter.BaseAdapterClickListener;
 
-/**
- * Created by mohax on 25.02.2017.
- * <p>
- * for pacanskiypublic
- */
 public class SocialLoginHolder
         extends BaseHolder<SocialLoginHolder.SocialLoginModel, BaseAdapterClickListener<SocialLoginHolder.SocialLoginModel>> {
 
@@ -37,14 +29,8 @@ public class SocialLoginHolder
     public void bind(SocialLoginHolder.SocialLoginModel data) {
         super.bind(data);
 
-        Context context = itemView.getContext();
-
         title.setText(data.getSocialProvider().getTitle());
-
-        Glide.with(context)
-                .load(data.getSocialProvider().getIcon())
-                .dontAnimate()
-                .into(image);
+        image.setImageResource(data.getSocialProvider().getIcon());
 
         itemView.setOnClickListener(view -> mAdapterClickListener.onItemClick(data));
     }

@@ -28,7 +28,6 @@ import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.AttributeGetter;
-import ru.kuchanov.scpcore.util.DimensionUtils;
 import timber.log.Timber;
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
@@ -89,8 +88,8 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
 
 //                        width = DimensionUtils.getScreenWidth();
                         width = imageView.getMeasuredWidth();
-                        Timber.d("width: %s", width);
-                        Timber.d("DimensionUtils.getScreenWidth(): %s", DimensionUtils.getScreenWidth());
+//                        Timber.d("width: %s", width);
+//                        Timber.d("DimensionUtils.getScreenWidth(): %s", DimensionUtils.getScreenWidth());
 
                         height = (int) (width / multiplier);
 
@@ -107,7 +106,8 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
 
         String title = null;
         if (!document.getElementsByTag("span").isEmpty()) {
-            title = document.getElementsByTag("span").html();
+            title = document.getElementsByTag("span").first().html();
+//            Timber.d("title: %s", title);
         } else if (!document.getElementsByClass("scp-image-caption").isEmpty()) {
             title = document.getElementsByClass("scp-image-caption").first().html();
         }

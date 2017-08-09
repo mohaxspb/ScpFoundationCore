@@ -10,7 +10,7 @@ import ru.kuchanov.scpcore.di.module.NotificationModule;
 import ru.kuchanov.scpcore.di.module.PresentersModule;
 import ru.kuchanov.scpcore.di.module.StorageModule;
 import ru.kuchanov.scpcore.monetization.util.MyAdListener;
-import ru.kuchanov.scpcore.monetization.util.MySkippableVideoCallbacks;
+import ru.kuchanov.scpcore.monetization.util.MyAppodealInterstitialCallbacks;
 import ru.kuchanov.scpcore.receivers.AppInstallReceiver;
 import ru.kuchanov.scpcore.receivers.ReceiverBoot;
 import ru.kuchanov.scpcore.receivers.ReceiverTimer;
@@ -164,7 +164,7 @@ public interface AppComponent {
 
     void inject(MyAdListener adListener);
 
-    void inject(MySkippableVideoCallbacks callbacks);
+    void inject(MyAppodealInterstitialCallbacks callbacks);
 
     void inject(DownloadAllServiceDefault service);
 }

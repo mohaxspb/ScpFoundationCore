@@ -31,4 +31,6 @@ public interface MonetizationActions {
     void startRewardedVideoFlow();
 
     boolean isBannerEnabled();
+
+    void showOfferSubscriptionPopup();
 }

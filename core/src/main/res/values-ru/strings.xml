@@ -242,4 +242,10 @@
     <string name="subscription_no_ads_title">Отключение рекламы</string>
     <string name="subscription_full_version_title">Полная версия</string>
     <string name="attention">Внимание!</string>
+    <!---->
+    <string name="sign_in_to_disable_ads">Авторизуйтесь чтобы отключить рекламу на %1$d часа и получить %2$d очков, которые увеличат ваш лимит загружаемых статей!</string>
+    <string name="dialog_offer_login_to_gain_score_title">Хотите авторизоваться?</string>
+    <string name="dialog_offer_login_to_gain_score_content">Хотите сначала авторизоваться? После авторизации вы получите не только отключение рекламы, но и очки, которые позволят вам загружать больше статей для чтения offline!</string>
+    <string name="dialog_offer_subscription_title">Спасибо за поддержку разработчиков!</string>
+    <string name="dialog_offer_subscription_content">Хотите приобрести также подписку для отключения всей рекламы, получения безлимитного offline доступа к фонду, автоматической облачной синхронизации данных и доступа ко всем шрифтам без ограничений?</string>
 </resources>

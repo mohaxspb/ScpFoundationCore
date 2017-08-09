@@ -37,8 +37,8 @@ ext {
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
 
     compileOptions.encoding = 'utf-8'
 
@@ -50,13 +50,16 @@ android {
 
     packagingOptions {
         exclude 'META-INF/rxjava.properties'
+        exclude 'META-INF/LICENSE'
     }
 
     defaultConfig {
         minSdkVersion 17
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode buildVersionCodeFor3Numbers()
         versionName version
+        // Enabling multidex support.
+        multiDexEnabled true
 
         manifestPlaceholders = [debuggable: true]
         buildConfigField "boolean", "TIMBER_ENABLE", "true"
@@ -71,12 +74,9 @@ android {
 
         //play market refuses not hardcoded strings as intent filter
         resValue('string', 'receiver_action_timer', '"ru.dante.scpfoundation.receivers.ReceiverTimer"')
-//        manifestPlaceholders = [receiver_action_timer: "ru.dante.scpfoundation.receivers.ReceiverTimer"]
         resValue('string', 'receiver_action_boot', '"android.intent.action.BOOT_COMPLETED"')
+//        manifestPlaceholders = [receiver_action_timer: "ru.dante.scpfoundation.receivers.ReceiverTimer"]
 //        manifestPlaceholders = [receiver_action_boot: "android.intent.action.BOOT_COMPLETED"]
-
-        // Enabling multidex support.
-        multiDexEnabled true
     }
 
     buildTypes {
@@ -119,7 +119,7 @@ android {
 }
 
 dependencies {
-    String supportLibraryVersion = '25.3.1'
+    String supportLibraryVersion = '26.0.0'
     String googleLibraryVersion = '11.0.4'
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -184,7 +184,9 @@ dependencies {
     //appodeal
     compile "com.google.android.gms:play-services-ads:$googleLibraryVersion"
     compile "com.google.android.gms:play-services-location:$googleLibraryVersion"
-    // AppMetrica
+    compile 'com.squareup.picasso:picasso:2.5.2' //for Inmobi
+    //end of appodeal
+    // AppMetrica //todo think if we need it here as we have it in appodeal
     compile 'com.yandex.android:mobmetricalib:2.62'
     //recyclerView fast scroller
     compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'
@@ -200,14 +202,21 @@ dependencies {
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
 
     //sub project modules
-    compile('ru.kuchanov.scp:scp-downloads:1.0.7@aar') { transitive = true }
-    compile('ru.kuchanov.utils:rate:1.0.2@aar') { transitive = true }
+    compile('ru.kuchanov.scp:downloads:1.0.9@aar') { transitive = true }
+    compile('ru.kuchanov.utils:rate:1.0.3@aar') { transitive = true }
 }
+
+//add aar dependencies same as in appodeal sample project
+//https://github.com/appodeal/appodeal-android-demo/blob/master/app/build.gradle
+//fileTree(dir: 'libs-aar', include: '*.aar').each { File file ->
+//    dependencies.add("compile", [name: file.name.replaceFirst(~/\.[^\.]+$/, ''), ext: 'aar'])
+//}
 
 //add it only in project build.gradle, not in lib
 //apply plugin: 'com.google.gms.google-services'
 
 // Place it at the end of the file for publishing to bintray
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+//use own implimentation as we fix here issue with java doc generating
 //apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
 apply from: '../bintrayv1.gradle'

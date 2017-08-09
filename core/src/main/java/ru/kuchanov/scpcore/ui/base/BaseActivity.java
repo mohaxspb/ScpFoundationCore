@@ -76,8 +76,8 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.AdMobHelper;
 import ru.kuchanov.scpcore.monetization.util.InappHelper;
 import ru.kuchanov.scpcore.monetization.util.MyAdListener;
-import ru.kuchanov.scpcore.monetization.util.MyNonSkippableVideoCallbacks;
-import ru.kuchanov.scpcore.monetization.util.MySkippableVideoCallbacks;
+import ru.kuchanov.scpcore.monetization.util.MyAppodealInterstitialCallbacks;
+import ru.kuchanov.scpcore.monetization.util.MyRewardedVideoCallbacks;
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp;
 import ru.kuchanov.scpcore.mvp.base.MonetizationActions;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
@@ -288,17 +288,23 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
         //appodeal
         Appodeal.disableLocationPermissionCheck();
-        Appodeal.confirm(Appodeal.SKIPPABLE_VIDEO);
         if (BuildConfig.FLAVOR.equals("dev")) {
             Appodeal.setTesting(true);
 //            Appodeal.setLogLevel(Log.LogLevel.debug);
         }
-        Appodeal.initialize(this, getString(R.string.appodeal_app_key), Appodeal.NON_SKIPPABLE_VIDEO | Appodeal.SKIPPABLE_VIDEO);
-        Appodeal.disableNetwork(this, "cheetah");
-        Appodeal.setNonSkippableVideoCallbacks(new MyNonSkippableVideoCallbacks() {
+        Appodeal.disableNetwork(this, "facebook");
+        Appodeal.initialize(this, getString(R.string.appodeal_app_key), Appodeal.REWARDED_VIDEO | Appodeal.INTERSTITIAL);
+
+        //user settings
+//        UserSettings userSettings = Appodeal.getUserSettings(this);
+        //we should get this data from each network while login and store it in i.e. prefs to set it here.
+        //also we should update it periodically
+
+        Appodeal.muteVideosIfCallsMuted(true);
+        Appodeal.setRewardedVideoCallbacks(new MyRewardedVideoCallbacks() {
             @Override
-            public void onNonSkippableVideoFinished() {
-                super.onNonSkippableVideoFinished();
+            public void onRewardedVideoFinished(int i, String s) {
+                super.onRewardedVideoFinished(i, s);
                 mMyPreferenceManager.applyRewardFromAds();
                 long numOfMillis = FirebaseRemoteConfig.getInstance()
                         .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
@@ -314,17 +320,17 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 mPresenter.updateUserScoreForScoreAction(action);
             }
         });
-        Appodeal.setSkippableVideoCallbacks(new MySkippableVideoCallbacks() {
+        Appodeal.setInterstitialCallbacks(new MyAppodealInterstitialCallbacks() {
             @Override
-            public void onSkippableVideoFinished() {
-                super.onSkippableVideoFinished();
+            public void onInterstitialClosed() {
+                super.onInterstitialClosed();
                 @DataSyncActions.ScoreAction
-                String action = DataSyncActions.ScoreAction.REWARDED_VIDEO;
+                String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
                 mPresenter.updateUserScoreForScoreAction(action);
             }
         });
 
-        if (!isAdsLoaded()) {
+        if (!isAdsLoaded() && mMyPreferenceManager.isTimeToLoadAds()) {
             requestNewInterstitial();
         }
 
@@ -353,11 +359,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void startRewardedVideoFlow() {
-        //analitics
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.EventType.REWARD_REQUESTED);
-        FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-
         if (mMyPreferenceManager.isRewardedDescriptionShown()) {
             showRewardedVideo();
         } else {
@@ -376,6 +377,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     public void showRewardedVideo() {
         if (Appodeal.isLoaded(Appodeal.NON_SKIPPABLE_VIDEO)) {
+            //analitics
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.EventType.REWARD_REQUESTED);
+            FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
             Appodeal.show(this, Appodeal.NON_SKIPPABLE_VIDEO);
         } else {
             showMessage(R.string.reward_not_loaded_yet);
@@ -418,9 +424,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
      */
     @Override
     public void showInterstitial(MyAdListener adListener, boolean showVideoIfNeedAndCan) {
-        if (mMyPreferenceManager.isTimeToShowVideoInsteadOfInterstitial() && Appodeal.isLoaded(Appodeal.SKIPPABLE_VIDEO)) {
+        if (mMyPreferenceManager.isTimeToShowVideoInsteadOfInterstitial() && Appodeal.isLoaded(Appodeal.INTERSTITIAL)) {
             //TODO we should redirect user to desired activity...
-            Appodeal.show(this, Appodeal.SKIPPABLE_VIDEO);
+            Appodeal.show(this, Appodeal.INTERSTITIAL);
         } else {
             //add score in activity, that will be shown from close callback of listener
             mInterstitialAd.setAdListener(adListener);
@@ -685,6 +691,41 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
+    public void showOfferLoginPopup(MaterialDialog.SingleButtonCallback cancelCallback) {
+        Timber.d("showOfferLoginPopup");
+        new MaterialDialog.Builder(this)
+                .title(R.string.dialog_offer_login_to_gain_score_title)
+                .content(R.string.dialog_offer_login_to_gain_score_content)
+                .positiveText(R.string.authorize)
+                .onPositive((dialog, which) -> showLoginProvidersPopup())
+                .negativeText(android.R.string.cancel)
+                .onNegative(cancelCallback)
+                .build()
+                .show();
+    }
+
+    @Override
+    public void showOfferSubscriptionPopup() {
+        Timber.d("showOfferSubscriptionPopup");
+        new MaterialDialog.Builder(this)
+                .title(R.string.dialog_offer_subscription_title)
+                .content(R.string.dialog_offer_subscription_content)
+                .positiveText(R.string.yes_bliad)
+                .onPositive((dialog, which) -> {
+                    BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
+                    subsDF.show(getSupportFragmentManager(), subsDF.getTag());
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.StartScreen.AFTER_LEVEL_UP);
+                    FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                })
+                .negativeText(android.R.string.cancel)
+                .onNegative((dialog, which) -> dialog.dismiss())
+                .build()
+                .show();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
         if (i == R.id.settings) {
@@ -734,13 +775,16 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             YandexMetrica.onResumeActivity(this);
         }
 
-        if (isTimeToShowAds() && !isAdsLoaded()) {
+        if (!isAdsLoaded() && mMyPreferenceManager.isTimeToLoadAds()) {
             requestNewInterstitial();
         }
 
         setUpBanner();
 
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+
+        //TODO activate it when add Appodeal banner
+        Appodeal.onResume(this, Appodeal.BANNER);
     }
 
     @Override
@@ -762,21 +806,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             case MyPreferenceManager.Keys.TIME_FOR_WHICH_BANNERS_DISABLED:
                 //check if there is banner in layout
                 setUpBanner();
-//                if (mAdView != null) {
-//                    //check if banner is enabled for activity in remote config
-//                    if (isBannerEnabled()) {
-//                        //check if user does not have any subscription
-//                        if (!mMyPreferenceManager.isHasNoAdsSubscription() && !mMyPreferenceManager.isHasSubscription()) {
-//                            //at last check if we should hide or show banner
-//                            boolean showBanner = mMyPreferenceManager.isTimeToShowBannerAds();
-//                            mAdView.setEnabled(showBanner);
-//                            mAdView.setVisibility(showBanner ? View.VISIBLE : View.GONE);
-//                            if (showBanner) {
-//                                mAdView.loadAd(AdMobHelper.buildAdRequest(this));
-//                            }
-//                        }
-//                    }
-//                }
                 break;
             //TODO think if we should react on subscriptions events
             default:

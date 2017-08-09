@@ -243,4 +243,16 @@
             }
         </value>
     </entry>
+    <entry>
+        <key>free_auth_enabled</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>score_action_auth</key>
+        <value>50</value>
+    </entry>
+    <entry>
+        <key>auth_cooldown_in_millis</key>
+        <value>7200000</value>
+    </entry>
 </defaultsMap>

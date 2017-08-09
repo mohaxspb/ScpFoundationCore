@@ -103,7 +103,7 @@ public class SubscriptionsRecyclerAdapter extends RecyclerView.Adapter<Subscript
             long initialMonthCostsInMicros;
             if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
                 //do not show percent for no ads subs
-                if (subscription.productId.equals(mData.get(0).productId)) {
+                if (subscription.productId.equals(mData.get(0).productId) || subscription.productId.equals(mData.get(1).productId)) {
                     percent.setVisibility(View.GONE);
                     return;
                 } else {
@@ -120,8 +120,10 @@ public class SubscriptionsRecyclerAdapter extends RecyclerView.Adapter<Subscript
             }
             int months = InappHelper.getMonthsFromSku(subscription.productId);
             long oneMonthPriceForMonths = initialMonthCostsInMicros * months;
-            long percentCosts = 100L - subscription.price_amount_micros * 100L / oneMonthPriceForMonths;
-            percent.setText("-" + percentCosts + "%");
+            if (oneMonthPriceForMonths != 0) {
+                long percentCosts = 100L - subscription.price_amount_micros * 100L / oneMonthPriceForMonths;
+                percent.setText("-" + percentCosts + "%");
+            }
         }
     }
 

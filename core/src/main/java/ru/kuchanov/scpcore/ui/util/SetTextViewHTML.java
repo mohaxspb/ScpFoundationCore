@@ -1,10 +1,12 @@
 package ru.kuchanov.scpcore.ui.util;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
@@ -45,6 +48,25 @@ public class SetTextViewHTML {
         textView.setText(strBuilder);
     }
 
+//    public void setText(TextView textView, String html, TextItemsClickListener textItemsClickListener, boolean logText) {
+//        URLImageParser imgGetter = new URLImageParser(textView);
+//        MyHtmlTagHandler myHtmlTagHandler = new MyHtmlTagHandler();
+//        Timber.d("html: %s", html);
+//        CharSequence sequence = Html.fromHtml(html, imgGetter, myHtmlTagHandler);
+//        Timber.d("html: %s", sequence);
+//        SpannableStringBuilder strBuilder = new SpannableStringBuilder(sequence);
+//        URLSpan[] urls = strBuilder.getSpans(0, sequence.length(), URLSpan.class);
+//        for (URLSpan span : urls) {
+//            makeLinkClickable(strBuilder, span, textItemsClickListener);
+//        }
+//        ImageSpan[] imgs = strBuilder.getSpans(0, sequence.length(), ImageSpan.class);
+//        for (ImageSpan span : imgs) {
+//            makeImgsClickable(strBuilder, span, textItemsClickListener);
+//        }
+//        replaceQuoteSpans(textView.getContext(), strBuilder);
+//        textView.setText(strBuilder);
+//    }
+
     private void makeLinkClickable(
             SpannableStringBuilder strBuilder,
             URLSpan span,
@@ -54,6 +76,14 @@ public class SetTextViewHTML {
         int end = strBuilder.getSpanEnd(span);
         int flags = strBuilder.getSpanFlags(span);
         ClickableSpan clickable = new ClickableSpan() {
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+                if (span.getURL().startsWith(Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL)) {
+                    ds.setColor(ContextCompat.getColor(BaseApplication.getAppInstance(), R.color.material_red_500));
+                }
+            }
+
             @Override
             public void onClick(View view) {
                 Timber.d("Link clicked: %s", span.getURL());
@@ -165,6 +195,7 @@ public class SetTextViewHTML {
         QuoteSpan[] quoteSpans = spannable.getSpans(0, spannable.length(), QuoteSpan.class);
 
         for (QuoteSpan quoteSpan : quoteSpans) {
+//            Timber.d("replaceQuoteSpans quoteSpan: %s", quoteSpan);
             int start = spannable.getSpanStart(quoteSpan);
             int end = spannable.getSpanEnd(quoteSpan);
             int flags = spannable.getSpanFlags(quoteSpan);
@@ -174,10 +205,8 @@ public class SetTextViewHTML {
                             colorBackground,
                             colorStripe,
                             5,
-                            10),
-                    start,
-                    end,
-                    flags);
+                            10
+                    ), start, end, flags);
         }
     }
 

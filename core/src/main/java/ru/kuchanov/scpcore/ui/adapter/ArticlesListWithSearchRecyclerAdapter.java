@@ -5,6 +5,7 @@ import java.util.List;
 
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.ui.holder.HolderSimple;
+import timber.log.Timber;
 
 /**
  * Created by Dante on 17.01.2016.
@@ -27,6 +28,10 @@ public class ArticlesListWithSearchRecyclerAdapter extends ArticlesListRecyclerA
         }
         mSortedData.clear();
         for (Article article : mSortedWithFilterData) {
+            if (article.title == null) {
+                Timber.wtf("article.title is NULL for some reason...");
+                continue;
+            }
             if (article.title.toLowerCase().contains(searchQuery.toLowerCase())) {
                 mSortedData.add(article);
             }

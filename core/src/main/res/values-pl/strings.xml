@@ -230,9 +230,14 @@
     <string name="offer_app_lang_version_content"> Językiem urządzeniu - <b>%1$s</b>, I mamy tylko tej samej aplikacji, gdzie artykuły zostały przetłumaczone <b>%2$s</b>. Czy chcesz go zainstalować?\n\n Na liście aplikacji z tłumaczeń w różnych językach jest zawsze dostępne w menu w prawym górnym rogu dowolnego ekranu.</string>
     <string name="open_play_market"> Otwarte Play Market</string>
     <string name="menuAppLangVersions"> Oddziałów Funduszu </string>
-
     <!---->
     <string name="subscription_no_ads_title">Wyłącz reklamy</string>
     <string name="subscription_full_version_title">Pełna wersja</string>
     <string name="attention">Uwaga!</string>
+    <!---->
+    <string name="sign_in_to_disable_ads">Zaloguj się aby wyłączyć reklamy przez %1$d godziny i %2$d punktów, Które zwiększają swój limit na artykuły do pobrania!</string>
+    <string name="dialog_offer_login_to_gain_score_title">Chcesz autoryzować?</string>
+    <string name="dialog_offer_login_to_gain_score_content">Chcesz autoryzować? Po autoryzacji będzie nie tylko być w stanie wyłączyć reklamy, ale również otrzymasz punkty, które będzie można pobrać więcej artykułów do czytania offline!</string>
+    <string name="dialog_offer_subscription_title">Dziękujemy za wsparcie deweloperów!</string>
+    <string name="dialog_offer_subscription_content">Chcesz wykupić subskrypcję, aby wyłączyć wszystkie reklamy, uzyskaj nieograniczony dostęp offline do Funduszu, automatycznie chmura synchronizacji danych i dostęp do wszystkich czcionek bez ograniczeń?</string>
 </resources>

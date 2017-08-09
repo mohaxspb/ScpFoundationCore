@@ -145,7 +145,7 @@ public class ImagesPagerAdapter extends PagerAdapter {
 //            customProgressBar.hide();
 
             // Try to clear resources used for displaying this view
-            Glide.clear(((View) view).findViewById(R.id.image));
+            Glide.clear((View) ((View) view).findViewById(R.id.image));
             // Remove any resources used by this view
             unbindDrawables((View) view);
             // Invalidate the object
