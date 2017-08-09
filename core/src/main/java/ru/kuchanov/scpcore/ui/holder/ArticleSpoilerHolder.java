@@ -65,6 +65,7 @@ public class ArticleSpoilerHolder extends RecyclerView.ViewHolder {
 //            mContent.setTextIsSelectable(true);
         content.setLinksClickable(true);
         content.setMovementMethod(LinkMovementMethod.getInstance());
+//        Timber.d("spoilerParts.get(1): %s", spoilerParts.get(1));
         mSetTextViewHTML.setText(content, spoilerParts.get(1), mTextItemsClickListener);
 
         title.setOnClickListener(v -> {

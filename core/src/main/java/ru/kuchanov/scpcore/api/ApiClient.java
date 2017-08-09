@@ -729,6 +729,24 @@ public class ApiClient implements ApiClientModel<Article> {
                 }
             }
 
+            //replace styles with underline and strike
+            Elements spans = pageContent.getElementsByTag("span");
+            for (Element element : spans) {
+                //<span style="text-decoration: underline;">PLEASE</span>
+                if (element.hasAttr("style") && element.attr("style").equals("text-decoration: underline;")) {
+//                    Timber.d("fix underline span: %s", element.outerHtml());
+                    Element uTag = new Element(Tag.valueOf("u"), "").text(element.text());
+                    element.replaceWith(uTag);
+//                    Timber.d("fixED underline span: %s", uTag.outerHtml());
+                }
+                //<span style="text-decoration: line-through;">условия содержания.</span>
+                if (element.hasAttr("style") && element.attr("style").equals("text-decoration: line-through;")) {
+//                    Timber.d("fix strike span");
+                    Element sTag = new Element(Tag.valueOf("s"), "");
+                    element.replaceWith(sTag);
+                }
+            }
+
             //search for relative urls to add domain
             for (Element a : pageContent.getElementsByTag("a")) {
                 //replace all links to not translated articles

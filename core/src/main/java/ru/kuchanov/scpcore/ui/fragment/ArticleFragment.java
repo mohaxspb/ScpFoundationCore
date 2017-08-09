@@ -345,12 +345,12 @@ public class ArticleFragment
         //if reach here, so it's one of awful toc with bad style
         String srtToCheck = "name=\"" + link + "\"";
         String srtToCheck1 = "name=\"" + link.replace("#", "") + "\"";
-        Timber.d("srtToCheck: %s", srtToCheck);
-        Timber.d("srtToCheck1: %s", srtToCheck1);
+//        Timber.d("srtToCheck: %s", srtToCheck);
+//        Timber.d("srtToCheck1: %s", srtToCheck1);
         for (int i = 0; i < articlesTextParts.size(); i++) {
             if (articlesTextParts.get(i).contains(srtToCheck) ||
                     articlesTextParts.get(i).contains(srtToCheck1)) {
-                Timber.d("found part: %s", articlesTextParts.get(i));
+//                Timber.d("found part: %s", articlesTextParts.get(i));
 //                (i+1 так как в адаптере есть еще элемент для заголовка)
                 mRecyclerView.scrollToPosition(i + 1);
                 return;
