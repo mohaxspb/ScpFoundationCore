@@ -46,7 +46,7 @@ public class CC3LicenseDialogFragment extends DialogFragment {
         Timber.d("onCreateDialog");
         MaterialDialog dialog;
 
-        //icons from https://raw.githubusercontent.com/hjnilsson/country-flags/master/svg
+        //icons from https://github.com/hjnilsson/country-flags/tree/master/svg
 
         MaterialDialog.Builder dialogTextSizeBuilder = new MaterialDialog.Builder(getActivity());
         dialogTextSizeBuilder
@@ -70,6 +70,7 @@ public class CC3LicenseDialogFragment extends DialogFragment {
             View en = ButterKnife.findById(dialog.getCustomView(), R.id.en);
             View ru = ButterKnife.findById(dialog.getCustomView(), R.id.ru);
             View pl = ButterKnife.findById(dialog.getCustomView(), R.id.pl);
+            View de = ButterKnife.findById(dialog.getCustomView(), R.id.de);
 
             TextView content = ButterKnife.findById(dialog.getCustomView(), R.id.content);
 
@@ -84,6 +85,9 @@ public class CC3LicenseDialogFragment extends DialogFragment {
                 case "pl":
                     setContentText(content, getString(R.string.license_pl, mConstantValues.getBaseApiUrl(), mConstantValues.getBaseApiUrl()));
                     break;
+                case "de":
+                    setContentText(content, getString(R.string.license_de, mConstantValues.getBaseApiUrl(), mConstantValues.getBaseApiUrl()));
+                    break;
                 default:
                     throw new IllegalArgumentException("unexpected lang: " + mConstantValues.getAppLang());
             }
@@ -91,6 +95,7 @@ public class CC3LicenseDialogFragment extends DialogFragment {
             en.setOnClickListener(view -> setContentText(content, getString(R.string.license_en, mConstantValues.getBaseApiUrl(), mConstantValues.getBaseApiUrl())));
             pl.setOnClickListener(view -> setContentText(content, getString(R.string.license_pl, mConstantValues.getBaseApiUrl(), mConstantValues.getBaseApiUrl())));
             ru.setOnClickListener(view -> setContentText(content, getString(R.string.license_ru, mConstantValues.getBaseApiUrl(), mConstantValues.getBaseApiUrl())));
+            de.setOnClickListener(view -> setContentText(content, getString(R.string.license_de, mConstantValues.getBaseApiUrl(), mConstantValues.getBaseApiUrl())));
         }
         return dialog;
     }

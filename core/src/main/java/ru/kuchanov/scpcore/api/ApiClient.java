@@ -635,7 +635,7 @@ public class ApiClient implements ApiClientModel<Article> {
             //todo need to use one method for rimg/limg and add loopeing through multiple rimg/limg tags in article
             //parse multiple imgs in "rimg" tag
             Element rimg = pageContent.getElementsByClass("rimg").first();
-//                Timber.d("rimg: %s", rimg);
+//            Timber.d("rimg: %s", rimg);
             if (rimg != null) {
                 Elements imgs = rimg.getElementsByTag("img");
                 Elements descriptions = rimg.getElementsByTag("span");
@@ -657,7 +657,7 @@ public class ApiClient implements ApiClientModel<Article> {
                     rimg.remove();
                 }
             }
-//                Timber.d("pageContent.getElementsByClass(\"rimg\"): %s", pageContent.getElementsByClass("rimg"));
+//            Timber.d("pageContent.getElementsByClass(\"rimg\"): %s", pageContent.getElementsByClass("rimg"));
 
             //parse multiple imgs in "limg" tag
             Element limg = pageContent.getElementsByClass("limg").first();

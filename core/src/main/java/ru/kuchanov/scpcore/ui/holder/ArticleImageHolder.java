@@ -106,7 +106,8 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
 
         String title = null;
         if (!document.getElementsByTag("span").isEmpty()) {
-            title = document.getElementsByTag("span").html();
+            title = document.getElementsByTag("span").first().html();
+//            Timber.d("title: %s", title);
         } else if (!document.getElementsByClass("scp-image-caption").isEmpty()) {
             title = document.getElementsByClass("scp-image-caption").first().html();
         }
