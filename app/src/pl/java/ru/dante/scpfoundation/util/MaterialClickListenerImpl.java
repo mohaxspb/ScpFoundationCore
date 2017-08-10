@@ -1,18 +1,9 @@
 package ru.dante.scpfoundation.util;
 
-import android.support.v4.app.FragmentTransaction;
-
 import ru.dante.scpfoundation.ConstantValuesImpl;
 import ru.kuchanov.scp.downloads.ConstantValues;
-import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 import ru.kuchanov.scpcore.ui.base.BaseActivity;
-import ru.kuchanov.scpcore.ui.fragment.MaterialsArchiveFragment;
-import ru.kuchanov.scpcore.ui.fragment.MaterialsExperimentsFragment;
-import ru.kuchanov.scpcore.ui.fragment.MaterialsIncidentsFragment;
-import ru.kuchanov.scpcore.ui.fragment.MaterialsInterviewsFragment;
-import ru.kuchanov.scpcore.ui.fragment.MaterialsJokesFragment;
-import ru.kuchanov.scpcore.ui.fragment.MaterialsOtherFragment;
 
 /**
  * Created by mohax on 24.07.2017.

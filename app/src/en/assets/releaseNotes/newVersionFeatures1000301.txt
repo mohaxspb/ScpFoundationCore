@@ -1,0 +1,17 @@
+<b>Версия 1.0.3.1</b>
+<br/><br/>
+<b>Improvements</b>
+<br/>
+ - Add deutsche interface translation.
+<br/>
+ - Reduce traffic and memory usage.
+<br/><br/>
+<b>Bug fixes</b>
+<br/>
+ - Fix some rare crashes.
+<br/><br/>
+If you have any questions you can contact us via email:
+<br/>
+E-mail: <a href="mailto:neva.spb.rx@gmail.com">For any questions</a>
+<br/><br/>
+Thanks for using our app!
