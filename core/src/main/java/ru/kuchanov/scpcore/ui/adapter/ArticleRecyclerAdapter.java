@@ -5,22 +5,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ParseHtmlUtils;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.RealmString;
-import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.holder.ArticleImageHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleSpoilerHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTableHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTagsHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTextHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTitleHolder;
+import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import timber.log.Timber;
 
@@ -31,6 +30,7 @@ import timber.log.Timber;
  */
 public class ArticleRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    //TODO realize via enum
     private static final int TYPE_TEXT = 0;
     private static final int TYPE_SPOILER = 1;
     private static final int TYPE_IMAGE = 2;
@@ -38,13 +38,13 @@ public class ArticleRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private static final int TYPE_TABLE = 4;
     private static final int TYPE_TAGS = 5;
 
-    @Inject
-    MyPreferenceManager mMyPreferenceManager;
-
     private Article mArticle;
     private List<String> mArticlesTextParts;
     @ParseHtmlUtils.TextType
     private List<String> mArticlesTextPartsTypes;
+
+    //use it to manage spoilers and its state, from which items size depends
+    private List<SpoilerViewModel> mSpoilerViewModels = new ArrayList<>();
 
     public List<String> getArticlesTextParts() {
         return mArticlesTextParts;
@@ -54,10 +54,6 @@ public class ArticleRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     public void setTextItemsClickListener(SetTextViewHTML.TextItemsClickListener textItemsClickListener) {
         mTextItemsClickListener = textItemsClickListener;
-    }
-
-    public ArticleRecyclerAdapter() {
-        BaseApplication.getAppComponent().inject(this);
     }
 
     public void setData(Article article) {
@@ -72,6 +68,26 @@ public class ArticleRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
 
         Timber.d("mArticlesTextPartsTypes: %s", mArticlesTextPartsTypes);
+
+        //set SpoilerViewModels
+        mSpoilerViewModels.clear();
+        int counter = 0;
+        for (String textPartType : mArticlesTextPartsTypes) {
+            if (textPartType.equals(ParseHtmlUtils.TextType.SPOILER)) {
+                String spoilerData = mArticlesTextParts.get(mArticlesTextPartsTypes.indexOf(textPartType));
+                List<String> spoilerParts = ParseHtmlUtils.getSpoilerParts(spoilerData);
+
+                SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
+                spoilerViewModel.titles = Collections.singletonList(spoilerParts.get(0));
+                spoilerViewModel.mSpoilerTextParts = ParseHtmlUtils.getArticlesTextParts(spoilerParts.get(1));
+                spoilerViewModel.mSpoilerTextPartsTypes = ParseHtmlUtils.getListOfTextTypes(spoilerViewModel.mSpoilerTextParts);
+                spoilerViewModel.id = counter;
+
+                mSpoilerViewModels.add(spoilerViewModel);
+
+                counter++;
+            }
+        }
 
         notifyDataSetChanged();
     }

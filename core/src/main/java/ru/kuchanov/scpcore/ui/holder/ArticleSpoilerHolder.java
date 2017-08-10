@@ -78,4 +78,10 @@ public class ArticleSpoilerHolder extends RecyclerView.ViewHolder {
             }
         });
     }
+
+    public interface SpoilerClickListener{
+        void onSpoilerExpand();
+
+        void onSpoilerCollapse();
+    }
 }
