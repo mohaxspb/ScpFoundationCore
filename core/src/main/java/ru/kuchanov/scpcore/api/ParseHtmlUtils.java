@@ -19,7 +19,7 @@ import java.util.List;
 public class ParseHtmlUtils {
 
     @Retention(RetentionPolicy.SOURCE)
-    @StringDef({TextType.TEXT, TextType.SPOILER, TextType.IMAGE, TextType.TABLE})
+    @StringDef({TextType.TEXT, TextType.SPOILER, TextType.IMAGE, TextType.TABLE, TextType.TITLE, TextType.TAGS})
     public @interface TextType {
         String TEXT = "TEXT";
         String SPOILER = "SPOILER";

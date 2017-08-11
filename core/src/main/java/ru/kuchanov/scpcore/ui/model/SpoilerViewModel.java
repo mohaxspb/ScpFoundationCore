@@ -1,5 +1,6 @@
 package ru.kuchanov.scpcore.ui.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import ru.kuchanov.scpcore.api.ParseHtmlUtils;
@@ -9,7 +10,7 @@ import ru.kuchanov.scpcore.api.ParseHtmlUtils;
  * <p>
  * for ScpCore
  */
-public class SpoilerViewModel {
+public class SpoilerViewModel implements Serializable{
 
     public boolean isExpanded;
 

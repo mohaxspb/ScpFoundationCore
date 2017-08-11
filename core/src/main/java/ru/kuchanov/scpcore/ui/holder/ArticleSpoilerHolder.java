@@ -94,17 +94,23 @@ public class ArticleSpoilerHolder extends RecyclerView.ViewHolder {
             mSpoilerViewModel.isExpanded = !mSpoilerViewModel.isExpanded;
             if (mSpoilerViewModel.isExpanded) {
                 title.setCompoundDrawablesWithIntrinsicBounds(AttributeGetter.getDrawableId(context, R.attr.iconArrowUp), 0, 0, 0);
-                mSpoilerClickListener.onSpoilerExpand(mSpoilerViewModel);
+//                mSpoilerClickListener.onSpoilerExpand(mSpoilerViewModel);
+                mSpoilerClickListener.onSpoilerExpand(getAdapterPosition());
             } else {
                 title.setCompoundDrawablesWithIntrinsicBounds(AttributeGetter.getDrawableId(context, R.attr.iconArrowDown), 0, 0, 0);
-                mSpoilerClickListener.onSpoilerCollapse(mSpoilerViewModel);
+//                mSpoilerClickListener.onSpoilerCollapse(mSpoilerViewModel);
+                mSpoilerClickListener.onSpoilerCollapse(getAdapterPosition());
             }
         });
     }
 
     public interface SpoilerClickListener {
-        void onSpoilerExpand(SpoilerViewModel spoilerViewModel);
+//        void onSpoilerExpand(SpoilerViewModel spoilerViewModel);
+//
+//        void onSpoilerCollapse(SpoilerViewModel spoilerViewModel);
 
-        void onSpoilerCollapse(SpoilerViewModel spoilerViewModel);
+        void onSpoilerExpand(int position);
+
+        void onSpoilerCollapse(int position);
     }
 }
