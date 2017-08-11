@@ -43,18 +43,8 @@ public class ArticleRecyclerAdapter
     private static final int TYPE_TABLE = 4;
     private static final int TYPE_TAGS = 5;
 
-    private Article mArticle;
-//    private List<String> mArticlesTextParts;
-//    @ParseHtmlUtils.TextType
-//    private List<String> mArticlesTextPartsTypes;
-
-//    private List<Object> mTopLevelItems = new ArrayList<>();
-
     private List<ArticleTextPartViewModel> mViewModels = new ArrayList<>();
 
-    //    public List<String> getArticlesTextParts() {
-//        return mArticlesTextParts;
-//    }
     public List<String> getArticlesTextParts() {
         return ArticleTextPartViewModel.convertToStringList(mViewModels);
     }
@@ -67,28 +57,26 @@ public class ArticleRecyclerAdapter
 
     public void setData(Article article, List<SpoilerViewModel> expandedSpoilers) {
 //        Timber.d("setData: %s", article);
-        mArticle = article;
-
         mViewModels.clear();
 
         List<String> mArticlesTextParts = new ArrayList<>();
         @ParseHtmlUtils.TextType
         List<String> mArticlesTextPartsTypes = new ArrayList<>();
 
-        mArticlesTextParts.add(mArticle.title);
+        mArticlesTextParts.add(article.title);
         mArticlesTextPartsTypes.add(ParseHtmlUtils.TextType.TITLE);
 
         //TODO refactor it
-        if (mArticle.hasTabs) {
-            mArticlesTextParts = ParseHtmlUtils.getArticlesTextParts(mArticle.text);
-            mArticlesTextPartsTypes = ParseHtmlUtils.getListOfTextTypes(mArticlesTextParts);
+        if (article.hasTabs) {
+            mArticlesTextParts.addAll(ParseHtmlUtils.getArticlesTextParts(article.text));
+            mArticlesTextPartsTypes.addAll(ParseHtmlUtils.getListOfTextTypes(mArticlesTextParts));
         } else {
-            mArticlesTextParts = RealmString.toStringList(mArticle.textParts);
-            mArticlesTextPartsTypes = RealmString.toStringList(mArticle.textPartsTypes);
+            mArticlesTextParts.addAll(RealmString.toStringList(article.textParts));
+            mArticlesTextPartsTypes.addAll(RealmString.toStringList(article.textPartsTypes));
         }
 
         //DO NOT USE THIS VALUE!!!
-        mArticlesTextParts.add(mArticle.tags.toString());
+        mArticlesTextParts.add(article.tags.toString());
         mArticlesTextPartsTypes.add(ParseHtmlUtils.TextType.TAGS);
 
         for (int order = 0; order < mArticlesTextParts.size(); order++) {
@@ -109,7 +97,7 @@ public class ArticleRecyclerAdapter
                     data = spoilerViewModel;
                     break;
                 case ParseHtmlUtils.TextType.TAGS:
-                    data = mArticle.tags;
+                    data = article.tags;
                     break;
                 default:
                     data = mArticlesTextParts.get(order);
@@ -186,20 +174,20 @@ public class ArticleRecyclerAdapter
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch (getItemViewType(position)) {
+            case TYPE_TITLE:
+                ((ArticleTitleHolder) holder).bind(mViewModels.get(position));
+                break;
             case TYPE_TEXT:
                 ((ArticleTextHolder) holder).bind(mViewModels.get(position));
                 break;
             case TYPE_IMAGE:
-                ((ArticleImageHolder) holder).bind((String) mViewModels.get(position).data);
+                ((ArticleImageHolder) holder).bind(mViewModels.get(position));
                 break;
             case TYPE_SPOILER:
                 ((ArticleSpoilerHolder) holder).bind((SpoilerViewModel) mViewModels.get(position).data);
                 break;
-            case TYPE_TITLE:
-                ((ArticleTitleHolder) holder).bind((String) mViewModels.get(position).data);
-                break;
             case TYPE_TABLE:
-                ((ArticleTableHolder) holder).bind((String) mViewModels.get(position).data);
+                ((ArticleTableHolder) holder).bind(mViewModels.get(position));
                 break;
             case TYPE_TAGS:
                 ((ArticleTagsHolder) holder).bind((RealmList<ArticleTag>) mViewModels.get(position).data);
@@ -216,7 +204,7 @@ public class ArticleRecyclerAdapter
 
     @Override
     public long getItemId(int position) {
-        return position;
+        return mViewModels.get(position).data.hashCode();
     }
 
     @Override

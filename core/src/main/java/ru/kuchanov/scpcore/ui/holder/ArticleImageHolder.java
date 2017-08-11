@@ -1,6 +1,7 @@
 package ru.kuchanov.scpcore.ui.holder;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -26,6 +27,7 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.ui.model.ArticleTextPartViewModel;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import timber.log.Timber;
@@ -58,9 +60,19 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
         mTextItemsClickListener = clickListener;
     }
 
-    public void bind(String articleTextPart) {
+    public void bind(ArticleTextPartViewModel viewModel) {
         Context context = itemView.getContext();
-        Document document = Jsoup.parse(articleTextPart);
+
+        if (viewModel.isInSpoiler) {
+            int defaultMargin = context.getResources().getDimensionPixelSize(R.dimen.defaultMargin);
+            ((RecyclerView.LayoutParams) itemView.getLayoutParams()).setMargins(defaultMargin, 0, defaultMargin, 0);
+            itemView.setBackgroundColor(AttributeGetter.getColor(context, R.attr.windowBackgroundDark));
+        } else {
+            ((RecyclerView.LayoutParams) itemView.getLayoutParams()).setMargins(0, 0, 0, 0);
+            itemView.setBackgroundColor(Color.TRANSPARENT);
+        }
+
+        Document document = Jsoup.parse((String) viewModel.data);
         Element imageTag = document.getElementsByTag("img").first();
         String imageUrl = imageTag == null ? null : imageTag.attr("src");
 
