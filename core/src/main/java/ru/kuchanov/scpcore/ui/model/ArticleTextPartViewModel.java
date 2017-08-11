@@ -3,9 +3,7 @@ package ru.kuchanov.scpcore.ui.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.RealmList;
 import ru.kuchanov.scpcore.api.ParseHtmlUtils;
-import ru.kuchanov.scpcore.db.model.ArticleTag;
 
 /**
  * Created by mohax on 11.08.2017.
@@ -14,33 +12,17 @@ import ru.kuchanov.scpcore.db.model.ArticleTag;
  */
 public class ArticleTextPartViewModel {
 
-    //FIXME seems to be we do not need it...
-    public int order;
-
     @ParseHtmlUtils.TextType
     public String type;
 
     public Object data;
 
-    public ArticleTextPartViewModel(int order, @ParseHtmlUtils.TextType String type, Object data) {
-        this.order = order;
+    public boolean isInSpoiler;
+
+    public ArticleTextPartViewModel(@ParseHtmlUtils.TextType String type, Object data, boolean isInSpoiler) {
         this.type = type;
         this.data = data;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ArticleTextPartViewModel that = (ArticleTextPartViewModel) o;
-
-        return order == that.order;
-    }
-
-    @Override
-    public int hashCode() {
-        return order;
+        this.isInSpoiler = isInSpoiler;
     }
 
     @Override

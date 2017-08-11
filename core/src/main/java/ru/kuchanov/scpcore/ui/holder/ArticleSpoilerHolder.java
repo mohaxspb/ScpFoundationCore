@@ -33,8 +33,6 @@ public class ArticleSpoilerHolder extends RecyclerView.ViewHolder {
 
     @BindView(R2.id.title)
     TextView title;
-    @BindView(R2.id.content)
-    TextView content;
 
     private SpoilerViewModel mSpoilerViewModel;
 
@@ -48,36 +46,6 @@ public class ArticleSpoilerHolder extends RecyclerView.ViewHolder {
         mSpoilerClickListener = clickListener;
     }
 
-//    public void bind(String textPart) {
-//        Context context = itemView.getContext();
-//        int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_primary);
-//        float articleTextScale = mMyPreferenceManager.getArticleTextScale();
-//        title.setTextSize(TypedValue.COMPLEX_UNIT_PX, articleTextScale * textSizePrimary);
-//
-//        CalligraphyUtils.applyFontToTextView(context, title, mMyPreferenceManager.getFontPath());
-//        CalligraphyUtils.applyFontToTextView(context, content, mMyPreferenceManager.getFontPath());
-//
-//        List<String> spoilerParts = ParseHtmlUtils.getSpoilerParts(textPart);
-//
-//        title.setText(spoilerParts.get(0));
-//        //TODO add settings for it
-////            mContent.setTextIsSelectable(true);
-//        content.setLinksClickable(true);
-//        content.setMovementMethod(LinkMovementMethod.getInstance());
-////        Timber.d("spoilerParts.get(1): %s", spoilerParts.get(1));
-//        mSetTextViewHTML.setText(content, spoilerParts.get(1), mTextItemsClickListener);
-//
-//        title.setOnClickListener(v -> {
-//            if (content.getVisibility() == View.GONE) {
-//                title.setCompoundDrawablesWithIntrinsicBounds(AttributeGetter.getDrawableId(context, R.attr.iconArrowUp), 0, 0, 0);
-//                content.setVisibility(View.VISIBLE);
-//            } else {
-//                title.setCompoundDrawablesWithIntrinsicBounds(AttributeGetter.getDrawableId(context, R.attr.iconArrowDown), 0, 0, 0);
-//                content.setVisibility(View.GONE);
-//            }
-//        });
-//    }
-
     public void bind(SpoilerViewModel data) {
         mSpoilerViewModel = data;
         Context context = itemView.getContext();
@@ -86,7 +54,6 @@ public class ArticleSpoilerHolder extends RecyclerView.ViewHolder {
         title.setTextSize(TypedValue.COMPLEX_UNIT_PX, articleTextScale * textSizePrimary);
 
         CalligraphyUtils.applyFontToTextView(context, title, mMyPreferenceManager.getFontPath());
-        CalligraphyUtils.applyFontToTextView(context, content, mMyPreferenceManager.getFontPath());
 
         title.setText(mSpoilerViewModel.titles.get(0));
 

@@ -68,43 +68,7 @@ public class ArticleRecyclerAdapter
     public void setData(Article article, List<SpoilerViewModel> expandedSpoilers) {
 //        Timber.d("setData: %s", article);
         mArticle = article;
-        //TODO refactor it
-//        if (mArticle.hasTabs) {
-//            mArticlesTextParts = ParseHtmlUtils.getArticlesTextParts(mArticle.text);
-//            mArticlesTextPartsTypes = ParseHtmlUtils.getListOfTextTypes(mArticlesTextParts);
-//        } else {
-//            mArticlesTextParts = RealmString.toStringList(mArticle.textParts);
-//            mArticlesTextPartsTypes = RealmString.toStringList(mArticle.textPartsTypes);
-//        }
 
-//        Timber.d("mArticlesTextPartsTypes: %s", mArticlesTextPartsTypes);
-
-        //set SpoilerViewModels
-//        mTopLevelItems.put(ParseHtmlUtils.TextType.TITLE, mArticle.title);
-
-//        mTopLevelItems.clear();
-//        int counter = 0;
-//        for (String textPartType : mArticlesTextPartsTypes) {
-//            if (textPartType.equals(ParseHtmlUtils.TextType.SPOILER)) {
-//                String spoilerData = mArticlesTextParts.get(counter);
-//                List<String> spoilerParts = ParseHtmlUtils.getSpoilerParts(spoilerData);
-//
-//                SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
-//                spoilerViewModel.titles = Collections.singletonList(spoilerParts.get(0));
-//                spoilerViewModel.mSpoilerTextParts = ParseHtmlUtils.getArticlesTextParts(spoilerParts.get(1));
-//                spoilerViewModel.mSpoilerTextPartsTypes = ParseHtmlUtils.getListOfTextTypes(spoilerViewModel.mSpoilerTextParts);
-////                spoilerViewModel.id = counter;
-//
-//                mTopLevelItems.add(spoilerViewModel);
-//            } else {
-//                mTopLevelItems.add(mArticlesTextParts.get(counter));
-//            }
-//            counter++;
-//        }
-
-//        Timber.d("mTopLevelItems: %s", mTopLevelItems);
-
-        /////////////////////////////
         mViewModels.clear();
 
         List<String> mArticlesTextParts = new ArrayList<>();
@@ -114,6 +78,7 @@ public class ArticleRecyclerAdapter
         mArticlesTextParts.add(mArticle.title);
         mArticlesTextPartsTypes.add(ParseHtmlUtils.TextType.TITLE);
 
+        //TODO refactor it
         if (mArticle.hasTabs) {
             mArticlesTextParts = ParseHtmlUtils.getArticlesTextParts(mArticle.text);
             mArticlesTextPartsTypes = ParseHtmlUtils.getListOfTextTypes(mArticlesTextParts);
@@ -151,7 +116,7 @@ public class ArticleRecyclerAdapter
                     break;
             }
 
-            mViewModels.add(new ArticleTextPartViewModel(order, type, data));
+            mViewModels.add(new ArticleTextPartViewModel(type, data, false));
             //add textParts for expanded spoilers
             if (data instanceof SpoilerViewModel && ((SpoilerViewModel) data).isExpanded) {
                 SpoilerViewModel spoilerViewModel = ((SpoilerViewModel) data);
@@ -160,7 +125,7 @@ public class ArticleRecyclerAdapter
                     @ParseHtmlUtils.TextType
                     String typeInSpoiler = spoilerViewModel.mSpoilerTextPartsTypes.get(i);
                     String dataInSpoiler = spoilerViewModel.mSpoilerTextParts.get(i);
-                    viewModels.add(new ArticleTextPartViewModel(i, typeInSpoiler, dataInSpoiler));
+                    viewModels.add(new ArticleTextPartViewModel(typeInSpoiler, dataInSpoiler, true));
                 }
                 mViewModels.addAll(viewModels);
             }
@@ -220,43 +185,9 @@ public class ArticleRecyclerAdapter
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-//        switch (getItemViewType(position)) {
-//            case TYPE_TEXT:
-//                ((ArticleTextHolder) holder).bind(mArticlesTextParts.get(position - 1));
-//                break;
-//            case TYPE_IMAGE:
-//                ((ArticleImageHolder) holder).bind(mArticlesTextParts.get(position - 1));
-//                break;
-//            case TYPE_SPOILER:
-//                String spoilerData = mArticlesTextParts.get(position - 1);
-//                List<String> spoilerParts = ParseHtmlUtils.getSpoilerParts(spoilerData);
-//
-//                SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
-//                spoilerViewModel.titles = Collections.singletonList(spoilerParts.get(0));
-//                spoilerViewModel.mSpoilerTextParts = ParseHtmlUtils.getArticlesTextParts(spoilerParts.get(1));
-//                spoilerViewModel.mSpoilerTextPartsTypes = ParseHtmlUtils.getListOfTextTypes(spoilerViewModel.mSpoilerTextParts);
-//
-//                int indexInAllItemsList = mTopLevelItems.indexOf(spoilerViewModel);
-//                SpoilerViewModel spoilerViewModelInDataList = ((SpoilerViewModel) mTopLevelItems.get(indexInAllItemsList));
-//
-//                ((ArticleSpoilerHolder) holder).bind(spoilerViewModelInDataList);
-//                break;
-//            case TYPE_TITLE:
-//                ((ArticleTitleHolder) holder).bind(mArticle.title);
-//                break;
-//            case TYPE_TABLE:
-//                ((ArticleTableHolder) holder).bind(mArticlesTextParts.get(position - 1));
-//                break;
-//            case TYPE_TAGS:
-//                ((ArticleTagsHolder) holder).bind(mArticle.tags);
-//                break;
-//            default:
-//                throw new IllegalArgumentException("unexpected item type: " + getItemViewType(position));
-//        }
-
         switch (getItemViewType(position)) {
             case TYPE_TEXT:
-                ((ArticleTextHolder) holder).bind((String) mViewModels.get(position).data);
+                ((ArticleTextHolder) holder).bind(mViewModels.get(position));
                 break;
             case TYPE_IMAGE:
                 ((ArticleImageHolder) holder).bind((String) mViewModels.get(position).data);
@@ -289,24 +220,15 @@ public class ArticleRecyclerAdapter
     }
 
     @Override
-//    public void onSpoilerExpand(SpoilerViewModel spoilerViewModel) {
     public void onSpoilerExpand(int position) {
         Timber.d("onSpoilerExpand: %s", position);
-
-//        int indexInAllItemsList = mTopLevelItems.indexOf(spoilerViewModel);
-//        ((SpoilerViewModel) mTopLevelItems.get(indexInAllItemsList)).isExpanded = true;
-//
-//        mArticlesTextPartsTypes.addAll(indexInAllItemsList + 1, spoilerViewModel.mSpoilerTextPartsTypes);
-//        mArticlesTextParts.addAll(indexInAllItemsList + 1, spoilerViewModel.mSpoilerTextParts);
-
-//        notifyItemRangeInserted(indexInAllItemsList + 1, spoilerViewModel.mSpoilerTextPartsTypes.size());
         SpoilerViewModel spoilerViewModel = ((SpoilerViewModel) mViewModels.get(position).data);
         List<ArticleTextPartViewModel> viewModels = new ArrayList<>();
         for (int order = 0; order < spoilerViewModel.mSpoilerTextPartsTypes.size(); order++) {
             @ParseHtmlUtils.TextType
             String type = spoilerViewModel.mSpoilerTextPartsTypes.get(order);
             String data = spoilerViewModel.mSpoilerTextParts.get(order);
-            viewModels.add(new ArticleTextPartViewModel(order, type, data));
+            viewModels.add(new ArticleTextPartViewModel(type, data, true));
         }
         mViewModels.addAll(position + 1, viewModels);
 
@@ -316,21 +238,8 @@ public class ArticleRecyclerAdapter
     }
 
     @Override
-//    public void onSpoilerCollapse(SpoilerViewModel spoilerViewModel) {
     public void onSpoilerCollapse(int position) {
         Timber.d("onSpoilerCollapse: %s", position);
-
-//        int indexInAllItemsList = mTopLevelItems.indexOf(spoilerViewModel);
-//        ((SpoilerViewModel) mTopLevelItems.get(indexInAllItemsList)).isExpanded = false;
-//
-//        mArticlesTextPartsTypes
-//                .subList(indexInAllItemsList + 1, indexInAllItemsList + 1 + spoilerViewModel.mSpoilerTextPartsTypes.size())
-//                .clear();
-//        mArticlesTextParts
-//                .subList(indexInAllItemsList + 1, indexInAllItemsList + 1 + spoilerViewModel.mSpoilerTextParts.size())
-//                .clear();
-//
-//        notifyItemRangeRemoved(indexInAllItemsList + 1, spoilerViewModel.mSpoilerTextPartsTypes.size());
 
         SpoilerViewModel spoilerViewModel = ((SpoilerViewModel) mViewModels.get(position).data);
         List<ArticleTextPartViewModel> viewModels = new ArrayList<>();
@@ -338,7 +247,7 @@ public class ArticleRecyclerAdapter
             @ParseHtmlUtils.TextType
             String type = spoilerViewModel.mSpoilerTextPartsTypes.get(order);
             String data = spoilerViewModel.mSpoilerTextParts.get(order);
-            viewModels.add(new ArticleTextPartViewModel(order, type, data));
+            viewModels.add(new ArticleTextPartViewModel(type, data, true));
         }
 
         mViewModels
