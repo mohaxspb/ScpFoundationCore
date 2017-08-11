@@ -63,12 +63,18 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
     public void bind(ArticleTextPartViewModel viewModel) {
         Context context = itemView.getContext();
 
+        int defaultMargin = context.getResources().getDimensionPixelSize(R.dimen.defaultMargin);
         if (viewModel.isInSpoiler) {
-            int defaultMargin = context.getResources().getDimensionPixelSize(R.dimen.defaultMargin);
-            ((RecyclerView.LayoutParams) itemView.getLayoutParams()).setMargins(defaultMargin, 0, defaultMargin, 0);
+            RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) itemView.getLayoutParams();
+            params.topMargin = defaultMargin / 2;
+            params.leftMargin = defaultMargin;
+            params.rightMargin = defaultMargin;
             itemView.setBackgroundColor(AttributeGetter.getColor(context, R.attr.windowBackgroundDark));
         } else {
-            ((RecyclerView.LayoutParams) itemView.getLayoutParams()).setMargins(0, 0, 0, 0);
+            RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) itemView.getLayoutParams();
+            params.topMargin = 0;
+            params.leftMargin = 0;
+            params.rightMargin = 0;
             itemView.setBackgroundColor(Color.TRANSPARENT);
         }
 
