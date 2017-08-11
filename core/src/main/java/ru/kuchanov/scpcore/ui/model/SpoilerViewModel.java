@@ -32,13 +32,12 @@ public class SpoilerViewModel {
 
         SpoilerViewModel that = (SpoilerViewModel) o;
 
-        return id == that.id;
-
+        return mSpoilerTextParts.equals(that.mSpoilerTextParts);
     }
 
     @Override
     public int hashCode() {
-        return id;
+        return mSpoilerTextParts.hashCode();
     }
 
     @Override

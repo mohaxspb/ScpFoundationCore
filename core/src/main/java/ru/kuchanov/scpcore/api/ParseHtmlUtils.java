@@ -25,6 +25,8 @@ public class ParseHtmlUtils {
         String SPOILER = "SPOILER";
         String IMAGE = "IMAGE";
         String TABLE = "TABLE";
+        String TITLE = "TITLE";
+        String TAGS = "TAGS";
     }
 
     public static List<String> getArticlesTextParts(String html) {
