@@ -153,7 +153,7 @@ public class ArticleRecyclerAdapter
 
             mViewModels.add(new ArticleTextPartViewModel(order, type, data));
             //add textParts for expanded spoilers
-            if (data instanceof SpoilerViewModel) {
+            if (data instanceof SpoilerViewModel && ((SpoilerViewModel) data).isExpanded) {
                 SpoilerViewModel spoilerViewModel = ((SpoilerViewModel) data);
                 List<ArticleTextPartViewModel> viewModels = new ArrayList<>();
                 for (int i = 0; i < spoilerViewModel.mSpoilerTextPartsTypes.size(); i++) {
@@ -341,9 +341,6 @@ public class ArticleRecyclerAdapter
             viewModels.add(new ArticleTextPartViewModel(order, type, data));
         }
 
-        mViewModels
-                .subList(position + 1, position + 1 + viewModels.size())
-                .clear();
         mViewModels
                 .subList(position + 1, position + 1 + viewModels.size())
                 .clear();
