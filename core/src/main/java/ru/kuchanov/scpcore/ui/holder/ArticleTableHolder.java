@@ -2,6 +2,8 @@ package ru.kuchanov.scpcore.ui.holder;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -16,8 +18,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
+import ru.kuchanov.scpcore.ui.model.ArticleTextPartViewModel;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
+import ru.kuchanov.scpcore.util.AttributeGetter;
 import timber.log.Timber;
 
 /**
@@ -46,7 +51,18 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    public void bind(String tableContent) {
+    public void bind(ArticleTextPartViewModel viewModel) {
+        Context context = itemView.getContext();
+
+        if (viewModel.isInSpoiler) {
+            int defaultMargin = context.getResources().getDimensionPixelSize(R.dimen.defaultMargin);
+            ((RecyclerView.LayoutParams) itemView.getLayoutParams()).setMargins(defaultMargin, 0, defaultMargin, 0);
+            itemView.setBackgroundColor(AttributeGetter.getColor(context, R.attr.windowBackgroundDark));
+        } else {
+            ((RecyclerView.LayoutParams) itemView.getLayoutParams()).setMargins(0, 0, 0, 0);
+            itemView.setBackgroundColor(Color.TRANSPARENT);
+        }
+
         String fullHtml = "<!DOCTYPE html>\n" +
                 "<html>\n" +
                 "    <head>\n" +
@@ -54,7 +70,7 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
                 "        <style>table.wiki-content-table{border-collapse:collapse;border-spacing:0;margin:.5em auto}table.wiki-content-table td{border:1px solid #888;padding:.3em .7em}table.wiki-content-table th{border:1px solid #888;padding:.3em .7em;background-color:#eee}</style>\n" +
                 "    </head>\n" +
                 "    <body>";
-        fullHtml += tableContent;
+        fullHtml += (String) viewModel.data;
         fullHtml += "</body>\n" +
                 "</html>";
 
@@ -72,7 +88,7 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
 //                    Timber.d("link: %s", link);
 
                     if (checkUrl(link)) {
-                        Timber.d("Link clicked: %s", link);
+//                        Timber.d("Link clicked: %s", link);
                     }
                 }
             }
@@ -132,6 +148,13 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
                 if (link.endsWith(".mp3")) {
                     if (mTextItemsClickListener != null) {
                         mTextItemsClickListener.onMusicClicked(link);
+                    }
+                    return true;
+                }
+
+                if (link.endsWith(".jpg") || link.endsWith(".jpeg") || link.endsWith(".png") || link.endsWith(".gif")) {
+                    if (mTextItemsClickListener != null) {
+                        mTextItemsClickListener.onImageClicked(link);
                     }
                     return true;
                 }

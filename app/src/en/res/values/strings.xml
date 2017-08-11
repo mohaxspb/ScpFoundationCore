@@ -2,11 +2,4 @@
     <!--no need to translate-->
     <string name="app_name" translatable="false">SCP Foundation Database EN</string>
     <!--end no need to translate-->
-
-    <string-array name="materials_titles">
-        <item>Joke SCPs</item>
-        <item>Archived SCPs</item>
-        <item>Explained SCPs</item>
-        <item>Log of Extranormal Events</item>
-    </string-array>
 </resources>

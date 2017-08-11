@@ -15,11 +15,6 @@ public class ConstantValuesImpl implements ConstantValues {
     }
 
     @Override
-    public String getMain() {
-        return Urls.MAIN;
-    }
-
-    @Override
     public String getMostRated() {
         return Urls.RATE;
     }
@@ -113,16 +108,6 @@ public class ConstantValuesImpl implements ConstantValues {
     }
 
     @Override
-    public String getMostRecentUrl() {
-        return Api.MOST_RECENT_URL;
-    }
-
-    @Override
-    public String getMostRatedUrl() {
-        return Urls.RATE;
-    }
-
-    @Override
     public String getSearchSiteUrl() {
         return Api.SEARCH_URL;
     }
@@ -145,6 +130,11 @@ public class ConstantValuesImpl implements ConstantValues {
     @Override
     public int getNumOfArticlesOnSearchPage() {
         return Api.NUM_OF_ARTICLES_ON_SEARCH_PAGE;
+    }
+
+    @Override
+    public String getAppLang() {
+        return "en";
     }
 
     interface Api {

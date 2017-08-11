@@ -15,7 +15,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
-import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
@@ -43,7 +42,7 @@ public class ApiClientImpl extends ApiClient {
         Timber.d("getRandomUrl");
         return bindWithUtils(Observable.unsafeCreate(subscriber -> {
             Request.Builder request = new Request.Builder();
-            request.url(Constants.Api.RANDOM_PAGE_SCRIPT_URL);
+            request.url(mConstantValues.getRandomPageUrl());
             request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
             request.addHeader("Accept-Encoding", "gzip, deflate, br");
             request.addHeader("Accept-Language", "en-US,en;q=0.8,de-DE;q=0.5,de;q=0.3");
