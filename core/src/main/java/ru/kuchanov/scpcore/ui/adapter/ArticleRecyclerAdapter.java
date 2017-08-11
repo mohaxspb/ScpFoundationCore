@@ -63,9 +63,6 @@ public class ArticleRecyclerAdapter
         @ParseHtmlUtils.TextType
         List<String> mArticlesTextPartsTypes = new ArrayList<>();
 
-        mArticlesTextParts.add(article.title);
-        mArticlesTextPartsTypes.add(ParseHtmlUtils.TextType.TITLE);
-
         //TODO refactor it
         if (article.hasTabs) {
             Timber.d("article.text: %s", article.text);
@@ -76,9 +73,15 @@ public class ArticleRecyclerAdapter
             mArticlesTextPartsTypes.addAll(RealmString.toStringList(article.textPartsTypes));
         }
 
+        mArticlesTextParts.add(0, article.title);
+        mArticlesTextPartsTypes.add(0, ParseHtmlUtils.TextType.TITLE);
         //DO NOT USE THIS VALUE!!!
         mArticlesTextParts.add(article.tags.toString());
         mArticlesTextPartsTypes.add(ParseHtmlUtils.TextType.TAGS);
+
+        Timber.d("mArticlesTextPartsTypes: %s", mArticlesTextPartsTypes);
+        Timber.d("mArticlesTextParts.size: %s", mArticlesTextParts.size());
+        Timber.d("mArticlesTextPartsTypes.size: %s", mArticlesTextPartsTypes.size());
 
         for (int order = 0; order < mArticlesTextParts.size(); order++) {
             @ParseHtmlUtils.TextType

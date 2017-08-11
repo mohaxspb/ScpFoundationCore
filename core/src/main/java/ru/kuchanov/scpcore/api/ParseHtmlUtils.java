@@ -50,6 +50,7 @@ public class ParseHtmlUtils {
         @TextType
         List<String> listOfTextTypes = new ArrayList<>();
         for (String textPart : articlesTextParts) {
+            Timber.d("getListOfTextTypes: %s", textPart);
             Element element = Jsoup.parse(textPart);
             Element ourElement = element.getElementsByTag("body").first().children().first();
             if (ourElement == null) {
