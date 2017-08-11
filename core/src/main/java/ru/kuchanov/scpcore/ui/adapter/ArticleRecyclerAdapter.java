@@ -195,7 +195,10 @@ public class ArticleRecyclerAdapter
                 spoilerViewModel.mSpoilerTextParts = ParseHtmlUtils.getArticlesTextParts(spoilerParts.get(1));
                 spoilerViewModel.mSpoilerTextPartsTypes = ParseHtmlUtils.getListOfTextTypes(spoilerViewModel.mSpoilerTextParts);
 
-                ((ArticleSpoilerHolder) holder).bind(spoilerViewModel);
+                int indexInAllItemsList = mTopLevelItems.indexOf(spoilerViewModel);
+                SpoilerViewModel spoilerViewModelInDataList = ((SpoilerViewModel) mTopLevelItems.get(indexInAllItemsList));
+
+                ((ArticleSpoilerHolder) holder).bind(spoilerViewModelInDataList);
                 break;
             case TYPE_TITLE:
                 ((ArticleTitleHolder) holder).bind(mArticle.title);
@@ -221,38 +224,48 @@ public class ArticleRecyclerAdapter
         return position;
     }
 
-    //FIXME alsways called this method
+    //FIXME always calling this method
     @Override
     public void onSpoilerExpand(SpoilerViewModel spoilerViewModel) {
         Timber.d("onSpoilerExpand: %s", spoilerViewModel);
 
-        int indexInAllItemsList = mTopLevelItems.indexOf(spoilerViewModel) +1;
-        Timber.d("indexInAllItemsList: %s", indexInAllItemsList);
+        int indexInAllItemsList = mTopLevelItems.indexOf(spoilerViewModel);
+        ((SpoilerViewModel) mTopLevelItems.get(indexInAllItemsList)).isExpanded = true;
+//        Timber.d("indexInAllItemsList: %s", indexInAllItemsList);
 
-        Timber.d("mArticlesTextPartsTypes.size: %s", mArticlesTextPartsTypes.size());
-        Timber.d("mArticlesTextParts.size: %s", mArticlesTextParts.size());
-        mArticlesTextPartsTypes.addAll(indexInAllItemsList, spoilerViewModel.mSpoilerTextPartsTypes);
-        mArticlesTextParts.addAll(indexInAllItemsList, spoilerViewModel.mSpoilerTextParts);
-        Timber.d("mArticlesTextPartsTypes.size: %s", mArticlesTextPartsTypes.size());
-        Timber.d("mArticlesTextParts.size: %s", mArticlesTextParts.size());
+//        Timber.d("mArticlesTextPartsTypes.size: %s", mArticlesTextPartsTypes.size());
+//        Timber.d("mArticlesTextParts.size: %s", mArticlesTextParts.size());
+        mArticlesTextPartsTypes.addAll(indexInAllItemsList + 1, spoilerViewModel.mSpoilerTextPartsTypes);
+        mArticlesTextParts.addAll(indexInAllItemsList + 1, spoilerViewModel.mSpoilerTextParts);
+//        Timber.d("mArticlesTextPartsTypes.size: %s", mArticlesTextPartsTypes.size());
+//        Timber.d("mArticlesTextParts.size: %s", mArticlesTextParts.size());
 
-        notifyItemRangeInserted(indexInAllItemsList, spoilerViewModel.mSpoilerTextPartsTypes.size());
+        notifyItemRangeInserted(indexInAllItemsList + 1, spoilerViewModel.mSpoilerTextPartsTypes.size());
     }
 
     @Override
     public void onSpoilerCollapse(SpoilerViewModel spoilerViewModel) {
         Timber.d("onSpoilerCollapse: %s", spoilerViewModel);
 
-        int indexInAllItemsList = mTopLevelItems.indexOf(spoilerViewModel) +1;
-        Timber.d("indexInAllItemsList: %s", indexInAllItemsList);
+        int indexInAllItemsList = mTopLevelItems.indexOf(spoilerViewModel);
+        ((SpoilerViewModel) mTopLevelItems.get(indexInAllItemsList)).isExpanded = false;
+//        Timber.d("indexInAllItemsList: %s", indexInAllItemsList);
 
-        Timber.d("mArticlesTextPartsTypes.size: %s", mArticlesTextPartsTypes.size());
-        Timber.d("mArticlesTextParts.size: %s", mArticlesTextParts.size());
-        mArticlesTextPartsTypes.removeAll(spoilerViewModel.mSpoilerTextPartsTypes);
-        mArticlesTextParts.removeAll(spoilerViewModel.mSpoilerTextParts);
-        Timber.d("mArticlesTextPartsTypes.size: %s", mArticlesTextPartsTypes.size());
-        Timber.d("mArticlesTextParts.size: %s", mArticlesTextParts.size());
+//        Timber.d("mArticlesTextPartsTypes.size: %s", mArticlesTextPartsTypes.size());
+//        Timber.d("mArticlesTextParts.size: %s", mArticlesTextParts.size());
+//        mArticlesTextPartsTypes.removeAll(spoilerViewModel.mSpoilerTextPartsTypes);
+//        mArticlesTextParts.removeAll(spoilerViewModel.mSpoilerTextParts);
 
-        notifyItemRangeRemoved(indexInAllItemsList, spoilerViewModel.mSpoilerTextPartsTypes.size());
+        mArticlesTextPartsTypes
+                .subList(indexInAllItemsList + 1, indexInAllItemsList + 1 + spoilerViewModel.mSpoilerTextPartsTypes.size())
+                .clear();
+        mArticlesTextParts
+                .subList(indexInAllItemsList + 1, indexInAllItemsList + 1 + spoilerViewModel.mSpoilerTextParts.size())
+                .clear();
+
+//        Timber.d("mArticlesTextPartsTypes.size: %s", mArticlesTextPartsTypes.size());
+//        Timber.d("mArticlesTextParts.size: %s", mArticlesTextParts.size());
+
+        notifyItemRangeRemoved(indexInAllItemsList + 1, spoilerViewModel.mSpoilerTextPartsTypes.size());
     }
 }
