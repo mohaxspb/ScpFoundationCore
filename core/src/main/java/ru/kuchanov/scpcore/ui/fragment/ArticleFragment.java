@@ -216,6 +216,8 @@ public class ArticleFragment
             Article currentTabArticle = new Article();
             currentTabArticle.hasTabs = true;
             currentTabArticle.text = RealmString.toStringList(mArticle.tabsTexts).get(mCurrentSelectedTab);
+            currentTabArticle.tags = mArticle.tags;
+            currentTabArticle.title = mArticle.title;
             mAdapter.setData(currentTabArticle, mExpandedSpoilers);
 
             tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -229,6 +231,8 @@ public class ArticleFragment
                     Article currentTabArticle = new Article();
                     currentTabArticle.hasTabs = true;
                     currentTabArticle.text = RealmString.toStringList(mArticle.tabsTexts).get(mCurrentSelectedTab);
+                    currentTabArticle.tags = mArticle.tags;
+                    currentTabArticle.title = mArticle.title;
                     mAdapter.setData(currentTabArticle, mExpandedSpoilers);
                 }
 
@@ -345,9 +349,8 @@ public class ArticleFragment
         }
         for (int i = 0; i < articlesTextParts.size(); i++) {
             if (articlesTextParts.get(i).contains("id=\"" + "toc" + digits + "\"")) {
-//                (i+1 так как в адаптере есть еще элемент для заголовка)
                 Timber.d("found part: %s", articlesTextParts.get(i));
-                mRecyclerView.scrollToPosition(i + 1);
+                mRecyclerView.scrollToPosition(i);
                 return;
             }
         }
@@ -361,8 +364,7 @@ public class ArticleFragment
             if (articlesTextParts.get(i).contains(srtToCheck) ||
                     articlesTextParts.get(i).contains(srtToCheck1)) {
 //                Timber.d("found part: %s", articlesTextParts.get(i));
-//                (i+1 так как в адаптере есть еще элемент для заголовка)
-                mRecyclerView.scrollToPosition(i + 1);
+                mRecyclerView.scrollToPosition(i);
                 return;
             }
         }

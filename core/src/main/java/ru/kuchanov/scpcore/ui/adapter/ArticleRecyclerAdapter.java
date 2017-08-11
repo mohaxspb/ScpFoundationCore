@@ -68,6 +68,7 @@ public class ArticleRecyclerAdapter
 
         //TODO refactor it
         if (article.hasTabs) {
+            Timber.d("article.text: %s", article.text);
             mArticlesTextParts.addAll(ParseHtmlUtils.getArticlesTextParts(article.text));
             mArticlesTextPartsTypes.addAll(ParseHtmlUtils.getListOfTextTypes(mArticlesTextParts));
         } else {

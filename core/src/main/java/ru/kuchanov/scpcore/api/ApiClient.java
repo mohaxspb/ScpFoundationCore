@@ -783,8 +783,9 @@ public class ApiClient implements ApiClientModel<Article> {
 
             //type TODO fucking unformatted info!
 
-            //this we store aas article text
+            //this we store as article text
             String rawText = pageContent.toString();
+//            Timber.d("rawText: %s", rawText);
 
             //tabs
             boolean hasTabs = false;
@@ -805,13 +806,15 @@ public class ApiClient implements ApiClientModel<Article> {
                 Element yuiContent = yuiNavset.getElementsByClass("yui-content").first();
 
                 tabsTitles = new RealmList<>();
-                for (Element li : liElements) {
-                    tabsTitles.add(new RealmString(li.text()));
+                for (Element element : liElements) {
+                    tabsTitles.add(new RealmString(element.text()));
                 }
                 //TODO add supporting inner articles
                 tabsText = new RealmList<>();
                 for (Element tab : yuiContent.children()) {
-                    tabsText.add(new RealmString(tab.html()));
+//                    tabsText.add(new RealmString(tab.html()));
+                    tab.attr("id", "page-content");
+                    tabsText.add(new RealmString(tab.outerHtml()));
                 }
             } else {
                 List<String> rawTextParts = ParseHtmlUtils.getArticlesTextParts(rawText);

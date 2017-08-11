@@ -11,6 +11,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 /**
  * Created by mohax on 05.01.2017.
  * <p>
@@ -79,8 +81,9 @@ public class ParseHtmlUtils {
         return listOfTextTypes;
     }
 
-    public static ArrayList<String> getSpoilerParts(String html) {
-        ArrayList<String> spoilerParts = new ArrayList<>();
+    public static List<String> getSpoilerParts(String html) {
+        Timber.d("getSpoilerParts: %s", html);
+        List<String> spoilerParts = new ArrayList<>();
         Document document = Jsoup.parse(html);
         Element element = document.getElementsByClass("collapsible-block-folded").first();
         Element elementA = element.getElementsByTag("a").first();
