@@ -26,9 +26,7 @@
     <string name="share">Freigeben</string>
     <string name="open_with">Zum Browser</string>
     <string name="add_to_favorites">Zu Favoriten hinzufügen</string>
-    <string name="share_link_text">%1$s\n\n Gesendet mit Anwendung
-\"SCP
-Foundation\"\nhttps://play.google.com/store/apps/details?id=%2$s</string>
+    <string name="share_link_text">%1$s\n\n Gesendet mit Anwendung \"SCP Foundation\"\nhttps://play.google.com/store/apps/details?id=%2$s</string>
     <string name="share_choser_text">Teilen Sie mit…</string>
     <string name="browser_choser_text">Offen mit…</string>
     <string name="favorites_add">Zu Favoriten hinzufügen</string>
