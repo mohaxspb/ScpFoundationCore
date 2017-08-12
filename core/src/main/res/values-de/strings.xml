@@ -1,5 +1,4 @@
-<resources>
-    <!--drawer items-->
+<resources>    <!--drawer items-->
     <string name="drawer_item_1">Über die Organisation</string>
     <string name="drawer_item_2">Neuigkeiten</string>
     <string name="drawer_item_3">Artikel nach Bewertung </string>
@@ -36,7 +35,7 @@
     <string name="text_size_lists">Textgröße in Listen</string>
     <string name="text_size_dialog_title">Einstellungen für Textgröße</string>
     <string name="close">Schließen</string>
-    <string name="delete">Löschen</string>
+    <string name="delete">entfernen</string>
     <string name="search">suchen</string>
 
     <!--drawer items -->
@@ -46,20 +45,20 @@
     <string name="stories">Geschichte</string>
 
     <!--utils-->
-    <string name="search_hint">Geben Sie die Anfrage ein</string>
-    <string name="error_no_search_results">Auf Ihrer Anfrage wurde nichts gefunden</string>
-    <string name="start_download">Der Artikel ist nicht in der Datenbank. Starten des Downloads</string>
+    <string name="search_hint">Die Anfrage eingeben</string>
+    <string name="error_no_search_results">Ihre Suche hat leider keinen Treffer ergeben</string>
+    <string name="start_download"> Es gibt kein Artikel in der Datenbank. Das Herunterladen starten</string>
 
     <string name="settings_notif_on">Benachrichtigung über neue Artikel</string>
     <string name="settings_notif_led_on">LED-Anzeige</string>
     <string name="settings_notif_vibrate_on">Vibration</string>
     <string name="settings_notif_sound_on">Der Klang der Benachrichtigung</string>
-    <string name="settings_notification">Benachrichtigungs-Voreinstellungen</string>
-    <string name="dialog_title_subscriptions">Deaktiviert Werbung, automatische Cloud-Synchronisierung und atmosphärische Schriftarten</string>
+    <string name="settings_notification">Einstellungen vor Benachrichtigungs </string>
+    <string name="dialog_title_subscriptions"> die Werbung abschaltung, automatische Cloud-Synchronisierung und atmosphärische Schriftarten</string>
     <string name="dialog_title_subscriptions_disabled_free_downloads">Anzeigen deaktivieren, Automatische Cloud-Synchronisierung, Laden Sie eine unbegrenzte Anzahl von Artikeln herunter und atmosphärische Schriftarten</string>
-    <string name="current_subscription">Ihr aktuelles Abonnement</string>
+    <string name="current_subscription">Ihre aktuelles Abonnement</string>
     <string name="no_subscriptions">Leere</string>
-    <string name="refresh">Update</string>
+    <string name="refresh"> aktualisieren</string>
     <string name="i_accept">Ich stimme zu</string>
     <string name="error_read_licence">Die Lizenzdatei konnte nicht geöffnet werden</string>
     <string name="new_version_features">Die neue Version</string>
@@ -75,7 +74,7 @@
     <string name="remove_ads_for_free">Anzeigen entfernen und verdienen Sie Punkte kostenlos!</string>
     <string name="remove_ads_for_free_disabled_free_downloads">Anzeigen entfernen, Erhöhen Sie die Beschränkung auf Artikel nd verdienen Sie Punkte kostenlos!</string>
     <string name="ads_reward_gained">Yay! Keine Werbung für %d Stunden!</string>
-    <string name="wait"> Bitte warten…</string>
+    <string name="wait"> Moment mal bitte</string>
     <string name="ads_reward_error_loading">Fehler beim Laden. Probier es nochmal…</string>
     <string name="ads_reward_description_title">Instruktion</string>
     <string name="ads_reward_description_content">Wir zeigen Ihnen das Video und, nach der betrachtung, Schalten Sie die anzeigen vorübergehend aus. Sie können es so oft wie gewünscht deaktivieren!</string>
@@ -83,17 +82,17 @@
     <string name="settings_design_list_type">Die Gestaltung des Artikels in der Liste</string>
     <string name="rating">Bewertung %d</string>
     <string name="yes_sir">Das stimmt!</string>
-    <string name="reward_not_loaded_yet">Noch nicht geladen. Bitte versuchen Sie es erneut</string>
+    <string name="reward_not_loaded_yet">Noch nicht geladen. Bitte versuchen Sie noch ein mal</string>
     <string name="settings_design_font">Schrift</string>
     <string name="login_advantages">Achtung, Mitarbeiter! Die Autorisierung ist optional, Aber es ist für Cloud-basierte Synchronisierung von ausgewählten Artikeln und Lesen Status wie erforderlich. Es ermöglicht Ihnen auch, an der Agent-Ranking teilzunehmen. Sie können weitere Instruktionen vom Kopf des Content-Bereichs erhalten.</string>
     <string name="login_advantages_title">Warum die Autorisierung?</string>
     <string name="login_greetings">Willkommen, Agent %s</string>
-    <string name="error_login_no_email">kann ohne Informationen über die e-Mail nicht autorisiert werden.</string>
+    <string name="error_login_no_email">Es kann ohne Informationen über die e-Mail nicht autorisiert werden.</string>
     <string name="materials">Materialien</string>
     <string name="only_premium">Nur für die Unterzeichner</string>
     <string name="activate">Aktivieren.</string>
     <string name="info"> Informationen</string>
-    <string name="subs_info">Das zusätzliche Feature schließt das Deaktivieren von Ankündigungen ein, alle Schriftarten ohne Einschränkung, multiplizieren Sie alle Punkte, die Sie von 3 erhalten, Und eine Cloud-basierte Synchronisation von Favoriten und Lesungen. Und vor allem abonnieren, sie sind sehr motiviert Entwickler, um schnell Funktionen hinzufügen und Fehler beheben!</string>
+    <string name="subs_info">Das zusätzliche Feature schließt das Deaktivieren von Ankündigungen ein, es gibt alle Schriftarten ohne Einschränkung, multiplizieren Sie alle Punkte, die Sie von 3 erhalten, Und eine Cloud-basierte Synchronisation von Favoriten und Lesungen. Und vor allem abonnieren, sie sind sehr motiviert Entwickler, um schnell Funktionen hinzufügen und Fehler beheben!</string>
     <string name="subs_info_disabled_free_downloads">Zusätzliche Funktionen beinhalten Deaktivieren der Werbung, Unbegrenzter Download von Artikeln zu Offline, Alle Schriftarten ohne Einschränkung, Multiplizieren Sie alle Punkte, die Sie von 3 erhalten, Sowie die Cloud Sync von Favoriten und Lesungen. Und vor allem abonnieren, sie sind sehr motiviert Entwickler, um schnell Funktionen hinzufügen und Fehler beheben!</string>
 
     <string-array name="fag_items">
@@ -171,14 +170,14 @@
     <string name="leaderboard_dialog_title">Agent-Ranking</string>
     <string name="refreshed"> Aktualisiert in %s</string>
     <string name="progress_leaderboard"> Angeschlossen mit der Personalabteilung des Fonds…</string>
-    <string name="level">%d Ebene</string>
+    <string name="level">%d Stufe</string>
     <!--<string name="need_relogin_dialog_title">Требуется повторная авторизация</string>-->
     <!--<string name="need_relogin_dialog_content">Внимание персонал! В связи с приказом [ДАННЫЕ УДАЛЕНЫ] требуется повторная авторизация. После повторной авторизации ваши данные будут сохраняться в облаке и более не потеряются. Также ваши достижения на должности агента Фонда будут заноситься в таблицу рекордов. Внимание! В случае выхода из аккаунта все несинхронизированные данные будут потеряны! Будьте внимательны и регулярно синхронизируйте ваши данные.</string>-->
     <!--<string name="i_read_and_accept">Я прочитал и понял</string>-->
     <!--<string name="relogin">Авторизоваться</string>-->
     <!--<string name="relogin_dialog_title">Повторная авторизация</string>-->
     <!--<string name="relogin_dialog_content">Авторизоваться повторно сейчас? Вы можете сделать это позже из левого меню (красная кнопка слева от кнопки выхода из профиля)</string>-->
-    <string name="warning"> \Aufmerksamkeit!</string>
+    <string name="warning">Achtung!</string>
     <!--<string name="dialog_logout_content">При выходе из аккаунта все избранные и прочитанные статьи будут сброшены! Убедитесь, что вы всё синхронизировали. Синхронизацию можно произвести в Настройках.</string>-->
     <string name="dialog_logout_content">Bist du sicher, dass du aussteigen möchtest? Für unbefugte Agenten ist das Rating-System deaktiviert Und du wirst nicht in der Lage, Gläser zu verdienen und profitieren von den bereits kumulierten</string>
     <string name="logout">Ausfahrt</string>
