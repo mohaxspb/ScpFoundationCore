@@ -161,7 +161,8 @@ dependencies {
     compile 'com.github.chrisbanes:PhotoView:2.0.0'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     //mvp
-    compile 'com.hannesdorfmann.mosby:mvp:2.0.1'
+    compile 'com.hannesdorfmann.mosby3:mvp:3.0.4'
+    compile 'com.hannesdorfmann.mosby3:mvp-nullobject-presenter:3.0.4'
     //vk
     compile 'com.vk:androidsdk:1.6.8'
     //facebook
