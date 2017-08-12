@@ -88,7 +88,13 @@ public class ParseHtmlUtils {
         Document document = Jsoup.parse(html);
         Element element = document.getElementsByClass("collapsible-block-folded").first();
         Element elementA = element.getElementsByTag("a").first();
-        spoilerParts.add(elementA.text());
+        spoilerParts.add(elementA.text().replaceAll("&nbsp;", " "));
+        Timber.d("spoilerParts: %s", spoilerParts.get(0));
+
+        Element elementExpanded = document.getElementsByClass("collapsible-block-link").first();
+        Element elementAExpanded = elementExpanded.getElementsByTag("a").first();
+        spoilerParts.add(elementAExpanded.text().replaceAll("&nbsp;", " "));
+        Timber.d("spoilerParts: %s", spoilerParts.get(1));
 
         Element elementUnfolded = document.getElementsByClass("collapsible-block-unfolded").first();
         Element elementContent = elementUnfolded.getElementsByClass("collapsible-block-content").first();

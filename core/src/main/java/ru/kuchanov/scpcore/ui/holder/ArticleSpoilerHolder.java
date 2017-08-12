@@ -55,12 +55,14 @@ public class ArticleSpoilerHolder extends RecyclerView.ViewHolder {
 
         CalligraphyUtils.applyFontToTextView(context, title, mMyPreferenceManager.getFontPath());
 
-        title.setText(mSpoilerViewModel.titles.get(0));
+//        title.setText(mSpoilerViewModel.titles.get(0));
 
         if (mSpoilerViewModel.isExpanded) {
             title.setCompoundDrawablesWithIntrinsicBounds(AttributeGetter.getDrawableId(context, R.attr.iconArrowUp), 0, 0, 0);
+            title.setText(mSpoilerViewModel.titles.get(1));
         } else {
             title.setCompoundDrawablesWithIntrinsicBounds(AttributeGetter.getDrawableId(context, R.attr.iconArrowDown), 0, 0, 0);
+            title.setText(mSpoilerViewModel.titles.get(0));
         }
 
         title.setOnClickListener(v -> {
@@ -68,9 +70,11 @@ public class ArticleSpoilerHolder extends RecyclerView.ViewHolder {
             if (mSpoilerViewModel.isExpanded) {
                 title.setCompoundDrawablesWithIntrinsicBounds(AttributeGetter.getDrawableId(context, R.attr.iconArrowUp), 0, 0, 0);
                 mSpoilerClickListener.onSpoilerExpand(getAdapterPosition());
+                title.setText(mSpoilerViewModel.titles.get(1));
             } else {
                 title.setCompoundDrawablesWithIntrinsicBounds(AttributeGetter.getDrawableId(context, R.attr.iconArrowDown), 0, 0, 0);
                 mSpoilerClickListener.onSpoilerCollapse(getAdapterPosition());
+                title.setText(mSpoilerViewModel.titles.get(0));
             }
         });
     }
