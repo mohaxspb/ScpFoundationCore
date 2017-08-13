@@ -168,7 +168,9 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
             Timber.d("Clicked data: %s", data1);
 
             //check if its time to offer free trial subscription
-            if (mMyPreferenceManager.isTimeToOfferFreeTrial()) {
+            boolean hasSubscription = mMyPreferenceManager.isHasSubscription() || mMyPreferenceManager.isHasNoAdsSubscription();
+            if (!hasSubscription && mMyPreferenceManager.isTimeToOfferFreeTrial()) {
+                mMyPreferenceManager.setFreeAdsDisableRewardGainedCount(0);
                 getBaseActivity().showOfferFreeTrialSubscriptionPopup();
                 return;
             }
