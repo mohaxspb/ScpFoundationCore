@@ -305,7 +305,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             @Override
             public void onRewardedVideoFinished(int i, String s) {
                 super.onRewardedVideoFinished(i, s);
-                mMyPreferenceManager.applyRewardFromAds();
+                mMyPreferenceManager.applyAwardFromAds();
                 long numOfMillis = FirebaseRemoteConfig.getInstance()
                         .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
                 long hours = numOfMillis / 1000 / 60 / 60;
@@ -718,6 +718,31 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     Bundle bundle = new Bundle();
                     bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.StartScreen.AFTER_LEVEL_UP);
                     FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                })
+                .negativeText(android.R.string.cancel)
+                .onNegative((dialog, which) -> dialog.dismiss())
+                .build()
+                .show();
+    }
+
+    @Override
+    public void showOfferFreeTrialSubscriptionPopup() {
+        Timber.d("showOfferFreeTrialSubscriptionPopup");
+        new MaterialDialog.Builder(this)
+                .title(R.string.dialog_offer_free_trial_subscription_title)
+                //todo get days from market somehow
+                .content(getString(R.string.dialog_offer_free_trial_subscription_content, 14, 14))
+                .positiveText(R.string.yes_bliad)
+                .onPositive((dialog, which) -> {
+                    try {
+                        InappHelper.startSubsBuy(this, mService, InappHelper.InappType.SUBS, getString(R.string.subs_free_trial).split(",")[0]);
+                    } catch (Exception e) {
+                        Timber.e(e);
+                        showError(e);
+                    }
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.EventValue.ADS_DISABLE);
+                    FirebaseAnalytics.getInstance(this).logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
                 })
                 .negativeText(android.R.string.cancel)
                 .onNegative((dialog, which) -> dialog.dismiss())

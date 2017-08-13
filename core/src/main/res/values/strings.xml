@@ -272,4 +272,7 @@
     <string name="dialog_offer_login_to_gain_score_content">Do you want to authorize first? After authorizing you\'ll get not only ads disabling, but also score increasing, which allows you to load more articles to read them offline!</string>
     <string name="dialog_offer_subscription_title">Thanks for supporting us!</string>
     <string name="dialog_offer_subscription_content">Want to buy subscription to disable all ads and receive unlimited offline capabilities, authomated cloud sync and all fonts?</string>
+    <!---->
+    <string name="dialog_offer_free_trial_subscription_title">Want to try full version for free?</string>
+    <string name="dialog_offer_free_trial_subscription_content">We want to offer you a free %1$d days trial of full version. You\'ll receive unlimited downloads, no ads, auto cloud sync and all fonts for %2$d days for FREE!</string>
 </resources>

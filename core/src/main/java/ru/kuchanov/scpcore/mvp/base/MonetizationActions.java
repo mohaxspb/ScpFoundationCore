@@ -33,4 +33,6 @@ public interface MonetizationActions {
     boolean isBannerEnabled();
 
     void showOfferSubscriptionPopup();
+
+    void showOfferFreeTrialSubscriptionPopup();
 }

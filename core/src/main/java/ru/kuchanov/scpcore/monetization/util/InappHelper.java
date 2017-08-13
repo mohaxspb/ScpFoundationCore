@@ -44,7 +44,7 @@ import static ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog.REQUEST_
  */
 public class InappHelper {
 
-    private final static int API_VERSION = 3;
+    private final static int API_VERSION_3 = 3;
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({
@@ -111,7 +111,7 @@ public class InappHelper {
     public Observable<List<Item>> getValidatedOwnedSubsObserveble(IInAppBillingService mInAppBillingService) {
         return Observable.<List<Item>>unsafeCreate(subscriber -> {
             try {
-                Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION, BaseApplication.getAppInstance().getPackageName(), "subs", null);
+                Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "subs", null);
 
                 Timber.d("ownedItems bundle: %s", ownedItemsBundle);
                 if (ownedItemsBundle.getInt("RESPONSE_CODE") == 0) {
@@ -179,7 +179,7 @@ public class InappHelper {
     public Observable<List<Item>> getOwnedInappsObserveble(IInAppBillingService mInAppBillingService) {
         return Observable.unsafeCreate(subscriber -> {
             try {
-                Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION, BaseApplication.getAppInstance().getPackageName(), "inapp", null);
+                Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "inapp", null);
 
                 Timber.d("ownedItems bundle: %s", ownedItemsBundle);
                 if (ownedItemsBundle.getInt("RESPONSE_CODE") == 0) {
@@ -227,7 +227,7 @@ public class InappHelper {
 
                 Bundle querySkus = new Bundle();
                 querySkus.putStringArrayList("ITEM_ID_LIST", (ArrayList<String>) skuList);
-                Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION, BaseApplication.getAppInstance().getPackageName(), "subs", querySkus);
+                Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "subs", querySkus);
                 Timber.d("skuDetails: %s", skuDetails);
                 if (skuDetails.getInt("RESPONSE_CODE") == 0) {
                     List<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
@@ -267,7 +267,7 @@ public class InappHelper {
 
                 Bundle querySkus = new Bundle();
                 querySkus.putStringArrayList("ITEM_ID_LIST", (ArrayList<String>) skuList);
-                Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION, BaseApplication.getAppInstance().getPackageName(), "inapp", querySkus);
+                Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "inapp", querySkus);
                 Timber.d("skuDetails: %s", skuDetails);
                 if (skuDetails.getInt("RESPONSE_CODE") == 0) {
                     List<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
@@ -299,7 +299,7 @@ public class InappHelper {
 //    ) {
 //        return Observable.unsafeCreate(subscriber -> {
 //            try {
-//                int response = mInAppBillingService.consumePurchase(API_VERSION, BaseApplication.getAppInstance().getPackageName(), token);
+//                int response = mInAppBillingService.consumePurchase(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), token);
 //                subscriber.onNext(response);
 //                subscriber.onCompleted();
 //            } catch (RemoteException e) {
@@ -323,7 +323,7 @@ public class InappHelper {
                     switch (status) {
                         case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_VALID:
                             try {
-                                int response = mInAppBillingService.consumePurchase(API_VERSION, packageName, token);
+                                int response = mInAppBillingService.consumePurchase(API_VERSION_3, packageName, token);
                                 return Observable.just(response);
                             } catch (RemoteException e) {
                                 return Observable.error(e);
@@ -345,7 +345,7 @@ public class InappHelper {
             String sku
     ) throws RemoteException, IntentSender.SendIntentException {
         Bundle buyIntentBundle = mInAppBillingService.getBuyIntent(
-                API_VERSION,
+                API_VERSION_3,
                 BaseApplication.getAppInstance().getPackageName(),
                 sku,
                 type,
@@ -364,7 +364,7 @@ public class InappHelper {
             String sku
     ) throws RemoteException, IntentSender.SendIntentException {
         Bundle buyIntentBundle = mInAppBillingService.getBuyIntent(
-                API_VERSION,
+                API_VERSION_3,
                 BaseApplication.getAppInstance().getPackageName(),
                 sku,
                 type,

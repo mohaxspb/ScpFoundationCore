@@ -44,6 +44,8 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
      */
     private static final long PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS = 1000 * 60 * 5;
 
+    private static final int NUM_OF_DISABLE_ADS_REWARDS_COUNT_BEFORE_OFFER_SHOWING = 3;
+
     public interface Keys {
         String NIGHT_MODE = "NIGHT_MODE";
         String TEXT_SCALE_UI = "TEXT_SCALE_UI";
@@ -78,6 +80,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String LAST_TIME_SUBSCRIPTIONS_INVALIDATED = "LAST_TIME_SUBSCRIPTIONS_INVALIDATED";
         String PERSONAL_DATA_ACCEPTED = "PERSONAL_DATA_ACCEPTED";
         String AWARD_FROM_AUTH_GAINED = "AWARD_FROM_AUTH_GAINED";
+        String FREE_ADS_DISABLE_REWARD_GAINED_COUNT = "FREE_ADS_DISABLE_REWARD_GAINED_COUNT";
     }
 
     private Gson mGson;
@@ -195,12 +198,14 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
 
     }
 
-    public void applyRewardFromAds() {
+    public void applyAwardFromAds() {
         long time = System.currentTimeMillis()
                 + FirebaseRemoteConfig.getInstance().getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
         setLastTimeAdsShows(time);
         //also set time for which we should disable banners
         setTimeForWhichBannersDisabled(time);
+
+        setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
     }
 
     public boolean isRewardedDescriptionShown() {
@@ -265,6 +270,8 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         setLastTimeAdsShows(time);
         //also set time for which we should disable banners
         setTimeForWhichBannersDisabled(time);
+
+        setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
     }
 
     //vk groups join
@@ -293,6 +300,8 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         setLastTimeAdsShows(time);
         //also set time for which we should disable banners
         setTimeForWhichBannersDisabled(time);
+
+        setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
     }
 
     public void applyAwardSignIn() {
@@ -303,14 +312,16 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         setTimeForWhichBannersDisabled(time);
 
         setUserAwardedFromAuth(true);
+
+        setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
     }
 
-    public void setUserAwardedFromAuth(boolean awardedFromAuth){
+    public void setUserAwardedFromAuth(boolean awardedFromAuth) {
         mPreferences.edit().putBoolean(Keys.AWARD_FROM_AUTH_GAINED, awardedFromAuth).apply();
     }
 
-    public boolean isUserAwardedFromAuth(){
-       return mPreferences.getBoolean(Keys.AWARD_FROM_AUTH_GAINED, false);
+    public boolean isUserAwardedFromAuth() {
+        return mPreferences.getBoolean(Keys.AWARD_FROM_AUTH_GAINED, false);
     }
 
     //subscription
@@ -336,6 +347,18 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
      */
     public boolean isHasNoAdsSubscription() {
         return mPreferences.getBoolean(Keys.HAS_NO_ADS_SUBSCRIPTION, false);
+    }
+
+    private int getFreeAdsDisableRewardGainedCount() {
+        return mPreferences.getInt(Keys.FREE_ADS_DISABLE_REWARD_GAINED_COUNT, 0);
+    }
+
+    public void setFreeAdsDisableRewardGainedCount(int count) {
+        mPreferences.edit().putInt(Keys.FREE_ADS_DISABLE_REWARD_GAINED_COUNT, count).apply();
+    }
+
+    public boolean isTimeToOfferFreeTrial() {
+        return getFreeAdsDisableRewardGainedCount() >= NUM_OF_DISABLE_ADS_REWARDS_COUNT_BEFORE_OFFER_SHOWING;
     }
     //subscriptions end
 

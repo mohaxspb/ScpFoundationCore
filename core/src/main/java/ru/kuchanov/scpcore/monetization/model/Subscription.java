@@ -1,8 +1,15 @@
 package ru.kuchanov.scpcore.monetization.model;
 
+import android.text.TextUtils;
+
 import java.util.Comparator;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.Duration;
+
 import ru.kuchanov.scpcore.monetization.util.InappHelper;
+import timber.log.Timber;
 
 /**
  * Created by mohax on 14.01.2017.
@@ -11,6 +18,7 @@ import ru.kuchanov.scpcore.monetization.util.InappHelper;
  */
 public class Subscription {
 
+    private static final int NO_TRIAL_PERIOD = -1;
     /**
      * aka SKU
      */
@@ -144,4 +152,17 @@ public class Subscription {
             return d.price.compareTo(d1.price);
         }
     };
+
+    public int freeTrialPeriodInDays() {
+        if (TextUtils.isEmpty(freeTrialPeriod)) {
+            return NO_TRIAL_PERIOD;
+        }
+        try {
+            Duration dur = DatatypeFactory.newInstance().newDuration(freeTrialPeriod);
+            return dur.getDays();
+        } catch (DatatypeConfigurationException e) {
+            Timber.e(e);
+            return NO_TRIAL_PERIOD;
+        }
+    }
 }
