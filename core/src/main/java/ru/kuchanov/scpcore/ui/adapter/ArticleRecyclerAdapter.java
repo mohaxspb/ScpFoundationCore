@@ -93,8 +93,9 @@ public class ArticleRecyclerAdapter
                     List<String> spoilerParts = ParseHtmlUtils.getSpoilerParts(spoilerData);
 
                     SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
-                    spoilerViewModel.titles = Collections.singletonList(spoilerParts.get(0));
-                    spoilerViewModel.mSpoilerTextParts = ParseHtmlUtils.getArticlesTextParts(spoilerParts.get(1));
+//                    spoilerViewModel.titles = Collections.singletonList(spoilerParts.get(0));
+                    spoilerViewModel.titles = spoilerParts.subList(0, 2);
+                    spoilerViewModel.mSpoilerTextParts = ParseHtmlUtils.getArticlesTextParts(spoilerParts.get(2));
                     spoilerViewModel.mSpoilerTextPartsTypes = ParseHtmlUtils.getListOfTextTypes(spoilerViewModel.mSpoilerTextParts);
                     spoilerViewModel.isExpanded = expandedSpoilers.contains(spoilerViewModel);
 
