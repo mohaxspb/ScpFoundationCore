@@ -11,7 +11,7 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.monetization.util.InappHelper;
+import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.service.DownloadAllServiceDefault;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
@@ -80,11 +80,11 @@ public class HelpersModule {
     @Provides
     @NonNull
     @Singleton
-    InappHelper providesInappHelper(
+    InAppHelper providesInappHelper(
             @NonNull MyPreferenceManager preferenceManager,
             @NonNull DbProviderFactory dbProviderFactory,
             @NonNull ApiClient apiClient
     ) {
-        return new InappHelper(preferenceManager, dbProviderFactory, apiClient);
+        return new InAppHelper(preferenceManager, dbProviderFactory, apiClient);
     }
 }

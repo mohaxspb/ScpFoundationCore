@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
 import com.android.vending.billing.IInAppBillingService;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
@@ -24,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 
 import ru.kuchanov.scpcore.BaseApplication;
-import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
@@ -42,7 +40,7 @@ import static ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog.REQUEST_
  * <p>
  * for scp_ru
  */
-public class InappHelper {
+public class InAppHelper {
 
     private final static int API_VERSION_3 = 3;
 
@@ -72,7 +70,7 @@ public class InappHelper {
     private MyPreferenceManager mMyPreferenceManager;
     private DbProviderFactory mDbProviderFactory;
 
-    public InappHelper(MyPreferenceManager preferenceManager, DbProviderFactory dbProviderFactory, ApiClient apiClient) {
+    public InAppHelper(MyPreferenceManager preferenceManager, DbProviderFactory dbProviderFactory, ApiClient apiClient) {
         mMyPreferenceManager = preferenceManager;
         mDbProviderFactory = dbProviderFactory;
         mApiClient = apiClient;
@@ -83,8 +81,10 @@ public class InappHelper {
         @SubscriptionType
         int type;
 
+        //add old old donate subs, new ones and one with free trial period
         List<String> fullVersionSkus = new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.old_skus).split(",")));
         Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.ver_2_skus).split(","));
+        Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.subs_free_trial).split(","));
 
         List<String> noAdsSkus = new ArrayList<>();
         noAdsSkus.add(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_old));
@@ -108,13 +108,14 @@ public class InappHelper {
         return skus;
     }
 
-    public Observable<List<Item>> getValidatedOwnedSubsObserveble(IInAppBillingService mInAppBillingService) {
+    public Observable<List<Item>> getValidatedOwnedSubsObservable(IInAppBillingService mInAppBillingService) {
         return Observable.<List<Item>>unsafeCreate(subscriber -> {
             try {
                 Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "subs", null);
 
                 Timber.d("ownedItems bundle: %s", ownedItemsBundle);
                 if (ownedItemsBundle.getInt("RESPONSE_CODE") == 0) {
+                    //TODO use gson for parsing
                     List<String> ownedSkus = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
                     List<String> purchaseDataList = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_DATA_LIST");
                     List<String> signatureList = ownedItemsBundle.getStringArrayList("INAPP_DATA_SIGNATURE_LIST");
@@ -176,7 +177,7 @@ public class InappHelper {
                 });
     }
 
-    public Observable<List<Item>> getOwnedInappsObserveble(IInAppBillingService mInAppBillingService) {
+    public Observable<List<Item>> getOwnedInAppsObservable(IInAppBillingService mInAppBillingService) {
         return Observable.unsafeCreate(subscriber -> {
             try {
                 Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "inapp", null);
@@ -212,21 +213,18 @@ public class InappHelper {
         });
     }
 
-    public Observable<List<Subscription>> getSubsListToBuyObserveble(IInAppBillingService mInAppBillingService) {
+    public Observable<List<Subscription>> getSubsListToBuyObservable(
+            IInAppBillingService mInAppBillingService,
+            List<String> skus
+    ) {
         return Observable.unsafeCreate(subscriber -> {
             try {
                 //get all subs detailed info
                 List<Subscription> allSubscriptions = new ArrayList<>();
-                List<String> skuList = new ArrayList<>();
-                //get it from build config
-                Collections.addAll(skuList, BaseApplication.getAppInstance().getString(R.string.ver_2_skus).split(","));
-                if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
-                    skuList.add(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_ver_2));
-                }
-                Timber.d("skuList: %s", skuList);
+                Timber.d("skuList: %s", skus);
 
                 Bundle querySkus = new Bundle();
-                querySkus.putStringArrayList("ITEM_ID_LIST", (ArrayList<String>) skuList);
+                querySkus.putStringArrayList("ITEM_ID_LIST", (ArrayList<String>) skus);
                 Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "subs", querySkus);
                 Timber.d("skuDetails: %s", skuDetails);
                 if (skuDetails.getInt("RESPONSE_CODE") == 0) {
@@ -254,14 +252,13 @@ public class InappHelper {
         });
     }
 
-    public Observable<List<Subscription>> getInappsListToBuyObserveble(IInAppBillingService mInAppBillingService) {
+    public Observable<List<Subscription>> getInAppsListToBuyObservable(IInAppBillingService mInAppBillingService) {
         return Observable.unsafeCreate(subscriber -> {
             try {
                 //get all subs detailed info
                 List<Subscription> allSubscriptions = new ArrayList<>();
                 List<String> skuList = new ArrayList<>();
                 //get it from build config
-//                Collections.addAll(skuList, BuildConfig.INAPP_SKUS);
                 Collections.addAll(skuList, BaseApplication.getAppInstance().getString(R.string.inapp_skus).split(","));
                 Timber.d("skuList: %s", skuList);
 
@@ -293,22 +290,7 @@ public class InappHelper {
         });
     }
 
-//    public static Observable<Integer> consumeInapp(
-//            String token,
-//            IInAppBillingService mInAppBillingService
-//    ) {
-//        return Observable.unsafeCreate(subscriber -> {
-//            try {
-//                int response = mInAppBillingService.consumePurchase(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), token);
-//                subscriber.onNext(response);
-//                subscriber.onCompleted();
-//            } catch (RemoteException e) {
-//                subscriber.onError(e);
-//            }
-//        });
-//    }
-
-    public Observable<Integer> consumeInapp(
+    public Observable<Integer> consumeInApp(
             String sku,
             String token,
             IInAppBillingService mInAppBillingService
@@ -374,6 +356,22 @@ public class InappHelper {
         if (pendingIntent != null) {
             activity.startIntentSenderForResult(pendingIntent.getIntentSender(), REQUEST_CODE_SUBSCRIPTION, new Intent(), 0, 0, 0, null);
         }
+    }
+
+    public List<String> getOldSubsSkus(){
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.old_skus).split(",")));
+    }
+
+    public List<String> getNewSubsSkus(){
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver_2_skus).split(",")));
+    }
+
+    public List<String> getFreeTrailSubsSkus(){
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.subs_free_trial).split(",")));
+    }
+
+    public List<String> getNewNoAdsSubsSkus(){
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_ver_2).split(",")));
     }
 
     public static int getMonthsFromSku(String sku){

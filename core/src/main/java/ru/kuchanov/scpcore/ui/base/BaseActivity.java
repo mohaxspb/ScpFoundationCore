@@ -74,7 +74,7 @@ import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable;
 import ru.kuchanov.scpcore.manager.MyNotificationManager;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.AdMobHelper;
-import ru.kuchanov.scpcore.monetization.util.InappHelper;
+import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.monetization.util.MyAdListener;
 import ru.kuchanov.scpcore.monetization.util.MyAppodealInterstitialCallbacks;
 import ru.kuchanov.scpcore.monetization.util.MyRewardedVideoCallbacks;
@@ -146,7 +146,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Inject
     protected ru.kuchanov.scp.downloads.DialogUtils<Article> mDownloadAllChooser;
     @Inject
-    protected InappHelper mInappHelper;
+    protected InAppHelper mInAppHelper;
     //inapps and ads
     private IInAppBillingService mService;
 
@@ -525,8 +525,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     public void updateOwnedMarketItems() {
         Timber.d("updateOwnedMarketItems forceSubsValidation: %s");
-        mInappHelper
-                .getValidatedOwnedSubsObserveble(mService)
+        mInAppHelper
+                .getValidatedOwnedSubsObservable(mService)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -535,15 +535,15 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
                             mMyPreferenceManager.setLastTimeSubscriptionsValidated(System.currentTimeMillis());
 
-                            @InappHelper.SubscriptionType
-                            int type = mInappHelper.getSubscriptionTypeFromItemsList(validatedItems);
+                            @InAppHelper.SubscriptionType
+                            int type = mInAppHelper.getSubscriptionTypeFromItemsList(validatedItems);
                             Timber.d("subscription type: %s", type);
                             switch (type) {
-                                case InappHelper.SubscriptionType.NONE:
+                                case InAppHelper.SubscriptionType.NONE:
                                     mMyPreferenceManager.setHasNoAdsSubscription(false);
                                     mMyPreferenceManager.setHasSubscription(false);
                                     break;
-                                case InappHelper.SubscriptionType.NO_ADS: {
+                                case InAppHelper.SubscriptionType.NO_ADS: {
                                     mMyPreferenceManager.setHasNoAdsSubscription(true);
                                     mMyPreferenceManager.setHasSubscription(false);
                                     //remove banner
@@ -553,7 +553,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                                     }
                                     break;
                                 }
-                                case InappHelper.SubscriptionType.FULL_VERSION: {
+                                case InAppHelper.SubscriptionType.FULL_VERSION: {
                                     mMyPreferenceManager.setHasSubscription(true);
                                     mMyPreferenceManager.setHasNoAdsSubscription(true);
                                     //remove banner
@@ -728,6 +728,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     public void showOfferFreeTrialSubscriptionPopup() {
         Timber.d("showOfferFreeTrialSubscriptionPopup");
+
+        //TODO
+        mInAppHelper.getSubsListToBuyObservable(mService, mInAppHelper.getFreeTrailSubsSkus());
+
         new MaterialDialog.Builder(this)
                 .title(R.string.dialog_offer_free_trial_subscription_title)
                 //todo get days from market somehow
@@ -735,7 +739,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 .positiveText(R.string.yes_bliad)
                 .onPositive((dialog, which) -> {
                     try {
-                        InappHelper.startSubsBuy(this, mService, InappHelper.InappType.SUBS, getString(R.string.subs_free_trial).split(",")[0]);
+                        InAppHelper.startSubsBuy(this, mService, InAppHelper.InappType.SUBS, getString(R.string.subs_free_trial).split(",")[0]);
                     } catch (Exception e) {
                         Timber.e(e);
                         showError(e);

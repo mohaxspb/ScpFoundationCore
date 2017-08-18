@@ -8,7 +8,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 
-import ru.kuchanov.scpcore.monetization.util.InappHelper;
+import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import timber.log.Timber;
 
 /**
@@ -23,7 +23,7 @@ public class Subscription {
      * aka SKU
      */
     public String productId;
-    @InappHelper.InappType
+    @InAppHelper.InappType
     public String type;
     /**
      * Formatted price of the item, including its currency sign. The price does not include tax.

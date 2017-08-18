@@ -222,7 +222,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
             headerViewHolder.relogin.setVisibility(View.GONE);
 //            }
 
-            headerViewHolder.levelUp.setOnClickListener(view -> mInappHelper.getInappsListToBuyObserveble(getIInAppBillingService()).subscribe(
+            headerViewHolder.levelUp.setOnClickListener(view -> mInAppHelper.getInAppsListToBuyObservable(getIInAppBillingService()).subscribe(
                     items -> new MaterialDialog.Builder(view.getContext())
                             .title(R.string.dialog_level_up_title)
                             .content(R.string.dialog_level_up_content)
@@ -246,8 +246,8 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                                         startIntentSenderForResult(pendingIntent.getIntentSender(), REQUEST_CODE_INAPP, new Intent(), 0, 0, 0, null);
                                     } else {
                                         Timber.e("pendingIntent is NULL!");
-                                        mInappHelper.getOwnedInappsObserveble(getIInAppBillingService())
-                                                .flatMap(itemsOwned -> mInappHelper.consumeInapp(itemsOwned.get(0).sku, itemsOwned.get(0).purchaseData.purchaseToken, getIInAppBillingService()))
+                                        mInAppHelper.getOwnedInAppsObservable(getIInAppBillingService())
+                                                .flatMap(itemsOwned -> mInAppHelper.consumeInApp(itemsOwned.get(0).sku, itemsOwned.get(0).purchaseData.purchaseToken, getIInAppBillingService()))
                                                 .subscribeOn(Schedulers.io())
                                                 .observeOn(AndroidSchedulers.mainThread())
                                                 .subscribe(
@@ -373,7 +373,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                 if (item.productId.equals(getString(R.string.inapp_skus).split(",")[0])) {
                     //levelUp 5
                     //add 10 000 score
-                    mInappHelper.consumeInapp(item.productId, item.purchaseToken, getIInAppBillingService())
+                    mInAppHelper.consumeInApp(item.productId, item.purchaseToken, getIInAppBillingService())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
