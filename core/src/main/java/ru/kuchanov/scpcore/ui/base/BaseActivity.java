@@ -729,29 +729,21 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     public void showOfferFreeTrialSubscriptionPopup() {
         Timber.d("showOfferFreeTrialSubscriptionPopup");
 
-        //TODO
-        mInAppHelper.getSubsListToBuyObservable(mService, mInAppHelper.getFreeTrailSubsSkus());
-
-        new MaterialDialog.Builder(this)
-                .title(R.string.dialog_offer_free_trial_subscription_title)
-                //todo get days from market somehow
-                .content(getString(R.string.dialog_offer_free_trial_subscription_content, 14, 14))
-                .positiveText(R.string.yes_bliad)
-                .onPositive((dialog, which) -> {
-                    try {
-                        InAppHelper.startSubsBuy(this, mService, InAppHelper.InappType.SUBS, getString(R.string.subs_free_trial).split(",")[0]);
-                    } catch (Exception e) {
-                        Timber.e(e);
-                        showError(e);
-                    }
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.EventValue.ADS_DISABLE);
-                    FirebaseAnalytics.getInstance(this).logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
-                })
-                .negativeText(android.R.string.cancel)
-                .onNegative((dialog, which) -> dialog.dismiss())
-                .build()
-                .show();
+        showProgressDialog(R.string.wait);
+        mInAppHelper.getSubsListToBuyObservable(mService, mInAppHelper.getFreeTrailSubsSkus())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        subscriptions -> {
+                            dismissProgressDialog();
+                            mDialogUtils.showFreeTrialSubscriptionOfferDialog(this, subscriptions.get(0).freeTrialPeriodInDays());
+                        },
+                        e -> {
+                            Timber.e(e);
+                            dismissProgressDialog();
+                            showError(e);
+                        }
+                );
     }
 
     @Override
@@ -779,8 +771,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             fragmentDialogTextAppearance.show(getSupportFragmentManager(), TextSizeDialogFragment.TAG);
             return true;
         } else if (i == R.id.info) {
-            DialogFragment dialogFragment = NewVersionDialogFragment.newInstance(getString(R.string.app_info));
-            dialogFragment.show(getFragmentManager(), NewVersionDialogFragment.TAG);
+//            DialogFragment dialogFragment = NewVersionDialogFragment.newInstance(getString(R.string.app_info));
+//            dialogFragment.show(getFragmentManager(), NewVersionDialogFragment.TAG);
+            showOfferFreeTrialSubscriptionPopup();
             return true;
         } else if (i == R.id.menuItemDownloadAll) {
             mDownloadAllChooser.showDownloadDialog(this);

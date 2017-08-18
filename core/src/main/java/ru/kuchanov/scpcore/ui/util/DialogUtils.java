@@ -2,10 +2,12 @@ package ru.kuchanov.scpcore.ui.util;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.os.Bundle;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.GsonBuilder;
 
@@ -18,6 +20,8 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.api.model.remoteconfig.AppLangVersionsJson;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.InAppHelper;
+import ru.kuchanov.scpcore.ui.base.BaseActivity;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
@@ -102,6 +106,29 @@ public class DialogUtils {
                 .alwaysCallSingleChoiceCallback()
                 .itemsCallback((dialog, itemView, position, text) ->
                         IntentUtils.tryOpenPlayMarket(context, appLangVersions.get(position).appPackage))
+                .build()
+                .show();
+    }
+
+    public void showFreeTrialSubscriptionOfferDialog(BaseActivity baseActivity, int freeTrialDaysCount){
+        new MaterialDialog.Builder(baseActivity)
+                .title(R.string.dialog_offer_free_trial_subscription_title)
+                //todo get days from market somehow
+                .content(baseActivity.getString(R.string.dialog_offer_free_trial_subscription_content, freeTrialDaysCount, freeTrialDaysCount))
+                .positiveText(R.string.yes_bliad)
+                .onPositive((dialog, which) -> {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.EventValue.ADS_DISABLE);
+                    FirebaseAnalytics.getInstance(baseActivity).logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+                    try {
+                        InAppHelper.startSubsBuy(baseActivity, baseActivity.getIInAppBillingService(), InAppHelper.InappType.SUBS, baseActivity.getString(R.string.subs_free_trial).split(",")[0]);
+                    } catch (Exception e) {
+                        Timber.e(e);
+                        baseActivity.showError(e);
+                    }
+                })
+                .negativeText(android.R.string.cancel)
+                .onNegative((dialog, which) -> dialog.dismiss())
                 .build()
                 .show();
     }

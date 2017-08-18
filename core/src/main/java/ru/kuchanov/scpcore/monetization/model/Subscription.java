@@ -2,11 +2,9 @@ package ru.kuchanov.scpcore.monetization.model;
 
 import android.text.TextUtils;
 
+import java.time.Duration;
+import java.time.temporal.TemporalUnit;
 import java.util.Comparator;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.Duration;
 
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import timber.log.Timber;
@@ -157,12 +155,15 @@ public class Subscription {
         if (TextUtils.isEmpty(freeTrialPeriod)) {
             return NO_TRIAL_PERIOD;
         }
-        try {
-            Duration dur = DatatypeFactory.newInstance().newDuration(freeTrialPeriod);
-            return dur.getDays();
-        } catch (DatatypeConfigurationException e) {
-            Timber.e(e);
-            return NO_TRIAL_PERIOD;
-        }
+//        try {
+//            Duration dur = DatatypeFactoryImpl.newInstance().newDuration(freeTrialPeriod);
+//            return dur.getDays();
+//        } catch (DatatypeConfigurationException e) {
+//            Timber.e(e);
+//            return NO_TRIAL_PERIOD;
+//        }
+        //TODO replace with Jode-time... or find java7 variant
+        Duration duration = Duration.parse("PT20.345S");
+        return (int) duration.toDays();
     }
 }
