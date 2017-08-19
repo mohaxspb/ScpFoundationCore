@@ -519,6 +519,13 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             if (mMyPreferenceManager.isTimeToValidateSubscriptions()) {
                 updateOwnedMarketItems();
             }
+
+            //offer free trial every week for non subscribed users
+            //check here as we need to have connected service
+            if (!mMyPreferenceManager.isHasAnySubscription() && mMyPreferenceManager.isTimeToPeriodicalOfferFreeTrial()) {
+                showOfferFreeTrialSubscriptionPopup();
+                mMyPreferenceManager.setLastTimePeriodicalFreeTrialOffered(System.currentTimeMillis());
+            }
         }
     };
 
@@ -771,9 +778,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             fragmentDialogTextAppearance.show(getSupportFragmentManager(), TextSizeDialogFragment.TAG);
             return true;
         } else if (i == R.id.info) {
-//            DialogFragment dialogFragment = NewVersionDialogFragment.newInstance(getString(R.string.app_info));
-//            dialogFragment.show(getFragmentManager(), NewVersionDialogFragment.TAG);
-            showOfferFreeTrialSubscriptionPopup();
+            DialogFragment dialogFragment = NewVersionDialogFragment.newInstance(getString(R.string.app_info));
+            dialogFragment.show(getFragmentManager(), NewVersionDialogFragment.TAG);
             return true;
         } else if (i == R.id.menuItemDownloadAll) {
             mDownloadAllChooser.showDownloadDialog(this);
@@ -820,6 +826,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        //ignore facebook analytics log spam
+        if (key.startsWith("com.facebook")) {
+            return;
+        }
         Timber.d("onSharedPreferenceChanged with key: %s", key);
         switch (key) {
             case MyPreferenceManager.Keys.NIGHT_MODE:

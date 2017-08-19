@@ -169,7 +169,7 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
 
             //check if its time to offer free trial subscription
             boolean hasSubscription = mMyPreferenceManager.isHasSubscription() || mMyPreferenceManager.isHasNoAdsSubscription();
-            if (!hasSubscription && mMyPreferenceManager.isTimeToOfferFreeTrial()) {
+            if (!hasSubscription && mMyPreferenceManager.isTimeOfferFreeTrialFromDisableAdsOption()) {
                 mMyPreferenceManager.setFreeAdsDisableRewardGainedCount(0);
                 getBaseActivity().showOfferFreeTrialSubscriptionPopup();
                 return;

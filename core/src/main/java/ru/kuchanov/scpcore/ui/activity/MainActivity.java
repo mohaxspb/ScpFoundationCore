@@ -151,13 +151,13 @@ public class MainActivity
         mNavigationView.setCheckedItem(mCurrentSelectedDrawerItemId);
         setToolbarTitleByDrawerItemId(mCurrentSelectedDrawerItemId);
 
-        if(!mMyPreferenceManager.isPersonalDataAccepted()){
+        if (!mMyPreferenceManager.isPersonalDataAccepted()) {
             DialogFragment dialogFragment = CC3LicenseDialogFragment.newInstance();
             dialogFragment.show(getFragmentManager(), CC3LicenseDialogFragment.TAG);
         }
     }
 
-    public void showAppLangOrVersionFeaturesDialog(){
+    public void showAppLangOrVersionFeaturesDialog() {
         //first time check for device locale and offer proper lang app version if it is
         //else - show new version features
         if (mMyPreferenceManager.getCurAppVersion() == 0) {
