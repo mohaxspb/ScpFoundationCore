@@ -87,7 +87,7 @@
     <string name="yes_sir">Yes sir!</string>
     <string name="reward_not_loaded_yet">Still doesn\'t load. Try again</string>
     <string name="settings_design_font">Font</string>
-    <string name="login_advantages">Attention! Authorization is not required, but it needed for a cloud synch of the selected articles, and read status. It also allows you to participate in the agent ranking. You can get further instructions from the head of the content area.</string>
+    <string name="login_advantages">Attention! Authorization is not required, but it needed for a cloud sync of the favorite articles, and read status. It also allows you to participate in the agent ranking. You can get further instructions from the head of the content area.</string>
     <string name="login_advantages_title">Why authorization?</string>
     <string name="login_greetings">Welcome, Agent %s</string>
     <string name="error_login_no_email">You cannot log-in without e-mail.</string>
