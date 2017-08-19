@@ -88,6 +88,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String AWARD_FROM_AUTH_GAINED = "AWARD_FROM_AUTH_GAINED";
         String FREE_ADS_DISABLE_REWARD_GAINED_COUNT = "FREE_ADS_DISABLE_REWARD_GAINED_COUNT";
         String FREE_TRIAL_OFFERED_PERIODICAL = "FREE_TRIAL_OFFERED_PERIODICAL";
+        String FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE = "FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE";
     }
 
     private Gson mGson;
@@ -388,8 +389,16 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     public boolean isTimeToPeriodicalOfferFreeTrial() {
-        Timber.d("getLastTimePeriodicalFreeTrialOffered/FREE_TRIAL_OFFERED_PERIOD: %s/%s", getLastTimePeriodicalFreeTrialOffered(), FREE_TRIAL_OFFERED_PERIOD);
+//        Timber.d("getLastTimePeriodicalFreeTrialOffered/FREE_TRIAL_OFFERED_PERIOD: %s/%s", getLastTimePeriodicalFreeTrialOffered(), FREE_TRIAL_OFFERED_PERIOD);
         return System.currentTimeMillis() - getLastTimePeriodicalFreeTrialOffered() >= FREE_TRIAL_OFFERED_PERIOD;
+    }
+
+    public void setFreeTrialOfferedAfterGetting1000Score(boolean alreadyOffered) {
+        mPreferences.edit().putBoolean(Keys.FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE, alreadyOffered).apply();
+    }
+
+    public boolean isFreeTrialOfferedAfterGetting1000Score() {
+        return mPreferences.getBoolean(Keys.FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE, false);
     }
     //subscriptions end
 

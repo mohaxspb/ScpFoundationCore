@@ -323,6 +323,14 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                     mPresenter.onAvatarClicked();
                 });
             }
+
+            //check if user score is greter than 1000 and offer him/her a free trial if there is no subscription owned
+            if (!mMyPreferenceManager.isHasAnySubscription()
+                    && user.score >= 1000
+                    && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
+                showOfferFreeTrialSubscriptionPopup();
+                mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score(true);
+            }
         } else {
             for (int i = 0; i < mNavigationView.getHeaderCount(); i++) {
                 mNavigationView.removeHeaderView(mNavigationView.getHeaderView(i));

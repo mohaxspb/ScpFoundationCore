@@ -526,6 +526,17 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 showOfferFreeTrialSubscriptionPopup();
                 mMyPreferenceManager.setLastTimePeriodicalFreeTrialOffered(System.currentTimeMillis());
             }
+
+            //check here along with onUserChange as there can be situation when data from DB gained,
+            //but service not connected yet
+            //check if user score is greter than 1000 and offer him/her a free trial if there is no subscription owned
+            if (!mMyPreferenceManager.isHasAnySubscription()
+                    && mPresenter.getUser() != null
+                    && mPresenter.getUser().score >= 1000
+                    && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
+                showOfferFreeTrialSubscriptionPopup();
+                mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score(true);
+            }
         }
     };
 
