@@ -2,12 +2,14 @@ package ru.kuchanov.scpcore.monetization.model;
 
 import android.text.TextUtils;
 
-import java.time.Duration;
-import java.time.temporal.TemporalUnit;
+import org.joda.time.Days;
+import org.joda.time.Period;
+import org.joda.time.format.ISOPeriodFormat;
+import org.joda.time.format.PeriodFormatter;
+
 import java.util.Comparator;
 
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
-import timber.log.Timber;
 
 /**
  * Created by mohax on 14.01.2017.
@@ -155,15 +157,15 @@ public class Subscription {
         if (TextUtils.isEmpty(freeTrialPeriod)) {
             return NO_TRIAL_PERIOD;
         }
-//        try {
-//            Duration dur = DatatypeFactoryImpl.newInstance().newDuration(freeTrialPeriod);
-//            return dur.getDays();
-//        } catch (DatatypeConfigurationException e) {
-//            Timber.e(e);
-//            return NO_TRIAL_PERIOD;
-//        }
-        //TODO replace with Jode-time... or find java7 variant
-        Duration duration = Duration.parse("PT20.345S");
-        return (int) duration.toDays();
+        //java 8 only, ***!
+        //replace with Jode-time... or find java7 variant
+//        Duration duration = Duration.parse("PT20.345S");
+//        return (int) duration.toDays();
+
+        PeriodFormatter formatter = ISOPeriodFormat.standard();
+        Period p = formatter.parsePeriod(freeTrialPeriod);
+
+        Days days = p.toStandardDays();
+        return days.getDays();
     }
 }
