@@ -1,8 +1,15 @@
 package ru.kuchanov.scpcore.monetization.model;
 
+import android.text.TextUtils;
+
+import org.joda.time.Days;
+import org.joda.time.Period;
+import org.joda.time.format.ISOPeriodFormat;
+import org.joda.time.format.PeriodFormatter;
+
 import java.util.Comparator;
 
-import ru.kuchanov.scpcore.monetization.util.InappHelper;
+import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 
 /**
  * Created by mohax on 14.01.2017.
@@ -11,11 +18,12 @@ import ru.kuchanov.scpcore.monetization.util.InappHelper;
  */
 public class Subscription {
 
+    private static final int NO_TRIAL_PERIOD = -1;
     /**
      * aka SKU
      */
     public String productId;
-    @InappHelper.InappType
+    @InAppHelper.InappType
     public String type;
     /**
      * Formatted price of the item, including its currency sign. The price does not include tax.
@@ -144,4 +152,20 @@ public class Subscription {
             return d.price.compareTo(d1.price);
         }
     };
+
+    public int freeTrialPeriodInDays() {
+        if (TextUtils.isEmpty(freeTrialPeriod)) {
+            return NO_TRIAL_PERIOD;
+        }
+        //java 8 only, ***!
+        //replace with Jode-time... or find java7 variant
+//        Duration duration = Duration.parse("PT20.345S");
+//        return (int) duration.toDays();
+
+        PeriodFormatter formatter = ISOPeriodFormat.standard();
+        Period p = formatter.parsePeriod(freeTrialPeriod);
+
+        Days days = p.toStandardDays();
+        return days.getDays();
+    }
 }

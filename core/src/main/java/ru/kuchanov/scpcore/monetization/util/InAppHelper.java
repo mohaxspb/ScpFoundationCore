@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
 import com.android.vending.billing.IInAppBillingService;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
@@ -23,13 +22,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import ru.kuchanov.scp.downloads.ApiClientModel;
+import ru.kuchanov.scp.downloads.DbProviderFactoryModel;
+import ru.kuchanov.scp.downloads.MyPreferenceManagerModel;
 import ru.kuchanov.scpcore.BaseApplication;
-import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
-import ru.kuchanov.scpcore.db.DbProviderFactory;
-import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.monetization.model.Item;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
 import rx.Observable;
@@ -42,9 +42,9 @@ import static ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog.REQUEST_
  * <p>
  * for scp_ru
  */
-public class InappHelper {
+public class InAppHelper {
 
-    private final static int API_VERSION = 3;
+    private final static int API_VERSION_3 = 3;
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({
@@ -68,11 +68,15 @@ public class InappHelper {
         int FULL_VERSION = 1;
     }
 
-    private ApiClient mApiClient;
-    private MyPreferenceManager mMyPreferenceManager;
-    private DbProviderFactory mDbProviderFactory;
+    private ApiClientModel<Article> mApiClient;
+    private MyPreferenceManagerModel mMyPreferenceManager;
+    private DbProviderFactoryModel mDbProviderFactory;
 
-    public InappHelper(MyPreferenceManager preferenceManager, DbProviderFactory dbProviderFactory, ApiClient apiClient) {
+    public InAppHelper(
+            MyPreferenceManagerModel preferenceManager,
+            DbProviderFactoryModel dbProviderFactory,
+            ApiClientModel<Article> apiClient
+    ) {
         mMyPreferenceManager = preferenceManager;
         mDbProviderFactory = dbProviderFactory;
         mApiClient = apiClient;
@@ -83,8 +87,10 @@ public class InappHelper {
         @SubscriptionType
         int type;
 
+        //add old old donate subs, new ones and one with free trial period
         List<String> fullVersionSkus = new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.old_skus).split(",")));
         Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.ver_2_skus).split(","));
+        Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.subs_free_trial).split(","));
 
         List<String> noAdsSkus = new ArrayList<>();
         noAdsSkus.add(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_old));
@@ -108,13 +114,14 @@ public class InappHelper {
         return skus;
     }
 
-    public Observable<List<Item>> getValidatedOwnedSubsObserveble(IInAppBillingService mInAppBillingService) {
+    public Observable<List<Item>> getValidatedOwnedSubsObservable(IInAppBillingService mInAppBillingService) {
         return Observable.<List<Item>>unsafeCreate(subscriber -> {
             try {
-                Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION, BaseApplication.getAppInstance().getPackageName(), "subs", null);
+                Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "subs", null);
 
                 Timber.d("ownedItems bundle: %s", ownedItemsBundle);
                 if (ownedItemsBundle.getInt("RESPONSE_CODE") == 0) {
+                    //TODO use gson for parsing
                     List<String> ownedSkus = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
                     List<String> purchaseDataList = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_DATA_LIST");
                     List<String> signatureList = ownedItemsBundle.getStringArrayList("INAPP_DATA_SIGNATURE_LIST");
@@ -146,7 +153,7 @@ public class InappHelper {
                     for (Item item : items) {
                         Timber.d("validate item: %s", item.sku);
                         try {
-                            PurchaseValidateResponse purchaseValidateResponse = mApiClient.validatePurchaseSync(
+                            PurchaseValidateResponse purchaseValidateResponse = ((ApiClient)mApiClient).validatePurchaseSync(
                                     true,
                                     BaseApplication.getAppInstance().getPackageName(),
                                     item.sku,
@@ -176,10 +183,10 @@ public class InappHelper {
                 });
     }
 
-    public Observable<List<Item>> getOwnedInappsObserveble(IInAppBillingService mInAppBillingService) {
+    public Observable<List<Item>> getOwnedInAppsObservable(IInAppBillingService mInAppBillingService) {
         return Observable.unsafeCreate(subscriber -> {
             try {
-                Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION, BaseApplication.getAppInstance().getPackageName(), "inapp", null);
+                Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "inapp", null);
 
                 Timber.d("ownedItems bundle: %s", ownedItemsBundle);
                 if (ownedItemsBundle.getInt("RESPONSE_CODE") == 0) {
@@ -212,22 +219,19 @@ public class InappHelper {
         });
     }
 
-    public Observable<List<Subscription>> getSubsListToBuyObserveble(IInAppBillingService mInAppBillingService) {
+    public Observable<List<Subscription>> getSubsListToBuyObservable(
+            IInAppBillingService mInAppBillingService,
+            List<String> skus
+    ) {
         return Observable.unsafeCreate(subscriber -> {
             try {
                 //get all subs detailed info
                 List<Subscription> allSubscriptions = new ArrayList<>();
-                List<String> skuList = new ArrayList<>();
-                //get it from build config
-                Collections.addAll(skuList, BaseApplication.getAppInstance().getString(R.string.ver_2_skus).split(","));
-                if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
-                    skuList.add(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_ver_2));
-                }
-                Timber.d("skuList: %s", skuList);
+                Timber.d("skuList: %s", skus);
 
                 Bundle querySkus = new Bundle();
-                querySkus.putStringArrayList("ITEM_ID_LIST", (ArrayList<String>) skuList);
-                Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION, BaseApplication.getAppInstance().getPackageName(), "subs", querySkus);
+                querySkus.putStringArrayList("ITEM_ID_LIST", (ArrayList<String>) skus);
+                Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "subs", querySkus);
                 Timber.d("skuDetails: %s", skuDetails);
                 if (skuDetails.getInt("RESPONSE_CODE") == 0) {
                     List<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
@@ -254,20 +258,19 @@ public class InappHelper {
         });
     }
 
-    public Observable<List<Subscription>> getInappsListToBuyObserveble(IInAppBillingService mInAppBillingService) {
+    public Observable<List<Subscription>> getInAppsListToBuyObservable(IInAppBillingService mInAppBillingService) {
         return Observable.unsafeCreate(subscriber -> {
             try {
                 //get all subs detailed info
                 List<Subscription> allSubscriptions = new ArrayList<>();
                 List<String> skuList = new ArrayList<>();
                 //get it from build config
-//                Collections.addAll(skuList, BuildConfig.INAPP_SKUS);
                 Collections.addAll(skuList, BaseApplication.getAppInstance().getString(R.string.inapp_skus).split(","));
                 Timber.d("skuList: %s", skuList);
 
                 Bundle querySkus = new Bundle();
                 querySkus.putStringArrayList("ITEM_ID_LIST", (ArrayList<String>) skuList);
-                Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION, BaseApplication.getAppInstance().getPackageName(), "inapp", querySkus);
+                Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "inapp", querySkus);
                 Timber.d("skuDetails: %s", skuDetails);
                 if (skuDetails.getInt("RESPONSE_CODE") == 0) {
                     List<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
@@ -293,29 +296,14 @@ public class InappHelper {
         });
     }
 
-//    public static Observable<Integer> consumeInapp(
-//            String token,
-//            IInAppBillingService mInAppBillingService
-//    ) {
-//        return Observable.unsafeCreate(subscriber -> {
-//            try {
-//                int response = mInAppBillingService.consumePurchase(API_VERSION, BaseApplication.getAppInstance().getPackageName(), token);
-//                subscriber.onNext(response);
-//                subscriber.onCompleted();
-//            } catch (RemoteException e) {
-//                subscriber.onError(e);
-//            }
-//        });
-//    }
-
-    public Observable<Integer> consumeInapp(
+    public Observable<Integer> consumeInApp(
             String sku,
             String token,
             IInAppBillingService mInAppBillingService
     ) {
         String packageName = BaseApplication.getAppInstance().getPackageName();
 
-        return mApiClient.validatePurchase(false, packageName, sku, token)
+        return ((ApiClient)mApiClient).validatePurchase(false, packageName, sku, token)
                 .flatMap(purchaseValidateResponse -> {
                     @PurchaseValidateResponse.PurchaseValidationStatus
                     int status = purchaseValidateResponse.getStatus();
@@ -323,7 +311,7 @@ public class InappHelper {
                     switch (status) {
                         case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_VALID:
                             try {
-                                int response = mInAppBillingService.consumePurchase(API_VERSION, packageName, token);
+                                int response = mInAppBillingService.consumePurchase(API_VERSION_3, packageName, token);
                                 return Observable.just(response);
                             } catch (RemoteException e) {
                                 return Observable.error(e);
@@ -345,7 +333,7 @@ public class InappHelper {
             String sku
     ) throws RemoteException, IntentSender.SendIntentException {
         Bundle buyIntentBundle = mInAppBillingService.getBuyIntent(
-                API_VERSION,
+                API_VERSION_3,
                 BaseApplication.getAppInstance().getPackageName(),
                 sku,
                 type,
@@ -364,7 +352,7 @@ public class InappHelper {
             String sku
     ) throws RemoteException, IntentSender.SendIntentException {
         Bundle buyIntentBundle = mInAppBillingService.getBuyIntent(
-                API_VERSION,
+                API_VERSION_3,
                 BaseApplication.getAppInstance().getPackageName(),
                 sku,
                 type,
@@ -376,8 +364,24 @@ public class InappHelper {
         }
     }
 
-    public static int getMonthsFromSku(String sku){
-        String monthsString = sku.replaceAll("[^\\.0123456789]","");
+    public List<String> getOldSubsSkus() {
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.old_skus).split(",")));
+    }
+
+    public List<String> getNewSubsSkus() {
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver_2_skus).split(",")));
+    }
+
+    public List<String> getFreeTrailSubsSkus() {
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.subs_free_trial).split(",")));
+    }
+
+    public List<String> getNewNoAdsSubsSkus() {
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_ver_2).split(",")));
+    }
+
+    public static int getMonthsFromSku(String sku) {
+        String monthsString = sku.replaceAll("[^\\.0123456789]", "");
         return Integer.parseInt(monthsString);
     }
 }

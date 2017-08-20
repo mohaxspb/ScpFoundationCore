@@ -19,8 +19,12 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.service.DownloadAllServiceDefault;
+import ru.kuchanov.scpcore.ui.base.BaseActivity;
 import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -28,9 +32,19 @@ import timber.log.Timber;
  * <p>
  * for ScpFoundationRu
  */
-public class DownloadAllChooserDefault extends ru.kuchanov.scp.downloads.DialogUtils<Article> {
+public class DialogUtilsDefault extends ru.kuchanov.scp.downloads.DialogUtils<Article> {
+//
+//    public DialogUtilsDefault(
+//            MyPreferenceManagerModel preferenceManager,
+//            DbProviderFactoryModel dbProviderFactory,
+//            ApiClientModel<Article> apiClient,
+//            ConstantValues constantValues,
+//            Class clazz
+//    ) {
+//        super(preferenceManager, dbProviderFactory, apiClient, constantValues, clazz);
+//    }
 
-    public DownloadAllChooserDefault(
+    public DialogUtilsDefault(
             MyPreferenceManagerModel preferenceManager,
             DbProviderFactoryModel dbProviderFactory,
             ApiClientModel<Article> apiClient,
@@ -84,5 +98,33 @@ public class DownloadAllChooserDefault extends ru.kuchanov.scp.downloads.DialogU
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.StartScreen.DOWNLOAD_DIALOG);
         FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+    }
+
+    @Override
+    public void showFreeTrialOfferDialog(Context context) {
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
+                Constants.Firebase.Analitics.EventValue.DOWNLOAD_RANGE);
+        FirebaseAnalytics.getInstance(context)
+                .logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+
+        BaseActivity baseActivity = (BaseActivity) context;
+        DialogUtils dialogUtils = new DialogUtils(mPreferenceManager, mDbProviderFactory, mApiClient);
+        dialogUtils.showProgressDialog(context, R.string.wait);
+        InAppHelper mInAppHelper = new InAppHelper(mPreferenceManager, mDbProviderFactory, mApiClient);
+        mInAppHelper.getSubsListToBuyObservable(baseActivity.getIInAppBillingService(), mInAppHelper.getFreeTrailSubsSkus())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        subscriptions -> {
+                            dialogUtils.dismissProgressDialog();
+                            dialogUtils.showFreeTrialSubscriptionOfferDialog(baseActivity, subscriptions.get(0).freeTrialPeriodInDays());
+                        },
+                        e -> {
+                            Timber.e(e);
+                            dialogUtils.dismissProgressDialog();
+                            baseActivity.showError(e);
+                        }
+                );
     }
 }

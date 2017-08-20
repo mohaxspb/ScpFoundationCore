@@ -161,6 +161,21 @@ public interface Constants {
 
         interface Analitics {
 
+            interface EventName {
+                String FREE_TRIAL_OFFER_SHOWN = "FREE_TRIAL_OFFER_SHOWN";
+            }
+
+            interface EventParam {
+                String PLACE = "PLACE";
+            }
+
+            interface EventValue {
+                String ADS_DISABLE = "ADS_DISABLE";
+                String DOWNLOAD_RANGE = "DOWNLOAD_RANGE";
+                String PERIODICAL = "PERIODICAL";
+                String SCORE_1000_REACHED = "SCORE_1000_REACHED";
+            }
+
             interface EventType {
                 String REWARD_GAINED = "REWARD_GAINED";
                 String REWARD_REQUESTED = "REWARD_REQUESTED";

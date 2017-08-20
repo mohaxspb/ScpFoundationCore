@@ -7,6 +7,8 @@ import android.preference.PreferenceManager;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 
+import org.joda.time.Period;
+
 import java.util.ArrayList;
 
 import ru.kuchanov.scp.downloads.MyPreferenceManagerModel;
@@ -32,17 +34,23 @@ import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.REWARDED_V
 public class MyPreferenceManager implements MyPreferenceManagerModel {
 
     /**
-     * check if user joined app vk group each 2 hours
+     * check if user joined app vk group each 1 day
      */
-    private static final long PERIOD_BETWEEN_APP_VK_GROUP_JOINED_CHECK_IN_MILLIS = 1000 * 60 * 60 * 2;
+    private static final long PERIOD_BETWEEN_APP_VK_GROUP_JOINED_CHECK_IN_MILLIS = Period.days(1).toStandardDuration().getMillis(); //Period.days(1).getDays()
     /**
      * update user subs every 6 hours
      */
-    private static final long PERIOD_BETWEEN_SUBSCRIPTIONS_INVALIDATION_IN_MILLIS = 1000 * 60 * 60 * 6;
+    private static final long PERIOD_BETWEEN_SUBSCRIPTIONS_INVALIDATION_IN_MILLIS = Period.hours(6).toStandardDuration().getMillis();
     /**
-     * used to calculate is it time to request new Interstitial ads
+     * used to calculate is it time to request new Interstitial ads (5 min)
      */
-    private static final long PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS = 1000 * 60 * 5;
+    private static final long PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS = Period.minutes(5).toStandardDuration().getMillis();
+    /**
+     * offer free trial every 7 days
+     */
+    private static final long FREE_TRIAL_OFFERED_PERIOD = Period.days(7).toStandardDuration().getMillis();
+
+    private static final int NUM_OF_DISABLE_ADS_REWARDS_COUNT_BEFORE_OFFER_SHOWING = 3;
 
     public interface Keys {
         String NIGHT_MODE = "NIGHT_MODE";
@@ -78,6 +86,9 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String LAST_TIME_SUBSCRIPTIONS_INVALIDATED = "LAST_TIME_SUBSCRIPTIONS_INVALIDATED";
         String PERSONAL_DATA_ACCEPTED = "PERSONAL_DATA_ACCEPTED";
         String AWARD_FROM_AUTH_GAINED = "AWARD_FROM_AUTH_GAINED";
+        String FREE_ADS_DISABLE_REWARD_GAINED_COUNT = "FREE_ADS_DISABLE_REWARD_GAINED_COUNT";
+        String FREE_TRIAL_OFFERED_PERIODICAL = "FREE_TRIAL_OFFERED_PERIODICAL";
+        String FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE = "FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE";
     }
 
     private Gson mGson;
@@ -195,12 +206,14 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
 
     }
 
-    public void applyRewardFromAds() {
+    public void applyAwardFromAds() {
         long time = System.currentTimeMillis()
                 + FirebaseRemoteConfig.getInstance().getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
         setLastTimeAdsShows(time);
         //also set time for which we should disable banners
         setTimeForWhichBannersDisabled(time);
+
+        setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
     }
 
     public boolean isRewardedDescriptionShown() {
@@ -265,6 +278,8 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         setLastTimeAdsShows(time);
         //also set time for which we should disable banners
         setTimeForWhichBannersDisabled(time);
+
+        setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
     }
 
     //vk groups join
@@ -293,6 +308,8 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         setLastTimeAdsShows(time);
         //also set time for which we should disable banners
         setTimeForWhichBannersDisabled(time);
+
+        setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
     }
 
     public void applyAwardSignIn() {
@@ -303,14 +320,16 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         setTimeForWhichBannersDisabled(time);
 
         setUserAwardedFromAuth(true);
+
+        setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
     }
 
-    public void setUserAwardedFromAuth(boolean awardedFromAuth){
+    public void setUserAwardedFromAuth(boolean awardedFromAuth) {
         mPreferences.edit().putBoolean(Keys.AWARD_FROM_AUTH_GAINED, awardedFromAuth).apply();
     }
 
-    public boolean isUserAwardedFromAuth(){
-       return mPreferences.getBoolean(Keys.AWARD_FROM_AUTH_GAINED, false);
+    public boolean isUserAwardedFromAuth() {
+        return mPreferences.getBoolean(Keys.AWARD_FROM_AUTH_GAINED, false);
     }
 
     //subscription
@@ -325,6 +344,13 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     /**
+     * @return true if user has any subscription (no ads or full version)
+     */
+    public boolean isHasAnySubscription() {
+        return isHasNoAdsSubscription() || isHasSubscription();
+    }
+
+    /**
      * its a subscription that only removes ads
      */
     public void setHasNoAdsSubscription(boolean hasSubscription) {
@@ -336,6 +362,43 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
      */
     public boolean isHasNoAdsSubscription() {
         return mPreferences.getBoolean(Keys.HAS_NO_ADS_SUBSCRIPTION, false);
+    }
+
+    private int getFreeAdsDisableRewardGainedCount() {
+        return mPreferences.getInt(Keys.FREE_ADS_DISABLE_REWARD_GAINED_COUNT, 0);
+    }
+
+    public void setFreeAdsDisableRewardGainedCount(int count) {
+        mPreferences.edit().putInt(Keys.FREE_ADS_DISABLE_REWARD_GAINED_COUNT, count).apply();
+    }
+
+    public boolean isTimeOfferFreeTrialFromDisableAdsOption() {
+        return getFreeAdsDisableRewardGainedCount() >= NUM_OF_DISABLE_ADS_REWARDS_COUNT_BEFORE_OFFER_SHOWING;
+    }
+
+    public void setLastTimePeriodicalFreeTrialOffered(long timeInMillis) {
+        mPreferences.edit().putLong(Keys.FREE_TRIAL_OFFERED_PERIODICAL, timeInMillis).apply();
+    }
+
+    private long getLastTimePeriodicalFreeTrialOffered() {
+        long timeFromLastShow = mPreferences.getLong(Keys.FREE_TRIAL_OFFERED_PERIODICAL, 0);
+        if (timeFromLastShow == 0) {
+            setLastTimeAdsShows(System.currentTimeMillis());
+        }
+        return timeFromLastShow;
+    }
+
+    public boolean isTimeToPeriodicalOfferFreeTrial() {
+//        Timber.d("getLastTimePeriodicalFreeTrialOffered/FREE_TRIAL_OFFERED_PERIOD: %s/%s", getLastTimePeriodicalFreeTrialOffered(), FREE_TRIAL_OFFERED_PERIOD);
+        return System.currentTimeMillis() - getLastTimePeriodicalFreeTrialOffered() >= FREE_TRIAL_OFFERED_PERIOD;
+    }
+
+    public void setFreeTrialOfferedAfterGetting1000Score(boolean alreadyOffered) {
+        mPreferences.edit().putBoolean(Keys.FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE, alreadyOffered).apply();
+    }
+
+    public boolean isFreeTrialOfferedAfterGetting1000Score() {
+        return mPreferences.getBoolean(Keys.FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE, false);
     }
     //subscriptions end
 

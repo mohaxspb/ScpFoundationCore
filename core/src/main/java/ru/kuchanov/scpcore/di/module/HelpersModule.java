@@ -11,11 +11,11 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.monetization.util.InappHelper;
+import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.service.DownloadAllServiceDefault;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
-import ru.kuchanov.scpcore.ui.util.DownloadAllChooserDefault;
+import ru.kuchanov.scpcore.ui.util.DialogUtilsDefault;
 import ru.kuchanov.scpcore.ui.util.MaterialClickListenerDefault;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 
@@ -29,7 +29,7 @@ public class HelpersModule {
 
     @Provides
     @NonNull
-    @Singleton
+//    @Singleton
     DialogUtils providesDialogUtils(
             @NonNull MyPreferenceManager preferenceManager,
             @NonNull DbProviderFactory dbProviderFactory,
@@ -56,7 +56,7 @@ public class HelpersModule {
             @NonNull ApiClient apiClient,
             @NonNull ConstantValues constantValues
     ) {
-        return new DownloadAllChooserDefault(preferenceManager, dbProviderFactory, apiClient, constantValues, DownloadAllServiceDefault.class);
+        return new DialogUtilsDefault(preferenceManager, dbProviderFactory, apiClient, constantValues, DownloadAllServiceDefault.class);
     }
 
     @Provides
@@ -80,11 +80,11 @@ public class HelpersModule {
     @Provides
     @NonNull
     @Singleton
-    InappHelper providesInappHelper(
+    InAppHelper providesInappHelper(
             @NonNull MyPreferenceManager preferenceManager,
             @NonNull DbProviderFactory dbProviderFactory,
             @NonNull ApiClient apiClient
     ) {
-        return new InappHelper(preferenceManager, dbProviderFactory, apiClient);
+        return new InAppHelper(preferenceManager, dbProviderFactory, apiClient);
     }
 }

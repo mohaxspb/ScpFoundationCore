@@ -98,7 +98,7 @@
     <string name="yes_sir">Yes sir!</string>
     <string name="reward_not_loaded_yet">Still doesn\'t load. Try again</string>
     <string name="settings_design_font">Font</string>
-    <string name="login_advantages">Attention! Authorization is not required, but it needed for a cloud synch of the selected articles, and read status. It also allows you to participate in the agent ranking. You can get further instructions from the head of the content area.</string>
+    <string name="login_advantages">Attention! Authorization is not required, but it needed for a cloud sync of the favorite articles, and read status. It also allows you to participate in the agent ranking. You can get further instructions from the head of the content area.</string>
     <string name="login_advantages_title">Why authorization?</string>
     <string name="login_greetings">Welcome, Agent %s</string>
     <string name="error_login_no_email">You cannot log-in without e-mail.</string>
@@ -272,4 +272,7 @@
     <string name="dialog_offer_login_to_gain_score_content">Do you want to authorize first? After authorizing you\'ll get not only ads disabling, but also score increasing, which allows you to load more articles to read them offline!</string>
     <string name="dialog_offer_subscription_title">Thanks for supporting us!</string>
     <string name="dialog_offer_subscription_content">Want to buy subscription to disable all ads and receive unlimited offline capabilities, authomated cloud sync and all fonts?</string>
+    <!---->
+    <string name="dialog_offer_free_trial_subscription_title">Want to try full version for free?</string>
+    <string name="dialog_offer_free_trial_subscription_content">We want to offer you a free %1$d days trial of full version. You\'ll receive unlimited downloads, no ads, auto cloud sync and all fonts for %2$d days for FREE!</string>
 </resources>

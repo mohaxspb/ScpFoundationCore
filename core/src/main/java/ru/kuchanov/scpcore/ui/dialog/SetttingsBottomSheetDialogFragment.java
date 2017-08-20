@@ -37,7 +37,7 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyNotificationManager;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.monetization.util.InappHelper;
+import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.util.AttributeGetter;
@@ -94,7 +94,7 @@ public class SetttingsBottomSheetDialogFragment
     @Inject
     MyNotificationManager mMyNotificationManager;
     @Inject
-    InappHelper mInappHelper;
+    InAppHelper mInAppHelper;
 
     public static BottomSheetDialogFragment newInstance() {
         return new SetttingsBottomSheetDialogFragment();

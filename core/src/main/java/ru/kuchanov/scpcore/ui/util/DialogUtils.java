@@ -2,6 +2,7 @@ package ru.kuchanov.scpcore.ui.util;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.support.annotation.StringRes;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
@@ -12,12 +13,15 @@ import com.google.gson.GsonBuilder;
 import java.util.List;
 import java.util.Locale;
 
+import ru.kuchanov.scp.downloads.ApiClientModel;
+import ru.kuchanov.scp.downloads.DbProviderFactoryModel;
+import ru.kuchanov.scp.downloads.MyPreferenceManagerModel;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
-import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.api.model.remoteconfig.AppLangVersionsJson;
-import ru.kuchanov.scpcore.db.DbProviderFactory;
-import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.monetization.util.InAppHelper;
+import ru.kuchanov.scpcore.ui.base.BaseActivity;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
@@ -28,14 +32,26 @@ import timber.log.Timber;
  */
 public class DialogUtils {
 
-    private MyPreferenceManager mPreferenceManager;
-    private DbProviderFactory mDbProviderFactory;
-    private ApiClient mApiClient;
+    private MyPreferenceManagerModel mPreferenceManager;
+    private DbProviderFactoryModel mDbProviderFactory;
+    private ApiClientModel<Article> mApiClient;
+
+    private MaterialDialog mProgressDialog;
+
+//    public DialogUtils(
+//            MyPreferenceManager preferenceManager,
+//            DbProviderFactory dbProviderFactory,
+//            ApiClient apiClient
+//    ) {
+//        mPreferenceManager = preferenceManager;
+//        mDbProviderFactory = dbProviderFactory;
+//        mApiClient = apiClient;
+//    }
 
     public DialogUtils(
-            MyPreferenceManager preferenceManager,
-            DbProviderFactory dbProviderFactory,
-            ApiClient apiClient
+            MyPreferenceManagerModel preferenceManager,
+            DbProviderFactoryModel dbProviderFactory,
+            ApiClientModel<Article> apiClient
     ) {
         mPreferenceManager = preferenceManager;
         mDbProviderFactory = dbProviderFactory;
@@ -104,5 +120,45 @@ public class DialogUtils {
                         IntentUtils.tryOpenPlayMarket(context, appLangVersions.get(position).appPackage))
                 .build()
                 .show();
+    }
+
+    public void showFreeTrialSubscriptionOfferDialog(BaseActivity baseActivity, int freeTrialDaysCount) {
+        new MaterialDialog.Builder(baseActivity)
+                .title(R.string.dialog_offer_free_trial_subscription_title)
+                .content(baseActivity.getString(R.string.dialog_offer_free_trial_subscription_content, freeTrialDaysCount, freeTrialDaysCount))
+                .positiveText(R.string.yes_bliad)
+                .onPositive((dialog, which) -> {
+                    try {
+                        InAppHelper.startSubsBuy(baseActivity, baseActivity.getIInAppBillingService(), InAppHelper.InappType.SUBS, baseActivity.getString(R.string.subs_free_trial).split(",")[0]);
+                    } catch (Exception e) {
+                        Timber.e(e);
+                        baseActivity.showError(e);
+                    }
+                })
+                .negativeText(android.R.string.cancel)
+                .onNegative((dialog, which) -> dialog.dismiss())
+                .build()
+                .show();
+    }
+
+    public void showProgressDialog(Context context, String title) {
+        mProgressDialog = new MaterialDialog.Builder(context)
+                .progress(true, 0)
+                .content(title)
+                .cancelable(false)
+                .build();
+        mProgressDialog.show();
+    }
+
+    public void showProgressDialog(Context context, @StringRes int title) {
+        showProgressDialog(context, context.getString(title));
+    }
+
+    public void dismissProgressDialog() {
+        if (mProgressDialog == null || !mProgressDialog.isShowing()) {
+            return;
+        }
+        mProgressDialog.dismiss();
+        mProgressDialog = null;
     }
 }

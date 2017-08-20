@@ -27,6 +27,8 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -38,7 +40,7 @@ import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
-import ru.kuchanov.scpcore.monetization.util.InappHelper;
+import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.ui.adapter.SubscriptionsRecyclerAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseBottomSheetDialogFragment;
 import rx.Observable;
@@ -75,7 +77,7 @@ public class SubscriptionsFragmentDialog
     @Inject
     MyPreferenceManager mMyPreferenceManager;
     @Inject
-    InappHelper mInappHelper;
+    InAppHelper mInAppHelper;
 
     private IInAppBillingService mInAppBillingService;
 
@@ -153,8 +155,13 @@ public class SubscriptionsFragmentDialog
         refresh.setVisibility(View.GONE);
         progressCenter.setVisibility(View.VISIBLE);
 
-        mInappHelper.getValidatedOwnedSubsObserveble(mInAppBillingService)
-                .flatMap(ownedItems -> mInappHelper.getSubsListToBuyObserveble(mInAppBillingService)
+        List<String> skuList = mInAppHelper.getNewSubsSkus();
+        if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
+            skuList.addAll(mInAppHelper.getNewNoAdsSubsSkus());
+        }
+
+        mInAppHelper.getValidatedOwnedSubsObservable(mInAppBillingService)
+                .flatMap(ownedItems -> mInAppHelper.getSubsListToBuyObservable(mInAppBillingService, skuList)
                         .flatMap(toBuy -> Observable.just(new Pair<>(ownedItems, toBuy))))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -172,16 +179,16 @@ public class SubscriptionsFragmentDialog
                             infoContainer.setVisibility(View.VISIBLE);
 
                             //show current subscription
-                            @InappHelper.SubscriptionType
-                            int type = mInappHelper.getSubscriptionTypeFromItemsList(ownedItemsAndSubscriptions.first);
+                            @InAppHelper.SubscriptionType
+                            int type = mInAppHelper.getSubscriptionTypeFromItemsList(ownedItemsAndSubscriptions.first);
                             switch (type) {
-                                case InappHelper.SubscriptionType.NONE:
+                                case InAppHelper.SubscriptionType.NONE:
                                     currentSubscriptionValue.setText(getString(R.string.no_subscriptions));
                                     break;
-                                case InappHelper.SubscriptionType.NO_ADS:
+                                case InAppHelper.SubscriptionType.NO_ADS:
                                     currentSubscriptionValue.setText(getString(R.string.subscription_no_ads_title));
                                     break;
-                                case InappHelper.SubscriptionType.FULL_VERSION:
+                                case InAppHelper.SubscriptionType.FULL_VERSION:
                                     currentSubscriptionValue.setText(getString(R.string.subscription_full_version_title));
                                     break;
                                 default:
@@ -212,7 +219,7 @@ public class SubscriptionsFragmentDialog
     @Override
     public void onSubscriptionClicked(Subscription article) {
         try {
-            InappHelper.startSubsBuy(this, mInAppBillingService, InappHelper.InappType.SUBS, article.productId);
+            InAppHelper.startSubsBuy(this, mInAppBillingService, InAppHelper.InappType.SUBS, article.productId);
         } catch (Exception e) {
             Timber.e(e);
             Snackbar.make(mRoot, e.getMessage(), Snackbar.LENGTH_SHORT).show();
@@ -227,7 +234,7 @@ public class SubscriptionsFragmentDialog
         dialog.setOnShowListener(dialog1 -> {
             BottomSheetDialog d = (BottomSheetDialog) dialog1;
 
-            FrameLayout bottomSheet = (FrameLayout) d.findViewById(android.support.design.R.id.design_bottom_sheet);
+            FrameLayout bottomSheet = d.findViewById(android.support.design.R.id.design_bottom_sheet);
             if (bottomSheet != null) {
                 BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
             }

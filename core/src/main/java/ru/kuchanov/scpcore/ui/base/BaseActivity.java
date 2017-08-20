@@ -74,7 +74,7 @@ import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable;
 import ru.kuchanov.scpcore.manager.MyNotificationManager;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.AdMobHelper;
-import ru.kuchanov.scpcore.monetization.util.InappHelper;
+import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.monetization.util.MyAdListener;
 import ru.kuchanov.scpcore.monetization.util.MyAppodealInterstitialCallbacks;
 import ru.kuchanov.scpcore.monetization.util.MyRewardedVideoCallbacks;
@@ -146,12 +146,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Inject
     protected ru.kuchanov.scp.downloads.DialogUtils<Article> mDownloadAllChooser;
     @Inject
-    protected InappHelper mInappHelper;
+    protected InAppHelper mInAppHelper;
     //inapps and ads
     private IInAppBillingService mService;
 
     private InterstitialAd mInterstitialAd;
-    private MaterialDialog mProgressDialog;
 
     @NonNull
     @Override
@@ -305,7 +304,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             @Override
             public void onRewardedVideoFinished(int i, String s) {
                 super.onRewardedVideoFinished(i, s);
-                mMyPreferenceManager.applyRewardFromAds();
+                mMyPreferenceManager.applyAwardFromAds();
                 long numOfMillis = FirebaseRemoteConfig.getInstance()
                         .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
                 long hours = numOfMillis / 1000 / 60 / 60;
@@ -519,14 +518,44 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             if (mMyPreferenceManager.isTimeToValidateSubscriptions()) {
                 updateOwnedMarketItems();
             }
+
+            //offer free trial every week for non subscribed users
+            //check here as we need to have connected service
+            if (!mMyPreferenceManager.isHasAnySubscription() && mMyPreferenceManager.isTimeToPeriodicalOfferFreeTrial()) {
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
+                        Constants.Firebase.Analitics.EventValue.PERIODICAL);
+                FirebaseAnalytics.getInstance(BaseActivity.this)
+                        .logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+
+                showOfferFreeTrialSubscriptionPopup();
+                mMyPreferenceManager.setLastTimePeriodicalFreeTrialOffered(System.currentTimeMillis());
+            }
+
+            //check here along with onUserChange as there can be situation when data from DB gained,
+            //but service not connected yet
+            //check if user score is greter than 1000 and offer him/her a free trial if there is no subscription owned
+            if (!mMyPreferenceManager.isHasAnySubscription()
+                    && mPresenter.getUser() != null
+                    && mPresenter.getUser().score >= 1000
+                    && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
+                        Constants.Firebase.Analitics.EventValue.SCORE_1000_REACHED);
+                FirebaseAnalytics.getInstance(BaseActivity.this)
+                        .logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+
+                showOfferFreeTrialSubscriptionPopup();
+                mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score(true);
+            }
         }
     };
 
     @Override
     public void updateOwnedMarketItems() {
         Timber.d("updateOwnedMarketItems forceSubsValidation: %s");
-        mInappHelper
-                .getValidatedOwnedSubsObserveble(mService)
+        mInAppHelper
+                .getValidatedOwnedSubsObservable(mService)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -535,15 +564,15 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
                             mMyPreferenceManager.setLastTimeSubscriptionsValidated(System.currentTimeMillis());
 
-                            @InappHelper.SubscriptionType
-                            int type = mInappHelper.getSubscriptionTypeFromItemsList(validatedItems);
+                            @InAppHelper.SubscriptionType
+                            int type = mInAppHelper.getSubscriptionTypeFromItemsList(validatedItems);
                             Timber.d("subscription type: %s", type);
                             switch (type) {
-                                case InappHelper.SubscriptionType.NONE:
+                                case InAppHelper.SubscriptionType.NONE:
                                     mMyPreferenceManager.setHasNoAdsSubscription(false);
                                     mMyPreferenceManager.setHasSubscription(false);
                                     break;
-                                case InappHelper.SubscriptionType.NO_ADS: {
+                                case InAppHelper.SubscriptionType.NO_ADS: {
                                     mMyPreferenceManager.setHasNoAdsSubscription(true);
                                     mMyPreferenceManager.setHasSubscription(false);
                                     //remove banner
@@ -553,7 +582,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                                     }
                                     break;
                                 }
-                                case InappHelper.SubscriptionType.FULL_VERSION: {
+                                case InAppHelper.SubscriptionType.FULL_VERSION: {
                                     mMyPreferenceManager.setHasSubscription(true);
                                     mMyPreferenceManager.setHasNoAdsSubscription(true);
                                     //remove banner
@@ -656,24 +685,17 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showProgressDialog(String title) {
-        mProgressDialog = new MaterialDialog.Builder(this)
-                .progress(true, 0)
-                .content(title)
-                .cancelable(false)
-                .show();
+        mDialogUtils.showProgressDialog(this, title);
     }
 
     @Override
     public void showProgressDialog(@StringRes int title) {
-        showProgressDialog(getString(title));
+        mDialogUtils.showProgressDialog(this, getString(title));
     }
 
     @Override
     public void dismissProgressDialog() {
-        if (mProgressDialog == null || !mProgressDialog.isShowing()) {
-            return;
-        }
-        mProgressDialog.dismiss();
+        mDialogUtils.dismissProgressDialog();
     }
 
     @Override
@@ -712,17 +734,40 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 .content(R.string.dialog_offer_subscription_content)
                 .positiveText(R.string.yes_bliad)
                 .onPositive((dialog, which) -> {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE,
+                            Constants.Firebase.Analitics.StartScreen.AFTER_LEVEL_UP);
+                    FirebaseAnalytics.getInstance(this)
+                            .logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                     BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
                     subsDF.show(getSupportFragmentManager(), subsDF.getTag());
-
-                    Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.StartScreen.AFTER_LEVEL_UP);
-                    FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
                 })
                 .negativeText(android.R.string.cancel)
                 .onNegative((dialog, which) -> dialog.dismiss())
                 .build()
                 .show();
+    }
+
+    @Override
+    public void showOfferFreeTrialSubscriptionPopup() {
+        Timber.d("showOfferFreeTrialSubscriptionPopup");
+
+        showProgressDialog(R.string.wait);
+        mInAppHelper.getSubsListToBuyObservable(mService, mInAppHelper.getFreeTrailSubsSkus())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        subscriptions -> {
+                            dismissProgressDialog();
+                            mDialogUtils.showFreeTrialSubscriptionOfferDialog(this, subscriptions.get(0).freeTrialPeriodInDays());
+                        },
+                        e -> {
+                            Timber.e(e);
+                            dismissProgressDialog();
+                            showError(e);
+                        }
+                );
     }
 
     @Override
@@ -798,6 +843,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        //ignore facebook analytics log spam
+        if (key.startsWith("com.facebook")) {
+            return;
+        }
         Timber.d("onSharedPreferenceChanged with key: %s", key);
         switch (key) {
             case MyPreferenceManager.Keys.NIGHT_MODE:

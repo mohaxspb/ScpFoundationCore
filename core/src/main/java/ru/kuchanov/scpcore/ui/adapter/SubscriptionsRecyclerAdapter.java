@@ -22,7 +22,7 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
-import ru.kuchanov.scpcore.monetization.util.InappHelper;
+import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import timber.log.Timber;
 
 /**
@@ -118,7 +118,7 @@ public class SubscriptionsRecyclerAdapter extends RecyclerView.Adapter<Subscript
                 }
                 initialMonthCostsInMicros = mData.get(0).price_amount_micros;
             }
-            int months = InappHelper.getMonthsFromSku(subscription.productId);
+            int months = InAppHelper.getMonthsFromSku(subscription.productId);
             long oneMonthPriceForMonths = initialMonthCostsInMicros * months;
             if (oneMonthPriceForMonths != 0) {
                 long percentCosts = 100L - subscription.price_amount_micros * 100L / oneMonthPriceForMonths;

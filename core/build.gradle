@@ -201,9 +201,12 @@ dependencies {
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+    //time operations
+    compile 'joda-time:joda-time:2.9.9'
+
 
     //sub project modules
-    compile('ru.kuchanov.scp:downloads:1.0.9@aar') { transitive = true }
+    compile('ru.kuchanov.scp:downloads:1.0.14@aar') { transitive = true }
     compile('ru.kuchanov.utils:rate:1.0.3@aar') { transitive = true }
 }
 
