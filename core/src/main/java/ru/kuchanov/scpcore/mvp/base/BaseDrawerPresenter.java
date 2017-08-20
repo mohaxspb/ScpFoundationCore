@@ -27,17 +27,17 @@ public abstract class BaseDrawerPresenter<V extends DrawerMvp.View>
         if (!mApiClient.getConstantValues().getAppLang().equals("ru")) {
             getView().showMessage(R.string.random_article_warning);
         }
-        getView().showProgressDialog(true);
+        getView().showProgressDialog(R.string.dialog_random_page_message);
         mApiClient.getRandomUrl()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         url -> {
-                            getView().showProgressDialog(false);
+                            getView().dismissProgressDialog();
                             getView().onReceiveRandomUrl(url);
                         },
                         e -> {
-                            getView().showProgressDialog(false);
+                            getView().dismissProgressDialog();
                             getView().showError(e);
                         }
                 );
