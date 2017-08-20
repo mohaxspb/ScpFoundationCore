@@ -65,8 +65,9 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String NOTIFICATION_SOUND_IS_ON = "NOTIFICATION_SOUND_IS_ON";
 
         String ADS_LAST_TIME_SHOWS = "ADS_LAST_TIME_SHOWS";
-        String ADS_REWARDED_DESCRIPTION_IS_SHOWN = "ADS_REWARDED_DESCRIPTION_IS_SHOWN";
+        String TIME_FOR_WHICH_BANNERS_DISABLED = "TIME_FOR_WHICH_BANNERS_DISABLED";
         String ADS_NUM_OF_INTERSTITIALS_SHOWN = "ADS_NUM_OF_INTERSTITIALS_SHOWN";
+        String ADS_REWARDED_DESCRIPTION_IS_SHOWN = "ADS_REWARDED_DESCRIPTION_IS_SHOWN";
 
         String LICENCE_ACCEPTED = "LICENCE_ACCEPTED";
         String CUR_APP_VERSION = "CUR_APP_VERSION";
@@ -82,7 +83,6 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String APP_VK_GROUP_JOINED_LAST_TIME_CHECKED = "APP_VK_GROUP_JOINED_LAST_TIME_CHECKED";
         String APP_VK_GROUP_JOINED = "APP_VK_GROUP_JOINED";
         String DATA_RESTORED = "DATA_RESTORED";
-        String TIME_FOR_WHICH_BANNERS_DISABLED = "TIME_FOR_WHICH_BANNERS_DISABLED";
         String LAST_TIME_SUBSCRIPTIONS_INVALIDATED = "LAST_TIME_SUBSCRIPTIONS_INVALIDATED";
         String PERSONAL_DATA_ACCEPTED = "PERSONAL_DATA_ACCEPTED";
         String AWARD_FROM_AUTH_GAINED = "AWARD_FROM_AUTH_GAINED";
@@ -228,12 +228,15 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         mPreferences.edit().putLong(Keys.ADS_LAST_TIME_SHOWS, timeInMillis).apply();
     }
 
-    private long getLastTimeAdsShows() {
-        long timeFromLastShow = mPreferences.getLong(Keys.ADS_LAST_TIME_SHOWS, 0);
-        if (timeFromLastShow == 0) {
-            setLastTimeAdsShows(System.currentTimeMillis());
-        }
-        return timeFromLastShow;
+    /**
+     *
+     * @return millis when AdMob Interstitial last time shows
+     */
+    public long getLastTimeAdsShows() {
+//        if (timeFromLastShow == 0) {
+//            setLastTimeAdsShows(System.currentTimeMillis());
+//        }
+        return mPreferences.getLong(Keys.ADS_LAST_TIME_SHOWS, 0);
     }
 
     public void setNumOfInterstitialsShown(int numOfInterstitialsShown) {
@@ -254,7 +257,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return System.currentTimeMillis() >= getTimeForWhichBannersDisabled();
     }
 
-    private void setTimeForWhichBannersDisabled(long timeInMillis) {
+    public void setTimeForWhichBannersDisabled(long timeInMillis) {
         mPreferences.edit().putLong(Keys.TIME_FOR_WHICH_BANNERS_DISABLED, timeInMillis).apply();
     }
 
@@ -381,11 +384,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     private long getLastTimePeriodicalFreeTrialOffered() {
-        long timeFromLastShow = mPreferences.getLong(Keys.FREE_TRIAL_OFFERED_PERIODICAL, 0);
-        if (timeFromLastShow == 0) {
-            setLastTimeAdsShows(System.currentTimeMillis());
-        }
-        return timeFromLastShow;
+        return mPreferences.getLong(Keys.FREE_TRIAL_OFFERED_PERIODICAL, System.currentTimeMillis());
     }
 
     public boolean isTimeToPeriodicalOfferFreeTrial() {

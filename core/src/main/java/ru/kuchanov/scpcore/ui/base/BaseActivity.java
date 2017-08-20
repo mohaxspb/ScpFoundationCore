@@ -52,6 +52,8 @@ import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
 import com.yandex.metrica.YandexMetrica;
 
+import org.joda.time.Period;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -278,6 +280,17 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void initAds() {
+        //disable ads for first 3 days
+        if (mMyPreferenceManager.getLastTimeAdsShows() == 0) {
+            //so it's first time we check it after install (or app data clearing)
+            //so add 3 day to current time to disable it for 3 days to increase user experience
+            //3 days, as we use 2 day interval before asking for review
+            long initialAdsDisablePeriodInMillis = Period.days(3).toStandardDuration().getMillis();
+            mMyPreferenceManager.setLastTimeAdsShows(System.currentTimeMillis() + initialAdsDisablePeriodInMillis);
+            //also disable banners for same period
+            mMyPreferenceManager.setTimeForWhichBannersDisabled(System.currentTimeMillis() + initialAdsDisablePeriodInMillis);
+        }
+
         //init frameworks
         MobileAds.initialize(getApplicationContext(), getString(R.string.ads_app_id));
 
