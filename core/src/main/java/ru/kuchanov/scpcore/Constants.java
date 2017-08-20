@@ -171,6 +171,9 @@ public interface Constants {
 
             interface EventValue {
                 String ADS_DISABLE = "ADS_DISABLE";
+                String DOWNLOAD_RANGE = "DOWNLOAD_RANGE";
+                String PERIODICAL = "PERIODICAL";
+                String SCORE_1000_REACHED = "SCORE_1000_REACHED";
             }
 
             interface EventType {

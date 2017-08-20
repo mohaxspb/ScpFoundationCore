@@ -22,12 +22,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import ru.kuchanov.scp.downloads.ApiClientModel;
+import ru.kuchanov.scp.downloads.DbProviderFactoryModel;
+import ru.kuchanov.scp.downloads.MyPreferenceManagerModel;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
-import ru.kuchanov.scpcore.db.DbProviderFactory;
-import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.monetization.model.Item;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
 import rx.Observable;
@@ -66,11 +68,15 @@ public class InAppHelper {
         int FULL_VERSION = 1;
     }
 
-    private ApiClient mApiClient;
-    private MyPreferenceManager mMyPreferenceManager;
-    private DbProviderFactory mDbProviderFactory;
+    private ApiClientModel<Article> mApiClient;
+    private MyPreferenceManagerModel mMyPreferenceManager;
+    private DbProviderFactoryModel mDbProviderFactory;
 
-    public InAppHelper(MyPreferenceManager preferenceManager, DbProviderFactory dbProviderFactory, ApiClient apiClient) {
+    public InAppHelper(
+            MyPreferenceManagerModel preferenceManager,
+            DbProviderFactoryModel dbProviderFactory,
+            ApiClientModel<Article> apiClient
+    ) {
         mMyPreferenceManager = preferenceManager;
         mDbProviderFactory = dbProviderFactory;
         mApiClient = apiClient;
@@ -147,7 +153,7 @@ public class InAppHelper {
                     for (Item item : items) {
                         Timber.d("validate item: %s", item.sku);
                         try {
-                            PurchaseValidateResponse purchaseValidateResponse = mApiClient.validatePurchaseSync(
+                            PurchaseValidateResponse purchaseValidateResponse = ((ApiClient)mApiClient).validatePurchaseSync(
                                     true,
                                     BaseApplication.getAppInstance().getPackageName(),
                                     item.sku,
@@ -297,7 +303,7 @@ public class InAppHelper {
     ) {
         String packageName = BaseApplication.getAppInstance().getPackageName();
 
-        return mApiClient.validatePurchase(false, packageName, sku, token)
+        return ((ApiClient)mApiClient).validatePurchase(false, packageName, sku, token)
                 .flatMap(purchaseValidateResponse -> {
                     @PurchaseValidateResponse.PurchaseValidationStatus
                     int status = purchaseValidateResponse.getStatus();
@@ -358,24 +364,24 @@ public class InAppHelper {
         }
     }
 
-    public List<String> getOldSubsSkus(){
+    public List<String> getOldSubsSkus() {
         return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.old_skus).split(",")));
     }
 
-    public List<String> getNewSubsSkus(){
+    public List<String> getNewSubsSkus() {
         return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver_2_skus).split(",")));
     }
 
-    public List<String> getFreeTrailSubsSkus(){
+    public List<String> getFreeTrailSubsSkus() {
         return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.subs_free_trial).split(",")));
     }
 
-    public List<String> getNewNoAdsSubsSkus(){
+    public List<String> getNewNoAdsSubsSkus() {
         return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_ver_2).split(",")));
     }
 
-    public static int getMonthsFromSku(String sku){
-        String monthsString = sku.replaceAll("[^\\.0123456789]","");
+    public static int getMonthsFromSku(String sku) {
+        String monthsString = sku.replaceAll("[^\\.0123456789]", "");
         return Integer.parseInt(monthsString);
     }
 }

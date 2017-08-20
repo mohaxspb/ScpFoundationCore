@@ -170,6 +170,12 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
             //check if its time to offer free trial subscription
             boolean hasSubscription = mMyPreferenceManager.isHasSubscription() || mMyPreferenceManager.isHasNoAdsSubscription();
             if (!hasSubscription && mMyPreferenceManager.isTimeOfferFreeTrialFromDisableAdsOption()) {
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
+                        Constants.Firebase.Analitics.EventValue.ADS_DISABLE);
+                FirebaseAnalytics.getInstance(getBaseActivity())
+                        .logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+
                 mMyPreferenceManager.setFreeAdsDisableRewardGainedCount(0);
                 getBaseActivity().showOfferFreeTrialSubscriptionPopup();
                 return;

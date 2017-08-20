@@ -151,7 +151,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     private IInAppBillingService mService;
 
     private InterstitialAd mInterstitialAd;
-    private MaterialDialog mProgressDialog;
 
     @NonNull
     @Override
@@ -523,6 +522,12 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             //offer free trial every week for non subscribed users
             //check here as we need to have connected service
             if (!mMyPreferenceManager.isHasAnySubscription() && mMyPreferenceManager.isTimeToPeriodicalOfferFreeTrial()) {
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
+                        Constants.Firebase.Analitics.EventValue.PERIODICAL);
+                FirebaseAnalytics.getInstance(BaseActivity.this)
+                        .logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+
                 showOfferFreeTrialSubscriptionPopup();
                 mMyPreferenceManager.setLastTimePeriodicalFreeTrialOffered(System.currentTimeMillis());
             }
@@ -534,6 +539,12 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     && mPresenter.getUser() != null
                     && mPresenter.getUser().score >= 1000
                     && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
+                        Constants.Firebase.Analitics.EventValue.SCORE_1000_REACHED);
+                FirebaseAnalytics.getInstance(BaseActivity.this)
+                        .logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+
                 showOfferFreeTrialSubscriptionPopup();
                 mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score(true);
             }
@@ -674,24 +685,17 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showProgressDialog(String title) {
-        mProgressDialog = new MaterialDialog.Builder(this)
-                .progress(true, 0)
-                .content(title)
-                .cancelable(false)
-                .show();
+        mDialogUtils.showProgressDialog(this, title);
     }
 
     @Override
     public void showProgressDialog(@StringRes int title) {
-        showProgressDialog(getString(title));
+        mDialogUtils.showProgressDialog(this, getString(title));
     }
 
     @Override
     public void dismissProgressDialog() {
-        if (mProgressDialog == null || !mProgressDialog.isShowing()) {
-            return;
-        }
-        mProgressDialog.dismiss();
+        mDialogUtils.dismissProgressDialog();
     }
 
     @Override
@@ -730,12 +734,14 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 .content(R.string.dialog_offer_subscription_content)
                 .positiveText(R.string.yes_bliad)
                 .onPositive((dialog, which) -> {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE,
+                            Constants.Firebase.Analitics.StartScreen.AFTER_LEVEL_UP);
+                    FirebaseAnalytics.getInstance(this)
+                            .logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                     BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
                     subsDF.show(getSupportFragmentManager(), subsDF.getTag());
-
-                    Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.StartScreen.AFTER_LEVEL_UP);
-                    FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
                 })
                 .negativeText(android.R.string.cancel)
                 .onNegative((dialog, which) -> dialog.dismiss())

@@ -206,7 +206,7 @@ dependencies {
 
 
     //sub project modules
-    compile('ru.kuchanov.scp:downloads:1.0.9@aar') { transitive = true }
+    compile('ru.kuchanov.scp:downloads:1.0.14@aar') { transitive = true }
     compile('ru.kuchanov.utils:rate:1.0.3@aar') { transitive = true }
 }
 

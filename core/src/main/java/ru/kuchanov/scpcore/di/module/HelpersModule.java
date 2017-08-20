@@ -15,7 +15,7 @@ import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.service.DownloadAllServiceDefault;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
-import ru.kuchanov.scpcore.ui.util.DownloadAllChooserDefault;
+import ru.kuchanov.scpcore.ui.util.DialogUtilsDefault;
 import ru.kuchanov.scpcore.ui.util.MaterialClickListenerDefault;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 
@@ -29,7 +29,7 @@ public class HelpersModule {
 
     @Provides
     @NonNull
-    @Singleton
+//    @Singleton
     DialogUtils providesDialogUtils(
             @NonNull MyPreferenceManager preferenceManager,
             @NonNull DbProviderFactory dbProviderFactory,
@@ -56,7 +56,7 @@ public class HelpersModule {
             @NonNull ApiClient apiClient,
             @NonNull ConstantValues constantValues
     ) {
-        return new DownloadAllChooserDefault(preferenceManager, dbProviderFactory, apiClient, constantValues, DownloadAllServiceDefault.class);
+        return new DialogUtilsDefault(preferenceManager, dbProviderFactory, apiClient, constantValues, DownloadAllServiceDefault.class);
     }
 
     @Provides

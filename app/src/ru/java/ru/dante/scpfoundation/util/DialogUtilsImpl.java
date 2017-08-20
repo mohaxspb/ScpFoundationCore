@@ -1,11 +1,6 @@
 package ru.dante.scpfoundation.util;
 
 import android.content.Context;
-import android.os.Bundle;
-import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.v7.app.AppCompatActivity;
-
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,23 +8,18 @@ import java.util.List;
 import ru.kuchanov.scp.downloads.ApiClientModel;
 import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scp.downloads.DbProviderFactoryModel;
-import ru.kuchanov.scp.downloads.DialogUtils;
 import ru.kuchanov.scp.downloads.DownloadEntry;
 import ru.kuchanov.scp.downloads.MyPreferenceManagerModel;
-import ru.kuchanov.scpcore.BaseApplication;
-import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.db.model.Article;
-import ru.kuchanov.scpcore.service.DownloadAllServiceDefault;
-import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
-import timber.log.Timber;
+import ru.kuchanov.scpcore.ui.util.DialogUtilsDefault;
 
 /**
  * Created by mohax on 01.07.2017.
  * <p>
  * for ScpFoundationRu
  */
-public class DialogUtilsImpl extends DialogUtils<Article> {
+public class DialogUtilsImpl extends DialogUtilsDefault {
 
     public DialogUtilsImpl(
             MyPreferenceManagerModel preferenceManager,
@@ -60,30 +50,5 @@ public class DialogUtilsImpl extends DialogUtils<Article> {
 
         downloadEntries.add(new DownloadEntry(R.string.type_all, context.getString(R.string.type_all), mConstantValues.getNewArticles(), Article.FIELD_IS_IN_RECENT));
         return downloadEntries;
-    }
-
-    @Override
-    protected boolean isServiceRunning() {
-        return DownloadAllServiceDefault.isRunning();
-    }
-
-    @Override
-    protected void onIncreaseLimitClick(Context context) {
-        Timber.d("onIncreaseLimitClick");
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.StartScreen.DOWNLOAD_DIALOG);
-        FirebaseAnalytics.getInstance(context).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-
-        BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
-        subsDF.show(((AppCompatActivity) context).getSupportFragmentManager(), subsDF.getTag());
-    }
-
-    @Override
-    protected void logDownloadAttempt(DownloadEntry type) {
-        Timber.d("logDownloadAttempt: %s", type);
-
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.StartScreen.DOWNLOAD_DIALOG);
-        FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 }

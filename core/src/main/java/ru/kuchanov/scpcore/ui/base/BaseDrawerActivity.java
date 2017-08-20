@@ -328,6 +328,12 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
             if (!mMyPreferenceManager.isHasAnySubscription()
                     && user.score >= 1000
                     && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
+                        Constants.Firebase.Analitics.EventValue.SCORE_1000_REACHED);
+                FirebaseAnalytics.getInstance(this)
+                        .logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+
                 showOfferFreeTrialSubscriptionPopup();
                 mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score(true);
             }

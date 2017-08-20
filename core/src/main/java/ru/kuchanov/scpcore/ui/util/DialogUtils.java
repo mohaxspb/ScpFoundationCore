@@ -2,24 +2,24 @@ package ru.kuchanov.scpcore.ui.util;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.os.Bundle;
+import android.support.annotation.StringRes;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.PhotoView;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.GsonBuilder;
 
 import java.util.List;
 import java.util.Locale;
 
+import ru.kuchanov.scp.downloads.ApiClientModel;
+import ru.kuchanov.scp.downloads.DbProviderFactoryModel;
+import ru.kuchanov.scp.downloads.MyPreferenceManagerModel;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
-import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.api.model.remoteconfig.AppLangVersionsJson;
-import ru.kuchanov.scpcore.db.DbProviderFactory;
-import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.ui.base.BaseActivity;
 import ru.kuchanov.scpcore.util.IntentUtils;
@@ -32,14 +32,26 @@ import timber.log.Timber;
  */
 public class DialogUtils {
 
-    private MyPreferenceManager mPreferenceManager;
-    private DbProviderFactory mDbProviderFactory;
-    private ApiClient mApiClient;
+    private MyPreferenceManagerModel mPreferenceManager;
+    private DbProviderFactoryModel mDbProviderFactory;
+    private ApiClientModel<Article> mApiClient;
+
+    private MaterialDialog mProgressDialog;
+
+//    public DialogUtils(
+//            MyPreferenceManager preferenceManager,
+//            DbProviderFactory dbProviderFactory,
+//            ApiClient apiClient
+//    ) {
+//        mPreferenceManager = preferenceManager;
+//        mDbProviderFactory = dbProviderFactory;
+//        mApiClient = apiClient;
+//    }
 
     public DialogUtils(
-            MyPreferenceManager preferenceManager,
-            DbProviderFactory dbProviderFactory,
-            ApiClient apiClient
+            MyPreferenceManagerModel preferenceManager,
+            DbProviderFactoryModel dbProviderFactory,
+            ApiClientModel<Article> apiClient
     ) {
         mPreferenceManager = preferenceManager;
         mDbProviderFactory = dbProviderFactory;
@@ -110,16 +122,12 @@ public class DialogUtils {
                 .show();
     }
 
-    public void showFreeTrialSubscriptionOfferDialog(BaseActivity baseActivity, int freeTrialDaysCount){
+    public void showFreeTrialSubscriptionOfferDialog(BaseActivity baseActivity, int freeTrialDaysCount) {
         new MaterialDialog.Builder(baseActivity)
                 .title(R.string.dialog_offer_free_trial_subscription_title)
-                //todo get days from market somehow
                 .content(baseActivity.getString(R.string.dialog_offer_free_trial_subscription_content, freeTrialDaysCount, freeTrialDaysCount))
                 .positiveText(R.string.yes_bliad)
                 .onPositive((dialog, which) -> {
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.EventValue.ADS_DISABLE);
-                    FirebaseAnalytics.getInstance(baseActivity).logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
                     try {
                         InAppHelper.startSubsBuy(baseActivity, baseActivity.getIInAppBillingService(), InAppHelper.InappType.SUBS, baseActivity.getString(R.string.subs_free_trial).split(",")[0]);
                     } catch (Exception e) {
@@ -131,5 +139,26 @@ public class DialogUtils {
                 .onNegative((dialog, which) -> dialog.dismiss())
                 .build()
                 .show();
+    }
+
+    public void showProgressDialog(Context context, String title) {
+        mProgressDialog = new MaterialDialog.Builder(context)
+                .progress(true, 0)
+                .content(title)
+                .cancelable(false)
+                .build();
+        mProgressDialog.show();
+    }
+
+    public void showProgressDialog(Context context, @StringRes int title) {
+        showProgressDialog(context, context.getString(title));
+    }
+
+    public void dismissProgressDialog() {
+        if (mProgressDialog == null || !mProgressDialog.isShowing()) {
+            return;
+        }
+        mProgressDialog.dismiss();
+        mProgressDialog = null;
     }
 }
