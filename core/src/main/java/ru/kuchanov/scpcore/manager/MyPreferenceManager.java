@@ -207,11 +207,15 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     public void applyAwardFromAds() {
-        long time = System.currentTimeMillis()
-                + FirebaseRemoteConfig.getInstance().getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
-        setLastTimeAdsShows(time);
+//        long time = System.currentTimeMillis()
+//                + FirebaseRemoteConfig.getInstance().getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
+//        setLastTimeAdsShows(time);
+//        //also set time for which we should disable banners
+//        setTimeForWhichBannersDisabled(time);
+        long time = FirebaseRemoteConfig.getInstance().getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
+        increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
-        setTimeForWhichBannersDisabled(time);
+        increaseTimeForWhichBannersDisabled(time);
 
         setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
     }
@@ -228,8 +232,15 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         mPreferences.edit().putLong(Keys.ADS_LAST_TIME_SHOWS, timeInMillis).apply();
     }
 
+    private void increaseLastTimeAdsShows(long timeInMillis) {
+        long currentTime = getLastTimeAdsShows();
+        if (currentTime == 0) {
+            currentTime = System.currentTimeMillis();
+        }
+        mPreferences.edit().putLong(Keys.ADS_LAST_TIME_SHOWS, currentTime + timeInMillis).apply();
+    }
+
     /**
-     *
      * @return millis when AdMob Interstitial last time shows
      */
     public long getLastTimeAdsShows() {
@@ -261,6 +272,14 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         mPreferences.edit().putLong(Keys.TIME_FOR_WHICH_BANNERS_DISABLED, timeInMillis).apply();
     }
 
+    private void increaseTimeForWhichBannersDisabled(long timeInMillis) {
+        long currentTime = getTimeForWhichBannersDisabled();
+        if (currentTime == 0) {
+            currentTime = System.currentTimeMillis();
+        }
+        mPreferences.edit().putLong(Keys.TIME_FOR_WHICH_BANNERS_DISABLED, currentTime + timeInMillis).apply();
+    }
+
     private long getTimeForWhichBannersDisabled() {
         return mPreferences.getLong(Keys.TIME_FOR_WHICH_BANNERS_DISABLED, 0);
     }
@@ -275,12 +294,17 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     public void applyAwardForAppInstall() {
-        long time = System.currentTimeMillis() +
-                FirebaseRemoteConfig.getInstance().getLong(APP_INSTALL_REWARD_IN_MILLIS);
+//        long time = System.currentTimeMillis() +
+//                FirebaseRemoteConfig.getInstance().getLong(APP_INSTALL_REWARD_IN_MILLIS);
+//
+//        setLastTimeAdsShows(time);
+//        //also set time for which we should disable banners
+//        setTimeForWhichBannersDisabled(time);
+        long time = FirebaseRemoteConfig.getInstance().getLong(APP_INSTALL_REWARD_IN_MILLIS);
 
-        setLastTimeAdsShows(time);
+        increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
-        setTimeForWhichBannersDisabled(time);
+        increaseTimeForWhichBannersDisabled(time);
 
         setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
     }
@@ -306,28 +330,36 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     public void applyAwardVkGroupJoined() {
-        long time = System.currentTimeMillis()
-                + FirebaseRemoteConfig.getInstance().getLong(FREE_VK_GROUPS_JOIN_REWARD);
-        setLastTimeAdsShows(time);
+//        long time = System.currentTimeMillis()
+//                + FirebaseRemoteConfig.getInstance().getLong(FREE_VK_GROUPS_JOIN_REWARD);
+//        setLastTimeAdsShows(time);
+//        //also set time for which we should disable banners
+//        setTimeForWhichBannersDisabled(time);
+        long time = FirebaseRemoteConfig.getInstance().getLong(FREE_VK_GROUPS_JOIN_REWARD);
+        increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
-        setTimeForWhichBannersDisabled(time);
+        increaseTimeForWhichBannersDisabled(time);
 
         setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
     }
 
     public void applyAwardSignIn() {
-        long time = System.currentTimeMillis()
-                + FirebaseRemoteConfig.getInstance().getLong(AUTH_COOLDOWN_IN_MILLIS);
-        setLastTimeAdsShows(time);
+//        long time = System.currentTimeMillis()
+//                + FirebaseRemoteConfig.getInstance().getLong(AUTH_COOLDOWN_IN_MILLIS);
+//        setLastTimeAdsShows(time);
+//        //also set time for which we should disable banners
+//        setTimeForWhichBannersDisabled(time);
+        long time = FirebaseRemoteConfig.getInstance().getLong(AUTH_COOLDOWN_IN_MILLIS);
+        increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
-        setTimeForWhichBannersDisabled(time);
+        increaseTimeForWhichBannersDisabled(time);
 
         setUserAwardedFromAuth(true);
 
         setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
     }
 
-    public void setUserAwardedFromAuth(boolean awardedFromAuth) {
+    private void setUserAwardedFromAuth(boolean awardedFromAuth) {
         mPreferences.edit().putBoolean(Keys.AWARD_FROM_AUTH_GAINED, awardedFromAuth).apply();
     }
 

@@ -70,7 +70,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
     @BindView(R2.id.navigationView)
     protected NavigationView mNavigationView;
 
-    protected MaterialDialog dialog;
+//    protected MaterialDialog dialog;
 
     protected ActionBarDrawerToggle mDrawerToggle;
 
@@ -174,20 +174,20 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
         startArticleActivity(url);
     }
 
-    @Override
-    public void showProgressDialog(boolean show) {
-        if (show) {
-            MaterialDialog.Builder builder = new MaterialDialog.Builder(this);
-            builder.title(R.string.dialog_random_page_title);
-            builder.content(R.string.dialog_random_page_message);
-            builder.progress(true, 0);
-            builder.cancelable(false);
-            dialog = builder.build();
-            dialog.show();
-        } else if (dialog != null) {
-            dialog.dismiss();
-        }
-    }
+//    @Override
+//    public void showProgressDialog(boolean show) {
+//        if (show) {
+//            MaterialDialog.Builder builder = new MaterialDialog.Builder(this);
+//            builder.title(R.string.dialog_random_page_title);
+//            builder.content(R.string.dialog_random_page_message);
+//            builder.progress(true, 0);
+//            builder.cancelable(false);
+//            dialog = builder.build();
+//            dialog.show();
+//        } else if (dialog != null) {
+//            dialog.dismiss();
+//        }
+//    }
 
     @Override
     public void updateUser(User user) {

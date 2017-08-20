@@ -142,6 +142,10 @@ public class DialogUtils {
     }
 
     public void showProgressDialog(Context context, String title) {
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+            mProgressDialog = null;
+        }
         mProgressDialog = new MaterialDialog.Builder(context)
                 .progress(true, 0)
                 .content(title)
