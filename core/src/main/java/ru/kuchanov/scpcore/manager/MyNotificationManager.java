@@ -9,6 +9,8 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
+import org.joda.time.Period;
+
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.receivers.ReceiverTimer;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
@@ -26,7 +28,7 @@ public class MyNotificationManager {
         mContext = context;
     }
 
-    public void setAlarm() {
+    private void setAlarm() {
         Timber.d("Setting alarm");
         cancelAlarm();
         AlarmManager am = (AlarmManager) mContext.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
@@ -41,7 +43,8 @@ public class MyNotificationManager {
 
         int periodInMinutes = mMyPreferenceManager.getNotificationPeriodInMinutes();
         Timber.d("setting alarm with period: %s", periodInMinutes);
-        long periodInMiliseconds = periodInMinutes * 60 * 1000;
+//        long periodInMiliseconds = periodInMinutes * 60 * 1000;
+        long periodInMiliseconds = Period.minutes(periodInMinutes).toStandardDuration().getMillis();
 //        //test
 //        periodInMiliseconds = 1000 * 20;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -80,7 +83,7 @@ public class MyNotificationManager {
         }
     }
 
-    public void cancelAlarm() {
+    private void cancelAlarm() {
         Timber.d("Canceling alarm");
         final AlarmManager am = (AlarmManager) mContext.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         Intent intentToTimerReceiver = new Intent(mContext.getApplicationContext(), ReceiverTimer.class);

@@ -166,6 +166,21 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
         adapter.setData(data);
         adapter.setItemClickListener(data1 -> {
             Timber.d("Clicked data: %s", data1);
+
+            //check if its time to offer free trial subscription
+            boolean hasSubscription = mMyPreferenceManager.isHasSubscription() || mMyPreferenceManager.isHasNoAdsSubscription();
+            if (!hasSubscription && mMyPreferenceManager.isTimeOfferFreeTrialFromDisableAdsOption()) {
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
+                        Constants.Firebase.Analitics.EventValue.ADS_DISABLE);
+                FirebaseAnalytics.getInstance(getBaseActivity())
+                        .logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+
+                mMyPreferenceManager.setFreeAdsDisableRewardGainedCount(0);
+                getBaseActivity().showOfferFreeTrialSubscriptionPopup();
+                return;
+            }
+
             if (data1 instanceof AppInviteModel) {
                 if (FirebaseAuth.getInstance().getCurrentUser() == null) {
                     getBaseActivity().showOfferLoginPopup((dialog1, which) -> IntentUtils.firebaseInvite(getActivity()));

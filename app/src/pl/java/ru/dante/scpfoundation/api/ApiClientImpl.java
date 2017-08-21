@@ -17,12 +17,12 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import ru.dante.scpfoundation.BuildConfig;
 import ru.dante.scpfoundation.MyApplicationImpl;
 import ru.dante.scpfoundation.R;
 import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scp.downloads.ScpParseException;
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
@@ -57,7 +57,7 @@ public class ApiClientImpl extends ApiClient {
 
             try {
                 OkHttpClient client = new OkHttpClient.Builder()
-                        .followRedirects(true)
+                        .followRedirects(false)
                         .addInterceptor(new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(BuildConfig.FLAVOR.equals("dev")
                                 ? HttpLoggingInterceptor.Level.BODY
                                 : HttpLoggingInterceptor.Level.NONE))
@@ -67,8 +67,8 @@ public class ApiClientImpl extends ApiClient {
                 ResponseBody requestResult = response.body();
                 if (requestResult != null) {
                     String html = requestResult.string();
-                    html = html.substring(html.indexOf("<iframe src=\"http://snippets.wdfiles.com/local--code/code:iframe-redirect#") +
-                            "<iframe src=\"http://snippets.wdfiles.com/local--code/code:iframe-redirect#".length());
+                    String patternToFindUrl = "<iframe src=\"http://snippets.wdfiles.com/local--code/code:iframe-redirect#";
+                    html = html.substring(html.indexOf(patternToFindUrl) + patternToFindUrl.length());
                     html = html.substring(0, html.indexOf("\""));
                     String randomURL = html;
                     Timber.d("randomUrl = " + randomURL);
@@ -174,9 +174,9 @@ public class ApiClientImpl extends ApiClient {
 
             Element pTag = element.getElementsByTag("p").first();
             String ratingString = pTag.text().substring(pTag.text().indexOf("Ocena: ") + "Ocena: ".length());
-//            Timber.d("ratingString: %s", ratingString);
+            Timber.d("ratingString: %s", ratingString);
             ratingString = ratingString.substring(0, ratingString.indexOf(", Komentarze"));
-//            Timber.d("ratingString: %s", ratingString);
+            Timber.d("ratingString: %s", ratingString);
             int rating = Integer.parseInt(ratingString);
             //TODO parse date
 
@@ -327,6 +327,6 @@ public class ApiClientImpl extends ApiClient {
 
     @Override
     protected String getScpServerWiki() {
-        return "scp-pl";
+        return "scp-wiki";
     }
 }

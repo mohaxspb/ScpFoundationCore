@@ -36,6 +36,9 @@ ext {
             variant.resValue('string', 'subs_no_ads_old', properties.get("noAdsSkuOld"))
 
             variant.resValue('string', 'subs_no_ads_ver_2', properties.get("noAdsSkuVer2"))
+
+            //free trail subs
+            variant.resValue('string', 'subs_free_trial', properties.get("subsFreeTrial"))
         } else {
             logger.lifecycle('pathToFileWithData: {}', pathToFileWithData)
             throw new GradleException("You need to have marketSkus.properties file in root of project with " +

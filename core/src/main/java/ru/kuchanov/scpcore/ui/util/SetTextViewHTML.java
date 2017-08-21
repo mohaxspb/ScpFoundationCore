@@ -20,6 +20,7 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
+import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import timber.log.Timber;
 
@@ -231,5 +232,9 @@ public class SetTextViewHTML {
         void onTagClicked(ArticleTag tag);
 
         void onNotTranslatedArticleClick(String link);
+
+        void onSpoilerExpand(SpoilerViewModel spoilerViewModel);
+
+        void onSpoilerCollapse(SpoilerViewModel spoilerViewModel);
     }
 }

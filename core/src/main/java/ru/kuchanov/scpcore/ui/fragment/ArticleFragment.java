@@ -19,6 +19,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,6 +38,7 @@ import ru.kuchanov.scpcore.mvp.contract.ArticleMvp;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import ru.kuchanov.scpcore.ui.adapter.ArticleRecyclerAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseFragment;
+import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
 import ru.kuchanov.scpcore.ui.util.ReachBottomRecyclerScrollListener;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
@@ -58,6 +60,7 @@ public class ArticleFragment
 
     //tabs
     private static final String KEY_CURRENT_SELECTED_TAB = "KEY_CURRENT_SELECTED_TAB";
+    private static final String KEY_EXPANDED_SPOILERS = "KEY_EXPANDED_SPOILERS";
 
     @BindView(R2.id.progressCenter)
     ProgressBar mProgressBarCenter;
@@ -82,6 +85,8 @@ public class ArticleFragment
     private ArticleRecyclerAdapter mAdapter;
     private Article mArticle;
 
+    private List<SpoilerViewModel> mExpandedSpoilers = new ArrayList<>();
+
     public static ArticleFragment newInstance(String url) {
         ArticleFragment fragment = new ArticleFragment();
         Bundle args = new Bundle();
@@ -95,6 +100,7 @@ public class ArticleFragment
         super.onSaveInstanceState(outState);
         //tabs
         outState.putInt(KEY_CURRENT_SELECTED_TAB, mCurrentSelectedTab);
+        outState.putSerializable(KEY_EXPANDED_SPOILERS, (ArrayList<SpoilerViewModel>)mExpandedSpoilers);
     }
 
     @Override
@@ -104,6 +110,7 @@ public class ArticleFragment
         url = getArguments().getString(EXTRA_URL);
         if (savedInstanceState != null) {
             mCurrentSelectedTab = savedInstanceState.getInt(KEY_CURRENT_SELECTED_TAB);
+            mExpandedSpoilers = (List<SpoilerViewModel>) savedInstanceState.getSerializable(KEY_EXPANDED_SPOILERS);
         }
 
         mPresenter.onCreate();
@@ -209,17 +216,24 @@ public class ArticleFragment
             Article currentTabArticle = new Article();
             currentTabArticle.hasTabs = true;
             currentTabArticle.text = RealmString.toStringList(mArticle.tabsTexts).get(mCurrentSelectedTab);
-            mAdapter.setData(currentTabArticle);
+            currentTabArticle.tags = mArticle.tags;
+            currentTabArticle.title = mArticle.title;
+            mAdapter.setData(currentTabArticle, mExpandedSpoilers);
 
             tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                 @Override
                 public void onTabSelected(TabLayout.Tab tab) {
                     Timber.d("onTabSelected: %s", tab.getPosition());
+
+                    mExpandedSpoilers.clear();
+
                     mCurrentSelectedTab = tab.getPosition();
                     Article currentTabArticle = new Article();
                     currentTabArticle.hasTabs = true;
                     currentTabArticle.text = RealmString.toStringList(mArticle.tabsTexts).get(mCurrentSelectedTab);
-                    mAdapter.setData(currentTabArticle);
+                    currentTabArticle.tags = mArticle.tags;
+                    currentTabArticle.title = mArticle.title;
+                    mAdapter.setData(currentTabArticle, mExpandedSpoilers);
                 }
 
                 @Override
@@ -239,7 +253,7 @@ public class ArticleFragment
             }
         } else {
             tabLayout.setVisibility(View.GONE);
-            mAdapter.setData(mArticle);
+            mAdapter.setData(mArticle, mExpandedSpoilers);
         }
 
         mRecyclerView.addOnScrollListener(new ReachBottomRecyclerScrollListener() {
@@ -335,9 +349,8 @@ public class ArticleFragment
         }
         for (int i = 0; i < articlesTextParts.size(); i++) {
             if (articlesTextParts.get(i).contains("id=\"" + "toc" + digits + "\"")) {
-//                (i+1 так как в адаптере есть еще элемент для заголовка)
                 Timber.d("found part: %s", articlesTextParts.get(i));
-                mRecyclerView.scrollToPosition(i + 1);
+                mRecyclerView.scrollToPosition(i);
                 return;
             }
         }
@@ -351,8 +364,7 @@ public class ArticleFragment
             if (articlesTextParts.get(i).contains(srtToCheck) ||
                     articlesTextParts.get(i).contains(srtToCheck1)) {
 //                Timber.d("found part: %s", articlesTextParts.get(i));
-//                (i+1 так как в адаптере есть еще элемент для заголовка)
-                mRecyclerView.scrollToPosition(i + 1);
+                mRecyclerView.scrollToPosition(i);
                 return;
             }
         }
@@ -413,6 +425,22 @@ public class ArticleFragment
             return;
         }
         showMessage(R.string.article_not_translated);
+    }
+
+    @Override
+    public void onSpoilerExpand(SpoilerViewModel spoilerViewModel) {
+        if (!isAdded()) {
+            return;
+        }
+        mExpandedSpoilers.add(spoilerViewModel);
+    }
+
+    @Override
+    public void onSpoilerCollapse(SpoilerViewModel spoilerViewModel) {
+        if (!isAdded()) {
+            return;
+        }
+        mExpandedSpoilers.remove(spoilerViewModel);
     }
 
     @Override

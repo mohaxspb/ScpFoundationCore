@@ -17,8 +17,6 @@ public interface DrawerMvp {
 
         void onReceiveRandomUrl(String url);
 
-        void showProgressDialog(boolean show);
-
         void showLeaderboard(LeaderBoardResponse leaderBoardResponse);
     }
 

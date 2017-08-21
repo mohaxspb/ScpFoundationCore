@@ -151,7 +151,7 @@ public class AppInstallReceiver extends BroadcastReceiver {
     }
 
     private void showNotificationSimple(Context context, String title, String content) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "appInstall");
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT), 0);
         builder.setContentTitle(title)
                 .setContentIntent(pendingIntent)

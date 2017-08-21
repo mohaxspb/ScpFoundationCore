@@ -161,7 +161,8 @@ dependencies {
     compile 'com.github.chrisbanes:PhotoView:2.0.0'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     //mvp
-    compile 'com.hannesdorfmann.mosby:mvp:2.0.1'
+    compile 'com.hannesdorfmann.mosby3:mvp:3.0.4'
+    compile 'com.hannesdorfmann.mosby3:mvp-nullobject-presenter:3.0.4'
     //vk
     compile 'com.vk:androidsdk:1.6.8'
     //facebook
@@ -200,9 +201,12 @@ dependencies {
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+    //time operations
+    compile 'joda-time:joda-time:2.9.9'
+
 
     //sub project modules
-    compile('ru.kuchanov.scp:downloads:1.0.9@aar') { transitive = true }
+    compile('ru.kuchanov.scp:downloads:1.0.14@aar') { transitive = true }
     compile('ru.kuchanov.utils:rate:1.0.3@aar') { transitive = true }
 }
 

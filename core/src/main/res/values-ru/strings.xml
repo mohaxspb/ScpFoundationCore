@@ -248,4 +248,7 @@
     <string name="dialog_offer_login_to_gain_score_content">Хотите сначала авторизоваться? После авторизации вы получите не только отключение рекламы, но и очки, которые позволят вам загружать больше статей для чтения offline!</string>
     <string name="dialog_offer_subscription_title">Спасибо за поддержку разработчиков!</string>
     <string name="dialog_offer_subscription_content">Хотите приобрести также подписку для отключения всей рекламы, получения безлимитного offline доступа к фонду, автоматической облачной синхронизации данных и доступа ко всем шрифтам без ограничений?</string>
+    <!---->
+    <string name="dialog_offer_free_trial_subscription_title">Хотите попробовать полную версию бесплатно?</string>
+    <string name="dialog_offer_free_trial_subscription_content">Мы хотим предложить вам бесплатно поробовать полную версию в течении %1$d дней. Вы получите безлимитные offline статьи, отключение рекламы, автоматическую облачную синхронизацию и все шрифты на %2$d дней БЕСПЛАТНО!</string>
 </resources>

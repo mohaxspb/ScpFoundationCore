@@ -1,14 +1,8 @@
 package ru.kuchanov.scpcore.util;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.support.annotation.ColorRes;
-import android.util.TypedValue;
-
-import ru.kuchanov.scpcore.R;
-import timber.log.Timber;
 
 /**
  * Created by Юрий on 28.09.2015 0:54.
@@ -30,24 +24,24 @@ public class AttributeGetter {
         return colorId;
     }
 
-    public static int getAttrColor(Context context, int addressInRClass) {
-        TypedValue typedValue = new TypedValue();
-        Resources.Theme theme = context.getTheme();
-        theme.resolveAttribute(addressInRClass, typedValue, true);
-        Timber.d("typedValue.data: %s", typedValue.data);
-        return typedValue.data;
-    }
+//    public static int getAttrColor(Context context, int addressInRClass) {
+//        TypedValue typedValue = new TypedValue();
+//        Resources.Theme theme = context.getTheme();
+//        theme.resolveAttribute(addressInRClass, typedValue, true);
+//        Timber.d("typedValue.data: %s", typedValue.data);
+//        return typedValue.data;
+//    }
 
-    @ColorRes
-    public static int getColorResId(Context context, int addressInRClass) {
-        int colorId;
-        int[] attrs = new int[]{addressInRClass};
-        TypedArray ta = context.obtainStyledAttributes(attrs);
-        colorId = ta.getResourceId(0, R.color.colorPrimaryDark);
-        ta.recycle();
-
-        return colorId;
-    }
+//    @ColorRes
+//    public static int getColorResId(Context context, int addressInRClass) {
+//        int colorId;
+//        int[] attrs = new int[]{addressInRClass};
+//        TypedArray ta = context.obtainStyledAttributes(attrs);
+//        colorId = ta.getResourceId(0, R.color.colorPrimaryDark);
+//        ta.recycle();
+//
+//        return colorId;
+//    }
 
     public static int getDrawableId(Context ctx, int addressInRClass) {
         int drawableId;
