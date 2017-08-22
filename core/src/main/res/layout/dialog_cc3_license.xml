@@ -83,6 +83,22 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             />
+
+        <ImageView
+            android:id="@+id/fr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="@dimen/defaultMargin"
+            android:src="@drawable/ic_fr"
+            tools:ignore="ContentDescription"
+            />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            />
     </LinearLayout>
 
     <TextView
