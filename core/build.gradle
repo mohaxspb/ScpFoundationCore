@@ -204,10 +204,9 @@ dependencies {
     //time operations
     compile 'joda-time:joda-time:2.9.9'
 
-
     //sub project modules
-    compile('ru.kuchanov.scp:downloads:1.0.14@aar') { transitive = true }
-    compile('ru.kuchanov.utils:rate:1.0.3@aar') { transitive = true }
+    compile('ru.kuchanov.scp:downloads:1.0.16@aar') { transitive = true }
+    compile('ru.kuchanov.utils:rate:1.0.4@aar') { transitive = true }
 }
 
 //add aar dependencies same as in appodeal sample project

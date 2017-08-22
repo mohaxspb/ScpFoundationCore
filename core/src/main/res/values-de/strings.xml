@@ -1,4 +1,5 @@
-<resources>    <!--drawer items-->
+<resources>
+    <!--drawer items-->
     <string name="drawer_item_1">Über die Organisation</string>
     <string name="drawer_item_2">Neuigkeiten</string>
     <string name="drawer_item_3">Artikel nach Bewertung </string>
@@ -249,4 +250,6 @@
     <string name="dialog_offer_login_to_gain_score_content">Möchten Sie zuerst autorisieren? Nach der Autorisierung erhalten Sie nicht nur die Werbung zu deaktivieren, Aber Sie werden Punkte erhalten, die Ihnen erlauben, mehr Artikel herunterzuladen, um offline zu lesen!</string>
     <string name="dialog_offer_subscription_title">Vielen Dank für die Unterstützung von Entwicklern!</string>
     <string name="dialog_offer_subscription_content">ХMöchten Sie ein Abonnement erwerben, um alle Werbung zu deaktivieren, unbegrenzten Offline-Zugriff auf den Fonds zu erhalten, automatische Cloud-Synchronisierung und Zugriff auf alle Schriftarten ohne Einschränkungen?</string>
+    <string name="dialog_offer_free_trial_subscription_title">Möchtest du die Vollversion kostenlos ausprobieren?</string>
+    <string name="dialog_offer_free_trial_subscription_content">Wir möchten Ihnen eine kostenlose Testversion der Vollversion innerhalb von %1$d Tagen anbieten. Sie erhalten unbegrenzte Offline-Artikel, deaktivieren Sie Werbung, automatische Cloud-Synchronisation und alle Schriften für %2$d Tage kostenlos!</string>
 </resources>

@@ -228,6 +228,7 @@
     <string name="materials_interview">Interviews</string>
     <string name="materials_incidents">Incidents</string>
     <string name="materials_experiments">Experiments</string>
+    <string name="materials_kadr">Experiments</string>
 
     <string name="error_connection">Connection error</string>
     <string name="error_parse">Error while HTML parsing</string>
