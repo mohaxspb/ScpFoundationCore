@@ -1,0 +1,254 @@
+<resources>
+    <!--drawer items-->
+    <string name="drawer_item_1">Informations sur le Fondation SCP</string>
+    <string name="drawer_item_2">Actualité</string>
+    <string name="drawer_item_3">Popularité d\'article</string>
+    <string name="drawer_item_4">Nouveaux articles</string>
+    <string name="drawer_item_5">Random article</string>
+    <string name="drawer_item_6">Série SCP I</string>
+    <string name="drawer_item_7">Série SCP II</string>
+    <string name="drawer_item_8">Série SCP III</string>
+    <string name="drawer_item_9">Série SCP FR</string>
+    <string name="drawer_item_10">Matériels</string>
+    <string name="drawer_item_11">Histoires</string>
+    <string name="drawer_item_12">Favoris</string>
+    <string name="drawer_item_13">Article Offline</string>
+    <string name="drawer_item_14">Galerie</string>
+    <string name="drawer_item_15">Recherche</string>
+    <string name="drawer_item_objects4">Série SCP IV</string>
+    <!--настройки-->
+    <string name="enter">Entrée</string>
+    <string name="settings">Configuration</string>
+    <string name="night_mode">Mode nocturne</string>
+    <string name="text_size">Taille du texte</string>
+    <string name="in_apps">Version élargie</string>
+    <string name="day_mode">Mode diurne</string>
+    <string name="unsupported_link">Ce lien est pas pris en charge</string>
+    <string name="share">Partager</string>
+    <string name="open_with">Dans le navigateur</string>
+    <string name="add_to_favorites">Ajouter aux favoris</string>
+    <string name="share_link_text">%1$s\n\nEnvoyé par l\'application \"SCP Foundation\"\nhttps://play.google.com/store/apps/details?id=%2$s</string>
+    <string name="share_choser_text">Partager par…</string>
+    <string name="browser_choser_text">Ouvrir avec…</string>
+    <string name="favorites_add">Ajouter aux favoris</string>
+    <string name="favorites_remove">Supprimer des favoris</string>
+    <string name="text_size_article">La taille du texte dans les articles</string>
+    <string name="text_size_lists">La taille du texte dans les listes</string>
+    <string name="text_size_dialog_title">Paramètres de la taille du texte</string>
+    <string name="close">Fermer</string>
+    <string name="delete">Supprimer</string>
+    <string name="search">Recherche</string>
+
+    <!--drawer items -->
+    <!--TODO maybe use ut instead of upper ones?..-->
+    <string name="about_org">Sur l\'organisation des</string>
+    <string name="news">Actualité</string>
+    <string name="stories">Histoires</string>
+
+    <!--utils-->
+    <string name="search_hint">Tapez votre demande</string>
+    <string name="error_no_search_results">Sur votre demande rien n\'a été trouvé</string>
+    <string name="start_download">Articles non dans la base de données. Commence à télécharger</string>
+
+    <string name="settings_notif_on">Notifications de nouveaux articles</string>
+    <string name="settings_notif_led_on">LED indicateur</string>
+    <string name="settings_notif_vibrate_on">Vibration</string>
+    <string name="settings_notif_sound_on">Son de notification</string>
+    <string name="settings_notification">Préférences de notification</string>
+    <string name="dialog_title_subscriptions">Désactiver de publicité, synchronisation automatique des nuages et les polices atmosphériques</string>
+    <string name="dialog_title_subscriptions_disabled_free_downloads">Désactiver de publicité, synchronisation automatique des nuages, articles de téléchargement illimité et les polices atmosphériques</string>
+    <string name="current_subscription">Votre abonnement en cours:</string>
+    <string name="no_subscriptions">Vide</string>
+    <string name="refresh">Mettre à jour</string>
+    <string name="i_accept">Je suis d\'accord</string>
+    <string name="error_read_licence">Impossible d\'ouvrir le fichier de licence</string>
+    <string name="new_version_features">nouvelle version</string>
+    <string name="hurray">Vive!</string>
+    <string name="in_progress">Dans l\'élaboration</string>
+    <string name="settings_design">Apparence</string>
+    <string name="settings_design_list_new">Nouveau design dans les listes</string>
+    <string name="dialog_random_page_title">Reconnexion au Fondation</string>
+    <string name="dialog_random_page_message">Vérifier le niveau de tolérance</string>
+    <string name="remove_ads">Désactiver la publicité?</string>
+    <string name="yes_bliad">Oui!</string>
+    <string name="app_info">A propos de l\'application</string>
+    <string name="remove_ads_for_free">Désactiver la publicité et gagner des points gratuits!</string>
+    <string name="remove_ads_for_free_disabled_free_downloads">Désactiver la publicité, d\'augmenter la limite des articles et gagner des points gratuits!</string>
+    <string name="ads_reward_gained">Vive! Pas de publicité au %d heures!</string>
+    <string name="wait">Attendre…</string>
+    <string name="ads_reward_error_loading">Impossible de charger. Essayez encore une fois…</string>
+    <string name="ads_reward_description_title">Instruction</string>
+    <string name="ads_reward_description_content">Nous allons vous montrer la vidéo et après avoir regardé, désactivez temporairement de publicité. Vous pouvez le désactiver autant de fois!</string>
+    <string name="ads_reward_ok">Tout est clair!</string>
+    <string name="settings_design_list_type">Articles de design la liste</string>
+    <string name="rating">Popularité %d</string>
+    <string name="yes_sir">C\'est vrai!</string>
+    <string name="reward_not_loaded_yet">Plus n\'est pas chargé. Essayez encore une fois</string>
+    <string name="settings_design_font">Fonte</string>
+    <string name="login_advantages">Le personnel de l\'attention! L\'autorisation n\'est pas nécessaire, mais il est nécessaire pour la synchronisation des nuages d\'articles sélectionnés et l\'état du prochitanogo add. il vous permet également de participer aux agents de notation. D\'autres instructions peuvent être obtenues à partir de la tête de la zone de contenu.</string>
+    <string name="login_advantages_title">Pourquoi l\'autorisation?</string>
+    <string name="login_greetings">Agent Bienvenue %s</string>
+    <string name="error_login_no_email">Il est impossible de se connecter sans aucune information sur e-mail</string>
+    <string name="materials">Matériels</string>
+    <string name="only_premium">Seulement pour les signataires</string>
+    <string name="activate">Activer</string>
+    <string name="info">Information</string>
+    <string name="subs_info">La fonctionnalité supplémentaire comprend la désactivation de publicité, toutes les polices, sans s\'y limiter, la multiplication de tous les points que vous avez reçu les 3 et synchronisation nuage favoris et lire. Et le plus important - l\'abonnement, vous êtes développeurs très promotiviruete plus en plus vite pour ajouter des fonctionnalités et des bugs corriger!</string>
+    <string name="subs_info_disabled_free_downloads">La fonctionnalité supplémentaire comprend la désactivation de publicité, articles de téléchargement illimité hors ligne, toutes les polices, sans s\'y limiter, la multiplication de tous les points que vous avez reçu les 3 et synchronisation nuage favoris et lire. Et le plus important - l\'abonnement, vous êtes développeurs très promotiviruete plus en plus vite pour ajouter des fonctionnalités et des bugs corriger!</string>
+
+    <string-array name="fag_items">
+        <item>Autorisation</item>
+        <item>Synchronisation nuage</item>
+        <item>Système de notation</item>
+    </string-array>
+
+    <string-array name="fag_items_content">
+        <item>1. Peut autoriser le menu coulissant gauche, haut, bouton \"Entrée\".\n
+        2. Connectez-vous avec sots.seti exige sots.seti du courrier électronique, parce que il est utilisé comme ID la liste la base de données du serveur.\n
+        3. L\'autorisation est nécessaire pour sauver prochitanogo et articles choisis dans le nuage et de participer aux agents de notation.\n</item>
+        <item>1. Il ne fonctionne que pour les agents autorisés.\n
+        2. Il nécessite une connexion Internet.\n
+        3. Il fonctionne automatiquement aux agents avec abonnement.\n
+        4. Pour les agents soucieux de leur budget, requiert la synchronisation manuelle. Regarder \"Configuration\".\n
+        5. Le nuage est enregistré l\'état des articles - si elle prochitanogo et ajouté aux favoris.\n
+        6. A l\'effacement des données d\'application / signé toutes les données désynchronisé est perdu.\n</item>
+        <item>1. Il ne fonctionne que pour les agents autorisés.\n
+        2. Il nécessite une connexion Internet.\n
+        3. Il fonctionne automatiquement aux agents avec abonnement.\n
+        4. Pour les agents soucieux de leur budget, requiert la synchronisation manuelle. Regarder \"Configuration\".\n 
+        5. Les points sont attribués pour: Ajout d\'articles à vos favoris, la lecture de celui-ci, l\'installation d\'applications, se joindre au groupe de VK, annonces, achats de visualisation la liste application. À l\'avenir, la liste sera complétée.\n
+        6. Tous les modificateurs de points sont utilisés - pour les abonnements et étant dans le groupe d\'applications dans tous les points VK reçus seront augmentés\n
+        7. A l\'effacement des données d\'application / signé toutes les données désynchronisé est perdu.\n
+        8. Comme vous obtenez des points de votre niveau de tolérance augmentera. Attention! niveau de tolérance ne fournit pas de privilèges supplémentaires - il est juste une étiquette sous votre avatar.\n
+        9. Les progrès jusqu\'à ce que le niveau suivant montre une bande verte autour des avatars.\n
+        10. Le nombre de points au niveau suivant est affiché lorsque vous cliquez sur l\'avatar.\n
+        11. agents tableau de classement est affiché en cliquant sur un avatar. Il est mis à jour toutes les quelques minutes. Habituellement, à 5 minutes.</item>
+    </string-array>
+
+    <string name="free">Gratuit</string>
+    <string name="dialog_free_ads_disable_title">Désactivation de publicité</string>
+    <string name="start_market_error">Impossible de démarrer PlayMarket</string>
+    <string name="thanks_for_supporting_us">Les développeurs sont reconnaissants pour votre soutien!</string>
+    <string name="invitation_message">Regardez ce que je trouve une application cool!</string>
+    <string name="invitation_cta">Lire des documents secrets!</string>
+    <string name="invitation_title">Fondation X-Files SCP!</string>
+    <string name="invite_friends">Invitez 5 amis dans l\'application!</string>
+    <string name="watch_video_to_disable_ads">Regardez la vidéo pour désactiver la publicité au %1$d heures et la réception %2$d points!</string>
+    <string name="app_install_ads_disable_title">Installez nos autres applications pour désactiver la publicité au %1$d heures et la réception %2$d points!</string>
+    <string name="vk_group_join_ads_disable_title">Rejoignez le groupe VK pour désactiver la publicité au %1$d heures et la réception %2$d points!</string>
+    <string name="need_vk_group_access">L\'autorisation est nécessaire pour l\'accès aux groupes. Connectez-vous à nouveau.</string>
+    <string name="gallery">Galerie</string>
+    <string name="error_login_firebase_connection">Erreur de connexion. Essayez à nouveau. %s</string>
+    <string name="on_user_logined">Agent %s Bienvenue</string>
+    <string name="login_in_progress_custom_token">Exiger un mot de passe sur le Fondation du serveur</string>
+    <string name="error_while_sync">Impossible d\'enregistrer l\'article dans le nuage</string>
+    <string name="sync_fav_success">Article synchronized</string>
+    <string name="app_cracked">Une tentative de piratage de la base de données du Fondation. Mode de mise en quarantaine est activé.</string>
+    <string name="auto_sync_disabled">Synchronisation automatique est désactivée</string>
+    <string name="turn_on">Activer</string>
+    <string name="enable_auto_sync">Activer la synchronisation automatique</string>
+    <string name="sync">Synchroniser</string>
+    <string name="subscribe">Signer</string>
+    <string name="error_while_all_data_sync">Impossible d\'enregistrer les données dans le nuage. Erreur: %s</string>
+    <string name="all_data_sync_success">Toutes les données sont stockées avec un nuage! Enregistré %1$d articles, ajoutés %2$d points.</string>
+    <string name="sync_need_auth">Autorisation est nécessaire</string>
+    <string name="authorize">Autoriser</string>
+    <string name="settings_data_sync">Articles enregistrement vers le cloud</string>
+    <string name="all_data_already_synced">Les données sont déjà en synchronisation, aucune action supplémentaire est nécessaire.</string>
+    <string name="profile_score_info">Vous aves %1$d points. Au niveau suivant %2$d points</string>
+    <string name="profile_score_info_max_level">Vous aves %1$d points. Vous avez le niveau maximum de tolérance!</string>
+    <string name="image_loading">L\'image est chargée…</string>
+    <string name="image_saved">L\'image enregistrée</string>
+    <string name="image_saving_error">Enregistrement de l\'image d\'erreur</string>
+    <!--Shortcuts android 7.1-->
+    <string name="new_short">Nouveau</string>
+    <string name="random_short">Aléatoire</string>
+    <string name="dialog_level_up_title">Réception de la tolérance 5</string>
+    <string name="dialog_level_up_content">Le personnel de l\'attention! le niveau de tolérance d\'un signe purement décoratif. Il ne vous permettra pas de voir les fichiers supprimés et avoir accès à un contenu caché. Vous recevrez seulement trois choses: 10000 points, l\'inscription \ « 5 niveau de tolérance \ » et la satisfaction morale de soutien aux développeurs qui travaillent pour améliorer l\'application)</string>
+    <string name="dialog_level_up_ok_text">Je compris!</string>
+    <string name="cracked_level_title">Classe D</string>
+    <string name="cracked_avatar_message">Ssayer de briser la Fondation est enregistrée, le protocole ██████ activé.</string>
+    <string name="leaderboard_dialog_title">Agents de notation</string>
+    <string name="refreshed">Mise à jour %s</string>
+    <string name="progress_leaderboard">Associé au service du personnel du Fondation…</string>
+    <string name="level">%d niveau</string>
+    <!--<string name="need_relogin_dialog_title">Nécessite de l\'authentification</string>-->
+    <!--<string name="need_relogin_dialog_content">Le personnel de l\'attention! Dans le cadre de l\'ordre [DATA DELETED] nécessite une nouvelle authentification. Après la ré-autorisation de vos données seront stockées dans le nuage et non plus perdu. Post a également vos réalisations sur l\'agent du Fondation seront inscrits dans le tableau des meilleurs scores. Attention! En cas de compte toutes les données désynchronisé est perdu! Veillez à synchroniser régulièrement vos données.</string>-->
+    <!--<string name="i_read_and_accept">Je l\'ai lu et compris</string>-->
+    <!--<string name="relogin">Autoriser</string>-->
+    <!--<string name="relogin_dialog_title">Réautorisation</string>-->
+    <!--<string name="relogin_dialog_content">Connectez-vous à nouveau maintenant? Vous pouvez le faire ultérieurement à partir du menu de gauche (bouton rouge à gauche du profil du bouton de sortie</string>-->
+    <string name="warning">Attention!</string>
+    <!--<string name="dialog_logout_content">Lorsque vous quittez votre compte et tous vos articles préférés READ APURES! Assurez-vous que vous avez tout synchronisé. La synchronisation peut se faire dans les Configuration.</string>-->
+    <string name="dialog_logout_content">Êtes-vous sûr de vouloir quitter? Pour les agents non autorisés du système de notation est désactivé et vous ne pouvez pas gagner des points et bénéficier de déjà accumulé</string>
+    <string name="logout">Sortie</string>
+    <string name="error_getting_path_to_image">Impossible d\'enregistrer l\'image. Essayez à nouveau.</string>
+    <string name="faq">Information</string>
+    <string name="need_login">Autorisation nécessaire</string>
+    <string name="need_login_content">Agents Attention! Pour ajouter des favoris et marquer l\'autorisation de lecture de l\'article est nécessaire. Cela vous permet de synchroniser les données à travers le nuage sur tous vos appareils, et vous permettra de gagner des points et participer aux agents de notation!</string>
+    <string name="error_inapp">Les données de lecture d\'erreur.</string>
+    <string name="sort">Tri</string>
+    <string name="dialog_sort_title">Tri et de filtrage</string>
+    <string name="social_provider_vk_title">VK</string>
+    <string name="dialog_social_login_title">Autorisation</string>
+    <string name="error_login_firebase_user_collision">Erreur - Cette adresse e-mail déjà enregistré avec un autre utilisateur.</string>
+    <string name="tags_search">Rechercher des tags</string>
+    <string name="tags_choosen">Tags sélectionnés</string>
+    <string name="tags_all">Tous les tags</string>
+    <string name="tags_search_results">Résultats</string>
+    <string name="tags">Tags:</string>
+    <string name="filter_none">Sans filtre</string>
+    <string name="filter_not_read">Non lus</string>
+    <string name="filter_read">Lire</string>
+    <string name="filter_rating">Par popularité</string>
+    <string name="filter_title">Nommément</string>
+    <string name="filter_neutral_or_not_added">Non affecté ou neutralisé</string>
+    <string name="filter_save">Assurer</string>
+    <string name="filter_euclid">Euclide</string>
+    <string name="filter_keter">Keter</string>
+    <string name="filter_thaumiel">Thaumiel</string>
+    <string name="feedback_title">Revue sur SCP FR</string>
+    <string name="notif_new_arts_title">Nouveaux articles: %1$d%2$s</string>
+
+    <string name="materials_experiments">Protocole expérimental</string>
+    <string name="materials_incidents">Rapport d\'incident</string>
+    <string name="materials_interview">Les entrevues avec les témoins</string>
+    <string name="materials_jokes">Humoristique SCP</string>
+    <string name="materials_archive">Archivé SCP</string>
+    <string name="materials_others">Autres matériaux</string>
+    <string name="materials_kadr">Dans les coulisses</string>
+
+    <plurals name="plurals_score">
+        <item quantity="zero">%1$d point</item>
+        <item quantity="one">%1$d point</item>
+        <item quantity="two">%1$d point</item>
+        <item quantity="few">%1$d points</item>
+        <item quantity="many">%1$d points</item>
+        <item quantity="other">%1$d points</item>
+    </plurals>
+    <string name="download">Télécharger</string>
+
+    <string name="error_connection">Erreur de connexion</string>
+    <string name="error_parse">Erreur d\'analyse HTML</string>
+
+    <!---->
+    <string name="score_increased">Ajouté %s</string>
+    <string name="random_article_warning">Nouvelle page aléatoire généré par le serveur toutes les quelques minutes.</string>
+    <string name="article_not_translated">Cet article n\'a pas encore traduit dans le site.</string>
+    <string name="offer_app_lang_version_content">La langue de votre appareil - <b>%1$s</b>, et nous avons juste la même application où les articles ont été traduits en <b>%2$s</b>. Voulez-vous l\'installer?\n\nListe des applications avec des traductions dans différentes langues est toujours disponible dans le menu du haut d\'un écran.</string>
+    <string name="open_play_market">Ouvert Play Market</string>
+    <string name="menuAppLangVersions">Branches Fondation</string>
+    <!---->
+    <string name="subscription_no_ads_title">Désactiver les annonces</string>
+    <string name="subscription_full_version_title">Version complète</string>
+    <string name="attention">Attention!</string>
+    <!---->
+    <string name="sign_in_to_disable_ads">Se connecter pour désactiver les annonces sur %1$d heures et obtenir %2$d les points qui augmenteront votre limite d\'articles téléchargeables!</string>
+    <string name="dialog_offer_login_to_gain_score_title">Voulez vous autoriser?</string>
+    <string name="dialog_offer_login_to_gain_score_content">Vous voulez d\'abord vous autoriser? Une fois autorisé vous ne serez pas seulement de la publicité, mais aussi des points qui vous permettent de télécharger d\'autres articles à lire en mode offline!</string>
+    <string name="dialog_offer_subscription_title">Nous vous remercions de soutenir les développeurs!</string>
+    <string name="dialog_offer_subscription_content">Est-ce que vous voulez acheter et abonnez-vous pour désactiver la publicité, la réception en mode offline d\'accès illimité à la base, la synchronisation des données en nuage automatique et l\'accès à toutes les polices sans restrictions?</string>
+    <!---->
+    <string name="dialog_offer_free_trial_subscription_title">Voulez-vous essayer gratuitement la version complète?</string>
+    <string name="dialog_offer_free_trial_subscription_content">Nous voulons vous offrir une version complète à %1$d jours. Vous recevrez gratuitement des articles offline, désactiver la publicité, la synchronisation des données en nuage automatique et l\'accès à toutes les polices sans restrictions à %2$d jours GRATUITEMENT!</string>
+</resources>

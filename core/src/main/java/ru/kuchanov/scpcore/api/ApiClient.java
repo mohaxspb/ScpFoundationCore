@@ -535,7 +535,7 @@ public class ApiClient implements ApiClientModel<Article> {
 
         try {
             Document doc = Jsoup.parse(responseBody);
-            Element pageContent = doc.getElementById("page-content");
+            Element pageContent = getArticlePageContentTag(doc);
             if (pageContent == null) {
                 throw new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse));
             }
@@ -863,6 +863,15 @@ public class ApiClient implements ApiClientModel<Article> {
             Timber.e(e);
             throw e;
         }
+    }
+
+    /**
+     * We need this as in FR site all article content wraped in another div... ***!!!11
+     *
+     * @return Element with article content
+     */
+    protected Element getArticlePageContentTag(Document doc) {
+        return doc.getElementById("page-content");
     }
 
     public Observable<Article> getArticle(String url) {

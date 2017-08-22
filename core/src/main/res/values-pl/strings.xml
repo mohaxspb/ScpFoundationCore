@@ -223,6 +223,14 @@
     <string name="error_connection">Błąd połączenia</string>
     <string name="error_parse">Błąd parsowania HTML</string>
 
+    <string name="materials_others">Other</string>
+    <string name="materials_kadr">Experiments</string>
+    <string name="materials_jokes">Joke SCPs</string>
+    <string name="materials_interview">Interviews</string>
+    <string name="materials_incidents">Incidents</string>
+    <string name="materials_experiments">Experiments</string>
+    <string name="materials_archive">Archived SCPs</string>
+
     <!--ver 1.0.6-->
     <string name="score_increased"> Dodane %s</string>
     <string name="random_article_warning"> Nowy artykuł losowe jest generowany przez serwer co kilka minut.</string>
@@ -240,4 +248,6 @@
     <string name="dialog_offer_login_to_gain_score_content">Chcesz autoryzować? Po autoryzacji będzie nie tylko być w stanie wyłączyć reklamy, ale również otrzymasz punkty, które będzie można pobrać więcej artykułów do czytania offline!</string>
     <string name="dialog_offer_subscription_title">Dziękujemy za wsparcie deweloperów!</string>
     <string name="dialog_offer_subscription_content">Chcesz wykupić subskrypcję, aby wyłączyć wszystkie reklamy, uzyskaj nieograniczony dostęp offline do Funduszu, automatycznie chmura synchronizacji danych i dostęp do wszystkich czcionek bez ograniczeń?</string>
+    <string name="dialog_offer_free_trial_subscription_title">Czy chcesz wypróbować pełną wersję za darmo?</string>
+    <string name="dialog_offer_free_trial_subscription_content">W ciągu %1$d dni chcemy zaoferować bezpłatną wersję pełnej wersji. Otrzymasz nieograniczone artykuły offline, wyłączy reklamę, automatyczną synchronizację chmur i wszystkie czcionki przez %2$d dni ZA DARMO!</string>
 </resources>
