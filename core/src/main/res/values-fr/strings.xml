@@ -231,7 +231,7 @@
     <string name="error_connection">Erreur de connexion</string>
     <string name="error_parse">Erreur d\'analyse HTML</string>
 
-    <!--ver 1.0.6+-->
+    <!---->
     <string name="score_increased">Ajouté %s</string>
     <string name="random_article_warning">Nouvelle page aléatoire généré par le serveur toutes les quelques minutes.</string>
     <string name="article_not_translated">Cet article n\'a pas encore traduit dans le site.</string>
@@ -248,4 +248,7 @@
     <string name="dialog_offer_login_to_gain_score_content">Vous voulez d\'abord vous autoriser? Une fois autorisé vous ne serez pas seulement de la publicité, mais aussi des points qui vous permettent de télécharger d\'autres articles à lire en mode offline!</string>
     <string name="dialog_offer_subscription_title">Nous vous remercions de soutenir les développeurs!</string>
     <string name="dialog_offer_subscription_content">Est-ce que vous voulez acheter et abonnez-vous pour désactiver la publicité, la réception en mode offline d\'accès illimité à la base, la synchronisation des données en nuage automatique et l\'accès à toutes les polices sans restrictions?</string>
+    <!---->
+    <string name="dialog_offer_free_trial_subscription_title">Voulez-vous essayer gratuitement la version complète?</string>
+    <string name="dialog_offer_free_trial_subscription_content">Nous voulons vous offrir une version complète à %1$d jours. Vous recevrez gratuitement des articles offline, désactiver la publicité, la synchronisation des données en nuage automatique et l\'accès à toutes les polices sans restrictions à %2$d jours GRATUITEMENT!</string>
 </resources>
