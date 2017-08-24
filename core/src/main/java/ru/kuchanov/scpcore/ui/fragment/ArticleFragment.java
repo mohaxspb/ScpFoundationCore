@@ -3,6 +3,7 @@ package ru.kuchanov.scpcore.ui.fragment;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,11 +31,14 @@ import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
+import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.mvp.contract.ArticleMvp;
+import ru.kuchanov.scpcore.mvp.presenter.ArticlePresenter;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import ru.kuchanov.scpcore.ui.adapter.ArticleRecyclerAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseFragment;
@@ -77,6 +81,13 @@ public class ArticleFragment
     @Inject
     ConstantValues mConstantValues;
 
+//    @Inject
+//    MyPreferenceManager myPreferenceManager;
+//    @Inject
+//    ApiClient mApiClient;
+//    @Inject
+//    DbProviderFactory mDbProviderFactory;
+
     //tabs
     private int mCurrentSelectedTab = 0;
 
@@ -95,12 +106,25 @@ public class ArticleFragment
         return fragment;
     }
 
+    @NonNull
+    @Override
+    public ArticleMvp.Presenter createPresenter() {
+//        BaseApplication.getAppComponent().inject(this);
+//        mPresenter = new ArticlePresenter(myPreferenceManager, mDbProviderFactory, mApiClient);
+        return mPresenter;
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         //tabs
         outState.putInt(KEY_CURRENT_SELECTED_TAB, mCurrentSelectedTab);
-        outState.putSerializable(KEY_EXPANDED_SPOILERS, (ArrayList<SpoilerViewModel>)mExpandedSpoilers);
+        outState.putSerializable(KEY_EXPANDED_SPOILERS, (ArrayList<SpoilerViewModel>) mExpandedSpoilers);
+    }
+
+    @Override
+    protected void callInjections() {
+        BaseApplication.getAppComponent().inject(this);
     }
 
     @Override
@@ -113,17 +137,12 @@ public class ArticleFragment
             mExpandedSpoilers = (List<SpoilerViewModel>) savedInstanceState.getSerializable(KEY_EXPANDED_SPOILERS);
         }
 
-        mPresenter.onCreate();
+//        setRetainInstance(true);
     }
 
     @Override
     protected int getLayoutResId() {
         return R.layout.fragment_article;
-    }
-
-    @Override
-    protected void callInjections() {
-        BaseApplication.getAppComponent().inject(this);
     }
 
     @Override
@@ -141,6 +160,7 @@ public class ArticleFragment
 
         mRecyclerView.setAdapter(mAdapter);
 
+        mPresenter.attachView(this);
         mPresenter.setArticleId(url);
         mPresenter.getDataFromDb();
 

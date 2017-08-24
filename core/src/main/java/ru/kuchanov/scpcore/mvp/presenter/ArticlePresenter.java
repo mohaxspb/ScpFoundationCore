@@ -1,5 +1,6 @@
 package ru.kuchanov.scpcore.mvp.presenter;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import ru.kuchanov.scpcore.api.ApiClient;
@@ -35,6 +36,24 @@ public class ArticlePresenter
             ApiClient apiClient
     ) {
         super(myPreferencesManager, dbProviderFactory, apiClient);
+        Timber.d("ArticlePresenter constructor");
+    }
+
+    @Override
+    public void attachView(@NonNull ArticleMvp.View view) {
+        Timber.d("attachView");
+        super.attachView(view);
+    }
+
+    @Override
+    public void getUserFromDb() {
+        Timber.d("getUserFromDb");
+        super.getUserFromDb();
+    }
+
+    @Override
+    protected boolean getUserInConstructor(){
+        return false;
     }
 
     @Override

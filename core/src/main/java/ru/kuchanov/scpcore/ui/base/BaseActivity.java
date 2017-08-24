@@ -154,6 +154,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     private InterstitialAd mInterstitialAd;
 
+//    @Inject
     @NonNull
     @Override
     public P createPresenter() {

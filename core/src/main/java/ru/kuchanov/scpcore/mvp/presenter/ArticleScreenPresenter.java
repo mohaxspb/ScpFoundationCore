@@ -7,17 +7,17 @@ import ru.kuchanov.scpcore.mvp.base.BaseDrawerPresenter;
 import ru.kuchanov.scpcore.mvp.contract.ArticleScreenMvp;
 import timber.log.Timber;
 
-/**
- * Created by y.kuchanov on 21.12.16.
- * <p>
- * for TappAwards
- */
 public class ArticleScreenPresenter
         extends BaseDrawerPresenter<ArticleScreenMvp.View>
         implements ArticleScreenMvp.Presenter {
 
     public ArticleScreenPresenter(MyPreferenceManager myPreferencesManager, DbProviderFactory dbProviderFactory, ApiClient apiClient) {
         super(myPreferencesManager, dbProviderFactory, apiClient);
+    }
+
+    @Override
+    protected boolean getUserInConstructor() {
+        return false;
     }
 
     @Override
