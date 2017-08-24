@@ -52,8 +52,8 @@ public class TagsSearchResultsArticlesFragment
         if(getArguments().containsKey(ArticleActivity.EXTRA_ARTICLES_URLS_LIST)) {
           articles = getArguments().getStringArrayList(ArticleActivity.EXTRA_ARTICLES_URLS_LIST);
         }
-        Timber.d("articles: %s", articles);
-        Timber.d("tags: %s", tags);
+//        Timber.d("articles: %s", articles);
+//        Timber.d("tags: %s", tags);
         mPresenter.setQueryTags(tags);
         mPresenter.setArticlesUrls(articles);
 

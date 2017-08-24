@@ -1,6 +1,7 @@
 package ru.kuchanov.scpcore.mvp.base;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,12 +41,26 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 
     private User mUser;
 
+    protected boolean getUserInConstructor(){
+        return true;
+    }
+
     public BasePresenter(MyPreferenceManager myPreferencesManager, DbProviderFactory dbProviderFactory, ApiClient apiClient) {
         mMyPreferencesManager = myPreferencesManager;
         mDbProviderFactory = dbProviderFactory;
         mApiClient = apiClient;
 
-        getUserFromDb();
+        if(getUserInConstructor()) {
+            getUserFromDb();
+        }
+    }
+
+    @Override
+    public void attachView(@NonNull V view) {
+        super.attachView(view);
+        if(!getUserInConstructor()){
+            getUserFromDb();
+        }
     }
 
     @Override
