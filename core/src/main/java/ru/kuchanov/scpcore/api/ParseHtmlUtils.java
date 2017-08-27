@@ -5,6 +5,7 @@ import android.support.annotation.StringDef;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -19,6 +20,43 @@ import timber.log.Timber;
  * for scp_ru
  */
 public class ParseHtmlUtils {
+
+    public static void parseImgsTags(Element pageContent) {
+        parseRimgLimgCimgImages("rimg", pageContent);
+        parseRimgLimgCimgImages("limg", pageContent);
+        parseRimgLimgCimgImages("cimg", pageContent);
+    }
+
+    private static void parseRimgLimgCimgImages(String className, Element pageContent){
+        //parse multiple imgs in "rimg" tag
+        Elements rimgs = pageContent.getElementsByClass(className);
+//            Timber.d("rimg: %s", rimg);
+        if (rimgs != null) {
+            for (Element rimg : rimgs) {
+                Elements imgs = rimg.getElementsByTag("img");
+                Elements descriptions = rimg.getElementsByTag("span");
+                List<Element> rimgsToAdd = new ArrayList<>();
+                if (imgs != null && imgs.size() > 1 && descriptions.size() == imgs.size()) {
+                    for (int i = 0; i < imgs.size(); i++) {
+                        Element img = imgs.get(i);
+                        Element description = descriptions.get(i);
+                        Element newRimg = new Element("div");
+                        newRimg.addClass(className);
+                        newRimg.appendChild(img).appendChild(description);
+                        rimgsToAdd.add(newRimg);
+                    }
+                    Element rimgLast = rimg;
+                    for (Element newRimg : rimgsToAdd) {
+                        rimgLast.after(newRimg);
+                        rimgLast = newRimg;
+                    }
+                    rimg.remove();
+                }
+            }
+        }
+
+//            Timber.d("pageContent.getElementsByClass(\"rimg\"): %s", pageContent.getElementsByClass("rimg"));
+    }
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({TextType.TEXT, TextType.SPOILER, TextType.IMAGE, TextType.TABLE, TextType.TITLE, TextType.TAGS})
