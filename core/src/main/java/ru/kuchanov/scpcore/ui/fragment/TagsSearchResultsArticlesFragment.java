@@ -31,12 +31,8 @@ public class TagsSearchResultsArticlesFragment
     public static TagsSearchResultsArticlesFragment newInstance(List<Article> articles, List<ArticleTag> tags) {
         TagsSearchResultsArticlesFragment fragment = new TagsSearchResultsArticlesFragment();
         Bundle args = new Bundle();
-//        args.putParcelable(EXTRA_TAGS, Parcels.wrap(tags));
-//        args.putParcelable(EXTRA_ARTICLES, Parcels.wrap(articles));
-//        args.putSerializable(BaseActivity.EXTRA_TAGS, new ArrayList<>(tags));
         args.putStringArrayList(ArticleActivity.EXTRA_TAGS, (ArrayList<String>) ArticleTag.getStringsFromTags(tags));
         if (articles != null) {
-//            args.putSerializable(EXTRA_ARTICLES, new ArrayList<>(articles));
             args.putStringArrayList(ArticleActivity.EXTRA_ARTICLES_URLS_LIST, (ArrayList<String>) Article.getListOfUrls(articles));
         }
         fragment.setArguments(args);
@@ -46,7 +42,6 @@ public class TagsSearchResultsArticlesFragment
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         Timber.d("onViewCreated");
-//        List<Article> articles = Parcels.unwrap(getArguments().getParcelable(EXTRA_ARTICLES));
         List<ArticleTag> tags = ArticleTag.getTagsFromStringList (getArguments().getStringArrayList(BaseActivity.EXTRA_TAGS));
         List<String> articles = null;
         if(getArguments().containsKey(ArticleActivity.EXTRA_ARTICLES_URLS_LIST)) {
@@ -54,10 +49,9 @@ public class TagsSearchResultsArticlesFragment
         }
 //        Timber.d("articles: %s", articles);
 //        Timber.d("tags: %s", tags);
+        mPresenter.attachView(this);
         mPresenter.setQueryTags(tags);
         mPresenter.setArticlesUrls(articles);
-
-//        updateData(articles);
 
         super.onViewCreated(view, savedInstanceState);
     }
