@@ -103,10 +103,12 @@ abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
         }
     };
 
-    BaseActivityPresenter(MyPreferenceManager myPreferencesManager, DbProviderFactory dbProviderFactory, ApiClient apiClient) {
+    BaseActivityPresenter(
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient
+    ) {
         super(myPreferencesManager, dbProviderFactory, apiClient);
-
-        getUserFromDb();
     }
 
     /**

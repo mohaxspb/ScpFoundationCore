@@ -33,13 +33,25 @@
             android:layout_weight="1"
             >
 
+            <!--<android.support.v7.widget.RecyclerView-->
+            <!--android:id="@+id/recyclerView"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:scrollbarThumbVertical="?scrollbar"-->
+            <!--android:scrollbars="vertical"-->
+            <!--/>-->
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scrollbarThumbVertical="?scrollbar"
-                android:scrollbars="vertical"
+                app:fastScrollEnabled="true"
+                app:fastScrollHorizontalThumbDrawable="@drawable/state_list_drawable"
+                app:fastScrollHorizontalTrackDrawable="@drawable/state_list_transparent"
+                app:fastScrollVerticalThumbDrawable="@drawable/state_list_drawable"
+                app:fastScrollVerticalTrackDrawable="@drawable/state_list_transparent"
                 />
+
         </android.support.v4.widget.SwipeRefreshLayout>
     </LinearLayout>
 

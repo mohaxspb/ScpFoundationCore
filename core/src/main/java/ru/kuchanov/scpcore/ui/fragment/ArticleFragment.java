@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -146,6 +147,14 @@ public class ArticleFragment
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        //fix no presenter attach
+        mPresenter.attachView(this);
+
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
     protected void initViews() {
         Timber.d("initViews");
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -160,7 +169,6 @@ public class ArticleFragment
 
         mRecyclerView.setAdapter(mAdapter);
 
-        mPresenter.attachView(this);
         mPresenter.setArticleId(url);
         mPresenter.getDataFromDb();
 
