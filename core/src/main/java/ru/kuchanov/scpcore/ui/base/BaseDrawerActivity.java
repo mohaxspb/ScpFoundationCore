@@ -395,8 +395,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                                         Timber.d("consume inapp successful, so update user score");
                                         mPresenter.updateUserScoreForInapp(item.productId);
 
-                                        boolean hasSubscription = mMyPreferenceManager.isHasSubscription() || mMyPreferenceManager.isHasNoAdsSubscription();
-                                        if (!hasSubscription) {
+                                        if (!mMyPreferenceManager.isHasAnySubscription()) {
                                             showOfferSubscriptionPopup();
                                         }
                                     },
