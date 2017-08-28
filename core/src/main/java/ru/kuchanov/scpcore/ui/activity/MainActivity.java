@@ -154,6 +154,13 @@ public class MainActivity
         if (!mMyPreferenceManager.isPersonalDataAccepted()) {
             DialogFragment dialogFragment = CC3LicenseDialogFragment.newInstance();
             dialogFragment.show(getFragmentManager(), CC3LicenseDialogFragment.TAG);
+        } else {
+            Timber.d("mMyPreferenceManager.getCurAppVersion(): %s", mMyPreferenceManager.getCurAppVersion());
+            Timber.d("SystemUtils.getPackageInfo().versionCode: %s", SystemUtils.getPackageInfo().versionCode);
+            if (mMyPreferenceManager.getCurAppVersion() != SystemUtils.getPackageInfo().versionCode) {
+                DialogFragment dialogFragment = NewVersionDialogFragment.newInstance(getString(R.string.new_version_features));
+                dialogFragment.show(getFragmentManager(), NewVersionDialogFragment.TAG);
+            }
         }
     }
 

@@ -84,7 +84,7 @@ public class DialogUtils {
         nagDialog.setCancelable(true);
         nagDialog.setContentView(R.layout.preview_image);
 
-        final PhotoView photoView = (PhotoView) nagDialog.findViewById(R.id.image_view_touch);
+        PhotoView photoView = nagDialog.findViewById(R.id.image_view_touch);
         photoView.setMaximumScale(5f);
 
         Glide.with(photoView.getContext())
