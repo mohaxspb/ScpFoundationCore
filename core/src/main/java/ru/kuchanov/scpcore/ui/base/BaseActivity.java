@@ -154,6 +154,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     private InterstitialAd mInterstitialAd;
 
+    //    @Inject
     @NonNull
     @Override
     public P createPresenter() {
@@ -388,13 +389,13 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showRewardedVideo() {
-        if (Appodeal.isLoaded(Appodeal.NON_SKIPPABLE_VIDEO)) {
+        if (Appodeal.isLoaded(Appodeal.REWARDED_VIDEO)) {
             //analitics
             Bundle bundle = new Bundle();
             bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.EventType.REWARD_REQUESTED);
             FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
-            Appodeal.show(this, Appodeal.NON_SKIPPABLE_VIDEO);
+            Appodeal.show(this, Appodeal.REWARDED_VIDEO);
         } else {
             showMessage(R.string.reward_not_loaded_yet);
         }
@@ -402,8 +403,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public boolean isTimeToShowAds() {
-        boolean hasSubscription = mMyPreferenceManager.isHasNoAdsSubscription() || mMyPreferenceManager.isHasSubscription();
-        return !hasSubscription && mMyPreferenceManager.isTimeToShowAds();
+        return !mMyPreferenceManager.isHasAnySubscription() && mMyPreferenceManager.isTimeToShowAds();
     }
 
     @Override
@@ -551,6 +551,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             if (!mMyPreferenceManager.isHasAnySubscription()
                     && mPresenter.getUser() != null
                     && mPresenter.getUser().score >= 1000
+                    //do not show it after level up gain, where we add 10000 score
+                    && mPresenter.getUser().score < 10000
                     && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
                 Bundle bundle = new Bundle();
                 bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,

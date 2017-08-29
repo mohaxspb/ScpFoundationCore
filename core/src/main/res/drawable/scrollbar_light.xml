@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <size android:width="4dp"/>
+    <size android:width="4dp" />
     <gradient
         android:angle="45"
         android:endColor="@color/scp_default_light"
-        android:startColor="@color/scp_default_light"/>
-    <corners android:radius="6dp"/>
+        android:startColor="@color/scp_default_light" />
+    <corners android:radius="6dp" />
 </shape>

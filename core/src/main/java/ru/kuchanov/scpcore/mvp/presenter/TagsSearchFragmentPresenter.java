@@ -42,10 +42,12 @@ public class TagsSearchFragmentPresenter
                 .subscribe(
                         data -> {
                             Timber.d("getTagsFromApi onNext: %s", data.size());
+                            alreadyRefreshFromApi = true;
                             getView().showSwipeProgress(false);
                         },
                         e -> {
                             Timber.e(e);
+                            alreadyRefreshFromApi = true;
                             getView().showSwipeProgress(false);
                             getView().showError(e);
                         }
@@ -63,7 +65,7 @@ public class TagsSearchFragmentPresenter
                             Timber.d("getTagsFromDb onNext: %s", tags.size());
                             mTags = tags;
                             getView().showAllTags(mTags);
-                            if (mTags.isEmpty() && !alreadyRefreshFromApi) {
+                            if (mTags.isEmpty() || !alreadyRefreshFromApi) {
                                 getTagsFromApi();
                             }
                         },
@@ -92,7 +94,7 @@ public class TagsSearchFragmentPresenter
                 .subscribe(
                         articles -> {
                             Timber.d("tagsSearchResponse: %s", articles);
-                            alreadyRefreshFromApi = true;
+
                             getView().showProgress(false);
 
                             if (articles.isEmpty()) {
@@ -103,7 +105,6 @@ public class TagsSearchFragmentPresenter
                         },
                         e -> {
                             Timber.e(e);
-                            alreadyRefreshFromApi = true;
                             getView().showProgress(false);
                         }
                 );

@@ -3,6 +3,8 @@ package ru.kuchanov.scpcore.ui.fragment;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -77,6 +79,13 @@ public class ArticleFragment
     @Inject
     ConstantValues mConstantValues;
 
+//    @Inject
+//    MyPreferenceManager myPreferenceManager;
+//    @Inject
+//    ApiClient mApiClient;
+//    @Inject
+//    DbProviderFactory mDbProviderFactory;
+
     //tabs
     private int mCurrentSelectedTab = 0;
 
@@ -95,12 +104,25 @@ public class ArticleFragment
         return fragment;
     }
 
+    @NonNull
+    @Override
+    public ArticleMvp.Presenter createPresenter() {
+//        BaseApplication.getAppComponent().inject(this);
+//        mPresenter = new ArticlePresenter(myPreferenceManager, mDbProviderFactory, mApiClient);
+        return mPresenter;
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         //tabs
         outState.putInt(KEY_CURRENT_SELECTED_TAB, mCurrentSelectedTab);
-        outState.putSerializable(KEY_EXPANDED_SPOILERS, (ArrayList<SpoilerViewModel>)mExpandedSpoilers);
+        outState.putSerializable(KEY_EXPANDED_SPOILERS, (ArrayList<SpoilerViewModel>) mExpandedSpoilers);
+    }
+
+    @Override
+    protected void callInjections() {
+        BaseApplication.getAppComponent().inject(this);
     }
 
     @Override
@@ -113,7 +135,7 @@ public class ArticleFragment
             mExpandedSpoilers = (List<SpoilerViewModel>) savedInstanceState.getSerializable(KEY_EXPANDED_SPOILERS);
         }
 
-        mPresenter.onCreate();
+//        setRetainInstance(true);
     }
 
     @Override
@@ -122,8 +144,11 @@ public class ArticleFragment
     }
 
     @Override
-    protected void callInjections() {
-        BaseApplication.getAppComponent().inject(this);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        //fix no presenter attach
+        mPresenter.attachView(this);
+
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override

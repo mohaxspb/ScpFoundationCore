@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import io.realm.RealmList;
@@ -94,7 +93,7 @@ public class ArticleRecyclerAdapter
 
                     SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
 //                    spoilerViewModel.titles = Collections.singletonList(spoilerParts.get(0));
-                    spoilerViewModel.titles = spoilerParts.subList(0, 2);
+                    spoilerViewModel.titles = new ArrayList<>(spoilerParts.subList(0, 2));
                     spoilerViewModel.mSpoilerTextParts = ParseHtmlUtils.getArticlesTextParts(spoilerParts.get(2));
                     spoilerViewModel.mSpoilerTextPartsTypes = ParseHtmlUtils.getListOfTextTypes(spoilerViewModel.mSpoilerTextParts);
                     spoilerViewModel.isExpanded = expandedSpoilers.contains(spoilerViewModel);
