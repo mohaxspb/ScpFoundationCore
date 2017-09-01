@@ -20,6 +20,8 @@
             android:layout_weight="1"
             />
 
+        <!--icons from https://github.com/hjnilsson/country-flags/tree/master/svg-->
+
         <ImageView
             android:id="@+id/en"
             android:layout_width="wrap_content"
@@ -91,6 +93,38 @@
             android:background="?selectableItemBackgroundBorderless"
             android:padding="@dimen/defaultMargin"
             android:src="@drawable/ic_fr"
+            tools:ignore="ContentDescription"
+            />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            />
+
+        <ImageView
+            android:id="@+id/es"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="@dimen/defaultMargin"
+            android:src="@drawable/ic_es"
+            tools:ignore="ContentDescription"
+            />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            />
+
+        <ImageView
+            android:id="@+id/it"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="@dimen/defaultMargin"
+            android:src="@drawable/ic_it"
             tools:ignore="ContentDescription"
             />
 
