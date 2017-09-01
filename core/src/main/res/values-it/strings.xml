@@ -105,25 +105,25 @@
 
     <string-array name="fag_items_content">
         <item>1. È possibile autorizzarlo nel menu a sinistra, in alto, e il pulsante \"Accedi\".\n
-        2. L'ingresso attraverso la rete richiede un messaggio di e-mail specificato nella rete perché viene utilizzato come ID nel database del server.\n
-        3. Hai bisogno di autorizzazione per mantenere gli articoli letti e selezionati nella nuvola e di partecipare alla classifica dell'agente.\n</item>
+        2. L\'ingresso attraverso la rete richiede un messaggio di e-mail specificato nella rete perché viene utilizzato come ID nel database del server.\n
+        3. Hai bisogno di autorizzazione per mantenere gli articoli letti e selezionati nella nuvola e di partecipare alla classifica dell\'agente.\n</item>
         <item>1. Funziona solo per agenti autorizzati.\n
         2. Richiede una connessione Internet.\n
         3. Funziona automaticamente per gli agenti che hanno una sottoscrizione.\n
         4. Per gli agenti parsimonioso richiede la sincronizzazione manuale. Guardare \"Impostazioni\".\n
-        5. Lo stato dell'articolo viene salvato nel cloud - Letto e aggiunto ai Preferiti..\n
-        6. Se si ripuliscono i dati di applicazione/uscita dall'account, tutti i dati non sincronizzati verranno persi.\n</item>
+        5. Lo stato dell\'articolo viene salvato nel cloud - Letto e aggiunto ai Preferiti..\n
+        6. Se si ripuliscono i dati di applicazione/uscita dall\'account, tutti i dati non sincronizzati verranno persi.\n</item>
         <item>1. Funziona solo per agenti autorizzati.\n
         2. ichiede una connessione Internet.\n
         3. unziona automaticamente per gli agenti che hanno una sottoscrizione.\n
         4. Per gli agenti parsimonioso richiede la sincronizzazione manuale. Guardare \"Impostazioni\".\n
-        5. I punti sono assegnati per: Aggiungi articoli ai tuoi preferiti, per leggere gli articoli, per l'installazione delle applicazioni, per guardare gli annunci, Per gli acquisti nell'applicazione. L'elenco sarà ulteriormente ampliato\n
-        6. I modificatori si applicano a tutti i punti - Tutti i punti che riceverai saranno aumentati per l'abbonamento.\n
-        7. Se si ripuliscono i dati di applicazione/uscita dall'account, tutti i dati non sincronizzati verranno persi.\n
-        8. ПCome si riceve i punti, il livello Di Autorizzazione Di Sicurezza crescerà. Attenzione! Il livello di Sicurezza non dà alcun beneficio extra-è solo l'iscrizione sotto il tuo avatar.\n
-        9. Progresso fino a quando il livello successivo è mostrato dalla banda verde intorno all'avatar.\n
-        10. Il numero di punti al livello successivo viene visualizzato quando si fa clic sull'avatar.\n
-        11. La tabella rating agente viene visualizzata quando si fa clic sull'avatar. È aggiornato ogni pochi minuti. Di solito sono 5 minuti.</item>
+        5. I punti sono assegnati per: Aggiungi articoli ai tuoi preferiti, per leggere gli articoli, per l\'installazione delle applicazioni, per guardare gli annunci, Per gli acquisti nell\'applicazione. L\'elenco sarà ulteriormente ampliato\n
+        6. I modificatori si applicano a tutti i punti - Tutti i punti che riceverai saranno aumentati per l\'abbonamento.\n
+        7. Se si ripuliscono i dati di applicazione/uscita dall\'account, tutti i dati non sincronizzati verranno persi.\n
+        8. ПCome si riceve i punti, il livello Di Autorizzazione Di Sicurezza crescerà. Attenzione! Il livello di Sicurezza non dà alcun beneficio extra-è solo l\'iscrizione sotto il tuo avatar.\n
+        9. Progresso fino a quando il livello successivo è mostrato dalla banda verde intorno all\'avatar.\n
+        10. Il numero di punti al livello successivo viene visualizzato quando si fa clic sull\'avatar.\n
+        11. La tabella rating agente viene visualizzata quando si fa clic sull\'avatar. È aggiornato ogni pochi minuti. Di solito sono 5 minuti.</item>
     </string-array>
 
     <string name="free">Libero</string>
@@ -165,7 +165,7 @@
     <string name="new_short">Nuovo</string>
     <string name="random_short">Casuale</string>
     <string name="dialog_level_up_title">Prendi il livello di sicurezza 5</string>
-    <string name="dialog_level_up_content">Attenzione, personale! Livello di sicurezza è un\'iscrizione puramente decorativa. Non vi permetterà di vedere i dati remoti e accedere ad alcuni materiali nascosti. Otterrete solo tre cose: 10000 punti, iscrizione \"5 livello di sicurezza\" e la soddisfazione morale di sostenere gli sviluppatori che lavorano per migliorare l'applicazione)</string>
+    <string name="dialog_level_up_content">Attenzione, personale! Livello di sicurezza è un\'iscrizione puramente decorativa. Non vi permetterà di vedere i dati remoti e accedere ad alcuni materiali nascosti. Otterrete solo tre cose: 10000 punti, iscrizione \"5 livello di sicurezza\" e la soddisfazione morale di sostenere gli sviluppatori che lavorano per migliorare l\'applicazione)</string>
     <string name="dialog_level_up_ok_text">Ho capito!</string>
     <string name="cracked_level_title">Classe D</string>
     <string name="cracked_avatar_message">Il tentativo di effrazione del fondo è registrato, il protocollo ██████ è attivato.</string>
@@ -230,13 +230,13 @@
     <string name="download">Scaricare</string>
 
     <string name="error_connection">La connessione non è riuscita</string>
-    <string name="error_parse">Errore nell\'analisi dell'HTML.</string>
+    <string name="error_parse">Errore nell\'analisi dell\'HTML.</string>
 
     <!--ver 1.0.6+-->
     <string name="score_increased">Aggiunto %s</string>
     <string name="random_article_warning">Un nuovo articolo casuale viene generato dal server ogni pochi minuti.</string>
     <string name="article_not_translated">Questo articolo non è stato ancora tradotto nel sito</string>
-    <string name="offer_app_lang_version_content">La lingua del dispositivo - <b>%1$s</b>, E abbiamo solo la stessa applicazione in cui gli articoli sono tradotti in <b>%2$s</b>. Vuoi installarlo?\n\nL'elenco delle applicazioni con traduzioni in diverse lingue è sempre disponibile nel menu in alto a destra di qualsiasi schermata.</string>
+    <string name="offer_app_lang_version_content">La lingua del dispositivo - <b>%1$s</b>, E abbiamo solo la stessa applicazione in cui gli articoli sono tradotti in <b>%2$s</b>. Vuoi installarlo?\n\nL\'elenco delle applicazioni con traduzioni in diverse lingue è sempre disponibile nel menu in alto a destra di qualsiasi schermata.</string>
     <string name="open_play_market">Aperto Play Market</string>
     <string name="menuAppLangVersions">Rami del fondo</string>
     <!---->
