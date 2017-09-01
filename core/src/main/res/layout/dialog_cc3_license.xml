@@ -8,105 +8,148 @@
     android:orientation="vertical"
     >
 
-    <LinearLayout
+    <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/defaultMarginSmall"
+        android:scrollbars="horizontal"
+        android:scrollbarThumbHorizontal="?scrollbar"
+        android:scrollbarSize="@dimen/defaultMarginTiny"
         >
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            />
-
-        <ImageView
-            android:id="@+id/en"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackgroundBorderless"
-            android:padding="@dimen/defaultMargin"
-            android:src="@drawable/ic_gb"
-            tools:ignore="ContentDescription"
-            />
+            android:padding="@dimen/defaultMarginSmall"
+            >
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            />
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                />
 
-        <ImageView
-            android:id="@+id/pl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackgroundBorderless"
-            android:padding="@dimen/defaultMargin"
-            android:src="@drawable/ic_pl"
-            tools:ignore="ContentDescription"
-            />
+            <!--icons from https://github.com/hjnilsson/country-flags/tree/master/svg-->
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            />
+            <ImageView
+                android:id="@+id/en"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackgroundBorderless"
+                android:padding="@dimen/defaultMargin"
+                android:src="@drawable/ic_gb"
+                tools:ignore="ContentDescription"
+                />
 
-        <ImageView
-            android:id="@+id/ru"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackgroundBorderless"
-            android:padding="@dimen/defaultMargin"
-            android:src="@drawable/ic_ru"
-            tools:ignore="ContentDescription"
-            />
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                />
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            />
+            <ImageView
+                android:id="@+id/pl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackgroundBorderless"
+                android:padding="@dimen/defaultMargin"
+                android:src="@drawable/ic_pl"
+                tools:ignore="ContentDescription"
+                />
 
-        <ImageView
-            android:id="@+id/de"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackgroundBorderless"
-            android:padding="@dimen/defaultMargin"
-            android:src="@drawable/ic_de"
-            tools:ignore="ContentDescription"
-            />
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                />
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            />
+            <ImageView
+                android:id="@+id/ru"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackgroundBorderless"
+                android:padding="@dimen/defaultMargin"
+                android:src="@drawable/ic_ru"
+                tools:ignore="ContentDescription"
+                />
 
-        <ImageView
-            android:id="@+id/fr"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackgroundBorderless"
-            android:padding="@dimen/defaultMargin"
-            android:src="@drawable/ic_fr"
-            tools:ignore="ContentDescription"
-            />
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                />
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            />
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/de"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackgroundBorderless"
+                android:padding="@dimen/defaultMargin"
+                android:src="@drawable/ic_de"
+                tools:ignore="ContentDescription"
+                />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                />
+
+            <ImageView
+                android:id="@+id/fr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackgroundBorderless"
+                android:padding="@dimen/defaultMargin"
+                android:src="@drawable/ic_fr"
+                tools:ignore="ContentDescription"
+                />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                />
+
+            <ImageView
+                android:id="@+id/es"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackgroundBorderless"
+                android:padding="@dimen/defaultMargin"
+                android:src="@drawable/ic_es"
+                tools:ignore="ContentDescription"
+                />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                />
+
+            <ImageView
+                android:id="@+id/it"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackgroundBorderless"
+                android:padding="@dimen/defaultMargin"
+                android:src="@drawable/ic_it"
+                tools:ignore="ContentDescription"
+                />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                />
+        </LinearLayout>
+    </HorizontalScrollView>
 
     <TextView
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:linksClickable="true"
         android:autoLink="web"
+        android:linksClickable="true"
         android:padding="@dimen/defaultMargin"
         tools:text="@string/license_en"
         />
