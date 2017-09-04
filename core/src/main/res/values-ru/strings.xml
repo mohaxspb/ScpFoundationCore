@@ -252,4 +252,6 @@
     <string name="dialog_offer_free_trial_subscription_title">Хотите попробовать полную версию бесплатно?</string>
     <string name="dialog_offer_free_trial_subscription_content">Мы хотим предложить вам бесплатно поробовать полную версию в течении %1$d дней. Вы получите безлимитные offline статьи, отключение рекламы, автоматическую облачную синхронизацию и все шрифты на %2$d дней БЕСПЛАТНО!</string>
     <string name="version"><![CDATA[<b>Версия: %s</b>]]></string>
+    <string name="snoska">Сноска %s</string>
+    <string name="bibliography">Библиография</string>
 </resources>

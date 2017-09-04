@@ -253,4 +253,6 @@
     <string name="dialog_offer_free_trial_subscription_title">Möchtest du die Vollversion kostenlos ausprobieren?</string>
     <string name="dialog_offer_free_trial_subscription_content">Wir möchten Ihnen eine kostenlose Testversion der Vollversion innerhalb von %1$d Tagen anbieten. Sie erhalten unbegrenzte Offline-Artikel, deaktivieren Sie Werbung, automatische Cloud-Synchronisation und alle Schriften für %2$d Tage kostenlos!</string>
     <string name="version"><![CDATA[<b>Version: %s</b>]]></string>
+    <string name="snoska">Fußnote %s</string>
+    <string name="bibliography">Bibliographie</string>
 </resources>

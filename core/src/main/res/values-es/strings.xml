@@ -255,4 +255,6 @@
     <string name="dialog_offer_free_trial_subscription_content">Queremos ofrecerle una versión gratuita de prueba completa durante %1$d días. ¡ obtendrá artículos sin conexión ilimitada, desactivar ad, sincronización automática de la nube, y todas las fuentes de %2$d días. GRATIS!</string>
 
     <string name="version"><![CDATA[<b>Versión: %s</b>]]></string>
+    <string name="snoska">Nota de pie de página %s</string>
+    <string name="bibliography">Bibliografía</string>
 </resources>
