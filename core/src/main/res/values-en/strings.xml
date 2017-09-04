@@ -254,4 +254,5 @@
     <string name="dialog_offer_free_trial_subscription_title">Want to try full version for free?</string>
     <string name="dialog_offer_free_trial_subscription_content">We want to offer you a free %1$d days trial of full version. You\'ll receive unlimited downloads, no ads, auto cloud sync and all fonts for %2$d days for FREE!</string>
 
+    <string name="version"><![CDATA[<b>Version: %s</b>]]></string>
 </resources>
