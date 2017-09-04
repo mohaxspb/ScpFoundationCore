@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.hannesdorfmann.mosby3.mvp.MvpFragment;
+import com.hannesdorfmann.mosby.mvp.MvpFragment;
 import com.squareup.leakcanary.RefWatcher;
 
 import java.io.IOException;

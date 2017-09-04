@@ -44,7 +44,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     /**
      * used to calculate is it time to request new Interstitial ads (5 min)
      */
-    private static final long PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS = Period.minutes(5).toStandardDuration().getMillis();
+    private static final long PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS = Period.minutes(15).toStandardDuration().getMillis();
     /**
      * offer free trial every 7 days
      */

@@ -59,7 +59,11 @@ public class NewVersionDialogFragment extends DialogFragment {
             Timber.e(e, "error while read newVersionFeatures from file");
         }
 
-        newVersionFeatures = newVersionFeatures.concat("<br/><br/>").concat(getString(R.string.license_en, mConstantValues.getBaseApiUrl(), mConstantValues.getBaseApiUrl()));
+        newVersionFeatures = getString(R.string.version, SystemUtils.getPackageInfo().versionName)
+                .concat("<br/><br/>")
+                .concat(newVersionFeatures)
+                .concat("<br/><br/>")
+                .concat(getString(R.string.license_en, mConstantValues.getBaseApiUrl(), mConstantValues.getBaseApiUrl()));
 
 
         String title = getArguments().getString(EXTRA_TITLE, getString(R.string.app_name));

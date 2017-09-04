@@ -9,6 +9,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -42,8 +43,10 @@ import ru.kuchanov.scpcore.ui.adapter.ArticleRecyclerAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseFragment;
 import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
+import ru.kuchanov.scpcore.ui.util.MyHtmlTagHandler;
 import ru.kuchanov.scpcore.ui.util.ReachBottomRecyclerScrollListener;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
+import ru.kuchanov.scpcore.ui.util.URLImageParser;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
@@ -332,11 +335,12 @@ public class ArticleFragment
                 Document document = Jsoup.parse(articlesTextParts.get(i));
                 Elements divTag = document.getElementsByAttributeValue("id", linkToFind);
                 if (divTag.size() != 0) {
-                    String textThatWeTryToFindSoManyTime = divTag.text();
+                    String textThatWeTryToFindSoManyTime = divTag.html();
                     textThatWeTryToFindSoManyTime = textThatWeTryToFindSoManyTime.substring(3, textThatWeTryToFindSoManyTime.length());
+                    Timber.d("textThatWeTryToFindSoManyTime: %s", textThatWeTryToFindSoManyTime);
                     new MaterialDialog.Builder(getActivity())
-                            .title("Сноска " + link)
-                            .content(textThatWeTryToFindSoManyTime)
+                            .title(getString(R.string.snoska, link))
+                            .content(Html.fromHtml(textThatWeTryToFindSoManyTime, null, new MyHtmlTagHandler()))
                             .show();
                     break;
                 }
@@ -354,7 +358,7 @@ public class ArticleFragment
                 String textThatWeTryToFindSoManyTime = divTag.text();
                 textThatWeTryToFindSoManyTime = textThatWeTryToFindSoManyTime.substring(3, textThatWeTryToFindSoManyTime.length());
                 new MaterialDialog.Builder(getActivity())
-                        .title("Библиография")
+                        .title(getString(R.string.bibliography))
                         .content(textThatWeTryToFindSoManyTime)
                         .show();
                 break;
