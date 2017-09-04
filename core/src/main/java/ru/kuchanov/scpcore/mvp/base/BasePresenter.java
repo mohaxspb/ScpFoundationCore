@@ -6,7 +6,7 @@ import android.support.v4.util.Pair;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.hannesdorfmann.mosby3.mvp.MvpNullObjectBasePresenter;
+import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 import com.vk.sdk.VKSdk;
 
 import ru.kuchanov.scpcore.BaseApplication;
