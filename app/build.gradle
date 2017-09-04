@@ -91,6 +91,18 @@ android {
             applicationIdSuffix ".fr"
         }
 
+        es {
+            dimension "lang"
+
+            applicationIdSuffix ".es"
+        }
+
+        italy {
+            dimension "lang"
+
+            applicationIdSuffix ".it"
+        }
+
         applicationVariants.all { variant ->
             fillArrays(variant, false)
             fillApiArrays(variant, false)
@@ -113,16 +125,22 @@ android {
 }
 
 configurations {
+    //dev
     ruDevReleaseCompile
     enDevReleaseCompile
     plDevReleaseCompile
     deDevReleaseCompile
     frDevReleaseCompile
+    esDevReleaseCompile
+    italyDevReleaseCompile
+    //prod
     ruProdReleaseCompile
     enProdReleaseCompile
     plProdReleaseCompile
     deProdReleaseCompile
     frProdReleaseCompile
+    esProdReleaseCompile
+    italyProdReleaseCompile
 }
 
 dependencies {

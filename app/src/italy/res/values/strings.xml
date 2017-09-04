@@ -1,0 +1,15 @@
+<resources>
+    <!--no need to translate-->
+    <string name="app_name" translatable="false">SCP Foundation Francophone On/Offline</string>
+    <!--end no need to translate-->
+
+    <string name="drawer_item_9">SCP-IT Serie I</string>
+    <string name="type_ru">SCP-IT Serie I</string>
+
+    <string-array name="materials_titles">
+        <item>SCP Scherzo</item>
+        <item>SCP Risolti</item>
+        <item>Log degli Elementi Anomali</item>
+        <item>Log degli Eventi Paranormali</item>
+    </string-array>
+</resources>

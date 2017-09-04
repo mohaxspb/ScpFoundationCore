@@ -252,4 +252,6 @@
     <!---->
     <string name="dialog_offer_free_trial_subscription_title">Vuoi provare la versione completa gratis?</string>
     <string name="dialog_offer_free_trial_subscription_content">Vogliamo offrirvi una versione gratuita Try Full entro 7 giorni. Otterrete Unlimited gli articoli fuori linea, disattivate l\'annuncio, sincronizzazione di auto-nube e tutti i caratteri per 7 giorni liberi!</string>
+
+    <string name="version"><![CDATA[<b>Versione: %s</b>]]></string>
 </resources>
