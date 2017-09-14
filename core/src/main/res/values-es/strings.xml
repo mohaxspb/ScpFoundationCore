@@ -245,7 +245,7 @@
     <string name="subscription_full_version_title">La versión completa</string>
     <string name="attention">Atención!</string>
     <!---->
-    <string name="sign_in_to_disable_ads">¡ Registro para desactivar la publicidad durante 2 horas y obtener 20 puntos que aumentan su límite de artículos descargables!</string>
+    <string name="sign_in_to_disable_ads">¡ Registro para desactivar la publicidad durante %1$d horas y obtener %2$d puntos que aumentan su límite de artículos descargables!</string>
     <string name="dialog_offer_login_to_gain_score_title">¿quieres autorizar?</string>
     <string name="dialog_offer_login_to_gain_score_content">¿desea autorizar primero? ¡ después de la autorización, usted no sólo será capaz de desactivar los anuncios, pero también obtendrá puntos que le permitirá descargar más artículos para leer fuera de línea!</string>
     <string name="dialog_offer_subscription_title">¡ Gracias por apoyar a los desarrolladores!</string>

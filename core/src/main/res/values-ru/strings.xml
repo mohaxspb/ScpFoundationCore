@@ -130,7 +130,7 @@
     <string name="start_market_error">Не удалось запустить PlayMarket</string>
     <string name="thanks_for_supporting_us">Разработчики благодарны за вашу поддержку!</string>
     <string name="invitation_message">Смотри какое крутое приложение я нашёл!</string>
-    <string name="invitation_cta">Прочти секретные документы!</string>
+    <string name="invitation_cta">Cекретные документы!</string>
     <string name="invitation_title">Секретные материалы фонда SCP!</string>
     <string name="invite_friends">Пригласи 5 друзей в приложение!</string>
     <string name="watch_video_to_disable_ads">Посмотри видео для отключения рекламы на %1$d часа и получения %2$d очков</string>

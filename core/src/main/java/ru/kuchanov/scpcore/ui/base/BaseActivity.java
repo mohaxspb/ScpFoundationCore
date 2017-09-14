@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -34,6 +35,8 @@ import com.facebook.login.LoginResult;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.appinvite.AppInvite;
+import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -41,7 +44,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.appinvite.FirebaseAppInvite;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
@@ -188,6 +193,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .addApi(AppInvite.API)
                 .build();
         //facebook login
         LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
@@ -222,6 +228,31 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         initAds();
 
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+
+        //app invite
+        FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())
+                .addOnSuccessListener(this, data -> {
+                    Timber.d("FirebaseAppInvite onSuccessListener");
+                    if (data == null) {
+                        Timber.d("getInvitation: no data");
+                        return;
+                    }
+
+                    // Get the deep link
+                    Uri deepLink = data.getLink();
+                    Timber.d("deepLink: %s", deepLink);
+
+                    // Extract invite
+                    FirebaseAppInvite invite = FirebaseAppInvite.getInvitation(data);
+                    if (invite != null) {
+                        String invitationId = invite.getInvitationId();
+                        Timber.d("invitationId: %s", invitationId);
+                    }
+
+                    // Handle the deep link
+                    // ...
+                })
+                .addOnFailureListener(this, e -> Timber.e(e, "getDynamicLink:onFailure"));
     }
 
     @Override
@@ -953,6 +984,17 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             } else {
                 // Signed out, show unauthenticated UI.
                 mPresenter.logoutUser();
+            }
+        } else if (requestCode == Constants.Firebase.REQUEST_INVITE) {
+            if (resultCode == RESULT_OK) {
+                // Get the invitation IDs of all sent messages
+                String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
+                for (String id : ids) {
+                    Timber.d("onActivityResult: sent invitation %s", id);
+                }
+            } else {
+                // Sending failed or it was canceled, show failure message to the user
+                Timber.d("invitation failed for some reason");
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

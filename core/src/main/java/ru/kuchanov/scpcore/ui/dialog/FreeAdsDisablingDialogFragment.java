@@ -97,7 +97,9 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
                     .getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_REWARDED_VIDEO);
             data.add(new RewardedVideo(getString(R.string.watch_video_to_disable_ads, hours, score)));
         }
-        if (config.getBoolean(Constants.Firebase.RemoteConfigKeys.FREE_INVITES_ENABLED)) {
+        //FIXME test
+//        if (config.getBoolean(Constants.Firebase.RemoteConfigKeys.FREE_INVITES_ENABLED)) {
+        if(true){
             data.add(new AppInviteModel(getString(R.string.invite_friends)));
         }
         if (config.getBoolean(Constants.Firebase.RemoteConfigKeys.FREE_APPS_INSTALL_ENABLED)) {
