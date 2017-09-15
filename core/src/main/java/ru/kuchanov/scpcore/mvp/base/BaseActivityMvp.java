@@ -19,6 +19,9 @@ public interface BaseActivityMvp {
 
         void onActivityStopped();
 
+        @Deprecated
         void reactOnCrackEvent();
+
+        void onInviteReceived(String inviteId);
     }
 }

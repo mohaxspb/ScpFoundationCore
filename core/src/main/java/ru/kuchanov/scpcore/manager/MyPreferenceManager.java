@@ -89,6 +89,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String FREE_ADS_DISABLE_REWARD_GAINED_COUNT = "FREE_ADS_DISABLE_REWARD_GAINED_COUNT";
         String FREE_TRIAL_OFFERED_PERIODICAL = "FREE_TRIAL_OFFERED_PERIODICAL";
         String FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE = "FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE";
+        String INVITE_ALREADY_RECEIVED = "INVITE_ALREADY_RECEIVED";
     }
 
     private Gson mGson;
@@ -226,6 +227,15 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
 
     public void setRewardedDescriptionIsNotShown(boolean isShown) {
         mPreferences.edit().putBoolean(Keys.ADS_REWARDED_DESCRIPTION_IS_SHOWN, isShown).apply();
+    }
+
+    //invite
+    public boolean isInviteAlreadyReceived() {
+        return mPreferences.getBoolean(Keys.INVITE_ALREADY_RECEIVED, false);
+    }
+
+    public void setInviteAlreadyReceived(boolean received) {
+        mPreferences.edit().putBoolean(Keys.INVITE_ALREADY_RECEIVED, received).apply();
     }
 
     public void setLastTimeAdsShows(long timeInMillis) {

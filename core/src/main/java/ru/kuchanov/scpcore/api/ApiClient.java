@@ -1952,6 +1952,10 @@ public class ApiClient implements ApiClientModel<Article> {
         return mVpsServer.validatePurchaseSync(isSubscription, packageName, sku, purchaseToken).execute().body();
     }
 
+    public Observable<Boolean> sendNewInviteReceivedID(String inviteId, boolean newOne) {
+        return mVpsServer.onInviteReceived(inviteId, newOne, mConstantValues.getAppLang()).map(onInviteReceivedResponse -> onInviteReceivedResponse.status);
+    }
+
     protected String getScpServerWiki() {
         return "scp-ru";
     }

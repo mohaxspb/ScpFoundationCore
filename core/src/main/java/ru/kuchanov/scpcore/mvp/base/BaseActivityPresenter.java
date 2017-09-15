@@ -28,6 +28,7 @@ import ru.kuchanov.scpcore.db.model.SocialProviderModel;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -313,6 +314,20 @@ abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
                             Timber.e(e, "reactOnCrackEvent onError");
                             getView().dismissProgressDialog();
                         }
+                );
+    }
+
+    @Override
+    public void onInviteReceived(String inviteId) {
+        //After invite receive we'll check if it's first time invite received and,
+        //if so, send its ID to server, which will check for ID existing and will send push to sender and delete inviteID-pushID pair,
+        //else we'll send to server command to delete IDs pair, to prevent collecting useless data.
+        mApiClient.sendNewInviteReceivedID(inviteId, !mMyPreferencesManager.isInviteAlreadyReceived())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        status -> Timber.d("invite id successfully sent to server"),
+                        Timber::e
                 );
     }
 }
