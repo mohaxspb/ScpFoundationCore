@@ -279,4 +279,6 @@
     <string name="version"><b>Version: %s</b></string>
     <string name="snoska">Footnote %s</string>
     <string name="bibliography">Bibliography</string>
+    <string name="your_invite_received">Your invite accepted!</string>
+    <string name="invite_receiver_reward_message">Ads disabled for 24 hours, 100 score added</string>
 </resources>

@@ -37,7 +37,7 @@ public interface VpsServer {
     Observable<LeaderBoardResponse> getLeaderboard(@Query("lang") String lang);
 
     @FormUrlEncoded
-    @POST("scp-ru-1/inviteReceived")
+    @POST("scp-ru-1/OnInviteReceived")
     Observable<OnInviteReceivedResponse> onInviteReceived(
             @InviteAction @Field("action") String action,
             @Field("inviteId") String inviteId,
@@ -46,7 +46,7 @@ public interface VpsServer {
     );
 
     @FormUrlEncoded
-    @POST("scp-ru-1/inviteReceived")
+    @POST("scp-ru-1/OnInviteReceived")
     Observable<OnInviteReceivedResponse> onInviteSent(
             @InviteAction @Field("action") String action,
             @Field("inviteId") String inviteId,

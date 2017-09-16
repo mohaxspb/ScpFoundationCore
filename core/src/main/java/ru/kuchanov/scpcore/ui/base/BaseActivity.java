@@ -253,6 +253,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                         Timber.d("invitationId: %s", invitationId);
                         //TODO check if it's first receive and mark as not after handle
                         //TODO send ID to server to send push/remove IDs pair
+                        mPresenter.onInviteReceived(invitationId);
                     }
 
                     // Handle the deep link
@@ -994,10 +995,13 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         } else if (requestCode == Constants.Firebase.REQUEST_INVITE) {
             if (resultCode == RESULT_OK) {
                 // Get the invitation IDs of all sent messages
-                String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
-                for (String id : ids) {
-                    Timber.d("onActivityResult: sent invitation %s", id);
-                }
+//                runOnUiThread(() -> {
+                    String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
+                    for (String id : ids) {
+                        Timber.d("onActivityResult: sent invitation %s", id);
+                        mPresenter.onInviteSent(id);
+                    }
+//                });
             } else {
                 // Sending failed or it was canceled, show failure message to the user
                 Timber.d("invitation failed for some reason");

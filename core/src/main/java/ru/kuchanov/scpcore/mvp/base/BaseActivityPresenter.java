@@ -11,6 +11,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.ArrayList;
@@ -333,14 +334,11 @@ abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
 
     @Override
     public void onInviteSent(String inviteId) {
-        //After invite receive we'll check if it's first time invite received and,
-        //if so, send its ID to server, which will check for ID existing and will send push to sender and delete inviteID-pushID pair,
-        //else we'll send to server command to delete IDs pair, to prevent collecting useless data.
-        mApiClient.inviteReceived(inviteId, !mMyPreferencesManager.isInviteAlreadyReceived())
+        mApiClient.inviteSent(inviteId, FirebaseInstanceId.getInstance().getToken())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        status -> Timber.d("invite id successfully sent to server"),
+                        status -> Timber.d("invite id and fcmToken successfully sent to server"),
                         Timber::e
                 );
     }
