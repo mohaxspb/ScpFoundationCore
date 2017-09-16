@@ -47,6 +47,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.appinvite.FirebaseAppInvite;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
@@ -228,6 +229,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         initAds();
 
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+
+        //just log fcm token for test purposes
+        Timber.d("fcmToken: %s", FirebaseInstanceId.getInstance().getToken());
 
         //app invite
         FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())

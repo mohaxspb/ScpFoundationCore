@@ -15,6 +15,7 @@ import ru.kuchanov.scpcore.receivers.AppInstallReceiver;
 import ru.kuchanov.scpcore.receivers.ReceiverBoot;
 import ru.kuchanov.scpcore.receivers.ReceiverTimer;
 import ru.kuchanov.scpcore.service.DownloadAllServiceDefault;
+import ru.kuchanov.scpcore.service.MyFirebaseMessagingService;
 import ru.kuchanov.scpcore.ui.activity.ArticleActivity;
 import ru.kuchanov.scpcore.ui.activity.GalleryActivity;
 import ru.kuchanov.scpcore.ui.activity.LicenceActivity;
@@ -167,4 +168,6 @@ public interface AppComponent {
     void inject(MyAppodealInterstitialCallbacks callbacks);
 
     void inject(DownloadAllServiceDefault service);
+
+    void inject(MyFirebaseMessagingService myFirebaseMessagingService);
 }

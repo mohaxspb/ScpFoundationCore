@@ -183,6 +183,7 @@ dependencies {
     compile "com.google.firebase:firebase-ads:$googleLibraryVersion"
     compile "com.google.firebase:firebase-database:$googleLibraryVersion"
     compile "com.google.firebase:firebase-auth:$googleLibraryVersion"
+    compile "com.google.firebase:firebase-messaging:$googleLibraryVersion"
     //google login
     compile "com.google.android.gms:play-services-auth:$googleLibraryVersion"
     //appodeal

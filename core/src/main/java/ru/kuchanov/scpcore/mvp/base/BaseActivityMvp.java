@@ -23,5 +23,7 @@ public interface BaseActivityMvp {
         void reactOnCrackEvent();
 
         void onInviteReceived(String inviteId);
+
+        void onInviteSent(String inviteId);
     }
 }
