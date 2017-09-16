@@ -23,6 +23,7 @@ import timber.log.Timber;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.APP_INSTALL_REWARD_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.AUTH_COOLDOWN_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.INVITE_REWARD_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS;
 
@@ -237,6 +238,19 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     public void setInviteAlreadyReceived(boolean received) {
         mPreferences.edit().putBoolean(Keys.INVITE_ALREADY_RECEIVED, received).apply();
     }
+
+    public void applyAwardForInvite() {
+        long time = FirebaseRemoteConfig.getInstance().getLong(INVITE_REWARD_IN_MILLIS);
+
+        increaseLastTimeAdsShows(time);
+        //also set time for which we should disable banners
+        increaseTimeForWhichBannersDisabled(time);
+
+        //I think we do not need it
+//        setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
+    }
+
+    //END invite
 
     public void setLastTimeAdsShows(long timeInMillis) {
         mPreferences.edit().putLong(Keys.ADS_LAST_TIME_SHOWS, timeInMillis).apply();

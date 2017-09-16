@@ -144,7 +144,7 @@
     <string name="invitation_message">Look at the cool application I found!</string>
     <string name="invitation_cta">Read the secret documents!</string>
     <string name="invitation_title">SCP Foundation Secret Materials!</string>
-    <string name="invite_friends">Invite 5 friends to the app!</string>
+    <string name="invite_friends">Invite friends to the app to disable ads for %1$d hours and get %2$d points!!</string>
     <string name="watch_video_to_disable_ads">Watch video to disable ads for %1$d hours and get %2$d points!</string>
     <string name="app_install_ads_disable_title">Install our other apps to disable Ads %1$d hours and get %2$d points!</string>
     <string name="vk_group_join_ads_disable_title">Join the VK group to disable %1$d hours and get %2$d points!</string>
@@ -279,6 +279,9 @@
     <string name="version"><b>Version: %s</b></string>
     <string name="snoska">Footnote %s</string>
     <string name="bibliography">Bibliography</string>
+
+    <!---->
     <string name="your_invite_received">Your invite accepted!</string>
-    <string name="invite_receiver_reward_message">Ads disabled for 24 hours, 100 score added</string>
+    <string name="invite_received_reward_message">Ads disabled for %1$d hours, %2$d score added!</string>
+    <string name="ads_disabled_for_some_hours">Ads disabled for %d hours!</string>
 </resources>

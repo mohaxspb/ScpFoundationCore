@@ -995,13 +995,12 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         } else if (requestCode == Constants.Firebase.REQUEST_INVITE) {
             if (resultCode == RESULT_OK) {
                 // Get the invitation IDs of all sent messages
-//                runOnUiThread(() -> {
-                    String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
-                    for (String id : ids) {
-                        Timber.d("onActivityResult: sent invitation %s", id);
-                        mPresenter.onInviteSent(id);
-                    }
-//                });
+                String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
+                for (String id : ids) {
+                    Timber.d("onActivityResult: sent invitation %s", id);
+                    //todo we need to be able to send multiple IDs in one request
+                    mPresenter.onInviteSent(id);
+                }
             } else {
                 // Sending failed or it was canceled, show failure message to the user
                 Timber.d("invitation failed for some reason");

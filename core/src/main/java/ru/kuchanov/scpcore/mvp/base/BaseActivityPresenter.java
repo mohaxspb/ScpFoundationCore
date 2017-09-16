@@ -339,7 +339,10 @@ abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         status -> Timber.d("invite id and fcmToken successfully sent to server"),
-                        Timber::e
+                        e -> {
+                            Timber.e(e);
+                            getView().showError(e);
+                        }
                 );
     }
 }

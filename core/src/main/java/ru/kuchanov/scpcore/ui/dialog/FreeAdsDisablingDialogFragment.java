@@ -17,6 +17,9 @@ import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 
+import org.joda.time.Duration;
+import org.joda.time.Period;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,7 +95,8 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
         if (config.getBoolean(Constants.Firebase.RemoteConfigKeys.FREE_REWARDED_VIDEO_ENABLED)) {
             long numOfMillis = FirebaseRemoteConfig.getInstance()
                     .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
-            long hours = numOfMillis / 1000 / 60 / 60;
+//            long hours = numOfMillis / 1000 / 60 / 60;
+            int hours = Duration.millis(numOfMillis).toStandardHours().getHours();
             int score = (int) FirebaseRemoteConfig.getInstance()
                     .getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_REWARDED_VIDEO);
             data.add(new RewardedVideo(getString(R.string.watch_video_to_disable_ads, hours, score)));
@@ -100,7 +104,13 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
         //FIXME test
 //        if (config.getBoolean(Constants.Firebase.RemoteConfigKeys.FREE_INVITES_ENABLED)) {
         if(true){
-            data.add(new AppInviteModel(getString(R.string.invite_friends)));
+            //set num of rewarded no ads period and score
+            long numOfMillis = FirebaseRemoteConfig.getInstance()
+                    .getLong(Constants.Firebase.RemoteConfigKeys.INVITE_REWARD_IN_MILLIS);
+            int hours = Duration.millis(numOfMillis).toStandardHours().getHours();
+            int score = (int) FirebaseRemoteConfig.getInstance()
+                    .getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_INVITE);
+            data.add(new AppInviteModel(getString(R.string.invite_friends, hours, score)));
         }
         if (config.getBoolean(Constants.Firebase.RemoteConfigKeys.FREE_APPS_INSTALL_ENABLED)) {
             String jsonString = config.getString(Constants.Firebase.RemoteConfigKeys.APPS_TO_INSTALL_JSON);

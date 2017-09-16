@@ -1,6 +1,5 @@
 package ru.kuchanov.scpcore.service;
 
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -13,15 +12,23 @@ import android.support.v4.content.ContextCompat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
+import org.joda.time.Duration;
 
 import javax.inject.Inject;
 
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.mvp.base.BasePresenter;
+import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -45,36 +52,62 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Timber.d("onMessageReceived: %s", remoteMessage.getData() != null ? remoteMessage.getData() : null);
 
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            Timber.d("Not authorized");
-            //todo give only no ads reward
+        //todo need to switch by some key-value pair to be able to handle different pushes
+        if (remoteMessage.getNotification() == null) {
+            //as we didn't add some pushType params while send push from server we'll think that there is
+            //only one type - invite. For any other types we'll think that it's mass sent with simple text
+
+            //give no ads reward
+            mMyPreferenceManager.applyAwardForInvite();
+
+            String notifMessage;
+            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                //also increase user score
+                incrementUserScoreForInvite();
+
+                long numOfMillis = FirebaseRemoteConfig.getInstance()
+                        .getLong(Constants.Firebase.RemoteConfigKeys.INVITE_REWARD_IN_MILLIS);
+                int hours = Duration.millis(numOfMillis).toStandardHours().getHours();
+                int score = (int) FirebaseRemoteConfig.getInstance()
+                        .getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_INVITE);
+                notifMessage = getString(R.string.invite_received_reward_message, hours, score);
+            } else {
+                Timber.d("Not authorized, so only noAds period is increased");
+                notifMessage = getString(R.string.ads_disabled_for_some_hours);
+            }
+
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(
+                    this,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            );
+
+            buildNotification(
+                    remoteMessage.getMessageId().hashCode(),
+                    getString(R.string.your_invite_received),
+                    notifMessage,
+                    pendingIntent
+            );
         } else {
-            //todo also increase user score
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(
+                    this,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            );
+            buildNotification(
+                    remoteMessage.getMessageId().hashCode(),
+                    remoteMessage.getNotification().getTitle(),
+                    remoteMessage.getNotification().getBody(),
+                    pendingIntent
+            );
+
         }
-
-
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                this,
-                0,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-        );
-
-//        buildNotification(
-//                remoteMessage.getMessageId().hashCode(),
-//                remoteMessage.getNotification().getTitle(),
-//                remoteMessage.getNotification().getBody(),
-//                pendingIntent
-//        );
-
-        buildNotification(
-                remoteMessage.getMessageId().hashCode(),
-                getString(R.string.your_invite_received),
-                getString(R.string.invite_receiver_reward_message),
-                pendingIntent
-        );
 
 //        Map data = remoteMessage.getData();
 //        String type = (String) data.get(Constants.PushFields.PUSH_FIELD_TYPE);
@@ -83,6 +116,34 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //            Timber.e("type is empty!");
 //            return;
 //        }
+    }
+
+    private void incrementUserScoreForInvite() {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Timber.d("user unlogined, do nothing");
+            return;
+        }
+
+        @DataSyncActions.ScoreAction
+        String action = DataSyncActions.ScoreAction.INVITE;
+        int totalScoreToAdd = BasePresenter.getTotalScoreToAddFromAction(action, mMyPreferenceManager);
+
+        //increment scoreInFirebase
+        mApiClient
+                .incrementScoreInFirebaseObservable(totalScoreToAdd)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(newTotalScore -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
+                .subscribe(
+                        newTotalScore -> {
+                            Timber.d("new total score is: %s", newTotalScore);
+                        },
+                        e -> {
+                            Timber.e(e, "error while increment userCore from action");
+                            //increment unsynced score to sync it later
+                            mMyPreferenceManager.addUnsyncedScore(totalScoreToAdd);
+                        }
+                );
     }
 
     private void buildNotification(int id, String title, String message, PendingIntent pendingIntent) {

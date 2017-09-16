@@ -132,8 +132,8 @@
     <string name="invitation_message">Смотри какое крутое приложение я нашёл!</string>
     <string name="invitation_cta">Cекретные документы!</string>
     <string name="invitation_title">Секретные материалы фонда SCP!</string>
-    <string name="invite_friends">Пригласи 5 друзей в приложение!</string>
-    <string name="watch_video_to_disable_ads">Посмотри видео для отключения рекламы на %1$d часа и получения %2$d очков</string>
+    <string name="invite_friends">Пригласи друзей в приложение для отключения рекламы на %1$d часа и получения %2$d очков!</string>
+    <string name="watch_video_to_disable_ads">Посмотри видео для отключения рекламы на %1$d часа и получения %2$d очков!</string>
     <string name="app_install_ads_disable_title">Установи другие наши приложения для отключения рекламы на %1$d часа и получения %2$d очков!</string>
     <string name="vk_group_join_ads_disable_title">Вступи в группу ВК для отключения рекламы на %1$d часа и получения %2$d очков!</string>
     <string name="need_vk_group_access">Требуется разрешение на доступ к группам. Авторизуйтесь заново.</string>
@@ -254,4 +254,9 @@
     <string name="version"><![CDATA[<b>Версия: %s</b>]]></string>
     <string name="snoska">Сноска %s</string>
     <string name="bibliography">Библиография</string>
+
+    <!---->
+    <string name="your_invite_received">Ваше приглашение в Фонд принято!</string>
+    <string name="invite_received_reward_message">Реклама отключена на %1$d часа, %2$d очков добавлено!</string>
+    <string name="ads_disabled_for_some_hours">Реклама отключена на %d часа!</string>
 </resources>

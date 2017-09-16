@@ -41,7 +41,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 
     private User mUser;
 
-    protected boolean getUserInConstructor(){
+    protected boolean getUserInConstructor() {
         return true;
     }
 
@@ -50,7 +50,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         mDbProviderFactory = dbProviderFactory;
         mApiClient = apiClient;
 
-        if(getUserInConstructor()) {
+        if (getUserInConstructor()) {
             getUserFromDb();
         }
     }
@@ -58,7 +58,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     @Override
     public void attachView(@NonNull V view) {
         super.attachView(view);
-        if(!getUserInConstructor()){
+        if (!getUserInConstructor()) {
             getUserFromDb();
         }
     }
@@ -525,6 +525,12 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                 break;
             case ScoreAction.OUR_APP:
                 score = remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_OUR_APP);
+                break;
+            case ScoreAction.AUTH:
+                score = remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_AUTH);
+                break;
+            case ScoreAction.INVITE:
+                score = remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_INVITE);
                 break;
             case ScoreAction.NONE:
                 score = remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_NONE);

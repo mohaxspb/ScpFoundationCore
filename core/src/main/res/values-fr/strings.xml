@@ -132,7 +132,7 @@
     <string name="invitation_message">Regardez ce que je trouve une application cool!</string>
     <string name="invitation_cta">Lire des documents secrets!</string>
     <string name="invitation_title">Fondation X-Files SCP!</string>
-    <string name="invite_friends">Invitez 5 amis dans l\'application!</string>
+    <string name="invite_friends">Invitez amis dans l\'application pour désactiver la publicité au %1$d heures et la réception %2$d points!!</string>
     <string name="watch_video_to_disable_ads">Regardez la vidéo pour désactiver la publicité au %1$d heures et la réception %2$d points!</string>
     <string name="app_install_ads_disable_title">Installez nos autres applications pour désactiver la publicité au %1$d heures et la réception %2$d points!</string>
     <string name="vk_group_join_ads_disable_title">Rejoignez le groupe VK pour désactiver la publicité au %1$d heures et la réception %2$d points!</string>
