@@ -50,7 +50,8 @@ public abstract class BaseApplication extends MultiDexApplication {
         public void onVKAccessTokenChanged(VKAccessToken oldToken, VKAccessToken newToken) {
             if (newToken == null) {
                 //VKAccessToken is invalid
-                //TODO
+                //TODO may be we need to logout user...
+                Timber.d("VK token is null, do smth with it!");
             }
         }
     };

@@ -160,7 +160,6 @@ public class GalleryActivity
 
         if (id == R.id.invite) {
             IntentUtils.firebaseInvite(this);
-            return true;
         } else if (id == R.id.about) {
             link = mConstantValues.getAbout();
         } else if (id == R.id.mostRatedArticles) {

@@ -101,9 +101,7 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
                     .getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_REWARDED_VIDEO);
             data.add(new RewardedVideo(getString(R.string.watch_video_to_disable_ads, hours, score)));
         }
-        //FIXME test
-//        if (config.getBoolean(Constants.Firebase.RemoteConfigKeys.FREE_INVITES_ENABLED)) {
-        if(true){
+        if (config.getBoolean(Constants.Firebase.RemoteConfigKeys.FREE_INVITES_ENABLED)) {
             //set num of rewarded no ads period and score
             long numOfMillis = FirebaseRemoteConfig.getInstance()
                     .getLong(Constants.Firebase.RemoteConfigKeys.INVITE_REWARD_IN_MILLIS);

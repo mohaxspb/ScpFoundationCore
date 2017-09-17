@@ -222,7 +222,7 @@ public class MainActivity
         setToolbarTitleByDrawerItemId(id);
         if (id == R.id.invite) {
             IntentUtils.firebaseInvite(this);
-            return true;
+            return false;
         } else if (id == R.id.about) {
             mCurrentSelectedDrawerItemId = id;
             showFragment(ArticleFragment.newInstance(mConstantValues.getAbout()),

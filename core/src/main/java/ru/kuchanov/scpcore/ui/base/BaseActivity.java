@@ -251,13 +251,16 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     if (invite != null) {
                         String invitationId = invite.getInvitationId();
                         Timber.d("invitationId: %s", invitationId);
-                        //TODO check if it's first receive and mark as not after handle
-                        //TODO send ID to server to send push/remove IDs pair
-                        mPresenter.onInviteReceived(invitationId);
+                        //check if it's first receive if so
+                        //send ID to server to send push/remove IDs pair
+                        //then mark as not after handle
+                        if (!mMyPreferenceManager.isInviteAlreadyReceived()) {
+                            mPresenter.onInviteReceived(invitationId);
+                            mMyPreferenceManager.setInviteAlreadyReceived(true);
+                        } else {
+                            Timber.d("attempt to receive already received invite! Ata-ta, %USER_NAME%!");
+                        }
                     }
-
-                    // Handle the deep link
-                    // ...
                 })
                 .addOnFailureListener(this, e -> Timber.e(e, "getDynamicLink:onFailure"));
     }
