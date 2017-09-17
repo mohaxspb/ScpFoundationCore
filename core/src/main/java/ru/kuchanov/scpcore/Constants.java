@@ -97,6 +97,14 @@ public interface Constants {
             }
         }
 
+        interface PushDataKeys {
+            String INVITE_ID = "inviteid";
+            String TITLE = "title";
+            String MESSAGE = "message";
+            String URL = "url";
+            String OPEN_IN_THIRD_PARTY_BROWSER = "openInThirdPartyBrowser";
+        }
+
         interface Refs {
             String USERS = "users";
             String ARTICLES = "articles";

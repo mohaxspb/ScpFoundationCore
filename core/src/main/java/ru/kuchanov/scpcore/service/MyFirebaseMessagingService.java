@@ -3,6 +3,7 @@ package ru.kuchanov.scpcore.service;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
@@ -27,6 +28,7 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.mvp.base.BasePresenter;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
+import ru.kuchanov.scpcore.ui.activity.WebViewActivity;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -57,40 +59,73 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             //as we didn't add some pushType params while send push from server we'll think that there is
             //only one type - invite. For any other types we'll think that it's mass sent with simple text
 
-            //give no ads reward
-            mMyPreferenceManager.applyAwardForInvite();
+            //or, as for now we can just check for inviteId key in data
+            if (remoteMessage.getData().containsKey(Constants.Firebase.PushDataKeys.INVITE_ID)) {
+                //give no ads reward
+                mMyPreferenceManager.applyAwardForInvite();
 
-            String notifMessage;
-            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                //also increase user score
-                incrementUserScoreForInvite();
+                String notifMessage;
+                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                    //also increase user score
+                    incrementUserScoreForInvite();
 
-                long numOfMillis = FirebaseRemoteConfig.getInstance()
-                        .getLong(Constants.Firebase.RemoteConfigKeys.INVITE_REWARD_IN_MILLIS);
-                int hours = Duration.millis(numOfMillis).toStandardHours().getHours();
-                int score = (int) FirebaseRemoteConfig.getInstance()
-                        .getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_INVITE);
-                notifMessage = getString(R.string.invite_received_reward_message, hours, score);
+                    long numOfMillis = FirebaseRemoteConfig.getInstance()
+                            .getLong(Constants.Firebase.RemoteConfigKeys.INVITE_REWARD_IN_MILLIS);
+                    int hours = Duration.millis(numOfMillis).toStandardHours().getHours();
+                    int score = (int) FirebaseRemoteConfig.getInstance()
+                            .getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_INVITE);
+                    notifMessage = getString(R.string.invite_received_reward_message, hours, score);
+                } else {
+                    Timber.d("Not authorized, so only noAds period is increased");
+                    notifMessage = getString(R.string.ads_disabled_for_some_hours);
+                }
+
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                PendingIntent pendingIntent = PendingIntent.getActivity(
+                        this,
+                        0,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+                buildNotification(
+                        remoteMessage.getMessageId().hashCode(),
+                        getString(R.string.your_invite_received),
+                        notifMessage,
+                        pendingIntent
+                );
             } else {
-                Timber.d("Not authorized, so only noAds period is increased");
-                notifMessage = getString(R.string.ads_disabled_for_some_hours);
+                String title = remoteMessage.getData().get(Constants.Firebase.PushDataKeys.TITLE);
+                String message = remoteMessage.getData().get(Constants.Firebase.PushDataKeys.MESSAGE);
+                String url = remoteMessage.getData().get(Constants.Firebase.PushDataKeys.URL);
+                boolean openInThirdPartyBrowser =
+                        Boolean.parseBoolean(remoteMessage.getData().get(Constants.Firebase.PushDataKeys.OPEN_IN_THIRD_PARTY_BROWSER));
+                Intent intent;
+                if (url == null) {
+                    intent = new Intent(this, MainActivity.class);
+                } else if (!openInThirdPartyBrowser) {
+                    intent = new Intent(this, WebViewActivity.class);
+                    intent.putExtra(WebViewActivity.EXTRA_URL, url);
+                } else {
+                    intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(url));
+                }
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                PendingIntent pendingIntent = PendingIntent.getActivity(
+                        this,
+                        0,
+                        intent,
+                        PendingIntent.FLAG_ONE_SHOT
+                );
+                buildNotification(
+                        remoteMessage.getMessageId().hashCode(),
+                        title,
+                        message,
+                        pendingIntent
+                );
             }
-
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent pendingIntent = PendingIntent.getActivity(
-                    this,
-                    0,
-                    intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT
-            );
-
-            buildNotification(
-                    remoteMessage.getMessageId().hashCode(),
-                    getString(R.string.your_invite_received),
-                    notifMessage,
-                    pendingIntent
-            );
         } else {
             Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -111,7 +146,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     remoteMessage.getNotification().getBody(),
                     pendingIntent
             );
-
         }
 
 //        Map data = remoteMessage.getData();

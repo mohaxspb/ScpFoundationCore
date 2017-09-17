@@ -72,6 +72,8 @@
 
         <activity android:name="ru.kuchanov.scpcore.ui.activity.LicenceActivity"/>
 
+        <activity android:name="ru.kuchanov.scpcore.ui.activity.WebViewActivity"/>
+
         <!--service-->
         <service android:name="ru.dante.scpfoundation.service.DownloadAllServiceImpl"/>
 
