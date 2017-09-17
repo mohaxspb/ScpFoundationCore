@@ -346,7 +346,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             Appodeal.setTesting(true);
 //            Appodeal.setLogLevel(Log.LogLevel.debug);
         }
-        Appodeal.disableNetwork(this, "facebook");
+        Appodeal.disableNetwork(this, "vungle");
+//        Appodeal.disableNetwork(this, "facebook");
         Appodeal.initialize(this, getString(R.string.appodeal_app_key), Appodeal.REWARDED_VIDEO | Appodeal.INTERSTITIAL);
 
         //user settings

@@ -5,6 +5,7 @@ import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
@@ -65,6 +66,9 @@ public abstract class BaseApplication extends MultiDexApplication {
             return;
         }
         refWatcher = LeakCanary.install(this);
+
+        FirebaseApp.initializeApp(this);
+
         // Инициализация AppMetrica SDK
         YandexMetrica.activate(getApplicationContext(), getString(R.string.yandex_metrica_api_key));
         // Отслеживание активности пользователей

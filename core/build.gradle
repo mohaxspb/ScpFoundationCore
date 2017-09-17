@@ -190,9 +190,10 @@ dependencies {
     compile "com.google.android.gms:play-services-ads:$googleLibraryVersion"
     compile "com.google.android.gms:play-services-location:$googleLibraryVersion"
     compile 'com.squareup.picasso:picasso:2.5.2' //for Inmobi
+    compile 'com.adcolony:sdk:3.2.1'
     //end of appodeal
     // AppMetrica //todo think if we need it here as we have it in appodeal
-    compile 'com.yandex.android:mobmetricalib:2.62'
+    compile 'com.yandex.android:mobmetricalib:2.76'
     //recyclerView fast scroller
     compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'
     //circular progress
