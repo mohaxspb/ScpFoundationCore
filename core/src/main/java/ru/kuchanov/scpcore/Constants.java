@@ -173,6 +173,8 @@ public interface Constants {
 
             interface EventName {
                 String FREE_TRIAL_OFFER_SHOWN = "FREE_TRIAL_OFFER_SHOWN";
+                String INVITE_SENT = "INVITE_SENT";
+                String INVITE_RECEIVED = "INVITE_RECEIVED";
             }
 
             interface EventParam {
@@ -204,6 +206,10 @@ public interface Constants {
 
             String INVITED_FIVE_FRIENDS = "INVITED_FIVE_FRIENDS";
             String APP_CRACKED = "APP_CRACKED";
+
+            interface USER_PROPERTY_KEY {
+                String INVITED = "INVITED";
+            }
         }
 
         interface PushTopics {
