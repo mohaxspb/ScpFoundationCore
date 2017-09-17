@@ -256,6 +256,12 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                         //then mark as not after handle
                         if (!mMyPreferenceManager.isInviteAlreadyReceived()) {
                             mMyPreferenceManager.setInviteAlreadyReceived(true);
+
+                            FirebaseAnalytics.getInstance(BaseActivity.this)
+                                    .logEvent(Constants.Firebase.Analitics.EventName.INVITE_RECEIVED, null);
+                            FirebaseAnalytics.getInstance(BaseActivity.this).setUserProperty(
+                                    Constants.Firebase.Analitics.USER_PROPERTY_KEY.INVITED,
+                                    "true");
                         } else {
                             Timber.d("attempt to receive already received invite! Ata-ta, %USER_NAME%!");
                         }
@@ -1004,6 +1010,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     Timber.d("onActivityResult: sent invitation %s", id);
                     //todo we need to be able to send multiple IDs in one request
                     mPresenter.onInviteSent(id);
+
+                    FirebaseAnalytics.getInstance(BaseActivity.this)
+                            .logEvent(Constants.Firebase.Analitics.EventName.INVITE_SENT, null);
                 }
             } else {
                 // Sending failed or it was canceled, show failure message to the user
