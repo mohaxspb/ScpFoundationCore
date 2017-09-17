@@ -20,6 +20,7 @@ import ru.kuchanov.scpcore.ui.fragment.ArticleFragment;
 import ru.kuchanov.scpcore.ui.fragment.MaterialsAllFragment;
 import ru.kuchanov.scpcore.ui.fragment.TagsSearchFragment;
 import ru.kuchanov.scpcore.ui.fragment.TagsSearchResultsArticlesFragment;
+import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
@@ -88,7 +89,11 @@ public class TagSearchActivity
     public boolean onNavigationItemClicked(int id) {
         Timber.d("onNavigationItemClicked with id: %s", id);
         String link = null;
-        if (id == R.id.about) {
+
+        if (id == R.id.invite) {
+            IntentUtils.firebaseInvite(this);
+            return true;
+        } else if (id == R.id.about) {
             link = mConstantValues.getAbout();
         } else if (id == R.id.mostRatedArticles) {
             link = mConstantValues.getMostRated();

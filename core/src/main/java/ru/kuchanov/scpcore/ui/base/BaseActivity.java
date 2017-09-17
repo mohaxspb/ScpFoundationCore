@@ -450,7 +450,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     /**
-     * ads adsListener with showing SnackBar after ads closing and calles {@link MonetizationActions#showInterstitial(MyAdListener, boolean)}
+     * ads adsListener with showing SnackBar after ads closing and calls {@link MonetizationActions#showInterstitial(MyAdListener, boolean)}
      */
     @Override
     public void showInterstitial() {

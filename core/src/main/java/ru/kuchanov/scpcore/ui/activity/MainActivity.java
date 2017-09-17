@@ -220,7 +220,10 @@ public class MainActivity
     public boolean onNavigationItemClicked(int id) {
         Timber.d("onNavigationItemClicked with id: %s", id);
         setToolbarTitleByDrawerItemId(id);
-        if (id == R.id.about) {
+        if (id == R.id.invite) {
+            IntentUtils.firebaseInvite(this);
+            return true;
+        } else if (id == R.id.about) {
             mCurrentSelectedDrawerItemId = id;
             showFragment(ArticleFragment.newInstance(mConstantValues.getAbout()),
                     ArticleFragment.TAG + "#" + mConstantValues.getAbout());

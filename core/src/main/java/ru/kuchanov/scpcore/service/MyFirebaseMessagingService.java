@@ -61,6 +61,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             //or, as for now we can just check for inviteId key in data
             if (remoteMessage.getData().containsKey(Constants.Firebase.PushDataKeys.INVITE_ID)) {
+                Timber.d("Handle invite accepted push");
                 //give no ads reward
                 mMyPreferenceManager.applyAwardForInvite();
 
@@ -87,6 +88,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         0,
                         intent,
                         PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+                Timber.d("title/body/messageId: %s/%s/%s",
+                        getString(R.string.your_invite_received),
+                        notifMessage,
+                        remoteMessage.getMessageId()
                 );
 
                 buildNotification(

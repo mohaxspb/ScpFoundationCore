@@ -98,7 +98,7 @@ public interface Constants {
         }
 
         interface PushDataKeys {
-            String INVITE_ID = "inviteid";
+            String INVITE_ID = "inviteId";
             String TITLE = "title";
             String MESSAGE = "message";
             String URL = "url";
@@ -204,6 +204,10 @@ public interface Constants {
 
             String INVITED_FIVE_FRIENDS = "INVITED_FIVE_FRIENDS";
             String APP_CRACKED = "APP_CRACKED";
+        }
+
+        interface PushTopics {
+            String MAIN = "main";
         }
     }
 }

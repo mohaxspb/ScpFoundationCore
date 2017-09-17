@@ -5,6 +5,7 @@ import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
@@ -109,6 +110,9 @@ public abstract class BaseApplication extends MultiDexApplication {
         SystemUtils.printCertificateFingerprints();
 
         Realm.init(this);
+
+        //subscribe to main push topic
+        FirebaseMessaging.getInstance().subscribeToTopic(Constants.Firebase.PushTopics.MAIN);
     }
 
     @Override
