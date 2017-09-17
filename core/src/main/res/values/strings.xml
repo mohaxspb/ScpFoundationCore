@@ -6,6 +6,7 @@
     <string name="social_provider_google_title" translatable="false">Google</string>
     <string name="feedback_email" translatable="false">neva.spb.rx@gmail.com</string>
     <string name="image_title" translatable="false">scp_image</string>
+    <string name="image_description" translatable="false">Image from gallery of SCP Foundation app</string>
 
     <string name="pref_favorites" translatable="false">pref_favorites</string>
     <string name="read_articles" translatable="false">read_articles</string>
