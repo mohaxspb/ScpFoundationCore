@@ -100,7 +100,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT
             );
-            Timber.d("title/body: %s/%s",
+            Timber.d("title/body/messageId: %s/%s/%s",
                     remoteMessage.getNotification().getTitle(),
                     remoteMessage.getNotification().getBody(),
                     remoteMessage.getMessageId()
