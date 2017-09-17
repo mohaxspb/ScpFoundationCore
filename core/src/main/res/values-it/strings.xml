@@ -133,7 +133,7 @@
     <string name="invitation_message">Guardate l\'applicazione cool che ho trovato!</string>
     <string name="invitation_cta">Leggi i documenti segreti!</string>
     <string name="invitation_title">SCP Fondazione materiali segreti!</string>
-    <string name="invite_friends">Invita 5 amici al app!</string>
+    <string name="invite_friends">Invita amici al app per disattivare gli annunci per %1$d ore e ottenere %2$d punti!</string>
     <string name="watch_video_to_disable_ads">Guarda il video per disattivare gli annunci per %1$d ore e ottenere %2$d punti</string>
     <string name="app_install_ads_disable_title">Installare le nostre altre applicazioni per disabilitare la pubblicità per %1$d ore e ottenere %2$d  punti!</string>
     <string name="vk_group_join_ads_disable_title">Unisciti al gruppo VK per spegnere l\'annuncio per %1$d  ore e ottenere %2$d punti!</string>

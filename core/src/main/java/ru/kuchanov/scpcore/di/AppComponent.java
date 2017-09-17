@@ -15,6 +15,7 @@ import ru.kuchanov.scpcore.receivers.AppInstallReceiver;
 import ru.kuchanov.scpcore.receivers.ReceiverBoot;
 import ru.kuchanov.scpcore.receivers.ReceiverTimer;
 import ru.kuchanov.scpcore.service.DownloadAllServiceDefault;
+import ru.kuchanov.scpcore.service.MyFirebaseMessagingService;
 import ru.kuchanov.scpcore.ui.activity.ArticleActivity;
 import ru.kuchanov.scpcore.ui.activity.GalleryActivity;
 import ru.kuchanov.scpcore.ui.activity.LicenceActivity;
@@ -25,11 +26,12 @@ import ru.kuchanov.scpcore.ui.activity.TagSearchActivity;
 import ru.kuchanov.scpcore.ui.adapter.ArticleRecyclerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListRecyclerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerAdapter;
+import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerCardDesignAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SubscriptionsRecyclerAdapter;
 import ru.kuchanov.scpcore.ui.dialog.CC3LicenseDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.FreeAdsDisablingDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
-import ru.kuchanov.scpcore.ui.dialog.SetttingsBottomSheetDialogFragment;
+import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.fragment.ArticleFragment;
@@ -76,7 +78,7 @@ public interface AppComponent {
 
     void inject(MaterialsActivity activity);
 
-   void inject(MainActivity activity);
+    void inject(MainActivity activity);
 
     void inject(GalleryActivity activity);
 
@@ -130,7 +132,7 @@ public interface AppComponent {
 
     void inject(FreeAdsDisablingDialogFragment dialogFragment);
 
-    void inject(SetttingsBottomSheetDialogFragment dialogFragment);
+    void inject(SettingsBottomSheetDialogFragment dialogFragment);
 
     void inject(CC3LicenseDialogFragment dialogFragment);
 
@@ -141,6 +143,8 @@ public interface AppComponent {
     void inject(SubscriptionsRecyclerAdapter adapter);
 
     void inject(SettingsSpinnerAdapter adapter);
+
+    void inject(SettingsSpinnerCardDesignAdapter adapter);
 
     void inject(ArticleImageHolder holder);
 
@@ -154,7 +158,7 @@ public interface AppComponent {
 
     void inject(HolderSimple holder);
 
- void inject(ArticleTableHolder holder);
+    void inject(ArticleTableHolder holder);
 
     void inject(ReceiverTimer receiver);
 
@@ -167,4 +171,6 @@ public interface AppComponent {
     void inject(MyAppodealInterstitialCallbacks callbacks);
 
     void inject(DownloadAllServiceDefault service);
+
+    void inject(MyFirebaseMessagingService myFirebaseMessagingService);
 }

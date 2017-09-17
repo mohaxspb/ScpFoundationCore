@@ -1,7 +1,6 @@
 package ru.kuchanov.scpcore.ui.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,29 +19,25 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.util.DimensionUtils;
-import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 /**
  * Created by mohax on 02.04.2017.
  * <p>
  * for scp_ru
  */
-public class SettingsSpinnerAdapter extends ArrayAdapter<String> {
+public class SettingsSpinnerCardDesignAdapter extends ArrayAdapter<String> {
 
     private List<String> data;
-    private List<String> fontsPathsList;
     @Inject
     MyPreferenceManager mMyPreferenceManager;
 
-    public SettingsSpinnerAdapter(
+    public SettingsSpinnerCardDesignAdapter(
             @NonNull Context context,
             @LayoutRes int resource,
-            @NonNull List<String> objects,
-            List<String> fontsPathsList
+            @NonNull List<String> objects
     ) {
         super(context, resource, objects);
         this.data = objects;
-        this.fontsPathsList = fontsPathsList;
 
         BaseApplication.getAppComponent().inject(this);
     }
@@ -55,15 +50,13 @@ public class SettingsSpinnerAdapter extends ArrayAdapter<String> {
 
         if (v == null) {
             LayoutInflater inflater = LayoutInflater.from(context);
-            v = inflater.inflate(R.layout.design_list_spinner_item_font, parent, false);
+            v = inflater.inflate(R.layout.design_list_spinner_item, parent, false);
         }
 
-        String fontPath = fontsPathsList.get(position);
         TextView textView = (TextView) v;
         textView.setText(data.get(position));
         int padding = DimensionUtils.getDefaultMargin();
         textView.setPadding(padding, padding, padding, padding);
-        CalligraphyUtils.applyFontToTextView(context, textView, fontPath);
 
         boolean isNightMode = mMyPreferenceManager.isNightMode();
         int backgroundColorSelected = ContextCompat.getColor(context, isNightMode
@@ -73,7 +66,8 @@ public class SettingsSpinnerAdapter extends ArrayAdapter<String> {
                 ? R.color.settings_spinner_unselected_dark
                 : R.color.settings_spinner_unselected_light);
 
-        boolean isSelected = position == fontsPathsList.indexOf(mMyPreferenceManager.getFontPath());
+//        data.indexOf(mMyPreferenceManager.getListDesignType());
+        boolean isSelected = position == data.indexOf(mMyPreferenceManager.getListDesignType());
 
         v.setBackgroundColor(isSelected ? backgroundColorSelected : backgroundColorUnselected);
 
@@ -90,12 +84,10 @@ public class SettingsSpinnerAdapter extends ArrayAdapter<String> {
             v = inflater.inflate(R.layout.design_list_spinner_item_font, parent, false);
         }
 
-        String fontPath = fontsPathsList.get(position);
         TextView textView = (TextView) v;
         textView.setText(data.get(position));
         int padding = DimensionUtils.getDefaultMarginSmall();
         textView.setPadding(padding, padding, padding, padding);
-        CalligraphyUtils.applyFontToTextView(parent.getContext(), textView, fontPath);
 
         return v;
     }

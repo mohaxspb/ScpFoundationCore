@@ -70,8 +70,6 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
     @BindView(R2.id.navigationView)
     protected NavigationView mNavigationView;
 
-//    protected MaterialDialog dialog;
-
     protected ActionBarDrawerToggle mDrawerToggle;
 
     protected int mCurrentSelectedDrawerItemId;
@@ -174,21 +172,6 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
         startArticleActivity(url);
     }
 
-//    @Override
-//    public void showProgressDialog(boolean show) {
-//        if (show) {
-//            MaterialDialog.Builder builder = new MaterialDialog.Builder(this);
-//            builder.title(R.string.dialog_random_page_title);
-//            builder.content(R.string.dialog_random_page_message);
-//            builder.progress(true, 0);
-//            builder.cancelable(false);
-//            dialog = builder.build();
-//            dialog.show();
-//        } else if (dialog != null) {
-//            dialog.dismiss();
-//        }
-//    }
-
     @Override
     public void updateUser(User user) {
         Timber.d("updateUser: %s", user);
@@ -215,12 +198,8 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                     .show()
             );
 
-//            if (VKSdk.isLoggedIn() && FirebaseAuth.getInstance().getCurrentUser() == null) {
-//                headerViewHolder.relogin.setVisibility(View.VISIBLE);
-//                headerViewHolder.relogin.setOnClickListener(view -> showNeedReloginPopup());
-//            } else {
+            //fixme remove it from layout
             headerViewHolder.relogin.setVisibility(View.GONE);
-//            }
 
             headerViewHolder.levelUp.setOnClickListener(view -> mInAppHelper.getInAppsListToBuyObservable(getIInAppBillingService()).subscribe(
                     items -> new MaterialDialog.Builder(view.getContext())

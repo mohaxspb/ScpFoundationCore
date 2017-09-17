@@ -34,7 +34,7 @@ public class StorageUtils {
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
             return MediaStore.Images.Media.insertImage(activity.getContentResolver(), image,
                     activity.getString(R.string.image_title),
-                    null); //todo wtf
+                    activity.getString(R.string.image_description));
         } else {
             ActivityCompat.requestPermissions(
                     activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},

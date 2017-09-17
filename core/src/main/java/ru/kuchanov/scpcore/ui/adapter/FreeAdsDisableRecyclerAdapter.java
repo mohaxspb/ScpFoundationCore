@@ -40,7 +40,7 @@ public class FreeAdsDisableRecyclerAdapter extends BaseRecyclerAdapter<
     @Override
     public void setData(List<BaseModel> data) {
         super.setData(data);
-        Timber.d("data: %s", data);
+//        Timber.d("data: %s", data);
     }
 
     @Override

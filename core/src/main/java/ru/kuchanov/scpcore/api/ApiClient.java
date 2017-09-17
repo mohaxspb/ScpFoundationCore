@@ -103,8 +103,8 @@ public class ApiClient implements ApiClientModel<Article> {
     protected OkHttpClient mOkHttpClient;
     protected Gson mGson;
 
-    protected VpsServer mVpsServer;
-    protected ScpServer mScpServer;
+    private VpsServer mVpsServer;
+    private ScpServer mScpServer;
 
     protected ConstantValues mConstantValues;
 
@@ -1950,6 +1950,24 @@ public class ApiClient implements ApiClientModel<Article> {
             String purchaseToken
     ) throws IOException {
         return mVpsServer.validatePurchaseSync(isSubscription, packageName, sku, purchaseToken).execute().body();
+    }
+
+    public Observable<Boolean> inviteReceived(String inviteId, boolean newOne) {
+        return mVpsServer.onInviteReceived(
+                VpsServer.InviteAction.RECEIVED,
+                inviteId,
+                mConstantValues.getAppLang(),
+                newOne
+        ).map(onInviteReceivedResponse -> onInviteReceivedResponse.status);
+    }
+
+    public Observable<Boolean> inviteSent(String inviteId, String fcmToken) {
+        return mVpsServer.onInviteSent(
+                VpsServer.InviteAction.SENT,
+                inviteId,
+                mConstantValues.getAppLang(),
+                fcmToken
+        ).map(onInviteReceivedResponse -> onInviteReceivedResponse.status);
     }
 
     protected String getScpServerWiki() {

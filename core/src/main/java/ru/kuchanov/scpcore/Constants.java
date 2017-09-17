@@ -97,6 +97,14 @@ public interface Constants {
             }
         }
 
+        interface PushDataKeys {
+            String INVITE_ID = "inviteId";
+            String TITLE = "title";
+            String MESSAGE = "message";
+            String URL = "url";
+            String OPEN_IN_THIRD_PARTY_BROWSER = "openInThirdPartyBrowser";
+        }
+
         interface Refs {
             String USERS = "users";
             String ARTICLES = "articles";
@@ -129,6 +137,7 @@ public interface Constants {
             String FREE_VK_GROUPS_JOIN_REWARD = "free_vk_groups_join_reward";
             String REWARDED_VIDEO_COOLDOWN_IN_MILLIS = "rewarded_video_cooldown_in_millis";
             String AUTH_COOLDOWN_IN_MILLIS = "auth_cooldown_in_millis";
+            String INVITE_REWARD_IN_MILLIS = "invite_reward_in_millis";
             //score multipliers
             String VK_APP_GROUP_ID = "vk_app_group_id";
             String SCORE_MULTIPLIER_SUBSCRIPTION = "score_multiplier_subscription";
@@ -141,6 +150,7 @@ public interface Constants {
             String SCORE_ACTION_OUR_APP = "score_action_our_app";
             String SCORE_ACTION_REWARDED_VIDEO = "score_action_rewarded_video";
             String SCORE_ACTION_AUTH = "score_action_auth";
+            String SCORE_ACTION_INVITE = "score_action_invite";
             String SCORE_ACTION_NONE = "score_action_none";
             String LEVELS_JSON = "levels_json";
             //downloads
@@ -194,6 +204,10 @@ public interface Constants {
 
             String INVITED_FIVE_FRIENDS = "INVITED_FIVE_FRIENDS";
             String APP_CRACKED = "APP_CRACKED";
+        }
+
+        interface PushTopics {
+            String MAIN = "main";
         }
     }
 }

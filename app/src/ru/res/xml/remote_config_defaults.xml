@@ -50,7 +50,7 @@
     <!--invites-->
     <entry>
         <key>free_invites_enabled</key>
-        <value>false</value>
+        <value>true</value>
     </entry>
     <!--vk groups-->
     <entry>

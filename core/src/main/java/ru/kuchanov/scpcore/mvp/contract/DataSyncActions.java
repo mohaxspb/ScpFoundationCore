@@ -23,6 +23,8 @@ public interface DataSyncActions {
         String VK_GROUP = "VK_GROUP";
         String OUR_APP = "OUR_APP";
         String REWARDED_VIDEO = "REWARDED_VIDEO";
+        String AUTH = "AUTH";
+        String INVITE = "INVITE";
         String NONE = "NONE";
     }
 

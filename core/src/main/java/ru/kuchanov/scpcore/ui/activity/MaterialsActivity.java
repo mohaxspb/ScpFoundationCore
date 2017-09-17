@@ -19,6 +19,7 @@ import ru.kuchanov.scpcore.ui.base.BaseDrawerActivity;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.fragment.ArticleFragment;
 import ru.kuchanov.scpcore.ui.fragment.MaterialsAllFragment;
+import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
@@ -81,7 +82,9 @@ public class MaterialsActivity
         Timber.d("onNavigationItemClicked with id: %s", id);
         String link = null;
 
-        if (id == R.id.about) {
+        if (id == R.id.invite) {
+            IntentUtils.firebaseInvite(this);
+        } else  if (id == R.id.about) {
             link = mConstantValues.getAbout();
         } else if (id == R.id.mostRatedArticles) {
             link = mConstantValues.getMostRated();

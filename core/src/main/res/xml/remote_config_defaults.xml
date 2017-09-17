@@ -255,4 +255,12 @@
         <key>auth_cooldown_in_millis</key>
         <value>7200000</value>
     </entry>
+    <entry>
+        <key>score_action_invite</key>
+        <value>100</value>
+    </entry>
+    <entry>
+        <key>invite_reward_in_millis</key>
+        <value>86400000</value>
+    </entry>
 </defaultsMap>

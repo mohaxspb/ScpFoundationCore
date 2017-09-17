@@ -101,6 +101,7 @@ public class IntentUtils {
         Intent intent = new AppInviteInvitation.IntentBuilder(activity.getString(R.string.invitation_title))
                 .setMessage(activity.getString(R.string.invitation_message))
                 .setCallToActionText(activity.getString(R.string.invitation_cta))
+                .setDeepLink(Uri.parse("https://pg9u9.app.goo.gl/"))
                 .build();
         activity.startActivityForResult(intent, Constants.Firebase.REQUEST_INVITE);
     }

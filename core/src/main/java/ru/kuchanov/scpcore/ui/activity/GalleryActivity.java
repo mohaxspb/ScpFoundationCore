@@ -158,7 +158,9 @@ public class GalleryActivity
         Timber.d("onNavigationItemClicked with id: %s", id);
         String link = null;
 
-        if (id == R.id.about) {
+        if (id == R.id.invite) {
+            IntentUtils.firebaseInvite(this);
+        } else if (id == R.id.about) {
             link = mConstantValues.getAbout();
         } else if (id == R.id.mostRatedArticles) {
             link = mConstantValues.getMostRated();

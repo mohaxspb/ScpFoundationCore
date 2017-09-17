@@ -20,7 +20,7 @@ public class SecureUtils {
 //        Timber.d("user: %s, %s", user, user != null ? user.getUid() : null);
 //        if (user != null) {
 //            if (user.getUid().equals(BuildConfig.NON_CRACKED_USER_UID)) {
-//                //TODO use this class via dagger and inject preferences manager instead of this awful hack
+//                //use this class via dagger and inject preferences manager instead of this awful hack
 //                MyPreferenceManager myPreferenceManager = new MyPreferenceManager(context, new Gson());
 //                myPreferenceManager.setAppCracked(false);
 //

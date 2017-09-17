@@ -17,12 +17,13 @@ import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
-import ru.kuchanov.scpcore.ui.dialog.SetttingsBottomSheetDialogFragment;
+import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.APP_INSTALL_REWARD_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.AUTH_COOLDOWN_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.INVITE_REWARD_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS;
 
@@ -89,6 +90,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String FREE_ADS_DISABLE_REWARD_GAINED_COUNT = "FREE_ADS_DISABLE_REWARD_GAINED_COUNT";
         String FREE_TRIAL_OFFERED_PERIODICAL = "FREE_TRIAL_OFFERED_PERIODICAL";
         String FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE = "FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE";
+        String INVITE_ALREADY_RECEIVED = "INVITE_ALREADY_RECEIVED";
     }
 
     private Gson mGson;
@@ -126,17 +128,17 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
 
     //design settings
     public boolean isDesignListNewEnabled() {
-        return !mPreferences.getString(Keys.DESIGN_LIST_TYPE, SetttingsBottomSheetDialogFragment.ListItemType.MIDDLE).equals(SetttingsBottomSheetDialogFragment.ListItemType.MIN);
+        return !mPreferences.getString(Keys.DESIGN_LIST_TYPE, SettingsBottomSheetDialogFragment.ListItemType.MIDDLE).equals(SettingsBottomSheetDialogFragment.ListItemType.MIN);
     }
 
-    public void setListDesignType(@SetttingsBottomSheetDialogFragment.ListItemType String type) {
+    public void setListDesignType(@SettingsBottomSheetDialogFragment.ListItemType String type) {
         mPreferences.edit().putString(Keys.DESIGN_LIST_TYPE, type).apply();
     }
 
-    @SetttingsBottomSheetDialogFragment.ListItemType
+    @SettingsBottomSheetDialogFragment.ListItemType
     public String getListDesignType() {
-        @SetttingsBottomSheetDialogFragment.ListItemType
-        String type = mPreferences.getString(Keys.DESIGN_LIST_TYPE, SetttingsBottomSheetDialogFragment.ListItemType.MIDDLE);
+        @SettingsBottomSheetDialogFragment.ListItemType
+        String type = mPreferences.getString(Keys.DESIGN_LIST_TYPE, SettingsBottomSheetDialogFragment.ListItemType.MIDDLE);
         return type;
     }
 
@@ -227,6 +229,28 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     public void setRewardedDescriptionIsNotShown(boolean isShown) {
         mPreferences.edit().putBoolean(Keys.ADS_REWARDED_DESCRIPTION_IS_SHOWN, isShown).apply();
     }
+
+    //invite
+    public boolean isInviteAlreadyReceived() {
+        return mPreferences.getBoolean(Keys.INVITE_ALREADY_RECEIVED, false);
+    }
+
+    public void setInviteAlreadyReceived(boolean received) {
+        mPreferences.edit().putBoolean(Keys.INVITE_ALREADY_RECEIVED, received).apply();
+    }
+
+    public void applyAwardForInvite() {
+        long time = FirebaseRemoteConfig.getInstance().getLong(INVITE_REWARD_IN_MILLIS);
+
+        increaseLastTimeAdsShows(time);
+        //also set time for which we should disable banners
+        increaseTimeForWhichBannersDisabled(time);
+
+        //I think we do not need it
+//        setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
+    }
+
+    //END invite
 
     public void setLastTimeAdsShows(long timeInMillis) {
         mPreferences.edit().putLong(Keys.ADS_LAST_TIME_SHOWS, timeInMillis).apply();
