@@ -96,7 +96,7 @@ import ru.kuchanov.scpcore.ui.activity.TagSearchActivity;
 import ru.kuchanov.scpcore.ui.adapter.SocialLoginAdapter;
 import ru.kuchanov.scpcore.ui.dialog.FreeAdsDisablingDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
-import ru.kuchanov.scpcore.ui.dialog.SetttingsBottomSheetDialogFragment;
+import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.SocialLoginHolder;
@@ -255,11 +255,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                         //send ID to server to send push/remove IDs pair
                         //then mark as not after handle
                         if (!mMyPreferenceManager.isInviteAlreadyReceived()) {
-                            mPresenter.onInviteReceived(invitationId);
                             mMyPreferenceManager.setInviteAlreadyReceived(true);
                         } else {
                             Timber.d("attempt to receive already received invite! Ata-ta, %USER_NAME%!");
                         }
+                        mPresenter.onInviteReceived(invitationId);
                     }
                 })
                 .addOnFailureListener(this, e -> Timber.e(e, "getDynamicLink:onFailure"));
@@ -316,7 +316,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     protected void onStart() {
         super.onStart();
-        //unsubscribe from firebase;
+        //subscribe from firebase;
         mPresenter.onActivityStarted();
     }
 
@@ -831,7 +831,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         int i = item.getItemId();
         if (i == R.id.settings) {
             Timber.d("settings pressed");
-            BottomSheetDialogFragment settingsDF = SetttingsBottomSheetDialogFragment.newInstance();
+            BottomSheetDialogFragment settingsDF = SettingsBottomSheetDialogFragment.newInstance();
             settingsDF.show(getSupportFragmentManager(), settingsDF.getTag());
             return true;
         } else if (i == R.id.subscribe) {

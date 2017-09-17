@@ -17,7 +17,7 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.ui.dialog.SetttingsBottomSheetDialogFragment;
+import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.HolderMedium;
 import ru.kuchanov.scpcore.ui.holder.HolderSimple;
 import ru.kuchanov.scpcore.ui.holder.HolderWithImage;
@@ -207,12 +207,12 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderSimp
     @Override
     public int getItemViewType(int position) {
         switch (mMyPreferenceManager.getListDesignType()) {
-            case SetttingsBottomSheetDialogFragment.ListItemType.MIN:
+            case SettingsBottomSheetDialogFragment.ListItemType.MIN:
                 return TYPE_MIN;
             default:
-            case SetttingsBottomSheetDialogFragment.ListItemType.MIDDLE:
+            case SettingsBottomSheetDialogFragment.ListItemType.MIDDLE:
                 return TYPE_MIDDLE;
-            case SetttingsBottomSheetDialogFragment.ListItemType.MAX:
+            case SettingsBottomSheetDialogFragment.ListItemType.MAX:
                 return TYPE_MAX;
         }
     }

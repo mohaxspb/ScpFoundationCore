@@ -39,6 +39,7 @@ import ru.kuchanov.scpcore.manager.MyNotificationManager;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerAdapter;
+import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerCardDesignAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import timber.log.Timber;
@@ -49,7 +50,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
  * <p>
  * for scp_ru
  */
-public class SetttingsBottomSheetDialogFragment
+public class SettingsBottomSheetDialogFragment
         extends BaseBottomSheetDialogFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -97,7 +98,7 @@ public class SetttingsBottomSheetDialogFragment
     InAppHelper mInAppHelper;
 
     public static BottomSheetDialogFragment newInstance() {
-        return new SetttingsBottomSheetDialogFragment();
+        return new SettingsBottomSheetDialogFragment();
     }
 
     @Override
@@ -122,7 +123,7 @@ public class SetttingsBottomSheetDialogFragment
         List<String> typesList = Arrays.asList(types);
 
         ArrayAdapter<String> adapterCard =
-                new ArrayAdapter<>(getActivity(), R.layout.design_list_spinner_item, typesList);
+                new SettingsSpinnerCardDesignAdapter(getActivity(), R.layout.design_list_spinner_item, typesList);
         adapterCard.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         Drawable.ConstantState spinnerDrawableConstantState = listItemSpinner.getBackground().getConstantState();
@@ -262,7 +263,7 @@ public class SetttingsBottomSheetDialogFragment
         dialog.setOnShowListener(dialog1 -> {
             BottomSheetDialog d = (BottomSheetDialog) dialog1;
 
-            FrameLayout bottomSheet = (FrameLayout) d.findViewById(android.support.design.R.id.design_bottom_sheet);
+            FrameLayout bottomSheet = d.findViewById(android.support.design.R.id.design_bottom_sheet);
             if (bottomSheet != null) {
                 BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
             }

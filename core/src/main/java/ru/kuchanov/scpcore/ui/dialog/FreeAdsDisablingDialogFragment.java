@@ -18,7 +18,6 @@ import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 
 import org.joda.time.Duration;
-import org.joda.time.Period;
 
 import java.util.ArrayList;
 import java.util.List;

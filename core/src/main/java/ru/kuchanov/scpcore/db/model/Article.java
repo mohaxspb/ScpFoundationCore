@@ -40,7 +40,9 @@ public class Article extends RealmObject implements ArticleModel, Serializable{
     public static final String FIELD_IS_IN_JOKES = "isInJokes";
 
     public static final String FIELD_URL = "url";
-    //TODO think if we really need it
+    //think if we really need it
+    //yes, we need it to delete articles after limit reach
+    //we sort by this value and delete old articles first
     public static final String FIELD_LOCAL_UPDATE_TIME_STAMP = "localUpdateTimeStamp";
     public static final String FIELD_TEXT = "text";
 
@@ -219,7 +221,7 @@ public class Article extends RealmObject implements ArticleModel, Serializable{
         return url + "\n";
     }
 
-    //TODO check dates and create proper comparator
+    //check dates and create proper comparator
 //    public static final Comparator<Article> COMPARATOR_DATE_CREATED = (a1, a2) -> a1.createdDate == null ? a2.createdDate == null : a1.createdDate.compareTo(a1.createdDate);///a1.createdDate.compareTo(a2.createdDate);
 //
 //    public static final Comparator<Article> COMPARATOR_DATE_UPDATED = (a1, a2) -> a1.updatedDate.compareTo(a2.updatedDate);

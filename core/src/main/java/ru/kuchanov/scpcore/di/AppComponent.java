@@ -26,11 +26,12 @@ import ru.kuchanov.scpcore.ui.activity.TagSearchActivity;
 import ru.kuchanov.scpcore.ui.adapter.ArticleRecyclerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListRecyclerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerAdapter;
+import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerCardDesignAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SubscriptionsRecyclerAdapter;
 import ru.kuchanov.scpcore.ui.dialog.CC3LicenseDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.FreeAdsDisablingDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
-import ru.kuchanov.scpcore.ui.dialog.SetttingsBottomSheetDialogFragment;
+import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.fragment.ArticleFragment;
@@ -77,7 +78,7 @@ public interface AppComponent {
 
     void inject(MaterialsActivity activity);
 
-   void inject(MainActivity activity);
+    void inject(MainActivity activity);
 
     void inject(GalleryActivity activity);
 
@@ -131,7 +132,7 @@ public interface AppComponent {
 
     void inject(FreeAdsDisablingDialogFragment dialogFragment);
 
-    void inject(SetttingsBottomSheetDialogFragment dialogFragment);
+    void inject(SettingsBottomSheetDialogFragment dialogFragment);
 
     void inject(CC3LicenseDialogFragment dialogFragment);
 
@@ -142,6 +143,8 @@ public interface AppComponent {
     void inject(SubscriptionsRecyclerAdapter adapter);
 
     void inject(SettingsSpinnerAdapter adapter);
+
+    void inject(SettingsSpinnerCardDesignAdapter adapter);
 
     void inject(ArticleImageHolder holder);
 
@@ -155,7 +158,7 @@ public interface AppComponent {
 
     void inject(HolderSimple holder);
 
- void inject(ArticleTableHolder holder);
+    void inject(ArticleTableHolder holder);
 
     void inject(ReceiverTimer receiver);
 
