@@ -214,6 +214,10 @@ public class ArticleRecyclerAdapter
     @Override
     public void onSpoilerExpand(int position) {
         Timber.d("onSpoilerExpand: %s", position);
+        if (position == RecyclerView.NO_POSITION) {
+            return;
+        }
+
         SpoilerViewModel spoilerViewModel = ((SpoilerViewModel) mViewModels.get(position).data);
         List<ArticleTextPartViewModel> viewModels = new ArrayList<>();
         for (int order = 0; order < spoilerViewModel.mSpoilerTextPartsTypes.size(); order++) {
@@ -232,6 +236,9 @@ public class ArticleRecyclerAdapter
     @Override
     public void onSpoilerCollapse(int position) {
         Timber.d("onSpoilerCollapse: %s", position);
+        if (position == RecyclerView.NO_POSITION) {
+            return;
+        }
 
         SpoilerViewModel spoilerViewModel = ((SpoilerViewModel) mViewModels.get(position).data);
         List<ArticleTextPartViewModel> viewModels = new ArrayList<>();
