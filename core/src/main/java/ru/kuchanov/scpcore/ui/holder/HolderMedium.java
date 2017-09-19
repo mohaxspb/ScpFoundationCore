@@ -13,7 +13,7 @@ import ru.kuchanov.scpcore.ui.adapter.ArticlesListRecyclerAdapter;
  * <p>
  * for ScpFoundationRu
  */
-public class HolderMedium extends HolderWithImage {
+public class HolderMedium extends HolderMax {
 
     public HolderMedium(View itemView, ArticlesListRecyclerAdapter.ArticleClickListener clickListener) {
         super(itemView, clickListener);

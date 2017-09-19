@@ -1,6 +1,7 @@
 package ru.kuchanov.scpcore.ui.holder;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -9,17 +10,24 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.NativeExpressAdView;
+import com.google.android.gms.ads.VideoOptions;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.AdMobHelper;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListRecyclerAdapter;
 import ru.kuchanov.scpcore.util.AttributeGetter;
+import timber.log.Timber;
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 /**
@@ -27,7 +35,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
  * <p>
  * for ScpFoundationRu
  */
-public class HolderSimple extends RecyclerView.ViewHolder {
+public class HolderMin extends RecyclerView.ViewHolder {
 
     @Inject
     protected MyPreferenceManager mMyPreferenceManager;
@@ -50,7 +58,12 @@ public class HolderSimple extends RecyclerView.ViewHolder {
     @BindView(R2.id.typeIcon)
     ImageView typeIcon;
 
-    public HolderSimple(View itemView, ArticlesListRecyclerAdapter.ArticleClickListener clickListener) {
+    @BindView(R2.id.nativeAdViewContainer)
+    CardView nativeAdViewContainer;
+    @BindView(R2.id.nativeAdView)
+    NativeExpressAdView nativeExpressAdView;
+
+    public HolderMin(View itemView, ArticlesListRecyclerAdapter.ArticleClickListener clickListener) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         BaseApplication.getAppComponent().inject(this);
@@ -121,16 +134,18 @@ public class HolderSimple extends RecyclerView.ViewHolder {
             }
         });
 
-        if(context.getResources().getBoolean(R.bool.filter_by_type_enabled)) {
+        if (context.getResources().getBoolean(R.bool.filter_by_type_enabled)) {
             setTypesIcons(article);
         } else {
             typeIcon.setVisibility(View.GONE);
         }
+
+        //native ads
+        showNativeAds();
     }
 
     protected void setTypesIcons(Article article) {
         switch (article.type) {
-            default:
             case Article.ObjectType.NONE:
                 typeIcon.setImageResource(R.drawable.ic_none_small);
                 break;
@@ -149,6 +164,8 @@ public class HolderSimple extends RecyclerView.ViewHolder {
             case Article.ObjectType.THAUMIEL:
                 typeIcon.setImageResource(R.drawable.ic_thaumiel_small);
                 break;
+            default:
+                throw new IllegalArgumentException("unexpected article type: " + article.type);
         }
     }
 
@@ -181,5 +198,25 @@ public class HolderSimple extends RecyclerView.ViewHolder {
                 mArticleClickListener.toggleFavoriteState(mData);
             }
         });
+    }
+
+    private void showNativeAds() {
+        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        if (getAdapterPosition() != 0
+                //todo set remote config field for it
+                && getAdapterPosition() % config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_INTERVAL) == 0
+                && config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED)
+                && !mMyPreferenceManager.isHasAnySubscription()) {
+            Timber.d("show ads");
+            nativeAdViewContainer.setVisibility(View.VISIBLE);
+            // Set its video options.
+            nativeExpressAdView.setVideoOptions(new VideoOptions.Builder()
+                    .setStartMuted(true)
+                    .build());
+
+            nativeExpressAdView.loadAd(AdMobHelper.buildAdRequest(itemView.getContext()));
+        } else {
+            nativeAdViewContainer.setVisibility(View.GONE);
+        }
     }
 }

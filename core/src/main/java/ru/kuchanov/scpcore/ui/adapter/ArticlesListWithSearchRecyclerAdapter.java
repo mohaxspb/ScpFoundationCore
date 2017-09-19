@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.kuchanov.scpcore.db.model.Article;
-import ru.kuchanov.scpcore.ui.holder.HolderSimple;
+import ru.kuchanov.scpcore.ui.holder.HolderMin;
 import timber.log.Timber;
 
 /**
@@ -46,7 +46,7 @@ public class ArticlesListWithSearchRecyclerAdapter extends ArticlesListRecyclerA
     }
 
     @Override
-    public void onBindViewHolder(HolderSimple holder, int position) {
+    public void onBindViewHolder(HolderMin holder, int position) {
         holder.bind(mSortedData.get(position));
         holder.setShouldShowPreview(shouldShowPreview);
         holder.setShouldShowPopupOnFavoriteClick(shouldShowPopupOnFavoriteClick);

@@ -24,7 +24,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
  * <p>
  * for ScpFoundationRu
  */
-public class HolderWithImage extends HolderSimple {
+public class HolderMax extends HolderMin {
 
     @BindView(R2.id.typeIcon)
     ImageView typeIcon;
@@ -40,7 +40,7 @@ public class HolderWithImage extends HolderSimple {
     @BindView(R2.id.tagsExpander)
     TextView mTagsExpander;
 
-    public HolderWithImage(View itemView, ArticlesListRecyclerAdapter.ArticleClickListener clickListener) {
+    public HolderMax(View itemView, ArticlesListRecyclerAdapter.ArticleClickListener clickListener) {
         super(itemView, clickListener);
     }
 

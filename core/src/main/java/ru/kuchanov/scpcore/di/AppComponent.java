@@ -59,7 +59,7 @@ import ru.kuchanov.scpcore.ui.holder.ArticleTableHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTagsHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTextHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTitleHolder;
-import ru.kuchanov.scpcore.ui.holder.HolderSimple;
+import ru.kuchanov.scpcore.ui.holder.HolderMin;
 
 @Singleton
 @Component(modules = {
@@ -156,7 +156,7 @@ public interface AppComponent {
 
     void inject(ArticleSpoilerHolder holder);
 
-    void inject(HolderSimple holder);
+    void inject(HolderMin holder);
 
     void inject(ArticleTableHolder holder);
 

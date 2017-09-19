@@ -19,8 +19,8 @@ import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.HolderMedium;
-import ru.kuchanov.scpcore.ui.holder.HolderSimple;
-import ru.kuchanov.scpcore.ui.holder.HolderWithImage;
+import ru.kuchanov.scpcore.ui.holder.HolderMin;
+import ru.kuchanov.scpcore.ui.holder.HolderMax;
 import timber.log.Timber;
 
 /**
@@ -28,7 +28,7 @@ import timber.log.Timber;
  * <p>
  * for scp_ru
  */
-public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderSimple> {
+public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderMin> {
 
     public SortType getSortType() {
         return mSortType;
@@ -218,30 +218,31 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderSimp
     }
 
     @Override
-    public HolderSimple onCreateViewHolder(ViewGroup parent, int viewType) {
-        HolderSimple viewHolder;
+    public HolderMin onCreateViewHolder(ViewGroup parent, int viewType) {
+        HolderMin viewHolder;
         View view;
         switch (viewType) {
             case TYPE_MIN:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_ugly_old_style, parent, false);
-                viewHolder = new HolderSimple(view, mArticleClickListener);
+                viewHolder = new HolderMin(view, mArticleClickListener);
                 break;
-            default:
+            case TYPE_MAX:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article, parent, false);
+                viewHolder = new HolderMax(view, mArticleClickListener);
+                break;
             case TYPE_MIDDLE:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_medium, parent, false);
                 viewHolder = new HolderMedium(view, mArticleClickListener);
                 break;
-            case TYPE_MAX:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article, parent, false);
-                viewHolder = new HolderWithImage(view, mArticleClickListener);
-                break;
+            default:
+                throw new IllegalArgumentException("unexpected viewType: " + viewType);
         }
 
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(HolderSimple holder, int position) {
+    public void onBindViewHolder(HolderMin holder, int position) {
         holder.bind(mSortedWithFilterData.get(position));
         holder.setShouldShowPreview(shouldShowPreview);
         holder.setShouldShowPopupOnFavoriteClick(shouldShowPopupOnFavoriteClick);
