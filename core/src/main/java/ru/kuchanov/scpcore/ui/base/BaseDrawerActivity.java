@@ -198,9 +198,6 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                     .show()
             );
 
-            //fixme remove it from layout
-            headerViewHolder.relogin.setVisibility(View.GONE);
-
             headerViewHolder.levelUp.setOnClickListener(view -> mInAppHelper.getInAppsListToBuyObservable(getIInAppBillingService()).subscribe(
                     items -> new MaterialDialog.Builder(view.getContext())
                             .title(R.string.dialog_level_up_title)
@@ -303,9 +300,11 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                 });
             }
 
-            //check if user score is greter than 1000 and offer him/her a free trial if there is no subscription owned
+            //check if user score is greater than 1000 and offer him/her a free trial if there is no subscription owned
             if (!mMyPreferenceManager.isHasAnySubscription()
                     && user.score >= 1000
+                    //do not show it after level up gain, where we add 10000 score
+                    && mPresenter.getUser().score < 10000
                     && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
                 Bundle bundle = new Bundle();
                 bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
@@ -313,8 +312,8 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                 FirebaseAnalytics.getInstance(this)
                         .logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
-                showOfferFreeTrialSubscriptionPopup();
                 mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score(true);
+                showOfferFreeTrialSubscriptionPopup();
             }
         } else {
             for (int i = 0; i < mNavigationView.getHeaderCount(); i++) {

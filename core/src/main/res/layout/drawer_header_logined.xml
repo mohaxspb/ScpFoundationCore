@@ -24,6 +24,7 @@
             android:id="@+id/level"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/defaultMargin"
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:textColor="@color/material_blue_gray_50"
@@ -118,8 +119,8 @@
         android:layout_marginEnd="@dimen/defaultMargin"
         android:background="?selectableItemBackgroundBorderless"
         android:contentDescription="@string/app_name"
-        android:tint="@android:color/white"
         android:src="@drawable/ic_logout_variant"
+        android:tint="@android:color/white"
         />
 
     <ImageView
@@ -127,8 +128,8 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignBottom="@id/avatarContainer"
-        android:layout_marginStart="40dp"
         android:layout_marginEnd="@dimen/defaultMargin"
+        android:layout_marginStart="40dp"
         android:layout_toEndOf="@id/avatarContainer"
         android:background="?selectableItemBackgroundBorderless"
         android:contentDescription="@string/app_name"
