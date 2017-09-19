@@ -186,7 +186,7 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
             @Override
             public void onArticleClicked(Article article, int position) {
                 Timber.d("onArticleClicked: %s/%s", article.title, position);
-                if (!isAdded()) {
+                if (!isAdded() || position == RecyclerView.NO_POSITION) {
                     return;
                 }
                 getBaseActivity().startArticleActivity(Article.getListOfUrls(getAdapter().getDisplayedData()), position);
