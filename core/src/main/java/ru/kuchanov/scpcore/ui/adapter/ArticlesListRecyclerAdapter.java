@@ -67,9 +67,8 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderMin>
     }
 
     private static final int TYPE_ARTICLE = 0;
-    private static final int TYPE_NATIVE_ADS = 1;
-    //TODO may be create separate type for each native ads source
-//    private static final int TYPE_MAX = 2;
+    private static final int TYPE_NATIVE_ADS_AD_MOB = 1;
+    private static final int TYPE_NATIVE_ADS_APPODEAL = 2;
 
     @Inject
     MyPreferenceManager mMyPreferenceManager;

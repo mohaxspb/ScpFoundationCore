@@ -91,25 +91,25 @@
         tools:visibility="visible"
         />
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/nativeAdViewContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/defaultMargin"
-        android:visibility="gone"
-        app:cardBackgroundColor="?artListCardBackgroundColor"
-        app:cardCornerRadius="@dimen/cardview_default_radius"
-        app:cardElevation="@dimen/cardview_default_radius"
-        tools:visibility="visible"
-        >
+    <!--<android.support.v7.widget.CardView-->
+        <!--android:id="@+id/nativeAdViewContainer"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="@dimen/defaultMargin"-->
+        <!--android:visibility="gone"-->
+        <!--app:cardBackgroundColor="?artListCardBackgroundColor"-->
+        <!--app:cardCornerRadius="@dimen/cardview_default_radius"-->
+        <!--app:cardElevation="@dimen/cardview_default_radius"-->
+        <!--tools:visibility="visible"-->
+        <!--&gt;-->
 
-        <com.google.android.gms.ads.NativeExpressAdView
-            android:id="@+id/nativeAdView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            ads:adSize="FULL_WIDTHx250"
-            ads:adUnitId="@string/ad_unit_id_native_articles_lists"
-            />
-    </android.support.v7.widget.CardView>
+        <!--<com.google.android.gms.ads.NativeExpressAdView-->
+            <!--android:id="@+id/nativeAdView"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--ads:adSize="FULL_WIDTHx250"-->
+            <!--ads:adUnitId="@string/ad_unit_id_native_articles_lists"-->
+            <!--/>-->
+    <!--</android.support.v7.widget.CardView>-->
 
 </LinearLayout>

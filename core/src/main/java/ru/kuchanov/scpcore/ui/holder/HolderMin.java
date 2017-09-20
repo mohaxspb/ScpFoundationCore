@@ -28,7 +28,6 @@ import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.AdMobHelper;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListRecyclerAdapter;
-import ru.kuchanov.scpcore.ui.util.DialogUtils;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import ru.kuchanov.scpcore.util.DimensionUtils;
 import timber.log.Timber;
@@ -235,7 +234,7 @@ public class HolderMin extends RecyclerView.ViewHolder {
                             showAdMobNativeAds();
                             break;
                         case Constants.NativeAdsSource.APPODEAL:
-                            showAppodelNativeAds();
+                            showAppodealNativeAds();
                             break;
                         default:
                             throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
@@ -245,7 +244,7 @@ public class HolderMin extends RecyclerView.ViewHolder {
                     showAdMobNativeAds();
                     break;
                 case Constants.NativeAdsSource.APPODEAL:
-                    showAppodelNativeAds();
+                    showAppodealNativeAds();
                     break;
                 default:
                     throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
@@ -256,8 +255,9 @@ public class HolderMin extends RecyclerView.ViewHolder {
         }
     }
 
-    private void showAppodelNativeAds() {
+    private void showAppodealNativeAds() {
         //TODO
+        System.out.println("fd");
     }
 
     private void showAdMobNativeAds() {
