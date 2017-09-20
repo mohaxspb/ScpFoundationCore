@@ -255,4 +255,26 @@
         <key>auth_cooldown_in_millis</key>
         <value>7200000</value>
     </entry>
+    <!--native ads-->
+    <entry>
+        <key>native_ads_lists_interval</key>
+        <value>10</value>
+    </entry>
+    <entry>
+        <key>native_ads_lists_enabled</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>native_ads_lists_source</key>
+        <value>0</value>
+    </entry>
+    <!--invite-->
+    <entry>
+        <key>score_action_invite</key>
+        <value>100</value>
+    </entry>
+    <entry>
+        <key>invite_reward_in_millis</key>
+        <value>86400000</value>
+    </entry>
 </defaultsMap>

@@ -108,7 +108,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             ads:adSize="FULL_WIDTHx250"
-            ads:adUnitId="@string/ad_unit_id_native"
+            ads:adUnitId="@string/ad_unit_id_native_articles_lists"
             />
     </android.support.v7.widget.CardView>
 

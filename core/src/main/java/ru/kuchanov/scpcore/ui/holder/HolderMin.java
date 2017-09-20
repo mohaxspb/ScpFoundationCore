@@ -202,19 +202,38 @@ public class HolderMin extends RecyclerView.ViewHolder {
 
     private void showNativeAds() {
         FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        int nativeAdsInterval = (int) config.getLong(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_INTERVAL);
         if (getAdapterPosition() != 0
-                //todo set remote config field for it
-                && getAdapterPosition() % config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_INTERVAL) == 0
+                //maybe we need to check for NO_POSITION
+                && getAdapterPosition() != RecyclerView.NO_POSITION
+                && config.getBoolean(Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED)
+                //check if we show more that 3 ads per list and prevent it as admob forbids it
+                && getAdapterPosition() <= nativeAdsInterval * Constants.NUM_OF_NATIVE_PER_SCREEN
                 && config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED)
+                && getAdapterPosition() % nativeAdsInterval == 0
                 && !mMyPreferenceManager.isHasAnySubscription()) {
-            Timber.d("show ads");
-            nativeAdViewContainer.setVisibility(View.VISIBLE);
-            // Set its video options.
-            nativeExpressAdView.setVideoOptions(new VideoOptions.Builder()
-                    .setStartMuted(true)
-                    .build());
+            Timber.d("show native ads");
+            //check native source and choose correct one
+            int nativeAdsSource = (int) config.getLong(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_SOURCE);
+            switch (nativeAdsSource) {
+                case Constants.NativeAdsSource.ALL:
+                    //todo show ads from list of sources via random
+                    break;
+                case Constants.NativeAdsSource.AD_MOB:
+                    nativeAdViewContainer.setVisibility(View.VISIBLE);
+                    // Set its video options.
+                    nativeExpressAdView.setVideoOptions(new VideoOptions.Builder()
+                            .setStartMuted(true)
+                            .build());
 
-            nativeExpressAdView.loadAd(AdMobHelper.buildAdRequest(itemView.getContext()));
+                    nativeExpressAdView.loadAd(AdMobHelper.buildAdRequest(itemView.getContext()));
+                    break;
+                case Constants.NativeAdsSource.APPODEAL:
+                    //todo show appodeal native ads
+                    break;
+                default:
+                    throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
+            }
         } else {
             nativeAdViewContainer.setVisibility(View.GONE);
         }
