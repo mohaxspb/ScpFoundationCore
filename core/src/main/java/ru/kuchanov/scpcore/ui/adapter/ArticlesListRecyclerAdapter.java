@@ -18,9 +18,9 @@ import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
+import ru.kuchanov.scpcore.ui.holder.HolderMax;
 import ru.kuchanov.scpcore.ui.holder.HolderMedium;
 import ru.kuchanov.scpcore.ui.holder.HolderMin;
-import ru.kuchanov.scpcore.ui.holder.HolderMax;
 import timber.log.Timber;
 
 /**
@@ -66,9 +66,10 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderMin>
         }
     }
 
-    private static final int TYPE_MIN = 0;
-    private static final int TYPE_MIDDLE = 1;
-    private static final int TYPE_MAX = 2;
+    private static final int TYPE_ARTICLE = 0;
+    private static final int TYPE_NATIVE_ADS = 1;
+    //TODO may be create separate type for each native ads source
+//    private static final int TYPE_MAX = 2;
 
     @Inject
     MyPreferenceManager mMyPreferenceManager;
@@ -105,6 +106,7 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderMin>
 
         mSortedWithFilterData.clear();
 
+        //todo add native ads to result data list
         switch (mSortType) {
             case NONE:
                 mSortedWithFilterData.addAll(mData);
@@ -206,36 +208,43 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderMin>
 
     @Override
     public int getItemViewType(int position) {
-        switch (mMyPreferenceManager.getListDesignType()) {
-            case SettingsBottomSheetDialogFragment.ListItemType.MIN:
-                return TYPE_MIN;
-            default:
-            case SettingsBottomSheetDialogFragment.ListItemType.MIDDLE:
-                return TYPE_MIDDLE;
-            case SettingsBottomSheetDialogFragment.ListItemType.MAX:
-                return TYPE_MAX;
-        }
+        //TODO we must create viewType for article and native ads
+        throw new IllegalStateException("not implemented");
+//        switch (mMyPreferenceManager.getListDesignType()) {
+//            case SettingsBottomSheetDialogFragment.ListItemType.MIN:
+//                return TYPE_MIN;
+//            default:
+//            case SettingsBottomSheetDialogFragment.ListItemType.MIDDLE:
+//                return TYPE_MIDDLE;
+//            case SettingsBottomSheetDialogFragment.ListItemType.MAX:
+//                return TYPE_MAX;
+//        }
     }
 
     @Override
     public HolderMin onCreateViewHolder(ViewGroup parent, int viewType) {
+        //todo switch by viewType for create native ads viewHolder
+
         HolderMin viewHolder;
         View view;
-        switch (viewType) {
-            case TYPE_MIN:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_ugly_old_style, parent, false);
+
+        @SettingsBottomSheetDialogFragment.ListItemType
+        String listDesignType = mMyPreferenceManager.getListDesignType();
+        switch (listDesignType) {
+            case SettingsBottomSheetDialogFragment.ListItemType.MIN:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_min, parent, false);
                 viewHolder = new HolderMin(view, mArticleClickListener);
                 break;
-            case TYPE_MAX:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article, parent, false);
+            case SettingsBottomSheetDialogFragment.ListItemType.MIDDLE:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_medium, parent, false);
                 viewHolder = new HolderMax(view, mArticleClickListener);
                 break;
-            case TYPE_MIDDLE:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_medium, parent, false);
+            case SettingsBottomSheetDialogFragment.ListItemType.MAX:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_max, parent, false);
                 viewHolder = new HolderMedium(view, mArticleClickListener);
                 break;
             default:
-                throw new IllegalArgumentException("unexpected viewType: " + viewType);
+                throw new IllegalArgumentException("unexpected ListDesignType: " + listDesignType);
         }
 
         return viewHolder;
@@ -243,6 +252,7 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderMin>
 
     @Override
     public void onBindViewHolder(HolderMin holder, int position) {
+        //todo switch by viewType for create native ads viewHolder
         holder.bind(mSortedWithFilterData.get(position));
         holder.setShouldShowPreview(shouldShowPreview);
         holder.setShouldShowPopupOnFavoriteClick(shouldShowPopupOnFavoriteClick);

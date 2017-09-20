@@ -258,6 +258,7 @@
         <key>auth_cooldown_in_millis</key>
         <value>7200000</value>
     </entry>
+    <!--invites-->
     <entry>
         <key>score_action_invite</key>
         <value>100</value>

@@ -17,7 +17,9 @@ public interface Constants {
     /**
      * cant find link, but as I remember 3 ads per list is permitted limit
      */
-    int NUM_OF_NATIVE_PER_SCREEN = 3;
+    int NUM_OF_NATIVE_ADS_PER_SCREEN = 3;
+    int NUM_OF_NATIVE_ADS_SOURCES = 2;
+    int NATIVE_ADS_MIN_HEIGHT = 250;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({NativeAdsSource.ALL, NativeAdsSource.AD_MOB, NativeAdsSource.APPODEAL})
