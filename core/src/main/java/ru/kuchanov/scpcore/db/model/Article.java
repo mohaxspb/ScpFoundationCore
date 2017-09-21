@@ -188,7 +188,7 @@ public class Article extends RealmObject implements ArticleModel, Serializable {
 
     @Override
     public int hashCode() {
-        return 42;
+        return url.hashCode();
     }
 
 //    @Override

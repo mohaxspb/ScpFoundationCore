@@ -8,16 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.ads.NativeExpressAdView;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import javax.inject.Inject;
@@ -43,7 +40,7 @@ import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS
  * <p>
  * for scp_ru
  */
-public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderMin> {
+public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public SortType getSortType() {
         return mSortType;
@@ -126,7 +123,6 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderMin>
 
         mSortedWithFilterData.clear();
 
-        //todo add native ads to result data list
         switch (mSortType) {
             case NONE:
                 mSortedWithFilterData.addAll(mData);
@@ -218,8 +214,8 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderMin>
                 throw new IllegalArgumentException("unexpected type: " + mSortType);
         }
 
+        //add native ads to result data list
         createDataWithAdsAndArticles();
-
         Timber.d("mArticlesAndAds: %s", mArticlesAndAds);
 
         notifyDataSetChanged();
@@ -230,6 +226,11 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderMin>
         for (Article article : mSortedWithFilterData) {
             mArticlesAndAds.add(new ArticlesListModel(ArticleListNodeType.ARTICLE, article));
         }
+        //do not add native ads items if user has subscription or banners temporary disabled
+        if (mMyPreferenceManager.isHasAnySubscription() || !mMyPreferenceManager.isTimeToShowBannerAds()) {
+            return;
+        }
+
         // Loop through the items array and place a new Native Express ad in every ith position in
         // the items List.
         FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
@@ -274,10 +275,12 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderMin>
 
     @Override
     public long getItemId(int position) {
-        //TODO create correct ID, as we now have ads in list
-        return mSortedWithFilterData.get(position).url.hashCode();
+        //create correct ID, as we now have ads in list
+//        return mSortedWithFilterData.get(position).url.hashCode();
+        return mArticlesAndAds.get(position).data.hashCode();
     }
 
+    @ArticleListNodeType
     @Override
     public int getItemViewType(int position) {
         //we must create viewType for article and native ads
@@ -294,40 +297,69 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderMin>
     }
 
     @Override
-    public HolderMin onCreateViewHolder(ViewGroup parent, int viewType) {
-        //todo switch by viewType for create native ads viewHolder
-
-        HolderMin viewHolder;
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, @ArticleListNodeType int viewType) {
+        RecyclerView.ViewHolder viewHolder;
         View view;
 
-        @SettingsBottomSheetDialogFragment.ListItemType
-        String listDesignType = mMyPreferenceManager.getListDesignType();
-        switch (listDesignType) {
-            case SettingsBottomSheetDialogFragment.ListItemType.MIN:
+        //switch by viewType for create native ads viewHolder
+        switch (viewType) {
+            case ArticleListNodeType.ARTICLE:
+                @SettingsBottomSheetDialogFragment.ListItemType
+                String listDesignType = mMyPreferenceManager.getListDesignType();
+                switch (listDesignType) {
+                    case SettingsBottomSheetDialogFragment.ListItemType.MIN:
+                        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_min, parent, false);
+                        viewHolder = new HolderMin(view, mArticleClickListener);
+                        break;
+                    case SettingsBottomSheetDialogFragment.ListItemType.MIDDLE:
+                        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_medium, parent, false);
+                        viewHolder = new HolderMax(view, mArticleClickListener);
+                        break;
+                    case SettingsBottomSheetDialogFragment.ListItemType.MAX:
+                        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_max, parent, false);
+                        viewHolder = new HolderMedium(view, mArticleClickListener);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("unexpected ListDesignType: " + listDesignType);
+                }
+                break;
+            case ArticleListNodeType.NATIVE_ADS_AD_MOB:
+                //TODO
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_min, parent, false);
                 viewHolder = new HolderMin(view, mArticleClickListener);
                 break;
-            case SettingsBottomSheetDialogFragment.ListItemType.MIDDLE:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_medium, parent, false);
-                viewHolder = new HolderMax(view, mArticleClickListener);
-                break;
-            case SettingsBottomSheetDialogFragment.ListItemType.MAX:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_max, parent, false);
-                viewHolder = new HolderMedium(view, mArticleClickListener);
+            case ArticleListNodeType.NATIVE_ADS_APPODEAL:
+                //TODO
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_min, parent, false);
+                viewHolder = new HolderMin(view, mArticleClickListener);
                 break;
             default:
-                throw new IllegalArgumentException("unexpected ListDesignType: " + listDesignType);
+                throw new IllegalArgumentException("unexpected viewType: " + viewType);
         }
 
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(HolderMin holder, int position) {
-        //todo switch by viewType for create native ads viewHolder
-        holder.bind(mSortedWithFilterData.get(position));
-        holder.setShouldShowPreview(shouldShowPreview);
-        holder.setShouldShowPopupOnFavoriteClick(shouldShowPopupOnFavoriteClick);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        @ArticleListNodeType
+        int viewType = getItemViewType(position);
+        switch (viewType) {
+            case ArticleListNodeType.ARTICLE:
+                HolderMin holderArticle = (HolderMin) holder;
+                holderArticle.bind(mSortedWithFilterData.get(position));
+                holderArticle.setShouldShowPreview(shouldShowPreview);
+                holderArticle.setShouldShowPopupOnFavoriteClick(shouldShowPopupOnFavoriteClick);
+                break;
+            case ArticleListNodeType.NATIVE_ADS_AD_MOB:
+                //TODO
+                break;
+            case ArticleListNodeType.NATIVE_ADS_APPODEAL:
+                //TODO
+                break;
+            default:
+                throw new IllegalArgumentException("unexpected viewType: " + viewType);
+        }
     }
 
     @Override
@@ -358,5 +390,7 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderMin>
         void onOfflineClicked(Article article);
 
         void onTagClicked(ArticleTag tag);
+
+        //todo add listeners for native ads clicks - we'll use it to mesure banner/native effectivnes
     }
 }

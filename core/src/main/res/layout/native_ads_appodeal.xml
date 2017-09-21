@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<!--<FrameLayout-->
+<!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--xmlns:tools="http://schemas.android.com/tools"-->
+<!--android:id="@+id/container"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="wrap_content"-->
+<!--&gt;-->
+<merge
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     >
 
     <com.appodeal.ads.native_ad.views.NativeAdViewAppWall
@@ -20,4 +24,5 @@
         android:visibility="gone"
         tools:visibility="visible"
         />
-</FrameLayout>
+</merge>
+    <!--</FrameLayout>-->
