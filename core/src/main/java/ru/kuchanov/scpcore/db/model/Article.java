@@ -19,7 +19,7 @@ import ru.kuchanov.scp.downloads.ArticleModel;
  * <p>
  * for scp_ru
  */
-public class Article extends RealmObject implements ArticleModel, Serializable{
+public class Article extends RealmObject implements ArticleModel, Serializable {
 
     public static final String FIELD_IS_IN_READEN = "isInReaden";
     public static final String FIELD_IS_IN_RECENT = "isInRecent";
@@ -215,10 +215,16 @@ public class Article extends RealmObject implements ArticleModel, Serializable{
 //                ", updatedDate='" + updatedDate + '\'' +
 //                '}';
 //    }
+//
+//    @Override
+//    public String toString() {
+//        return url + "\n";
+//    }
+
 
     @Override
     public String toString() {
-        return url + "\n";
+        return url;
     }
 
     //check dates and create proper comparator

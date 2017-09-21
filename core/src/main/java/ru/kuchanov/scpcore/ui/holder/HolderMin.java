@@ -61,10 +61,10 @@ public class HolderMin extends RecyclerView.ViewHolder {
     @BindView(R2.id.typeIcon)
     ImageView typeIcon;
 
-    @BindView(R2.id.nativeAdViewContainer)
-    CardView nativeAdViewContainer;
-    @BindView(R2.id.nativeAdView)
-    NativeExpressAdView nativeExpressAdView;
+//    @BindView(R2.id.nativeAdViewContainer)
+//    CardView nativeAdViewContainer;
+//    @BindView(R2.id.nativeAdView)
+//    NativeExpressAdView nativeExpressAdView;
 
     public HolderMin(View itemView, ArticlesListRecyclerAdapter.ArticleClickListener clickListener) {
         super(itemView);
@@ -144,7 +144,7 @@ public class HolderMin extends RecyclerView.ViewHolder {
         }
 
         //native ads
-        showNativeAds();
+//        showNativeAds();
     }
 
     protected void setTypesIcons(Article article) {
@@ -203,70 +203,70 @@ public class HolderMin extends RecyclerView.ViewHolder {
         });
     }
 
-    private void showNativeAds() {
-        if (getAdapterPosition() == RecyclerView.NO_POSITION) {
-            nativeAdViewContainer.setMinimumHeight(0);
-            nativeAdViewContainer.setVisibility(View.GONE);
-            return;
-        }
-        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-        int nativeAdsInterval = (int) config.getLong(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_INTERVAL);
-        if (getAdapterPosition() != 0
-                //maybe we need to check for NO_POSITION
-//                && getAdapterPosition() != RecyclerView.NO_POSITION
-                && config.getBoolean(Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED)
-                //check if we show more that 3 ads per list and prevent it as admob forbids it
-                && getAdapterPosition() <= nativeAdsInterval * Constants.NUM_OF_NATIVE_ADS_PER_SCREEN
-                && config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED)
-                && getAdapterPosition() % (nativeAdsInterval - 1) == 0
-                && !mMyPreferenceManager.isHasAnySubscription()) {
-            Timber.d("show native ads: %s", getAdapterPosition());
-
-            nativeAdViewContainer.setMinimumHeight(DimensionUtils.dpToPx(Constants.NATIVE_ADS_MIN_HEIGHT));
-
-            //check native source and choose correct one
-            int nativeAdsSource = (int) config.getLong(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_SOURCE);
-            switch (nativeAdsSource) {
-                case Constants.NativeAdsSource.ALL:
-                    //show ads from list of sources via random
-                    switch (new Random().nextInt(Constants.NUM_OF_NATIVE_ADS_SOURCES) + 1/*for all one*/) {
-                        case Constants.NativeAdsSource.AD_MOB:
-                            showAdMobNativeAds();
-                            break;
-                        case Constants.NativeAdsSource.APPODEAL:
-                            showAppodealNativeAds();
-                            break;
-                        default:
-                            throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
-                    }
-                    break;
-                case Constants.NativeAdsSource.AD_MOB:
-                    showAdMobNativeAds();
-                    break;
-                case Constants.NativeAdsSource.APPODEAL:
-                    showAppodealNativeAds();
-                    break;
-                default:
-                    throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
-            }
-        } else {
-            nativeAdViewContainer.setMinimumHeight(0);
-            nativeAdViewContainer.setVisibility(View.GONE);
-        }
-    }
-
-    private void showAppodealNativeAds() {
-        //TODO
-        System.out.println("fd");
-    }
-
-    private void showAdMobNativeAds() {
-        nativeAdViewContainer.setVisibility(View.VISIBLE);
-        // Set its video options.
-        nativeExpressAdView.setVideoOptions(new VideoOptions.Builder()
-                .setStartMuted(true)
-                .build());
-
-        nativeExpressAdView.loadAd(AdMobHelper.buildAdRequest(itemView.getContext()));
-    }
+//    private void showNativeAds() {
+//        if (getAdapterPosition() == RecyclerView.NO_POSITION) {
+//            nativeAdViewContainer.setMinimumHeight(0);
+//            nativeAdViewContainer.setVisibility(View.GONE);
+//            return;
+//        }
+//        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+//        int nativeAdsInterval = (int) config.getLong(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_INTERVAL);
+//        if (getAdapterPosition() != 0
+//                //maybe we need to check for NO_POSITION
+////                && getAdapterPosition() != RecyclerView.NO_POSITION
+//                && config.getBoolean(Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED)
+//                //check if we show more that 3 ads per list and prevent it as admob forbids it
+//                && getAdapterPosition() <= nativeAdsInterval * Constants.NUM_OF_NATIVE_ADS_PER_SCREEN
+//                && config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED)
+//                && getAdapterPosition() % (nativeAdsInterval - 1) == 0
+//                && !mMyPreferenceManager.isHasAnySubscription()) {
+//            Timber.d("show native ads: %s", getAdapterPosition());
+//
+//            nativeAdViewContainer.setMinimumHeight(DimensionUtils.dpToPx(Constants.NATIVE_ADS_MIN_HEIGHT));
+//
+//            //check native source and choose correct one
+//            int nativeAdsSource = (int) config.getLong(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_SOURCE);
+//            switch (nativeAdsSource) {
+//                case Constants.NativeAdsSource.ALL:
+//                    //show ads from list of sources via random
+//                    switch (new Random().nextInt(Constants.NUM_OF_NATIVE_ADS_SOURCES) + 1/*for all one*/) {
+//                        case Constants.NativeAdsSource.AD_MOB:
+//                            showAdMobNativeAds();
+//                            break;
+//                        case Constants.NativeAdsSource.APPODEAL:
+//                            showAppodealNativeAds();
+//                            break;
+//                        default:
+//                            throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
+//                    }
+//                    break;
+//                case Constants.NativeAdsSource.AD_MOB:
+//                    showAdMobNativeAds();
+//                    break;
+//                case Constants.NativeAdsSource.APPODEAL:
+//                    showAppodealNativeAds();
+//                    break;
+//                default:
+//                    throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
+//            }
+//        } else {
+//            nativeAdViewContainer.setMinimumHeight(0);
+//            nativeAdViewContainer.setVisibility(View.GONE);
+//        }
+//    }
+//
+//    private void showAppodealNativeAds() {
+//        //TODO
+//        System.out.println("fd");
+//    }
+//
+//    private void showAdMobNativeAds() {
+//        nativeAdViewContainer.setVisibility(View.VISIBLE);
+//        // Set its video options.
+//        nativeExpressAdView.setVideoOptions(new VideoOptions.Builder()
+//                .setStartMuted(true)
+//                .build());
+//
+//        nativeExpressAdView.loadAd(AdMobHelper.buildAdRequest(itemView.getContext()));
+//    }
 }

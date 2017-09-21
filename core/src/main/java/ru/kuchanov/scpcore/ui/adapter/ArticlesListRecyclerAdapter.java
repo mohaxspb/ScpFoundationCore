@@ -1,5 +1,6 @@
 package ru.kuchanov.scpcore.ui.adapter;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.IntDef;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
@@ -82,15 +83,11 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderMin>
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({ArticleListNodeType.ARTICLE, ArticleListNodeType.NATIVE_ADS_AD_MOB, ArticleListNodeType.NATIVE_ADS_APPODEAL})
-    @interface ArticleListNodeType {
+    public @interface ArticleListNodeType {
         int ARTICLE = 0;
         int NATIVE_ADS_AD_MOB = 1;
         int NATIVE_ADS_APPODEAL = 2;
     }
-
-//    private static final int TYPE_ARTICLE = 0;
-//    private static final int TYPE_NATIVE_ADS_AD_MOB = 1;
-//    private static final int TYPE_NATIVE_ADS_APPODEAL = 2;
 
     @Inject
     MyPreferenceManager mMyPreferenceManager;
@@ -223,14 +220,24 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderMin>
 
         createDataWithAdsAndArticles();
 
+        Timber.d("mArticlesAndAds: %s", mArticlesAndAds);
+
         notifyDataSetChanged();
     }
 
+    @SuppressLint("InflateParams")
     private void createDataWithAdsAndArticles() {
+        for (Article article : mSortedWithFilterData) {
+            mArticlesAndAds.add(new ArticlesListModel(ArticleListNodeType.ARTICLE, article));
+        }
         // Loop through the items array and place a new Native Express ad in every ith position in
         // the items List.
         FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         for (int i = 0; i <= mSortedWithFilterData.size(); i += (config.getLong(NATIVE_ADS_LISTS_INTERVAL) - 1)) {
+            //do not add as first row
+            if (i == 0) {
+                continue;
+            }
             View nativeAdView;
             @Constants.NativeAdsSource
             int nativeAdsSource = (int) config.getLong(NATIVE_ADS_LISTS_SOURCE);
@@ -241,21 +248,23 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderMin>
                     switch (new Random().nextInt(Constants.NUM_OF_NATIVE_ADS_SOURCES) + 1) {
                         case Constants.NativeAdsSource.AD_MOB:
                             nativeAdView = LayoutInflater.from(BaseApplication.getAppInstance()).inflate(R.layout.native_ads_admob, null, false);
-                            mArticlesAndAds.add(i, new );
+                            mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView));
                             break;
                         case Constants.NativeAdsSource.APPODEAL:
                             nativeAdView = LayoutInflater.from(BaseApplication.getAppInstance()).inflate(R.layout.native_ads_appodeal, null, false);
+                            mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, nativeAdView));
                             break;
                         default:
                             throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
                     }
-
                     break;
                 case Constants.NativeAdsSource.AD_MOB:
-                    showAdMobNativeAds();
+                    nativeAdView = LayoutInflater.from(BaseApplication.getAppInstance()).inflate(R.layout.native_ads_admob, null, false);
+                    mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView));
                     break;
                 case Constants.NativeAdsSource.APPODEAL:
-                    showAppodealNativeAds();
+                    nativeAdView = LayoutInflater.from(BaseApplication.getAppInstance()).inflate(R.layout.native_ads_appodeal, null, false);
+                    mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, nativeAdView));
                     break;
                 default:
                     throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
@@ -271,8 +280,8 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<HolderMin>
 
     @Override
     public int getItemViewType(int position) {
-        //TODO we must create viewType for article and native ads
-        throw new IllegalStateException("not implemented");
+        //we must create viewType for article and native ads
+        return mArticlesAndAds.get(position).type;
 //        switch (mMyPreferenceManager.getListDesignType()) {
 //            case SettingsBottomSheetDialogFragment.ListItemType.MIN:
 //                return TYPE_MIN;
