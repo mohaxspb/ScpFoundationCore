@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nativeAdViewContainer"
@@ -15,11 +14,9 @@
     tools:visibility="visible"
     >
 
-    <com.google.android.gms.ads.NativeExpressAdView
-        android:id="@+id/nativeAdView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        ads:adSize="FULL_WIDTHx250"
-        ads:adUnitId="@string/ad_unit_id_native_articles_lists"
-        />
+    <!--<FrameLayout-->
+        <!--android:id="@+id/container"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--/>-->
 </android.support.v7.widget.CardView>
