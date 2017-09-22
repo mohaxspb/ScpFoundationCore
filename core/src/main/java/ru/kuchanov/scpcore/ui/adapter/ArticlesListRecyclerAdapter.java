@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.ads.NativeExpressAdView;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.lang.annotation.Retention;
@@ -29,6 +30,7 @@ import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.HolderMax;
 import ru.kuchanov.scpcore.ui.holder.HolderMedium;
 import ru.kuchanov.scpcore.ui.holder.HolderMin;
+import ru.kuchanov.scpcore.ui.holder.NativeAdsArticleListHolder;
 import ru.kuchanov.scpcore.ui.model.ArticlesListModel;
 import timber.log.Timber;
 
@@ -227,13 +229,18 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
             mArticlesAndAds.add(new ArticlesListModel(ArticleListNodeType.ARTICLE, article));
         }
         //do not add native ads items if user has subscription or banners temporary disabled
-        if (mMyPreferenceManager.isHasAnySubscription() || !mMyPreferenceManager.isTimeToShowBannerAds()) {
+        //or banners rnabled or native disabled
+        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        if (mMyPreferenceManager.isHasAnySubscription()
+                || !mMyPreferenceManager.isTimeToShowBannerAds()
+                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED)
+                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED)) {
             return;
         }
 
         // Loop through the items array and place a new Native Express ad in every ith position in
         // the items List.
-        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        int appodealIndex = 0;
         for (int i = 0; i <= mSortedWithFilterData.size(); i += (config.getLong(NATIVE_ADS_LISTS_INTERVAL) - 1)) {
             //do not add as first row
             if (i == 0) {
@@ -252,8 +259,8 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                             mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView));
                             break;
                         case Constants.NativeAdsSource.APPODEAL:
-                            nativeAdView = LayoutInflater.from(BaseApplication.getAppInstance()).inflate(R.layout.native_ads_appodeal, null, false);
-                            mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, nativeAdView));
+                            mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex));
+                            appodealIndex++;
                             break;
                         default:
                             throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
@@ -264,8 +271,8 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                     mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView));
                     break;
                 case Constants.NativeAdsSource.APPODEAL:
-                    nativeAdView = LayoutInflater.from(BaseApplication.getAppInstance()).inflate(R.layout.native_ads_appodeal, null, false);
-                    mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, nativeAdView));
+                    mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex));
+                    appodealIndex++;
                     break;
                 default:
                     throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
@@ -323,16 +330,15 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                         throw new IllegalArgumentException("unexpected ListDesignType: " + listDesignType);
                 }
                 break;
-            case ArticleListNodeType.NATIVE_ADS_AD_MOB:
-                //TODO
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_min, parent, false);
-                viewHolder = new HolderMin(view, mArticleClickListener);
-                break;
             case ArticleListNodeType.NATIVE_ADS_APPODEAL:
-                //TODO
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_min, parent, false);
-                viewHolder = new HolderMin(view, mArticleClickListener);
+            case ArticleListNodeType.NATIVE_ADS_AD_MOB:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_native_container, parent, false);
+                viewHolder = new NativeAdsArticleListHolder(view, mArticleClickListener);
                 break;
+//            case ArticleListNodeType.NATIVE_ADS_APPODEAL:
+//                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_native_container, parent, false);
+//                viewHolder = new NativeAdsArticleListHolder(view, mArticleClickListener);
+//                break;
             default:
                 throw new IllegalArgumentException("unexpected viewType: " + viewType);
         }
@@ -352,10 +358,12 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                 holderArticle.setShouldShowPopupOnFavoriteClick(shouldShowPopupOnFavoriteClick);
                 break;
             case ArticleListNodeType.NATIVE_ADS_AD_MOB:
-                //TODO
+                NativeAdsArticleListHolder nativeAdsHolder = (NativeAdsArticleListHolder) holder;
+                nativeAdsHolder.bind((NativeExpressAdView) mArticlesAndAds.get(position).data);
                 break;
             case ArticleListNodeType.NATIVE_ADS_APPODEAL:
-                //TODO
+                NativeAdsArticleListHolder nativeAdsAppodealHolder = (NativeAdsArticleListHolder) holder;
+                nativeAdsAppodealHolder.bind((Integer) mArticlesAndAds.get(position).data);
                 break;
             default:
                 throw new IllegalArgumentException("unexpected viewType: " + viewType);
