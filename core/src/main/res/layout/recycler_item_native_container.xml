@@ -6,13 +6,14 @@
     android:id="@+id/nativeAdViewContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="@dimen/native_ads_admob_height"
     android:visibility="gone"
     app:cardBackgroundColor="?artListCardBackgroundColor"
     app:cardCornerRadius="@dimen/cardview_default_radius"
     app:cardElevation="@dimen/cardview_default_radius"
     tools:visibility="visible"
     >
+
+    <!--android:minHeight="@dimen/native_ads_admob_height"-->
 
     <FrameLayout
         android:id="@+id/container"

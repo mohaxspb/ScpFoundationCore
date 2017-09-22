@@ -45,12 +45,13 @@ public class ArticlesListWithSearchRecyclerAdapter extends ArticlesListRecyclerA
         sortArticles(mSearchQuery);
     }
 
-    @Override
-    public void onBindViewHolder(HolderMin holder, int position) {
-        holder.bind(mSortedData.get(position));
-        holder.setShouldShowPreview(shouldShowPreview);
-        holder.setShouldShowPopupOnFavoriteClick(shouldShowPopupOnFavoriteClick);
-    }
+    //TODO refactor this class
+//    @Override
+//    public void onBindViewHolder(HolderMin holder, int position) {
+//        holder.bind(mSortedData.get(position));
+//        holder.setShouldShowPreview(shouldShowPreview);
+//        holder.setShouldShowPopupOnFavoriteClick(shouldShowPopupOnFavoriteClick);
+//    }
 
     @Override
     public int getItemCount() {

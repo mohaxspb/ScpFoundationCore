@@ -13,6 +13,8 @@ import com.appodeal.ads.native_ad.views.NativeAdViewAppWall;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.google.android.gms.ads.VideoOptions;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -22,6 +24,7 @@ import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListRecyclerAdapter;
+import timber.log.Timber;
 
 /**
  * Created by mohax on 22.09.2017.
@@ -63,23 +66,37 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
                 .setStartMuted(true)
                 .build());
         container.addView(nativeExpressAdView, 0);
+
+        appodealNativeMediaView.setVisibility(View.GONE);
+        appodealNativeAdViewAppWall.setVisibility(View.GONE);
     }
 
     public void bind(int appodealAdIndex) {
+        Timber.d("appodealAdIndex: %s", appodealAdIndex);
         View admobNativeAd = container.getChildAt(0);
-        if (admobNativeAd instanceof NativeExpressAdView) {
-            container.removeView(admobNativeAd);
-        }
-        if (admobNativeAd.getParent() != null) {
-            ((ViewGroup) admobNativeAd.getParent()).removeView(admobNativeAd);
+        if (admobNativeAd != null) {
+            if (admobNativeAd instanceof NativeExpressAdView) {
+                container.removeView(admobNativeAd);
+                if (admobNativeAd.getParent() != null) {
+                    ((ViewGroup) admobNativeAd.getParent()).removeView(admobNativeAd);
+                }
+            }
         }
 
-        NativeAd nativeAd = Appodeal.getNativeAds(Constants.NUM_OF_NATIVE_ADS_PER_SCREEN).get(appodealAdIndex);
+        List<NativeAd> nativeAdsList = Appodeal.getNativeAds(Constants.NUM_OF_NATIVE_ADS_PER_SCREEN);
+        Timber.d("nativeAdsList.size(): %s", nativeAdsList.size());
+        if (nativeAdsList.size() <= appodealAdIndex) {
+            Timber.d("No appodeal ads loaded yet");
+            return;
+        }
+        NativeAd nativeAd = nativeAdsList.get(appodealAdIndex);
         if (nativeAd.containsVideo()) {
             appodealNativeMediaView.setVisibility(View.VISIBLE);
+            appodealNativeAdViewAppWall.setVisibility(View.GONE);
             nativeAd.setNativeMediaView(appodealNativeMediaView);
         } else {
             appodealNativeMediaView.setVisibility(View.GONE);
+            appodealNativeAdViewAppWall.setVisibility(View.VISIBLE);
             appodealNativeAdViewAppWall.setNativeAd(nativeAd);
         }
     }

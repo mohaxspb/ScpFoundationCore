@@ -16,7 +16,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -26,6 +25,7 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.AdMobHelper;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.HolderMax;
 import ru.kuchanov.scpcore.ui.holder.HolderMedium;
@@ -218,13 +218,17 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
 
         //add native ads to result data list
         createDataWithAdsAndArticles();
-        Timber.d("mArticlesAndAds: %s", mArticlesAndAds);
+//        Timber.d("mArticlesAndAds: %s", mArticlesAndAds);
+//        for (ArticlesListModel model : mArticlesAndAds) {
+//            Timber.d("type: %s", model.type);
+//        }
 
         notifyDataSetChanged();
     }
 
     @SuppressLint("InflateParams")
     private void createDataWithAdsAndArticles() {
+        mArticlesAndAds.clear();
         for (Article article : mSortedWithFilterData) {
             mArticlesAndAds.add(new ArticlesListModel(ArticleListNodeType.ARTICLE, article));
         }
@@ -253,21 +257,23 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
             switch (nativeAdsSource) {
                 case Constants.NativeAdsSource.ALL:
                     //show ads from list of sources via random
-                    switch (new Random().nextInt(Constants.NUM_OF_NATIVE_ADS_SOURCES) + 1) {
-                        case Constants.NativeAdsSource.AD_MOB:
-                            nativeAdView = LayoutInflater.from(BaseApplication.getAppInstance()).inflate(R.layout.native_ads_admob, null, false);
-                            mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView));
-                            break;
-                        case Constants.NativeAdsSource.APPODEAL:
-                            mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex));
-                            appodealIndex++;
-                            break;
-                        default:
-                            throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
-                    }
+//                    switch (new Random().nextInt(Constants.NUM_OF_NATIVE_ADS_SOURCES) + 1) {
+//                        case Constants.NativeAdsSource.AD_MOB:
+                    nativeAdView = LayoutInflater.from(BaseApplication.getAppInstance()).inflate(R.layout.native_ads_admob, null, false);
+                    ((NativeExpressAdView) nativeAdView).loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
+                    mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView));
                     break;
+//                        case Constants.NativeAdsSource.APPODEAL:
+//                            mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex));
+//                            appodealIndex++;
+//                            break;
+//                        default:
+//                            throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
+//                    }
+//                    break;
                 case Constants.NativeAdsSource.AD_MOB:
                     nativeAdView = LayoutInflater.from(BaseApplication.getAppInstance()).inflate(R.layout.native_ads_admob, null, false);
+                    ((NativeExpressAdView) nativeAdView).loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
                     mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView));
                     break;
                 case Constants.NativeAdsSource.APPODEAL:
