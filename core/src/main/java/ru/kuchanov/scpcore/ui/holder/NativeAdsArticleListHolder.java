@@ -10,6 +10,7 @@ import com.appodeal.ads.Appodeal;
 import com.appodeal.ads.NativeAd;
 import com.appodeal.ads.NativeMediaView;
 import com.appodeal.ads.native_ad.views.NativeAdViewAppWall;
+import com.appodeal.ads.native_ad.views.NativeAdViewContentStream;
 import com.google.android.gms.ads.NativeExpressAdView;
 
 import java.util.List;
@@ -42,7 +43,8 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     @BindView(R2.id.container)
     FrameLayout container;
     @BindView(R2.id.appodealNativeAdViewAppWall)
-    NativeAdViewAppWall appodealNativeAdViewAppWall;
+    NativeAdViewContentStream appodealNativeAdViewAppWall;
+    //    NativeAdViewAppWall appodealNativeAdViewAppWall;
     @BindView(R2.id.appodealNativeMediaView)
     NativeMediaView appodealNativeMediaView;
 
@@ -88,7 +90,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         List<NativeAd> nativeAdsList = Appodeal.getNativeAds(Constants.NUM_OF_NATIVE_ADS_PER_SCREEN);
         Timber.d("nativeAdsList.size(): %s", nativeAdsList.size());
         if (nativeAdsList.size() <= appodealAdIndex) {
-            Timber.d("No appodeal ads loaded yet");
+            Timber.d("No appodeal ads loaded yet for index: %s", appodealAdIndex);
             return;
         }
         NativeAd nativeAd = nativeAdsList.get(appodealAdIndex);

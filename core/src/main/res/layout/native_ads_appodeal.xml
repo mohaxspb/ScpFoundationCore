@@ -11,7 +11,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     >
 
-    <com.appodeal.ads.native_ad.views.NativeAdViewAppWall
+    <!--<com.appodeal.ads.native_ad.views.NativeAdViewAppWall-->
+        <!--android:id="@+id/appodealNativeAdViewAppWall"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--/>-->
+    <com.appodeal.ads.native_ad.views.NativeAdViewContentStream
         android:id="@+id/appodealNativeAdViewAppWall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

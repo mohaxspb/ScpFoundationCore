@@ -270,7 +270,7 @@
     <!--native ads-->
     <entry>
         <key>native_ads_lists_interval</key>
-        <value>10</value>
+        <value>15</value>
     </entry>
     <entry>
         <key>native_ads_lists_enabled</key>

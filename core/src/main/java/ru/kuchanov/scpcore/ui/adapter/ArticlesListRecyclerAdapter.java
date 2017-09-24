@@ -104,8 +104,8 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
     private SortType mSortType = SortType.NONE;
 
     private ArticleClickListener mArticleClickListener;
-    boolean shouldShowPopupOnFavoriteClick;
-    boolean shouldShowPreview;
+    private boolean shouldShowPopupOnFavoriteClick;
+    private boolean shouldShowPreview;
 
     public ArticlesListRecyclerAdapter() {
         BaseApplication.getAppComponent().inject(this);
@@ -118,6 +118,11 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
     public void setData(List<Article> data) {
         mData = data;
         sortByType(mSortType);
+
+//        Timber.d("mAdsModelsList: %s", mAdsModelsList);
+        for (ArticlesListModel model : mAdsModelsList) {
+            Timber.d("type: %s/%s", model.type, model.data);
+        }
     }
 
     public void sortByType(SortType sortType) {
@@ -257,70 +262,11 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
             //do not add as first row
             if (i == 0) {
                 continue;
-            } else if (i / interval >= Constants.NUM_OF_NATIVE_ADS_PER_SCREEN) {
+            } else if (i / interval > Constants.NUM_OF_NATIVE_ADS_PER_SCREEN) {
                 break;
             }
 
-            mArticlesAndAds.add(i, mAdsModelsList.get(i / interval));
-//
-//            @Constants.NativeAdsSource
-//            int nativeAdsSource = (int) config.getLong(NATIVE_ADS_LISTS_SOURCE);
-//
-//            switch (nativeAdsSource) {
-//                case Constants.NativeAdsSource.ALL: {
-//                    //show ads from list of sources via random
-////                    switch (new Random().nextInt(Constants.NUM_OF_NATIVE_ADS_SOURCES) + 1) {
-////                        case Constants.NativeAdsSource.AD_MOB:
-//                    ArticlesListModel model;
-//                    if (adsModelsList.size() <= (i / interval)) {
-//                        NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
-//                                .inflate(R.layout.native_ads_admob, null, false);
-//                        nativeAdView.setVideoOptions(new VideoOptions.Builder()
-//                                .setStartMuted(true)
-//                                .build());
-//                        nativeAdView.setAdListener(new MyAdmobNativeAdListener());
-//                        nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
-//                        model = new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView);
-//                        adsModelsList.add(model);
-//                    } else {
-//                        model = adsModelsList.get(i / interval);
-//                    }
-//                    mArticlesAndAds.add(i, model);
-//                    break;
-////                        case Constants.NativeAdsSource.APPODEAL:
-////                            mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex));
-////                            appodealIndex++;
-////                            break;
-////                        default:
-////                            throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
-////                    }
-////                    break;
-//                }
-//                case Constants.NativeAdsSource.AD_MOB: {
-//                    ArticlesListModel model;
-//                    if (adsModelsList.size() <= (i / interval)) {
-//                        NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
-//                                .inflate(R.layout.native_ads_admob, null, false);
-//                        nativeAdView.setAdListener(new MyAdmobNativeAdListener());
-//                        nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
-//                        nativeAdView.setVideoOptions(new VideoOptions.Builder()
-//                                .setStartMuted(true)
-//                                .build());
-//                        model = new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView);
-//                        adsModelsList.add(model);
-//                    } else {
-//                        model = adsModelsList.get(i / interval);
-//                    }
-//                    mArticlesAndAds.add(i, model);
-//                    break;
-//                }
-//                case Constants.NativeAdsSource.APPODEAL:
-//                    mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex));
-//                    appodealIndex++;
-//                    break;
-//                default:
-//                    throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
-//            }
+            mArticlesAndAds.add(i, mAdsModelsList.get((i / interval) - 1));
         }
     }
 
@@ -340,7 +286,7 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                     switch (new Random().nextInt(Constants.NUM_OF_NATIVE_ADS_SOURCES) + 1) {
                         case Constants.NativeAdsSource.AD_MOB:
                             ArticlesListModel model;
-//                            if (adsModelsList.size() <= (i)) {
+                            @SuppressLint("InflateParams")
                             NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
                                     .inflate(R.layout.native_ads_admob, null, false);
                             nativeAdView.setVideoOptions(new VideoOptions.Builder()
@@ -350,10 +296,6 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                             nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
                             model = new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView);
                             adsModelsList.add(model);
-//                            } else {
-//                                model = adsModelsList.get(i);
-//                            }
-//                            adsModelsList.add(model);
                             break;
                         case Constants.NativeAdsSource.APPODEAL:
                             adsModelsList.add(new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex));
@@ -366,7 +308,7 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                 }
                 case Constants.NativeAdsSource.AD_MOB: {
                     ArticlesListModel model;
-//                    if (adsModelsList.size() <= (i)) {
+                    @SuppressLint("InflateParams")
                     NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
                             .inflate(R.layout.native_ads_admob, null, false);
                     nativeAdView.setAdListener(new MyAdmobNativeAdListener());
@@ -376,10 +318,6 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                             .build());
                     model = new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView);
                     adsModelsList.add(model);
-//                    } else {
-//                        model = adsModelsList.get(i);
-//                    }
-//                    adsModelsList.add(model);
                     break;
                 }
                 case Constants.NativeAdsSource.APPODEAL:
@@ -397,7 +335,6 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
     @Override
     public long getItemId(int position) {
         //create correct ID, as we now have ads in list
-//        return mSortedWithFilterData.get(position).url.hashCode();
         return mArticlesAndAds.get(position).data.hashCode();
     }
 
@@ -406,15 +343,6 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
     public int getItemViewType(int position) {
         //we must create viewType for article and native ads
         return mArticlesAndAds.get(position).type;
-//        switch (mMyPreferenceManager.getListDesignType()) {
-//            case SettingsBottomSheetDialogFragment.ListItemType.MIN:
-//                return TYPE_MIN;
-//            default:
-//            case SettingsBottomSheetDialogFragment.ListItemType.MIDDLE:
-//                return TYPE_MIDDLE;
-//            case SettingsBottomSheetDialogFragment.ListItemType.MAX:
-//                return TYPE_MAX;
-//        }
     }
 
     @Override
