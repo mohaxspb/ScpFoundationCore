@@ -119,10 +119,13 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
         mData = data;
         sortByType(mSortType);
 
+        //add native ads to result data list
+        createDataWithAdsAndArticles();
+
 //        Timber.d("mAdsModelsList: %s", mAdsModelsList);
-        for (ArticlesListModel model : mAdsModelsList) {
-            Timber.d("type: %s/%s", model.type, model.data);
-        }
+//        for (ArticlesListModel model : mAdsModelsList) {
+//            Timber.d("type: %s/%s", model.type, model.data);
+//        }
     }
 
     public void sortByType(SortType sortType) {
@@ -225,20 +228,19 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                 throw new IllegalArgumentException("unexpected type: " + mSortType);
         }
 
-        //add native ads to result data list
-        createDataWithAdsAndArticles();
-//        Timber.d("mArticlesAndAds: %s", mArticlesAndAds);
-//        for (ArticlesListModel model : mArticlesAndAds) {
-//            Timber.d("type: %s", model.type);
-//        }
-
         notifyDataSetChanged();
     }
+
+
+
+//    protected void sortArticles(String searchQuery) {
+//        //empty implimentation here
+//    }
 
     @SuppressLint("InflateParams")
     private void createDataWithAdsAndArticles() {
         mArticlesAndAds.clear();
-        for (Article article : mSortedWithFilterData) {
+        for (Article article : getDisplayedData()) {
             mArticlesAndAds.add(new ArticlesListModel(ArticleListNodeType.ARTICLE, article));
         }
         //do not add native ads items if user has subscription or banners temporary disabled
@@ -258,7 +260,7 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
         // the items List.
 //        int appodealIndex = 0;
         int interval = (int) (config.getLong(NATIVE_ADS_LISTS_INTERVAL) - 1);
-        for (int i = 0; i <= mSortedWithFilterData.size(); i += interval) {
+        for (int i = 0; i <= getDisplayedData().size(); i += interval) {
             //do not add as first row
             if (i == 0) {
                 continue;
@@ -292,7 +294,13 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                             nativeAdView.setVideoOptions(new VideoOptions.Builder()
                                     .setStartMuted(true)
                                     .build());
-                            nativeAdView.setAdListener(new MyAdmobNativeAdListener());
+                            nativeAdView.setAdListener(new MyAdmobNativeAdListener() {
+                                @Override
+                                public void onAdFailedToLoad(int i) {
+                                    super.onAdFailedToLoad(i);
+                                    nativeAdView.setVisibility(View.GONE);
+                                }
+                            });
                             nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
                             model = new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView);
                             adsModelsList.add(model);

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.kuchanov.scpcore.db.model.Article;
-import ru.kuchanov.scpcore.ui.holder.HolderMin;
 import timber.log.Timber;
 
 /**
@@ -14,11 +13,12 @@ import timber.log.Timber;
  */
 public class ArticlesListWithSearchRecyclerAdapter extends ArticlesListRecyclerAdapter {
 
-    private List<Article> mSortedData = new ArrayList<>();
+    private List<Article> mFilteredWithSearchQueryData = new ArrayList<>();
     private String mSearchQuery = "";
 
+    @Override
     public List<Article> getDisplayedData() {
-        return mSortedData;
+        return mFilteredWithSearchQueryData;
     }
 
     public void sortArticles(String searchQuery) {
@@ -26,35 +26,35 @@ public class ArticlesListWithSearchRecyclerAdapter extends ArticlesListRecyclerA
         if (mData == null) {
             return;
         }
-        mSortedData.clear();
+        mFilteredWithSearchQueryData.clear();
         for (Article article : mSortedWithFilterData) {
             if (article.title == null) {
                 Timber.wtf("article.title is NULL for some reason...");
                 continue;
             }
             if (article.title.toLowerCase().contains(searchQuery.toLowerCase())) {
-                mSortedData.add(article);
+                mFilteredWithSearchQueryData.add(article);
             }
         }
-        notifyDataSetChanged();
+//        notifyDataSetChanged();
     }
 
-    @Override
-    public void sortByType(SortType sortType) {
-        super.sortByType(sortType);
-        sortArticles(mSearchQuery);
-    }
+//    @Override
+//    public void sortByType(SortType sortType) {
+//        super.sortByType(sortType);
+//        sortArticles(mSearchQuery);
+//    }
 
     //TODO refactor this class
 //    @Override
 //    public void onBindViewHolder(HolderMin holder, int position) {
-//        holder.bind(mSortedData.get(position));
+//        holder.bind(mFilteredWithSearchQueryData.get(position));
 //        holder.setShouldShowPreview(shouldShowPreview);
 //        holder.setShouldShowPopupOnFavoriteClick(shouldShowPopupOnFavoriteClick);
 //    }
 
-    @Override
-    public int getItemCount() {
-        return mSortedData.size();
-    }
+//    @Override
+//    public int getItemCount() {
+//        return mFilteredWithSearchQueryData.size();
+//    }
 }
