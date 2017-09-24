@@ -46,7 +46,7 @@ public class StorageUtils {
     public static boolean fileExistsInAssets(String path) {
         try {
             List<String> assetsFiles = Arrays.asList(BaseApplication.getAppInstance().getResources().getAssets().list(""));
-            Timber.d("assetsFiles: %s", assetsFiles);
+//            Timber.d("assetsFiles: %s", assetsFiles);
             return assetsFiles.contains(path);
         } catch (IOException e) {
             Timber.e(e);

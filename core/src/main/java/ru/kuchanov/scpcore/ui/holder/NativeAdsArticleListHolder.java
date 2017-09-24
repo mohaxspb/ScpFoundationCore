@@ -62,9 +62,6 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         if (nativeExpressAdView.getParent() != null) {
             ((ViewGroup) nativeExpressAdView.getParent()).removeView(nativeExpressAdView);
         }
-        nativeExpressAdView.setVideoOptions(new VideoOptions.Builder()
-                .setStartMuted(true)
-                .build());
         container.addView(nativeExpressAdView, 0);
 
         appodealNativeMediaView.setVisibility(View.GONE);

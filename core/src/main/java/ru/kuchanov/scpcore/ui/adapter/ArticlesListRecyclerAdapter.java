@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.ads.NativeExpressAdView;
+import com.google.android.gms.ads.VideoOptions;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.lang.annotation.Retention;
@@ -26,6 +27,7 @@ import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.AdMobHelper;
+import ru.kuchanov.scpcore.monetization.util.MyAdmobNativeAdListener;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.HolderMax;
 import ru.kuchanov.scpcore.ui.holder.HolderMedium;
@@ -95,6 +97,7 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
 
     protected List<Article> mSortedWithFilterData = new ArrayList<>();
 
+    private List<ArticlesListModel> adsModelsList = new ArrayList<>();
     protected List<ArticlesListModel> mArticlesAndAds = new ArrayList<>();
 
     private SortType mSortType = SortType.NONE;
@@ -245,24 +248,40 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
         // Loop through the items array and place a new Native Express ad in every ith position in
         // the items List.
         int appodealIndex = 0;
-        for (int i = 0; i <= mSortedWithFilterData.size(); i += (config.getLong(NATIVE_ADS_LISTS_INTERVAL) - 1)) {
+        int interval = (int) (config.getLong(NATIVE_ADS_LISTS_INTERVAL) - 1);
+        for (int i = 0; i <= mSortedWithFilterData.size(); i += interval) {
             //do not add as first row
             if (i == 0) {
                 continue;
+            } else if (i / interval > Constants.NUM_OF_NATIVE_ADS_PER_SCREEN) {
+                break;
             }
-            View nativeAdView;
+
             @Constants.NativeAdsSource
             int nativeAdsSource = (int) config.getLong(NATIVE_ADS_LISTS_SOURCE);
 
             switch (nativeAdsSource) {
-                case Constants.NativeAdsSource.ALL:
+                case Constants.NativeAdsSource.ALL: {
                     //show ads from list of sources via random
 //                    switch (new Random().nextInt(Constants.NUM_OF_NATIVE_ADS_SOURCES) + 1) {
 //                        case Constants.NativeAdsSource.AD_MOB:
-                    nativeAdView = LayoutInflater.from(BaseApplication.getAppInstance()).inflate(R.layout.native_ads_admob, null, false);
-                    ((NativeExpressAdView) nativeAdView).loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
-                    mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView));
+                    ArticlesListModel model;
+                    if (adsModelsList.size() <= (i / interval)) {
+                        NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
+                                .inflate(R.layout.native_ads_admob, null, false);
+                        nativeAdView.setVideoOptions(new VideoOptions.Builder()
+                                .setStartMuted(true)
+                                .build());
+                        nativeAdView.setAdListener(new MyAdmobNativeAdListener());
+                        nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
+                        model = new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView);
+                        adsModelsList.add(model);
+                    } else {
+                        model = adsModelsList.get(i / interval);
+                    }
+                    mArticlesAndAds.add(i, model);
                     break;
+                    //FIXME
 //                        case Constants.NativeAdsSource.APPODEAL:
 //                            mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex));
 //                            appodealIndex++;
@@ -271,11 +290,25 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
 //                            throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
 //                    }
 //                    break;
-                case Constants.NativeAdsSource.AD_MOB:
-                    nativeAdView = LayoutInflater.from(BaseApplication.getAppInstance()).inflate(R.layout.native_ads_admob, null, false);
-                    ((NativeExpressAdView) nativeAdView).loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
-                    mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView));
+                }
+                case Constants.NativeAdsSource.AD_MOB: {
+                    ArticlesListModel model;
+                    if (adsModelsList.size() <= (i / interval)) {
+                        NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
+                                .inflate(R.layout.native_ads_admob, null, false);
+                        nativeAdView.setAdListener(new MyAdmobNativeAdListener());
+                        nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
+                        nativeAdView.setVideoOptions(new VideoOptions.Builder()
+                                .setStartMuted(true)
+                                .build());
+                        model = new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView);
+                        adsModelsList.add(model);
+                    } else {
+                        model = adsModelsList.get(i / interval);
+                    }
+                    mArticlesAndAds.add(i, model);
                     break;
+                }
                 case Constants.NativeAdsSource.APPODEAL:
                     mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex));
                     appodealIndex++;
