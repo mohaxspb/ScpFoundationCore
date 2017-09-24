@@ -86,7 +86,7 @@ import ru.kuchanov.scpcore.monetization.util.AdMobHelper;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.monetization.util.MyAdListener;
 import ru.kuchanov.scpcore.monetization.util.MyAppodealInterstitialCallbacks;
-import ru.kuchanov.scpcore.monetization.util.MyNativeCallbacks;
+import ru.kuchanov.scpcore.monetization.util.MyAppodealNativeCallbacks;
 import ru.kuchanov.scpcore.monetization.util.MyRewardedVideoCallbacks;
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp;
 import ru.kuchanov.scpcore.mvp.base.MonetizationActions;
@@ -403,7 +403,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
         FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         if(config.getBoolean(NATIVE_ADS_LISTS_ENABLED)) {
-            Appodeal.setNativeCallbacks(new MyNativeCallbacks());
+            Appodeal.setNativeCallbacks(new MyAppodealNativeCallbacks());
             Appodeal.cache(this, Appodeal.NATIVE, Constants.NUM_OF_NATIVE_ADS_PER_SCREEN);
         }
 

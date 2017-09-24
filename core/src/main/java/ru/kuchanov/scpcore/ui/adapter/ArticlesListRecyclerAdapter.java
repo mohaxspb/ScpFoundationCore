@@ -17,6 +17,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -97,7 +98,7 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
 
     protected List<Article> mSortedWithFilterData = new ArrayList<>();
 
-    private List<ArticlesListModel> adsModelsList = new ArrayList<>();
+    private List<ArticlesListModel> mAdsModelsList = new ArrayList<>();
     protected List<ArticlesListModel> mArticlesAndAds = new ArrayList<>();
 
     private SortType mSortType = SortType.NONE;
@@ -244,79 +245,153 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                 || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED)) {
             return;
         }
+        if (mAdsModelsList.isEmpty()) {
+            mAdsModelsList.addAll(createAdsModelsList());
+        }
 
         // Loop through the items array and place a new Native Express ad in every ith position in
         // the items List.
-        int appodealIndex = 0;
+//        int appodealIndex = 0;
         int interval = (int) (config.getLong(NATIVE_ADS_LISTS_INTERVAL) - 1);
         for (int i = 0; i <= mSortedWithFilterData.size(); i += interval) {
             //do not add as first row
             if (i == 0) {
                 continue;
-            } else if (i / interval > Constants.NUM_OF_NATIVE_ADS_PER_SCREEN) {
+            } else if (i / interval >= Constants.NUM_OF_NATIVE_ADS_PER_SCREEN) {
                 break;
             }
 
-            @Constants.NativeAdsSource
-            int nativeAdsSource = (int) config.getLong(NATIVE_ADS_LISTS_SOURCE);
+            mArticlesAndAds.add(i, mAdsModelsList.get(i / interval));
+//
+//            @Constants.NativeAdsSource
+//            int nativeAdsSource = (int) config.getLong(NATIVE_ADS_LISTS_SOURCE);
+//
+//            switch (nativeAdsSource) {
+//                case Constants.NativeAdsSource.ALL: {
+//                    //show ads from list of sources via random
+////                    switch (new Random().nextInt(Constants.NUM_OF_NATIVE_ADS_SOURCES) + 1) {
+////                        case Constants.NativeAdsSource.AD_MOB:
+//                    ArticlesListModel model;
+//                    if (adsModelsList.size() <= (i / interval)) {
+//                        NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
+//                                .inflate(R.layout.native_ads_admob, null, false);
+//                        nativeAdView.setVideoOptions(new VideoOptions.Builder()
+//                                .setStartMuted(true)
+//                                .build());
+//                        nativeAdView.setAdListener(new MyAdmobNativeAdListener());
+//                        nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
+//                        model = new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView);
+//                        adsModelsList.add(model);
+//                    } else {
+//                        model = adsModelsList.get(i / interval);
+//                    }
+//                    mArticlesAndAds.add(i, model);
+//                    break;
+////                        case Constants.NativeAdsSource.APPODEAL:
+////                            mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex));
+////                            appodealIndex++;
+////                            break;
+////                        default:
+////                            throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
+////                    }
+////                    break;
+//                }
+//                case Constants.NativeAdsSource.AD_MOB: {
+//                    ArticlesListModel model;
+//                    if (adsModelsList.size() <= (i / interval)) {
+//                        NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
+//                                .inflate(R.layout.native_ads_admob, null, false);
+//                        nativeAdView.setAdListener(new MyAdmobNativeAdListener());
+//                        nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
+//                        nativeAdView.setVideoOptions(new VideoOptions.Builder()
+//                                .setStartMuted(true)
+//                                .build());
+//                        model = new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView);
+//                        adsModelsList.add(model);
+//                    } else {
+//                        model = adsModelsList.get(i / interval);
+//                    }
+//                    mArticlesAndAds.add(i, model);
+//                    break;
+//                }
+//                case Constants.NativeAdsSource.APPODEAL:
+//                    mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex));
+//                    appodealIndex++;
+//                    break;
+//                default:
+//                    throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
+//            }
+        }
+    }
 
+    private List<ArticlesListModel> createAdsModelsList() {
+        List<ArticlesListModel> adsModelsList = new ArrayList<>();
+
+        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        @Constants.NativeAdsSource
+        int nativeAdsSource = (int) config.getLong(NATIVE_ADS_LISTS_SOURCE);
+        //test
+//        nativeAdsSource = Constants.NativeAdsSource.APPODEAL;
+        int appodealIndex = 0;
+        for (int i = 0; i < Constants.NUM_OF_NATIVE_ADS_PER_SCREEN; i++) {
             switch (nativeAdsSource) {
                 case Constants.NativeAdsSource.ALL: {
                     //show ads from list of sources via random
-//                    switch (new Random().nextInt(Constants.NUM_OF_NATIVE_ADS_SOURCES) + 1) {
-//                        case Constants.NativeAdsSource.AD_MOB:
-                    ArticlesListModel model;
-                    if (adsModelsList.size() <= (i / interval)) {
-                        NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
-                                .inflate(R.layout.native_ads_admob, null, false);
-                        nativeAdView.setVideoOptions(new VideoOptions.Builder()
-                                .setStartMuted(true)
-                                .build());
-                        nativeAdView.setAdListener(new MyAdmobNativeAdListener());
-                        nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
-                        model = new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView);
-                        adsModelsList.add(model);
-                    } else {
-                        model = adsModelsList.get(i / interval);
+                    switch (new Random().nextInt(Constants.NUM_OF_NATIVE_ADS_SOURCES) + 1) {
+                        case Constants.NativeAdsSource.AD_MOB:
+                            ArticlesListModel model;
+//                            if (adsModelsList.size() <= (i)) {
+                            NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
+                                    .inflate(R.layout.native_ads_admob, null, false);
+                            nativeAdView.setVideoOptions(new VideoOptions.Builder()
+                                    .setStartMuted(true)
+                                    .build());
+                            nativeAdView.setAdListener(new MyAdmobNativeAdListener());
+                            nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
+                            model = new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView);
+                            adsModelsList.add(model);
+//                            } else {
+//                                model = adsModelsList.get(i);
+//                            }
+//                            adsModelsList.add(model);
+                            break;
+                        case Constants.NativeAdsSource.APPODEAL:
+                            adsModelsList.add(new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex));
+                            appodealIndex++;
+                            break;
+                        default:
+                            throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
                     }
-                    mArticlesAndAds.add(i, model);
                     break;
-                    //FIXME
-//                        case Constants.NativeAdsSource.APPODEAL:
-//                            mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex));
-//                            appodealIndex++;
-//                            break;
-//                        default:
-//                            throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
-//                    }
-//                    break;
                 }
                 case Constants.NativeAdsSource.AD_MOB: {
                     ArticlesListModel model;
-                    if (adsModelsList.size() <= (i / interval)) {
-                        NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
-                                .inflate(R.layout.native_ads_admob, null, false);
-                        nativeAdView.setAdListener(new MyAdmobNativeAdListener());
-                        nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
-                        nativeAdView.setVideoOptions(new VideoOptions.Builder()
-                                .setStartMuted(true)
-                                .build());
-                        model = new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView);
-                        adsModelsList.add(model);
-                    } else {
-                        model = adsModelsList.get(i / interval);
-                    }
-                    mArticlesAndAds.add(i, model);
+//                    if (adsModelsList.size() <= (i)) {
+                    NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
+                            .inflate(R.layout.native_ads_admob, null, false);
+                    nativeAdView.setAdListener(new MyAdmobNativeAdListener());
+                    nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
+                    nativeAdView.setVideoOptions(new VideoOptions.Builder()
+                            .setStartMuted(true)
+                            .build());
+                    model = new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView);
+                    adsModelsList.add(model);
+//                    } else {
+//                        model = adsModelsList.get(i);
+//                    }
+//                    adsModelsList.add(model);
                     break;
                 }
                 case Constants.NativeAdsSource.APPODEAL:
-                    mArticlesAndAds.add(i, new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex));
+                    adsModelsList.add(new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex));
                     appodealIndex++;
                     break;
                 default:
                     throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
             }
         }
+
+        return adsModelsList;
     }
 
     @Override

@@ -10,7 +10,7 @@ import timber.log.Timber;
  * <p>
  * for ScpCore
  */
-public class MyNativeCallbacks implements NativeCallbacks {
+public class MyAppodealNativeCallbacks implements NativeCallbacks {
     @Override
     public void onNativeLoaded() {
         Timber.d("onNativeLoaded");
