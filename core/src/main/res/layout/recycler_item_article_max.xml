@@ -7,9 +7,9 @@
     android:layout_height="wrap_content"
     app:cardBackgroundColor="?artListCardBackgroundColor"
     app:cardCornerRadius="3dp"
-    tools:layout_gravity="center"
     app:cardElevation="3dp"
     app:cardUseCompatPadding="true"
+    tools:layout_gravity="center"
     >
 
     <LinearLayout
@@ -23,7 +23,8 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            >
 
             <ImageView
                 android:id="@+id/image"
@@ -76,9 +77,9 @@
                 android:layout_marginBottom="@dimen/defaultMarginTiny"
                 android:layout_marginRight="@dimen/defaultMarginSmall"
                 android:layout_marginTop="@dimen/defaultMarginTiny"
-                android:gravity="center_vertical"
-                android:drawableRight="?iconArrowDown"
                 android:background="?selectableItemBackground"
+                android:drawableRight="?iconArrowDown"
+                android:gravity="center_vertical"
                 android:padding="@dimen/defaultMarginSmall"
                 android:text="@string/tags"
                 android:textColor="?newArticlesTextColor"
