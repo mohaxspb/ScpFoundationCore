@@ -74,9 +74,9 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
         super.initViews();
         Timber.d("initViews");
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setDrawingCacheEnabled(true);
-        mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-        mRecyclerView.setItemViewCacheSize(40);
+//        mRecyclerView.setDrawingCacheEnabled(true);
+//        mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+//        mRecyclerView.setItemViewCacheSize(40);
 
         initAdapter();
 
@@ -130,8 +130,9 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
                         Timber.d("sortBy: %s", text);
                         mSortType = sortTypes.get(which);
                         getAdapter().sortByType(mSortType);
+                        getAdapter().notifyDataSetChanged();
                         dialog.dismiss();
-                        getActivity().supportInvalidateOptionsMenu();
+                        getActivity().invalidateOptionsMenu();
                         return true;
                     })
                     .positiveText(R.string.close)
@@ -223,6 +224,7 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
         getAdapter().setHasStableIds(true);
         getAdapter().setShouldShowPopupOnFavoriteClick(isShouldShowPopupOnFavoriteClick());
         getAdapter().sortByType(mSortType);
+        getAdapter().notifyDataSetChanged();
     }
 
     protected boolean isShouldShowPopupOnFavoriteClick() {

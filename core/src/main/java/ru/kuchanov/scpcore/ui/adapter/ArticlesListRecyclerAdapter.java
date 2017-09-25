@@ -99,9 +99,9 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
     protected List<Article> mSortedWithFilterData = new ArrayList<>();
 
     private List<ArticlesListModel> mAdsModelsList = new ArrayList<>();
-    protected List<ArticlesListModel> mArticlesAndAds = new ArrayList<>();
+    private List<ArticlesListModel> mArticlesAndAds = new ArrayList<>();
 
-    private SortType mSortType = SortType.NONE;
+    protected SortType mSortType = SortType.NONE;
 
     private ArticleClickListener mArticleClickListener;
     private boolean shouldShowPopupOnFavoriteClick;
@@ -121,6 +121,8 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
 
         //add native ads to result data list
         createDataWithAdsAndArticles();
+
+        notifyDataSetChanged();
 
 //        Timber.d("mAdsModelsList: %s", mAdsModelsList);
 //        for (ArticlesListModel model : mAdsModelsList) {
@@ -228,17 +230,12 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                 throw new IllegalArgumentException("unexpected type: " + mSortType);
         }
 
-        notifyDataSetChanged();
+        //add native ads to result data list
+        createDataWithAdsAndArticles();
     }
 
-
-
-//    protected void sortArticles(String searchQuery) {
-//        //empty implimentation here
-//    }
-
     @SuppressLint("InflateParams")
-    private void createDataWithAdsAndArticles() {
+    protected void createDataWithAdsAndArticles() {
         mArticlesAndAds.clear();
         for (Article article : getDisplayedData()) {
             mArticlesAndAds.add(new ArticlesListModel(ArticleListNodeType.ARTICLE, article));
@@ -290,7 +287,7 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                             ArticlesListModel model;
                             @SuppressLint("InflateParams")
                             NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
-                                    .inflate(R.layout.native_ads_admob, null, false);
+                                    .inflate(R.layout.native_ads_admob_medium, null, false);
                             nativeAdView.setVideoOptions(new VideoOptions.Builder()
                                     .setStartMuted(true)
                                     .build());
@@ -318,7 +315,7 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                     ArticlesListModel model;
                     @SuppressLint("InflateParams")
                     NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
-                            .inflate(R.layout.native_ads_admob, null, false);
+                            .inflate(R.layout.native_ads_admob_medium, null, false);
                     nativeAdView.setAdListener(new MyAdmobNativeAdListener());
                     nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
                     nativeAdView.setVideoOptions(new VideoOptions.Builder()
@@ -403,7 +400,7 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
         switch (viewType) {
             case ArticleListNodeType.ARTICLE:
                 HolderMin holderArticle = (HolderMin) holder;
-                holderArticle.bind(mSortedWithFilterData.get(position));
+                holderArticle.bind((Article) mArticlesAndAds.get(position).data);
                 holderArticle.setShouldShowPreview(shouldShowPreview);
                 holderArticle.setShouldShowPopupOnFavoriteClick(shouldShowPopupOnFavoriteClick);
                 break;
@@ -422,7 +419,7 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public int getItemCount() {
-        return mSortedWithFilterData.size();
+        return mArticlesAndAds.size();
     }
 
     public void setArticleClickListener(ArticleClickListener articleClickListener) {

@@ -53,6 +53,7 @@ public abstract class BaseListArticlesWithSearchFragment<V extends BaseArticlesL
     protected void initAdapter() {
         super.initAdapter();
         getAdapter().sortArticles(mSearchQuery);
+        getAdapter().notifyDataSetChanged();
     }
 
     @Override
@@ -100,7 +101,8 @@ public abstract class BaseListArticlesWithSearchFragment<V extends BaseArticlesL
             @Override
             public boolean onQueryTextChange(String newText) {
                 mSearchQuery = newText;
-                mAdapter.sortArticles(newText);
+                getAdapter().sortArticles(newText);
+                getAdapter().notifyDataSetChanged();
                 return true;
             }
         });

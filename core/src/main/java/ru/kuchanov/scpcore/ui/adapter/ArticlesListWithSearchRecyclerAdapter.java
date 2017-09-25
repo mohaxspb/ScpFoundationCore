@@ -21,6 +21,21 @@ public class ArticlesListWithSearchRecyclerAdapter extends ArticlesListRecyclerA
         return mFilteredWithSearchQueryData;
     }
 
+    @Override
+    public void setData(List<Article> data) {
+//        super.setData(data);
+
+        mData = data;
+        sortByType(mSortType);
+
+        sortArticles(mSearchQuery);
+
+        //add native ads to result data list
+        createDataWithAdsAndArticles();
+
+        notifyDataSetChanged();
+    }
+
     public void sortArticles(String searchQuery) {
         mSearchQuery = searchQuery;
         if (mData == null) {
@@ -36,16 +51,19 @@ public class ArticlesListWithSearchRecyclerAdapter extends ArticlesListRecyclerA
                 mFilteredWithSearchQueryData.add(article);
             }
         }
+
+        //add native ads to result data list
+        createDataWithAdsAndArticles();
+//
 //        notifyDataSetChanged();
     }
 
-//    @Override
-//    public void sortByType(SortType sortType) {
-//        super.sortByType(sortType);
-//        sortArticles(mSearchQuery);
-//    }
+    @Override
+    public void sortByType(SortType sortType) {
+        super.sortByType(sortType);
+        sortArticles(mSearchQuery);
+    }
 
-    //TODO refactor this class
 //    @Override
 //    public void onBindViewHolder(HolderMin holder, int position) {
 //        holder.bind(mFilteredWithSearchQueryData.get(position));

@@ -37,6 +37,8 @@ ext {
 
             variant.resValue('string', 'ad_unit_id_native_articles_lists', properties.get("adsBannerIdNativeArticlesLists"))
 
+            variant.resValue('string', 'ad_unit_id_native_articles_lists_medium', properties.get("adsBannerIdNativeArticlesListsMedium"))
+
             variant.resValue('string', 'appodeal_app_key', properties.get("appodealAppKey"))
             //ads END
 
