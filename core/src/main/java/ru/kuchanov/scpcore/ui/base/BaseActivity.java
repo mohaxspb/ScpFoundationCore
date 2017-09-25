@@ -258,8 +258,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                         //send ID to server to send push/remove IDs pair
                         //then mark as not after handle
                         if (!mMyPreferenceManager.isInviteAlreadyReceived()) {
-                            mMyPreferenceManager.setInviteAlreadyReceived(true);
-
+//                            mMyPreferenceManager.setInviteAlreadyReceived(true);
                             FirebaseAnalytics.getInstance(BaseActivity.this)
                                     .logEvent(Constants.Firebase.Analitics.EventName.INVITE_RECEIVED, null);
                             FirebaseAnalytics.getInstance(BaseActivity.this).setUserProperty(
@@ -269,6 +268,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                             Timber.d("attempt to receive already received invite! Ata-ta, %USER_NAME%!");
                         }
                         mPresenter.onInviteReceived(invitationId);
+                        mMyPreferenceManager.setInviteAlreadyReceived(true);
                     }
                 })
                 .addOnFailureListener(this, e -> Timber.e(e, "getDynamicLink:onFailure"));
