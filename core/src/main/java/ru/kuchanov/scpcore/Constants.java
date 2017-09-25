@@ -1,7 +1,11 @@
 package ru.kuchanov.scpcore;
 
 import android.support.annotation.DrawableRes;
+import android.support.annotation.IntDef;
 import android.support.annotation.StringRes;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * Created by mohax on 03.01.2017.
@@ -9,6 +13,21 @@ import android.support.annotation.StringRes;
  * for scp_ru
  */
 public interface Constants {
+
+    /**
+     * cant find link, but as I remember 3 ads per list is permitted limit
+     */
+    int NUM_OF_NATIVE_ADS_PER_SCREEN = 3;
+    int NUM_OF_NATIVE_ADS_SOURCES = 2;
+    int NATIVE_ADS_MIN_HEIGHT = 250;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({NativeAdsSource.ALL, NativeAdsSource.AD_MOB, NativeAdsSource.APPODEAL})
+    @interface NativeAdsSource {
+        int ALL = 0;
+        int AD_MOB = 1;
+        int APPODEAL = 2;
+    }
 
     interface Api {
         int ZERO_OFFSET = 0;
@@ -138,6 +157,10 @@ public interface Constants {
             String REWARDED_VIDEO_COOLDOWN_IN_MILLIS = "rewarded_video_cooldown_in_millis";
             String AUTH_COOLDOWN_IN_MILLIS = "auth_cooldown_in_millis";
             String INVITE_REWARD_IN_MILLIS = "invite_reward_in_millis";
+            //native ads
+            String NATIVE_ADS_LISTS_INTERVAL = "native_ads_lists_interval";
+            String NATIVE_ADS_LISTS_ENABLED = "native_ads_lists_enabled";
+            String NATIVE_ADS_LISTS_SOURCE = "native_ads_lists_source";
             //score multipliers
             String VK_APP_GROUP_ID = "vk_app_group_id";
             String SCORE_MULTIPLIER_SUBSCRIPTION = "score_multiplier_subscription";

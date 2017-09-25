@@ -225,19 +225,22 @@
             "code": "ru",
             "title": "Русский филиал",
             "package": "ru.dante.scpfoundation",
-            "icon": "https://lh3.googleusercontent.com/nxy_ouZM-1PTsve_PXDI9-CoErm1Q2XRwKML7_967K-eR5TmVlI5RHDUJsc4WhjsLaI=w300-rw"
+            "icon":
+            "https://lh3.googleusercontent.com/nxy_ouZM-1PTsve_PXDI9-CoErm1Q2XRwKML7_967K-eR5TmVlI5RHDUJsc4WhjsLaI=w300-rw"
             },
             {
             "code": "en",
             "title": "English version",
             "package": "ru.dante.scpfoundation.eng",
-            "icon": "https://lh3.googleusercontent.com/dIv6quzx1zwwht9xZHje_vjCGx5zO6r0DxwukqiC1g-9_szMkfsEoFzXLpbxLS5hj4Q=w300-rw"
+            "icon":
+            "https://lh3.googleusercontent.com/dIv6quzx1zwwht9xZHje_vjCGx5zO6r0DxwukqiC1g-9_szMkfsEoFzXLpbxLS5hj4Q=w300-rw"
             },
             {
             "code": "pl",
             "title": "Polska Filia",
             "package": "ru.dante.scpfoundation.pl",
-            "icon": "https://lh3.googleusercontent.com/rgAVhH8ouKmkn-Ne6dlJayCATeMoXw_205QYeJVa01bWeu1_iXDOvU9HNKenaiDCbQ=w300-rw"
+            "icon":
+            "https://lh3.googleusercontent.com/rgAVhH8ouKmkn-Ne6dlJayCATeMoXw_205QYeJVa01bWeu1_iXDOvU9HNKenaiDCbQ=w300-rw"
             }
             ]
             }
@@ -255,6 +258,7 @@
         <key>auth_cooldown_in_millis</key>
         <value>7200000</value>
     </entry>
+    <!--invites-->
     <entry>
         <key>score_action_invite</key>
         <value>100</value>
@@ -262,5 +266,18 @@
     <entry>
         <key>invite_reward_in_millis</key>
         <value>86400000</value>
+    </entry>
+    <!--native ads-->
+    <entry>
+        <key>native_ads_lists_interval</key>
+        <value>15</value>
+    </entry>
+    <entry>
+        <key>native_ads_lists_enabled</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>native_ads_lists_source</key>
+        <value>0</value>
     </entry>
 </defaultsMap>

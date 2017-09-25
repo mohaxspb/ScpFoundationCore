@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.vending.billing.IInAppBillingService;
 import com.appodeal.ads.Appodeal;
+import com.appodeal.ads.Native;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -85,6 +86,7 @@ import ru.kuchanov.scpcore.monetization.util.AdMobHelper;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.monetization.util.MyAdListener;
 import ru.kuchanov.scpcore.monetization.util.MyAppodealInterstitialCallbacks;
+import ru.kuchanov.scpcore.monetization.util.MyAppodealNativeCallbacks;
 import ru.kuchanov.scpcore.monetization.util.MyRewardedVideoCallbacks;
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp;
 import ru.kuchanov.scpcore.mvp.base.MonetizationActions;
@@ -106,6 +108,7 @@ import rx.schedulers.Schedulers;
 import timber.log.Timber;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED;
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
 
 /**
@@ -255,8 +258,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                         //send ID to server to send push/remove IDs pair
                         //then mark as not after handle
                         if (!mMyPreferenceManager.isInviteAlreadyReceived()) {
-                            mMyPreferenceManager.setInviteAlreadyReceived(true);
-
+//                            mMyPreferenceManager.setInviteAlreadyReceived(true);
                             FirebaseAnalytics.getInstance(BaseActivity.this)
                                     .logEvent(Constants.Firebase.Analitics.EventName.INVITE_RECEIVED, null);
                             FirebaseAnalytics.getInstance(BaseActivity.this).setUserProperty(
@@ -266,6 +268,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                             Timber.d("attempt to receive already received invite! Ata-ta, %USER_NAME%!");
                         }
                         mPresenter.onInviteReceived(invitationId);
+                        mMyPreferenceManager.setInviteAlreadyReceived(true);
                     }
                 })
                 .addOnFailureListener(this, e -> Timber.e(e, "getDynamicLink:onFailure"));
@@ -347,6 +350,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         mInterstitialAd.setAdListener(new MyAdListener());
 
         //appodeal
+        Appodeal.setAutoCacheNativeIcons(true);
+        Appodeal.setAutoCacheNativeMedia(false);
+        Appodeal.setNativeAdType(Native.NativeAdType.Auto);
         Appodeal.disableLocationPermissionCheck();
         if (BuildConfig.FLAVOR.equals("dev")) {
             Appodeal.setTesting(true);
@@ -354,7 +360,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         }
         Appodeal.disableNetwork(this, "vungle");
 //        Appodeal.disableNetwork(this, "facebook");
-        Appodeal.initialize(this, getString(R.string.appodeal_app_key), Appodeal.REWARDED_VIDEO | Appodeal.INTERSTITIAL);
+        Appodeal.initialize(
+                this,
+                getString(R.string.appodeal_app_key),
+                Appodeal.REWARDED_VIDEO | Appodeal.INTERSTITIAL | Appodeal.NATIVE
+        );
 
         //user settings
 //        UserSettings userSettings = Appodeal.getUserSettings(this);
@@ -390,6 +400,12 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 mPresenter.updateUserScoreForScoreAction(action);
             }
         });
+
+        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        if(config.getBoolean(NATIVE_ADS_LISTS_ENABLED)) {
+            Appodeal.setNativeCallbacks(new MyAppodealNativeCallbacks());
+            Appodeal.cache(this, Appodeal.NATIVE, Constants.NUM_OF_NATIVE_ADS_PER_SCREEN);
+        }
 
         if (!isAdsLoaded() && mMyPreferenceManager.isTimeToLoadAds()) {
             requestNewInterstitial();

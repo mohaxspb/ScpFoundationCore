@@ -287,7 +287,10 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
                 FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_INTERSITIAL_BETWEEN_REWARDED);
     }
 
-    //banner disable from free ads disable options
+    /**
+     *
+     * @return is banners temporary disabled from free ads disable options
+     */
     public boolean isTimeToShowBannerAds() {
         return System.currentTimeMillis() >= getTimeForWhichBannersDisabled();
     }

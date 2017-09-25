@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<FrameLayout-->
+<!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--xmlns:tools="http://schemas.android.com/tools"-->
+<!--android:id="@+id/container"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="wrap_content"-->
+<!--&gt;-->
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <!--<com.appodeal.ads.native_ad.views.NativeAdViewAppWall-->
+        <!--android:id="@+id/appodealNativeAdViewAppWall"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--/>-->
+    <com.appodeal.ads.native_ad.views.NativeAdViewContentStream
+        android:id="@+id/appodealNativeAdViewAppWall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+    <com.appodeal.ads.NativeMediaView
+        android:id="@+id/appodealNativeMediaView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible"
+        />
+</merge>
+    <!--</FrameLayout>-->

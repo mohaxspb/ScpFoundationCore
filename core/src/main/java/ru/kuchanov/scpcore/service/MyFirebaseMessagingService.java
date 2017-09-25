@@ -78,7 +78,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     notifMessage = getString(R.string.invite_received_reward_message, hours, score);
                 } else {
                     Timber.d("Not authorized, so only noAds period is increased");
-                    notifMessage = getString(R.string.ads_disabled_for_some_hours);
+                    long numOfMillis = FirebaseRemoteConfig.getInstance()
+                            .getLong(Constants.Firebase.RemoteConfigKeys.INVITE_REWARD_IN_MILLIS);
+                    int hours = Duration.millis(numOfMillis).toStandardHours().getHours();
+                    notifMessage = getString(R.string.ads_disabled_for_some_hours, hours);
                 }
 
                 Intent intent = new Intent(this, MainActivity.class);

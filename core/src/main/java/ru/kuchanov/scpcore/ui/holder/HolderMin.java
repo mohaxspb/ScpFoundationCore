@@ -27,7 +27,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
  * <p>
  * for ScpFoundationRu
  */
-public class HolderSimple extends RecyclerView.ViewHolder {
+public class HolderMin extends RecyclerView.ViewHolder {
 
     @Inject
     protected MyPreferenceManager mMyPreferenceManager;
@@ -50,7 +50,12 @@ public class HolderSimple extends RecyclerView.ViewHolder {
     @BindView(R2.id.typeIcon)
     ImageView typeIcon;
 
-    public HolderSimple(View itemView, ArticlesListRecyclerAdapter.ArticleClickListener clickListener) {
+//    @BindView(R2.id.nativeAdViewContainer)
+//    CardView nativeAdViewContainer;
+//    @BindView(R2.id.nativeAdView)
+//    NativeExpressAdView nativeExpressAdView;
+
+    public HolderMin(View itemView, ArticlesListRecyclerAdapter.ArticleClickListener clickListener) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         BaseApplication.getAppComponent().inject(this);
@@ -121,16 +126,18 @@ public class HolderSimple extends RecyclerView.ViewHolder {
             }
         });
 
-        if(context.getResources().getBoolean(R.bool.filter_by_type_enabled)) {
+        if (context.getResources().getBoolean(R.bool.filter_by_type_enabled)) {
             setTypesIcons(article);
         } else {
             typeIcon.setVisibility(View.GONE);
         }
+
+        //native ads
+//        showNativeAds();
     }
 
     protected void setTypesIcons(Article article) {
         switch (article.type) {
-            default:
             case Article.ObjectType.NONE:
                 typeIcon.setImageResource(R.drawable.ic_none_small);
                 break;
@@ -149,6 +156,8 @@ public class HolderSimple extends RecyclerView.ViewHolder {
             case Article.ObjectType.THAUMIEL:
                 typeIcon.setImageResource(R.drawable.ic_thaumiel_small);
                 break;
+            default:
+                throw new IllegalArgumentException("unexpected article type: " + article.type);
         }
     }
 
