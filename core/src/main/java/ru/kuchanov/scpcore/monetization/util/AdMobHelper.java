@@ -16,6 +16,7 @@ import ru.kuchanov.scpcore.util.SystemUtils;
  */
 public class AdMobHelper {
 
+    //TODO remove context from args, use application instance
     public static AdRequest buildAdRequest(Context context) {
         AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
 

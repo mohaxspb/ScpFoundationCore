@@ -132,7 +132,7 @@
     <string name="invitation_message">Schau dir die kühle Anwendung fand ich!</string>
     <string name="invitation_cta">Lesen Sie die geheimen Dokumente!</string>
     <string name="invitation_title">Geheime Materialien Fonds SCP!</string>
-    <string name="invite_friends">Lade fünf Freunde zur APP ein!</string>
+    <string name="invite_friends">Lade Freunde zur APP ein zu deaktivieren %1$d Stunden und Empfang von %2$d punkten!!</string>
     <string name="watch_video_to_disable_ads">Sehen Sie sich das Video an, um die anzeigen auszuschalten на %1$d Stunden und Empfang von %2$d Punkten</string>
     <string name="app_install_ads_disable_title">Installieren Sie unsere anderen apps, um werbung zu deaktivieren %1$d Stunden und Empfang von %2$d punkten!</string>
     <string name="vk_group_join_ads_disable_title">Werden Sie Mitglied von VK Um die Werbung zu deaktivieren %1$d Stunden und Empfang von %2$d punkten!</string>

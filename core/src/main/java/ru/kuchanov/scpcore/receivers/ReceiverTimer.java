@@ -36,6 +36,9 @@ public class ReceiverTimer extends BroadcastReceiver {
 
     public static final int NOTIF_ID = 963;
 
+    public static final long[] VIBRATION_PATTERN = new long[]{500, 500, 500, 500, 500};
+    private static final int LED_DURATION = 3000;
+
     @Inject
     MyPreferenceManager mMyPreferencesManager;
     @Inject
@@ -89,7 +92,7 @@ public class ReceiverTimer extends BroadcastReceiver {
             return;
         }
         // Use NotificationCompat.Builder to set up our notification.
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx, "new articles");
 
         //icon appears in device notification bar and right hand corner of notification
         builder.setSmallIcon(R.drawable.ic_logo_notification);
@@ -151,13 +154,11 @@ public class ReceiverTimer extends BroadcastReceiver {
         // Content title, which appears in large type at the top of the notification
         builder.setContentTitle(ctx.getString(R.string.notif_new_arts_title, dataFromWeb.size(), ""));
         if (mMyPreferencesManager.isNotificationVibrationEnabled()) {
-            //TODO move to const
-            builder.setVibrate(new long[]{500, 500, 500, 500, 500});
+            builder.setVibrate(VIBRATION_PATTERN);
         }
         //LED
         if (mMyPreferencesManager.isNotificationLedEnabled()) {
-            //TODO move to const
-            builder.setLights(Color.WHITE, 3000, 3000);
+            builder.setLights(Color.WHITE, LED_DURATION, LED_DURATION);
         }
         //Sound//LED
         if (mMyPreferencesManager.isNotificationSoundEnabled()) {

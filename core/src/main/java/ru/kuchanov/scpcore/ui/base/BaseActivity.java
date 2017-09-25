@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.vending.billing.IInAppBillingService;
 import com.appodeal.ads.Appodeal;
+import com.appodeal.ads.Native;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -34,6 +36,8 @@ import com.facebook.login.LoginResult;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.appinvite.AppInvite;
+import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -41,7 +45,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.appinvite.FirebaseAppInvite;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
@@ -79,6 +86,7 @@ import ru.kuchanov.scpcore.monetization.util.AdMobHelper;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.monetization.util.MyAdListener;
 import ru.kuchanov.scpcore.monetization.util.MyAppodealInterstitialCallbacks;
+import ru.kuchanov.scpcore.monetization.util.MyAppodealNativeCallbacks;
 import ru.kuchanov.scpcore.monetization.util.MyRewardedVideoCallbacks;
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp;
 import ru.kuchanov.scpcore.mvp.base.MonetizationActions;
@@ -90,7 +98,7 @@ import ru.kuchanov.scpcore.ui.activity.TagSearchActivity;
 import ru.kuchanov.scpcore.ui.adapter.SocialLoginAdapter;
 import ru.kuchanov.scpcore.ui.dialog.FreeAdsDisablingDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
-import ru.kuchanov.scpcore.ui.dialog.SetttingsBottomSheetDialogFragment;
+import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.SocialLoginHolder;
@@ -100,6 +108,7 @@ import rx.schedulers.Schedulers;
 import timber.log.Timber;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED;
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
 
 /**
@@ -188,6 +197,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .addApi(AppInvite.API)
                 .build();
         //facebook login
         LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
@@ -222,6 +232,46 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         initAds();
 
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+
+        //just log fcm token for test purposes
+        Timber.d("fcmToken: %s", FirebaseInstanceId.getInstance().getToken());
+
+        //app invite
+        FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())
+                .addOnSuccessListener(this, data -> {
+                    Timber.d("FirebaseAppInvite onSuccessListener");
+                    if (data == null) {
+                        Timber.d("getInvitation: no data");
+                        return;
+                    }
+
+                    // Get the deep link
+                    Uri deepLink = data.getLink();
+                    Timber.d("deepLink: %s", deepLink);
+
+                    // Extract invite
+                    FirebaseAppInvite invite = FirebaseAppInvite.getInvitation(data);
+                    if (invite != null) {
+                        String invitationId = invite.getInvitationId();
+                        Timber.d("invitationId: %s", invitationId);
+                        //check if it's first receive if so
+                        //send ID to server to send push/remove IDs pair
+                        //then mark as not after handle
+                        if (!mMyPreferenceManager.isInviteAlreadyReceived()) {
+//                            mMyPreferenceManager.setInviteAlreadyReceived(true);
+                            FirebaseAnalytics.getInstance(BaseActivity.this)
+                                    .logEvent(Constants.Firebase.Analitics.EventName.INVITE_RECEIVED, null);
+                            FirebaseAnalytics.getInstance(BaseActivity.this).setUserProperty(
+                                    Constants.Firebase.Analitics.USER_PROPERTY_KEY.INVITED,
+                                    "true");
+                        } else {
+                            Timber.d("attempt to receive already received invite! Ata-ta, %USER_NAME%!");
+                        }
+                        mPresenter.onInviteReceived(invitationId);
+                        mMyPreferenceManager.setInviteAlreadyReceived(true);
+                    }
+                })
+                .addOnFailureListener(this, e -> Timber.e(e, "getDynamicLink:onFailure"));
     }
 
     @Override
@@ -275,7 +325,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     protected void onStart() {
         super.onStart();
-        //unsubscribe from firebase;
+        //subscribe from firebase;
         mPresenter.onActivityStarted();
     }
 
@@ -300,13 +350,21 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         mInterstitialAd.setAdListener(new MyAdListener());
 
         //appodeal
+        Appodeal.setAutoCacheNativeIcons(true);
+        Appodeal.setAutoCacheNativeMedia(false);
+        Appodeal.setNativeAdType(Native.NativeAdType.Auto);
         Appodeal.disableLocationPermissionCheck();
         if (BuildConfig.FLAVOR.equals("dev")) {
             Appodeal.setTesting(true);
 //            Appodeal.setLogLevel(Log.LogLevel.debug);
         }
-        Appodeal.disableNetwork(this, "facebook");
-        Appodeal.initialize(this, getString(R.string.appodeal_app_key), Appodeal.REWARDED_VIDEO | Appodeal.INTERSTITIAL);
+        Appodeal.disableNetwork(this, "vungle");
+//        Appodeal.disableNetwork(this, "facebook");
+        Appodeal.initialize(
+                this,
+                getString(R.string.appodeal_app_key),
+                Appodeal.REWARDED_VIDEO | Appodeal.INTERSTITIAL | Appodeal.NATIVE
+        );
 
         //user settings
 //        UserSettings userSettings = Appodeal.getUserSettings(this);
@@ -342,6 +400,12 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 mPresenter.updateUserScoreForScoreAction(action);
             }
         });
+
+        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        if(config.getBoolean(NATIVE_ADS_LISTS_ENABLED)) {
+            Appodeal.setNativeCallbacks(new MyAppodealNativeCallbacks());
+            Appodeal.cache(this, Appodeal.NATIVE, Constants.NUM_OF_NATIVE_ADS_PER_SCREEN);
+        }
 
         if (!isAdsLoaded() && mMyPreferenceManager.isTimeToLoadAds()) {
             requestNewInterstitial();
@@ -412,7 +476,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     /**
-     * ads adsListener with showing SnackBar after ads closing and calles {@link MonetizationActions#showInterstitial(MyAdListener, boolean)}
+     * ads adsListener with showing SnackBar after ads closing and calls {@link MonetizationActions#showInterstitial(MyAdListener, boolean)}
      */
     @Override
     public void showInterstitial() {
@@ -790,7 +854,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         int i = item.getItemId();
         if (i == R.id.settings) {
             Timber.d("settings pressed");
-            BottomSheetDialogFragment settingsDF = SetttingsBottomSheetDialogFragment.newInstance();
+            BottomSheetDialogFragment settingsDF = SettingsBottomSheetDialogFragment.newInstance();
             settingsDF.show(getSupportFragmentManager(), settingsDF.getTag());
             return true;
         } else if (i == R.id.subscribe) {
@@ -953,6 +1017,22 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             } else {
                 // Signed out, show unauthenticated UI.
                 mPresenter.logoutUser();
+            }
+        } else if (requestCode == Constants.Firebase.REQUEST_INVITE) {
+            if (resultCode == RESULT_OK) {
+                // Get the invitation IDs of all sent messages
+                String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
+                for (String id : ids) {
+                    Timber.d("onActivityResult: sent invitation %s", id);
+                    //todo we need to be able to send multiple IDs in one request
+                    mPresenter.onInviteSent(id);
+
+                    FirebaseAnalytics.getInstance(BaseActivity.this)
+                            .logEvent(Constants.Firebase.Analitics.EventName.INVITE_SENT, null);
+                }
+            } else {
+                // Sending failed or it was canceled, show failure message to the user
+                Timber.d("invitation failed for some reason");
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

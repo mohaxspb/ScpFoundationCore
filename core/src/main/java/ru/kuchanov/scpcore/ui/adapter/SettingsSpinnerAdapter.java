@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,8 +51,10 @@ public class SettingsSpinnerAdapter extends ArrayAdapter<String> {
     public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View v = convertView;
 
+        Context context = parent.getContext();
+
         if (v == null) {
-            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            LayoutInflater inflater = LayoutInflater.from(context);
             v = inflater.inflate(R.layout.design_list_spinner_item_font, parent, false);
         }
 
@@ -60,16 +63,17 @@ public class SettingsSpinnerAdapter extends ArrayAdapter<String> {
         textView.setText(data.get(position));
         int padding = DimensionUtils.getDefaultMargin();
         textView.setPadding(padding, padding, padding, padding);
-        CalligraphyUtils.applyFontToTextView(parent.getContext(), textView, fontPath);
+        CalligraphyUtils.applyFontToTextView(context, textView, fontPath);
 
         boolean isNightMode = mMyPreferenceManager.isNightMode();
-        //TODO move colors to res
-        int backgroundColorSelected = isNightMode ? Color.parseColor("#33ECEFF1") : Color.parseColor("#33724646");
-//                        int backgroundColorUnselected = AttributeGetter.getColor(parent.getContext(), R.attr.windowbackgroundOverrided);
-        int backgroundColorUnselected = isNightMode ? Color.parseColor("#3337474F") : Color.parseColor("#33ECEFF1");
+        int backgroundColorSelected = ContextCompat.getColor(context, isNightMode
+                ? R.color.settings_spinner_selected_dark
+                : R.color.settings_spinner_selected_light);
+        int backgroundColorUnselected = ContextCompat.getColor(context, isNightMode
+                ? R.color.settings_spinner_unselected_dark
+                : R.color.settings_spinner_unselected_light);
 
         boolean isSelected = position == fontsPathsList.indexOf(mMyPreferenceManager.getFontPath());
-//                        Timber.d("isSelected: %s", isSelected);
 
         v.setBackgroundColor(isSelected ? backgroundColorSelected : backgroundColorUnselected);
 
@@ -92,14 +96,6 @@ public class SettingsSpinnerAdapter extends ArrayAdapter<String> {
         int padding = DimensionUtils.getDefaultMarginSmall();
         textView.setPadding(padding, padding, padding, padding);
         CalligraphyUtils.applyFontToTextView(parent.getContext(), textView, fontPath);
-
-//        boolean isNightMode = mMyPreferenceManager.isNightMode();
-//        int backgroundColorSelected = isNightMode ? Color.parseColor("#ECEFF1") : Color.parseColor("#724646");
-//        int backgroundColorUnselected = AttributeGetter.getColor(parent.getContext(), R.attr.windowbackgroundOverrided);
-//
-//        boolean isSelected = position == fontPath.indexOf(mMyPreferenceManager.getFontPath());
-//
-//        v.setBackgroundColor(isSelected ? backgroundColorSelected : backgroundColorUnselected);
 
         return v;
     }

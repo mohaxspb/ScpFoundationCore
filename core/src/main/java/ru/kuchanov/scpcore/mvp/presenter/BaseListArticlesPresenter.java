@@ -116,7 +116,7 @@ abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.View>
                 .flatMap(apiDate -> getSaveToDbObservable(apiDate, offset))
                 .subscribe(
                         data -> {
-                            Timber.d("getDataFromApi load data size: %s and offset: %s", data.first, data.second);
+                            Timber.d("getDataFromApi loaded data size: %s and offset: %s", data.first, data.second);
 
                             isLoading = false;
 

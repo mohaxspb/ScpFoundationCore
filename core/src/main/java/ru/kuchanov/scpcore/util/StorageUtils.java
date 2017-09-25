@@ -34,7 +34,7 @@ public class StorageUtils {
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
             return MediaStore.Images.Media.insertImage(activity.getContentResolver(), image,
                     activity.getString(R.string.image_title),
-                    null); //todo wtf
+                    activity.getString(R.string.image_description));
         } else {
             ActivityCompat.requestPermissions(
                     activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
@@ -46,7 +46,7 @@ public class StorageUtils {
     public static boolean fileExistsInAssets(String path) {
         try {
             List<String> assetsFiles = Arrays.asList(BaseApplication.getAppInstance().getResources().getAssets().list(""));
-            Timber.d("assetsFiles: %s", assetsFiles);
+//            Timber.d("assetsFiles: %s", assetsFiles);
             return assetsFiles.contains(path);
         } catch (IOException e) {
             Timber.e(e);

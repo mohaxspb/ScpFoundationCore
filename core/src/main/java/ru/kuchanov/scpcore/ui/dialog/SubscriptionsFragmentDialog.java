@@ -170,8 +170,8 @@ public class SubscriptionsFragmentDialog
                             if (!isAdded()) {
                                 return;
                             }
-                            Timber.d("itemsOwned: %s", ownedItemsAndSubscriptions.first);
-                            Timber.d("subsToBuy: %s", ownedItemsAndSubscriptions.second);
+//                            Timber.d("itemsOwned: %s", ownedItemsAndSubscriptions.first);
+//                            Timber.d("subsToBuy: %s", ownedItemsAndSubscriptions.second);
 
                             isDataLoaded = true;
                             refresh.setVisibility(View.GONE);

@@ -132,7 +132,7 @@
     <string name="invitation_message">Spójrz na fajnych aplikacji, znalazłem!</string>
     <string name="invitation_cta">Przeczytać tajnych dokumentów!</string>
     <string name="invitation_title">SCP Foundation tajne materiały!</string>
-    <string name="invite_friends">Zaprosić pięciu znajomych do aplikacji!</string>
+    <string name="invite_friends">Zaprosić znajomych do aplikacji, aby wyłączyć reklamy dla %1$d godziny i otrzymywać punkty %2$d!</string>
     <string name="watch_video_to_disable_ads">Obejrzyj film wideo, aby wyłączyć reklamy dla %1$d godziny i otrzymywać punkty %2$d</string>
     <string name="app_install_ads_disable_title">Zainstaluj nasze inne aplikacje, aby wyłączyć reklamy dla %1$d godziny i %2$d punkty!</string>
     <string name="vk_group_join_ads_disable_title">Dołącz do grupy VKontakte, aby wyłączyć reklamy dla %1$d godziny i %2$d punkty!</string>

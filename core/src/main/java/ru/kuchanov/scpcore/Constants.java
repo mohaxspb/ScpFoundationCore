@@ -1,7 +1,11 @@
 package ru.kuchanov.scpcore;
 
 import android.support.annotation.DrawableRes;
+import android.support.annotation.IntDef;
 import android.support.annotation.StringRes;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * Created by mohax on 03.01.2017.
@@ -9,6 +13,21 @@ import android.support.annotation.StringRes;
  * for scp_ru
  */
 public interface Constants {
+
+    /**
+     * cant find link, but as I remember 3 ads per list is permitted limit
+     */
+    int NUM_OF_NATIVE_ADS_PER_SCREEN = 3;
+    int NUM_OF_NATIVE_ADS_SOURCES = 2;
+    int NATIVE_ADS_MIN_HEIGHT = 250;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({NativeAdsSource.ALL, NativeAdsSource.AD_MOB, NativeAdsSource.APPODEAL})
+    @interface NativeAdsSource {
+        int ALL = 0;
+        int AD_MOB = 1;
+        int APPODEAL = 2;
+    }
 
     interface Api {
         int ZERO_OFFSET = 0;
@@ -97,6 +116,14 @@ public interface Constants {
             }
         }
 
+        interface PushDataKeys {
+            String INVITE_ID = "inviteId";
+            String TITLE = "title";
+            String MESSAGE = "message";
+            String URL = "url";
+            String OPEN_IN_THIRD_PARTY_BROWSER = "openInThirdPartyBrowser";
+        }
+
         interface Refs {
             String USERS = "users";
             String ARTICLES = "articles";
@@ -129,6 +156,11 @@ public interface Constants {
             String FREE_VK_GROUPS_JOIN_REWARD = "free_vk_groups_join_reward";
             String REWARDED_VIDEO_COOLDOWN_IN_MILLIS = "rewarded_video_cooldown_in_millis";
             String AUTH_COOLDOWN_IN_MILLIS = "auth_cooldown_in_millis";
+            String INVITE_REWARD_IN_MILLIS = "invite_reward_in_millis";
+            //native ads
+            String NATIVE_ADS_LISTS_INTERVAL = "native_ads_lists_interval";
+            String NATIVE_ADS_LISTS_ENABLED = "native_ads_lists_enabled";
+            String NATIVE_ADS_LISTS_SOURCE = "native_ads_lists_source";
             //score multipliers
             String VK_APP_GROUP_ID = "vk_app_group_id";
             String SCORE_MULTIPLIER_SUBSCRIPTION = "score_multiplier_subscription";
@@ -141,6 +173,7 @@ public interface Constants {
             String SCORE_ACTION_OUR_APP = "score_action_our_app";
             String SCORE_ACTION_REWARDED_VIDEO = "score_action_rewarded_video";
             String SCORE_ACTION_AUTH = "score_action_auth";
+            String SCORE_ACTION_INVITE = "score_action_invite";
             String SCORE_ACTION_NONE = "score_action_none";
             String LEVELS_JSON = "levels_json";
             //downloads
@@ -163,6 +196,8 @@ public interface Constants {
 
             interface EventName {
                 String FREE_TRIAL_OFFER_SHOWN = "FREE_TRIAL_OFFER_SHOWN";
+                String INVITE_SENT = "INVITE_SENT";
+                String INVITE_RECEIVED = "INVITE_RECEIVED";
             }
 
             interface EventParam {
@@ -194,6 +229,14 @@ public interface Constants {
 
             String INVITED_FIVE_FRIENDS = "INVITED_FIVE_FRIENDS";
             String APP_CRACKED = "APP_CRACKED";
+
+            interface USER_PROPERTY_KEY {
+                String INVITED = "INVITED";
+            }
+        }
+
+        interface PushTopics {
+            String MAIN = "main";
         }
     }
 }

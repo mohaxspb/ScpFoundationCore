@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -73,6 +74,9 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
         super.initViews();
         Timber.d("initViews");
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        mRecyclerView.setDrawingCacheEnabled(true);
+//        mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+//        mRecyclerView.setItemViewCacheSize(40);
 
         initAdapter();
 
@@ -126,8 +130,9 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
                         Timber.d("sortBy: %s", text);
                         mSortType = sortTypes.get(which);
                         getAdapter().sortByType(mSortType);
+                        getAdapter().notifyDataSetChanged();
                         dialog.dismiss();
-                        getActivity().supportInvalidateOptionsMenu();
+                        getActivity().invalidateOptionsMenu();
                         return true;
                     })
                     .positiveText(R.string.close)
@@ -186,7 +191,7 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
             @Override
             public void onArticleClicked(Article article, int position) {
                 Timber.d("onArticleClicked: %s/%s", article.title, position);
-                if (!isAdded()) {
+                if (!isAdded() || position == RecyclerView.NO_POSITION) {
                     return;
                 }
                 getBaseActivity().startArticleActivity(Article.getListOfUrls(getAdapter().getDisplayedData()), position);
@@ -219,6 +224,7 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
         getAdapter().setHasStableIds(true);
         getAdapter().setShouldShowPopupOnFavoriteClick(isShouldShowPopupOnFavoriteClick());
         getAdapter().sortByType(mSortType);
+        getAdapter().notifyDataSetChanged();
     }
 
     protected boolean isShouldShowPopupOnFavoriteClick() {

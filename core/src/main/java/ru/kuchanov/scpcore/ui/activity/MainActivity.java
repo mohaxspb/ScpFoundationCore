@@ -220,7 +220,10 @@ public class MainActivity
     public boolean onNavigationItemClicked(int id) {
         Timber.d("onNavigationItemClicked with id: %s", id);
         setToolbarTitleByDrawerItemId(id);
-        if (id == R.id.about) {
+        if (id == R.id.invite) {
+            IntentUtils.firebaseInvite(this);
+            return false;
+        } else if (id == R.id.about) {
             mCurrentSelectedDrawerItemId = id;
             showFragment(ArticleFragment.newInstance(mConstantValues.getAbout()),
                     ArticleFragment.TAG + "#" + mConstantValues.getAbout());
@@ -325,8 +328,8 @@ public class MainActivity
     @Override
     public void setToolbarTitleByDrawerItemId(int id) {
         Timber.d("setToolbarTitleByDrawerItemId with id: %s", id);
-        //TODO move to separate interface and inject correct impl for lang each flavor
-        //or check so https://stackoverflow.com/a/40085939/3212712
+        //maybe we can move to separate interface and inject correct impl for lang each flavor
+        //but it works now without any problems... So..
         String title;
         if (id == R.id.about) {
             title = getString(R.string.drawer_item_1);

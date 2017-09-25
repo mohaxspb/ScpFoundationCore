@@ -88,7 +88,7 @@ public class SubscriptionsRecyclerAdapter extends RecyclerView.Adapter<Subscript
         }
 
         void bind(Subscription subscription) {
-            Timber.d("bind with date: %s", subscription);
+//            Timber.d("bind with date: %s", subscription);
             Context context = itemView.getContext();
             float uiTextScale = mMyPreferenceManager.getUiTextScale();
             int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_primary);

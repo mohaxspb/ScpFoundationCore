@@ -112,4 +112,9 @@
     <color name="zbs_color_red">#724646</color>
     <!--(заебись цвет текста для "темной темы" новых статей)-->
     <color name="zbs_color_white">@color/material_blue_gray_50</color>
+    <!--colors for spinner-->
+    <color name="settings_spinner_selected_light">#33724646</color>
+    <color name="settings_spinner_selected_dark">#33ECEFF1</color>
+    <color name="settings_spinner_unselected_light">#33ECEFF1</color>
+    <color name="settings_spinner_unselected_dark">#3337474F</color>
 </resources>

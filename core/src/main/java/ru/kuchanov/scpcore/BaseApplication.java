@@ -5,6 +5,8 @@ import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
@@ -49,7 +51,8 @@ public abstract class BaseApplication extends MultiDexApplication {
         public void onVKAccessTokenChanged(VKAccessToken oldToken, VKAccessToken newToken) {
             if (newToken == null) {
                 //VKAccessToken is invalid
-                //TODO
+                //TODO may be we need to logout user...
+                Timber.d("VK token is null, do smth with it!");
             }
         }
     };
@@ -63,6 +66,9 @@ public abstract class BaseApplication extends MultiDexApplication {
             return;
         }
         refWatcher = LeakCanary.install(this);
+
+        FirebaseApp.initializeApp(this);
+
         // Инициализация AppMetrica SDK
         YandexMetrica.activate(getApplicationContext(), getString(R.string.yandex_metrica_api_key));
         // Отслеживание активности пользователей
@@ -109,6 +115,9 @@ public abstract class BaseApplication extends MultiDexApplication {
         SystemUtils.printCertificateFingerprints();
 
         Realm.init(this);
+
+        //subscribe to main push topic
+        FirebaseMessaging.getInstance().subscribeToTopic(Constants.Firebase.PushTopics.MAIN);
     }
 
     @Override
