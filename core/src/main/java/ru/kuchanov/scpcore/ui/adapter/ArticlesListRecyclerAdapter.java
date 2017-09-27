@@ -436,7 +436,7 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
 
     public interface ArticleClickListener {
 
-        void onArticleClicked(Article article, int position);
+        void onArticleClicked(Article article);
 
         void toggleReadenState(Article article);
 

@@ -5,6 +5,12 @@
         android:checkableBehavior="single">
 
         <item
+            android:id="@+id/invite"
+            android:checked="true"
+            android:icon="@drawable/ic_contact_mail"
+            android:title="@string/drawer_item_invite_friends"
+            />
+        <item
             android:id="@+id/about"
             android:checked="true"
             android:icon="@drawable/ic_drawer_about"

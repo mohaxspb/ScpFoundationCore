@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -189,12 +188,12 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
     protected void initAdapter() {
         getAdapter().setArticleClickListener(new ArticlesListRecyclerAdapter.ArticleClickListener() {
             @Override
-            public void onArticleClicked(Article article, int position) {
-                Timber.d("onArticleClicked: %s/%s", article.title, position);
-                if (!isAdded() || position == RecyclerView.NO_POSITION) {
+            public void onArticleClicked(Article article) {
+                Timber.d("onArticleClicked: %s", article.title);
+                if (!isAdded()) {
                     return;
                 }
-                getBaseActivity().startArticleActivity(Article.getListOfUrls(getAdapter().getDisplayedData()), position);
+                getBaseActivity().startArticleActivity(Article.getListOfUrls(getAdapter().getDisplayedData()), getAdapter().getDisplayedData().indexOf(article));
             }
 
             @Override

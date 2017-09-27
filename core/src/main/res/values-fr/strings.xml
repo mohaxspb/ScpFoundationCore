@@ -129,8 +129,8 @@
     <string name="dialog_free_ads_disable_title">Désactivation de publicité</string>
     <string name="start_market_error">Impossible de démarrer PlayMarket</string>
     <string name="thanks_for_supporting_us">Les développeurs sont reconnaissants pour votre soutien!</string>
-    <string name="invitation_message">Regardez ce que je trouve une application cool!</string>
-    <string name="invitation_cta">Lire des documents secrets!</string>
+    <string name="invitation_message">Rejoindre le fonds!</string>
+    <string name="invitation_cta">Joignez-vous à nous!</string>
     <string name="invitation_title">Fondation X-Files SCP!</string>
     <string name="invite_friends">Invitez amis dans l\'application pour désactiver la publicité au %1$d heures et la réception %2$d points!!</string>
     <string name="watch_video_to_disable_ads">Regardez la vidéo pour désactiver la publicité au %1$d heures et la réception %2$d points!</string>
@@ -255,4 +255,10 @@
     <string name="version"><![CDATA[<b>Version: %s</b>]]></string>
     <string name="snoska">Note de bas de page %s</string>
     <string name="bibliography">Bibliographie</string>
+
+    <!---->
+    <string name="your_invite_received">Votre invitation au fonds est acceptée!</string>
+    <string name="invite_received_reward_message">La publicité est éteinte pendant %1$d heures, %2$d points ajoutés!</string>
+    <string name="ads_disabled_for_some_hours">La publicité est éteinte pendant %d heures!</string>
+    <string name="drawer_item_invite_friends">Invitez vos amis!</string>
 </resources>

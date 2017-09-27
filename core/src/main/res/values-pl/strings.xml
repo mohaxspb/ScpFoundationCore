@@ -129,8 +129,8 @@
     <string name="dialog_free_ads_disable_title">Wyłącza reklamy</string>
     <string name="start_market_error">Nie można uruchomić PlayMarket.</string>
     <string name="thanks_for_supporting_us">Deweloperzy są wdzięczni za wasze wsparcie!</string>
-    <string name="invitation_message">Spójrz na fajnych aplikacji, znalazłem!</string>
-    <string name="invitation_cta">Przeczytać tajnych dokumentów!</string>
+    <string name="invitation_message">Dołącz do Funduszu!</string>
+    <string name="invitation_cta">Dołącz do nas!</string>
     <string name="invitation_title">SCP Foundation tajne materiały!</string>
     <string name="invite_friends">Zaprosić znajomych do aplikacji, aby wyłączyć reklamy dla %1$d godziny i otrzymywać punkty %2$d!</string>
     <string name="watch_video_to_disable_ads">Obejrzyj film wideo, aby wyłączyć reklamy dla %1$d godziny i otrzymywać punkty %2$d</string>
@@ -254,4 +254,10 @@
     <string name="version"><![CDATA[<b>Wersja: %s</b>]]></string>
     <string name="snoska">Przypis %s</string>
     <string name="bibliography">Bibliografia</string>
+
+    <!---->
+    <string name="your_invite_received">Zaproszenie do funduszu jest akceptowane!</string>
+    <string name="invite_received_reward_message">Reklama jest wyłączony przez %1$d godziny, %2$d punkty dodane!</string>
+    <string name="ads_disabled_for_some_hours">Ogłoszenie jest wyłączony przez %d godziny!</string>
+    <string name="drawer_item_invite_friends">Zaproś swoich znajomych!</string>
 </resources>

@@ -1,0 +1,19 @@
+<b>Wersja 1.1.1.1</b>
+<br/><br/>
+<b>Ulepszenia</b>
+<br/>
+ - Dodaj natywny szybki przewiń do ekranu artykułu.
+<br/><br/>
+<b>Poprawki</b>
+<br/>
+ - Naprawiono awarie podczas obracania ekranu, które pojawiły się po ostatniej aktualizacji.
+<br/>
+ - Niektóre obrazy nie były wyświetlane w niektórych artykułach. To naprawiamy.
+<br/>
+ - Niektóre drobne poprawki i ulepszenia.
+<br/><br/>
+W razie jakichkolwiek pytań skontaktuj się z nami pocztą elektroniczną:
+<br/>
+E-mail: <a href="mailto:neva.spb.rx@gmail.com">We wszystkich kwestiach</a>
+<br/><br/>
+Dziękujemy za korzystanie z naszej aplikacji!

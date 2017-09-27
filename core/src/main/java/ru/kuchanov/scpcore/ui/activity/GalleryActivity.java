@@ -271,6 +271,7 @@ public class GalleryActivity
 
     @Override
     public boolean isBannerEnabled() {
-        return !FirebaseRemoteConfig.getInstance().getBoolean(GALLERY_BANNER_DISABLED);
+        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        return !config.getBoolean(GALLERY_BANNER_DISABLED);
     }
 }

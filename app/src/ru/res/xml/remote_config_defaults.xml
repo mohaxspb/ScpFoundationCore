@@ -50,7 +50,7 @@
     <!--invites-->
     <entry>
         <key>free_invites_enabled</key>
-        <value>true</value>
+        <value>false</value>
     </entry>
     <!--vk groups-->
     <entry>
@@ -255,19 +255,6 @@
         <key>auth_cooldown_in_millis</key>
         <value>7200000</value>
     </entry>
-    <!--native ads-->
-    <entry>
-        <key>native_ads_lists_interval</key>
-        <value>10</value>
-    </entry>
-    <entry>
-        <key>native_ads_lists_enabled</key>
-        <value>true</value>
-    </entry>
-    <entry>
-        <key>native_ads_lists_source</key>
-        <value>0</value>
-    </entry>
     <!--invites-->
     <entry>
         <key>score_action_invite</key>
@@ -288,6 +275,6 @@
     </entry>
     <entry>
         <key>native_ads_lists_source</key>
-        <value>0</value>
+        <value>2</value>
     </entry>
 </defaultsMap>
