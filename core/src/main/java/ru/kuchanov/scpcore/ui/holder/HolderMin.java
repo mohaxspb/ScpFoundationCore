@@ -74,7 +74,7 @@ public class HolderMin extends RecyclerView.ViewHolder {
         CalligraphyUtils.applyFontToTextView(context, title, mMyPreferenceManager.getFontPath());
         CalligraphyUtils.applyFontToTextView(context, preview, mMyPreferenceManager.getFontPath());
 
-        itemView.setOnClickListener(v -> mArticleClickListener.onArticleClicked(article, getAdapterPosition()));
+        itemView.setOnClickListener(v -> mArticleClickListener.onArticleClicked(article));
 
         title.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiTextScale * textSizePrimary);
         if (!TextUtils.isEmpty(article.title)) {
