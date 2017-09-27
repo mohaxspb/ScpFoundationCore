@@ -99,11 +99,18 @@ public class IntentUtils {
     }
 
     public static void firebaseInvite(FragmentActivity activity) {
+        String message = activity.getString(R.string.invitation_message);
+        if (message.length() > Constants.Firebase.INVITE_CTA_MAX_LENGTH) {
+            message = message.substring(0, Constants.Firebase.INVITE_CTA_MAX_LENGTH);
+        }
+        String cta = activity.getString(R.string.invitation_cta);
+        if (cta.length() > Constants.Firebase.INVITE_CTA_MAX_LENGTH) {
+            cta = cta.substring(0, Constants.Firebase.INVITE_CTA_MAX_LENGTH);
+        }
         Intent intent = new AppInviteInvitation.IntentBuilder(activity.getString(R.string.invitation_title))
-                .setMessage(activity.getString(R.string.invitation_message).substring(0, Constants.Firebase.INVITE_CTA_MAX_LENGTH))
-//                .setMessage(activity.getString(R.string.invitation_message))
-                .setCallToActionText(activity.getString(R.string.invitation_cta).substring(0, Constants.Firebase.INVITE_CTA_MAX_LENGTH))
-                .setDeepLink(Uri.parse("https://pg9u9.app.goo.gl/"))
+                .setMessage(message)
+                .setCallToActionText(cta)
+                .setDeepLink(Uri.parse(activity.getString(R.string.firebase_deep_link)))
                 .build();
         activity.startActivityForResult(intent, Constants.Firebase.REQUEST_INVITE);
     }
