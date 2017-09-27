@@ -1,0 +1,9 @@
+<b>Version 1.1.0.1</b>
+<br/><br/>
+- Dodaj francuski interfejs tłumaczenia, traduit Lucie.
+<br/>
+- Nowy sposób wyświetlania rozszerzonych tekstów - teraz prawidłowo obsługują tabele, obrazy itp.
+<br/><br/>
+E-mail: <a href="mailto:neva.spb.rx@gmail.com">We wszystkich kwestiach</a>
+<br/><br/>
+Dziękujemy za korzystanie z naszej aplikacji!

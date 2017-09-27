@@ -182,5 +182,6 @@ public class ConstantValuesImpl implements ConstantValues {
 // ARCHIVE, SCP_EX,
                 OBJECTS_1, OBJECTS_2, OBJECTS_3, OBJECTS_4,
                 NEWS, SEARCH};
+        String MATERIALS = BASE_API_URL + "/informes-de-incidentes";
     }
 }

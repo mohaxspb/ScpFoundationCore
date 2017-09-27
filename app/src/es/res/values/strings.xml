@@ -7,10 +7,6 @@
     <string name="type_ru">Serie SCP-ES</string>
 
     <string-array name="materials_titles">
-        <item>SCP Humoristiques</item>
-        <!--<item>SCP-EX</item>-->
-        <!--<item>Archivierte SCPs</item>-->
-        <item>Enregistrement Des Objets Anormaux</item>
-        <item>Enregistrement Des Événements Extranormaux</item>
+        <item>Informes de Incidentes, Entrevistas a Testigos y Diarios Personales</item>
     </string-array>
 </resources>

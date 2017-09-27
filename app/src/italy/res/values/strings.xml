@@ -1,6 +1,6 @@
 <resources>
     <!--no need to translate-->
-    <string name="app_name" translatable="false">SCP Foundation Francophone On/Offline</string>
+    <string name="app_name" translatable="false">Scp Foundation Italian On/Offline</string>
     <!--end no need to translate-->
 
     <string name="drawer_item_9">SCP-IT Serie I</string>

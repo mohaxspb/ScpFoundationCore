@@ -22,13 +22,7 @@ public class MaterialClickListenerImpl implements MaterialsActivity.MaterialClic
     public void onMaterialClick(int position, BaseActivity activity) {
         switch (position) {
             case 0:
-                activity.startArticleActivity(mConstantValues.getJokes());
-                break;
-            case 1:
-                activity.startArticleActivity(ConstantValuesImpl.Urls.ANOMALS);
-                break;
-            case 2:
-                activity.startArticleActivity(ConstantValuesImpl.Urls.EVENTS);
+                activity.startArticleActivity(ConstantValuesImpl.Urls.MATERIALS);
                 break;
             default:
                 throw new RuntimeException("unexpected position in materials list");

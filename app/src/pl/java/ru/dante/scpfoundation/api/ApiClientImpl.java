@@ -9,6 +9,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -276,6 +277,10 @@ public class ApiClientImpl extends ApiClient {
 //        String tagName = tags.get(0).title;
 //        Timber.d("tagName: %s", tagName);
         List<String> tagsTitles = ArticleTag.getStringsFromTags(tags);
+        //fix index of bounds error
+        if (tagsTitles.isEmpty()) {
+            return Observable.just(Collections.emptyList());
+        }
 //        Timber.d("tagsTitles: %s", tagsTitles);
         String tagTitle = tagsTitles.get(0);
 //        Timber.d("tagTitle: %s", tagTitle);

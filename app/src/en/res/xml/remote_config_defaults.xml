@@ -207,7 +207,7 @@
     </entry>
     <entry>
         <key>main_banner_disabled</key>
-        <value>false</value>
+        <value>true</value>
     </entry>
     <entry>
         <key>article_banner_disabled</key>
@@ -254,5 +254,27 @@
     <entry>
         <key>auth_cooldown_in_millis</key>
         <value>7200000</value>
+    </entry>
+    <!--invites-->
+    <entry>
+        <key>score_action_invite</key>
+        <value>100</value>
+    </entry>
+    <entry>
+        <key>invite_reward_in_millis</key>
+        <value>86400000</value>
+    </entry>
+    <!--native ads-->
+    <entry>
+        <key>native_ads_lists_interval</key>
+        <value>15</value>
+    </entry>
+    <entry>
+        <key>native_ads_lists_enabled</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>native_ads_lists_source</key>
+        <value>2</value>
     </entry>
 </defaultsMap>

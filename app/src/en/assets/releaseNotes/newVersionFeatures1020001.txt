@@ -1,0 +1,15 @@
+<b>Main</b>
+<br/>
+ - Added the Fund's agent alert system about important events. For example, 9-10.12.2017 we will be on the "AVA Expo" in Saint-Petersburg, Russia, and you can look at the captured objects in person. And just through the alert system, we can remind you of that.
+<br/>
+ - Added the ability to invite friends to the app. The fund needs more class D!
+<b>Fixes</b>
+ - Correct the fall in Android Oreo (8). Also we update some libs. Their developers say it's better. And the programmer doesn't cheat programmer. But that's not accurate.
+<br/>
+ - Any minor corrections and improvements.
+<br/><br/>
+If you have any questions you can contact us via email:
+<br/>
+E-mail: <a href="mailto:neva.spb.rx@gmail.com">For any questions</a>
+<br/><br/>
+Thanks for using our app!
