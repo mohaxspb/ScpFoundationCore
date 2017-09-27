@@ -255,4 +255,10 @@
     <string name="version"><![CDATA[<b>Version: %s</b>]]></string>
     <string name="snoska">Fußnote %s</string>
     <string name="bibliography">Bibliographie</string>
+
+    <!---->
+    <string name="your_invite_received">Ihre Einladung zum Fonds wird akzeptiert!</string>
+    <string name="invite_received_reward_message">Werbung ist für %1$d Stunden ausgeschaltet, %2$d Punkte hinzugefügt!</string>
+    <string name="ads_disabled_for_some_hours">Die Anzeige ist für %1$d Stunden ausgeschaltet!</string>
+    <string name="drawer_item_invite_friends">Lade deine Freunde ein!</string>
 </resources>

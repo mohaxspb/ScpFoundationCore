@@ -286,5 +286,4 @@
     <string name="invite_received_reward_message">Ads disabled for %1$d hours, %2$d score added!</string>
     <string name="ads_disabled_for_some_hours">Ads disabled for %d hours!</string>
     <string name="drawer_item_invite_friends">Invite friends!</string>
-
 </resources>

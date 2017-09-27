@@ -254,4 +254,10 @@
     <string name="version"><![CDATA[<b>Wersja: %s</b>]]></string>
     <string name="snoska">Przypis %s</string>
     <string name="bibliography">Bibliografia</string>
+
+    <!---->
+    <string name="your_invite_received">Zaproszenie do funduszu jest akceptowane!</string>
+    <string name="invite_received_reward_message">Reklama jest wyłączony przez %1$d godziny, %2$d punkty dodane!</string>
+    <string name="ads_disabled_for_some_hours">Ogłoszenie jest wyłączony przez %d godziny!</string>
+    <string name="drawer_item_invite_friends">Zaproś swoich znajomych!</string>
 </resources>
