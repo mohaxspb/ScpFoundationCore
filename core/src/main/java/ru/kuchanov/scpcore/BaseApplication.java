@@ -1,6 +1,7 @@
 package ru.kuchanov.scpcore;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
@@ -70,9 +71,13 @@ public abstract class BaseApplication extends MultiDexApplication {
         FirebaseApp.initializeApp(this);
 
         // Инициализация AppMetrica SDK
-        YandexMetrica.activate(getApplicationContext(), getString(R.string.yandex_metrica_api_key));
-        // Отслеживание активности пользователей
-        YandexMetrica.enableActivityAutoTracking(this);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            YandexMetrica.activate(getApplicationContext(), getString(R.string.yandex_metrica_api_key));
+            // Отслеживание активности пользователей
+            YandexMetrica.enableActivityAutoTracking(this);
+        } else {
+            Timber.e("as there is problem in Metrica in Oreo, we just disable it");
+        }
 
         sAppInstance = this;
 

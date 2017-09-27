@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -402,7 +403,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         });
 
         FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-        if(config.getBoolean(NATIVE_ADS_LISTS_ENABLED)) {
+        if (config.getBoolean(NATIVE_ADS_LISTS_ENABLED)) {
             Appodeal.setNativeCallbacks(new MyAppodealNativeCallbacks());
             Appodeal.cache(this, Appodeal.NATIVE, Constants.NUM_OF_NATIVE_ADS_PER_SCREEN);
         }
@@ -895,7 +896,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     public void onResume() {
         super.onResume();
-        if (!BuildConfig.FLAVOR.equals("dev")) {
+        if (!BuildConfig.FLAVOR.equals("dev") && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             YandexMetrica.onResumeActivity(this);
         }
 
@@ -913,7 +914,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void onPause() {
-        if (!BuildConfig.FLAVOR.equals("dev")) {
+        if (!BuildConfig.FLAVOR.equals("dev") && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             YandexMetrica.onPauseActivity(this);
         }
         super.onPause();

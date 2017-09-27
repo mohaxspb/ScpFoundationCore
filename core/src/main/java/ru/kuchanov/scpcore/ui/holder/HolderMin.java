@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
@@ -76,8 +77,9 @@ public class HolderMin extends RecyclerView.ViewHolder {
         itemView.setOnClickListener(v -> mArticleClickListener.onArticleClicked(article, getAdapterPosition()));
 
         title.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiTextScale * textSizePrimary);
-        title.setText(Html.fromHtml(article.title));
-
+        if (!TextUtils.isEmpty(article.title)) {
+            title.setText(Html.fromHtml(article.title));
+        }
         //(отмечание прочитанного)
         int readIconId;
         int readColorId;
