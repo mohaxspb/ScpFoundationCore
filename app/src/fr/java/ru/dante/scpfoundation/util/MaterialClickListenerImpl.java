@@ -24,12 +24,6 @@ public class MaterialClickListenerImpl implements MaterialsActivity.MaterialClic
             case 0:
                 activity.startArticleActivity(mConstantValues.getJokes());
                 break;
-//            case 1:
-//                activity.startArticleActivity(ConstantValuesImpl.Urls.SCP_EX);
-//                break;
-//            case 2:
-//                activity.startArticleActivity(ConstantValuesImpl.Urls.ARCHIVE);
-//                break;
             case 1:
                 activity.startArticleActivity(ConstantValuesImpl.Urls.ANOMALS);
                 break;

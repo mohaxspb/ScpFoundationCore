@@ -1,4 +1,4 @@
-<b>Версия 1.0.3.1</b>
+<b>Version 1.0.3.1</b>
 <br/><br/>
 <b>Improvements</b>
 <br/>

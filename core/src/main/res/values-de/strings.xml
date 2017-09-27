@@ -129,8 +129,8 @@
     <string name="dialog_free_ads_disable_title">Deaktiviert Werbung.</string>
     <string name="start_market_error">Fehler beim Starten des Downloads von Play Market.</string>
     <string name="thanks_for_supporting_us">Entwickler sind dankbar für Ihre Unterstützung!</string>
-    <string name="invitation_message">Schau dir die kühle Anwendung fand ich!</string>
-    <string name="invitation_cta">Lesen Sie die geheimen Dokumente!</string>
+    <string name="invitation_message">Erlernen Sie SCP!</string>
+    <string name="invitation_cta">Begleiten Sie uns!</string>
     <string name="invitation_title">Geheime Materialien Fonds SCP!</string>
     <string name="invite_friends">Lade Freunde zur APP ein zu deaktivieren %1$d Stunden und Empfang von %2$d punkten!!</string>
     <string name="watch_video_to_disable_ads">Sehen Sie sich das Video an, um die anzeigen auszuschalten на %1$d Stunden und Empfang von %2$d Punkten</string>
@@ -255,4 +255,10 @@
     <string name="version"><![CDATA[<b>Version: %s</b>]]></string>
     <string name="snoska">Fußnote %s</string>
     <string name="bibliography">Bibliographie</string>
+
+    <!---->
+    <string name="your_invite_received">Ihre Einladung zum Fonds wird akzeptiert!</string>
+    <string name="invite_received_reward_message">Werbung ist für %1$d Stunden ausgeschaltet, %2$d Punkte hinzugefügt!</string>
+    <string name="ads_disabled_for_some_hours">Die Anzeige ist für %1$d Stunden ausgeschaltet!</string>
+    <string name="drawer_item_invite_friends">Lade deine Freunde ein!</string>
 </resources>

@@ -63,6 +63,8 @@
 
         <activity android:name="ru.kuchanov.scpcore.ui.activity.LicenceActivity" />
 
+        <activity android:name="ru.kuchanov.scpcore.ui.activity.WebViewActivity"/>
+
         <!--service-->
         <service android:name="ru.dante.scpfoundation.service.DownloadAllServiceImpl"/>
 
@@ -99,6 +101,23 @@
 
         <!--facebook-->
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+
+        <!--firebase push-->
+        <service
+            android:name="ru.kuchanov.scpcore.service.MyFirebaseMessagingService"
+            tools:ignore="ExportedService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="ru.kuchanov.scpcore.service.MyFirebaseInstanceIdService"
+            tools:ignore="ExportedService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
 
     </application>
 

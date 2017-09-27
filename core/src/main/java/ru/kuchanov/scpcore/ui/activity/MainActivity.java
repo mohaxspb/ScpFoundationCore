@@ -43,6 +43,7 @@ import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.APP_LANG_VERSIONS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED;
 import static ru.kuchanov.scpcore.ui.activity.LicenceActivity.EXTRA_SHOW_ABOUT;
 
 public class MainActivity
@@ -393,6 +394,7 @@ public class MainActivity
 
     @Override
     public boolean isBannerEnabled() {
-        return !FirebaseRemoteConfig.getInstance().getBoolean(MAIN_BANNER_DISABLED);
+        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        return !config.getBoolean(MAIN_BANNER_DISABLED) && !config.getBoolean(NATIVE_ADS_LISTS_ENABLED);
     }
 }

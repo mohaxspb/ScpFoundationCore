@@ -1,0 +1,17 @@
+<b>Verbesserungen</b>
+<br/>
+ - Added Agent Alert System des Fonds über wichtige Ereignisse. Zum Beispiel, 9-10.12.2017 wir werden auf der "AVA Expo" in Sankt-Petersburg, Russland, und Sie können sich anschauen, und Sie können sich die erfassten Gegenstände in Person. Und nur durch das Alert-System können wir Sie daran erinnern.
+<br/>
+ - Hinzugefügt die Fähigkeit, Freunde zu der APP einzuladen. Der Fonds braucht mehr Klasse D!
+<br/><br/>
+<b>Behebt</b>
+<br/>
+ - Korrigieren Sie den Fall in Android Oreo (8).
+<br/>
+ - Geringfügige Korrekturen und Verbesserungen.
+<br/><br/>
+Wenn Sie Fragen haben, können Sie uns per E-Mail kontaktieren:
+<br/>
+E-mail: <a href="mailto:neva.spb.rx@gmail.com">Für alle Fragen</a>
+<br/><br/>
+Vielen Dank für die Nutzung unserer App!

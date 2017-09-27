@@ -86,6 +86,8 @@ public interface Constants {
 
     interface Firebase {
 
+        int INVITE_CTA_MAX_LENGTH = 20;
+
         enum CallToActionReason {
             REMOVE_ADS, ENABLE_AUTO_SYNC, SYNC_NEED_AUTH, ENABLE_FONTS
         }

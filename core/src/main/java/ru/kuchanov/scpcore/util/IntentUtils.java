@@ -19,6 +19,7 @@ import java.util.List;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
+import timber.log.Timber;
 
 /**
  * Created by mohax on 08.01.2017.
@@ -99,8 +100,9 @@ public class IntentUtils {
 
     public static void firebaseInvite(FragmentActivity activity) {
         Intent intent = new AppInviteInvitation.IntentBuilder(activity.getString(R.string.invitation_title))
-                .setMessage(activity.getString(R.string.invitation_message))
-                .setCallToActionText(activity.getString(R.string.invitation_cta))
+                .setMessage(activity.getString(R.string.invitation_message).substring(0, Constants.Firebase.INVITE_CTA_MAX_LENGTH))
+//                .setMessage(activity.getString(R.string.invitation_message))
+                .setCallToActionText(activity.getString(R.string.invitation_cta).substring(0, Constants.Firebase.INVITE_CTA_MAX_LENGTH))
                 .setDeepLink(Uri.parse("https://pg9u9.app.goo.gl/"))
                 .build();
         activity.startActivityForResult(intent, Constants.Firebase.REQUEST_INVITE);
