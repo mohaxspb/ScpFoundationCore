@@ -142,8 +142,8 @@
     <string name="dialog_free_ads_disable_title">Remove Ads</string>
     <string name="start_market_error">Failed to start Play Market</string>
     <string name="thanks_for_supporting_us">Developers are grateful for your support!</string>
-    <string name="invitation_message">Look at the cool application I found!</string>
-    <string name="invitation_cta">Read the secret documents!</string>
+    <string name="invitation_message">Learn about SCP!</string>
+    <string name="invitation_cta">Join to us!</string>
     <string name="invitation_title">SCP Foundation Secret Materials!</string>
     <string name="invite_friends">Invite friends to the app to disable ads for %1$d hours and get %2$d points!!</string>
     <string name="watch_video_to_disable_ads">Watch video to disable ads for %1$d hours and get %2$d points!</string>
