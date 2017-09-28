@@ -109,6 +109,12 @@ import rx.schedulers.Schedulers;
 import timber.log.Timber;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
+import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventName;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventParam;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventType;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventValue;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.StartScreen;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.UserPropertyKey;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED;
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
 
@@ -261,9 +267,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                         if (!mMyPreferenceManager.isInviteAlreadyReceived()) {
 //                            mMyPreferenceManager.setInviteAlreadyReceived(true);
                             FirebaseAnalytics.getInstance(BaseActivity.this)
-                                    .logEvent(Constants.Firebase.Analitics.EventName.INVITE_RECEIVED, null);
+                                    .logEvent(EventName.INVITE_RECEIVED, null);
                             FirebaseAnalytics.getInstance(BaseActivity.this).setUserProperty(
-                                    Constants.Firebase.Analitics.USER_PROPERTY_KEY.INVITED,
+                                    UserPropertyKey.INVITED,
                                     "true");
                         } else {
                             Timber.d("attempt to receive already received invite! Ata-ta, %USER_NAME%!");
@@ -383,9 +389,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 long hours = numOfMillis / 1000 / 60 / 60;
                 showMessage(getString(R.string.ads_reward_gained, hours));
 
-                Bundle bundle = new Bundle();
-                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.EventType.REWARD_GAINED);
-                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventType.REWARD_GAINED, null);
 
                 @DataSyncActions.ScoreAction
                 String action = DataSyncActions.ScoreAction.REWARDED_VIDEO;
@@ -455,10 +459,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     public void showRewardedVideo() {
         if (Appodeal.isLoaded(Appodeal.REWARDED_VIDEO)) {
-            //analitics
-            Bundle bundle = new Bundle();
-            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.EventType.REWARD_REQUESTED);
-            FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+            FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventType.REWARD_REQUESTED, null);
 
             Appodeal.show(this, Appodeal.REWARDED_VIDEO);
         } else {
@@ -524,8 +525,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     subsDF.show(getSupportFragmentManager(), subsDF.getTag());
 
                     Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.StartScreen.SNACK_BAR);
-                    FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                    bundle.putString(EventParam.PLACE, StartScreen.SNACK_BAR);
+                    FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.SUBSCRIPTIONS_SHOWN, bundle);
                 });
                 break;
             case ENABLE_FONTS:
@@ -535,8 +536,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     subsDF.show(getSupportFragmentManager(), subsDF.getTag());
 
                     Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.StartScreen.FONT);
-                    FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                    bundle.putString(EventParam.PLACE, StartScreen.FONT);
+                    FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.SUBSCRIPTIONS_SHOWN, bundle);
                 });
                 break;
             case ENABLE_AUTO_SYNC:
@@ -547,8 +548,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     subsDF.show(getSupportFragmentManager(), subsDF.getTag());
 
                     Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.StartScreen.AUTO_SYNC_SNACKBAR);
-                    FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                    bundle.putString(EventParam.PLACE, StartScreen.AUTO_SYNC_SNACKBAR);
+                    FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.SUBSCRIPTIONS_SHOWN, bundle);
                 });
                 break;
             case SYNC_NEED_AUTH:
@@ -601,10 +602,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             //check here as we need to have connected service
             if (!mMyPreferenceManager.isHasAnySubscription() && mMyPreferenceManager.isTimeToPeriodicalOfferFreeTrial()) {
                 Bundle bundle = new Bundle();
-                bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
-                        Constants.Firebase.Analitics.EventValue.PERIODICAL);
-                FirebaseAnalytics.getInstance(BaseActivity.this)
-                        .logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+                bundle.putString(EventParam.PLACE, EventValue.PERIODICAL);
+                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
                 showOfferFreeTrialSubscriptionPopup();
                 mMyPreferenceManager.setLastTimePeriodicalFreeTrialOffered(System.currentTimeMillis());
@@ -620,10 +619,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     && mPresenter.getUser().score < 10000
                     && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
                 Bundle bundle = new Bundle();
-                bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
-                        Constants.Firebase.Analitics.EventValue.SCORE_1000_REACHED);
-                FirebaseAnalytics.getInstance(BaseActivity.this)
-                        .logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+                bundle.putString(EventParam.PLACE, EventValue.SCORE_1000_REACHED);
+                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
                 showOfferFreeTrialSubscriptionPopup();
                 mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score(true);
@@ -815,10 +812,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 .positiveText(R.string.yes_bliad)
                 .onPositive((dialog, which) -> {
                     Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE,
-                            Constants.Firebase.Analitics.StartScreen.AFTER_LEVEL_UP);
-                    FirebaseAnalytics.getInstance(this)
-                            .logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                    bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.StartScreen.AFTER_LEVEL_UP);
+                    FirebaseAnalytics.getInstance(this).logEvent(Constants.Firebase.Analitics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
 
                     BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
                     subsDF.show(getSupportFragmentManager(), subsDF.getTag());
@@ -864,7 +859,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             subsDF.show(getSupportFragmentManager(), subsDF.getTag());
 
             Bundle bundle = new Bundle();
-            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.StartScreen.MENU);
+            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, StartScreen.MENU);
             FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
             return true;
         } else if (i == R.id.night_mode_item) {
@@ -1029,7 +1024,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     mPresenter.onInviteSent(id);
 
                     FirebaseAnalytics.getInstance(BaseActivity.this)
-                            .logEvent(Constants.Firebase.Analitics.EventName.INVITE_SENT, null);
+                            .logEvent(EventName.INVITE_SENT, null);
                 }
             } else {
                 // Sending failed or it was canceled, show failure message to the user
