@@ -288,7 +288,6 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     /**
-     *
      * @return is banners temporary disabled from free ads disable options
      */
     public boolean isTimeToShowBannerAds() {
@@ -443,7 +442,12 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     private long getLastTimePeriodicalFreeTrialOffered() {
-        return mPreferences.getLong(Keys.FREE_TRIAL_OFFERED_PERIODICAL, System.currentTimeMillis());
+        long lastTimeShows = mPreferences.getLong(Keys.FREE_TRIAL_OFFERED_PERIODICAL, 0);
+        if (lastTimeShows == 0) {
+            lastTimeShows = System.currentTimeMillis();
+            setLastTimePeriodicalFreeTrialOffered(lastTimeShows);
+        }
+        return lastTimeShows;
     }
 
     public boolean isTimeToPeriodicalOfferFreeTrial() {

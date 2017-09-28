@@ -247,8 +247,8 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
                                 adapter.notifyDataSetChanged();
 
                                 Bundle bundle = new Bundle();
-                                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "group" + vkGroupId);
-                                FirebaseAnalytics.getInstance(getActivity()).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "group_" + vkGroupId);
+                                FirebaseAnalytics.getInstance(getActivity()).logEvent(Constants.Firebase.Analitics.EventName.VK_GROUP_JOINED, bundle);
 
                                 getBaseActivity().createPresenter().updateUserScoreForVkGroup(vkGroupId);
                                 dismiss();
@@ -262,7 +262,7 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
                         }
                 );
             } else {
-                Timber.wtf("Unexpected type!");
+                throw new IllegalArgumentException("Unexpected type: " + data1.title);
             }
         });
 

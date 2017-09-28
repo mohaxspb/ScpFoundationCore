@@ -200,6 +200,10 @@ public interface Constants {
                 String FREE_TRIAL_OFFER_SHOWN = "FREE_TRIAL_OFFER_SHOWN";
                 String INVITE_SENT = "INVITE_SENT";
                 String INVITE_RECEIVED = "INVITE_RECEIVED";
+                String SUBSCRIPTIONS_SHOWN = "SUBSCRIPTIONS_SHOWN";
+                String MASS_DOWNLOAD = "MASS_DOWNLOAD";
+                String VK_GROUP_JOINED = "VK_GROUP_JOINED";
+                String APP_INSTALLED = "APP_INSTALLED";
             }
 
             interface EventParam {
@@ -229,10 +233,7 @@ public interface Constants {
                 String AFTER_LEVEL_UP = "AFTER_LEVEL_UP";
             }
 
-            String INVITED_FIVE_FRIENDS = "INVITED_FIVE_FRIENDS";
-            String APP_CRACKED = "APP_CRACKED";
-
-            interface USER_PROPERTY_KEY {
+            interface UserPropertyKey {
                 String INVITED = "INVITED";
             }
         }
