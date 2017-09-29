@@ -9,7 +9,6 @@ import android.widget.FrameLayout;
 import com.appodeal.ads.Appodeal;
 import com.appodeal.ads.NativeAd;
 import com.appodeal.ads.NativeMediaView;
-import com.appodeal.ads.native_ad.views.NativeAdViewAppWall;
 import com.appodeal.ads.native_ad.views.NativeAdViewContentStream;
 import com.google.android.gms.ads.NativeExpressAdView;
 
@@ -23,7 +22,7 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.ui.adapter.ArticlesListRecyclerAdapter;
+import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 import timber.log.Timber;
 
 /**
@@ -36,7 +35,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     @Inject
     protected MyPreferenceManager mMyPreferenceManager;
 
-    private ArticlesListRecyclerAdapter.ArticleClickListener mArticleClickListener;
+    private ArticlesListAdapter.ArticleClickListener mArticleClickListener;
 
     @BindView(R2.id.nativeAdViewContainer)
     CardView nativeAdViewContainer;
@@ -48,7 +47,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     @BindView(R2.id.appodealNativeMediaView)
     NativeMediaView appodealNativeMediaView;
 
-    public NativeAdsArticleListHolder(View itemView, ArticlesListRecyclerAdapter.ArticleClickListener clickListener) {
+    public NativeAdsArticleListHolder(View itemView, ArticlesListAdapter.ArticleClickListener clickListener) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         BaseApplication.getAppComponent().inject(this);

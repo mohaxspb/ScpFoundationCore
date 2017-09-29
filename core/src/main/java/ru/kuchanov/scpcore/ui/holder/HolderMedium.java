@@ -6,7 +6,7 @@ import android.view.View;
 
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.db.model.Article;
-import ru.kuchanov.scpcore.ui.adapter.ArticlesListRecyclerAdapter;
+import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 
 /**
  * Created by mohax on 11.06.2017.
@@ -15,7 +15,7 @@ import ru.kuchanov.scpcore.ui.adapter.ArticlesListRecyclerAdapter;
  */
 public class HolderMedium extends HolderMax {
 
-    public HolderMedium(View itemView, ArticlesListRecyclerAdapter.ArticleClickListener clickListener) {
+    public HolderMedium(View itemView, ArticlesListAdapter.ArticleClickListener clickListener) {
         super(itemView, clickListener);
     }
 

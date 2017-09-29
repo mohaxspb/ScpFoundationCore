@@ -26,7 +26,7 @@ import ru.kuchanov.scpcore.util.AttributeGetter;
  * <p>
  * for scp_ru
  */
-public class ImagesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<VkImage> mVkImages;
 

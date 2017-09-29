@@ -23,14 +23,13 @@ import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
-import timber.log.Timber;
 
 /**
  * Created by Dante on 17.01.2016.
  * <p>
  * for scp_ru
  */
-public class SubscriptionsRecyclerAdapter extends RecyclerView.Adapter<SubscriptionsRecyclerAdapter.ViewHolderText> {
+public class SubscriptionsAdapter extends RecyclerView.Adapter<SubscriptionsAdapter.ViewHolderText> {
 
     @Inject
     MyPreferenceManager mMyPreferenceManager;
@@ -43,7 +42,7 @@ public class SubscriptionsRecyclerAdapter extends RecyclerView.Adapter<Subscript
         mArticleClickListener = articleClickListener;
     }
 
-    public SubscriptionsRecyclerAdapter() {
+    public SubscriptionsAdapter() {
         BaseApplication.getAppComponent().inject(this);
     }
 
@@ -58,15 +57,15 @@ public class SubscriptionsRecyclerAdapter extends RecyclerView.Adapter<Subscript
     }
 
     @Override
-    public SubscriptionsRecyclerAdapter.ViewHolderText onCreateViewHolder(ViewGroup parent, int viewType) {
-        SubscriptionsRecyclerAdapter.ViewHolderText viewHolder;
+    public SubscriptionsAdapter.ViewHolderText onCreateViewHolder(ViewGroup parent, int viewType) {
+        SubscriptionsAdapter.ViewHolderText viewHolder;
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_subscription, parent, false);
         viewHolder = new ViewHolderText(view);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(SubscriptionsRecyclerAdapter.ViewHolderText holder, int position) {
+    public void onBindViewHolder(SubscriptionsAdapter.ViewHolderText holder, int position) {
         holder.bind(mData.get(position));
     }
 

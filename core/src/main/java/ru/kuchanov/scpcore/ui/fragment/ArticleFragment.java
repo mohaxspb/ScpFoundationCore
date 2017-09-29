@@ -39,14 +39,13 @@ import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.mvp.contract.ArticleMvp;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
-import ru.kuchanov.scpcore.ui.adapter.ArticleRecyclerAdapter;
+import ru.kuchanov.scpcore.ui.adapter.ArticleAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseFragment;
 import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
 import ru.kuchanov.scpcore.ui.util.MyHtmlTagHandler;
 import ru.kuchanov.scpcore.ui.util.ReachBottomRecyclerScrollListener;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
-import ru.kuchanov.scpcore.ui.util.URLImageParser;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
@@ -94,7 +93,7 @@ public class ArticleFragment
 
     private String url;
 
-    private ArticleRecyclerAdapter mAdapter;
+    private ArticleAdapter mAdapter;
     private Article mArticle;
 
     private List<SpoilerViewModel> mExpandedSpoilers = new ArrayList<>();
@@ -158,7 +157,7 @@ public class ArticleFragment
     protected void initViews() {
         Timber.d("initViews");
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mAdapter = new ArticleRecyclerAdapter();
+        mAdapter = new ArticleAdapter();
         mAdapter.setTextItemsClickListener(this);
         mAdapter.setHasStableIds(true);
 

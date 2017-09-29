@@ -21,7 +21,7 @@ import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.mvp.base.BaseArticlesListMvp;
 import ru.kuchanov.scpcore.mvp.base.BaseListMvp;
-import ru.kuchanov.scpcore.ui.adapter.ArticlesListRecyclerAdapter;
+import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseListFragment;
 import ru.kuchanov.scpcore.ui.util.EndlessRecyclerViewScrollListener;
 import timber.log.Timber;
@@ -37,14 +37,14 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
 
     private static final String EXTRA_SORT_TYPE = "EXTRA_SORT_TYPE";
 
-    protected ArticlesListRecyclerAdapter mAdapter;
-    private ArticlesListRecyclerAdapter.SortType mSortType = ArticlesListRecyclerAdapter.SortType.NONE;
+    protected ArticlesListAdapter mAdapter;
+    private ArticlesListAdapter.SortType mSortType = ArticlesListAdapter.SortType.NONE;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            mSortType = (ArticlesListRecyclerAdapter.SortType) savedInstanceState.getSerializable(EXTRA_SORT_TYPE);
+            mSortType = (ArticlesListAdapter.SortType) savedInstanceState.getSerializable(EXTRA_SORT_TYPE);
         }
     }
 
@@ -56,9 +56,9 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
 
     @SuppressWarnings("unchecked")
     @Override
-    protected ArticlesListRecyclerAdapter getAdapter() {
+    protected ArticlesListAdapter getAdapter() {
         if (mAdapter == null) {
-            mAdapter = new ArticlesListRecyclerAdapter();
+            mAdapter = new ArticlesListAdapter();
         }
         return mAdapter;
     }
@@ -110,13 +110,13 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
         if (i == R.id.menuItemSort) {
-            List<ArticlesListRecyclerAdapter.SortType> sortTypes = new ArrayList<>(Arrays.asList(ArticlesListRecyclerAdapter.SortType.values()));
+            List<ArticlesListAdapter.SortType> sortTypes = new ArrayList<>(Arrays.asList(ArticlesListAdapter.SortType.values()));
             if (!getResources().getBoolean(R.bool.filter_by_type_enabled)) {
-                sortTypes.remove(ArticlesListRecyclerAdapter.SortType.EUCLID);
-                sortTypes.remove(ArticlesListRecyclerAdapter.SortType.KETER);
-                sortTypes.remove(ArticlesListRecyclerAdapter.SortType.NEUTRAL_OR_NOT_ADDED);
-                sortTypes.remove(ArticlesListRecyclerAdapter.SortType.SAFE);
-                sortTypes.remove(ArticlesListRecyclerAdapter.SortType.THAUMIEL);
+                sortTypes.remove(ArticlesListAdapter.SortType.EUCLID);
+                sortTypes.remove(ArticlesListAdapter.SortType.KETER);
+                sortTypes.remove(ArticlesListAdapter.SortType.NEUTRAL_OR_NOT_ADDED);
+                sortTypes.remove(ArticlesListAdapter.SortType.SAFE);
+                sortTypes.remove(ArticlesListAdapter.SortType.THAUMIEL);
             }
 
             int selectedIndex = sortTypes.indexOf(getAdapter().getSortType());
@@ -149,7 +149,7 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
         super.onPrepareOptionsMenu(menu);
         MenuItem item = menu.findItem(R.id.menuItemSort);
         if (item != null && getActivity() != null) {
-            if (mSortType != ArticlesListRecyclerAdapter.SortType.NONE) {
+            if (mSortType != ArticlesListAdapter.SortType.NONE) {
                 item.getIcon().setColorFilter(ContextCompat.getColor(getActivity(), R.color.material_green_500), PorterDuff.Mode.SRC_ATOP);
             } else {
                 item.getIcon().setColorFilter(ContextCompat.getColor(getActivity(), android.R.color.transparent), PorterDuff.Mode.SRC_ATOP);
@@ -186,7 +186,7 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
      * override it to add something
      */
     protected void initAdapter() {
-        getAdapter().setArticleClickListener(new ArticlesListRecyclerAdapter.ArticleClickListener() {
+        getAdapter().setArticleClickListener(new ArticlesListAdapter.ArticleClickListener() {
             @Override
             public void onArticleClicked(Article article) {
                 Timber.d("onArticleClicked: %s", article.title);

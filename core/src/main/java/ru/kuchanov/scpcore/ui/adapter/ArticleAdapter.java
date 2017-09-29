@@ -30,7 +30,7 @@ import timber.log.Timber;
  * <p>
  * for scp_ru
  */
-public class ArticleRecyclerAdapter
+public class ArticleAdapter
         extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements ArticleSpoilerHolder.SpoilerClickListener {
 

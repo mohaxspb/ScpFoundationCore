@@ -24,7 +24,7 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
     private LeaderboardClickListener mAdapterClickListener;
 
     public LeaderboardRecyclerAdapter() {
-        Timber.d("FreeAdsDisableRecyclerAdapter constructor");
+        Timber.d("FreeAdsDisableAdapter constructor");
     }
 
     @Override
