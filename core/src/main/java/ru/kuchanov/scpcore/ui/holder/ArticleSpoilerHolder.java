@@ -34,7 +34,7 @@ public class ArticleSpoilerHolder extends RecyclerView.ViewHolder {
     @BindView(R2.id.title)
     TextView title;
 
-    private SpoilerViewModel mSpoilerViewModel;
+//    private SpoilerViewModel mSpoilerViewModel;
 
     private SpoilerClickListener mSpoilerClickListener;
 
@@ -46,9 +46,9 @@ public class ArticleSpoilerHolder extends RecyclerView.ViewHolder {
         mSpoilerClickListener = clickListener;
     }
 
-    public void bind(SpoilerViewModel data) {
-        mSpoilerViewModel = data;
+    public void bind(SpoilerViewModel mSpoilerViewModel) {
         Context context = itemView.getContext();
+//        mSpoilerViewModel = data;
         int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_primary);
         float articleTextScale = mMyPreferenceManager.getArticleTextScale();
         title.setTextSize(TypedValue.COMPLEX_UNIT_PX, articleTextScale * textSizePrimary);

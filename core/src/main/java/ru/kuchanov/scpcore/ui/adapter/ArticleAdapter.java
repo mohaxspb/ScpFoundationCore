@@ -79,17 +79,18 @@ public class ArticleAdapter
         mArticlesTextPartsTypes.add(ParseHtmlUtils.TextType.TAGS);
 
         Timber.d("mArticlesTextPartsTypes: %s", mArticlesTextPartsTypes);
-        Timber.d("mArticlesTextParts.size: %s", mArticlesTextParts.size());
-        Timber.d("mArticlesTextPartsTypes.size: %s", mArticlesTextPartsTypes.size());
+//        Timber.d("mArticlesTextParts.size: %s", mArticlesTextParts.size());
+//        Timber.d("mArticlesTextPartsTypes.size: %s", mArticlesTextPartsTypes.size());
 
         for (int order = 0; order < mArticlesTextParts.size(); order++) {
             @ParseHtmlUtils.TextType
             String type = mArticlesTextPartsTypes.get(order);
             Object data;
+//            boolean isInTab = false;
             switch (type) {
                 case ParseHtmlUtils.TextType.SPOILER:
                     String spoilerData = mArticlesTextParts.get(order);
-                    List<String> spoilerParts = ParseHtmlUtils.getSpoilerParts(spoilerData);
+                    List<String> spoilerParts = ParseHtmlUtils.parseSpoilerParts(spoilerData);
 
                     SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
 //                    spoilerViewModel.titles = Collections.singletonList(spoilerParts.get(0));

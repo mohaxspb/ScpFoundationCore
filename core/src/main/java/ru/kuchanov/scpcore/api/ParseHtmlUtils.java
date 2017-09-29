@@ -12,6 +12,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.RealmList;
+import ru.kuchanov.scpcore.db.model.RealmString;
+import ru.kuchanov.scpcore.ui.model.TabsViewModel;
 import timber.log.Timber;
 
 /**
@@ -27,7 +30,7 @@ public class ParseHtmlUtils {
         parseRimgLimgCimgImages("cimg", pageContent);
     }
 
-    private static void parseRimgLimgCimgImages(String className, Element pageContent){
+    private static void parseRimgLimgCimgImages(String className, Element pageContent) {
         //parse multiple imgs in "rimg" tag
         Elements rimgs = pageContent.getElementsByClass(className);
 //            Timber.d("rimg: %s", rimg);
@@ -54,7 +57,6 @@ public class ParseHtmlUtils {
                 }
             }
         }
-
 //            Timber.d("pageContent.getElementsByClass(\"rimg\"): %s", pageContent.getElementsByClass("rimg"));
     }
 
@@ -120,8 +122,8 @@ public class ParseHtmlUtils {
         return listOfTextTypes;
     }
 
-    public static List<String> getSpoilerParts(String html) {
-//        Timber.d("getSpoilerParts: %s", html);
+    public static List<String> parseSpoilerParts(String html) {
+//        Timber.d("parseSpoilerParts: %s", html);
         List<String> spoilerParts = new ArrayList<>();
         Document document = Jsoup.parse(html);
         Element element = document.getElementsByClass("collapsible-block-folded").first();
@@ -133,6 +135,7 @@ public class ParseHtmlUtils {
         Element elementUnfolded = document.getElementsByClass("collapsible-block-unfolded").first();
 
         Element elementExpanded = elementUnfolded.getElementsByClass("collapsible-block-link").first();
+        //replacing non-breaking-spaces
 //        spoilerParts.add(elementExpanded.text().replaceAll("&nbsp;", " "));
         spoilerParts.add(elementExpanded.text().replaceAll("\\p{Z}", " "));
         Timber.d("spoilerParts: %s", spoilerParts.get(1));
@@ -140,5 +143,35 @@ public class ParseHtmlUtils {
         Element elementContent = elementUnfolded.getElementsByClass("collapsible-block-content").first();
         spoilerParts.add(elementContent.html());
         return spoilerParts;
+    }
+
+    public static TabsViewModel parseTabs(Document document) {
+//        Element yuiNavset = document.getElementsByAttributeValueStarting("class", "yui-navset").first();
+        Element yuiNavset = document.getElementsByClass("yui-navset").first();
+        if (yuiNavset != null) {
+            Element titles = yuiNavset.getElementsByClass("yui-nav").first();
+            Elements liElements = titles.getElementsByTag("li");
+            Element yuiContent = yuiNavset.getElementsByClass("yui-content").first();
+
+            List<String> tabsTitles = new ArrayList<>();
+            for (Element element : liElements) {
+                tabsTitles.add(element.text());
+            }
+
+            //TODO add supporting inner articles ??? wtf where it can be found on site?
+            List<TabsViewModel.TabData> tabDataList = new ArrayList<>();
+            for (Element tab : yuiContent.children()) {
+                tab.attr("id", "page-content");
+                String tabText = tab.outerHtml();
+
+                List<String> tabsTextParts = getArticlesTextParts(tabText);
+                List<String> tabsTextPartTypes = getListOfTextTypes(tabsTextParts);
+                tabDataList.add(new TabsViewModel.TabData(tabsTextPartTypes, tabsTextParts));
+            }
+
+            return new TabsViewModel(tabsTitles, tabDataList);
+        } else {
+            return null;
+        }
     }
 }
