@@ -12,10 +12,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.RealmList;
-import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.ui.model.TabsViewModel;
-import timber.log.Timber;
 
 /**
  * Created by mohax on 05.01.2017.
@@ -23,6 +20,16 @@ import timber.log.Timber;
  * for scp_ru
  */
 public class ParseHtmlUtils {
+
+    public static final String TAG_IMG = "img";
+    public static final String TAG_SPAN = "span";
+    public static final String TAG_DIV = "div";
+    public static final String TAG_P = "p";
+    public static final String TAG_BODY = "body";
+    public static final String TAG_TABLE = "table";
+    public static final String TAG_LI = "li";
+
+    public static final String ID_PAGE_CONTENT = "page-content";
 
     public static void parseImgsTags(Element pageContent) {
         parseRimgLimgCimgImages("rimg", pageContent);
@@ -36,14 +43,14 @@ public class ParseHtmlUtils {
 //            Timber.d("rimg: %s", rimg);
         if (rimgs != null) {
             for (Element rimg : rimgs) {
-                Elements imgs = rimg.getElementsByTag("img");
-                Elements descriptions = rimg.getElementsByTag("span");
+                Elements imgs = rimg.getElementsByTag(TAG_IMG);
+                Elements descriptions = rimg.getElementsByTag(TAG_SPAN);
                 List<Element> rimgsToAdd = new ArrayList<>();
                 if (imgs != null && imgs.size() > 1 && descriptions.size() == imgs.size()) {
                     for (int i = 0; i < imgs.size(); i++) {
                         Element img = imgs.get(i);
                         Element description = descriptions.get(i);
-                        Element newRimg = new Element("div");
+                        Element newRimg = new Element(TAG_DIV);
                         newRimg.addClass(className);
                         newRimg.appendChild(img).appendChild(description);
                         rimgsToAdd.add(newRimg);
@@ -75,7 +82,7 @@ public class ParseHtmlUtils {
         List<String> articlesTextParts = new ArrayList<>();
         Document document = Jsoup.parse(html);
 //        Timber.d(document.outerHtml());
-        Element contentPage = document.getElementById("page-content");
+        Element contentPage = document.getElementById(ID_PAGE_CONTENT);
         if (contentPage == null) {
             contentPage = document.body();
         }
@@ -92,12 +99,12 @@ public class ParseHtmlUtils {
         for (String textPart : articlesTextParts) {
 //            Timber.d("getListOfTextTypes: %s", textPart);
             Element element = Jsoup.parse(textPart);
-            Element ourElement = element.getElementsByTag("body").first().children().first();
+            Element ourElement = element.getElementsByTag(TAG_BODY).first().children().first();
             if (ourElement == null) {
                 listOfTextTypes.add(TextType.TEXT);
                 continue;
             }
-            if (ourElement.tagName().equals("p")) {
+            if (ourElement.tagName().equals(TAG_P)) {
                 listOfTextTypes.add(TextType.TEXT);
                 continue;
             }
@@ -105,7 +112,7 @@ public class ParseHtmlUtils {
                 listOfTextTypes.add(TextType.SPOILER);
                 continue;
             }
-            if (ourElement.tagName().equals("table")) {
+            if (ourElement.tagName().equals(TAG_TABLE)) {
                 listOfTextTypes.add(TextType.TABLE);
                 continue;
             }
@@ -130,7 +137,7 @@ public class ParseHtmlUtils {
         Element elementA = element.getElementsByTag("a").first();
 //        spoilerParts.add(elementA.text().replaceAll("&nbsp;", " "));
         spoilerParts.add(elementA.text().replaceAll("\\p{Z}", " "));
-        Timber.d("spoilerParts: %s", spoilerParts.get(0));
+//        Timber.d("spoilerParts: %s", spoilerParts.get(0));
 
         Element elementUnfolded = document.getElementsByClass("collapsible-block-unfolded").first();
 
@@ -138,7 +145,7 @@ public class ParseHtmlUtils {
         //replacing non-breaking-spaces
 //        spoilerParts.add(elementExpanded.text().replaceAll("&nbsp;", " "));
         spoilerParts.add(elementExpanded.text().replaceAll("\\p{Z}", " "));
-        Timber.d("spoilerParts: %s", spoilerParts.get(1));
+//        Timber.d("spoilerParts: %s", spoilerParts.get(1));
 
         Element elementContent = elementUnfolded.getElementsByClass("collapsible-block-content").first();
         spoilerParts.add(elementContent.html());
@@ -150,7 +157,7 @@ public class ParseHtmlUtils {
         Element yuiNavset = document.getElementsByClass("yui-navset").first();
         if (yuiNavset != null) {
             Element titles = yuiNavset.getElementsByClass("yui-nav").first();
-            Elements liElements = titles.getElementsByTag("li");
+            Elements liElements = titles.getElementsByTag(TAG_LI);
             Element yuiContent = yuiNavset.getElementsByClass("yui-content").first();
 
             List<String> tabsTitles = new ArrayList<>();
@@ -161,7 +168,7 @@ public class ParseHtmlUtils {
             //TODO add supporting inner articles ??? wtf where it can be found on site?
             List<TabsViewModel.TabData> tabDataList = new ArrayList<>();
             for (Element tab : yuiContent.children()) {
-                tab.attr("id", "page-content");
+                tab.attr("id", ID_PAGE_CONTENT);
                 String tabText = tab.outerHtml();
 
                 List<String> tabsTextParts = getArticlesTextParts(tabText);
