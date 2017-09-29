@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.kuchanov.scpcore.ui.model.TabsViewModel;
+import timber.log.Timber;
 
 /**
  * Created by mohax on 05.01.2017.
@@ -30,6 +31,9 @@ public class ParseHtmlUtils {
     public static final String TAG_LI = "li";
 
     public static final String ID_PAGE_CONTENT = "page-content";
+
+    public static final String CLASS_TABS = "yui-navset";
+    public static final String CLASS_SPOILER = "collapsible-block";
 
     public static void parseImgsTags(Element pageContent) {
         parseRimgLimgCimgImages("rimg", pageContent);
@@ -68,7 +72,7 @@ public class ParseHtmlUtils {
     }
 
     @Retention(RetentionPolicy.SOURCE)
-    @StringDef({TextType.TEXT, TextType.SPOILER, TextType.IMAGE, TextType.TABLE, TextType.TITLE, TextType.TAGS})
+    @StringDef({TextType.TEXT, TextType.SPOILER, TextType.IMAGE, TextType.TABLE, TextType.TITLE, TextType.TAGS, TextType.TABS})
     public @interface TextType {
         String TEXT = "TEXT";
         String SPOILER = "SPOILER";
@@ -76,6 +80,7 @@ public class ParseHtmlUtils {
         String TABLE = "TABLE";
         String TITLE = "TITLE";
         String TAGS = "TAGS";
+        String TABS = "TABS";
     }
 
     public static List<String> getArticlesTextParts(String html) {
@@ -108,8 +113,12 @@ public class ParseHtmlUtils {
                 listOfTextTypes.add(TextType.TEXT);
                 continue;
             }
-            if (ourElement.className().equals("collapsible-block")) {
+            if (ourElement.className().equals(CLASS_SPOILER)) {
                 listOfTextTypes.add(TextType.SPOILER);
+                continue;
+            }
+            if (ourElement.classNames().contains(CLASS_TABS)) {
+                listOfTextTypes.add(TextType.TABS);
                 continue;
             }
             if (ourElement.tagName().equals(TAG_TABLE)) {
@@ -154,7 +163,7 @@ public class ParseHtmlUtils {
 
     public static TabsViewModel parseTabs(Document document) {
 //        Element yuiNavset = document.getElementsByAttributeValueStarting("class", "yui-navset").first();
-        Element yuiNavset = document.getElementsByClass("yui-navset").first();
+        Element yuiNavset = document.getElementsByClass(CLASS_TABS).first();
         if (yuiNavset != null) {
             Element titles = yuiNavset.getElementsByClass("yui-nav").first();
             Elements liElements = titles.getElementsByTag(TAG_LI);

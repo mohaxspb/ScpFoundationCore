@@ -5,7 +5,6 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,7 +34,6 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
-import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.mvp.contract.ArticleMvp;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
@@ -73,8 +71,8 @@ public class ArticleFragment
     @BindView(R2.id.recyclerView)
     RecyclerView mRecyclerView;
 
-    @BindView(R2.id.tabLayout)
-    TabLayout tabLayout;
+//    @BindView(R2.id.tabLayout)
+//    TabLayout tabLayout;
 
     @Inject
     DialogUtils mDialogUtils;
@@ -176,10 +174,7 @@ public class ArticleFragment
         }
 
         mSwipeRefreshLayout.setColorSchemeResources(R.color.zbs_color_red);
-        mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            Timber.d("onRefresh");
-            mPresenter.getDataFromApi();
-        });
+        mSwipeRefreshLayout.setOnRefreshListener(() -> mPresenter.getDataFromApi());
     }
 
     @Override
@@ -232,56 +227,7 @@ public class ArticleFragment
         if (getUserVisibleHint()) {
             updateActivityMenuState();
         }
-        if (mArticle.hasTabs) {
-            tabLayout.clearOnTabSelectedListeners();
-            tabLayout.removeAllTabs();
-            for (String title : RealmString.toStringList(article.tabsTitles)) {
-                tabLayout.addTab(tabLayout.newTab().setText(title));
-            }
-            tabLayout.setVisibility(View.VISIBLE);
-
-            Article currentTabArticle = new Article();
-            currentTabArticle.hasTabs = true;
-            currentTabArticle.text = RealmString.toStringList(mArticle.tabsTexts).get(mCurrentSelectedTab);
-            currentTabArticle.tags = mArticle.tags;
-            currentTabArticle.title = mArticle.title;
-            mAdapter.setData(currentTabArticle, mExpandedSpoilers);
-
-            tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-                @Override
-                public void onTabSelected(TabLayout.Tab tab) {
-                    Timber.d("onTabSelected: %s", tab.getPosition());
-
-                    mExpandedSpoilers.clear();
-
-                    mCurrentSelectedTab = tab.getPosition();
-                    Article currentTabArticle = new Article();
-                    currentTabArticle.hasTabs = true;
-                    currentTabArticle.text = RealmString.toStringList(mArticle.tabsTexts).get(mCurrentSelectedTab);
-                    currentTabArticle.tags = mArticle.tags;
-                    currentTabArticle.title = mArticle.title;
-                    mAdapter.setData(currentTabArticle, mExpandedSpoilers);
-                }
-
-                @Override
-                public void onTabUnselected(TabLayout.Tab tab) {
-
-                }
-
-                @Override
-                public void onTabReselected(TabLayout.Tab tab) {
-
-                }
-            });
-
-            TabLayout.Tab selectedTab = tabLayout.getTabAt(mCurrentSelectedTab);
-            if (selectedTab != null) {
-                selectedTab.select();
-            }
-        } else {
-            tabLayout.setVisibility(View.GONE);
-            mAdapter.setData(mArticle, mExpandedSpoilers);
-        }
+        mAdapter.setData(mArticle, mExpandedSpoilers);
 
         mRecyclerView.addOnScrollListener(new ReachBottomRecyclerScrollListener() {
             @Override
@@ -367,7 +313,7 @@ public class ArticleFragment
 
     @Override
     public void onTocClicked(String link) {
-        Timber.d("onTocClicked: %s", link);
+//        Timber.d("onTocClicked: %s", link);
         List<String> articlesTextParts = mAdapter.getArticlesTextParts();
         String digits = "";
         for (char c : link.toCharArray()) {

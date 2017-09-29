@@ -17,11 +17,13 @@ import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.ui.holder.ArticleImageHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleSpoilerHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTableHolder;
+import ru.kuchanov.scpcore.ui.holder.ArticleTabsHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTagsHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTextHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTitleHolder;
 import ru.kuchanov.scpcore.ui.model.ArticleTextPartViewModel;
 import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
+import ru.kuchanov.scpcore.ui.model.TabsViewModel;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import timber.log.Timber;
 
@@ -41,6 +43,7 @@ public class ArticleAdapter
     private static final int TYPE_TITLE = 3;
     private static final int TYPE_TABLE = 4;
     private static final int TYPE_TAGS = 5;
+    private static final int TYPE_TABS = 6;
 
     private List<ArticleTextPartViewModel> mViewModels = new ArrayList<>();
 
@@ -58,54 +61,67 @@ public class ArticleAdapter
 //        Timber.d("setData: %s", article);
         mViewModels.clear();
 
-        List<String> mArticlesTextParts = new ArrayList<>();
+        List<String> articlesTextParts = new ArrayList<>();
         @ParseHtmlUtils.TextType
-        List<String> mArticlesTextPartsTypes = new ArrayList<>();
+        List<String> articlesTextPartsTypes = new ArrayList<>();
 
-        //TODO refactor it
-        if (article.hasTabs) {
-            Timber.d("article.text: %s", article.text);
-            mArticlesTextParts.addAll(ParseHtmlUtils.getArticlesTextParts(article.text));
-            mArticlesTextPartsTypes.addAll(ParseHtmlUtils.getListOfTextTypes(mArticlesTextParts));
-        } else {
-            mArticlesTextParts.addAll(RealmString.toStringList(article.textParts));
-            mArticlesTextPartsTypes.addAll(RealmString.toStringList(article.textPartsTypes));
-        }
+//        if (article.hasTabs) {
+//            Timber.d("article.text: %s", article.text);
+//            mArticlesTextParts.addAll(ParseHtmlUtils.getArticlesTextParts(article.text));
+//            mArticlesTextPartsTypes.addAll(ParseHtmlUtils.getListOfTextTypes(mArticlesTextParts));
+//        } else {
+        articlesTextParts.addAll(RealmString.toStringList(article.textParts));
+        articlesTextPartsTypes.addAll(RealmString.toStringList(article.textPartsTypes));
+//        }
 
-        mArticlesTextParts.add(0, article.title);
-        mArticlesTextPartsTypes.add(0, ParseHtmlUtils.TextType.TITLE);
+        articlesTextParts.add(0, article.title);
+        articlesTextPartsTypes.add(0, ParseHtmlUtils.TextType.TITLE);
         //DO NOT USE THIS VALUE!!!
-        mArticlesTextParts.add(article.tags.toString());
-        mArticlesTextPartsTypes.add(ParseHtmlUtils.TextType.TAGS);
+        articlesTextParts.add(article.tags.toString());
+        articlesTextPartsTypes.add(ParseHtmlUtils.TextType.TAGS);
 
-        Timber.d("mArticlesTextPartsTypes: %s", mArticlesTextPartsTypes);
+        Timber.d("mArticlesTextPartsTypes: %s", articlesTextPartsTypes);
 //        Timber.d("mArticlesTextParts.size: %s", mArticlesTextParts.size());
 //        Timber.d("mArticlesTextPartsTypes.size: %s", mArticlesTextPartsTypes.size());
 
-        for (int order = 0; order < mArticlesTextParts.size(); order++) {
+        for (int order = 0; order < articlesTextParts.size(); order++) {
             @ParseHtmlUtils.TextType
-            String type = mArticlesTextPartsTypes.get(order);
+            String type = articlesTextPartsTypes.get(order);
             Object data;
 //            boolean isInTab = false;
             switch (type) {
                 case ParseHtmlUtils.TextType.SPOILER:
-                    String spoilerData = mArticlesTextParts.get(order);
+                    String spoilerData = articlesTextParts.get(order);
                     List<String> spoilerParts = ParseHtmlUtils.parseSpoilerParts(spoilerData);
 
                     SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
 //                    spoilerViewModel.titles = Collections.singletonList(spoilerParts.get(0));
                     spoilerViewModel.titles = new ArrayList<>(spoilerParts.subList(0, 2));
                     spoilerViewModel.mSpoilerTextParts = ParseHtmlUtils.getArticlesTextParts(spoilerParts.get(2));
+                    for (String part : spoilerViewModel.mSpoilerTextParts) {
+                        String partCuted = part;
+                        if (part.length() > 100) {
+                            partCuted = partCuted.substring(0, 100);
+                        }
+                        Timber.d("partCuted: %s", partCuted);
+                    }
                     spoilerViewModel.mSpoilerTextPartsTypes = ParseHtmlUtils.getListOfTextTypes(spoilerViewModel.mSpoilerTextParts);
+
+                    Timber.d("spoilerParts size: %s", spoilerViewModel.mSpoilerTextParts.size());
+                    Timber.d("spoilerPartsTypes size: %s", spoilerViewModel.mSpoilerTextPartsTypes.size());
+
                     spoilerViewModel.isExpanded = expandedSpoilers.contains(spoilerViewModel);
 
                     data = spoilerViewModel;
+                    break;
+                case ParseHtmlUtils.TextType.TABS:
+                    //TODO create and set ViewModel (as for spoiler)
                     break;
                 case ParseHtmlUtils.TextType.TAGS:
                     data = article.tags;
                     break;
                 default:
-                    data = mArticlesTextParts.get(order);
+                    data = articlesTextParts.get(order);
                     break;
             }
 
@@ -144,6 +160,8 @@ public class ArticleAdapter
                 return TYPE_TABLE;
             case ParseHtmlUtils.TextType.TAGS:
                 return TYPE_TAGS;
+            case ParseHtmlUtils.TextType.TABS:
+                return TYPE_TABS;
             default:
                 throw new IllegalArgumentException("unexpected type: " + type);
         }
@@ -171,6 +189,9 @@ public class ArticleAdapter
             case TYPE_TAGS:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_tags, parent, false);
                 return new ArticleTagsHolder(view, mTextItemsClickListener);
+            case TYPE_TABS:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_tabs, parent, false);
+                return new ArticleTabsHolder(view, mTextItemsClickListener);
             default:
                 throw new IllegalArgumentException("unexpected type: " + viewType);
         }
@@ -197,6 +218,9 @@ public class ArticleAdapter
             case TYPE_TAGS:
                 ((ArticleTagsHolder) holder).bind((RealmList<ArticleTag>) mViewModels.get(position).data);
                 break;
+            case TYPE_TABS:
+                ((ArticleTabsHolder) holder).bind((TabsViewModel) mViewModels.get(position).data);
+                break;
             default:
                 throw new IllegalArgumentException("unexpected item type: " + getItemViewType(position));
         }
@@ -220,6 +244,10 @@ public class ArticleAdapter
         }
 
         SpoilerViewModel spoilerViewModel = ((SpoilerViewModel) mViewModels.get(position).data);
+        Timber.d("mSpoilerTextPartsTypes size: %s", spoilerViewModel.mSpoilerTextPartsTypes.size());
+        Timber.d("mSpoilerTextPartsTypes: %s", spoilerViewModel.mSpoilerTextPartsTypes);
+        Timber.d("mSpoilerTextParts size: %s", spoilerViewModel.mSpoilerTextParts.size());
+//        Timber.d("mSpoilerTextParts: %s", spoilerViewModel.mSpoilerTextParts);
         List<ArticleTextPartViewModel> viewModels = new ArrayList<>();
         for (int order = 0; order < spoilerViewModel.mSpoilerTextPartsTypes.size(); order++) {
             @ParseHtmlUtils.TextType
