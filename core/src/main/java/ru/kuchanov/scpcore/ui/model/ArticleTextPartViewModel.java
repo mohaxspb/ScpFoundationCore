@@ -33,6 +33,24 @@ public class ArticleTextPartViewModel {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ArticleTextPartViewModel viewModel = (ArticleTextPartViewModel) o;
+
+        if (!type.equals(viewModel.type)) return false;
+        return data.equals(viewModel.data);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = type.hashCode();
+        result = 31 * result + data.hashCode();
+        return result;
+    }
+
+    @Override
     public String toString() {
         if (data instanceof String) {
             return (String) data;

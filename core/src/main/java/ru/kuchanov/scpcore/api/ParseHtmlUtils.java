@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.kuchanov.scpcore.ui.model.TabsViewModel;
-import timber.log.Timber;
 
 /**
  * Created by mohax on 05.01.2017.
@@ -161,8 +160,9 @@ public class ParseHtmlUtils {
         return spoilerParts;
     }
 
-    public static TabsViewModel parseTabs(Document document) {
+    public static TabsViewModel parseTabs(String html) {
 //        Element yuiNavset = document.getElementsByAttributeValueStarting("class", "yui-navset").first();
+        Document document = Jsoup.parse(html);
         Element yuiNavset = document.getElementsByClass(CLASS_TABS).first();
         if (yuiNavset != null) {
             Element titles = yuiNavset.getElementsByClass("yui-nav").first();
@@ -185,9 +185,9 @@ public class ParseHtmlUtils {
                 tabDataList.add(new TabsViewModel.TabData(tabsTextPartTypes, tabsTextParts));
             }
 
-            return new TabsViewModel(tabsTitles, tabDataList);
+            return new TabsViewModel(tabsTitles, tabDataList, false);
         } else {
-            return null;
+            throw new IllegalArgumentException("error parse tabs");
         }
     }
 }

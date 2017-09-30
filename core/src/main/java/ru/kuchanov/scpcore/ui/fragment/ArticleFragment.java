@@ -23,7 +23,9 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -40,6 +42,7 @@ import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import ru.kuchanov.scpcore.ui.adapter.ArticleAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseFragment;
 import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
+import ru.kuchanov.scpcore.ui.model.TabsViewModel;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
 import ru.kuchanov.scpcore.ui.util.MyHtmlTagHandler;
 import ru.kuchanov.scpcore.ui.util.ReachBottomRecyclerScrollListener;
@@ -54,7 +57,8 @@ import timber.log.Timber;
  */
 public class ArticleFragment
         extends BaseFragment<ArticleMvp.View, ArticleMvp.Presenter>
-        implements ArticleMvp.View, SetTextViewHTML.TextItemsClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
+        implements ArticleMvp.View,
+        SetTextViewHTML.TextItemsClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String TAG = ArticleFragment.class.getSimpleName();
 
@@ -95,6 +99,7 @@ public class ArticleFragment
     private Article mArticle;
 
     private List<SpoilerViewModel> mExpandedSpoilers = new ArrayList<>();
+    private Set<TabsViewModel> mTabsViewModels = new HashSet<>();
 
     public static ArticleFragment newInstance(String url) {
         ArticleFragment fragment = new ArticleFragment();
@@ -415,6 +420,14 @@ public class ArticleFragment
             return;
         }
         mExpandedSpoilers.remove(spoilerViewModel);
+    }
+
+    @Override
+    public void onTabSelected(TabsViewModel tabsViewModel) {
+        if (!isAdded()) {
+            return;
+        }
+        mTabsViewModels.add(tabsViewModel);
     }
 
     @Override

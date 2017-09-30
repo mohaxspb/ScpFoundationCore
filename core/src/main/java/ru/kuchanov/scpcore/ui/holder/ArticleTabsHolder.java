@@ -1,6 +1,7 @@
 package ru.kuchanov.scpcore.ui.holder;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -14,7 +15,8 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.model.TabsViewModel;
-import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
+import ru.kuchanov.scpcore.util.AttributeGetter;
+import timber.log.Timber;
 
 /**
  * Created by mohax on 11.06.2017.
@@ -26,12 +28,12 @@ public class ArticleTabsHolder extends RecyclerView.ViewHolder {
     @Inject
     MyPreferenceManager mMyPreferenceManager;
 
-    private SetTextViewHTML.TextItemsClickListener mTextItemsClickListener;
+    private MyTabClickListener mTextItemsClickListener;
 
     @BindView(R2.id.tabLayout)
-    TabLayout mTabLayout;
+    TabLayout tabLayout;
 
-    public ArticleTabsHolder(View itemView, SetTextViewHTML.TextItemsClickListener clickListener) {
+    public ArticleTabsHolder(View itemView, MyTabClickListener clickListener) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         BaseApplication.getAppComponent().inject(this);
@@ -44,69 +46,51 @@ public class ArticleTabsHolder extends RecyclerView.ViewHolder {
         int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_large);
         float articleTextScale = mMyPreferenceManager.getArticleTextScale();
 
-        //TODO
+        if (data.isInSpoiler) {
+            int defaultMargin = context.getResources().getDimensionPixelSize(R.dimen.defaultMargin);
+            ((RecyclerView.LayoutParams) itemView.getLayoutParams()).setMargins(defaultMargin, 0, defaultMargin, 0);
+            itemView.setBackgroundColor(AttributeGetter.getColor(context, R.attr.windowBackgroundDark));
+        } else {
+            ((RecyclerView.LayoutParams) itemView.getLayoutParams()).setMargins(0, 0, 0, 0);
+            itemView.setBackgroundColor(Color.TRANSPARENT);
+        }
 
-//        title.setTextSize(TypedValue.COMPLEX_UNIT_PX, articleTextScale * textSizePrimary);
-//
-//        CalligraphyUtils.applyFontToTextView(context, title, mMyPreferenceManager.getFontPath());
-//
-//        mTagsContainer.removeAllViews();
-//        if (data != null) {
-//            for (ArticleTag tag : data) {
-//                TagView tagView = new TagView(context);
-//                tagView.setTag(tag);
-//                tagView.setActionImage(TagView.Action.NONE);
-//
-//                tagView.setOnTagClickListener((tagView1, tag1) -> mTextItemsClickListener.onTagClicked(tag1));
-//
-//                mTagsContainer.addView(tagView);
-//            }
-//        }
+        tabLayout.clearOnTabSelectedListeners();
+        tabLayout.removeAllTabs();
+        for (String title : data.getTitles()) {
+            tabLayout.addTab(tabLayout.newTab().setText(title));
+        }
+        tabLayout.setVisibility(View.VISIBLE);
+
+
+        TabLayout.Tab selectedTab = tabLayout.getTabAt(data.getCurrentTab());
+        if (selectedTab != null) {
+            selectedTab.select();
+        }
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                Timber.d("onTabSelected: %s", tab.getPosition());
+
+                data.setCurrentTab(tab.getPosition());
+
+                mTextItemsClickListener.onTabSelected(getAdapterPosition(), tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
-    //            tabLayout.clearOnTabSelectedListeners();
-//            tabLayout.removeAllTabs();
-//            for (String title : RealmString.toStringList(article.tabsTitles)) {
-//                tabLayout.addTab(tabLayout.newTab().setText(title));
-//            }
-//            tabLayout.setVisibility(View.VISIBLE);
-//
-//            Article currentTabArticle = new Article();
-//            currentTabArticle.hasTabs = true;
-//            currentTabArticle.text = RealmString.toStringList(mArticle.tabsTexts).get(mCurrentSelectedTab);
-//            currentTabArticle.tags = mArticle.tags;
-//            currentTabArticle.title = mArticle.title;
-//            mAdapter.setData(currentTabArticle, mExpandedSpoilers);
-//
-//            tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-//                @Override
-//                public void onTabSelected(TabLayout.Tab tab) {
-//                    Timber.d("onTabSelected: %s", tab.getPosition());
-//
-//                    mExpandedSpoilers.clear();
-//
-//                    mCurrentSelectedTab = tab.getPosition();
-//                    Article currentTabArticle = new Article();
-//                    currentTabArticle.hasTabs = true;
-//                    currentTabArticle.text = RealmString.toStringList(mArticle.tabsTexts).get(mCurrentSelectedTab);
-//                    currentTabArticle.tags = mArticle.tags;
-//                    currentTabArticle.title = mArticle.title;
-//                    mAdapter.setData(currentTabArticle, mExpandedSpoilers);
-//                }
-//
-//                @Override
-//                public void onTabUnselected(TabLayout.Tab tab) {
-//
-//                }
-//
-//                @Override
-//                public void onTabReselected(TabLayout.Tab tab) {
-//
-//                }
-//            });
-//
-//            TabLayout.Tab selectedTab = tabLayout.getTabAt(mCurrentSelectedTab);
-//            if (selectedTab != null) {
-//                selectedTab.select();
-//            }
+    public interface MyTabClickListener {
+        void onTabSelected(int positionInAdapter, int positionInTabs);
+    }
 }

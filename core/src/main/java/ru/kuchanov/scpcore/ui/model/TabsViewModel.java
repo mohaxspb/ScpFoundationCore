@@ -15,9 +15,14 @@ public class TabsViewModel implements Serializable {
     private List<String> mTitles;
     private List<TabData> mTabDataList;
 
-    public TabsViewModel(List<String> titles, List<TabData> tabDataList) {
+    private int mCurrentTab;
+
+    public boolean isInSpoiler;
+
+    public TabsViewModel(List<String> titles, List<TabData> tabDataList, boolean isInSpoiler) {
         mTitles = titles;
         mTabDataList = tabDataList;
+        this.isInSpoiler = isInSpoiler;
     }
 
     public List<String> getTitles() {
@@ -41,6 +46,14 @@ public class TabsViewModel implements Serializable {
     @Override
     public int hashCode() {
         return mTabDataList.hashCode();
+    }
+
+    public int getCurrentTab() {
+        return mCurrentTab;
+    }
+
+    public void setCurrentTab(int currentTab) {
+        mCurrentTab = currentTab;
     }
 
     public static class TabData {
@@ -71,7 +84,6 @@ public class TabsViewModel implements Serializable {
 
             if (!mTextPartsTypes.equals(tabData.mTextPartsTypes)) return false;
             return mTextParts.equals(tabData.mTextParts);
-
         }
 
         @Override

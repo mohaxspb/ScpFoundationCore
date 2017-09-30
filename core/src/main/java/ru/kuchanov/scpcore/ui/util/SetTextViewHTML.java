@@ -21,6 +21,7 @@ import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
+import ru.kuchanov.scpcore.ui.model.TabsViewModel;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import timber.log.Timber;
 
@@ -236,5 +237,7 @@ public class SetTextViewHTML {
         void onSpoilerExpand(SpoilerViewModel spoilerViewModel);
 
         void onSpoilerCollapse(SpoilerViewModel spoilerViewModel);
+
+        void onTabSelected(TabsViewModel tabsViewModel);
     }
 }
