@@ -18,7 +18,7 @@ import butterknife.BindView;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.mvp.base.BaseArticlesListMvp;
-import ru.kuchanov.scpcore.ui.adapter.ArticlesListWithSearchRecyclerAdapter;
+import ru.kuchanov.scpcore.ui.adapter.ArticlesListWithSearchAdapter;
 
 /**
  * Created by mohax on 03.01.2017.
@@ -39,12 +39,12 @@ public abstract class BaseListArticlesWithSearchFragment<V extends BaseArticlesL
     private String mSavedQuery = "";
     private MenuItem menuItem;
 
-    protected ArticlesListWithSearchRecyclerAdapter mAdapter;
+    protected ArticlesListWithSearchAdapter mAdapter;
 
     @Override
-    protected ArticlesListWithSearchRecyclerAdapter getAdapter() {
+    protected ArticlesListWithSearchAdapter getAdapter() {
         if (mAdapter == null) {
-            mAdapter = new ArticlesListWithSearchRecyclerAdapter();
+            mAdapter = new ArticlesListWithSearchAdapter();
         }
         return mAdapter;
     }

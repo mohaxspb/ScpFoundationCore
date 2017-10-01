@@ -11,7 +11,7 @@ import timber.log.Timber;
  * <p>
  * for scp_ru
  */
-public class ArticlesListWithSearchRecyclerAdapter extends ArticlesListRecyclerAdapter {
+public class ArticlesListWithSearchAdapter extends ArticlesListAdapter {
 
     private List<Article> mFilteredWithSearchQueryData = new ArrayList<>();
     private String mSearchQuery = "";

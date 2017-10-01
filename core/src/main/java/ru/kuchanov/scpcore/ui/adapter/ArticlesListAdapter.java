@@ -45,7 +45,7 @@ import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS
  * <p>
  * for scp_ru
  */
-public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public SortType getSortType() {
         return mSortType;
@@ -107,7 +107,7 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
     private boolean shouldShowPopupOnFavoriteClick;
     private boolean shouldShowPreview;
 
-    public ArticlesListRecyclerAdapter() {
+    public ArticlesListAdapter() {
         BaseApplication.getAppComponent().inject(this);
     }
 

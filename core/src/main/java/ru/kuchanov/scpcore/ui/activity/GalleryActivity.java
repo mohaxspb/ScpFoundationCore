@@ -27,8 +27,8 @@ import ru.kuchanov.scpcore.db.model.VkImage;
 import ru.kuchanov.scpcore.monetization.util.MyAdListener;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.mvp.contract.GalleryScreenMvp;
+import ru.kuchanov.scpcore.ui.adapter.ImagesAdapter;
 import ru.kuchanov.scpcore.ui.adapter.ImagesPagerAdapter;
-import ru.kuchanov.scpcore.ui.adapter.ImagesRecyclerAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseDrawerActivity;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import ru.kuchanov.scpcore.util.StorageUtils;
@@ -55,7 +55,7 @@ public class GalleryActivity
     Button mRefresh;
 
     private ImagesPagerAdapter mAdapter;
-    private ImagesRecyclerAdapter mRecyclerAdapter;
+    private ImagesAdapter mRecyclerAdapter;
     private int mCurPosition;
 
     @Override
@@ -117,7 +117,7 @@ public class GalleryActivity
             }
         });
 
-        mRecyclerAdapter = new ImagesRecyclerAdapter();
+        mRecyclerAdapter = new ImagesAdapter();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         mRecyclerView.setAdapter(mRecyclerAdapter);
         mRecyclerAdapter.setImageClickListener((position, v) -> mViewPager.setCurrentItem(position));

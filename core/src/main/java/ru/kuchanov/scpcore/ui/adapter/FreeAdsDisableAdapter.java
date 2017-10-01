@@ -23,7 +23,7 @@ import ru.kuchanov.scpcore.ui.holder.SignInHolder;
 import ru.kuchanov.scpcore.ui.holder.VkGroupToJoinHolder;
 import timber.log.Timber;
 
-public class FreeAdsDisableRecyclerAdapter extends BaseRecyclerAdapter<
+public class FreeAdsDisableAdapter extends BaseRecyclerAdapter<
         BaseModel,
         BaseAdapterClickListener<BaseModel>,
         BaseHolder<BaseModel, BaseAdapterClickListener<BaseModel>>

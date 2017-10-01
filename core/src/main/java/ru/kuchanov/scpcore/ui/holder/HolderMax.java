@@ -13,7 +13,7 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
-import ru.kuchanov.scpcore.ui.adapter.ArticlesListRecyclerAdapter;
+import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 import ru.kuchanov.scpcore.ui.view.TagView;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import ru.kuchanov.scpcore.util.DateUtils;
@@ -40,7 +40,7 @@ public class HolderMax extends HolderMin {
     @BindView(R2.id.tagsExpander)
     TextView mTagsExpander;
 
-    public HolderMax(View itemView, ArticlesListRecyclerAdapter.ArticleClickListener clickListener) {
+    public HolderMax(View itemView, ArticlesListAdapter.ArticleClickListener clickListener) {
         super(itemView, clickListener);
     }
 

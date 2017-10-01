@@ -23,11 +23,11 @@ import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 import ru.kuchanov.scpcore.ui.activity.SplashActivity;
 import ru.kuchanov.scpcore.ui.activity.TagSearchActivity;
-import ru.kuchanov.scpcore.ui.adapter.ArticleRecyclerAdapter;
-import ru.kuchanov.scpcore.ui.adapter.ArticlesListRecyclerAdapter;
+import ru.kuchanov.scpcore.ui.adapter.ArticleAdapter;
+import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerCardDesignAdapter;
-import ru.kuchanov.scpcore.ui.adapter.SubscriptionsRecyclerAdapter;
+import ru.kuchanov.scpcore.ui.adapter.SubscriptionsAdapter;
 import ru.kuchanov.scpcore.ui.dialog.CC3LicenseDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.FreeAdsDisablingDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
@@ -56,6 +56,7 @@ import ru.kuchanov.scpcore.ui.fragment.TagsSearchResultsArticlesFragment;
 import ru.kuchanov.scpcore.ui.holder.ArticleImageHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleSpoilerHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTableHolder;
+import ru.kuchanov.scpcore.ui.holder.ArticleTabsHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTagsHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTextHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTitleHolder;
@@ -137,11 +138,11 @@ public interface AppComponent {
 
     void inject(CC3LicenseDialogFragment dialogFragment);
 
-    void inject(ArticlesListRecyclerAdapter adapter);
+    void inject(ArticlesListAdapter adapter);
 
-    void inject(ArticleRecyclerAdapter adapter);
+    void inject(ArticleAdapter adapter);
 
-    void inject(SubscriptionsRecyclerAdapter adapter);
+    void inject(SubscriptionsAdapter adapter);
 
     void inject(SettingsSpinnerAdapter adapter);
 
@@ -162,6 +163,8 @@ public interface AppComponent {
     void inject(ArticleTableHolder holder);
 
     void inject(NativeAdsArticleListHolder holder);
+
+    void inject(ArticleTabsHolder holder);
 
     void inject(ReceiverTimer receiver);
 

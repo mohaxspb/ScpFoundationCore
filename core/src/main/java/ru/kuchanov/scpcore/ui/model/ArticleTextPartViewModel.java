@@ -18,16 +18,40 @@ public class ArticleTextPartViewModel {
     public Object data;
 
     public boolean isInSpoiler;
+//    public boolean isInTab;
 
-    public ArticleTextPartViewModel(@ParseHtmlUtils.TextType String type, Object data, boolean isInSpoiler) {
+    public ArticleTextPartViewModel(
+            @ParseHtmlUtils.TextType String type,
+            Object data,
+            boolean isInSpoiler
+//            boolean isInTab
+    ) {
         this.type = type;
         this.data = data;
         this.isInSpoiler = isInSpoiler;
+//        this.isInTab = isInTab;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ArticleTextPartViewModel viewModel = (ArticleTextPartViewModel) o;
+
+        if (!type.equals(viewModel.type)) return false;
+        return data.equals(viewModel.data);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = type.hashCode();
+        result = 31 * result + data.hashCode();
+        return result;
     }
 
     @Override
     public String toString() {
-//        return data.toString();
         if (data instanceof String) {
             return (String) data;
         } else if (data instanceof SpoilerViewModel) {

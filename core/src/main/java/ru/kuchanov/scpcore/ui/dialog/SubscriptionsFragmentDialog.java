@@ -41,7 +41,7 @@ import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
-import ru.kuchanov.scpcore.ui.adapter.SubscriptionsRecyclerAdapter;
+import ru.kuchanov.scpcore.ui.adapter.SubscriptionsAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseBottomSheetDialogFragment;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -50,7 +50,7 @@ import timber.log.Timber;
 
 public class SubscriptionsFragmentDialog
         extends BaseBottomSheetDialogFragment
-        implements SubscriptionsRecyclerAdapter.SubscriptionClickListener {
+        implements SubscriptionsAdapter.SubscriptionClickListener {
 
     public static final int REQUEST_CODE_SUBSCRIPTION = 1001;
 
@@ -197,7 +197,7 @@ public class SubscriptionsFragmentDialog
 
                             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                             recyclerView.setHasFixedSize(true);
-                            SubscriptionsRecyclerAdapter adapter = new SubscriptionsRecyclerAdapter();
+                            SubscriptionsAdapter adapter = new SubscriptionsAdapter();
                             adapter.setData(ownedItemsAndSubscriptions.second);
                             adapter.setArticleClickListener(SubscriptionsFragmentDialog.this);
                             recyclerView.setAdapter(adapter);

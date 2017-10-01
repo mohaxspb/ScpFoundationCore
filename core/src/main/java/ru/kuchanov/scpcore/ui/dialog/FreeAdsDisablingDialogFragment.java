@@ -39,7 +39,7 @@ import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
 import ru.kuchanov.scpcore.monetization.model.RewardedVideo;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
-import ru.kuchanov.scpcore.ui.adapter.FreeAdsDisableRecyclerAdapter;
+import ru.kuchanov.scpcore.ui.adapter.FreeAdsDisableAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseActivity;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
@@ -171,7 +171,7 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
             }
         }
 
-        FreeAdsDisableRecyclerAdapter adapter = new FreeAdsDisableRecyclerAdapter();
+        FreeAdsDisableAdapter adapter = new FreeAdsDisableAdapter();
         adapter.setData(data);
         adapter.setItemClickListener(data1 -> {
             Timber.d("Clicked data: %s", data1);

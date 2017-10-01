@@ -19,7 +19,7 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.ui.adapter.ArticlesListRecyclerAdapter;
+import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
@@ -33,7 +33,7 @@ public class HolderMin extends RecyclerView.ViewHolder {
     @Inject
     protected MyPreferenceManager mMyPreferenceManager;
 
-    ArticlesListRecyclerAdapter.ArticleClickListener mArticleClickListener;
+    ArticlesListAdapter.ArticleClickListener mArticleClickListener;
 
     protected Article mData;
 
@@ -56,7 +56,7 @@ public class HolderMin extends RecyclerView.ViewHolder {
 //    @BindView(R2.id.nativeAdView)
 //    NativeExpressAdView nativeExpressAdView;
 
-    public HolderMin(View itemView, ArticlesListRecyclerAdapter.ArticleClickListener clickListener) {
+    public HolderMin(View itemView, ArticlesListAdapter.ArticleClickListener clickListener) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         BaseApplication.getAppComponent().inject(this);
