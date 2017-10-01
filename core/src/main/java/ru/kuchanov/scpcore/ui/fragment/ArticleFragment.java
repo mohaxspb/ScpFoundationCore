@@ -23,9 +23,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -122,7 +120,7 @@ public class ArticleFragment
         url = getArguments().getString(EXTRA_URL);
         if (savedInstanceState != null) {
             mExpandedSpoilers = (List<SpoilerViewModel>) savedInstanceState.getSerializable(KEY_EXPANDED_SPOILERS);
-            mTabsViewModels  = (List<TabsViewModel>) savedInstanceState.getSerializable(KEY_TABS);
+            mTabsViewModels = (List<TabsViewModel>) savedInstanceState.getSerializable(KEY_TABS);
         }
     }
 
@@ -410,7 +408,11 @@ public class ArticleFragment
         if (!isAdded()) {
             return;
         }
-        mTabsViewModels.add(tabsViewModel);
+        if (mTabsViewModels.contains(tabsViewModel)) {
+            mTabsViewModels.set(mTabsViewModels.indexOf(tabsViewModel), tabsViewModel);
+        } else {
+            mTabsViewModels.add(tabsViewModel);
+        }
     }
 
     @Override
