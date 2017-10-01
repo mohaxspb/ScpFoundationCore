@@ -64,9 +64,8 @@ public class ArticleFragment
 
     public static final String EXTRA_URL = "EXTRA_URL";
 
-    //tabs
-    private static final String KEY_CURRENT_SELECTED_TAB = "KEY_CURRENT_SELECTED_TAB";
     private static final String KEY_EXPANDED_SPOILERS = "KEY_EXPANDED_SPOILERS";
+    private static final String KEY_TABS = "KEY_TABS";
 
     @BindView(R2.id.progressCenter)
     ProgressBar mProgressBarCenter;
@@ -75,23 +74,10 @@ public class ArticleFragment
     @BindView(R2.id.recyclerView)
     RecyclerView mRecyclerView;
 
-//    @BindView(R2.id.tabLayout)
-//    TabLayout tabLayout;
-
     @Inject
     DialogUtils mDialogUtils;
     @Inject
     ConstantValues mConstantValues;
-
-//    @Inject
-//    MyPreferenceManager myPreferenceManager;
-//    @Inject
-//    ApiClient mApiClient;
-//    @Inject
-//    DbProviderFactory mDbProviderFactory;
-
-    //tabs
-    private int mCurrentSelectedTab = 0;
 
     private String url;
 
@@ -99,7 +85,7 @@ public class ArticleFragment
     private Article mArticle;
 
     private List<SpoilerViewModel> mExpandedSpoilers = new ArrayList<>();
-    private Set<TabsViewModel> mTabsViewModels = new HashSet<>();
+    private List<TabsViewModel> mTabsViewModels = new ArrayList<>();
 
     public static ArticleFragment newInstance(String url) {
         ArticleFragment fragment = new ArticleFragment();
@@ -120,8 +106,7 @@ public class ArticleFragment
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //tabs
-        outState.putInt(KEY_CURRENT_SELECTED_TAB, mCurrentSelectedTab);
+        outState.putSerializable(KEY_TABS, (ArrayList<TabsViewModel>) mTabsViewModels);
         outState.putSerializable(KEY_EXPANDED_SPOILERS, (ArrayList<SpoilerViewModel>) mExpandedSpoilers);
     }
 
@@ -132,15 +117,13 @@ public class ArticleFragment
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Timber.d("onCreate");
+//        Timber.d("onCreate");
         super.onCreate(savedInstanceState);
         url = getArguments().getString(EXTRA_URL);
         if (savedInstanceState != null) {
-            mCurrentSelectedTab = savedInstanceState.getInt(KEY_CURRENT_SELECTED_TAB);
             mExpandedSpoilers = (List<SpoilerViewModel>) savedInstanceState.getSerializable(KEY_EXPANDED_SPOILERS);
+            mTabsViewModels  = (List<TabsViewModel>) savedInstanceState.getSerializable(KEY_TABS);
         }
-
-//        setRetainInstance(true);
     }
 
     @Override
@@ -232,7 +215,7 @@ public class ArticleFragment
         if (getUserVisibleHint()) {
             updateActivityMenuState();
         }
-        mAdapter.setData(mArticle, mExpandedSpoilers);
+        mAdapter.setData(mArticle, mExpandedSpoilers, mTabsViewModels);
 
         mRecyclerView.addOnScrollListener(new ReachBottomRecyclerScrollListener() {
             @Override

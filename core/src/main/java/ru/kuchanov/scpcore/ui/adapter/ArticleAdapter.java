@@ -47,6 +47,8 @@ public class ArticleAdapter
 
     private List<ArticleTextPartViewModel> mViewModels = new ArrayList<>();
 
+    private List<TabsViewModel> mTabsViewModelList = new ArrayList<>();
+
     public List<String> getArticlesTextParts() {
         return ArticleTextPartViewModel.convertToStringList(mViewModels);
     }
@@ -57,23 +59,18 @@ public class ArticleAdapter
         mTextItemsClickListener = textItemsClickListener;
     }
 
-    //todo pass tabViewModelsAlso
-    public void setData(Article article, List<SpoilerViewModel> expandedSpoilers) {
+    public void setData(Article article, List<SpoilerViewModel> expandedSpoilers, List<TabsViewModel> tabsViewModels) {
 //        Timber.d("setData: %s", article);
+        mTabsViewModelList = tabsViewModels;
+
         mViewModels.clear();
 
         List<String> articlesTextParts = new ArrayList<>();
         @ParseHtmlUtils.TextType
         List<String> articlesTextPartsTypes = new ArrayList<>();
 
-//        if (article.hasTabs) {
-//            Timber.d("article.text: %s", article.text);
-//            mArticlesTextParts.addAll(ParseHtmlUtils.getArticlesTextParts(article.text));
-//            mArticlesTextPartsTypes.addAll(ParseHtmlUtils.getListOfTextTypes(mArticlesTextParts));
-//        } else {
         articlesTextParts.addAll(RealmString.toStringList(article.textParts));
         articlesTextPartsTypes.addAll(RealmString.toStringList(article.textPartsTypes));
-//        }
 
         articlesTextParts.add(0, article.title);
         articlesTextPartsTypes.add(0, ParseHtmlUtils.TextType.TITLE);
@@ -81,30 +78,24 @@ public class ArticleAdapter
         articlesTextParts.add(article.tags.toString());
         articlesTextPartsTypes.add(ParseHtmlUtils.TextType.TAGS);
 
-        Timber.d("mArticlesTextPartsTypes: %s", articlesTextPartsTypes);
-//        Timber.d("mArticlesTextParts.size: %s", mArticlesTextParts.size());
-//        Timber.d("mArticlesTextPartsTypes.size: %s", mArticlesTextPartsTypes.size());
-
         for (int order = 0; order < articlesTextParts.size(); order++) {
             @ParseHtmlUtils.TextType
             String type = articlesTextPartsTypes.get(order);
             Object data;
-//            boolean isInTab = false;
             switch (type) {
                 case ParseHtmlUtils.TextType.SPOILER:
                     List<String> spoilerParts = ParseHtmlUtils.parseSpoilerParts(articlesTextParts.get(order));
 
                     SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
-//                    spoilerViewModel.titles = Collections.singletonList(spoilerParts.get(0));
                     spoilerViewModel.titles = new ArrayList<>(spoilerParts.subList(0, 2));
                     spoilerViewModel.mSpoilerTextParts = ParseHtmlUtils.getArticlesTextParts(spoilerParts.get(2));
-                    for (String part : spoilerViewModel.mSpoilerTextParts) {
-                        String partCuted = part;
-                        if (part.length() > 100) {
-                            partCuted = partCuted.substring(0, 100);
-                        }
-                        Timber.d("partCuted: %s", partCuted);
-                    }
+//                    for (String part : spoilerViewModel.mSpoilerTextParts) {
+//                        String partCuted = part;
+//                        if (part.length() > 100) {
+//                            partCuted = partCuted.substring(0, 100);
+//                        }
+//                        Timber.d("partCuted: %s", partCuted);
+//                    }
                     spoilerViewModel.mSpoilerTextPartsTypes = ParseHtmlUtils.getListOfTextTypes(spoilerViewModel.mSpoilerTextParts);
 
                     Timber.d("spoilerParts size: %s", spoilerViewModel.mSpoilerTextParts.size());
@@ -118,8 +109,11 @@ public class ArticleAdapter
                     //create and set ViewModel (as for spoiler)
                     TabsViewModel tabsViewModel = ParseHtmlUtils.parseTabs(articlesTextParts.get(order));
 
-                    //todo get and set state (index of opened tab)
-                    tabsViewModel.setCurrentTab(0);
+                    //get and set state (index of opened tab)
+                    if (mTabsViewModelList.contains(tabsViewModel)) {
+                        TabsViewModel savedOne = mTabsViewModelList.get(mTabsViewModelList.indexOf(tabsViewModel));
+                        tabsViewModel.setCurrentTab(savedOne.getCurrentTab());
+                    }
 
                     data = tabsViewModel;
 
@@ -134,6 +128,7 @@ public class ArticleAdapter
                         viewModels.add(new ArticleTextPartViewModel(typeInSpoiler, dataInSpoiler, true));
                     }
                     mViewModels.addAll(viewModels);
+                    //FIXME may be problem here
                     return;
                 case ParseHtmlUtils.TextType.TAGS:
                     data = article.tags;
@@ -148,15 +143,57 @@ public class ArticleAdapter
             if (data instanceof SpoilerViewModel && ((SpoilerViewModel) data).isExpanded) {
                 SpoilerViewModel spoilerViewModel = ((SpoilerViewModel) data);
                 List<ArticleTextPartViewModel> viewModels = new ArrayList<>();
+                Timber.d("expanded spoiler title: %s", spoilerViewModel.titles.get(0));
                 for (int i = 0; i < spoilerViewModel.mSpoilerTextPartsTypes.size(); i++) {
                     @ParseHtmlUtils.TextType
                     String typeInSpoiler = spoilerViewModel.mSpoilerTextPartsTypes.get(i);
-                    String dataInSpoiler = spoilerViewModel.mSpoilerTextParts.get(i);
-                    viewModels.add(new ArticleTextPartViewModel(typeInSpoiler, dataInSpoiler, true));
+
+                    Timber.d("expanded spoiler type: %s", typeInSpoiler);
+
+                    //handle tabs
+                    if (typeInSpoiler.equals(ParseHtmlUtils.TextType.TABS)) {
+                        TabsViewModel tabsViewModel = ParseHtmlUtils.parseTabs(spoilerViewModel.mSpoilerTextParts.get(i));
+
+                        tabsViewModel.isInSpoiler = true;
+
+                        //get and set state (index of opened tab)
+                        if (mTabsViewModelList.contains(tabsViewModel)) {
+                            TabsViewModel savedOne = mTabsViewModelList.get(mTabsViewModelList.indexOf(tabsViewModel));
+                            Timber.d("savedOne selected tab: %s", savedOne.getCurrentTab());
+                            tabsViewModel.setCurrentTab(savedOne.getCurrentTab());
+                        } else {
+                            Timber.d("mTabsViewModelList.size: %s", mTabsViewModelList.size());
+                            for (TabsViewModel tabsViewModel1 : mTabsViewModelList) {
+                                Timber.d("selected tab: %s", tabsViewModel1.getCurrentTab());
+                            }
+                        }
+
+                        //add textParts for expanded spoilers
+                        List<ArticleTextPartViewModel> viewModelsTabs = new ArrayList<>();
+                        for (int u = 0; u < tabsViewModel.getTabDataList().get(tabsViewModel.getCurrentTab()).getTextParts().size(); u++) {
+                            TabsViewModel.TabData tabData = tabsViewModel.getTabDataList().get(tabsViewModel.getCurrentTab());
+                            @ParseHtmlUtils.TextType
+                            String typeInTab = tabData.getTextPartsTypes().get(u);
+                            viewModelsTabs.add(new ArticleTextPartViewModel(typeInTab, tabData.getTextParts().get(u), true));
+                        }
+                        viewModels.add(new ArticleTextPartViewModel(typeInSpoiler, tabsViewModel, true));
+                        viewModels.addAll(viewModelsTabs);
+                    } else {
+                        String dataInSpoiler = spoilerViewModel.mSpoilerTextParts.get(i);
+                        viewModels.add(new ArticleTextPartViewModel(typeInSpoiler, dataInSpoiler, true));
+                    }
                 }
                 mViewModels.addAll(viewModels);
             }
         }
+        //log
+        @ParseHtmlUtils.TextType
+        List<String> types = new ArrayList<>();
+        for (ArticleTextPartViewModel model : mViewModels) {
+            types.add(model.type);
+        }
+        Timber.d("types: %s", types);
+        Timber.d("mViewModels.size: %s", mViewModels.size());
 
         notifyDataSetChanged();
     }
@@ -274,8 +311,18 @@ public class ArticleAdapter
                 TabsViewModel tabsViewModel = ParseHtmlUtils.parseTabs(spoilerViewModel.mSpoilerTextParts.get(order));
 
                 tabsViewModel.isInSpoiler = true;
-                //todo get and set state (index of opened tab)
-                tabsViewModel.setCurrentTab(0);
+
+                //get and set state (index of opened tab)
+                if (mTabsViewModelList.contains(tabsViewModel)) {
+                    TabsViewModel savedOne = mTabsViewModelList.get(mTabsViewModelList.indexOf(tabsViewModel));
+                    Timber.d("savedOne selected tab: %s", savedOne.getCurrentTab());
+                    tabsViewModel.setCurrentTab(savedOne.getCurrentTab());
+                } else {
+                    Timber.d("mTabsViewModelList.size: %s", mTabsViewModelList.size());
+                    for (TabsViewModel tabsViewModel1 : mTabsViewModelList) {
+                        Timber.d("selected tab: %s", tabsViewModel1.getCurrentTab());
+                    }
+                }
 
                 viewModels.add(new ArticleTextPartViewModel(type, tabsViewModel, true));
                 //add textParts for expanded spoilers
@@ -313,33 +360,28 @@ public class ArticleAdapter
             String type = spoilerViewModel.mSpoilerTextPartsTypes.get(order);
 
             if (type.equals(ParseHtmlUtils.TextType.TABS)) {
-//                TabsViewModel tabsViewModel = ParseHtmlUtils.parseTabs(spoilerViewModel.mSpoilerTextParts.get(order));
-//
-//                //todo get and set state (index of opened tab)
-//                tabsViewModel.setCurrentTab(0);
                 List<ArticleTextPartViewModel> subList = new ArrayList<>(mViewModels.subList(position, mViewModels.size()));
                 TabsViewModel tabsViewModel = null;
-                for (ArticleTextPartViewModel partViewModel: subList){
-                    if(partViewModel.type.equals(ParseHtmlUtils.TextType.TABS)){
+                for (ArticleTextPartViewModel partViewModel : subList) {
+                    if (partViewModel.type.equals(ParseHtmlUtils.TextType.TABS)) {
                         tabsViewModel = (TabsViewModel) partViewModel.data;
                     }
                 }
-                if(tabsViewModel==null){
+                if (tabsViewModel == null) {
                     throw new IllegalStateException("tabsViewModel is null while collapse spoiler!");
                 }
 
                 viewModels.add(new ArticleTextPartViewModel(type, tabsViewModel, false));
 
-                for (TabsViewModel.TabData tabData:tabsViewModel.getTabDataList()){
+                for (TabsViewModel.TabData tabData : tabsViewModel.getTabDataList()) {
                     List<ArticleTextPartViewModel> viewModelsTabs = new ArrayList<>();
                     for (int i = 0; i < tabData.getTextParts().size(); i++) {
-//                        TabsViewModel.TabData tabData = tabsViewModel.getTabDataList().get(tabsViewModel.getCurrentTab());
                         @ParseHtmlUtils.TextType
                         String typeInSpoiler = tabData.getTextPartsTypes().get(i);
                         String dataInSpoiler = tabData.getTextParts().get(i);
                         viewModelsTabs.add(new ArticleTextPartViewModel(typeInSpoiler, dataInSpoiler, true));
                     }
-                    if(mViewModels.containsAll(viewModelsTabs)) {
+                    if (mViewModels.containsAll(viewModelsTabs)) {
                         viewModels.addAll(viewModelsTabs);
                     }
                 }
@@ -367,6 +409,7 @@ public class ArticleAdapter
         }
 
         TabsViewModel tabsViewModel = ((TabsViewModel) mViewModels.get(positionInList).data);
+        tabsViewModel.setCurrentTab(positionInTabs);
 
         for (TabsViewModel.TabData tabData : tabsViewModel.getTabDataList()) {
             List<ArticleTextPartViewModel> viewModelsTabs = new ArrayList<>();
@@ -383,7 +426,6 @@ public class ArticleAdapter
                         .clear();
 
                 notifyItemRangeRemoved(positionInList + 1, viewModelsTabs.size());
-//                break;
             }
         }
 

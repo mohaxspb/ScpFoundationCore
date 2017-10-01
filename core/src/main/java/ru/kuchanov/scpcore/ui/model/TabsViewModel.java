@@ -56,7 +56,7 @@ public class TabsViewModel implements Serializable {
         mCurrentTab = currentTab;
     }
 
-    public static class TabData {
+    public static class TabData implements Serializable {
         @ParseHtmlUtils.TextType
         private List<String> mTextPartsTypes;
 

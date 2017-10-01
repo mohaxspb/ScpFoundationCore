@@ -28,7 +28,7 @@ public class ArticleTabsHolder extends RecyclerView.ViewHolder {
     @Inject
     MyPreferenceManager mMyPreferenceManager;
 
-    private MyTabClickListener mTextItemsClickListener;
+    private MyTabClickListener myTabClickListener;
 
     @BindView(R2.id.tabLayout)
     TabLayout tabLayout;
@@ -38,10 +38,11 @@ public class ArticleTabsHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
         BaseApplication.getAppComponent().inject(this);
 
-        mTextItemsClickListener = clickListener;
+        myTabClickListener = clickListener;
     }
 
     public void bind(TabsViewModel data) {
+        Timber.d("bin tabs: %s", data.getCurrentTab());
         Context context = itemView.getContext();
         int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_large);
         float articleTextScale = mMyPreferenceManager.getArticleTextScale();
@@ -75,7 +76,7 @@ public class ArticleTabsHolder extends RecyclerView.ViewHolder {
 
                 data.setCurrentTab(tab.getPosition());
 
-                mTextItemsClickListener.onTabSelected(getAdapterPosition(), tab.getPosition());
+                myTabClickListener.onTabSelected(getAdapterPosition(), tab.getPosition());
             }
 
             @Override
