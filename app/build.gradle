@@ -146,8 +146,8 @@ configurations {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     //dagger2
-    compile 'com.google.dagger:dagger:2.8'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.8'
+    compile 'com.google.dagger:dagger:2.11'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
 
     //core module
     compile project(path: ':core', configuration: 'devRelease')
