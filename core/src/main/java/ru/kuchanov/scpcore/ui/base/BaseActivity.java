@@ -931,7 +931,13 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 //check if there is banner in layout
                 setUpBanner();
                 break;
-            //TODO think if we should react on subscriptions events
+            case MyPreferenceManager.Keys.HAS_SUBSCRIPTION:
+            case MyPreferenceManager.Keys.HAS_NO_ADS_SUBSCRIPTION:
+                FirebaseAnalytics.getInstance(BaseActivity.this).setUserProperty(
+                        UserPropertyKey.SUBSCRIBED,
+                        String.valueOf(mMyPreferenceManager.isHasAnySubscription())
+                );
+                break;
             default:
                 break;
         }

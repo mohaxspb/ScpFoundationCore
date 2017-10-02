@@ -235,6 +235,7 @@ public interface Constants {
 
             interface UserPropertyKey {
                 String INVITED = "INVITED";
+                String SUBSCRIBED = "SUBSCRIBED";
             }
         }
 
