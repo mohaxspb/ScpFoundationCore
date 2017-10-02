@@ -44,6 +44,11 @@
         <item name="iconTextSizeDialog">@drawable/ic_text_size_white_24dp</item>
         <item name="iconArrowUp">@drawable/ic_keyboard_arrow_up_black_24dp</item>
         <item name="iconArrowDown">@drawable/ic_keyboard_arrow_down_black_24dp</item>
+
+        <!--same but in different color-->
+        <item name="iconArrowUpThemed">@drawable/ic_keyboard_arrow_up_black_24dp</item>
+        <item name="iconArrowDownThemed">@drawable/ic_keyboard_arrow_down_black_24dp</item>
+
         <item name="iconOfflineAdd">@drawable/ic_download_black_24dp</item>
         <item name="iconOfflineRemove">@drawable/ic_save_black_24dp</item>
         <item name="iconEmptyImage">@drawable/ic_image_black_48dp</item>
@@ -119,6 +124,11 @@
         <item name="iconTextSizeDialog">@drawable/ic_text_size_white_24dp</item>
         <item name="iconArrowUp">@drawable/ic_keyboard_arrow_up_black_24dp</item>
         <item name="iconArrowDown">@drawable/ic_keyboard_arrow_down_black_24dp</item>
+
+        <!--same but in different color-->
+        <item name="iconArrowUpThemed">@drawable/ic_keyboard_arrow_up_blue_grey_50_24dp</item>
+        <item name="iconArrowDownThemed">@drawable/ic_keyboard_arrow_down_blue_grey_50_24dp</item>
+
         <item name="iconOfflineAdd">@drawable/ic_download_white_24dp</item>
         <item name="iconOfflineRemove">@drawable/ic_save_white_24dp</item>
         <item name="iconEmptyImage">@drawable/ic_image_white_48dp</item>

@@ -3,9 +3,15 @@ package ru.kuchanov.scpcore.ui.util;
 import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.StringRes;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.GsonBuilder;
@@ -22,6 +28,7 @@ import ru.kuchanov.scpcore.api.model.remoteconfig.AppLangVersionsJson;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.ui.base.BaseActivity;
+import ru.kuchanov.scpcore.util.AttributeGetter;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
@@ -82,15 +89,37 @@ public class DialogUtils {
         Timber.d("showImageDialog");
         Dialog nagDialog = new Dialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         nagDialog.setCancelable(true);
-        nagDialog.setContentView(R.layout.preview_image);
 
-        PhotoView photoView = nagDialog.findViewById(R.id.image_view_touch);
-        photoView.setMaximumScale(5f);
+        ImageView imageView;
+        if(imgUrl.endsWith("gif")){
+            nagDialog.setContentView(R.layout.dialog_preview_gif);
+            imageView = nagDialog.findViewById(R.id.image_view_touch);
+        } else {
+            nagDialog.setContentView(R.layout.dialog_preview_image);
+            imageView = nagDialog.findViewById(R.id.image_view_touch);
+            ((PhotoView)imageView).setMaximumScale(5f);
+        }
 
-        Glide.with(photoView.getContext())
+        ProgressBar progressBar = nagDialog.findViewById(R.id.progressCenter);
+        progressBar.setVisibility(View.VISIBLE);
+
+        Glide.with(imageView.getContext())
                 .load(imgUrl)
-                .placeholder(R.drawable.ic_image_white_48dp)
-                .into(photoView);
+                .error(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
+                .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .into(imageView);
 
         nagDialog.show();
     }

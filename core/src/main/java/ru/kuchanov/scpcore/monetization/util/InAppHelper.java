@@ -45,6 +45,7 @@ import static ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog.REQUEST_
 public class InAppHelper {
 
     private final static int API_VERSION_3 = 3;
+    public static final int RESULT_OK = 0;
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({
@@ -120,7 +121,7 @@ public class InAppHelper {
                 Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "subs", null);
 
                 Timber.d("ownedItems bundle: %s", ownedItemsBundle);
-                if (ownedItemsBundle.getInt("RESPONSE_CODE") == 0) {
+                if (ownedItemsBundle.getInt("RESPONSE_CODE") == RESULT_OK) {
                     //TODO use gson for parsing
                     List<String> ownedSkus = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
                     List<String> purchaseDataList = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_DATA_LIST");
@@ -189,7 +190,7 @@ public class InAppHelper {
                 Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "inapp", null);
 
                 Timber.d("ownedItems bundle: %s", ownedItemsBundle);
-                if (ownedItemsBundle.getInt("RESPONSE_CODE") == 0) {
+                if (ownedItemsBundle.getInt("RESPONSE_CODE") == RESULT_OK) {
                     List<String> ownedSkus = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
                     List<String> purchaseDataList = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_DATA_LIST");
                     List<String> signatureList = ownedItemsBundle.getStringArrayList("INAPP_DATA_SIGNATURE_LIST");
@@ -233,7 +234,7 @@ public class InAppHelper {
                 querySkus.putStringArrayList("ITEM_ID_LIST", (ArrayList<String>) skus);
                 Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "subs", querySkus);
                 Timber.d("skuDetails: %s", skuDetails);
-                if (skuDetails.getInt("RESPONSE_CODE") == 0) {
+                if (skuDetails.getInt("RESPONSE_CODE") == RESULT_OK) {
                     List<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
                     if (responseList == null) {
                         subscriber.onError(new IllegalStateException("responseList is null while get subs details"));
@@ -272,7 +273,7 @@ public class InAppHelper {
                 querySkus.putStringArrayList("ITEM_ID_LIST", (ArrayList<String>) skuList);
                 Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "inapp", querySkus);
                 Timber.d("skuDetails: %s", skuDetails);
-                if (skuDetails.getInt("RESPONSE_CODE") == 0) {
+                if (skuDetails.getInt("RESPONSE_CODE") == RESULT_OK) {
                     List<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
                     if (responseList == null) {
                         subscriber.onError(new IllegalStateException("responseList is null while get subs details"));

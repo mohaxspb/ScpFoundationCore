@@ -67,7 +67,7 @@
                         android:layout_marginRight="@dimen/defaultMarginSmall"
                         android:layout_marginTop="@dimen/defaultMarginTiny"
                         android:gravity="center_vertical"
-                        android:drawableRight="?iconArrowDown"
+                        android:drawableRight="?iconArrowDownThemed"
                         android:background="?selectableItemBackground"
                         android:padding="@dimen/defaultMarginSmall"
                         android:text="@string/tags"
