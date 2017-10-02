@@ -16,7 +16,6 @@ import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.mvp.base.BaseListMvp;
 import ru.kuchanov.scpcore.util.DimensionUtils;
-import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 /**
  * Created by mohax on 03.01.2017.
@@ -37,8 +36,6 @@ public abstract class BaseListFragment<V extends BaseListMvp.View, P extends Bas
     protected SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R2.id.recyclerView)
     protected RecyclerView mRecyclerView;
-    @BindView(R2.id.fastScroller)
-    protected VerticalRecyclerViewFastScroller mVerticalRecyclerViewFastScroller;
 
     protected DividerItemDecoration mDividerItemDecoration;
 
@@ -57,11 +54,6 @@ public abstract class BaseListFragment<V extends BaseListMvp.View, P extends Bas
         } else {
             mRecyclerView.addItemDecoration(mDividerItemDecoration);
         }
-        // Connect the recycler to the scroller (to let the scroller scroll the list)
-        mVerticalRecyclerViewFastScroller.setRecyclerView(mRecyclerView);
-
-        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
-        mRecyclerView.addOnScrollListener(mVerticalRecyclerViewFastScroller.getOnScrollListener());
     }
 
     @Override

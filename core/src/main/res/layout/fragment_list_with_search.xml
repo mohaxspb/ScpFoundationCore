@@ -20,18 +20,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:descendantFocusability="beforeDescendants"
-            android:scrollbars="vertical"
+            app:fastScrollEnabled="true"
+            app:fastScrollHorizontalThumbDrawable="@drawable/state_list_drawable"
+            app:fastScrollHorizontalTrackDrawable="@drawable/state_list_transparent"
+            app:fastScrollVerticalThumbDrawable="@drawable/state_list_drawable"
+            app:fastScrollVerticalTrackDrawable="@drawable/state_list_transparent"
             />
     </android.support.v4.widget.SwipeRefreshLayout>
-
-    <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
-        android:id="@+id/fastScroller"
-        android:layout_width="@dimen/defaultMarginSmall"
-        android:layout_height="match_parent"
-        android:layout_gravity="right"
-        app:rfs_barColor="@android:color/transparent"
-        app:rfs_handleColor="?newArticlesTextColor"
-        />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/searchFAB"

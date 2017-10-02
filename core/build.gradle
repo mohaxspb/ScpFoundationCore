@@ -195,8 +195,6 @@ dependencies {
     // AppMetrica
     //we add it here and delete jar from appodeal
     compile 'com.yandex.android:mobmetricalib:2.76'
-    //recyclerView fast scroller
-    compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'
     //circular progress
     compile 'com.github.jakob-grabner:Circle-Progress-View:v1.3'
     //tags layout

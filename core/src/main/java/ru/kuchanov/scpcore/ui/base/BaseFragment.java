@@ -48,11 +48,9 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
 
     private MaterialDialog mProgressDialog;
 
-//    @Inject
     @NonNull
     @Override
     public P createPresenter() {
-//        mPresenter.attachView((V) this);
         return mPresenter;
     }
 

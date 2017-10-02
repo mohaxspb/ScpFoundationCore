@@ -260,9 +260,6 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
                 mPresenter.getDataFromApi(getAdapter().getItemCount());
             }
         });
-
-        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
-        mRecyclerView.addOnScrollListener(mVerticalRecyclerViewFastScroller.getOnScrollListener());
     }
 
     @Override
