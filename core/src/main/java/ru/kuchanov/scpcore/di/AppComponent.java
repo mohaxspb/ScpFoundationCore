@@ -25,6 +25,7 @@ import ru.kuchanov.scpcore.ui.activity.SplashActivity;
 import ru.kuchanov.scpcore.ui.activity.TagSearchActivity;
 import ru.kuchanov.scpcore.ui.adapter.ArticleAdapter;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
+import ru.kuchanov.scpcore.ui.adapter.ImagesPagerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerCardDesignAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SubscriptionsAdapter;
@@ -147,6 +148,8 @@ public interface AppComponent {
     void inject(SettingsSpinnerAdapter adapter);
 
     void inject(SettingsSpinnerCardDesignAdapter adapter);
+
+    void inject(ImagesPagerAdapter adapter);
 
     void inject(ArticleImageHolder holder);
 

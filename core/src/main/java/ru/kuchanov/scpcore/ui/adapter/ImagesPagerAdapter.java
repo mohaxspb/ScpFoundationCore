@@ -5,9 +5,11 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +26,22 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
+import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.VkImage;
+import ru.kuchanov.scpcore.ui.activity.MainActivity;
+import ru.kuchanov.scpcore.ui.base.BaseActivity;
+import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
+import ru.kuchanov.scpcore.ui.model.TabsViewModel;
+import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
+import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
 /**
@@ -43,6 +57,15 @@ public class ImagesPagerAdapter extends PagerAdapter {
 
     public List<VkImage> getData() {
         return mData;
+    }
+
+    @Inject
+    SetTextViewHTML mSetTextViewHTML;
+    @Inject
+    ConstantValues mConstantValues;
+
+    public ImagesPagerAdapter() {
+        BaseApplication.getAppComponent().inject(this);
     }
 
     public void downloadImage(Context context, int position, SimpleTarget<Bitmap> target) {
@@ -85,7 +108,87 @@ public class ImagesPagerAdapter extends PagerAdapter {
         cardView = itemView.findViewById(R.id.descriptionContainer);
         description = itemView.findViewById(R.id.description);
 
-        description.setText(mData.get(position).description);
+//        description.setText(mData.get(position).description);
+        String title = mData.get(position).description;
+        if (!TextUtils.isEmpty(title)) {
+            description.setLinksClickable(true);
+            description.setMovementMethod(LinkMovementMethod.getInstance());
+            mSetTextViewHTML.setText(description, title, new SetTextViewHTML.TextItemsClickListener() {
+                @Override
+                public void onLinkClicked(String link) {
+                    Timber.d("onLinkClicked: %s", link);
+                    //open predefined main activities link clicked
+                    for (String pressedLink : mConstantValues.getAllLinksArray()) {
+                        if (link.equals(pressedLink)) {
+                            MainActivity.startActivity(context, link);
+                            return;
+                        }
+                    }
+
+                    ((BaseActivity) context).startArticleActivity(link);
+                }
+
+                @Override
+                public void onSnoskaClicked(String link) {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
+
+                @Override
+                public void onBibliographyClicked(String link) {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
+
+                @Override
+                public void onTocClicked(String link) {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
+
+                @Override
+                public void onImageClicked(String link, @Nullable String description) {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
+
+                @Override
+                public void onUnsupportedLinkPressed(String link) {
+                    ((BaseActivity) context).showMessage(R.string.unsupported_link);
+                }
+
+                @Override
+                public void onMusicClicked(String link) {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
+
+                @Override
+                public void onExternalDomenUrlClicked(String link) {
+                    IntentUtils.openUrl(link);
+                }
+
+                @Override
+                public void onTagClicked(ArticleTag tag) {
+                    ((BaseActivity) context).startTagsSearchActivity(Collections.singletonList(tag));
+                }
+
+                @Override
+                public void onNotTranslatedArticleClick(String link) {
+                    ((BaseActivity) context).showMessage(R.string.article_not_translated);
+                }
+
+                @Override
+                public void onSpoilerExpand(SpoilerViewModel spoilerViewModel) {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
+
+                @Override
+                public void onSpoilerCollapse(SpoilerViewModel spoilerViewModel) {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
+
+                @Override
+                public void onTabSelected(TabsViewModel tabsViewModel) {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
+            });
+        }
 
         imageView.setOnClickListener(v -> {
             if (TextUtils.isEmpty(mData.get(position).description)) {
