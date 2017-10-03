@@ -86,19 +86,14 @@ public class DialogUtils {
 
     //TODO think how to restore image dialog Maybe use fragment dialog?..
     public void showImageDialog(Context context, String imgUrl) {
-        Timber.d("showImageDialog");
+        Timber.d("showImageDialog: %s", imgUrl);
         Dialog nagDialog = new Dialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         nagDialog.setCancelable(true);
 
         ImageView imageView;
-        if(imgUrl.endsWith("gif")){
-            nagDialog.setContentView(R.layout.dialog_preview_gif);
-            imageView = nagDialog.findViewById(R.id.image_view_touch);
-        } else {
-            nagDialog.setContentView(R.layout.dialog_preview_image);
-            imageView = nagDialog.findViewById(R.id.image_view_touch);
-            ((PhotoView)imageView).setMaximumScale(5f);
-        }
+        nagDialog.setContentView(R.layout.dialog_preview_image);
+        imageView = nagDialog.findViewById(R.id.image_view_touch);
+        ((PhotoView) imageView).setMaximumScale(5f);
 
         ProgressBar progressBar = nagDialog.findViewById(R.id.progressCenter);
         progressBar.setVisibility(View.VISIBLE);
