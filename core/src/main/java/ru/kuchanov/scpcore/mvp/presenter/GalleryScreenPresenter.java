@@ -10,18 +10,17 @@ import ru.kuchanov.scpcore.mvp.base.BaseDrawerPresenter;
 import ru.kuchanov.scpcore.mvp.contract.GalleryScreenMvp;
 import timber.log.Timber;
 
-/**
- * Created by y.kuchanov on 21.12.16.
- * <p>
- * for TappAwards
- */
 public class GalleryScreenPresenter
         extends BaseDrawerPresenter<GalleryScreenMvp.View>
         implements GalleryScreenMvp.Presenter {
 
     private List<VkImage> mData;
 
-    public GalleryScreenPresenter(MyPreferenceManager myPreferencesManager, DbProviderFactory dbProviderFactory, ApiClient apiClient) {
+    public GalleryScreenPresenter(
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient
+    ) {
         super(myPreferencesManager, dbProviderFactory, apiClient);
     }
 
@@ -59,6 +58,11 @@ public class GalleryScreenPresenter
                     }
                 }
         );
+    }
+
+    @Override
+    public void setData(List<VkImage> data) {
+        mData = data;
     }
 
     @Override

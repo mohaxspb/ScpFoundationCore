@@ -119,15 +119,15 @@ public class HolderMax extends HolderMin {
         } else {
             mTagsContainer.setVisibility(View.VISIBLE);
 
-            mTagsExpander.setCompoundDrawablesWithIntrinsicBounds(0, 0, AttributeGetter.getDrawableId(context, R.attr.iconArrowDown), 0);
+            mTagsExpander.setCompoundDrawablesWithIntrinsicBounds(0, 0, AttributeGetter.getDrawableId(context, R.attr.iconArrowDownThemed), 0);
             mTagsExpander.setOnClickListener(v -> {
                 if (mTagsContainer.getChildAt(1).getVisibility() == View.GONE) {
-                    mTagsExpander.setCompoundDrawablesWithIntrinsicBounds(0, 0, AttributeGetter.getDrawableId(context, R.attr.iconArrowUp), 0);
+                    mTagsExpander.setCompoundDrawablesWithIntrinsicBounds(0, 0, AttributeGetter.getDrawableId(context, R.attr.iconArrowUpThemed), 0);
                     for (int i = 1; i < mTagsContainer.getChildCount(); i++) {
                         mTagsContainer.getChildAt(i).setVisibility(View.VISIBLE);
                     }
                 } else {
-                    mTagsExpander.setCompoundDrawablesWithIntrinsicBounds(0, 0, AttributeGetter.getDrawableId(context, R.attr.iconArrowDown), 0);
+                    mTagsExpander.setCompoundDrawablesWithIntrinsicBounds(0, 0, AttributeGetter.getDrawableId(context, R.attr.iconArrowDownThemed), 0);
                     for (int i = 1; i < mTagsContainer.getChildCount(); i++) {
                         mTagsContainer.getChildAt(i).setVisibility(View.GONE);
                     }

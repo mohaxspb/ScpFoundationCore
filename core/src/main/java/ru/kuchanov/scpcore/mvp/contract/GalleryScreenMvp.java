@@ -24,5 +24,7 @@ public interface GalleryScreenMvp extends DrawerMvp {
         void getDataFromDb();
 
         List<VkImage> getData();
+
+        void setData(List<VkImage> data);
     }
 }

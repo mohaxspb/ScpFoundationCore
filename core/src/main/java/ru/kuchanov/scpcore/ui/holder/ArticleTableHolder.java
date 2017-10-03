@@ -153,7 +153,7 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
 
                 if (link.endsWith(".jpg") || link.endsWith(".jpeg") || link.endsWith(".png") || link.endsWith(".gif")) {
                     if (mTextItemsClickListener != null) {
-                        mTextItemsClickListener.onImageClicked(link);
+                        mTextItemsClickListener.onImageClicked(link, null);
                     }
                     return true;
                 }

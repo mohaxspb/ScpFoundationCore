@@ -51,11 +51,6 @@ public class HolderMin extends RecyclerView.ViewHolder {
     @BindView(R2.id.typeIcon)
     ImageView typeIcon;
 
-//    @BindView(R2.id.nativeAdViewContainer)
-//    CardView nativeAdViewContainer;
-//    @BindView(R2.id.nativeAdView)
-//    NativeExpressAdView nativeExpressAdView;
-
     public HolderMin(View itemView, ArticlesListAdapter.ArticleClickListener clickListener) {
         super(itemView);
         ButterKnife.bind(this, itemView);
@@ -133,9 +128,6 @@ public class HolderMin extends RecyclerView.ViewHolder {
         } else {
             typeIcon.setVisibility(View.GONE);
         }
-
-        //native ads
-//        showNativeAds();
     }
 
     protected void setTypesIcons(Article article) {

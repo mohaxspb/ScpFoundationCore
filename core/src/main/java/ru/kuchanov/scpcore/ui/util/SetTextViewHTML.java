@@ -1,6 +1,7 @@
 package ru.kuchanov.scpcore.ui.util;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.Spannable;
@@ -171,7 +172,7 @@ public class SetTextViewHTML {
             public void onClick(View widget) {
                 Timber.d("makeImgsClickable Click: %s", imageSrc);
                 if (textItemsClickListener != null) {
-                    textItemsClickListener.onImageClicked(imageSrc);
+                    textItemsClickListener.onImageClicked(imageSrc, null);
                 }
             }
         };
@@ -222,7 +223,7 @@ public class SetTextViewHTML {
 
         void onTocClicked(String link);
 
-        void onImageClicked(String link);
+        void onImageClicked(String link, @Nullable String description);
 
         void onUnsupportedLinkPressed(String link);
 

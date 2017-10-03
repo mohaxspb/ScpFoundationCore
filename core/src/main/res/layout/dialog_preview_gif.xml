@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/material_blue_gray_900"
+    >
+
+    <ImageView
+        android:id="@+id/image_view_touch"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:scaleType="fitCenter"
+        tools:ignore="ContentDescription"
+        />
+
+    <ProgressBar
+        android:id="@+id/progressCenter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/material_blue_gray_50"
+        android:indeterminateTintMode="src_in"
+        android:visibility="gone"
+        tools:targetApi="lollipop"
+        />
+</FrameLayout>
