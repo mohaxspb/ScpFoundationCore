@@ -36,6 +36,7 @@ import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.mvp.contract.ArticleMvp;
+import ru.kuchanov.scpcore.ui.activity.GalleryActivity;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import ru.kuchanov.scpcore.ui.adapter.ArticleAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseFragment;
@@ -331,11 +332,11 @@ public class ArticleFragment
     }
 
     @Override
-    public void onImageClicked(String link) {
+    public void onImageClicked(String link, @Nullable String description) {
         if (!isAdded()) {
             return;
         }
-        mDialogUtils.showImageDialog(getActivity(), link);
+        GalleryActivity.startForImage(getActivity(), link, description);
     }
 
     @Override

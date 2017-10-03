@@ -29,12 +29,14 @@ import static ru.kuchanov.scpcore.util.IntentUtils.MY_PERMISSIONS_REQUEST_WRITE_
 public class StorageUtils {
 
     public static String saveImageToGallery(Activity activity, Bitmap image) {
-        int permissionCheck = ContextCompat.checkSelfPermission(
-                activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int permissionCheck = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-            return MediaStore.Images.Media.insertImage(activity.getContentResolver(), image,
+            return MediaStore.Images.Media.insertImage(
+                    activity.getContentResolver(),
+                    image,
                     activity.getString(R.string.image_title),
-                    activity.getString(R.string.image_description));
+                    activity.getString(R.string.image_description)
+            );
         } else {
             ActivityCompat.requestPermissions(
                     activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},

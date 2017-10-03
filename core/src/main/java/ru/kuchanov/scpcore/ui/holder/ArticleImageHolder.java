@@ -85,6 +85,25 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
         String imageUrl = imageTag == null ? null : imageTag.attr("src");
 
         CalligraphyUtils.applyFontToTextView(context, titleTextView, mMyPreferenceManager.getFontPath());
+
+        String title;
+        if (!document.getElementsByTag("span").isEmpty()) {
+            title = document.getElementsByTag("span").first().html();
+//            Timber.d("title: %s", title);
+        } else if (!document.getElementsByClass("scp-image-caption").isEmpty()) {
+            title = document.getElementsByClass("scp-image-caption").first().html();
+        } else {
+            title = null;
+        }
+
+        if (!TextUtils.isEmpty(title)) {
+            titleTextView.setLinksClickable(true);
+            titleTextView.setMovementMethod(LinkMovementMethod.getInstance());
+            //TODO add settings for it
+//            textView.setTextIsSelectable(true);
+            mSetTextViewHTML.setText(titleTextView, title, mTextItemsClickListener);
+        }
+
         progressCenter.setVisibility(View.VISIBLE);
         if (!TextUtils.isEmpty(imageUrl) && imageUrl.endsWith("gif")) {
             Glide.with(context)
@@ -118,7 +137,7 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
 
                             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
-                            imageView.setOnClickListener(v -> mTextItemsClickListener.onImageClicked(imageUrl));
+                            imageView.setOnClickListener(v -> mTextItemsClickListener.onImageClicked(imageUrl, title));
 
                             progressCenter.setVisibility(View.GONE);
                             return false;
@@ -156,28 +175,12 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
 
                             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
-                            imageView.setOnClickListener(v -> mTextItemsClickListener.onImageClicked(imageUrl));
+                            imageView.setOnClickListener(v -> mTextItemsClickListener.onImageClicked(imageUrl, title));
                             progressCenter.setVisibility(View.GONE);
                             return false;
                         }
                     })
                     .into(imageView);
-        }
-
-        String title = null;
-        if (!document.getElementsByTag("span").isEmpty()) {
-            title = document.getElementsByTag("span").first().html();
-//            Timber.d("title: %s", title);
-        } else if (!document.getElementsByClass("scp-image-caption").isEmpty()) {
-            title = document.getElementsByClass("scp-image-caption").first().html();
-        }
-
-        if (!TextUtils.isEmpty(title)) {
-            titleTextView.setLinksClickable(true);
-            titleTextView.setMovementMethod(LinkMovementMethod.getInstance());
-            //TODO add settings for it
-//            textView.setTextIsSelectable(true);
-            mSetTextViewHTML.setText(titleTextView, title, mTextItemsClickListener);
         }
     }
 }

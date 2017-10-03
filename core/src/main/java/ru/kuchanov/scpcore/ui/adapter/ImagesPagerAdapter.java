@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.CardView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -24,7 +26,6 @@ import com.bumptech.glide.request.target.Target;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.ButterKnife;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.db.model.VkImage;
 import timber.log.Timber;
@@ -76,17 +77,22 @@ public class ImagesPagerAdapter extends PagerAdapter {
         if (position == 0) {
             itemView.setAlpha(1f);
         }
-        ImageView imageView = ButterKnife.findById(itemView, R.id.image);
-        progressBar = ButterKnife.findById(itemView, R.id.progressCenter);
+        ImageView imageView = itemView.findViewById(R.id.image);
+        progressBar = itemView.findViewById(R.id.progressCenter);
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setAlpha(1f);
 
-        cardView = ButterKnife.findById(itemView, R.id.descriptionContainer);
-        description = ButterKnife.findById(itemView, R.id.description);
+        cardView = itemView.findViewById(R.id.descriptionContainer);
+        description = itemView.findViewById(R.id.description);
 
         description.setText(mData.get(position).description);
 
-        imageView.setOnClickListener(v -> cardView.setVisibility(cardView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE));
+        imageView.setOnClickListener(v -> {
+            if (TextUtils.isEmpty(mData.get(position).description)) {
+                return;
+            }
+            cardView.setVisibility(cardView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+        });
 
         String url = mData.get(position).allUrls.get(mData.get(position).allUrls.size() - 1).getVal();
         Timber.d("url: %s", url);
@@ -95,10 +101,11 @@ public class ImagesPagerAdapter extends PagerAdapter {
         Glide.with(context)
                 .load(url)
                 .fitCenter()
-                .thumbnail(.1f)
+                .thumbnail(url.endsWith("gif") ? 1f : .1f)
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        Timber.e(e);
                         progressBar.animate().alpha(0f).setDuration(250).setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
@@ -111,6 +118,7 @@ public class ImagesPagerAdapter extends PagerAdapter {
 
                     @Override
                     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        Timber.d("onResourceReady");
                         progressBar.animate().alpha(0f).setDuration(250).setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
@@ -121,6 +129,7 @@ public class ImagesPagerAdapter extends PagerAdapter {
                         return false;
                     }
                 })
+                .diskCacheStrategy(url.endsWith("gif") ? DiskCacheStrategy.SOURCE : DiskCacheStrategy.RESULT)
                 .into(imageView);
 
         container.addView(itemView);

@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.db.model;
 
+import android.support.annotation.Nullable;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -23,10 +25,19 @@ public class VkImage extends RealmObject {
     public int width;
     public int height;
     public long date;
+    @Nullable
     public String description;
 
     //util field
     public RealmList<RealmString> allUrls;
+
+    public VkImage() {
+    }
+
+    public VkImage(String imageUrl, @Nullable String description) {
+        this.allUrls = new RealmList<>(new RealmString(imageUrl));
+        this.description = description;
+    }
 
     @Override
     public String toString() {
