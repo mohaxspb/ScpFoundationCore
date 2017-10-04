@@ -18,18 +18,15 @@ public class ArticleTextPartViewModel {
     public Object data;
 
     public boolean isInSpoiler;
-//    public boolean isInTab;
 
     public ArticleTextPartViewModel(
             @ParseHtmlUtils.TextType String type,
             Object data,
             boolean isInSpoiler
-//            boolean isInTab
     ) {
         this.type = type;
         this.data = data;
         this.isInSpoiler = isInSpoiler;
-//        this.isInTab = isInTab;
     }
 
     @Override

@@ -13,10 +13,6 @@ public class ArticlesListModel {
     public int type;
 
     public Object data;
-//    /**
-//     * we
-//     */
-//    public int index;
 
     public ArticlesListModel(@ArticlesListAdapter.ArticleListNodeType int type, Object data) {
         this.type = type;

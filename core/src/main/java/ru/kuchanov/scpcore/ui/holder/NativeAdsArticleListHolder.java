@@ -42,8 +42,8 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     @BindView(R2.id.container)
     FrameLayout container;
     @BindView(R2.id.appodealNativeAdViewAppWall)
-    NativeAdViewContentStream appodealNativeAdViewAppWall;
-    //    NativeAdViewAppWall appodealNativeAdViewAppWall;
+    NativeAdViewContentStream appodealNativeAdView;
+    //    NativeAdViewAppWall appodealNativeAdView;
     @BindView(R2.id.appodealNativeMediaView)
     NativeMediaView appodealNativeMediaView;
 
@@ -55,36 +55,25 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         mArticleClickListener = clickListener;
     }
 
-    public void bind(NativeExpressAdView nativeExpressAdView) {
-//        if (container.getChildAt(0) instanceof NativeExpressAdView) {
-//            container.removeViewAt(0);
-//        }
-//        if (nativeExpressAdView.getParent() != null) {
-//            ((ViewGroup) nativeExpressAdView.getParent()).removeView(nativeExpressAdView);
-//        }
-//        container.addView(nativeExpressAdView, 0);
+    public NativeAdsArticleListHolder(View itemView) {
+        super(itemView);
+        ButterKnife.bind(this, itemView);
+        BaseApplication.getAppComponent().inject(this);
+    }
 
+    public void bind(NativeExpressAdView nativeExpressAdView) {
         if (!(container.getChildAt(0) instanceof NativeExpressAdView)) {
             if (nativeExpressAdView.getParent() != null) {
                 ((ViewGroup) nativeExpressAdView.getParent()).removeView(nativeExpressAdView);
             }
             container.addView(nativeExpressAdView, 0);
             appodealNativeMediaView.setVisibility(View.GONE);
-            appodealNativeAdViewAppWall.setVisibility(View.GONE);
+            appodealNativeAdView.setVisibility(View.GONE);
         }
     }
 
     public void bind(int appodealAdIndex) {
         Timber.d("appodealAdIndex: %s", appodealAdIndex);
-//        View admobNativeAd = container.getChildAt(0);
-//        if (admobNativeAd != null) {
-//            if (admobNativeAd instanceof NativeExpressAdView) {
-//                container.removeView(admobNativeAd);
-//                if (admobNativeAd.getParent() != null) {
-//                    ((ViewGroup) admobNativeAd.getParent()).removeView(admobNativeAd);
-//                }
-//            }
-//        }
 
         List<NativeAd> nativeAdsList = Appodeal.getNativeAds(Constants.NUM_OF_NATIVE_ADS_PER_SCREEN);
         Timber.d("nativeAdsList.size(): %s", nativeAdsList.size());
@@ -95,12 +84,12 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         NativeAd nativeAd = nativeAdsList.get(appodealAdIndex);
         if (nativeAd.containsVideo()) {
             appodealNativeMediaView.setVisibility(View.VISIBLE);
-            appodealNativeAdViewAppWall.setVisibility(View.GONE);
+            appodealNativeAdView.setVisibility(View.GONE);
             nativeAd.setNativeMediaView(appodealNativeMediaView);
         } else {
             appodealNativeMediaView.setVisibility(View.GONE);
-            appodealNativeAdViewAppWall.setVisibility(View.VISIBLE);
-            appodealNativeAdViewAppWall.setNativeAd(nativeAd);
+            appodealNativeAdView.setVisibility(View.VISIBLE);
+            appodealNativeAdView.setNativeAd(nativeAd);
         }
     }
 }
