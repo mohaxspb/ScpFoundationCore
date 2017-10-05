@@ -233,8 +233,8 @@ public class ArticleAdapter
         FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         if (mMyPreferenceManager.isHasAnySubscription()
                 || !mMyPreferenceManager.isTimeToShowBannerAds()
-                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED)
-                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED)) {
+                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.ARTICLE_BANNER_DISABLED)
+                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_IN_ARTICLE_ENABLED)) {
             return;
         }
         if (mAdsModelsList.isEmpty()) {

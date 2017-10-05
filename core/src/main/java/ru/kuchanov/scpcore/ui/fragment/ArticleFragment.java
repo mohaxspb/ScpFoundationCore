@@ -97,8 +97,6 @@ public class ArticleFragment
     @NonNull
     @Override
     public ArticleMvp.Presenter createPresenter() {
-//        BaseApplication.getAppComponent().inject(this);
-//        mPresenter = new ArticlePresenter(myPreferenceManager, mDbProviderFactory, mApiClient);
         return mPresenter;
     }
 

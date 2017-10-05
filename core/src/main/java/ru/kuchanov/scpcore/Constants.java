@@ -160,8 +160,9 @@ public interface Constants {
             String AUTH_COOLDOWN_IN_MILLIS = "auth_cooldown_in_millis";
             String INVITE_REWARD_IN_MILLIS = "invite_reward_in_millis";
             //native ads
-            String NATIVE_ADS_LISTS_INTERVAL = "native_ads_lists_interval";
             String NATIVE_ADS_LISTS_ENABLED = "native_ads_lists_enabled";
+            String NATIVE_IN_ARTICLE_ENABLED = "native_in_article_enabled";
+            String NATIVE_ADS_LISTS_INTERVAL = "native_ads_lists_interval";
             String NATIVE_ADS_LISTS_SOURCE = "native_ads_lists_source";
             //score multipliers
             String VK_APP_GROUP_ID = "vk_app_group_id";
