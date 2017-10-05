@@ -1,6 +1,6 @@
 package ru.kuchanov.scpcore.ui.holder;
 
-import android.support.v7.widget.CardView;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,8 +37,9 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
 
     private ArticlesListAdapter.ArticleClickListener mArticleClickListener;
 
+    @Nullable
     @BindView(R2.id.nativeAdViewContainer)
-    CardView nativeAdViewContainer;
+    View nativeAdViewContainer;
     @BindView(R2.id.container)
     FrameLayout container;
     @BindView(R2.id.appodealNativeAdViewAppWall)
