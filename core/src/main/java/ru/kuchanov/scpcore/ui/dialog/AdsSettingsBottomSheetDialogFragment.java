@@ -2,33 +2,23 @@ package ru.kuchanov.scpcore.ui.dialog;
 
 import android.app.Dialog;
 import android.content.SharedPreferences;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.StringDef;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.SwitchCompat;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.text.Html;
 import android.widget.FrameLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -42,17 +32,12 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyNotificationManager;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.monetization.model.Subscription;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
-import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerAdapter;
-import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerCardDesignAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseBottomSheetDialogFragment;
-import ru.kuchanov.scpcore.util.AttributeGetter;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
-import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 /**
  * Created by mohax on 14.01.2017.
@@ -108,7 +93,7 @@ public class AdsSettingsBottomSheetDialogFragment
         adsInArticleBannerSwitch.setChecked(mMyPreferenceManager.isBannerInArticleEnabled());
         adsInArticleNativeSwitch.setChecked(!mMyPreferenceManager.isBannerInArticleEnabled());
 
-        //todo set text for remove ads price
+        //set text for remove ads price
         List<String> skus = new ArrayList<>();
         String noAdsSku;
         if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
@@ -122,21 +107,39 @@ public class AdsSettingsBottomSheetDialogFragment
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(subscriptions -> subscriptions.isEmpty() ? Observable.error(new IllegalArgumentException("empty subs list")) : Observable.just(subscriptions))
                 .subscribe(
-                        subscriptions -> removeAdsForMonth.setText(getString(R.string.remove_ads_for_month, subscriptions.get(0).price)),
+                        subscriptions -> removeAdsForMonth.setText(Html.fromHtml(getString(R.string.remove_ads_for_month, "<b><font color = #4CAF50>" + subscriptions.get(0).price + "</font></b>"))),
                         Timber::e
                 );
+
+        removeAdsForFree.setText(Html.fromHtml(getString(R.string.remove_ads_for_free_for_hours)));
     }
 
-    @OnCheckedChanged(value = {R2.id.adsInListsBannerSwitch, R2.id.adsInListsNativeSwitch})
+    @OnCheckedChanged(R2.id.adsInListsBannerSwitch)
     void onBannerInArticlesListsEnabledCheckChangeListener(boolean checked) {
         Timber.d("setBannerInArticlesListsEnabled: %s", checked);
         mMyPreferenceManager.setBannerInArticlesListsEnabled(checked);
+        adsInListsNativeSwitch.setChecked(!checked);
     }
 
-    @OnCheckedChanged(value = {R2.id.adsInArticleBannerSwitch, R2.id.adsInArticleNativeSwitch})
+    @OnCheckedChanged(R2.id.adsInListsNativeSwitch)
+    void onNativeInArticlesListsEnabledCheckChangeListener(boolean checked) {
+        Timber.d("setNativeInArticlesListsEnabled: %s", checked);
+        mMyPreferenceManager.setBannerInArticlesListsEnabled(!checked);
+        adsInListsBannerSwitch.setChecked(!checked);
+    }
+
+    @OnCheckedChanged(R2.id.adsInArticleBannerSwitch)
     void onBannerInArticleEnabledCheckChangeListener(boolean checked) {
         Timber.d("setBannerInArticleEnabled: %s", checked);
         mMyPreferenceManager.setBannerInArticleEnabled(checked);
+        adsInArticleNativeSwitch.setChecked(!checked);
+    }
+
+    @OnCheckedChanged(R2.id.adsInArticleNativeSwitch)
+    void onNativeInArticleEnabledCheckChangeListener(boolean checked) {
+        Timber.d("setNativeInArticleEnabled: %s", checked);
+        mMyPreferenceManager.setBannerInArticleEnabled(!checked);
+        adsInArticleBannerSwitch.setChecked(!checked);
     }
 
     @OnClick(R2.id.removeAdsForMonth)
