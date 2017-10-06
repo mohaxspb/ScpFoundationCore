@@ -1,130 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     >
 
-    <TextView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/defaultMargin"
-        android:text="@string/settings_ads_title"
-        android:textSize="21sp"
-        android:textStyle="bold"
-        />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="@dimen/defaultMargin"
+        android:layout_height="match_parent"
+        android:background="?android:windowBackground"
         >
 
-        <TextView
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/settings_ads_banner_in_lists"
-            />
+            android:orientation="vertical"
+            >
 
-        <android.support.v7.widget.SwitchCompat
-            android:id="@+id/adsInListsBannerSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-    </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/defaultMargin"
+                android:text="@string/settings_ads_title"
+                android:textSize="21sp"
+                android:textStyle="bold"
+                />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="@dimen/defaultMargin"
-        >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/defaultMargin"
+                >
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/settings_ads_native_in_lists"
-            />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_ads_banner_in_lists"
+                    />
 
-        <android.support.v7.widget.SwitchCompat
-            android:id="@+id/adsInListsNativeSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-    </LinearLayout>
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/adsInListsBannerSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+            </LinearLayout>
 
-    <View
-        android:padding="@dimen/defaultMarginSmall"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?android:textColorPrimary"
-        />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/defaultMargin"
+                >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="@dimen/defaultMargin"
-        >
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_ads_native_in_lists"
+                    />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/settings_ads_banner_in_article"
-            />
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/adsInListsNativeSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+            </LinearLayout>
 
-        <android.support.v7.widget.SwitchCompat
-            android:id="@+id/adsInArticleBannerSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-    </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:textColorPrimary"
+                android:padding="@dimen/defaultMarginSmall"
+                />
 
-    <View
-        android:padding="@dimen/defaultMarginSmall"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?android:textColorPrimary"
-        />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/defaultMargin"
+                >
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/defaultMargin"
-        android:text="@string/disable_all_ads"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_ads_banner_in_article"
+                    />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="@dimen/defaultMargin"
-        >
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/adsInArticleBannerSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+            </LinearLayout>
 
-        <TextView
-            android:id="@+id/removeAdsForMonth"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="?selectableItemBackground"
-            android:text="@string/remove_ads_for_month"
-            />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/defaultMargin"
+                >
 
-        <TextView
-            android:id="@+id/removeAdsForFree"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
-            android:layout_weight="1"
-            android:text="@string/remove_ads_for_free_for_hours"
-            />
-    </LinearLayout>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_ads_native_in_article"
+                    />
 
-</LinearLayout>
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/adsInArticleNativeSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:textColorPrimary"
+                android:padding="@dimen/defaultMarginSmall"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/defaultMargin"
+                android:text="@string/disable_all_ads"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/defaultMargin"
+                >
+
+                <TextView
+                    android:id="@+id/removeAdsForMonth"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="?selectableItemBackground"
+                    android:text="@string/remove_ads_for_month"
+                    />
+
+                <TextView
+                    android:id="@+id/removeAdsForFree"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="?selectableItemBackground"
+                    android:text="@string/remove_ads_for_free_for_hours"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>

@@ -365,9 +365,9 @@ public class InAppHelper {
         }
     }
 
-    public List<String> getOldSubsSkus() {
-        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.old_skus).split(",")));
-    }
+//    public List<String> getOldSubsSkus() {
+//        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.old_skus).split(",")));
+//    }
 
     public List<String> getNewSubsSkus() {
         return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver_2_skus).split(",")));
