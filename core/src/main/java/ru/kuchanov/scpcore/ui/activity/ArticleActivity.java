@@ -5,8 +5,6 @@ import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.view.ViewPager;
 import android.view.MenuItem;
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-
 import java.util.List;
 
 import butterknife.BindView;
@@ -23,8 +21,6 @@ import ru.kuchanov.scpcore.ui.fragment.ArticleFragment;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
-import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.ARTICLE_BANNER_DISABLED;
-import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_IN_ARTICLE_ENABLED;
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
 
 public class ArticleActivity
@@ -193,7 +189,8 @@ public class ArticleActivity
 
     @Override
     public boolean isBannerEnabled() {
-        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-        return !config.getBoolean(ARTICLE_BANNER_DISABLED) && !config.getBoolean(NATIVE_IN_ARTICLE_ENABLED);
+//        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+//        return !config.getBoolean(ARTICLE_BANNER_DISABLED) && !config.getBoolean(NATIVE_IN_ARTICLE_ENABLED);
+        return mMyPreferenceManager.isBannerInArticleEnabled();
     }
 }

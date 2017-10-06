@@ -243,10 +243,15 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         //do not add native ads items if user has subscription or banners temporary disabled
         //or banners rnabled or native disabled
         FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+// /        if (mMyPreferenceManager.isHasAnySubscription()
+//                || !mMyPreferenceManager.isTimeToShowBannerAds()
+//                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED)
+//                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED)) {
+//            return;
+//        }
         if (mMyPreferenceManager.isHasAnySubscription()
                 || !mMyPreferenceManager.isTimeToShowBannerAds()
-                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED)
-                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED)) {
+                || mMyPreferenceManager.isBannerInArticlesListsEnabled()) {
             return;
         }
         if (mAdsModelsList.isEmpty()) {

@@ -271,6 +271,6 @@
     <string name="settings_ads_native_in_article">Native ads in article</string>
     <string name="settings_ads_banner_in_article">Banner in article</string>
     <string name="disable_all_ads">Disable all ads</string>
-    <string name="remove_ads_for_month">For month for %s</string>
-    <string name="remove_ads_for_free_for_hours"><![CDATA[For some hours for <b><font color=#4CAF50>FREE</font></b>]]></string>
+    <string name="remove_ads_for_month">For month for\n%s</string>
+    <string name="remove_ads_for_free_for_hours"><![CDATA[For some hours for\n<b><font color=#4CAF50>FREE</font></b>]]></string>
 </resources>

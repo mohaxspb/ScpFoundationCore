@@ -231,10 +231,15 @@ public class ArticleAdapter
         //do not add native ads items if user has subscription or banners temporary disabled
         //or banners rnabled or native disabled
         FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+//        if (mMyPreferenceManager.isHasAnySubscription()
+//                || !mMyPreferenceManager.isTimeToShowBannerAds()
+//                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.ARTICLE_BANNER_DISABLED)
+//                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_IN_ARTICLE_ENABLED)) {
+//            return;
+//        }
         if (mMyPreferenceManager.isHasAnySubscription()
                 || !mMyPreferenceManager.isTimeToShowBannerAds()
-                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.ARTICLE_BANNER_DISABLED)
-                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_IN_ARTICLE_ENABLED)) {
+                || mMyPreferenceManager.isBannerInArticleEnabled()) {
             return;
         }
         if (mAdsModelsList.isEmpty()) {

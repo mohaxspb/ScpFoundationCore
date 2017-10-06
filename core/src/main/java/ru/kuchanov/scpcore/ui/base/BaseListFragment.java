@@ -138,6 +138,9 @@ public abstract class BaseListFragment<V extends BaseListMvp.View, P extends Bas
             case MyPreferenceManager.Keys.DESIGN_FONT_PATH:
                 getAdapter().notifyDataSetChanged();
                 break;
+            case MyPreferenceManager.Keys.ADS_BANNER_IN_ARTICLES_LISTS:
+                updateData(mPresenter.getData());
+                break;
             case MyPreferenceManager.Keys.DESIGN_LIST_TYPE:
                 if (!isAdded()) {
                     return;

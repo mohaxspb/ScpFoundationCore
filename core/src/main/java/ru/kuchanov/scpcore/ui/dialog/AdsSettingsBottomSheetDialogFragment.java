@@ -107,7 +107,7 @@ public class AdsSettingsBottomSheetDialogFragment
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(subscriptions -> subscriptions.isEmpty() ? Observable.error(new IllegalArgumentException("empty subs list")) : Observable.just(subscriptions))
                 .subscribe(
-                        subscriptions -> removeAdsForMonth.setText(Html.fromHtml(getString(R.string.remove_ads_for_month, "<b><font color = #4CAF50>" + subscriptions.get(0).price + "</font></b>"))),
+                        subscriptions -> removeAdsForMonth.setText(Html.fromHtml(getString(R.string.remove_ads_for_month, "<br/><b><font color = #4CAF50>" + subscriptions.get(0).price + "</font></b>"))),
                         Timber::e
                 );
 

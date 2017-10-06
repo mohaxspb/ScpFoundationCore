@@ -423,6 +423,9 @@ public class ArticleFragment
             case MyPreferenceManager.Keys.DESIGN_FONT_PATH:
                 mAdapter.notifyDataSetChanged();
                 break;
+            case MyPreferenceManager.Keys.ADS_BANNER_IN_ARTICLE:
+                showData(mPresenter.getData());
+                break;
             default:
                 //do nothing
                 break;
