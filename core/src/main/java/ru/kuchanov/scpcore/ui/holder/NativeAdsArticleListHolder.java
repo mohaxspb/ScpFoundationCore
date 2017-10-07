@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.appodeal.ads.Appodeal;
 import com.appodeal.ads.NativeAd;
@@ -18,11 +19,13 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
+import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import timber.log.Timber;
 
 /**
@@ -47,6 +50,32 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     //    NativeAdViewAppWall appodealNativeAdView;
     @BindView(R2.id.appodealNativeMediaView)
     NativeMediaView appodealNativeMediaView;
+    private SetTextViewHTML.TextItemsClickListener clickListener;
+
+//    @BindView(R2.id.adsSettings)
+//    TextView adsSettings;
+//    @BindView(R2.id.rewardedVideo)
+//    TextView rewardedVideo;
+
+    @OnClick(R2.id.adsSettings)
+    void onAdsSettingsClick() {
+        if (mArticleClickListener != null) {
+            mArticleClickListener.onAdsSettingsClick();
+        }
+        if (clickListener != null) {
+            clickListener.onAdsSettingsClick();
+        }
+    }
+
+    @OnClick(R2.id.rewardedVideo)
+    void onRewardedVideoClick() {
+        if (mArticleClickListener != null) {
+            mArticleClickListener.onRewardedVideoClick();
+        }
+        if (clickListener != null) {
+            clickListener.onRewardedVideoClick();
+        }
+    }
 
     public NativeAdsArticleListHolder(View itemView, ArticlesListAdapter.ArticleClickListener clickListener) {
         super(itemView);
@@ -56,10 +85,12 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         mArticleClickListener = clickListener;
     }
 
-    public NativeAdsArticleListHolder(View itemView) {
+    public NativeAdsArticleListHolder(View itemView, SetTextViewHTML.TextItemsClickListener clickListener) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         BaseApplication.getAppComponent().inject(this);
+
+        this.clickListener = clickListener;
     }
 
     public void bind(NativeExpressAdView nativeExpressAdView) {

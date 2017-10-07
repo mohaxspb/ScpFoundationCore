@@ -433,15 +433,19 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public interface ArticleClickListener {
 
-        void onArticleClicked(Article article);
+        void onArticleClick(Article article);
 
         void toggleReadenState(Article article);
 
         void toggleFavoriteState(Article article);
 
-        void onOfflineClicked(Article article);
+        void onOfflineClick(Article article);
 
-        void onTagClicked(ArticleTag tag);
+        void onTagClick(ArticleTag tag);
+
+        void onAdsSettingsClick();
+
+        void onRewardedVideoClick();
 
         //todo add listeners for native ads clicks - we'll use it to mesure banner/native effectivnes
     }

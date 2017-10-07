@@ -10,8 +10,9 @@
     app:cardElevation="3dp"
     >
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/container"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
@@ -19,5 +20,8 @@
         <include
             layout="@layout/native_ads_appodeal"/>
 
-    </FrameLayout>
+        <include
+            layout="@layout/native_ads_buttons"/>
+
+    </LinearLayout>
 </android.support.v7.widget.CardView>

@@ -140,7 +140,7 @@ public class HolderMax extends HolderMin {
                 tagView.setTagTextSize(11);
                 tagView.setActionImage(TagView.Action.NONE);
 
-                tagView.setOnTagClickListener((tagView1, tag1) -> mArticleClickListener.onTagClicked(tag1));
+                tagView.setOnTagClickListener((tagView1, tag1) -> mArticleClickListener.onTagClick(tag1));
                 tagView.setVisibility(View.GONE);
 
                 mTagsContainer.addView(tagView);

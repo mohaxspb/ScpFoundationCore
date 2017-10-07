@@ -382,7 +382,7 @@ public class ArticleAdapter
             case TYPE_NATIVE_APPODEAL:
             case TYPE_NATIVE_ADMOB:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_native_container, parent, false);
-                return new NativeAdsArticleListHolder(view);
+                return new NativeAdsArticleListHolder(view, mTextItemsClickListener);
             default:
                 throw new IllegalArgumentException("unexpected type: " + viewType);
         }

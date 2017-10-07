@@ -421,8 +421,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     private void setUpBanner() {
-        if (mMyPreferenceManager.isHasSubscription()
-                || mMyPreferenceManager.isHasNoAdsSubscription()
+        Timber.d("setUpBanner");
+        if (mMyPreferenceManager.isHasAnySubscription()
                 || !isBannerEnabled()
                 || !mMyPreferenceManager.isTimeToShowBannerAds()) {
             if (mAdView != null) {

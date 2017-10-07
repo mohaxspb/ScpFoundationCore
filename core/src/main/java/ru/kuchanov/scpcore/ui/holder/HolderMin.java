@@ -69,7 +69,7 @@ public class HolderMin extends RecyclerView.ViewHolder {
         CalligraphyUtils.applyFontToTextView(context, title, mMyPreferenceManager.getFontPath());
         CalligraphyUtils.applyFontToTextView(context, preview, mMyPreferenceManager.getFontPath());
 
-        itemView.setOnClickListener(v -> mArticleClickListener.onArticleClicked(article));
+        itemView.setOnClickListener(v -> mArticleClickListener.onArticleClick(article));
 
         title.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiTextScale * textSizePrimary);
         if (!TextUtils.isEmpty(article.title)) {
@@ -113,12 +113,12 @@ public class HolderMin extends RecyclerView.ViewHolder {
                     PopupMenu popup = new PopupMenu(context, offline);
                     popup.getMenu().add(0, 0, 0, R.string.delete);
                     popup.setOnMenuItemClickListener(item -> {
-                        mArticleClickListener.onOfflineClicked(article);
+                        mArticleClickListener.onOfflineClick(article);
                         return true;
                     });
                     popup.show();
                 } else {
-                    mArticleClickListener.onOfflineClicked(article);
+                    mArticleClickListener.onOfflineClick(article);
                 }
             }
         });
