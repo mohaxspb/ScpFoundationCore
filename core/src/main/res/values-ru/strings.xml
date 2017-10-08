@@ -263,4 +263,11 @@
 
     <!---->
     <string name="settings_ads_banner_in_lists">Баннер в списках статей</string>
+    <string name="settings_ads_title">Настройки рекламы</string>
+    <string name="settings_ads_native_in_lists">Нативная реклама в списках статей</string>
+    <string name="settings_ads_native_in_article">Нативная реклама в статьях</string>
+    <string name="settings_ads_banner_in_article">Баннер в статьях</string>
+    <string name="disable_all_ads">Отключить всю рекламу</string>
+    <string name="remove_ads_for_month">На месяц за %s</string>
+    <string name="remove_ads_for_free_for_hours"><![CDATA[На несколько часов<br/><b><font color=#4CAF50>БЕСПЛАТНО</font></b>]]></string>
 </resources>
