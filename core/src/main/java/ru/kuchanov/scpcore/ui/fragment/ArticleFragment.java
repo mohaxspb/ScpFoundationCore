@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -40,6 +41,7 @@ import ru.kuchanov.scpcore.ui.activity.GalleryActivity;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import ru.kuchanov.scpcore.ui.adapter.ArticleAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseFragment;
+import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
 import ru.kuchanov.scpcore.ui.model.TabsViewModel;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
@@ -97,8 +99,6 @@ public class ArticleFragment
     @NonNull
     @Override
     public ArticleMvp.Presenter createPresenter() {
-//        BaseApplication.getAppComponent().inject(this);
-//        mPresenter = new ArticlePresenter(myPreferenceManager, mDbProviderFactory, mApiClient);
         return mPresenter;
     }
 
@@ -417,6 +417,23 @@ public class ArticleFragment
     }
 
     @Override
+    public void onAdsSettingsClick() {
+        if (!isAdded()) {
+            return;
+        }
+        BottomSheetDialogFragment subsDF = AdsSettingsBottomSheetDialogFragment.newInstance();
+        subsDF.show(getActivity().getSupportFragmentManager(), subsDF.getTag());
+    }
+
+    @Override
+    public void onRewardedVideoClick() {
+        if (!isAdded()) {
+            return;
+        }
+        getBaseActivity().startRewardedVideoFlow();
+    }
+
+    @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
             case MyPreferenceManager.Keys.TEXT_SCALE_ARTICLE:
@@ -424,6 +441,9 @@ public class ArticleFragment
                 break;
             case MyPreferenceManager.Keys.DESIGN_FONT_PATH:
                 mAdapter.notifyDataSetChanged();
+                break;
+            case MyPreferenceManager.Keys.ADS_BANNER_IN_ARTICLE:
+                showData(mPresenter.getData());
                 break;
             default:
                 //do nothing

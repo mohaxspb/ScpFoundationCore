@@ -1,19 +1,32 @@
 package ru.kuchanov.scpcore.ui.adapter;
 
+import android.annotation.SuppressLint;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.ads.NativeExpressAdView;
+import com.google.android.gms.ads.VideoOptions;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
+import javax.inject.Inject;
 
 import io.realm.RealmList;
+import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ParseHtmlUtils;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.RealmString;
+import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.AdMobHelper;
+import ru.kuchanov.scpcore.monetization.util.MyAdmobNativeAdListener;
 import ru.kuchanov.scpcore.ui.holder.ArticleImageHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleSpoilerHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTableHolder;
@@ -21,11 +34,15 @@ import ru.kuchanov.scpcore.ui.holder.ArticleTabsHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTagsHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTextHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTitleHolder;
+import ru.kuchanov.scpcore.ui.holder.NativeAdsArticleListHolder;
 import ru.kuchanov.scpcore.ui.model.ArticleTextPartViewModel;
 import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
 import ru.kuchanov.scpcore.ui.model.TabsViewModel;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import timber.log.Timber;
+
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_INTERVAL;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_SOURCE;
 
 /**
  * Created by Dante on 17.01.2016.
@@ -44,10 +61,20 @@ public class ArticleAdapter
     private static final int TYPE_TABLE = 4;
     private static final int TYPE_TAGS = 5;
     private static final int TYPE_TABS = 6;
+    private static final int TYPE_NATIVE_ADMOB = 7;
+    private static final int TYPE_NATIVE_APPODEAL = 8;
 
+    @Inject
+    MyPreferenceManager mMyPreferenceManager;
+
+    private List<ArticleTextPartViewModel> mAdsModelsList = new ArrayList<>();
     private List<ArticleTextPartViewModel> mViewModels = new ArrayList<>();
 
     private List<TabsViewModel> mTabsViewModelList = new ArrayList<>();
+
+    public ArticleAdapter() {
+        BaseApplication.getAppComponent().inject(this);
+    }
 
     public List<String> getArticlesTextParts() {
         return ArticleTextPartViewModel.convertToStringList(mViewModels);
@@ -181,6 +208,10 @@ public class ArticleAdapter
                     break;
             }
         }
+
+        addAds();
+
+
         //log
         @ParseHtmlUtils.TextType
         List<String> types = new ArrayList<>();
@@ -194,6 +225,105 @@ public class ArticleAdapter
         Timber.d("mViewModels.size: %s", mViewModels.size());
 
         notifyDataSetChanged();
+    }
+
+    private void addAds() {
+        //do not add native ads items if user has subscription or banners temporary disabled
+        //or banners rnabled or native disabled
+        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+//        if (mMyPreferenceManager.isHasAnySubscription()
+//                || !mMyPreferenceManager.isTimeToShowBannerAds()
+//                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.ARTICLE_BANNER_DISABLED)
+//                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_IN_ARTICLE_ENABLED)) {
+//            return;
+//        }
+        if (mMyPreferenceManager.isHasAnySubscription()
+                || !mMyPreferenceManager.isTimeToShowBannerAds()
+                || mMyPreferenceManager.isBannerInArticleEnabled()) {
+            return;
+        }
+        if (mAdsModelsList.isEmpty()) {
+            mAdsModelsList.addAll(createAdsModelsList());
+        }
+
+        // Loop through the items array and place a new Native Express ad in every ith position in
+        // the items List.
+//        int appodealIndex = 0;
+        int interval = (int) (config.getLong(NATIVE_ADS_LISTS_INTERVAL) - 1);
+        for (int i = 0; i <= mViewModels.size(); i += interval) {
+            //do not add as first row
+            if (i == 0) {
+                continue;
+            } else if (i / interval > Constants.NUM_OF_NATIVE_ADS_PER_SCREEN) {
+                break;
+            }
+
+            mViewModels.add(i, mAdsModelsList.get((i / interval) - 1));
+        }
+    }
+
+    private List<ArticleTextPartViewModel> createAdsModelsList() {
+        List<ArticleTextPartViewModel> adsModelsList = new ArrayList<>();
+
+        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        @Constants.NativeAdsSource
+        int nativeAdsSource = (int) config.getLong(NATIVE_ADS_LISTS_SOURCE);
+        //test
+//        nativeAdsSource = Constants.NativeAdsSource.APPODEAL;
+        int appodealIndex = 0;
+        for (int i = 0; i < Constants.NUM_OF_NATIVE_ADS_PER_SCREEN; i++) {
+            switch (nativeAdsSource) {
+                case Constants.NativeAdsSource.ALL: {
+                    //show ads from list of sources via random
+                    switch (new Random().nextInt(Constants.NUM_OF_NATIVE_ADS_SOURCES) + 1) {
+                        case Constants.NativeAdsSource.AD_MOB:
+                            @SuppressLint("InflateParams")
+                            NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
+                                    .inflate(R.layout.native_ads_admob_medium, null, false);
+                            nativeAdView.setVideoOptions(new VideoOptions.Builder()
+                                    .setStartMuted(true)
+                                    .build());
+                            nativeAdView.setAdListener(new MyAdmobNativeAdListener() {
+                                @Override
+                                public void onAdFailedToLoad(int i) {
+                                    super.onAdFailedToLoad(i);
+                                    nativeAdView.setVisibility(View.GONE);
+                                }
+                            });
+                            nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
+                            adsModelsList.add(new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_AD_MOB, nativeAdView, false));
+                            break;
+                        case Constants.NativeAdsSource.APPODEAL:
+                            adsModelsList.add(new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL, appodealIndex, false));
+                            appodealIndex++;
+                            break;
+                        default:
+                            throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
+                    }
+                    break;
+                }
+                case Constants.NativeAdsSource.AD_MOB: {
+                    @SuppressLint("InflateParams")
+                    NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
+                            .inflate(R.layout.native_ads_admob_medium, null, false);
+                    nativeAdView.setAdListener(new MyAdmobNativeAdListener());
+                    nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
+                    nativeAdView.setVideoOptions(new VideoOptions.Builder()
+                            .setStartMuted(true)
+                            .build());
+                    adsModelsList.add(new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_AD_MOB, nativeAdView, false));
+                    break;
+                }
+                case Constants.NativeAdsSource.APPODEAL:
+                    adsModelsList.add(new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL, appodealIndex, false));
+                    appodealIndex++;
+                    break;
+                default:
+                    throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
+            }
+        }
+
+        return adsModelsList;
     }
 
     @Override
@@ -215,6 +345,10 @@ public class ArticleAdapter
                 return TYPE_TAGS;
             case ParseHtmlUtils.TextType.TABS:
                 return TYPE_TABS;
+            case ParseHtmlUtils.TextType.NATIVE_ADS_AD_MOB:
+                return TYPE_NATIVE_ADMOB;
+            case ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL:
+                return TYPE_NATIVE_APPODEAL;
             default:
                 throw new IllegalArgumentException("unexpected type: " + type);
         }
@@ -245,6 +379,10 @@ public class ArticleAdapter
             case TYPE_TABS:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_tabs, parent, false);
                 return new ArticleTabsHolder(view, this);
+            case TYPE_NATIVE_APPODEAL:
+            case TYPE_NATIVE_ADMOB:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_native_container, parent, false);
+                return new NativeAdsArticleListHolder(view, mTextItemsClickListener);
             default:
                 throw new IllegalArgumentException("unexpected type: " + viewType);
         }
@@ -273,6 +411,14 @@ public class ArticleAdapter
                 break;
             case TYPE_TABS:
                 ((ArticleTabsHolder) holder).bind((TabsViewModel) mViewModels.get(position).data);
+                break;
+            case TYPE_NATIVE_APPODEAL:
+                NativeAdsArticleListHolder nativeAdsAppodealHolder = (NativeAdsArticleListHolder) holder;
+                nativeAdsAppodealHolder.bind((Integer) mViewModels.get(position).data);
+                break;
+            case TYPE_NATIVE_ADMOB:
+                NativeAdsArticleListHolder nativeAdsHolder = (NativeAdsArticleListHolder) holder;
+                nativeAdsHolder.bind((NativeExpressAdView) mViewModels.get(position).data);
                 break;
             default:
                 throw new IllegalArgumentException("unexpected item type: " + getItemViewType(position));

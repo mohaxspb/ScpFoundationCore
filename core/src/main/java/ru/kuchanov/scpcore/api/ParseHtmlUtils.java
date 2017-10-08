@@ -70,8 +70,11 @@ public class ParseHtmlUtils {
 //            Timber.d("pageContent.getElementsByClass(\"rimg\"): %s", pageContent.getElementsByClass("rimg"));
     }
 
+    //todo remake to intDef to be able to use as viewType in adapter
     @Retention(RetentionPolicy.SOURCE)
-    @StringDef({TextType.TEXT, TextType.SPOILER, TextType.IMAGE, TextType.TABLE, TextType.TITLE, TextType.TAGS, TextType.TABS})
+    @StringDef({TextType.TEXT, TextType.SPOILER, TextType.IMAGE,
+            TextType.TABLE, TextType.TITLE, TextType.TAGS,
+            TextType.TABS, TextType.NATIVE_ADS_AD_MOB, TextType.NATIVE_ADS_APPODEAL})
     public @interface TextType {
         String TEXT = "TEXT";
         String SPOILER = "SPOILER";
@@ -80,6 +83,8 @@ public class ParseHtmlUtils {
         String TITLE = "TITLE";
         String TAGS = "TAGS";
         String TABS = "TABS";
+        String NATIVE_ADS_AD_MOB = "NATIVE_ADS_AD_MOB";
+        String NATIVE_ADS_APPODEAL = "NATIVE_ADS_APPODEAL";
     }
 
     public static List<String> getArticlesTextParts(String html) {

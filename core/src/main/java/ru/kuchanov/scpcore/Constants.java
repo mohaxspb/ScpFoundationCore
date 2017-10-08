@@ -160,9 +160,14 @@ public interface Constants {
             String AUTH_COOLDOWN_IN_MILLIS = "auth_cooldown_in_millis";
             String INVITE_REWARD_IN_MILLIS = "invite_reward_in_millis";
             //native ads
-            String NATIVE_ADS_LISTS_INTERVAL = "native_ads_lists_interval";
             String NATIVE_ADS_LISTS_ENABLED = "native_ads_lists_enabled";
+            String NATIVE_IN_ARTICLE_ENABLED = "native_in_article_enabled";
+            String NATIVE_ADS_LISTS_INTERVAL = "native_ads_lists_interval";
             String NATIVE_ADS_LISTS_SOURCE = "native_ads_lists_source";
+            //banners
+            String GALLERY_BANNER_DISABLED = "gallery_banner_disabled";
+            String MAIN_BANNER_DISABLED = "main_banner_disabled";
+            String ARTICLE_BANNER_DISABLED = "article_banner_disabled";
             //score multipliers
             String VK_APP_GROUP_ID = "vk_app_group_id";
             String SCORE_MULTIPLIER_SUBSCRIPTION = "score_multiplier_subscription";
@@ -182,10 +187,6 @@ public interface Constants {
             String DOWNLOAD_ALL_ENABLED_FOR_FREE = "download_all_enabled_for_free";
             String DOWNLOAD_FREE_ARTICLES_LIMIT = "download_free_articles_limit";
             String DOWNLOAD_SCORE_PER_ARTICLE = "download_score_per_article";
-
-            String GALLERY_BANNER_DISABLED = "gallery_banner_disabled";
-            String MAIN_BANNER_DISABLED = "main_banner_disabled";
-            String ARTICLE_BANNER_DISABLED = "article_banner_disabled";
 
             String NO_ADS_SUBS_ENABLED = "no_ads_subs_enabled";
 
@@ -231,6 +232,7 @@ public interface Constants {
                 String AUTO_SYNC_FROM_SETTINGS = "AUTO_SYNC_FROM_SETTINGS";
                 String DOWNLOAD_DIALOG = "DOWNLOAD_DIALOG";
                 String AFTER_LEVEL_UP = "AFTER_LEVEL_UP";
+                String REMOVE_ADS_SETTINGS = "REMOVE_ADS_SETTINGS";
             }
 
             interface UserPropertyKey {

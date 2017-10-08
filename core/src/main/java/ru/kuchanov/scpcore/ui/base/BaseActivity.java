@@ -97,6 +97,7 @@ import ru.kuchanov.scpcore.ui.activity.GalleryActivity;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 import ru.kuchanov.scpcore.ui.activity.TagSearchActivity;
 import ru.kuchanov.scpcore.ui.adapter.SocialLoginAdapter;
+import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.FreeAdsDisablingDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
@@ -420,8 +421,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     private void setUpBanner() {
-        if (mMyPreferenceManager.isHasSubscription()
-                || mMyPreferenceManager.isHasNoAdsSubscription()
+        Timber.d("setUpBanner");
+        if (mMyPreferenceManager.isHasAnySubscription()
                 || !isBannerEnabled()
                 || !mMyPreferenceManager.isTimeToShowBannerAds()) {
             if (mAdView != null) {
@@ -862,6 +863,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, StartScreen.MENU);
             FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
             return true;
+        }  else if (i == R.id.removeAds) {
+            BottomSheetDialogFragment subsDF = AdsSettingsBottomSheetDialogFragment.newInstance();
+            subsDF.show(getSupportFragmentManager(), subsDF.getTag());
+            return true;
         } else if (i == R.id.night_mode_item) {
             mMyPreferenceManager.setIsNightMode(!mMyPreferenceManager.isNightMode());
             return true;
@@ -927,6 +932,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             case MyPreferenceManager.Keys.NIGHT_MODE:
                 recreate();
                 break;
+            case MyPreferenceManager.Keys.ADS_BANNER_IN_ARTICLE:
+            case MyPreferenceManager.Keys.ADS_BANNER_IN_ARTICLES_LISTS:
             case MyPreferenceManager.Keys.TIME_FOR_WHICH_BANNERS_DISABLED:
                 //check if there is banner in layout
                 setUpBanner();

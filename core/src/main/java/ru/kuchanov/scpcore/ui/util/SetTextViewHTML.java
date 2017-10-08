@@ -240,5 +240,9 @@ public class SetTextViewHTML {
         void onSpoilerCollapse(SpoilerViewModel spoilerViewModel);
 
         void onTabSelected(TabsViewModel tabsViewModel);
+
+        void onAdsSettingsClick();
+
+        void onRewardedVideoClick();
     }
 }

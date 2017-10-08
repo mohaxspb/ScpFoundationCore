@@ -2,6 +2,7 @@ package ru.kuchanov.scpcore.ui.fragment;
 
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +24,7 @@ import ru.kuchanov.scpcore.mvp.base.BaseArticlesListMvp;
 import ru.kuchanov.scpcore.mvp.base.BaseListMvp;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseListFragment;
+import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.util.EndlessRecyclerViewScrollListener;
 import timber.log.Timber;
 
@@ -188,8 +190,8 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
     protected void initAdapter() {
         getAdapter().setArticleClickListener(new ArticlesListAdapter.ArticleClickListener() {
             @Override
-            public void onArticleClicked(Article article) {
-                Timber.d("onArticleClicked: %s", article.title);
+            public void onArticleClick(Article article) {
+                Timber.d("onArticleClick: %s", article.title);
                 if (!isAdded()) {
                     return;
                 }
@@ -209,15 +211,32 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
             }
 
             @Override
-            public void onOfflineClicked(Article article) {
-                Timber.d("onOfflineClicked: %s", article.title);
+            public void onOfflineClick(Article article) {
+                Timber.d("onOfflineClick: %s", article.title);
                 mPresenter.toggleOfflineState(article);
             }
 
             @Override
-            public void onTagClicked(ArticleTag tag) {
-                Timber.d("onTagClicked: %s", tag);
+            public void onTagClick(ArticleTag tag) {
+                Timber.d("onTagClick: %s", tag);
                 getBaseActivity().startTagsSearchActivity(new ArrayList<>(Collections.singletonList(tag)));
+            }
+
+            @Override
+            public void onAdsSettingsClick() {
+                if (!isAdded()) {
+                    return;
+                }
+                BottomSheetDialogFragment subsDF = AdsSettingsBottomSheetDialogFragment.newInstance();
+                subsDF.show(getActivity().getSupportFragmentManager(), subsDF.getTag());
+            }
+
+            @Override
+            public void onRewardedVideoClick() {
+                if (!isAdded()) {
+                    return;
+                }
+                getBaseActivity().startRewardedVideoFlow();
             }
         });
         getAdapter().setHasStableIds(true);
