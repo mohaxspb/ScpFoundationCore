@@ -49,6 +49,10 @@
         <item name="iconArrowUpThemed">@drawable/ic_keyboard_arrow_up_black_24dp</item>
         <item name="iconArrowDownThemed">@drawable/ic_keyboard_arrow_down_black_24dp</item>
 
+        <!---->
+        <item name="iconAdsSettings24dp">@drawable/ic_offline_pin_black_24dp</item>
+        <item name="iconVideo24dp">@drawable/ic_video_library_black_24dp</item>
+
         <item name="iconOfflineAdd">@drawable/ic_download_black_24dp</item>
         <item name="iconOfflineRemove">@drawable/ic_save_black_24dp</item>
         <item name="iconEmptyImage">@drawable/ic_image_black_48dp</item>
@@ -128,6 +132,10 @@
         <!--same but in different color-->
         <item name="iconArrowUpThemed">@drawable/ic_keyboard_arrow_up_blue_grey_50_24dp</item>
         <item name="iconArrowDownThemed">@drawable/ic_keyboard_arrow_down_blue_grey_50_24dp</item>
+
+        <!---->
+        <item name="iconAdsSettings24dp">@drawable/ic_offline_pin_blue_grey_50_24dp</item>
+        <item name="iconVideo24dp">@drawable/ic_video_library_blue_grey_50_24dp</item>
 
         <item name="iconOfflineAdd">@drawable/ic_download_white_24dp</item>
         <item name="iconOfflineRemove">@drawable/ic_save_white_24dp</item>

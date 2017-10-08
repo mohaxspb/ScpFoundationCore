@@ -187,6 +187,16 @@ public class ImagesPagerAdapter extends PagerAdapter {
                 public void onTabSelected(TabsViewModel tabsViewModel) {
                     ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
                 }
+
+                @Override
+                public void onAdsSettingsClick() {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
+
+                @Override
+                public void onRewardedVideoClick() {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
             });
         }
 

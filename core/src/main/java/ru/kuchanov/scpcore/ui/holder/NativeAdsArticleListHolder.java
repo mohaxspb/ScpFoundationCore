@@ -4,8 +4,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import com.appodeal.ads.Appodeal;
 import com.appodeal.ads.NativeAd;
@@ -44,7 +42,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     @BindView(R2.id.nativeAdViewContainer)
     View nativeAdViewContainer;
     @BindView(R2.id.container)
-    FrameLayout container;
+    ViewGroup container;
     @BindView(R2.id.appodealNativeAdViewAppWall)
     NativeAdViewContentStream appodealNativeAdView;
     //    NativeAdViewAppWall appodealNativeAdView;
@@ -52,12 +50,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     NativeMediaView appodealNativeMediaView;
     private SetTextViewHTML.TextItemsClickListener clickListener;
 
-//    @BindView(R2.id.adsSettings)
-//    TextView adsSettings;
-//    @BindView(R2.id.rewardedVideo)
-//    TextView rewardedVideo;
-
-    @OnClick(R2.id.adsSettings)
+    @OnClick(R2.id.adsSettingsContainer)
     void onAdsSettingsClick() {
         if (mArticleClickListener != null) {
             mArticleClickListener.onAdsSettingsClick();
@@ -67,7 +60,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    @OnClick(R2.id.rewardedVideo)
+    @OnClick(R2.id.rewardedVideoContainer)
     void onRewardedVideoClick() {
         if (mArticleClickListener != null) {
             mArticleClickListener.onRewardedVideoClick();
