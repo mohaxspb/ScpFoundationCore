@@ -260,4 +260,7 @@
     <string name="invite_received_reward_message">Реклама отключена на %1$d часа, %2$d очков добавлено!</string>
     <string name="ads_disabled_for_some_hours">Реклама отключена на %d часа!</string>
     <string name="drawer_item_invite_friends">Пригласи друзей!</string>
+
+    <!---->
+    <string name="settings_ads_banner_in_lists">Баннер в списках статей</string>
 </resources>

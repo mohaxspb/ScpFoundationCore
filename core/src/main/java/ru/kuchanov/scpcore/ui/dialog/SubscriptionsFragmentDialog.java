@@ -41,7 +41,7 @@ import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
-import ru.kuchanov.scpcore.ui.adapter.SubscriptionsRecyclerAdapter;
+import ru.kuchanov.scpcore.ui.adapter.SubscriptionsAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseBottomSheetDialogFragment;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -50,7 +50,7 @@ import timber.log.Timber;
 
 public class SubscriptionsFragmentDialog
         extends BaseBottomSheetDialogFragment
-        implements SubscriptionsRecyclerAdapter.SubscriptionClickListener {
+        implements SubscriptionsAdapter.SubscriptionClickListener {
 
     public static final int REQUEST_CODE_SUBSCRIPTION = 1001;
 
@@ -197,7 +197,7 @@ public class SubscriptionsFragmentDialog
 
                             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                             recyclerView.setHasFixedSize(true);
-                            SubscriptionsRecyclerAdapter adapter = new SubscriptionsRecyclerAdapter();
+                            SubscriptionsAdapter adapter = new SubscriptionsAdapter();
                             adapter.setData(ownedItemsAndSubscriptions.second);
                             adapter.setArticleClickListener(SubscriptionsFragmentDialog.this);
                             recyclerView.setAdapter(adapter);
@@ -248,27 +248,31 @@ public class SubscriptionsFragmentDialog
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Timber.d("called in fragment");
         if (requestCode == REQUEST_CODE_SUBSCRIPTION) {
-//            int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
+            if (data == null) {
+                if (isAdded()) {
+                    getBaseActivity().showMessageLong("Error while parse result, please try again");
+                }
+                return;
+            }
+            int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
             String purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA");
 //            String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
 
-            if (resultCode == Activity.RESULT_OK) {
+            if (resultCode == Activity.RESULT_OK && responseCode == InAppHelper.RESULT_OK) {
                 try {
                     JSONObject jo = new JSONObject(purchaseData);
                     String sku = jo.getString("productId");
                     Timber.d("You have bought the %s", sku);
-
-                    Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, sku);
-//                    bundle.putFloat(FirebaseAnalytics.Param.VALUE, .5f);
-                    bundle.putFloat(FirebaseAnalytics.Param.PRICE, .5f);
-                    FirebaseAnalytics.getInstance(getActivity()).logEvent(FirebaseAnalytics.Event.ECOMMERCE_PURCHASE, bundle);
 
                     //validate subs list
                     getBaseActivity().updateOwnedMarketItems();
                 } catch (JSONException e) {
                     Timber.e(e, "Failed to parse purchase data.");
                     getBaseActivity().showError(e);
+                }
+            } else {
+                if (isAdded()) {
+                    getBaseActivity().showMessageLong("Error: response code is not \"0\". Please try again");
                 }
             }
         } else {

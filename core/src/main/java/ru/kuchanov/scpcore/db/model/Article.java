@@ -116,9 +116,9 @@ public class Article extends RealmObject implements ArticleModel, Serializable {
      */
     public int synced = Integer.MAX_VALUE;
 
-    public boolean hasTabs;
-    public RealmList<RealmString> tabsTexts;
-    public RealmList<RealmString> tabsTitles;
+//    public boolean hasTabs;
+//    public RealmList<RealmString> tabsTexts;
+//    public RealmList<RealmString> tabsTitles;
 
     public RealmList<RealmString> textParts;
     public RealmList<RealmString> textPartsTypes;

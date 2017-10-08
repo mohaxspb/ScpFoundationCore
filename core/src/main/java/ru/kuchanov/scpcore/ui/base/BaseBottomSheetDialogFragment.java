@@ -22,6 +22,10 @@ import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
 import timber.log.Timber;
 
+import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventName;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventParam;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.StartScreen;
+
 /**
  * Created by mohax on 14.01.2017.
  * <p>
@@ -105,8 +109,8 @@ public abstract class BaseBottomSheetDialogFragment extends BottomSheetDialogFra
                     subsDF.show(getChildFragmentManager(), subsDF.getTag());
 
                     Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.StartScreen.SNACK_BAR);
-                    FirebaseAnalytics.getInstance(getActivity()).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                    bundle.putString(EventParam.PLACE, StartScreen.SNACK_BAR);
+                    FirebaseAnalytics.getInstance(getActivity()).logEvent(EventName.SUBSCRIPTIONS_SHOWN, bundle);
                 });
                 break;
             case ENABLE_FONTS:
@@ -116,8 +120,8 @@ public abstract class BaseBottomSheetDialogFragment extends BottomSheetDialogFra
                     subsDF.show(getChildFragmentManager(), subsDF.getTag());
 
                     Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.StartScreen.FONT);
-                    FirebaseAnalytics.getInstance(getActivity()).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                    bundle.putString(EventParam.PLACE, StartScreen.FONT);
+                    FirebaseAnalytics.getInstance(getActivity()).logEvent(EventName.SUBSCRIPTIONS_SHOWN, bundle);
                 });
                 break;
             case ENABLE_AUTO_SYNC:
@@ -127,8 +131,8 @@ public abstract class BaseBottomSheetDialogFragment extends BottomSheetDialogFra
                     subsDF.show(getChildFragmentManager(), subsDF.getTag());
 
                     Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.StartScreen.AUTO_SYNC_SNACKBAR);
-                    FirebaseAnalytics.getInstance(getActivity()).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                    bundle.putString(EventParam.PLACE, StartScreen.AUTO_SYNC_SNACKBAR);
+                    FirebaseAnalytics.getInstance(getActivity()).logEvent(EventName.SUBSCRIPTIONS_SHOWN, bundle);
                 });
                 break;
             case SYNC_NEED_AUTH:

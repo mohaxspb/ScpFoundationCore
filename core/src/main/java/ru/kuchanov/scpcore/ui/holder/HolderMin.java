@@ -19,7 +19,7 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.ui.adapter.ArticlesListRecyclerAdapter;
+import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
@@ -33,7 +33,7 @@ public class HolderMin extends RecyclerView.ViewHolder {
     @Inject
     protected MyPreferenceManager mMyPreferenceManager;
 
-    ArticlesListRecyclerAdapter.ArticleClickListener mArticleClickListener;
+    ArticlesListAdapter.ArticleClickListener mArticleClickListener;
 
     protected Article mData;
 
@@ -51,12 +51,7 @@ public class HolderMin extends RecyclerView.ViewHolder {
     @BindView(R2.id.typeIcon)
     ImageView typeIcon;
 
-//    @BindView(R2.id.nativeAdViewContainer)
-//    CardView nativeAdViewContainer;
-//    @BindView(R2.id.nativeAdView)
-//    NativeExpressAdView nativeExpressAdView;
-
-    public HolderMin(View itemView, ArticlesListRecyclerAdapter.ArticleClickListener clickListener) {
+    public HolderMin(View itemView, ArticlesListAdapter.ArticleClickListener clickListener) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         BaseApplication.getAppComponent().inject(this);
@@ -74,7 +69,7 @@ public class HolderMin extends RecyclerView.ViewHolder {
         CalligraphyUtils.applyFontToTextView(context, title, mMyPreferenceManager.getFontPath());
         CalligraphyUtils.applyFontToTextView(context, preview, mMyPreferenceManager.getFontPath());
 
-        itemView.setOnClickListener(v -> mArticleClickListener.onArticleClicked(article));
+        itemView.setOnClickListener(v -> mArticleClickListener.onArticleClick(article));
 
         title.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiTextScale * textSizePrimary);
         if (!TextUtils.isEmpty(article.title)) {
@@ -118,12 +113,12 @@ public class HolderMin extends RecyclerView.ViewHolder {
                     PopupMenu popup = new PopupMenu(context, offline);
                     popup.getMenu().add(0, 0, 0, R.string.delete);
                     popup.setOnMenuItemClickListener(item -> {
-                        mArticleClickListener.onOfflineClicked(article);
+                        mArticleClickListener.onOfflineClick(article);
                         return true;
                     });
                     popup.show();
                 } else {
-                    mArticleClickListener.onOfflineClicked(article);
+                    mArticleClickListener.onOfflineClick(article);
                 }
             }
         });
@@ -133,9 +128,6 @@ public class HolderMin extends RecyclerView.ViewHolder {
         } else {
             typeIcon.setVisibility(View.GONE);
         }
-
-        //native ads
-//        showNativeAds();
     }
 
     protected void setTypesIcons(Article article) {

@@ -251,7 +251,7 @@
     <string name="dialog_offer_subscription_content">Vuoi acquistare un abbonamento per disabilitare tutti gli annunci, ottenere un accesso illimitato offline al fondo, automaticamente la sincronizzazione dei dati cloud, e accedere a tutti i font senza restrizioni?</string>
     <!---->
     <string name="dialog_offer_free_trial_subscription_title">Vuoi provare la versione completa gratis?</string>
-    <string name="dialog_offer_free_trial_subscription_content">Vogliamo offrirvi una versione gratuita Try Full entro 7 giorni. Otterrete Unlimited gli articoli fuori linea, disattivate l\'annuncio, sincronizzazione di auto-nube e tutti i caratteri per 7 giorni liberi!</string>
+    <string name="dialog_offer_free_trial_subscription_content">Vogliamo offrirvi una versione gratuita Try Full entro %1$d giorni. Otterrete Unlimited gli articoli fuori linea, disattivate l\'annuncio, sincronizzazione di auto-nube e tutti i caratteri per %2$d giorni liberi!</string>
 
     <string name="version"><![CDATA[<b>Versione: %s</b>]]></string>
     <string name="snoska">Nota %s</string>

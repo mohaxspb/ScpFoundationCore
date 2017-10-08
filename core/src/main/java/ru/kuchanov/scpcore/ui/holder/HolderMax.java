@@ -13,7 +13,7 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
-import ru.kuchanov.scpcore.ui.adapter.ArticlesListRecyclerAdapter;
+import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 import ru.kuchanov.scpcore.ui.view.TagView;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import ru.kuchanov.scpcore.util.DateUtils;
@@ -40,7 +40,7 @@ public class HolderMax extends HolderMin {
     @BindView(R2.id.tagsExpander)
     TextView mTagsExpander;
 
-    public HolderMax(View itemView, ArticlesListRecyclerAdapter.ArticleClickListener clickListener) {
+    public HolderMax(View itemView, ArticlesListAdapter.ArticleClickListener clickListener) {
         super(itemView, clickListener);
     }
 
@@ -119,15 +119,15 @@ public class HolderMax extends HolderMin {
         } else {
             mTagsContainer.setVisibility(View.VISIBLE);
 
-            mTagsExpander.setCompoundDrawablesWithIntrinsicBounds(0, 0, AttributeGetter.getDrawableId(context, R.attr.iconArrowDown), 0);
+            mTagsExpander.setCompoundDrawablesWithIntrinsicBounds(0, 0, AttributeGetter.getDrawableId(context, R.attr.iconArrowDownThemed), 0);
             mTagsExpander.setOnClickListener(v -> {
                 if (mTagsContainer.getChildAt(1).getVisibility() == View.GONE) {
-                    mTagsExpander.setCompoundDrawablesWithIntrinsicBounds(0, 0, AttributeGetter.getDrawableId(context, R.attr.iconArrowUp), 0);
+                    mTagsExpander.setCompoundDrawablesWithIntrinsicBounds(0, 0, AttributeGetter.getDrawableId(context, R.attr.iconArrowUpThemed), 0);
                     for (int i = 1; i < mTagsContainer.getChildCount(); i++) {
                         mTagsContainer.getChildAt(i).setVisibility(View.VISIBLE);
                     }
                 } else {
-                    mTagsExpander.setCompoundDrawablesWithIntrinsicBounds(0, 0, AttributeGetter.getDrawableId(context, R.attr.iconArrowDown), 0);
+                    mTagsExpander.setCompoundDrawablesWithIntrinsicBounds(0, 0, AttributeGetter.getDrawableId(context, R.attr.iconArrowDownThemed), 0);
                     for (int i = 1; i < mTagsContainer.getChildCount(); i++) {
                         mTagsContainer.getChildAt(i).setVisibility(View.GONE);
                     }
@@ -140,7 +140,7 @@ public class HolderMax extends HolderMin {
                 tagView.setTagTextSize(11);
                 tagView.setActionImage(TagView.Action.NONE);
 
-                tagView.setOnTagClickListener((tagView1, tag1) -> mArticleClickListener.onTagClicked(tag1));
+                tagView.setOnTagClickListener((tagView1, tag1) -> mArticleClickListener.onTagClick(tag1));
                 tagView.setVisibility(View.GONE);
 
                 mTagsContainer.addView(tagView);

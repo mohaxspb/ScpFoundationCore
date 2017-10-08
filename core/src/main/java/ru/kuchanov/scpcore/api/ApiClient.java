@@ -612,6 +612,10 @@ public class ApiClient implements ApiClientModel<Article> {
             if (svernut != null) {
                 svernut.remove();
             }
+            Elements script = pageContent.getElementsByTag("script");
+            for (Element element : script) {
+                element.remove();
+            }
             //replace all spans with strike-through with <s>
             Elements spansWithStrike = pageContent.select("span[style=text-decoration: line-through;]");
             for (Element element : spansWithStrike) {
@@ -704,51 +708,22 @@ public class ApiClient implements ApiClientModel<Article> {
                 }
             }
 
-            //type TODO fucking unformatted info!
+            //type parsing TODO fucking unformatted info!
 
             //this we store as article text
             String rawText = pageContent.toString();
 //            Timber.d("rawText: %s", rawText);
 
-            //tabs
-            boolean hasTabs = false;
-            RealmList<RealmString> tabsText = null;
-            RealmList<RealmString> tabsTitles = null;
             //articles textParts
-            RealmList<RealmString> textParts = null;
-            RealmList<RealmString> textPartsTypes = null;
+            RealmList<RealmString> textParts = new RealmList<>();
+            RealmList<RealmString> textPartsTypes = new RealmList<>();
 
-            Document document = Jsoup.parse(rawText);
-
-            Element yuiNavset = document.getElementsByAttributeValueStarting("class", "yui-navset").first();
-            if (yuiNavset != null) {
-                hasTabs = true;
-
-                Element titles = yuiNavset.getElementsByClass("yui-nav").first();
-                Elements liElements = titles.getElementsByTag("li");
-                Element yuiContent = yuiNavset.getElementsByClass("yui-content").first();
-
-                tabsTitles = new RealmList<>();
-                for (Element element : liElements) {
-                    tabsTitles.add(new RealmString(element.text()));
-                }
-                //TODO add supporting inner articles
-                tabsText = new RealmList<>();
-                for (Element tab : yuiContent.children()) {
-//                    tabsText.add(new RealmString(tab.html()));
-                    tab.attr("id", "page-content");
-                    tabsText.add(new RealmString(tab.outerHtml()));
-                }
-            } else {
-                List<String> rawTextParts = ParseHtmlUtils.getArticlesTextParts(rawText);
-                textParts = new RealmList<>();
-                for (String value : rawTextParts) {
-                    textParts.add(new RealmString(value));
-                }
-                textPartsTypes = new RealmList<>();
-                for (@ParseHtmlUtils.TextType String value : ParseHtmlUtils.getListOfTextTypes(rawTextParts)) {
-                    textPartsTypes.add(new RealmString(value));
-                }
+            List<String> rawTextParts = ParseHtmlUtils.getArticlesTextParts(rawText);
+            for (String value : rawTextParts) {
+                textParts.add(new RealmString(value));
+            }
+            for (@ParseHtmlUtils.TextType String value : ParseHtmlUtils.getListOfTextTypes(rawTextParts)) {
+                textPartsTypes.add(new RealmString(value));
             }
 
             //finally fill article info
@@ -757,10 +732,6 @@ public class ApiClient implements ApiClientModel<Article> {
             article.url = url;
             article.text = rawText;
             article.title = title;
-            //tabs
-            article.hasTabs = hasTabs;
-            article.tabsTitles = tabsTitles;
-            article.tabsTexts = tabsText;
             //textParts
             article.textParts = textParts;
             //log

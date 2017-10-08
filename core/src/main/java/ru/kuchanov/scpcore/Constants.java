@@ -160,9 +160,14 @@ public interface Constants {
             String AUTH_COOLDOWN_IN_MILLIS = "auth_cooldown_in_millis";
             String INVITE_REWARD_IN_MILLIS = "invite_reward_in_millis";
             //native ads
-            String NATIVE_ADS_LISTS_INTERVAL = "native_ads_lists_interval";
             String NATIVE_ADS_LISTS_ENABLED = "native_ads_lists_enabled";
+            String NATIVE_IN_ARTICLE_ENABLED = "native_in_article_enabled";
+            String NATIVE_ADS_LISTS_INTERVAL = "native_ads_lists_interval";
             String NATIVE_ADS_LISTS_SOURCE = "native_ads_lists_source";
+            //banners
+            String GALLERY_BANNER_DISABLED = "gallery_banner_disabled";
+            String MAIN_BANNER_DISABLED = "main_banner_disabled";
+            String ARTICLE_BANNER_DISABLED = "article_banner_disabled";
             //score multipliers
             String VK_APP_GROUP_ID = "vk_app_group_id";
             String SCORE_MULTIPLIER_SUBSCRIPTION = "score_multiplier_subscription";
@@ -183,10 +188,6 @@ public interface Constants {
             String DOWNLOAD_FREE_ARTICLES_LIMIT = "download_free_articles_limit";
             String DOWNLOAD_SCORE_PER_ARTICLE = "download_score_per_article";
 
-            String GALLERY_BANNER_DISABLED = "gallery_banner_disabled";
-            String MAIN_BANNER_DISABLED = "main_banner_disabled";
-            String ARTICLE_BANNER_DISABLED = "article_banner_disabled";
-
             String NO_ADS_SUBS_ENABLED = "no_ads_subs_enabled";
 
             String APP_LANG_VERSIONS = "app_lang_versions";
@@ -200,6 +201,10 @@ public interface Constants {
                 String FREE_TRIAL_OFFER_SHOWN = "FREE_TRIAL_OFFER_SHOWN";
                 String INVITE_SENT = "INVITE_SENT";
                 String INVITE_RECEIVED = "INVITE_RECEIVED";
+                String SUBSCRIPTIONS_SHOWN = "SUBSCRIPTIONS_SHOWN";
+                String MASS_DOWNLOAD = "MASS_DOWNLOAD";
+                String VK_GROUP_JOINED = "VK_GROUP_JOINED";
+                String APP_INSTALLED = "APP_INSTALLED";
             }
 
             interface EventParam {
@@ -227,13 +232,12 @@ public interface Constants {
                 String AUTO_SYNC_FROM_SETTINGS = "AUTO_SYNC_FROM_SETTINGS";
                 String DOWNLOAD_DIALOG = "DOWNLOAD_DIALOG";
                 String AFTER_LEVEL_UP = "AFTER_LEVEL_UP";
+                String REMOVE_ADS_SETTINGS = "REMOVE_ADS_SETTINGS";
             }
 
-            String INVITED_FIVE_FRIENDS = "INVITED_FIVE_FRIENDS";
-            String APP_CRACKED = "APP_CRACKED";
-
-            interface USER_PROPERTY_KEY {
+            interface UserPropertyKey {
                 String INVITED = "INVITED";
+                String SUBSCRIBED = "SUBSCRIBED";
             }
         }
 

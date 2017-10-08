@@ -30,7 +30,7 @@ public class SocialLoginAdapter extends BaseRecyclerAdapter<
 
     @Override
     public SocialLoginHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recycler_social_login, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_social_login, parent, false);
         return new SocialLoginHolder(view);
     }
 }

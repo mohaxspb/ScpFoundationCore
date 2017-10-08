@@ -1,7 +1,10 @@
 package ru.kuchanov.scpcore.ui.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +18,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -27,8 +31,8 @@ import ru.kuchanov.scpcore.db.model.VkImage;
 import ru.kuchanov.scpcore.monetization.util.MyAdListener;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.mvp.contract.GalleryScreenMvp;
+import ru.kuchanov.scpcore.ui.adapter.ImagesAdapter;
 import ru.kuchanov.scpcore.ui.adapter.ImagesPagerAdapter;
-import ru.kuchanov.scpcore.ui.adapter.ImagesRecyclerAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseDrawerActivity;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import ru.kuchanov.scpcore.util.StorageUtils;
@@ -40,6 +44,9 @@ import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_AD
 public class GalleryActivity
         extends BaseDrawerActivity<GalleryScreenMvp.View, GalleryScreenMvp.Presenter>
         implements GalleryScreenMvp.View {
+
+    private static final String EXTRA_IMAGE_URL = "EXTRA_IMAGE_URL";
+    private static final String EXTRA_IMAGE_DESCRIPTION = "EXTRA_IMAGE_DESCRIPTION";
 
     @BindView(R2.id.viewPager)
     ViewPager mViewPager;
@@ -54,9 +61,16 @@ public class GalleryActivity
     @BindView(R2.id.refresh)
     Button mRefresh;
 
-    private ImagesPagerAdapter mAdapter;
-    private ImagesRecyclerAdapter mRecyclerAdapter;
+    private ImagesPagerAdapter mPagerAdapter;
+    private ImagesAdapter mRecyclerAdapter;
     private int mCurPosition;
+
+    public static void startForImage(Context context, String imageUrl, @Nullable String imageDescription) {
+        Intent intent = new Intent(context, GalleryActivity.class);
+        intent.putExtra(EXTRA_IMAGE_URL, imageUrl);
+        intent.putExtra(EXTRA_IMAGE_DESCRIPTION, imageDescription);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void callInjections() {
@@ -89,13 +103,13 @@ public class GalleryActivity
         if (mToolbar != null) {
             mToolbar.setTitle(R.string.gallery);
         }
-        mAdapter = new ImagesPagerAdapter();
-        mViewPager.setAdapter(mAdapter);
+        mPagerAdapter = new ImagesPagerAdapter();
+        mViewPager.setAdapter(mPagerAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 mCurPosition = position;
-                if (position % FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_GALLERY_PHOTOS_BETWEEN_INTERSITIAL) == 0) {
+                if (position != 0 && position % FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_GALLERY_PHOTOS_BETWEEN_INTERSITIAL) == 0) {
                     boolean hasSubscription = mMyPreferenceManager.isHasSubscription() || mMyPreferenceManager.isHasNoAdsSubscription();
                     if (!hasSubscription) {
                         if (isAdsLoaded()) {
@@ -117,15 +131,23 @@ public class GalleryActivity
             }
         });
 
-        mRecyclerAdapter = new ImagesRecyclerAdapter();
+        mRecyclerAdapter = new ImagesAdapter();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         mRecyclerView.setAdapter(mRecyclerAdapter);
         mRecyclerAdapter.setImageClickListener((position, v) -> mViewPager.setCurrentItem(position));
 
         mViewPager.setCurrentItem(mCurPosition);
 
+        //set data to presenter if we want show only one image
+        if (getIntent().hasExtra(EXTRA_IMAGE_URL)) {
+            mPresenter.setData(Collections.singletonList(new VkImage(
+                    getIntent().getStringExtra(EXTRA_IMAGE_URL),
+                    getIntent().getStringExtra(EXTRA_IMAGE_DESCRIPTION)
+            )));
+            mBottomSheet.setVisibility(View.GONE);
+        }
         if (mPresenter.getData() != null) {
-            mAdapter.setData(mPresenter.getData());
+            mPagerAdapter.setData(mPresenter.getData());
             mRecyclerAdapter.setData(mPresenter.getData());
         } else {
             mPresenter.getDataFromDb();
@@ -209,23 +231,23 @@ public class GalleryActivity
         Timber.d("onOptionsItemSelected with id: %s", item);
         int i = item.getItemId();
         if (i == R.id.share) {
-            if (mAdapter.getData().isEmpty()) {
+            if (mPagerAdapter.getData().isEmpty()) {
                 return true;
             }
-            mAdapter.downloadImage(GalleryActivity.this, mViewPager.getCurrentItem(),
+            mPagerAdapter.downloadImage(GalleryActivity.this, mViewPager.getCurrentItem(),
                     new SimpleTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) {
                         @Override
                         public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
-                            String desc = mAdapter.getData().get(mViewPager.getCurrentItem()).description;
+                            String desc = mPagerAdapter.getData().get(mViewPager.getCurrentItem()).description;
                             IntentUtils.shareBitmapWithText(GalleryActivity.this, desc, resource);
                         }
                     });
             return true;
         } else if (i == R.id.save_image) {
-            if (mAdapter.getData().isEmpty()) {
+            if (mPagerAdapter.getData().isEmpty()) {
                 return true;
             }
-            mAdapter.downloadImage(GalleryActivity.this, mViewPager.getCurrentItem(),
+            mPagerAdapter.downloadImage(GalleryActivity.this, mViewPager.getCurrentItem(),
                     new SimpleTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) {
                         @Override
                         public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
@@ -245,7 +267,7 @@ public class GalleryActivity
     @Override
     public void showData(List<VkImage> data) {
         Timber.d("showData: %s", data.size());
-        mAdapter.setData(data);
+        mPagerAdapter.setData(data);
         mRecyclerAdapter.setData(data);
 
         mViewPager.setCurrentItem(mCurPosition);

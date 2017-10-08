@@ -5,7 +5,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,18 +35,19 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
-import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.mvp.contract.ArticleMvp;
+import ru.kuchanov.scpcore.ui.activity.GalleryActivity;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
-import ru.kuchanov.scpcore.ui.adapter.ArticleRecyclerAdapter;
+import ru.kuchanov.scpcore.ui.adapter.ArticleAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseFragment;
+import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
+import ru.kuchanov.scpcore.ui.model.TabsViewModel;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
 import ru.kuchanov.scpcore.ui.util.MyHtmlTagHandler;
 import ru.kuchanov.scpcore.ui.util.ReachBottomRecyclerScrollListener;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
-import ru.kuchanov.scpcore.ui.util.URLImageParser;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
@@ -57,15 +58,15 @@ import timber.log.Timber;
  */
 public class ArticleFragment
         extends BaseFragment<ArticleMvp.View, ArticleMvp.Presenter>
-        implements ArticleMvp.View, SetTextViewHTML.TextItemsClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
+        implements ArticleMvp.View,
+        SetTextViewHTML.TextItemsClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String TAG = ArticleFragment.class.getSimpleName();
 
     public static final String EXTRA_URL = "EXTRA_URL";
 
-    //tabs
-    private static final String KEY_CURRENT_SELECTED_TAB = "KEY_CURRENT_SELECTED_TAB";
     private static final String KEY_EXPANDED_SPOILERS = "KEY_EXPANDED_SPOILERS";
+    private static final String KEY_TABS = "KEY_TABS";
 
     @BindView(R2.id.progressCenter)
     ProgressBar mProgressBarCenter;
@@ -74,30 +75,18 @@ public class ArticleFragment
     @BindView(R2.id.recyclerView)
     RecyclerView mRecyclerView;
 
-    @BindView(R2.id.tabLayout)
-    TabLayout tabLayout;
-
     @Inject
     DialogUtils mDialogUtils;
     @Inject
     ConstantValues mConstantValues;
 
-//    @Inject
-//    MyPreferenceManager myPreferenceManager;
-//    @Inject
-//    ApiClient mApiClient;
-//    @Inject
-//    DbProviderFactory mDbProviderFactory;
-
-    //tabs
-    private int mCurrentSelectedTab = 0;
-
     private String url;
 
-    private ArticleRecyclerAdapter mAdapter;
+    private ArticleAdapter mAdapter;
     private Article mArticle;
 
     private List<SpoilerViewModel> mExpandedSpoilers = new ArrayList<>();
+    private List<TabsViewModel> mTabsViewModels = new ArrayList<>();
 
     public static ArticleFragment newInstance(String url) {
         ArticleFragment fragment = new ArticleFragment();
@@ -110,16 +99,13 @@ public class ArticleFragment
     @NonNull
     @Override
     public ArticleMvp.Presenter createPresenter() {
-//        BaseApplication.getAppComponent().inject(this);
-//        mPresenter = new ArticlePresenter(myPreferenceManager, mDbProviderFactory, mApiClient);
         return mPresenter;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //tabs
-        outState.putInt(KEY_CURRENT_SELECTED_TAB, mCurrentSelectedTab);
+        outState.putSerializable(KEY_TABS, (ArrayList<TabsViewModel>) mTabsViewModels);
         outState.putSerializable(KEY_EXPANDED_SPOILERS, (ArrayList<SpoilerViewModel>) mExpandedSpoilers);
     }
 
@@ -130,15 +116,13 @@ public class ArticleFragment
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Timber.d("onCreate");
+//        Timber.d("onCreate");
         super.onCreate(savedInstanceState);
         url = getArguments().getString(EXTRA_URL);
         if (savedInstanceState != null) {
-            mCurrentSelectedTab = savedInstanceState.getInt(KEY_CURRENT_SELECTED_TAB);
             mExpandedSpoilers = (List<SpoilerViewModel>) savedInstanceState.getSerializable(KEY_EXPANDED_SPOILERS);
+            mTabsViewModels = (List<TabsViewModel>) savedInstanceState.getSerializable(KEY_TABS);
         }
-
-//        setRetainInstance(true);
     }
 
     @Override
@@ -158,7 +142,7 @@ public class ArticleFragment
     protected void initViews() {
         Timber.d("initViews");
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mAdapter = new ArticleRecyclerAdapter();
+        mAdapter = new ArticleAdapter();
         mAdapter.setTextItemsClickListener(this);
         mAdapter.setHasStableIds(true);
 
@@ -177,10 +161,7 @@ public class ArticleFragment
         }
 
         mSwipeRefreshLayout.setColorSchemeResources(R.color.zbs_color_red);
-        mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            Timber.d("onRefresh");
-            mPresenter.getDataFromApi();
-        });
+        mSwipeRefreshLayout.setOnRefreshListener(() -> mPresenter.getDataFromApi());
     }
 
     @Override
@@ -233,56 +214,7 @@ public class ArticleFragment
         if (getUserVisibleHint()) {
             updateActivityMenuState();
         }
-        if (mArticle.hasTabs) {
-            tabLayout.clearOnTabSelectedListeners();
-            tabLayout.removeAllTabs();
-            for (String title : RealmString.toStringList(article.tabsTitles)) {
-                tabLayout.addTab(tabLayout.newTab().setText(title));
-            }
-            tabLayout.setVisibility(View.VISIBLE);
-
-            Article currentTabArticle = new Article();
-            currentTabArticle.hasTabs = true;
-            currentTabArticle.text = RealmString.toStringList(mArticle.tabsTexts).get(mCurrentSelectedTab);
-            currentTabArticle.tags = mArticle.tags;
-            currentTabArticle.title = mArticle.title;
-            mAdapter.setData(currentTabArticle, mExpandedSpoilers);
-
-            tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-                @Override
-                public void onTabSelected(TabLayout.Tab tab) {
-                    Timber.d("onTabSelected: %s", tab.getPosition());
-
-                    mExpandedSpoilers.clear();
-
-                    mCurrentSelectedTab = tab.getPosition();
-                    Article currentTabArticle = new Article();
-                    currentTabArticle.hasTabs = true;
-                    currentTabArticle.text = RealmString.toStringList(mArticle.tabsTexts).get(mCurrentSelectedTab);
-                    currentTabArticle.tags = mArticle.tags;
-                    currentTabArticle.title = mArticle.title;
-                    mAdapter.setData(currentTabArticle, mExpandedSpoilers);
-                }
-
-                @Override
-                public void onTabUnselected(TabLayout.Tab tab) {
-
-                }
-
-                @Override
-                public void onTabReselected(TabLayout.Tab tab) {
-
-                }
-            });
-
-            TabLayout.Tab selectedTab = tabLayout.getTabAt(mCurrentSelectedTab);
-            if (selectedTab != null) {
-                selectedTab.select();
-            }
-        } else {
-            tabLayout.setVisibility(View.GONE);
-            mAdapter.setData(mArticle, mExpandedSpoilers);
-        }
+        mAdapter.setData(mArticle, mExpandedSpoilers, mTabsViewModels);
 
         mRecyclerView.addOnScrollListener(new ReachBottomRecyclerScrollListener() {
             @Override
@@ -368,7 +300,7 @@ public class ArticleFragment
 
     @Override
     public void onTocClicked(String link) {
-        Timber.d("onTocClicked: %s", link);
+//        Timber.d("onTocClicked: %s", link);
         List<String> articlesTextParts = mAdapter.getArticlesTextParts();
         String digits = "";
         for (char c : link.toCharArray()) {
@@ -400,11 +332,11 @@ public class ArticleFragment
     }
 
     @Override
-    public void onImageClicked(String link) {
+    public void onImageClicked(String link, @Nullable String description) {
         if (!isAdded()) {
             return;
         }
-        mDialogUtils.showImageDialog(getActivity(), link);
+        GalleryActivity.startForImage(getActivity(), link, description);
     }
 
     @Override
@@ -473,6 +405,35 @@ public class ArticleFragment
     }
 
     @Override
+    public void onTabSelected(TabsViewModel tabsViewModel) {
+        if (!isAdded()) {
+            return;
+        }
+        if (mTabsViewModels.contains(tabsViewModel)) {
+            mTabsViewModels.set(mTabsViewModels.indexOf(tabsViewModel), tabsViewModel);
+        } else {
+            mTabsViewModels.add(tabsViewModel);
+        }
+    }
+
+    @Override
+    public void onAdsSettingsClick() {
+        if (!isAdded()) {
+            return;
+        }
+        BottomSheetDialogFragment subsDF = AdsSettingsBottomSheetDialogFragment.newInstance();
+        subsDF.show(getActivity().getSupportFragmentManager(), subsDF.getTag());
+    }
+
+    @Override
+    public void onRewardedVideoClick() {
+        if (!isAdded()) {
+            return;
+        }
+        getBaseActivity().startRewardedVideoFlow();
+    }
+
+    @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
             case MyPreferenceManager.Keys.TEXT_SCALE_ARTICLE:
@@ -480,6 +441,9 @@ public class ArticleFragment
                 break;
             case MyPreferenceManager.Keys.DESIGN_FONT_PATH:
                 mAdapter.notifyDataSetChanged();
+                break;
+            case MyPreferenceManager.Keys.ADS_BANNER_IN_ARTICLE:
+                showData(mPresenter.getData());
                 break;
             default:
                 //do nothing

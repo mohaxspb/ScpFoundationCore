@@ -82,7 +82,7 @@ public class AppInstallReceiver extends BroadcastReceiver {
 
             Bundle bundle = new Bundle();
             bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, packageName);
-            FirebaseAnalytics.getInstance(context).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+            FirebaseAnalytics.getInstance(context).logEvent(Constants.Firebase.Analitics.EventName.APP_INSTALLED, bundle);
         }
     }
 
@@ -99,26 +99,6 @@ public class AppInstallReceiver extends BroadcastReceiver {
         @DataSyncActions.ScoreAction
         String action = DataSyncActions.ScoreAction.OUR_APP;
         int totalScoreToAdd = BasePresenter.getTotalScoreToAddFromAction(action, mMyPreferencesManager);
-
-//        if (!mMyPreferencesManager.isHasSubscription()) {
-//            long curNumOfAttempts = mMyPreferencesManager.getNumOfAttemptsToAutoSync();
-//            long maxNumOfAttempts = FirebaseRemoteConfig.getInstance()
-//                    .getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_SYNC_ATTEMPTS_BEFORE_CALL_TO_ACTION);
-//
-//            Timber.d("does not have subscription, so no auto sync: %s/%s", curNumOfAttempts, maxNumOfAttempts);
-//
-//            if (curNumOfAttempts >= maxNumOfAttempts) {
-//                //show call to action
-//                mMyPreferencesManager.setNumOfAttemptsToAutoSync(0);
-////                getView().showSnackBarWithAction(Constants.Firebase.CallToActionReason.ENABLE_AUTO_SYNC);
-//            } else {
-//                mMyPreferencesManager.setNumOfAttemptsToAutoSync(curNumOfAttempts + 1);
-//            }
-//
-//            //increment unsynced score to sync it later
-//            mMyPreferencesManager.addUnsyncedApp(packageName);
-//            return;
-//        }
 
         //increment scoreInFirebase
         mApiClient

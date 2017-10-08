@@ -24,12 +24,12 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
     private LeaderboardClickListener mAdapterClickListener;
 
     public LeaderboardRecyclerAdapter() {
-        Timber.d("FreeAdsDisableRecyclerAdapter constructor");
+        Timber.d("FreeAdsDisableAdapter constructor");
     }
 
     @Override
     public LeaderboardHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_leaderboard, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_leaderboard, parent, false);
         return new LeaderboardHolder(itemView, mAdapterClickListener);
     }
 

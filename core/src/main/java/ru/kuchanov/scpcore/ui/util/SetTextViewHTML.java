@@ -1,6 +1,7 @@
 package ru.kuchanov.scpcore.ui.util;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.Spannable;
@@ -21,6 +22,7 @@ import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
+import ru.kuchanov.scpcore.ui.model.TabsViewModel;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import timber.log.Timber;
 
@@ -170,7 +172,7 @@ public class SetTextViewHTML {
             public void onClick(View widget) {
                 Timber.d("makeImgsClickable Click: %s", imageSrc);
                 if (textItemsClickListener != null) {
-                    textItemsClickListener.onImageClicked(imageSrc);
+                    textItemsClickListener.onImageClicked(imageSrc, null);
                 }
             }
         };
@@ -221,7 +223,7 @@ public class SetTextViewHTML {
 
         void onTocClicked(String link);
 
-        void onImageClicked(String link);
+        void onImageClicked(String link, @Nullable String description);
 
         void onUnsupportedLinkPressed(String link);
 
@@ -236,5 +238,11 @@ public class SetTextViewHTML {
         void onSpoilerExpand(SpoilerViewModel spoilerViewModel);
 
         void onSpoilerCollapse(SpoilerViewModel spoilerViewModel);
+
+        void onTabSelected(TabsViewModel tabsViewModel);
+
+        void onAdsSettingsClick();
+
+        void onRewardedVideoClick();
     }
 }

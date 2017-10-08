@@ -21,9 +21,13 @@ import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.APP_INSTALL_REWARD_IN_MILLIS;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.ARTICLE_BANNER_DISABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.AUTH_COOLDOWN_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.INVITE_REWARD_IN_MILLIS;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_IN_ARTICLE_ENABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS;
 
@@ -91,6 +95,8 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String FREE_TRIAL_OFFERED_PERIODICAL = "FREE_TRIAL_OFFERED_PERIODICAL";
         String FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE = "FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE";
         String INVITE_ALREADY_RECEIVED = "INVITE_ALREADY_RECEIVED";
+        String ADS_BANNER_IN_ARTICLES_LISTS = "ADS_BANNER_IN_ARTICLES_LISTS";
+        String ADS_BANNER_IN_ARTICLE = "ADS_BANNER_IN_ARTICLE";
     }
 
     private Gson mGson;
@@ -192,6 +198,35 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     //ads
+
+    /**
+     * @return user settings of remote config value (banner is enabled and native is disabled)
+     */
+    public boolean isBannerInArticlesListsEnabled() {
+        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        boolean bannerIsEnabled = !config.getBoolean(MAIN_BANNER_DISABLED);
+        boolean nativeIsEnabled = config.getBoolean(NATIVE_ADS_LISTS_ENABLED);
+        return mPreferences.getBoolean(Keys.ADS_BANNER_IN_ARTICLES_LISTS, bannerIsEnabled && !nativeIsEnabled);
+    }
+
+    /**
+     * @return user settings of remote config value (banner is enabled and native is disabled)
+     */
+    public boolean isBannerInArticleEnabled() {
+        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        boolean bannerIsEnabled = !config.getBoolean(ARTICLE_BANNER_DISABLED);
+        boolean nativeIsEnabled = config.getBoolean(NATIVE_IN_ARTICLE_ENABLED);
+        return mPreferences.getBoolean(Keys.ADS_BANNER_IN_ARTICLE, bannerIsEnabled && !nativeIsEnabled);
+    }
+
+    public void setBannerInArticlesListsEnabled(boolean enabled) {
+        mPreferences.edit().putBoolean(Keys.ADS_BANNER_IN_ARTICLES_LISTS, enabled).apply();
+    }
+
+    public void setBannerInArticleEnabled(boolean enabled) {
+        mPreferences.edit().putBoolean(Keys.ADS_BANNER_IN_ARTICLE, enabled).apply();
+    }
+
     public boolean isTimeToShowAds() {
         return System.currentTimeMillis() - getLastTimeAdsShows() >=
                 FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS);
@@ -288,7 +323,6 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     /**
-     *
      * @return is banners temporary disabled from free ads disable options
      */
     public boolean isTimeToShowBannerAds() {
@@ -443,7 +477,12 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     private long getLastTimePeriodicalFreeTrialOffered() {
-        return mPreferences.getLong(Keys.FREE_TRIAL_OFFERED_PERIODICAL, System.currentTimeMillis());
+        long lastTimeShows = mPreferences.getLong(Keys.FREE_TRIAL_OFFERED_PERIODICAL, 0);
+        if (lastTimeShows == 0) {
+            lastTimeShows = System.currentTimeMillis();
+            setLastTimePeriodicalFreeTrialOffered(lastTimeShows);
+        }
+        return lastTimeShows;
     }
 
     public boolean isTimeToPeriodicalOfferFreeTrial() {

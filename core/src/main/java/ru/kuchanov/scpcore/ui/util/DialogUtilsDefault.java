@@ -33,16 +33,6 @@ import timber.log.Timber;
  * for ScpFoundationRu
  */
 public class DialogUtilsDefault extends ru.kuchanov.scp.downloads.DialogUtils<Article> {
-//
-//    public DialogUtilsDefault(
-//            MyPreferenceManagerModel preferenceManager,
-//            DbProviderFactoryModel dbProviderFactory,
-//            ApiClientModel<Article> apiClient,
-//            ConstantValues constantValues,
-//            Class clazz
-//    ) {
-//        super(preferenceManager, dbProviderFactory, apiClient, constantValues, clazz);
-//    }
 
     public DialogUtilsDefault(
             MyPreferenceManagerModel preferenceManager,
@@ -83,9 +73,10 @@ public class DialogUtilsDefault extends ru.kuchanov.scp.downloads.DialogUtils<Ar
     @Override
     protected void onIncreaseLimitClick(Context context) {
         Timber.d("onIncreaseLimitClick");
+
         Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.StartScreen.DOWNLOAD_DIALOG);
-        FirebaseAnalytics.getInstance(context).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.StartScreen.DOWNLOAD_DIALOG);
+        FirebaseAnalytics.getInstance(context).logEvent(Constants.Firebase.Analitics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
 
         BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
         subsDF.show(((AppCompatActivity) context).getSupportFragmentManager(), subsDF.getTag());
@@ -96,8 +87,8 @@ public class DialogUtilsDefault extends ru.kuchanov.scp.downloads.DialogUtils<Ar
         Timber.d("logDownloadAttempt: %s", type);
 
         Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.StartScreen.DOWNLOAD_DIALOG);
-        FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, type.name);
+        FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(Constants.Firebase.Analitics.EventName.MASS_DOWNLOAD, bundle);
     }
 
     @Override

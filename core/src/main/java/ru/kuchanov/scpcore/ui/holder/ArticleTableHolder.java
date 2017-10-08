@@ -23,7 +23,6 @@ import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.ui.model.ArticleTextPartViewModel;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.AttributeGetter;
-import timber.log.Timber;
 
 /**
  * Created by mohax on 11.06.2017.
@@ -104,7 +103,7 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
             @TargetApi(Build.VERSION_CODES.N)
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                Timber.d("Link clicked: %s", request.getUrl().toString());
+//                Timber.d("Link clicked: %s", request.getUrl().toString());
                 String link = request.getUrl().toString();
 
                 return checkUrl(link);
@@ -154,7 +153,7 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
 
                 if (link.endsWith(".jpg") || link.endsWith(".jpeg") || link.endsWith(".png") || link.endsWith(".gif")) {
                     if (mTextItemsClickListener != null) {
-                        mTextItemsClickListener.onImageClicked(link);
+                        mTextItemsClickListener.onImageClicked(link, null);
                     }
                     return true;
                 }

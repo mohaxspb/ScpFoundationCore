@@ -5,8 +5,11 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.CardView;
+import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,17 +19,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import butterknife.ButterKnife;
+import javax.inject.Inject;
+
+import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
+import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.VkImage;
+import ru.kuchanov.scpcore.ui.activity.MainActivity;
+import ru.kuchanov.scpcore.ui.base.BaseActivity;
+import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
+import ru.kuchanov.scpcore.ui.model.TabsViewModel;
+import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
+import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
 /**
@@ -42,6 +57,15 @@ public class ImagesPagerAdapter extends PagerAdapter {
 
     public List<VkImage> getData() {
         return mData;
+    }
+
+    @Inject
+    SetTextViewHTML mSetTextViewHTML;
+    @Inject
+    ConstantValues mConstantValues;
+
+    public ImagesPagerAdapter() {
+        BaseApplication.getAppComponent().inject(this);
     }
 
     public void downloadImage(Context context, int position, SimpleTarget<Bitmap> target) {
@@ -76,17 +100,112 @@ public class ImagesPagerAdapter extends PagerAdapter {
         if (position == 0) {
             itemView.setAlpha(1f);
         }
-        ImageView imageView = ButterKnife.findById(itemView, R.id.image);
-        progressBar = ButterKnife.findById(itemView, R.id.progressCenter);
+        ImageView imageView = itemView.findViewById(R.id.image);
+        progressBar = itemView.findViewById(R.id.progressCenter);
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setAlpha(1f);
 
-        cardView = ButterKnife.findById(itemView, R.id.descriptionContainer);
-        description = ButterKnife.findById(itemView, R.id.description);
+        cardView = itemView.findViewById(R.id.descriptionContainer);
+        description = itemView.findViewById(R.id.description);
 
-        description.setText(mData.get(position).description);
+//        description.setText(mData.get(position).description);
+        String title = mData.get(position).description;
+        if (!TextUtils.isEmpty(title)) {
+            description.setLinksClickable(true);
+            description.setMovementMethod(LinkMovementMethod.getInstance());
+            mSetTextViewHTML.setText(description, title, new SetTextViewHTML.TextItemsClickListener() {
+                @Override
+                public void onLinkClicked(String link) {
+                    Timber.d("onLinkClicked: %s", link);
+                    //open predefined main activities link clicked
+                    for (String pressedLink : mConstantValues.getAllLinksArray()) {
+                        if (link.equals(pressedLink)) {
+                            MainActivity.startActivity(context, link);
+                            return;
+                        }
+                    }
 
-        imageView.setOnClickListener(v -> cardView.setVisibility(cardView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE));
+                    ((BaseActivity) context).startArticleActivity(link);
+                }
+
+                @Override
+                public void onSnoskaClicked(String link) {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
+
+                @Override
+                public void onBibliographyClicked(String link) {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
+
+                @Override
+                public void onTocClicked(String link) {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
+
+                @Override
+                public void onImageClicked(String link, @Nullable String description) {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
+
+                @Override
+                public void onUnsupportedLinkPressed(String link) {
+                    ((BaseActivity) context).showMessage(R.string.unsupported_link);
+                }
+
+                @Override
+                public void onMusicClicked(String link) {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
+
+                @Override
+                public void onExternalDomenUrlClicked(String link) {
+                    IntentUtils.openUrl(link);
+                }
+
+                @Override
+                public void onTagClicked(ArticleTag tag) {
+                    ((BaseActivity) context).startTagsSearchActivity(Collections.singletonList(tag));
+                }
+
+                @Override
+                public void onNotTranslatedArticleClick(String link) {
+                    ((BaseActivity) context).showMessage(R.string.article_not_translated);
+                }
+
+                @Override
+                public void onSpoilerExpand(SpoilerViewModel spoilerViewModel) {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
+
+                @Override
+                public void onSpoilerCollapse(SpoilerViewModel spoilerViewModel) {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
+
+                @Override
+                public void onTabSelected(TabsViewModel tabsViewModel) {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
+
+                @Override
+                public void onAdsSettingsClick() {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
+
+                @Override
+                public void onRewardedVideoClick() {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
+            });
+        }
+
+        imageView.setOnClickListener(v -> {
+            if (TextUtils.isEmpty(mData.get(position).description)) {
+                return;
+            }
+            cardView.setVisibility(cardView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+        });
 
         String url = mData.get(position).allUrls.get(mData.get(position).allUrls.size() - 1).getVal();
         Timber.d("url: %s", url);
@@ -95,10 +214,11 @@ public class ImagesPagerAdapter extends PagerAdapter {
         Glide.with(context)
                 .load(url)
                 .fitCenter()
-                .thumbnail(.1f)
+                .thumbnail(url.endsWith("gif") ? 1f : .1f)
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        Timber.e(e);
                         progressBar.animate().alpha(0f).setDuration(250).setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
@@ -111,6 +231,7 @@ public class ImagesPagerAdapter extends PagerAdapter {
 
                     @Override
                     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        Timber.d("onResourceReady");
                         progressBar.animate().alpha(0f).setDuration(250).setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
@@ -121,6 +242,7 @@ public class ImagesPagerAdapter extends PagerAdapter {
                         return false;
                     }
                 })
+                .diskCacheStrategy(url.endsWith("gif") ? DiskCacheStrategy.SOURCE : DiskCacheStrategy.RESULT)
                 .into(imageView);
 
         container.addView(itemView);

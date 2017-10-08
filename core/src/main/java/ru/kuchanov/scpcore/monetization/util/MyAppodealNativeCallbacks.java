@@ -15,7 +15,7 @@ import timber.log.Timber;
 public class MyAppodealNativeCallbacks implements NativeCallbacks {
     @Override
     public void onNativeLoaded() {
-        Timber.d("onNativeLoaded size");// %s", Appodeal.getNativeAds(Constants.NUM_OF_NATIVE_ADS_PER_SCREEN).size());
+        Timber.d("onNativeLoaded");// %s", Appodeal.getNativeAds(Constants.NUM_OF_NATIVE_ADS_PER_SCREEN).size());
     }
 
     @Override

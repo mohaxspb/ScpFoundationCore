@@ -48,6 +48,9 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
+import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventName;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventParam;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.StartScreen;
 /**
  * Created by mohax on 02.01.2017.
  * <p>
@@ -245,8 +248,8 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                 subsDF.show(getSupportFragmentManager(), subsDF.getTag());
 
                 Bundle bundle = new Bundle();
-                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, Constants.Firebase.Analitics.StartScreen.DRAWER_HEADER_LOGINED);
-                FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                bundle.putString(EventParam.PLACE, StartScreen.DRAWER_HEADER_LOGINED);
+                FirebaseAnalytics.getInstance(BaseDrawerActivity.this).logEvent(EventName.SUBSCRIPTIONS_SHOWN, bundle);
             });
 
             headerViewHolder.name.setText(user.fullName);

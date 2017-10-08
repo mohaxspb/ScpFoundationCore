@@ -499,10 +499,6 @@ public class DbProvider implements DbProviderModel<Article> {
             if (article.rating != 0) {
                 articleInDb.rating = article.rating;
             }
-            //tabs
-            articleInDb.hasTabs = article.hasTabs;
-            articleInDb.tabsTitles = article.tabsTitles;
-            articleInDb.tabsTexts = article.tabsTexts;
             //textParts
             articleInDb.textParts = article.textParts;
             articleInDb.textPartsTypes = article.textPartsTypes;
@@ -606,9 +602,6 @@ public class DbProvider implements DbProviderModel<Article> {
                         articleInDb.text = null;
                         articleInDb.textParts = null;
                         articleInDb.textPartsTypes = null;
-                        articleInDb.hasTabs = false;
-                        articleInDb.tabsTexts = null;
-                        articleInDb.tabsTitles = null;
 
                         subscriber.onNext(url);
                         subscriber.onCompleted();

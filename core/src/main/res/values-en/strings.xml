@@ -263,4 +263,14 @@
     <string name="invite_received_reward_message">Ads disabled for %1$d hours, %2$d score added!</string>
     <string name="ads_disabled_for_some_hours">Ads disabled for %d hours!</string>
     <string name="drawer_item_invite_friends">Invite friends!</string>
+
+    <!---->
+    <string name="settings_ads_banner_in_lists">Banner in articles lists</string>
+    <string name="settings_ads_title">Ads settings</string>
+    <string name="settings_ads_native_in_lists">Native ads in articles lists</string>
+    <string name="settings_ads_native_in_article">Native ads in article</string>
+    <string name="settings_ads_banner_in_article">Banner in article</string>
+    <string name="disable_all_ads">Disable all ads</string>
+    <string name="remove_ads_for_month">For month for\n%s</string>
+    <string name="remove_ads_for_free_for_hours"><![CDATA[For some hours for\n<b><font color=#4CAF50>FREE</font></b>]]></string>
 </resources>

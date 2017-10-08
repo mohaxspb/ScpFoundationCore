@@ -45,7 +45,7 @@ import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS
  * <p>
  * for scp_ru
  */
-public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public SortType getSortType() {
         return mSortType;
@@ -107,7 +107,7 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
     private boolean shouldShowPopupOnFavoriteClick;
     private boolean shouldShowPreview;
 
-    public ArticlesListRecyclerAdapter() {
+    public ArticlesListAdapter() {
         BaseApplication.getAppComponent().inject(this);
     }
 
@@ -243,10 +243,15 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
         //do not add native ads items if user has subscription or banners temporary disabled
         //or banners rnabled or native disabled
         FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+// /        if (mMyPreferenceManager.isHasAnySubscription()
+//                || !mMyPreferenceManager.isTimeToShowBannerAds()
+//                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED)
+//                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED)) {
+//            return;
+//        }
         if (mMyPreferenceManager.isHasAnySubscription()
                 || !mMyPreferenceManager.isTimeToShowBannerAds()
-                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED)
-                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED)) {
+                || mMyPreferenceManager.isBannerInArticlesListsEnabled()) {
             return;
         }
         if (mAdsModelsList.isEmpty()) {
@@ -284,7 +289,6 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                     //show ads from list of sources via random
                     switch (new Random().nextInt(Constants.NUM_OF_NATIVE_ADS_SOURCES) + 1) {
                         case Constants.NativeAdsSource.AD_MOB:
-                            ArticlesListModel model;
                             @SuppressLint("InflateParams")
                             NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
                                     .inflate(R.layout.native_ads_admob_medium, null, false);
@@ -299,8 +303,7 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                                 }
                             });
                             nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
-                            model = new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView);
-                            adsModelsList.add(model);
+                            adsModelsList.add(new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView));
                             break;
                         case Constants.NativeAdsSource.APPODEAL:
                             adsModelsList.add(new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex));
@@ -312,7 +315,6 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                     break;
                 }
                 case Constants.NativeAdsSource.AD_MOB: {
-                    ArticlesListModel model;
                     @SuppressLint("InflateParams")
                     NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
                             .inflate(R.layout.native_ads_admob_medium, null, false);
@@ -321,8 +323,7 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                     nativeAdView.setVideoOptions(new VideoOptions.Builder()
                             .setStartMuted(true)
                             .build());
-                    model = new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView);
-                    adsModelsList.add(model);
+                    adsModelsList.add(new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView));
                     break;
                 }
                 case Constants.NativeAdsSource.APPODEAL:
@@ -382,10 +383,6 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_native_container, parent, false);
                 viewHolder = new NativeAdsArticleListHolder(view, mArticleClickListener);
                 break;
-//            case ArticleListNodeType.NATIVE_ADS_APPODEAL:
-//                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_native_container, parent, false);
-//                viewHolder = new NativeAdsArticleListHolder(view, mArticleClickListener);
-//                break;
             default:
                 throw new IllegalArgumentException("unexpected viewType: " + viewType);
         }
@@ -436,15 +433,19 @@ public class ArticlesListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
 
     public interface ArticleClickListener {
 
-        void onArticleClicked(Article article);
+        void onArticleClick(Article article);
 
         void toggleReadenState(Article article);
 
         void toggleFavoriteState(Article article);
 
-        void onOfflineClicked(Article article);
+        void onOfflineClick(Article article);
 
-        void onTagClicked(ArticleTag tag);
+        void onTagClick(ArticleTag tag);
+
+        void onAdsSettingsClick();
+
+        void onRewardedVideoClick();
 
         //todo add listeners for native ads clicks - we'll use it to mesure banner/native effectivnes
     }

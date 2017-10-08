@@ -8,52 +8,24 @@
     android:layout_height="match_parent"
     >
 
-    <LinearLayout
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         >
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tabLayout"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:tabGravity="center"
-            app:tabIndicatorHeight="3dp"
-            app:tabMode="scrollable"
-            app:tabSelectedTextColor="?android:textColorSecondary"
-            tools:visibility="visible"
+            android:layout_height="match_parent"
+            app:fastScrollEnabled="true"
+            app:fastScrollHorizontalThumbDrawable="@drawable/state_list_drawable"
+            app:fastScrollHorizontalTrackDrawable="@drawable/state_list_transparent"
+            app:fastScrollVerticalThumbDrawable="@drawable/state_list_drawable"
+            app:fastScrollVerticalTrackDrawable="@drawable/state_list_transparent"
             />
 
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swipeRefresh"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            >
-
-            <!--<android.support.v7.widget.RecyclerView-->
-            <!--android:id="@+id/recyclerView"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:scrollbarThumbVertical="?scrollbar"-->
-            <!--android:scrollbars="vertical"-->
-            <!--/>-->
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:fastScrollEnabled="true"
-                app:fastScrollHorizontalThumbDrawable="@drawable/state_list_drawable"
-                app:fastScrollHorizontalTrackDrawable="@drawable/state_list_transparent"
-                app:fastScrollVerticalThumbDrawable="@drawable/state_list_drawable"
-                app:fastScrollVerticalTrackDrawable="@drawable/state_list_transparent"
-                />
-
-        </android.support.v4.widget.SwipeRefreshLayout>
-    </LinearLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <ProgressBar
         android:id="@+id/progressCenter"

@@ -1,12 +1,9 @@
 package ru.kuchanov.scpcore.ui.util;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.StringRes;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.bumptech.glide.Glide;
-import com.github.chrisbanes.photoview.PhotoView;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.GsonBuilder;
 
@@ -75,24 +72,6 @@ public class DialogUtils {
                 })
                 .build()
                 .show();
-    }
-
-    //TODO think how to restore image dialog Maybe use fragment dialog?..
-    public void showImageDialog(Context context, String imgUrl) {
-        Timber.d("showImageDialog");
-        Dialog nagDialog = new Dialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-        nagDialog.setCancelable(true);
-        nagDialog.setContentView(R.layout.preview_image);
-
-        PhotoView photoView = nagDialog.findViewById(R.id.image_view_touch);
-        photoView.setMaximumScale(5f);
-
-        Glide.with(photoView.getContext())
-                .load(imgUrl)
-                .placeholder(R.drawable.ic_image_white_48dp)
-                .into(photoView);
-
-        nagDialog.show();
     }
 
     public void showAppLangVariantsDialog(Context context, AppLangVersionsJson.AppLangVersion version) {

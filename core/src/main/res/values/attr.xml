@@ -23,6 +23,14 @@
     <attr name="iconTextSizeDialog" format="reference"/>
     <attr name="iconArrowUp" format="reference"/>
     <attr name="iconArrowDown" format="reference"/>
+
+    <attr name="iconArrowUpThemed" format="reference"/>
+    <attr name="iconArrowDownThemed" format="reference"/>
+
+    <!---->
+    <attr name="iconAdsSettings24dp" format="reference"/>
+    <attr name="iconVideo24dp" format="reference"/>
+
     <attr name="iconArrowUpSmall" format="reference"/>
     <attr name="iconArrowDownSmall" format="reference"/>
     <attr name="iconOfflineAdd" format="reference"/>
