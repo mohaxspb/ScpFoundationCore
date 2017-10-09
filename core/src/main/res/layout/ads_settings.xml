@@ -72,7 +72,9 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="?android:textColorPrimary"
+                android:layout_marginStart="@dimen/defaultMargin"
+                android:layout_marginEnd="@dimen/defaultMargin"
+                android:background="@color/material_blue_gray_500"
                 android:padding="@dimen/defaultMarginSmall"
                 />
 
@@ -121,7 +123,9 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="?android:textColorPrimary"
+                android:layout_marginStart="@dimen/defaultMargin"
+                android:layout_marginEnd="@dimen/defaultMargin"
+                android:background="@color/material_blue_gray_500"
                 android:padding="@dimen/defaultMarginSmall"
                 />
 

@@ -260,4 +260,14 @@
     <string name="invite_received_reward_message">Reklama jest wyłączony przez %1$d godziny, %2$d punkty dodane!</string>
     <string name="ads_disabled_for_some_hours">Ogłoszenie jest wyłączony przez %d godziny!</string>
     <string name="drawer_item_invite_friends">Zaproś swoich znajomych!</string>
+
+    <!---->
+    <string name="settings_ads_banner_in_lists">Baner na liście artykułów</string>
+    <string name="settings_ads_title">Reklamy ustawienia</string>
+    <string name="settings_ads_native_in_lists">Reklama natywna w listy artykułów</string>
+    <string name="settings_ads_native_in_article">Reklama natywna w artykułach</string>
+    <string name="settings_ads_banner_in_article">Banner w artykułach</string>
+    <string name="disable_all_ads">Wyłącz wszystkie reklamy</string>
+    <string name="remove_ads_for_month">W miesiącu  %s</string>
+    <string name="remove_ads_for_free_for_hours"><![CDATA[Przez kilka godzin<br/><b><font color=#4CAF50>Za darmo</font></b>]]></string>
 </resources>
