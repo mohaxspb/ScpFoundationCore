@@ -262,4 +262,14 @@
     <string name="invite_received_reward_message">La pubblicità è spenta per %1$d ore, %2$d punti aggiunti!</string>
     <string name="ads_disabled_for_some_hours">La pubblicità è spenta per %d ore!</string>
     <string name="drawer_item_invite_friends">Invitare amici!</string>
+
+    <!---->
+    <string name="settings_ads_banner_in_lists">Il banner nella lista degli articoli</string>
+    <string name="settings_ads_title">Impostazioni annuncio</string>
+    <string name="settings_ads_native_in_lists">Nativa annunci negli elenchi di articoli</string>
+    <string name="settings_ads_native_in_article">Annunci nativo in articoli</string>
+    <string name="settings_ads_banner_in_article">Banner in articoli</string>
+    <string name="disable_all_ads">Disattiva tutti gli annunci</string>
+    <string name="remove_ads_for_month">Un mese per %s</string>
+    <string name="remove_ads_for_free_for_hours"><![CDATA[Per qualche ora<br/><b><font color=#4CAF50>LIBERO</font></b>]]></string>
 </resources>

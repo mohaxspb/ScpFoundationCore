@@ -261,4 +261,13 @@
     <string name="invite_received_reward_message">Werbung ist für %1$d Stunden ausgeschaltet, %2$d Punkte hinzugefügt!</string>
     <string name="ads_disabled_for_some_hours">Die Anzeige ist für %1$d Stunden ausgeschaltet!</string>
     <string name="drawer_item_invite_friends">Lade deine Freunde ein!</string>
+    <!---->
+    <string name="settings_ads_banner_in_lists">Das Banner in der Liste der Artikel</string>
+    <string name="settings_ads_title">Advertisement-Einstellungen</string>
+    <string name="settings_ads_native_in_lists">Native Werbung in den Listen der Artikel</string>
+    <string name="settings_ads_native_in_article">Native Werbung in Artikeln</string>
+    <string name="settings_ads_banner_in_article">Banner in den Artikeln</string>
+    <string name="disable_all_ads">Deaktivieren Sie alle anzeigen</string>
+    <string name="remove_ads_for_month">Ein Monat für %s</string>
+    <string name="remove_ads_for_free_for_hours"><![CDATA[Für ein paar stunden<br/><b><font color=#4CAF50>KOSTENLOS</font></b>]]></string>
 </resources>
