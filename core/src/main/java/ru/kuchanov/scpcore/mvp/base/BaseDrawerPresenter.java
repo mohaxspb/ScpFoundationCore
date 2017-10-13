@@ -58,7 +58,7 @@ public abstract class BaseDrawerPresenter<V extends DrawerMvp.View>
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         leaderBoardResponse -> {
-                            Timber.d("getLeaderboard onNext: %s", leaderBoardResponse);
+                            Timber.d("getLeaderboard onNext: %s", leaderBoardResponse.users.size());
                             getView().dismissProgressDialog();
                             getView().showLeaderboard(leaderBoardResponse);
                         },

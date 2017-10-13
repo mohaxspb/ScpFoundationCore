@@ -1,7 +1,6 @@
 package ru.kuchanov.scpcore.ui.base;
 
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
@@ -113,20 +112,6 @@ public abstract class BaseListFragment<V extends BaseListMvp.View, P extends Bas
             return;
         }
         mSwipeRefreshLayout.setEnabled(enable);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        PreferenceManager.getDefaultSharedPreferences(getActivity())
-                .registerOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        PreferenceManager.getDefaultSharedPreferences(getActivity())
-                .unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override

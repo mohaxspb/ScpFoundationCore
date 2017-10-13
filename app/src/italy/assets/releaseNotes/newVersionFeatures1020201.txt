@@ -1,0 +1,15 @@
+<b>Principale</b>
+<br/>
+ - Redone il display delle schede. Ora alcuni articoli vengono visualizzati meglio.
+<br/>
+ - Migliorato la visualizzazione delle immagini negli articoli.
+<br/>
+ - Impostazioni aggiuntive per una maggiore personalizzazione dell'applicazione.
+<br/><br/>
+<b>Correzioni</b>
+<br/>
+ - eventuali correzioni minori e miglioramenti.
+<br/><br/>
+E-mail: <a href="mailto:neva.spb.rx@gmail.com">Per tutte le domande</a>
+<br/><br/>
+Grazie per aver utilizzato la nostra applicazione!

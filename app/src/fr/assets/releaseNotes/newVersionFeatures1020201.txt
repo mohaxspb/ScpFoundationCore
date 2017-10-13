@@ -1,0 +1,16 @@
+<b>Principale</b>
+<br/>
+ - Redéfinir l'affichage des onglets. Maintenant, certains articles sont mieux affichés.
+<br/>
+ - Amélioration de l'affichage des images dans les articles.
+<br/>
+ - Ajout de paramètres pour plus de personnalisation de l'application.
+<br/><br/>
+<b>Corrections</b>
+ - Des corrections mineures et des améliorations.
+<br/><br/>
+E-mail: <a href="mailto:neva.spb.rx@gmail.com">Pour toute question</a>
+<br/><br/>
+Merci d'utiliser notre application!
+<br/><br/>
+Traduit Lucie.

@@ -29,56 +29,18 @@ public class StorageModuleImpl extends StorageModule {
 
             Timber.d("providesRealmMigration: %s/%s", oldVersion, newVersion);
 
-            for (RealmObjectSchema realmObjectSchema : schema.getAll()) {
-                Timber.d("realmObjectSchema: %s", realmObjectSchema.getClassName());
-                Timber.d("realmObjectSchema: %s", realmObjectSchema.getFieldNames());
-            }
-
-            if (oldVersion == 0) {
-                schema.create(SocialProviderModel.class.getSimpleName())
-                        .addField(SocialProviderModel.FIELD_PROVIDER, String.class)
-                        .addField(SocialProviderModel.FIELD_ID, String.class);
-
-                schema.get(Article.class.getSimpleName())
-                        .addField(Article.FIELD_SYNCED, int.class)
-                        .transform(obj -> {
-                            boolean isInFavorite = obj.getLong(Article.FIELD_IS_IN_FAVORITE) != Article.ORDER_NONE;
-                            boolean isInRead = obj.getBoolean(Article.FIELD_IS_IN_READEN);
-                            if (isInFavorite || isInRead) {
-                                obj.set(Article.FIELD_SYNCED, Article.SYNCED_NEED);
-                            }
-                        });
-
-                schema.get(User.class.getSimpleName())
-                        .addField(User.FIELD_SCORE, int.class)
-                        .addField(User.FIELD_UID, String.class)
-                        .addField(User.FIELD_EMAIL, String.class)
-                        .addRealmListField(User.FIELD_SOCIAL_PROVIDERS, schema.get(SocialProviderModel.class.getSimpleName()))
-                        .removeField("firstName")
-                        .removeField("lastName")
-                        .removeField("network");
-
-                oldVersion++;
-            }
-
             if (oldVersion == 1) {
-                schema.get(Article.class.getSimpleName())
-                        .addField(Article.FIELD_IS_IN_OBJECTS_4, long.class)
-                        .transform(obj -> obj.set(Article.FIELD_IS_IN_OBJECTS_4, Article.ORDER_NONE));
+                RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
+                if (articleSchema != null) {
+                    articleSchema
+                            .removeField("tabsTitles")
+                            .removeField("tabsTexts")
+                            .removeField("hasTabs");
+                }
                 oldVersion++;
             }
 
-            if (oldVersion == 2) {
-                schema.create(ArticleTag.class.getSimpleName())
-                        .addField(ArticleTag.FIELD_TITLE, String.class, FieldAttribute.PRIMARY_KEY);
-
-                schema.get(Article.class.getSimpleName())
-                        .addRealmListField(Article.FIELD_TAGS, schema.get(ArticleTag.class.getSimpleName()));
-
-                oldVersion++;
-            }
-
-            //TODO add new if blocks if schema changed
+            //add new if blocks if schema changed
             if (oldVersion < newVersion) {
                 throw new IllegalStateException(String.format(Locale.ENGLISH, "Migration missing from v%d to v%d", oldVersion, newVersion));
             }
