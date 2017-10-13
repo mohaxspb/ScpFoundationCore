@@ -244,6 +244,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     public void applyAwardFromAds() {
+        Timber.d("applyAwardFromAds");
 //        long time = System.currentTimeMillis()
 //                + FirebaseRemoteConfig.getInstance().getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
 //        setLastTimeAdsShows(time);
@@ -296,7 +297,11 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         if (currentTime == 0) {
             currentTime = System.currentTimeMillis();
         }
-        mPreferences.edit().putLong(Keys.ADS_LAST_TIME_SHOWS, currentTime + timeInMillis).apply();
+        long nextTimeBannersWillShow = currentTime + timeInMillis;
+        if (nextTimeBannersWillShow < System.currentTimeMillis()) {
+            nextTimeBannersWillShow = System.currentTimeMillis() + timeInMillis;
+        }
+        mPreferences.edit().putLong(Keys.ADS_LAST_TIME_SHOWS, nextTimeBannersWillShow).apply();
     }
 
     /**
@@ -334,11 +339,17 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     private void increaseTimeForWhichBannersDisabled(long timeInMillis) {
+        Timber.d("increaseTimeForWhichBannersDisabled: %s", timeInMillis);
         long currentTime = getTimeForWhichBannersDisabled();
         if (currentTime == 0) {
+            Timber.d("currentTime is 0, so set it as System.currentTimeMillis()");
             currentTime = System.currentTimeMillis();
         }
-        mPreferences.edit().putLong(Keys.TIME_FOR_WHICH_BANNERS_DISABLED, currentTime + timeInMillis).apply();
+        long nextTimeBannersWillShow = currentTime + timeInMillis;
+        if (nextTimeBannersWillShow < System.currentTimeMillis()) {
+            nextTimeBannersWillShow = System.currentTimeMillis() + timeInMillis;
+        }
+        mPreferences.edit().putLong(Keys.TIME_FOR_WHICH_BANNERS_DISABLED, nextTimeBannersWillShow).apply();
     }
 
     private long getTimeForWhichBannersDisabled() {

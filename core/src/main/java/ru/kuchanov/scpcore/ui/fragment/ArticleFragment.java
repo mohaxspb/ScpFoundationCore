@@ -22,9 +22,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -100,6 +103,18 @@ public class ArticleFragment
     @Override
     public ArticleMvp.Presenter createPresenter() {
         return mPresenter;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Timber.d("onStart");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Timber.d("onStop");
     }
 
     @Override
@@ -435,6 +450,11 @@ public class ArticleFragment
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        //ignore facebook spam
+        if (key.startsWith("com.facebook")) {
+            return;
+        }
+        Timber.d("onSharedPreferenceChanged: key: %s", key);
         switch (key) {
             case MyPreferenceManager.Keys.TEXT_SCALE_ARTICLE:
                 mAdapter.notifyDataSetChanged();
@@ -443,6 +463,11 @@ public class ArticleFragment
                 mAdapter.notifyDataSetChanged();
                 break;
             case MyPreferenceManager.Keys.ADS_BANNER_IN_ARTICLE:
+                showData(mPresenter.getData());
+                break;
+            case MyPreferenceManager.Keys.TIME_FOR_WHICH_BANNERS_DISABLED:
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd EEE HH:mm:ss", Locale.getDefault());
+                Timber.d("Nex time is: %s", simpleDateFormat.format(new Date(sharedPreferences.getLong(key, 0))));
                 showData(mPresenter.getData());
                 break;
             default:

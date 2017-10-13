@@ -1,0 +1,15 @@
+<b>Principal</b>
+<br/>
+ - Rehacer la visualización de las pestañas. Ahora algunos artículos se muestran mejor.
+<br/>
+ - Mejora de la visualización de imágenes en los artículos.
+<br/>
+ - Configuración añadida para más personalización de la aplicación.
+<br/><br/>
+<b>Arreglos</b>
+<br/>
+ - Cualquier corrección y mejoras menores.
+<br/><br/>
+E-mail: <a href="mailto:neva.spb.rx@gmail.com">Para cualquier pregunta</a>
+<br/><br/>
+¡Gracias por utilizar nuestra aplicación!

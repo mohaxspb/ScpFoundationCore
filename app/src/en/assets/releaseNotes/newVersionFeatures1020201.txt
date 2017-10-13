@@ -1,0 +1,16 @@
+<b>Main</b>
+<br/>
+ - We remake tabs showing. Now som articles looks better.
+<br/>
+ - Upgrade for images showing in articles.
+<br/>
+ - Add more settings for app castomization.
+<br/><br/>
+<b>Fixes</b>
+ - Some small fixes and improvements.
+<br/><br/>
+If you have any questions you can contact us via email:
+<br/>
+E-mail: <a href="mailto:neva.spb.rx@gmail.com">For any questions</a>
+<br/><br/>
+Thanks for using our app!

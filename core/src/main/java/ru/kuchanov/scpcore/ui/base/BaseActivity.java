@@ -384,7 +384,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             @Override
             public void onRewardedVideoFinished(int i, String s) {
                 super.onRewardedVideoFinished(i, s);
-                mMyPreferenceManager.applyAwardFromAds();
+//                mMyPreferenceManager.applyAwardFromAds();
                 long numOfMillis = FirebaseRemoteConfig.getInstance()
                         .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
                 long hours = numOfMillis / 1000 / 60 / 60;
@@ -395,6 +395,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 @DataSyncActions.ScoreAction
                 String action = DataSyncActions.ScoreAction.REWARDED_VIDEO;
                 mPresenter.updateUserScoreForScoreAction(action);
+
+                mRoot.postDelayed(() -> mMyPreferenceManager.applyAwardFromAds(), 500);
             }
         });
         Appodeal.setInterstitialCallbacks(new MyAppodealInterstitialCallbacks() {
@@ -863,7 +865,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, StartScreen.MENU);
             FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
             return true;
-        }  else if (i == R.id.removeAds) {
+        } else if (i == R.id.removeAds) {
             BottomSheetDialogFragment subsDF = AdsSettingsBottomSheetDialogFragment.newInstance();
             subsDF.show(getSupportFragmentManager(), subsDF.getTag());
             return true;

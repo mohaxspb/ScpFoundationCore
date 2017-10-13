@@ -49,7 +49,7 @@ public class LeaderboardDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Timber.d("onCreateDialog");
-        final MaterialDialog dialog;
+        MaterialDialog dialog;
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(mLeaderBoardResponse.lastUpdated);

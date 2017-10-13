@@ -211,7 +211,7 @@
     </entry>
     <entry>
         <key>article_banner_disabled</key>
-        <value>true</value>
+        <value>false</value>
     </entry>
     <entry>
         <key>no_ads_subs_enabled</key>
@@ -279,6 +279,6 @@
     </entry>
     <entry>
         <key>native_in_article_enabled</key>
-        <value>true</value>
+        <value>false</value>
     </entry>
 </defaultsMap>
