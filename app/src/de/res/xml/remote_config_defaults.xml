@@ -277,4 +277,8 @@
         <key>native_ads_lists_source</key>
         <value>2</value>
     </entry>
+    <entry>
+        <key>native_in_article_enabled</key>
+        <value>false</value>
+    </entry>
 </defaultsMap>

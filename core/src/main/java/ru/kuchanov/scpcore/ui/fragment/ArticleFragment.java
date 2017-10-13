@@ -445,6 +445,9 @@ public class ArticleFragment
             case MyPreferenceManager.Keys.ADS_BANNER_IN_ARTICLE:
                 showData(mPresenter.getData());
                 break;
+            case MyPreferenceManager.Keys.TIME_FOR_WHICH_BANNERS_DISABLED:
+                showData(mPresenter.getData());
+                break;
             default:
                 //do nothing
                 break;
