@@ -11,7 +11,7 @@ apply from: '../apiKeysCreator.gradle'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion "26.0.2"
 
     defaultConfig {
         applicationId "ru.dante.scpfoundation"
@@ -65,42 +65,49 @@ android {
 
         ru {
             dimension "lang"
+            matchingFallbacks = ['debug', 'release']
         }
 
         en {
             dimension "lang"
 
             applicationIdSuffix ".eng"
+            matchingFallbacks = ['debug', 'release']
         }
 
         pl {
             dimension "lang"
 
             applicationIdSuffix ".pl"
+            matchingFallbacks = ['debug', 'release']
         }
 
         de {
             dimension "lang"
 
             applicationIdSuffix ".de"
+            matchingFallbacks = ['debug', 'release']
         }
 
         fr {
             dimension "lang"
 
             applicationIdSuffix ".fr"
+            matchingFallbacks = ['debug', 'release']
         }
 
         es {
             dimension "lang"
 
             applicationIdSuffix ".es"
+            matchingFallbacks = ['debug', 'release']
         }
 
         italy {
             dimension "lang"
 
             applicationIdSuffix ".it"
+            matchingFallbacks = ['debug', 'release']
         }
 
         applicationVariants.all { variant ->
@@ -150,7 +157,8 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
 
     //core module
-    compile project(path: ':core', configuration: 'devRelease')
+//    compile project(path: ':core', configuration: 'devRelease')
+    compile project(path: ':core')
 
 //    //to use lib via gradle add this lines:
 //    //leakcanary (we need it here too according to https://github.com/square/leakcanary/issues/514#issuecomment-318203708)

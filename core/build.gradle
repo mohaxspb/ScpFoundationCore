@@ -38,7 +38,7 @@ ext {
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion "26.0.2"
 
     compileOptions.encoding = 'utf-8'
 
@@ -52,6 +52,8 @@ android {
         exclude 'META-INF/rxjava.properties'
         exclude 'META-INF/LICENSE'
     }
+
+    flavorDimensions "mode"
 
     defaultConfig {
         minSdkVersion 17
@@ -92,10 +94,14 @@ android {
         prod {
             manifestPlaceholders = [myDebuggable: false]
             buildConfigField "boolean", "TIMBER_ENABLE", "false"
+
+            dimension "mode"
         }
 
         dev {
             manifestPlaceholders = [myDebuggable: true]
+
+            dimension "mode"
         }
 
         libraryVariants.all { variant ->
