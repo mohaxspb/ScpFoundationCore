@@ -134,4 +134,8 @@ public class ConstantValuesImpl implements ConstantValues {
     public String getAppLang() {
         return "ru";
     }
+
+    public String getObjectsFrUrl(){
+        return "http://scpfoundation.ru/scp-list-fr";
+    }
 }

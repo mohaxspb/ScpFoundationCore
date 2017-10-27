@@ -63,6 +63,11 @@ public class MaterialClickListenerImpl implements MaterialsActivity.MaterialClic
             case 6:
                 activity.startArticleActivity(mConstantValues.getLeaks());
                 break;
+            case 7:
+                fragmentTransaction.replace(R.id.content, MaterialsOtherFragment.newInstance());
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+                break;
             default:
                 throw new RuntimeException("unexpected position in materials list");
         }
