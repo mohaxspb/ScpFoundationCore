@@ -1,6 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
-
 //here is script to generate version code from version name
 //which is set in gradle.properties as value of version var
 //which must be in format major, minor, patch, where patch goes from 0 to 99
