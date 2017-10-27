@@ -72,6 +72,8 @@ public class ArticleAdapter
 
     private List<TabsViewModel> mTabsViewModelList = new ArrayList<>();
 
+    private List<SpoilerViewModel> mExpandedSpoilers = new ArrayList<>();
+
     public ArticleAdapter() {
         BaseApplication.getAppComponent().inject(this);
     }
@@ -89,6 +91,7 @@ public class ArticleAdapter
     public void setData(Article article, List<SpoilerViewModel> expandedSpoilers, List<TabsViewModel> tabsViewModels) {
 //        Timber.d("setData: %s", article);
         mTabsViewModelList = tabsViewModels;
+        mExpandedSpoilers = expandedSpoilers;
 
         mViewModels.clear();
 
@@ -115,18 +118,7 @@ public class ArticleAdapter
                     SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
                     spoilerViewModel.titles = new ArrayList<>(spoilerParts.subList(0, 2));
                     spoilerViewModel.mSpoilerTextParts = ParseHtmlUtils.getArticlesTextParts(spoilerParts.get(2));
-//                    for (String part : spoilerViewModel.mSpoilerTextParts) {
-//                        String partCuted = part;
-//                        if (part.length() > 100) {
-//                            partCuted = partCuted.substring(0, 100);
-//                        }
-//                        Timber.d("partCuted: %s", partCuted);
-//                    }
                     spoilerViewModel.mSpoilerTextPartsTypes = ParseHtmlUtils.getListOfTextTypes(spoilerViewModel.mSpoilerTextParts);
-
-                    Timber.d("spoilerParts size: %s", spoilerViewModel.mSpoilerTextParts.size());
-                    Timber.d("spoilerPartsTypes size: %s", spoilerViewModel.mSpoilerTextPartsTypes.size());
-
                     spoilerViewModel.isExpanded = expandedSpoilers.contains(spoilerViewModel);
 
                     mViewModels.add(new ArticleTextPartViewModel(type, spoilerViewModel, false));
@@ -193,8 +185,40 @@ public class ArticleAdapter
                         TabsViewModel.TabData tabData = tabsViewModel.getTabDataList().get(tabsViewModel.getCurrentTab());
                         @ParseHtmlUtils.TextType
                         String typeInTab = tabData.getTextPartsTypes().get(i);
-                        String dataInTab = tabData.getTextParts().get(i);
-                        viewModels.add(new ArticleTextPartViewModel(typeInTab, dataInTab, false));
+                        //spoiler support
+                        Object dataInTab = tabData.getTextParts().get(i);
+                        boolean isSpoiler = typeInTab.equals(ParseHtmlUtils.TextType.SPOILER);
+                        if (isSpoiler) {
+                            List<String> spoilerData = ParseHtmlUtils.parseSpoilerParts((String) dataInTab);
+
+                            SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
+                            spoilerViewModel.titles = new ArrayList<>(spoilerData.subList(0, 2));
+                            spoilerViewModel.mSpoilerTextParts = ParseHtmlUtils.getArticlesTextParts(spoilerData.get(2));
+                            spoilerViewModel.mSpoilerTextPartsTypes = ParseHtmlUtils.getListOfTextTypes(spoilerViewModel.mSpoilerTextParts);
+                            spoilerViewModel.isExpanded = expandedSpoilers.contains(spoilerViewModel);
+
+                            dataInTab = spoilerViewModel;
+                            viewModels.add(new ArticleTextPartViewModel(typeInTab, dataInTab, true));
+
+                            //add textParts for expanded spoilers
+                            if (spoilerViewModel.isExpanded) {
+                                List<ArticleTextPartViewModel> viewModelsInSpoiler = new ArrayList<>();
+                                Timber.d("expanded spoiler title: %s", spoilerViewModel.titles.get(0));
+                                for (int u = 0; u < spoilerViewModel.mSpoilerTextPartsTypes.size(); u++) {
+                                    @ParseHtmlUtils.TextType
+                                    String typeInSpoiler = spoilerViewModel.mSpoilerTextPartsTypes.get(u);
+
+                                    Timber.d("expanded spoiler type: %s", typeInSpoiler);
+
+                                    String dataInSpoiler = spoilerViewModel.mSpoilerTextParts.get(u);
+                                    viewModelsInSpoiler.add(new ArticleTextPartViewModel(typeInSpoiler, dataInSpoiler, true));
+
+                                }
+                                viewModels.addAll(viewModelsInSpoiler);
+                            }
+                        } else {
+                            viewModels.add(new ArticleTextPartViewModel(typeInTab, dataInTab, false));
+                        }
                     }
                     mViewModels.add(new ArticleTextPartViewModel(type, tabsViewModel, false));
                     mViewModels.addAll(viewModels);
@@ -559,10 +583,40 @@ public class ArticleAdapter
             List<ArticleTextPartViewModel> viewModelsTabs = new ArrayList<>();
             for (int i = 0; i < tabData.getTextParts().size(); i++) {
                 @ParseHtmlUtils.TextType
-                String typeInSpoiler = tabData.getTextPartsTypes().get(i);
-                //todo add spoiler support
-                String dataInSpoiler = tabData.getTextParts().get(i);
-                viewModelsTabs.add(new ArticleTextPartViewModel(typeInSpoiler, dataInSpoiler, false));
+                String typeInTab = tabData.getTextPartsTypes().get(i);
+                Object dataInTab = tabData.getTextParts().get(i);
+                boolean isSpoiler = typeInTab.equals(ParseHtmlUtils.TextType.SPOILER);
+                if (isSpoiler) {
+                    List<String> spoilerData = ParseHtmlUtils.parseSpoilerParts((String) dataInTab);
+
+                    SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
+                    spoilerViewModel.titles = new ArrayList<>(spoilerData.subList(0, 2));
+                    spoilerViewModel.mSpoilerTextParts = ParseHtmlUtils.getArticlesTextParts(spoilerData.get(2));
+                    spoilerViewModel.mSpoilerTextPartsTypes = ParseHtmlUtils.getListOfTextTypes(spoilerViewModel.mSpoilerTextParts);
+                    spoilerViewModel.isExpanded = mExpandedSpoilers.contains(spoilerViewModel);
+
+                    dataInTab = spoilerViewModel;
+                    viewModelsTabs.add(new ArticleTextPartViewModel(typeInTab, dataInTab, true));
+
+                    //add textParts for expanded spoilers
+                    if (spoilerViewModel.isExpanded) {
+                        List<ArticleTextPartViewModel> viewModelsInSpoiler = new ArrayList<>();
+                        Timber.d("expanded spoiler title: %s", spoilerViewModel.titles.get(0));
+                        for (int u = 0; u < spoilerViewModel.mSpoilerTextPartsTypes.size(); u++) {
+                            @ParseHtmlUtils.TextType
+                            String typeInSpoiler = spoilerViewModel.mSpoilerTextPartsTypes.get(u);
+
+                            Timber.d("expanded spoiler type: %s", typeInSpoiler);
+
+                            String dataInSpoiler = spoilerViewModel.mSpoilerTextParts.get(u);
+                            viewModelsInSpoiler.add(new ArticleTextPartViewModel(typeInSpoiler, dataInSpoiler, true));
+
+                        }
+                        viewModelsTabs.addAll(viewModelsInSpoiler);
+                    }
+                } else {
+                    viewModelsTabs.add(new ArticleTextPartViewModel(typeInTab, dataInTab, false));
+                }
             }
             if (mViewModels.containsAll(viewModelsTabs)) {
                 mViewModels
@@ -579,10 +633,41 @@ public class ArticleAdapter
         for (int i = 0; i < tabsViewModel.getTabDataList().get(positionInTabs).getTextParts().size(); i++) {
             TabsViewModel.TabData tabData = tabsViewModel.getTabDataList().get(positionInTabs);
             @ParseHtmlUtils.TextType
-            String typeInSpoiler = tabData.getTextPartsTypes().get(i);
-            //todo add spoiler support
-            String dataInSpoiler = tabData.getTextParts().get(i);
-            viewModelsTabs.add(new ArticleTextPartViewModel(typeInSpoiler, dataInSpoiler, tabsViewModel.isInSpoiler));
+            String typeInTab = tabData.getTextPartsTypes().get(i);
+
+            Object dataInTab = tabData.getTextParts().get(i);
+            boolean isSpoiler = typeInTab.equals(ParseHtmlUtils.TextType.SPOILER);
+            if (isSpoiler) {
+                List<String> spoilerData = ParseHtmlUtils.parseSpoilerParts((String) dataInTab);
+
+                SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
+                spoilerViewModel.titles = new ArrayList<>(spoilerData.subList(0, 2));
+                spoilerViewModel.mSpoilerTextParts = ParseHtmlUtils.getArticlesTextParts(spoilerData.get(2));
+                spoilerViewModel.mSpoilerTextPartsTypes = ParseHtmlUtils.getListOfTextTypes(spoilerViewModel.mSpoilerTextParts);
+                spoilerViewModel.isExpanded = mExpandedSpoilers.contains(spoilerViewModel);
+
+                dataInTab = spoilerViewModel;
+                viewModelsTabs.add(new ArticleTextPartViewModel(typeInTab, dataInTab, true));
+
+                //add textParts for expanded spoilers
+                if (spoilerViewModel.isExpanded) {
+                    List<ArticleTextPartViewModel> viewModelsInSpoiler = new ArrayList<>();
+                    Timber.d("expanded spoiler title: %s", spoilerViewModel.titles.get(0));
+                    for (int u = 0; u < spoilerViewModel.mSpoilerTextPartsTypes.size(); u++) {
+                        @ParseHtmlUtils.TextType
+                        String typeInSpoiler = spoilerViewModel.mSpoilerTextPartsTypes.get(u);
+
+                        Timber.d("expanded spoiler type: %s", typeInSpoiler);
+
+                        String dataInSpoiler = spoilerViewModel.mSpoilerTextParts.get(u);
+                        viewModelsInSpoiler.add(new ArticleTextPartViewModel(typeInSpoiler, dataInSpoiler, true));
+
+                    }
+                    viewModelsTabs.addAll(viewModelsInSpoiler);
+                }
+            } else {
+                viewModelsTabs.add(new ArticleTextPartViewModel(typeInTab, dataInTab, false));
+            }
         }
         viewModels.addAll(viewModelsTabs);
 

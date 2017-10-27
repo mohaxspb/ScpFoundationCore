@@ -234,7 +234,7 @@ public class Article extends RealmObject implements ArticleModel, Serializable {
 
     public static final Comparator<Article> COMPARATOR_DATE_RATING = (a1, a2) -> a2.rating - a1.rating;
 
-    public static final Comparator<Article> COMPARATOR_TITLE = (a1, a2) -> a1.title.compareTo(a2.title);
+    public static final Comparator<Article> COMPARATOR_TITLE = (a1, a2) -> a1.title == null ? -1 : a1.title.compareTo(a2.title);
 
     public static final Comparator<Article> COMPARATOR_READ_STATE = (a1, a2) -> Boolean.valueOf(a1.isInReaden).compareTo(a2.isInReaden);
 }

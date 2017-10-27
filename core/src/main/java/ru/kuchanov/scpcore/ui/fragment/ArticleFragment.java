@@ -315,6 +315,9 @@ public class ArticleFragment
 
     @Override
     public void onTocClicked(String link) {
+        if (!isAdded()) {
+            return;
+        }
 //        Timber.d("onTocClicked: %s", link);
         List<String> articlesTextParts = mAdapter.getArticlesTextParts();
         String digits = "";
