@@ -32,6 +32,12 @@ public class Article extends RealmObject implements ArticleModel, Serializable {
     public static final String FIELD_IS_IN_OBJECTS_4 = "isInObjects4";
     public static final String FIELD_IS_IN_OBJECTS_RU = "isInObjectsRu";
 
+    public static final String FIELD_IS_IN_OBJECTS_FR = "isInObjectsFr";
+    public static final String FIELD_IS_IN_OBJECTS_JP = "isInObjectsJp";
+    public static final String FIELD_IS_IN_OBJECTS_ES = "isInObjectsEs";
+    public static final String FIELD_IS_IN_OBJECTS_PL = "isInObjectsPl";
+    public static final String FIELD_IS_IN_OBJECTS_DE = "isInObjectsDe";
+
     public static final String FIELD_IS_IN_EXPERIMETS = "isInExperiments";
     public static final String FIELD_IS_IN_OTHER = "isInOther";
     public static final String FIELD_IS_IN_INCIDENTS = "isInIncidents";
@@ -95,6 +101,12 @@ public class Article extends RealmObject implements ArticleModel, Serializable {
     public long isInObjects4 = ORDER_NONE;
     public long isInObjectsRu = ORDER_NONE;
 
+    public long isInObjectsFr = ORDER_NONE;
+    public long isInObjectsJp = ORDER_NONE;
+    public long isInObjectsEs = ORDER_NONE;
+    public long isInObjectsPl = ORDER_NONE;
+    public long isInObjectsDe = ORDER_NONE;
+
     public long isInExperiments = ORDER_NONE;
     public long isInOther = ORDER_NONE;
     public long isInIncidents = ORDER_NONE;
@@ -115,10 +127,6 @@ public class Article extends RealmObject implements ArticleModel, Serializable {
      * <p>
      */
     public int synced = Integer.MAX_VALUE;
-
-//    public boolean hasTabs;
-//    public RealmList<RealmString> tabsTexts;
-//    public RealmList<RealmString> tabsTitles;
 
     public RealmList<RealmString> textParts;
     public RealmList<RealmString> textPartsTypes;

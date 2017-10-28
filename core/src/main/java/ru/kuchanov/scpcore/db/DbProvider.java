@@ -199,6 +199,23 @@ public class DbProvider implements DbProviderModel<Article> {
                             case Article.FIELD_IS_IN_OBJECTS_RU:
                                 application.isInObjectsRu = Article.ORDER_NONE;
                                 break;
+                                //other filials
+                            case Article.FIELD_IS_IN_OBJECTS_FR:
+                                application.isInObjectsFr = Article.ORDER_NONE;
+                                break;
+                            case Article.FIELD_IS_IN_OBJECTS_JP:
+                                application.isInObjectsJp = Article.ORDER_NONE;
+                                break;
+                            case Article.FIELD_IS_IN_OBJECTS_ES:
+                                application.isInObjectsEs = Article.ORDER_NONE;
+                                break;
+                            case Article.FIELD_IS_IN_OBJECTS_PL:
+                                application.isInObjectsPl = Article.ORDER_NONE;
+                                break;
+                            case Article.FIELD_IS_IN_OBJECTS_DE:
+                                application.isInObjectsDe = Article.ORDER_NONE;
+                                break;
+                                //////
                             case Article.FIELD_IS_IN_EXPERIMETS:
                                 application.isInExperiments = Article.ORDER_NONE;
                                 break;
@@ -245,6 +262,23 @@ public class DbProvider implements DbProviderModel<Article> {
                                 case Article.FIELD_IS_IN_OBJECTS_RU:
                                     applicationInDb.isInObjectsRu = i;
                                     break;
+                                    //other filials
+                                case Article.FIELD_IS_IN_OBJECTS_FR:
+                                    applicationInDb.isInObjectsFr = i;
+                                    break;
+                                case Article.FIELD_IS_IN_OBJECTS_JP:
+                                    applicationInDb.isInObjectsJp = i;
+                                    break;
+                                case Article.FIELD_IS_IN_OBJECTS_ES:
+                                    applicationInDb.isInObjectsEs = i;
+                                    break;
+                                case Article.FIELD_IS_IN_OBJECTS_PL:
+                                    applicationInDb.isInObjectsPl = i;
+                                    break;
+                                case Article.FIELD_IS_IN_OBJECTS_DE:
+                                    applicationInDb.isInObjectsDe = i;
+                                    break;
+                                    //////////
                                 case Article.FIELD_IS_IN_EXPERIMETS:
                                     applicationInDb.isInExperiments = i;
                                     break;
@@ -287,6 +321,23 @@ public class DbProvider implements DbProviderModel<Article> {
                                 case Article.FIELD_IS_IN_OBJECTS_RU:
                                     applicationToWrite.isInObjectsRu = i;
                                     break;
+                                //other filials
+                                case Article.FIELD_IS_IN_OBJECTS_FR:
+                                    applicationToWrite.isInObjectsFr = i;
+                                    break;
+                                case Article.FIELD_IS_IN_OBJECTS_JP:
+                                    applicationToWrite.isInObjectsJp = i;
+                                    break;
+                                case Article.FIELD_IS_IN_OBJECTS_ES:
+                                    applicationToWrite.isInObjectsEs = i;
+                                    break;
+                                case Article.FIELD_IS_IN_OBJECTS_PL:
+                                    applicationToWrite.isInObjectsPl = i;
+                                    break;
+                                case Article.FIELD_IS_IN_OBJECTS_DE:
+                                    applicationToWrite.isInObjectsDe = i;
+                                    break;
+                                //////////
                                 case Article.FIELD_IS_IN_EXPERIMETS:
                                     applicationToWrite.isInExperiments = i;
                                     break;

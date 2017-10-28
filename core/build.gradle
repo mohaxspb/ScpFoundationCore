@@ -219,7 +219,7 @@ dependencies {
     compile 'joda-time:joda-time:2.9.9'
 
     //sub project modules
-    compile('ru.kuchanov.scp:downloads:1.0.18@aar') { transitive = true }
+    compile('ru.kuchanov.scp:downloads:1.0.19@aar') { transitive = true }
     compile('ru.kuchanov.utils:rate:1.0.5@aar') { transitive = true }
 }
 

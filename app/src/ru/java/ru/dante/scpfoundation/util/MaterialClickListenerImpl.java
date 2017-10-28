@@ -2,6 +2,7 @@ package ru.dante.scpfoundation.util;
 
 import android.support.v4.app.FragmentTransaction;
 
+import ru.dante.scpfoundation.ui.fragment.ObjectsFrArticlesFragment;
 import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
@@ -64,7 +65,7 @@ public class MaterialClickListenerImpl implements MaterialsActivity.MaterialClic
                 activity.startArticleActivity(mConstantValues.getLeaks());
                 break;
             case 7:
-                fragmentTransaction.replace(R.id.content, MaterialsOtherFragment.newInstance());
+                fragmentTransaction.replace(R.id.content, ObjectsFrArticlesFragment.newInstance());
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
                 break;

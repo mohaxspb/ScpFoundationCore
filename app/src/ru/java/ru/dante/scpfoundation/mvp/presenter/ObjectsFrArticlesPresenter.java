@@ -32,11 +32,11 @@ public class ObjectsFrArticlesPresenter
 
     @Override
     protected String getObjectsInDbFieldName() {
-        return Article.FIELD_IS_IN_OBJECTS_1;
+        return Article.FIELD_IS_IN_OBJECTS_FR;
     }
 
     @Override
     protected String getObjectsLink() {
-        return mConstantValues.getObjectsFrUrl();
+        return mConstantValues.getObjectsFr();
     }
 }

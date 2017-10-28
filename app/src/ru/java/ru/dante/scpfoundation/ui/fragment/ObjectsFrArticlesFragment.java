@@ -2,10 +2,8 @@ package ru.dante.scpfoundation.ui.fragment;
 
 import ru.dante.scpfoundation.MyApplicationImpl;
 import ru.dante.scpfoundation.di.AppComponentImpl;
-import ru.kuchanov.scpcore.BaseApplication;
-import ru.kuchanov.scpcore.mvp.contract.Objects1Articles;
+import ru.dante.scpfoundation.mvp.contract.ObjectsFrArticles;
 import ru.kuchanov.scpcore.ui.fragment.BaseListArticlesWithSearchFragment;
-import ru.kuchanov.scpcore.ui.fragment.Objects1ArticlesFragment;
 
 /**
  * Created by mohax on 27.10.2017.
@@ -13,13 +11,13 @@ import ru.kuchanov.scpcore.ui.fragment.Objects1ArticlesFragment;
  * for ScpCore
  */
 public class ObjectsFrArticlesFragment
-        extends BaseListArticlesWithSearchFragment<Objects1Articles.View, Objects1Articles.Presenter>
-        implements Objects1Articles.View {
+        extends BaseListArticlesWithSearchFragment<ObjectsFrArticles.View, ObjectsFrArticles.Presenter>
+        implements ObjectsFrArticles.View {
 
-    public static final String TAG = Objects1ArticlesFragment.class.getSimpleName();
+    public static final String TAG = ObjectsFrArticlesFragment.class.getSimpleName();
 
-    public static Objects1ArticlesFragment newInstance() {
-        return new Objects1ArticlesFragment();
+    public static ObjectsFrArticlesFragment newInstance() {
+        return new ObjectsFrArticlesFragment();
     }
 
     @Override
