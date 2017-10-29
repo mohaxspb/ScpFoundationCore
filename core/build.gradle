@@ -201,7 +201,7 @@ dependencies {
     //end of appodeal
     // AppMetrica
     //we add it here and delete jar from appodeal
-    compile 'com.yandex.android:mobmetricalib:2.76'
+    compile 'com.yandex.android:mobmetricalib:2.77'
     //recyclerView fast scroller
     compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'
     //circular progress
