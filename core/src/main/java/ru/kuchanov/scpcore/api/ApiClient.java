@@ -492,6 +492,9 @@ public class ApiClient implements ApiClientModel<Article> {
         if (indexOfhr < indexOfh2WithIdToc1) {
             indexOfhr = allHtml.indexOf("<p style=\"text-align: center;\">= = = =</p>");
         }
+        if (indexOfhr < indexOfh2WithIdToc1) {
+            indexOfhr = allHtml.length();
+        }
         allHtml = allHtml.substring(indexOfh2WithIdToc1, indexOfhr);
 
         doc = Jsoup.parse(allHtml);

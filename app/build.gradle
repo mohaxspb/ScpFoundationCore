@@ -112,6 +112,8 @@ android {
             fillArrays(variant, false)
             fillApiArrays(variant, false)
 
+            logger.debug('variant: ' + variant)
+
             variant.mergedFlavor.versionCode = buildVersionCodeFromVariant(variant)
             variant.mergedFlavor.versionName = getVersionValueAsString(variant)
         }

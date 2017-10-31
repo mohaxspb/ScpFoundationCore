@@ -23,6 +23,8 @@ ext {
     buildVersionCodeFromVariant = { variant ->
         def version = getVersionValueAsString(variant)
 
+        logger.debug('version: ' + version)
+
         def (major, minor, patch, build) = version.toLowerCase().replaceAll('-', '').tokenize('.')
 
         (major, minor, patch, build) = [major, minor, patch, build].collect { it.toInteger() }
@@ -32,6 +34,8 @@ ext {
 
     getVersionValueAsString = {variant ->
         def pathToFileWithData = "config/" + variant.productFlavors[0].name + "/version.properties"
+
+        logger.debug('pathToFileWithData: ' + pathToFileWithData)
 
         def marketSkusPropertiesFile = rootProject.file(pathToFileWithData);
         def properties = new Properties()
