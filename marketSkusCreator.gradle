@@ -1,7 +1,8 @@
-apply from: 'https://raw.githubusercontent.com/mohaxspb/ScpFoundationCore/master/utils.gradle'
+apply from: '../utils.gradle'
 
 ext {
     fillArrays = { variant, fileIsinRoot ->
+        logger.info("fillArrays: {}", variant.productFlavors[0].name)
         def pathToFileWithData
         if(fileIsinRoot){
             pathToFileWithData = "marketSkus.properties"
@@ -12,7 +13,7 @@ ext {
             def flavorMergedName = variant.productFlavors[0].name + variant.productFlavors[1].name;
 
             if (getCurrentFlavor().equalsIgnoreCase(flavorMergedName) && buildTypeName.equalsIgnoreCase(getCurrentBuildType())) {
-                logger.lifecycle('flavorName/buildTypeName: {}/{}', flavorMergedName, buildTypeName)
+//                logger.lifecycle('flavorName/buildTypeName: {}/{}', flavorMergedName, buildTypeName)
                 fillSkusData(variant, pathToFileWithData)
             }
         }

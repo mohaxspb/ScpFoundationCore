@@ -24,7 +24,7 @@ android {
         release {
             // Load keystore
             if (rootProject.file('keystore.properties').exists()) {
-                def keystorePropertiesFile = rootProject.file("keystore.properties");
+                def keystorePropertiesFile = rootProject.file("keystore.properties")
                 def keystoreProperties = new Properties()
                 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
@@ -44,6 +44,16 @@ android {
                 signingConfig signingConfigs.release
             }
         }
+
+//        applicationVariants.all { variant ->
+//            logger.debug('variant: ' + variant)
+//
+//            fillArrays(variant, false)
+//            fillApiArrays(variant, false)
+//
+//            variant.mergedFlavor.versionCode = buildVersionCodeFromVariant(variant)
+//            variant.mergedFlavor.versionName = getVersionValueAsString(variant)
+//        }
     }
 
     flavorDimensions "lang", "mode"
@@ -109,13 +119,24 @@ android {
         }
 
         applicationVariants.all { variant ->
+            println('variantApp: ' + variant.getName())
+
             fillArrays(variant, false)
             fillApiArrays(variant, false)
 
-            logger.debug('variant: ' + variant)
+            def versionCode = buildVersionCodeFromVariant(variant)
+            def versionName = getVersionValueAsString(variant)
+            println('versionCode: ' + versionCode)
+            println('versionName: ' + versionName)
 
-            variant.mergedFlavor.versionCode = buildVersionCodeFromVariant(variant)
-            variant.mergedFlavor.versionName = getVersionValueAsString(variant)
+            println('variant.mergedFlavor.versionCode: ' + variant.mergedFlavor.versionCode)
+            println('variant.mergedFlavor.versionName: ' + variant.mergedFlavor.versionName)
+
+            variant.mergedFlavor.versionCode = versionCode
+            variant.mergedFlavor.versionName = versionName
+
+            println('variant.mergedFlavor.versionCode: ' + variant.mergedFlavor.versionCode)
+            println('variant.mergedFlavor.versionName: ' + variant.mergedFlavor.versionName)
         }
     }
 
@@ -151,14 +172,14 @@ configurations {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     //dagger2
-    compile 'com.google.dagger:dagger:2.11'
+    implementation 'com.google.dagger:dagger:2.11'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
 
     //core module
 //    compile project(path: ':core', configuration: 'devRelease')
-    compile project(path: ':core')
+    implementation project(':core')
 
 //    //to use lib via gradle add this lines:
 //    //leakcanary (we need it here too according to https://github.com/square/leakcanary/issues/514#issuecomment-318203708)
