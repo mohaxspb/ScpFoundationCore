@@ -2,27 +2,25 @@ package ru.dante.scpfoundation.di.module;
 
 import android.support.annotation.NonNull;
 
-import com.google.gson.Gson;
-
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
-import ru.dante.scpfoundation.ConstantValuesImpl;
-import ru.dante.scpfoundation.api.ApiClientImpl;
+import ru.dante.scpfoundation.mvp.contract.ObjectsDeArticles;
+import ru.dante.scpfoundation.mvp.contract.ObjectsEsArticles;
 import ru.dante.scpfoundation.mvp.contract.ObjectsFrArticles;
+import ru.dante.scpfoundation.mvp.contract.ObjectsJpArticles;
+import ru.dante.scpfoundation.mvp.contract.ObjectsPlArticles;
+import ru.dante.scpfoundation.mvp.presenter.ObjectsDeArticlesPresenter;
+import ru.dante.scpfoundation.mvp.presenter.ObjectsEsArticlesPresenter;
 import ru.dante.scpfoundation.mvp.presenter.ObjectsFrArticlesPresenter;
+import ru.dante.scpfoundation.mvp.presenter.ObjectsJpArticlesPresenter;
+import ru.dante.scpfoundation.mvp.presenter.ObjectsPlArticlesPresenter;
 import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
-import ru.kuchanov.scpcore.di.module.NetModule;
 import ru.kuchanov.scpcore.di.module.PresentersModule;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.mvp.contract.Objects1Articles;
-import ru.kuchanov.scpcore.mvp.presenter.Objects1ArticlesPresenter;
 
 /**
  * Created by mohax on 13.07.2017.
@@ -42,5 +40,53 @@ public class PresentersModuleImpl extends PresentersModule {
             @NonNull ConstantValues constantValues
     ) {
         return new ObjectsFrArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
+    }
+
+    @Provides
+    @Singleton
+    @NonNull
+    ObjectsJpArticles.Presenter providesObjectsJpArticlesPresenter(
+            @NonNull MyPreferenceManager myPreferencesManager,
+            @NonNull DbProviderFactory dbProviderFactory,
+            @NonNull ApiClient apiClient,
+            @NonNull ConstantValues constantValues
+    ) {
+        return new ObjectsJpArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
+    }
+
+    @Provides
+    @Singleton
+    @NonNull
+    ObjectsEsArticles.Presenter providesObjectsEsArticlesPresenter(
+            @NonNull MyPreferenceManager myPreferencesManager,
+            @NonNull DbProviderFactory dbProviderFactory,
+            @NonNull ApiClient apiClient,
+            @NonNull ConstantValues constantValues
+    ) {
+        return new ObjectsEsArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
+    }
+
+    @Provides
+    @Singleton
+    @NonNull
+    ObjectsPlArticles.Presenter providesObjectsPlArticlesPresenter(
+            @NonNull MyPreferenceManager myPreferencesManager,
+            @NonNull DbProviderFactory dbProviderFactory,
+            @NonNull ApiClient apiClient,
+            @NonNull ConstantValues constantValues
+    ) {
+        return new ObjectsPlArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
+    }
+
+    @Provides
+    @Singleton
+    @NonNull
+    ObjectsDeArticles.Presenter providesObjectsDeArticlesPresenter(
+            @NonNull MyPreferenceManager myPreferencesManager,
+            @NonNull DbProviderFactory dbProviderFactory,
+            @NonNull ApiClient apiClient,
+            @NonNull ConstantValues constantValues
+    ) {
+        return new ObjectsDeArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
     }
 }
