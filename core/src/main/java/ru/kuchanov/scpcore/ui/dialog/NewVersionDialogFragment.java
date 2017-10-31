@@ -55,10 +55,7 @@ public class NewVersionDialogFragment extends DialogFragment {
         String newVersionFeatures = "";
         try {
             String packageName = getActivity().getPackageName();
-            Timber.d("packageName: %s", packageName);
             long versionCode = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionCode;
-            Timber.d("versionCode: %s", versionCode);
-            Timber.d("SystemUtils.getPackageInfo().versionCode: %s", versionCode);
             newVersionFeatures = StorageUtils.readFromAssets(getActivity(), "releaseNotes/newVersionFeatures" + versionCode + ".txt");
         } catch (Exception e) {
             Timber.e(e, "error while read newVersionFeatures from file");
