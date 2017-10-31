@@ -137,6 +137,14 @@ android {
 
             println('variant.mergedFlavor.versionCode: ' + variant.mergedFlavor.versionCode)
             println('variant.mergedFlavor.versionName: ' + variant.mergedFlavor.versionName)
+
+            //need this as in new gradle plugin there broken functionality of iterating variant during build
+            //so we need to set version so
+            //see https://developer.android.com/studio/build/gradle-plugin-3-0-0-migration.html#variant_output
+            variant.outputs.all { output ->
+                output.versionCodeOverride = versionCode
+                output.versionNameOverride = versionName
+            }
         }
     }
 
