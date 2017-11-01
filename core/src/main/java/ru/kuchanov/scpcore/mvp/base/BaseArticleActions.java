@@ -9,9 +9,6 @@ import ru.kuchanov.scpcore.db.model.Article;
  */
 interface BaseArticleActions {
 
-//    void toggleFavoriteState(String url);
-//
-//    void toggleReadState(String url);
     void toggleFavoriteState(Article article);
 
     void toggleReadState(Article article);

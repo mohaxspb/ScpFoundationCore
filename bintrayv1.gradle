@@ -2,6 +2,26 @@ apply plugin: 'com.jfrog.bintray'
 
 version = libraryVersion
 
+//if (project.hasProperty("android")) { // Android libraries
+//    task sourcesJar(type: Jar) {
+//        classifier = 'sources'
+//        from android.sourceSets.main.java.srcDirs
+//    }
+//
+//    task javadoc(type: Javadoc) {
+////        source = android.sourceSets.main.java.srcDirs
+//        source = sourceSets.main.allJava
+////        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//        classpath += project.files(android.getBootClasspath().join(File.pathSeparator)) + configurations.compile
+//        options.addStringOption('encoding', 'UTF-8')
+//    }
+//} else { // Java libraries
+//    task sourcesJar(type: Jar, dependsOn: classes) {
+//        classifier = 'sources'
+//        from sourceSets.main.allSource
+//    }
+//}
+
 if (project.hasProperty("android")) { // Android libraries
     task sourcesJar(type: Jar) {
         classifier = 'sources'
@@ -10,9 +30,8 @@ if (project.hasProperty("android")) { // Android libraries
 
     task javadoc(type: Javadoc) {
         source = android.sourceSets.main.java.srcDirs
-//        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-        classpath += project.files(android.getBootClasspath().join(File.pathSeparator)) + configurations.compile
-        options.addStringOption('encoding', 'UTF-8')
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+        failOnError false
     }
 } else { // Java libraries
     task sourcesJar(type: Jar, dependsOn: classes) {
