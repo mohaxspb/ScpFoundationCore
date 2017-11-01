@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -898,7 +897,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     public void onResume() {
         super.onResume();
-        if (!BuildConfig.FLAVOR.equals("dev") && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        if (!BuildConfig.FLAVOR.equals("dev")) {
             YandexMetrica.onResumeActivity(this);
         }
 
@@ -916,7 +915,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void onPause() {
-        if (!BuildConfig.FLAVOR.equals("dev") && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        if (!BuildConfig.FLAVOR.equals("dev")) {
             YandexMetrica.onPauseActivity(this);
         }
         super.onPause();

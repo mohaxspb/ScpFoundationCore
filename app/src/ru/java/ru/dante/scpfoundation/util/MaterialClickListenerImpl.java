@@ -2,6 +2,11 @@ package ru.dante.scpfoundation.util;
 
 import android.support.v4.app.FragmentTransaction;
 
+import ru.dante.scpfoundation.ui.fragment.ObjectsDeArticlesFragment;
+import ru.dante.scpfoundation.ui.fragment.ObjectsEsArticlesFragment;
+import ru.dante.scpfoundation.ui.fragment.ObjectsFrArticlesFragment;
+import ru.dante.scpfoundation.ui.fragment.ObjectsJpArticlesFragment;
+import ru.dante.scpfoundation.ui.fragment.ObjectsPlArticlesFragment;
 import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
@@ -41,7 +46,7 @@ public class MaterialClickListenerImpl implements MaterialsActivity.MaterialClic
                 fragmentTransaction.commit();
                 break;
             case 2:
-                fragmentTransaction.replace(R.id.content,  MaterialsInterviewsFragment.newInstance());
+                fragmentTransaction.replace(R.id.content, MaterialsInterviewsFragment.newInstance());
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
                 break;
@@ -62,6 +67,31 @@ public class MaterialClickListenerImpl implements MaterialsActivity.MaterialClic
                 break;
             case 6:
                 activity.startArticleActivity(mConstantValues.getLeaks());
+                break;
+            case 7:
+                fragmentTransaction.replace(R.id.content, ObjectsFrArticlesFragment.newInstance());
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+                break;
+            case 8:
+                fragmentTransaction.replace(R.id.content, ObjectsJpArticlesFragment.newInstance());
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+                break;
+            case 9:
+                fragmentTransaction.replace(R.id.content, ObjectsEsArticlesFragment.newInstance());
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+                break;
+            case 10:
+                fragmentTransaction.replace(R.id.content, ObjectsPlArticlesFragment.newInstance());
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+                break;
+            case 11:
+                fragmentTransaction.replace(R.id.content, ObjectsDeArticlesFragment.newInstance());
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
                 break;
             default:
                 throw new RuntimeException("unexpected position in materials list");

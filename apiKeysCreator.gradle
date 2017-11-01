@@ -1,11 +1,12 @@
 ext {
     fillApiArrays = { variant, fileIsInRoot ->
+        logger.info("fillApiArrays: {}", variant.productFlavors[0].name)
         def pathToFileWithData
         if(fileIsInRoot){
-            logger.lifecycle('fileIsInRoot: {}', fileIsInRoot)
+//            logger.lifecycle('fileIsInRoot: {}', fileIsInRoot)
             pathToFileWithData = "apiKeys.properties"
         } else {
-            logger.lifecycle('variant.productFlavors[0].name: {}', variant.productFlavors[0].name)
+//            logger.lifecycle('variant.productFlavors[0].name: {}', variant.productFlavors[0].name)
             pathToFileWithData = "config/" + variant.productFlavors[0].name + "/apiKeys.properties"
         }
 

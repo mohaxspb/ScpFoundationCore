@@ -34,7 +34,9 @@
         <activity
             android:name="ru.kuchanov.scpcore.ui.activity.MainActivity"
             tools:node="replace">
-            <intent-filter android:autoVerify="true">
+            <intent-filter
+                android:autoVerify="true"
+                tools:targetApi="m">
                 <action android:name="android.intent.action.VIEW"/>
 
                 <category android:name="android.intent.category.DEFAULT"/>

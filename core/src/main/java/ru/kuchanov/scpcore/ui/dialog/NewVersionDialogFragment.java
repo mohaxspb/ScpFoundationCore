@@ -3,6 +3,7 @@ package ru.kuchanov.scpcore.ui.dialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.Html;
@@ -53,8 +54,9 @@ public class NewVersionDialogFragment extends DialogFragment {
         MaterialDialog dialog;
         String newVersionFeatures = "";
         try {
-            Timber.d("SystemUtils.getPackageInfo().versionCode: %s", SystemUtils.getPackageInfo().versionCode);
-            newVersionFeatures = StorageUtils.readFromAssets(getActivity(), "releaseNotes/newVersionFeatures" + SystemUtils.getPackageInfo().versionCode + ".txt");
+            String packageName = getActivity().getPackageName();
+            long versionCode = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionCode;
+            newVersionFeatures = StorageUtils.readFromAssets(getActivity(), "releaseNotes/newVersionFeatures" + versionCode + ".txt");
         } catch (Exception e) {
             Timber.e(e, "error while read newVersionFeatures from file");
         }

@@ -1,6 +1,7 @@
 package ru.kuchanov.scpcore.api;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -215,7 +216,7 @@ public class ApiClient implements ApiClientModel<Article> {
                     .url(mConstantValues.getNewArticles() + "/p/" + page)
                     .build();
 
-            String responseBody = null;
+            String responseBody;
             try {
                 Response response = mOkHttpClient.newCall(request).execute();
                 ResponseBody body = response.body();
@@ -298,7 +299,7 @@ public class ApiClient implements ApiClientModel<Article> {
                     .url(mConstantValues.getMostRated() + "/p/" + page)
                     .build();
 
-            String responseBody = null;
+            String responseBody;
             try {
                 Response response = mOkHttpClient.newCall(request).execute();
                 ResponseBody body = response.body();
@@ -368,7 +369,7 @@ public class ApiClient implements ApiClientModel<Article> {
                     .url(mConstantValues.getBaseApiUrl() + String.format(Locale.ENGLISH, mConstantValues.getSearchSiteUrl(), searchQuery, page))
                     .build();
 
-            String responseBody = null;
+            String responseBody;
             try {
                 Response response = mOkHttpClient.newCall(request).execute();
                 ResponseBody body = response.body();
@@ -466,18 +467,34 @@ public class ApiClient implements ApiClientModel<Article> {
         List<Article> articles = new ArrayList<>();
         //parse
         Element listPagesBox = pageContent.getElementsByClass("list-pages-box").first();
-        listPagesBox.remove();
+        if (listPagesBox != null) {
+            listPagesBox.remove();
+        }
         Element collapsibleBlock = pageContent.getElementsByClass("collapsible-block").first();
-        collapsibleBlock.remove();
+        if (collapsibleBlock != null) {
+            collapsibleBlock.remove();
+        }
         Element table = pageContent.getElementsByTag("table").first();
-        table.remove();
+        if (table != null) {
+            table.remove();
+        }
         Element h2 = doc.getElementById("toc0");
-        h2.remove();
+        if (h2 != null) {
+            h2.remove();
+        }
 
         //now we will remove all html code before tag h2,with id toc1
         String allHtml = pageContent.html();
         int indexOfh2WithIdToc1 = allHtml.indexOf("<h2 id=\"toc1\">");
         int indexOfhr = allHtml.indexOf("<hr>");
+        //for other objects filials there is no HR tag at the end...
+
+        if (indexOfhr < indexOfh2WithIdToc1) {
+            indexOfhr = allHtml.indexOf("<p style=\"text-align: center;\">= = = =</p>");
+        }
+        if (indexOfhr < indexOfh2WithIdToc1) {
+            indexOfhr = allHtml.length();
+        }
         allHtml = allHtml.substring(indexOfh2WithIdToc1, indexOfhr);
 
         doc = Jsoup.parse(allHtml);
@@ -552,13 +569,13 @@ public class ApiClient implements ApiClientModel<Article> {
             Elements footnoterefs = pageContent.getElementsByClass("footnoteref");
             for (Element snoska : footnoterefs) {
                 Element aTag = snoska.getElementsByTag("a").first();
-                String digits = "";
+                StringBuilder digits = new StringBuilder();
                 for (char c : aTag.id().toCharArray()) {
                     if (TextUtils.isDigitsOnly(String.valueOf(c))) {
-                        digits += String.valueOf(c);
+                        digits.append(String.valueOf(c));
                     }
                 }
-                aTag.attr("href", "scp://" + digits);
+                aTag.attr("href", "scp://" + digits.toString());
             }
             Elements footnoterefsFooter = pageContent.getElementsByClass("footnote-footer");
             for (Element snoska : footnoterefsFooter) {
@@ -817,7 +834,7 @@ public class ApiClient implements ApiClientModel<Article> {
                     .url(objectsLink)
                     .build();
 
-            String responseBody = null;
+            String responseBody;
             try {
                 Response response = mOkHttpClient.newCall(request).execute();
                 ResponseBody body = response.body();
@@ -872,7 +889,7 @@ public class ApiClient implements ApiClientModel<Article> {
                     .url(mConstantValues.getArchive())
                     .build();
 
-            String responseBody = null;
+            String responseBody;
             try {
                 Response response = mOkHttpClient.newCall(request).execute();
                 ResponseBody body = response.body();
@@ -950,7 +967,7 @@ public class ApiClient implements ApiClientModel<Article> {
                     .url(mConstantValues.getJokes())
                     .build();
 
-            String responseBody = null;
+            String responseBody;
             try {
                 Response response = mOkHttpClient.newCall(request).execute();
                 ResponseBody body = response.body();
@@ -1066,6 +1083,12 @@ public class ApiClient implements ApiClientModel<Article> {
             case "http://scp-ru.wdfiles.com/local--files/scp-list/na.png":
             case "http://scp-ru.wdfiles.com/local--files/archive/na.png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list-j/na(1).png":
+                //other filials
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-fr/safe.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-jp/safe1.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-es/safe.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-pl/safe.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-de/safe1.png":
                 type = Article.ObjectType.NEUTRAL_OR_NOT_ADDED;
                 break;
             case "http://scp-ru.wdfiles.com/local--files/scp-list-4/safe.png":
@@ -1075,6 +1098,12 @@ public class ApiClient implements ApiClientModel<Article> {
             case "http://scp-ru.wdfiles.com/local--files/scp-list/safe.png":
             case "http://scp-ru.wdfiles.com/local--files/archive/safe.png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list-j/safe(1).png":
+                //other filials
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-fr/na.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-jp/na1.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-es/na.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-pl/na.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-de/na1.png":
                 type = Article.ObjectType.SAFE;
                 break;
             case "http://scp-ru.wdfiles.com/local--files/scp-list-4/euclid.png":
@@ -1084,6 +1113,12 @@ public class ApiClient implements ApiClientModel<Article> {
             case "http://scp-ru.wdfiles.com/local--files/scp-list/euclid.png":
             case "http://scp-ru.wdfiles.com/local--files/archive/euclid.png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list-j/euclid(1).png":
+                //other filials
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-fr/euclid.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-jp/euclid1.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-es/euclid.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-pl/euclid.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-de/euclid1.png":
                 type = Article.ObjectType.EUCLID;
                 break;
             case "http://scp-ru.wdfiles.com/local--files/scp-list-4/keter.png":
@@ -1093,6 +1128,12 @@ public class ApiClient implements ApiClientModel<Article> {
             case "http://scp-ru.wdfiles.com/local--files/scp-list/keter.png":
             case "http://scp-ru.wdfiles.com/local--files/archive/keter.png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list-j/keter(1).png":
+                //other filials
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-fr/keter.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-jp/keter1.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-es/keter.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-pl/keter.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-de/keter1.png":
                 type = Article.ObjectType.KETER;
                 break;
             case "http://scp-ru.wdfiles.com/local--files/scp-list-4/thaumiel.png":
@@ -1102,6 +1143,12 @@ public class ApiClient implements ApiClientModel<Article> {
             case "http://scp-ru.wdfiles.com/local--files/scp-list/thaumiel.png":
             case "http://scp-ru.wdfiles.com/local--files/archive/thaumiel.png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list-j/thaumiel(1).png":
+                //other filials
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-fr/thaumiel.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-jp/thaumiel1.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-es/thaumiel.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-pl/thaumiel.png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-de/thaumiel\1.png":
                 type = Article.ObjectType.THAUMIEL;
                 break;
             default:
@@ -1232,7 +1279,10 @@ public class ApiClient implements ApiClientModel<Article> {
     }
 
     //todo use it via retrofit and update server to return JSON with request result
-    public Observable<FirebaseUser> getAuthInFirebaseWithSocialProviderObservable(Constants.Firebase.SocialProvider provider, String id) {
+    public Observable<FirebaseUser> getAuthInFirebaseWithSocialProviderObservable(
+            Constants.Firebase.SocialProvider provider,
+            String id
+    ) {
         Observable<FirebaseUser> authToFirebaseObservable;
         switch (provider) {
             case VK:
@@ -1247,12 +1297,12 @@ public class ApiClient implements ApiClientModel<Article> {
                             .build();
                     mOkHttpClient.newCall(request).enqueue(new Callback() {
                         @Override
-                        public void onFailure(Call call, IOException e) {
+                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
                             subscriber.onError(e);
                         }
 
                         @Override
-                        public void onResponse(Call call, Response response) throws IOException {
+                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                             String responseBody;
                             ResponseBody body = response.body();
                             if (body != null) {

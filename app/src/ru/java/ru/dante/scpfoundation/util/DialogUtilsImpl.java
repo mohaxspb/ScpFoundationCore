@@ -41,6 +41,12 @@ public class DialogUtilsImpl extends DialogUtilsDefault {
         downloadEntries.add(new DownloadEntry(R.string.type_4, context.getString(R.string.type_4), mConstantValues.getObjects4(), Article.FIELD_IS_IN_OBJECTS_4));
         downloadEntries.add(new DownloadEntry(R.string.type_ru, context.getString(R.string.type_ru), mConstantValues.getObjectsRu(), Article.FIELD_IS_IN_OBJECTS_RU));
 
+        downloadEntries.add(new DownloadEntry(R.string.type_fr, context.getString(R.string.type_fr), mConstantValues.getObjectsFr(), Article.FIELD_IS_IN_OBJECTS_FR));
+        downloadEntries.add(new DownloadEntry(R.string.type_jp, context.getString(R.string.type_jp), mConstantValues.getObjectsJp(), Article.FIELD_IS_IN_OBJECTS_JP));
+        downloadEntries.add(new DownloadEntry(R.string.type_es, context.getString(R.string.type_es), mConstantValues.getObjectsEs(), Article.FIELD_IS_IN_OBJECTS_ES));
+        downloadEntries.add(new DownloadEntry(R.string.type_pl, context.getString(R.string.type_pl), mConstantValues.getObjectsPl(), Article.FIELD_IS_IN_OBJECTS_PL));
+        downloadEntries.add(new DownloadEntry(R.string.type_de, context.getString(R.string.type_de), mConstantValues.getObjectsDe(), Article.FIELD_IS_IN_OBJECTS_DE));
+
         downloadEntries.add(new DownloadEntry(R.string.type_experiments, context.getString(R.string.type_experiments), mConstantValues.getExperiments(), Article.FIELD_IS_IN_EXPERIMETS));
         downloadEntries.add(new DownloadEntry(R.string.type_incidents, context.getString(R.string.type_incidents), mConstantValues.getIncidents(), Article.FIELD_IS_IN_INCIDENTS));
         downloadEntries.add(new DownloadEntry(R.string.type_interviews, context.getString(R.string.type_interviews), mConstantValues.getInterviews(), Article.FIELD_IS_IN_INTERVIEWS));

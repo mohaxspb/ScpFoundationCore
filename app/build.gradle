@@ -1,6 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
-
 //here is script to generate version code from version name
 //which is set in gradle.properties as value of version var
 //which must be in format major, minor, patch, where patch goes from 0 to 99
@@ -11,7 +9,7 @@ apply from: '../apiKeysCreator.gradle'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion "26.0.2"
 
     defaultConfig {
         applicationId "ru.dante.scpfoundation"
@@ -26,7 +24,7 @@ android {
         release {
             // Load keystore
             if (rootProject.file('keystore.properties').exists()) {
-                def keystorePropertiesFile = rootProject.file("keystore.properties");
+                def keystorePropertiesFile = rootProject.file("keystore.properties")
                 def keystoreProperties = new Properties()
                 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
@@ -46,6 +44,16 @@ android {
                 signingConfig signingConfigs.release
             }
         }
+
+//        applicationVariants.all { variant ->
+//            logger.debug('variant: ' + variant)
+//
+//            fillArrays(variant, false)
+//            fillApiArrays(variant, false)
+//
+//            variant.mergedFlavor.versionCode = buildVersionCodeFromVariant(variant)
+//            variant.mergedFlavor.versionName = getVersionValueAsString(variant)
+//        }
     }
 
     flavorDimensions "lang", "mode"
@@ -65,50 +73,78 @@ android {
 
         ru {
             dimension "lang"
+            matchingFallbacks = ['debug', 'release']
         }
 
         en {
             dimension "lang"
 
             applicationIdSuffix ".eng"
+            matchingFallbacks = ['debug', 'release']
         }
 
         pl {
             dimension "lang"
 
             applicationIdSuffix ".pl"
+            matchingFallbacks = ['debug', 'release']
         }
 
         de {
             dimension "lang"
 
             applicationIdSuffix ".de"
+            matchingFallbacks = ['debug', 'release']
         }
 
         fr {
             dimension "lang"
 
             applicationIdSuffix ".fr"
+            matchingFallbacks = ['debug', 'release']
         }
 
         es {
             dimension "lang"
 
             applicationIdSuffix ".es"
+            matchingFallbacks = ['debug', 'release']
         }
 
         italy {
             dimension "lang"
 
             applicationIdSuffix ".it"
+            matchingFallbacks = ['debug', 'release']
         }
 
         applicationVariants.all { variant ->
+            println('variantApp: ' + variant.getName())
+
             fillArrays(variant, false)
             fillApiArrays(variant, false)
 
-            variant.mergedFlavor.versionCode = buildVersionCodeFromVariant(variant)
-            variant.mergedFlavor.versionName = getVersionValueAsString(variant)
+            def versionCode = buildVersionCodeFromVariant(variant)
+            def versionName = getVersionValueAsString(variant)
+            println('versionCode: ' + versionCode)
+            println('versionName: ' + versionName)
+
+            println('variant.mergedFlavor.versionCode: ' + variant.mergedFlavor.versionCode)
+            println('variant.mergedFlavor.versionName: ' + variant.mergedFlavor.versionName)
+
+            variant.mergedFlavor.versionCode = versionCode
+            variant.mergedFlavor.versionName = versionName
+
+            println('variant.mergedFlavor.versionCode: ' + variant.mergedFlavor.versionCode)
+            println('variant.mergedFlavor.versionName: ' + variant.mergedFlavor.versionName)
+
+            //need this as in new gradle plugin there broken functionality of iterating variant during build
+            //so we need to set version so
+            //see https://developer.android.com/studio/build/gradle-plugin-3-0-0-migration.html#variant_output
+            variant.outputs.all { output ->
+                output.versionCodeOverride = versionCode
+                output.versionNameOverride = versionName
+            }
         }
     }
 
@@ -144,13 +180,14 @@ configurations {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     //dagger2
-    compile 'com.google.dagger:dagger:2.11'
+    implementation 'com.google.dagger:dagger:2.11'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
 
     //core module
-    compile project(path: ':core', configuration: 'devRelease')
+//    compile project(path: ':core', configuration: 'devRelease')
+    implementation project(':core')
 
 //    //to use lib via gradle add this lines:
 //    //leakcanary (we need it here too according to https://github.com/square/leakcanary/issues/514#issuecomment-318203708)

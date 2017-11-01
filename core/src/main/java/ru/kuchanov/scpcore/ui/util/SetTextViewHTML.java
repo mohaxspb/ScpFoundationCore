@@ -51,25 +51,6 @@ public class SetTextViewHTML {
         textView.setText(strBuilder);
     }
 
-//    public void setText(TextView textView, String html, TextItemsClickListener textItemsClickListener, boolean logText) {
-//        URLImageParser imgGetter = new URLImageParser(textView);
-//        MyHtmlTagHandler myHtmlTagHandler = new MyHtmlTagHandler();
-//        Timber.d("html: %s", html);
-//        CharSequence sequence = Html.fromHtml(html, imgGetter, myHtmlTagHandler);
-//        Timber.d("html: %s", sequence);
-//        SpannableStringBuilder strBuilder = new SpannableStringBuilder(sequence);
-//        URLSpan[] urls = strBuilder.getSpans(0, sequence.length(), URLSpan.class);
-//        for (URLSpan span : urls) {
-//            makeLinkClickable(strBuilder, span, textItemsClickListener);
-//        }
-//        ImageSpan[] imgs = strBuilder.getSpans(0, sequence.length(), ImageSpan.class);
-//        for (ImageSpan span : imgs) {
-//            makeImgsClickable(strBuilder, span, textItemsClickListener);
-//        }
-//        replaceQuoteSpans(textView.getContext(), strBuilder);
-//        textView.setText(strBuilder);
-//    }
-
     private void makeLinkClickable(
             SpannableStringBuilder strBuilder,
             URLSpan span,
