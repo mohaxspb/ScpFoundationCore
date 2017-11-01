@@ -158,7 +158,8 @@
             </intent-filter>
             <meta-data
                 android:name="metrica:api:level"
-                android:value="61"
+                android:value="62"
+                tools:node="replace"
                 tools:replace="android:value"/>
         </service>
 

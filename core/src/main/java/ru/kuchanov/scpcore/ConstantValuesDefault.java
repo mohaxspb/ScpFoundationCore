@@ -133,4 +133,29 @@ public class ConstantValuesDefault implements ConstantValues {
     public String getAppLang() {
         return "ru";
     }
+
+    @Override
+    public String getObjectsFr() {
+        return "http://scpfoundation.ru/scp-list-fr";
+    }
+
+    @Override
+    public String getObjectsJp() {
+        return "http://scpfoundation.ru/scp-list-jp";
+    }
+
+    @Override
+    public String getObjectsEs() {
+        return "http://scpfoundation.ru/scp-list-es";
+    }
+
+    @Override
+    public String getObjectsPl() {
+        return "http://scpfoundation.ru/scp-list-pl";
+    }
+
+    @Override
+    public String getObjectsDe() {
+        return "http://scpfoundation.ru/scp-list-de";
+    }
 }

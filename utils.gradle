@@ -14,7 +14,7 @@ ext {
         } else if (tskReqStr.contains("Debug")) {
             buildType = "debug"
         }
-        logger.lifecycle("getCurrentBuildType: {}", buildType)
+//        logger.lifecycle("getCurrentBuildType: {}", buildType)
 
         return buildType;
     }
@@ -39,7 +39,7 @@ ext {
         } else {
             curFlavor = ""
         }
-        logger.lifecycle("curFlavor: {}", curFlavor)
+//        logger.lifecycle("curFlavor: {}", curFlavor)
 
         return curFlavor;
     }

@@ -18,6 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.ui.model.ArticleTextPartViewModel;
@@ -154,6 +155,14 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
                 if (link.endsWith(".jpg") || link.endsWith(".jpeg") || link.endsWith(".png") || link.endsWith(".gif")) {
                     if (mTextItemsClickListener != null) {
                         mTextItemsClickListener.onImageClicked(link, null);
+                    }
+                    return true;
+                }
+
+                if (link.startsWith(Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL)) {
+                    if (mTextItemsClickListener != null) {
+                        String url = link.split(Constants.Api.NOT_TRANSLATED_ARTICLE_URL_DELIMITER)[1];
+                        mTextItemsClickListener.onNotTranslatedArticleClick(url);
                     }
                     return true;
                 }
