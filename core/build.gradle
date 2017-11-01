@@ -219,7 +219,7 @@ dependencies {
     api 'joda-time:joda-time:2.9.9'
 
     //sub project modules
-    api('ru.kuchanov.scp:downloads:1.0.19@aar') { transitive = true }
+    api('ru.kuchanov.scp:downloads:1.0.24@aar') { transitive = true }
     api('ru.kuchanov.utils:rate:1.0.5@aar') { transitive = true }
 }
 
