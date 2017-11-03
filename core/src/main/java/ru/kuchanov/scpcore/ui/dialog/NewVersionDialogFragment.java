@@ -65,6 +65,8 @@ public class NewVersionDialogFragment extends DialogFragment {
                 .concat("<br/><br/>")
                 .concat(newVersionFeatures)
                 .concat("<br/><br/>")
+                .concat(getString(R.string.contacts_info))
+                .concat("<br/><br/>")
                 .concat(getString(R.string.license_en, mConstantValues.getBaseApiUrl(), mConstantValues.getBaseApiUrl()));
 
 
