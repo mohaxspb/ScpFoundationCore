@@ -214,6 +214,7 @@ dependencies {
     api "com.google.android.gms:play-services-location:$googleLibraryVersion"
     api 'com.squareup.picasso:picasso:2.5.2' //for Inmobi
     api 'com.adcolony:sdk:3.2.1'
+    compile 'com.google.android.exoplayer:exoplayer:r2.5.4'
     //end of appodeal
     // AppMetrica
     //we add it here and delete jar from appodeal
