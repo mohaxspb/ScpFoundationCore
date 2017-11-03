@@ -254,5 +254,6 @@ apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.
 //use own implementation as we fix here issue with java doc generating
 //apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
 apply from: '../bintrayv1.gradle'
+//TODO try to use this to transite dependencies - https://github.com/bintray/gradle-bintray-plugin
 
 //apply from: 'https://raw.githubusercontent.com/blundell/release-android-library/master/android-release-aar.gradle'

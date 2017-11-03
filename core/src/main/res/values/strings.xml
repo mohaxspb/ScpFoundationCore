@@ -298,5 +298,13 @@
     <string name="remove_ads_for_free_for_hours"><![CDATA[For some hours for<br/><b><font color=#4CAF50>FREE</font></b>]]></string>
 
     <!---->
-    <string name="contacts_info"><![CDATA[]]></string>
+    <string name="contacts_info"><![CDATA[We remind you that you can monitor the progress of the project at <b>GitHub</b> and in <b>Trello</b>. You can contact us through <b>email</b>. Here are the links:
+<br/><br/>
+GitHub: <a href="https://github.com/mohaxspb/ScpFoundationCore.git">Repository ScpFoundationCore</a>
+<br/><br/>
+Trello: <a href="https://trello.com/b/K96g075n/scp">A taskboard with a list of tasks to implement</a>
+<br/><br/>
+E-mail: <a href="mailto:neva.spb.rx@gmail.com">For any questions</a>
+<br/><br/>
+Thanks for using our app!]]></string>
 </resources>
