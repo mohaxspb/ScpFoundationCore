@@ -1,0 +1,5 @@
+<b>Corrections</b>
+<br/>
+ - Correction de plantages dans les articles où sont les spoilers dans les onglets.
+<br/>
+ - Des corrections mineures et des améliorations.

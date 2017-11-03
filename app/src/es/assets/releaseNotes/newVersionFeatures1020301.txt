@@ -1,0 +1,5 @@
+<b>Arreglos</b>
+<br/>
+ - Corrige los bloqueos en los artículos donde hay spoilers en pestañas.
+<br/>
+ - Cualquier corrección y mejoras menores.

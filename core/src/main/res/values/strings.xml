@@ -296,4 +296,7 @@
     <string name="disable_all_ads">Disable all ads</string>
     <string name="remove_ads_for_month">For month for %s</string>
     <string name="remove_ads_for_free_for_hours"><![CDATA[For some hours for<br/><b><font color=#4CAF50>FREE</font></b>]]></string>
+
+    <!---->
+    <string name="contacts_info"><![CDATA[]]></string>
 </resources>

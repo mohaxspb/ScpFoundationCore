@@ -272,4 +272,7 @@
     <string name="disable_all_ads">Disattiva tutti gli annunci</string>
     <string name="remove_ads_for_month">Un mese per %s</string>
     <string name="remove_ads_for_free_for_hours"><![CDATA[Per qualche ora<br/><b><font color=#4CAF50>LIBERO</font></b>]]></string>
+
+    <!---->
+    <string name="contacts_info"><![CDATA[]]></string>
 </resources>
