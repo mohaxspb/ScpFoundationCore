@@ -1,0 +1,5 @@
+<b>Correzioni</b>
+<br/>
+ - Fix si blocca negli articoli in cui sono spoiler in schede.
+<br/>
+ - Eventuali correzioni minori e miglioramenti.

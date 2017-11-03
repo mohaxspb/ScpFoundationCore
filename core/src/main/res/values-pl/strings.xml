@@ -270,4 +270,15 @@
     <string name="disable_all_ads">Wyłącz wszystkie reklamy</string>
     <string name="remove_ads_for_month">W miesiącu  %s</string>
     <string name="remove_ads_for_free_for_hours"><![CDATA[Przez kilka godzin<br/><b><font color=#4CAF50>Za darmo</font></b>]]></string>
+
+    <!---->
+    <string name="contacts_info"><![CDATA[Przypominamy, że można monitorować postęp projektu <b>GitHub</b> i w <b>Trello</b>. Potete contattarci tramite <b>e-mail</b>. Oto linki:
+<br/><br/>
+GitHub: <a href="https://github.com/mohaxspb/ScpFoundationCore.git">ScpFoundationCore repozytorium</a>
+<br/><br/>
+Trello: <a href="https://trello.com/b/K96g075n/scp">Tablica z listą zadań do wykonania</a>
+<br/><br/>
+E-mail: <a href="mailto:neva.spb.rx@gmail.com">We wszystkich kwestiach</a>
+<br/><br/>
+Dziękujemy za korzystanie z naszej aplikacji!]]></string>
 </resources>

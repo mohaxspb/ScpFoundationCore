@@ -69,9 +69,7 @@ public abstract class BaseApplication extends MultiDexApplication {
 
         FirebaseApp.initializeApp(this);
 
-        // Инициализация AppMetrica SDK
         YandexMetrica.activate(getApplicationContext(), getString(R.string.yandex_metrica_api_key));
-        // Отслеживание активности пользователей
         YandexMetrica.enableActivityAutoTracking(this);
 
         sAppInstance = this;

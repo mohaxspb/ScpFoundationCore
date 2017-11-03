@@ -270,4 +270,17 @@
     <string name="disable_all_ads">Отключить всю рекламу</string>
     <string name="remove_ads_for_month">На месяц за %s</string>
     <string name="remove_ads_for_free_for_hours"><![CDATA[На несколько часов<br/><b><font color=#4CAF50>БЕСПЛАТНО</font></b>]]></string>
+
+    <!---->
+    <string name="contacts_info"><![CDATA[Напоминаем что следить за прогрессом проекта можно на <b>GitHub</b> и в <b>Trello</b>. А связаться с нами можно через группу в <b>ВК</b> или по <b>e-mail</b>. Вот ссылки:
+<br/><br/>
+GitHub: <a href="https://github.com/mohaxspb/ScpFoundationRu.git">Репозиторий ScpFoundationRu</a>
+<br/><br/>
+Trello: <a href="https://trello.com/b/K96g075n/scp">Доска со списком задач для реализации</a>
+<br/><br/>
+ВКонтакте: <a href="https://vk.com/scp_foundation_app">Группа приложения</a>
+<br/><br/>
+E-mail: <a href="mailto:neva.spb.rx@gmail.com">По всем вопросам</a>
+<br/><br/>
+Спасибо что пользуетесь нашим приложением!]]></string>
 </resources>
