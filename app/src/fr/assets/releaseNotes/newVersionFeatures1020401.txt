@@ -1,0 +1,5 @@
+<b>Corrections</b>
+<br/>
+ - Correction de plantages dans la recherche par tags.
+<br/>
+ - Des corrections mineures et des améliorations.

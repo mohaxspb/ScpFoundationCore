@@ -1,0 +1,5 @@
+<b>Fixes</b>
+<br/>
+ - Fix crashes in search by tags.
+<br/>
+ - Some small fixes and improvements.
