@@ -1,0 +1,5 @@
+<b>Poprawki</b>
+<br/>
+ - Napraw awarie w wyszukiwaniu według znaczników.
+<br/>
+ - Wszelkie drobne poprawki i ulepszenia.

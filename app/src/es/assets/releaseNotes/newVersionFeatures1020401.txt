@@ -1,0 +1,5 @@
+<b>Arreglos</b>
+<br/>
+ - Corrige los fallos en la búsqueda por etiquetas.
+<br/>
+ - Cualquier corrección y mejoras menores.

@@ -91,7 +91,22 @@ public class TagView extends FrameLayout {
 
     public void setActionImage(@DrawableRes @Action int actionImage) {
 //        Timber.d("setActionImage: %s", actionImage == Action.NONE);
-        mActionImage.setImageResource(actionImage);
+        @DrawableRes
+        int drawableResId;
+        switch (actionImage) {
+            case Action.ADD:
+                drawableResId = R.drawable.ic_add;
+                break;
+            case Action.REMOVE:
+                drawableResId = R.drawable.ic_clear;
+                break;
+            case Action.NONE:
+                drawableResId = 0;
+                break;
+            default:
+                throw new IllegalArgumentException("unexpected action: " + actionImage);
+        }
+        mActionImage.setImageResource(drawableResId);
         mActionImage.setVisibility(actionImage == Action.NONE ? GONE : VISIBLE);
     }
 
@@ -125,12 +140,9 @@ public class TagView extends FrameLayout {
             Action.NONE
     })
     public @interface Action {
-        @DrawableRes
-        int ADD = R2.drawable.ic_add;
-        @DrawableRes
-        int REMOVE = R2.drawable.ic_clear;
-        @DrawableRes
         int NONE = 0;
+        int ADD = 1;
+        int REMOVE = 2;
     }
 
     public interface OnTagClickListener {

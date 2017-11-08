@@ -1,0 +1,5 @@
+<b>Behebt</b>
+<br/>
+ - Behebt Abstürze bei der Suche nach Tags.
+<br/>
+ - Irgendwelche kleineren Korrekturen und Verbesserungen.

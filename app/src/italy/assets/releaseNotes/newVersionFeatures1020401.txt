@@ -1,0 +1,5 @@
+<b>Correzioni</b>
+<br/>
+ - Fix si blocca in ricerca per tag.
+<br/>
+ - Eventuali correzioni minori e miglioramenti.
