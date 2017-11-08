@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
 import android.view.MenuItem;
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
@@ -19,7 +20,6 @@ import ru.kuchanov.rate.PreRate;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
-import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.api.model.remoteconfig.AppLangVersionsJson;
 import ru.kuchanov.scpcore.mvp.contract.MainMvp;
 import ru.kuchanov.scpcore.ui.base.BaseDrawerActivity;
@@ -84,7 +84,7 @@ public class MainActivity
         } else if (intent.getAction() != null && intent.getAction().equals(Intent.ACTION_VIEW)) {
             String link = intent.getDataString();
             for (String pressedLink : mConstantValues.getAllLinksArray()) {
-                if (link.equals(pressedLink)) {
+                if (pressedLink.equals(link)) {
                     setDrawerItemFromLink(link);
                     return;
                 }
@@ -168,7 +168,11 @@ public class MainActivity
         //else - show new version features
         if (mMyPreferenceManager.getCurAppVersion() == 0) {
             String deviceLang = Locale.getDefault().getLanguage();
-            AppLangVersionsJson appLangVersions = new GsonBuilder().create().fromJson(FirebaseRemoteConfig.getInstance().getString(APP_LANG_VERSIONS), AppLangVersionsJson.class);
+            String json = FirebaseRemoteConfig.getInstance().getString(APP_LANG_VERSIONS);
+            if (TextUtils.isEmpty(json)) {
+                return;
+            }
+            AppLangVersionsJson appLangVersions = new GsonBuilder().create().fromJson(json, AppLangVersionsJson.class);
             for (AppLangVersionsJson.AppLangVersion version : appLangVersions.langs) {
                 String appToOfferLang = new Locale(version.code).getLanguage();
                 if (deviceLang.equals(appToOfferLang)) {
@@ -348,13 +352,13 @@ public class MainActivity
             title = getString(R.string.drawer_item_13);
         } else if (id == R.id.siteSearch) {
             title = getString(R.string.drawer_item_15);
-        } else if (id == R2.id.objects_RU) {
+        } else if (id == R.id.objects_RU) {
             title = getString(R.string.drawer_item_9);
-        } else if (id == R2.id.news) {
+        } else if (id == R.id.news) {
             title = getString(R.string.drawer_item_2);
-        } else if (id == R2.id.objects_IV) {
+        } else if (id == R.id.objects_IV) {
             title = getString(R.string.drawer_item_objects4);
-        } else if (id == R2.id.stories) {
+        } else if (id == R.id.stories) {
             title = getString(R.string.drawer_item_11);
         } else {
             Timber.e("unexpected item ID");

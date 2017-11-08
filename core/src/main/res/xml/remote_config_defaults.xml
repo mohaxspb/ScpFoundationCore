@@ -225,22 +225,43 @@
             "code": "ru",
             "title": "Русский филиал",
             "package": "ru.dante.scpfoundation",
-            "icon":
-            "https://lh3.googleusercontent.com/nxy_ouZM-1PTsve_PXDI9-CoErm1Q2XRwKML7_967K-eR5TmVlI5RHDUJsc4WhjsLaI=w300-rw"
+            "icon": "https://lh3.googleusercontent.com/nxy_ouZM-1PTsve_PXDI9-CoErm1Q2XRwKML7_967K-eR5TmVlI5RHDUJsc4WhjsLaI=w300-rw"
             },
             {
             "code": "en",
             "title": "English version",
             "package": "ru.dante.scpfoundation.eng",
-            "icon":
-            "https://lh3.googleusercontent.com/dIv6quzx1zwwht9xZHje_vjCGx5zO6r0DxwukqiC1g-9_szMkfsEoFzXLpbxLS5hj4Q=w300-rw"
+            "icon": "https://lh3.googleusercontent.com/dIv6quzx1zwwht9xZHje_vjCGx5zO6r0DxwukqiC1g-9_szMkfsEoFzXLpbxLS5hj4Q=w300-rw"
             },
             {
             "code": "pl",
             "title": "Polska Filia",
             "package": "ru.dante.scpfoundation.pl",
-            "icon":
-            "https://lh3.googleusercontent.com/rgAVhH8ouKmkn-Ne6dlJayCATeMoXw_205QYeJVa01bWeu1_iXDOvU9HNKenaiDCbQ=w300-rw"
+            "icon": "https://lh3.googleusercontent.com/rgAVhH8ouKmkn-Ne6dlJayCATeMoXw_205QYeJVa01bWeu1_iXDOvU9HNKenaiDCbQ=w300-rw"
+            },
+            {
+            "code": "de",
+            "title": "SCP Foundation in Deutschland",
+            "package": "ru.dante.scpfoundation.de",
+            "icon": "https://lh3.googleusercontent.com/UkkT3sSskUzUdQsRs2OM8_vRRCxfuF-MfWbft-shvBf3PiqtimhvH6-n0HuxD4Zgzw=w300-rw"
+            },
+            {
+            "code": "fr",
+            "title": "SCP Foundation Branche Francophone",
+            "package": "ru.dante.scpfoundation.fr",
+            "icon": "https://lh3.googleusercontent.com/kyP6zGVcBNgE8bbBBbXzRRsuapeBwkDt2sRkdaMaeveWJyElUbAoNR3h3Q9D_lDNQhQ=w300-rw"
+            },
+            {
+            "code": "es",
+            "title": "Scp Foundation Spanish",
+            "package": "ru.dante.scpfoundation.es",
+            "icon": "https://lh3.googleusercontent.com/l4In7GH-zQq5ExVxFO2NeqbpXUapeRkMAtWLXzwzNdizV2y7n8DGMb_PuKxyRYPygBU=w300-rw"
+            },
+            {
+            "code": "it",
+            "title": "Scp Foundation Italian",
+            "package": "ru.dante.scpfoundation.it",
+            "icon": "https://lh3.googleusercontent.com/KlX_J6DWFxg1ByjraVRRE3KuGBKlzBvMAjTe89oG8AMKO5wUjMFP-FfwECTV-xAnsw=w300-rw"
             }
             ]
             }
