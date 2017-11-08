@@ -271,4 +271,17 @@
     <string name="disable_all_ads">Désactiver toutes les annonces</string>
     <string name="remove_ads_for_month">Un mois pour %s</string>
     <string name="remove_ads_for_free_for_hours"><![CDATA[Pendant quelques heures<br/><b><font color=#4CAF50>GRATUIT</font></b>]]></string>
+
+    <!---->
+    <string name="contacts_info"><![CDATA[Nous vous rappelons que vous pouvez suivre la progression du projet à <b>GitHub</b> et à <b>Trello</b>. Vous pouvez nous contacter par <b>email</b>. Voici les liens:
+<br/><br/>
+GitHub: <a href="https://github.com/mohaxspb/ScpFoundationCore.git">Référentiel ScpFoundationCore</a>
+<br/><br/>
+Trello: <a href="https://trello.com/b/K96g075n/scp">Une planche avec une liste de tâches à mettre en œuvre</a>
+<br/><br/>
+E-mail: <a href="mailto:neva.spb.rx@gmail.com">Pour toute question</a>
+<br/><br/>
+Merci d'utiliser notre application!
+<br/><br/>
+Traduit Lucie.]]></string>
 </resources>

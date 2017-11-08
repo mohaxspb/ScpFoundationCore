@@ -44,16 +44,6 @@ android {
                 signingConfig signingConfigs.release
             }
         }
-
-//        applicationVariants.all { variant ->
-//            logger.debug('variant: ' + variant)
-//
-//            fillArrays(variant, false)
-//            fillApiArrays(variant, false)
-//
-//            variant.mergedFlavor.versionCode = buildVersionCodeFromVariant(variant)
-//            variant.mergedFlavor.versionName = getVersionValueAsString(variant)
-//        }
     }
 
     flavorDimensions "lang", "mode"

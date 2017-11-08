@@ -137,6 +137,31 @@ public class ConstantValuesImpl implements ConstantValues {
         return "en";
     }
 
+    @Override
+    public String getObjectsFr() {
+        throw new IllegalStateException("not implemented");
+    }
+
+    @Override
+    public String getObjectsJp() {
+        throw new IllegalStateException("not implemented");
+    }
+
+    @Override
+    public String getObjectsEs() {
+        throw new IllegalStateException("not implemented");
+    }
+
+    @Override
+    public String getObjectsPl() {
+        throw new IllegalStateException("not implemented");
+    }
+
+    @Override
+    public String getObjectsDe() {
+        throw new IllegalStateException("not implemented");
+    }
+
     interface Api {
         String MOST_RECENT_URL = "/most-recently-created/p/";
         /**

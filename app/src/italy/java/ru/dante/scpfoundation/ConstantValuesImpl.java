@@ -134,6 +134,31 @@ public class ConstantValuesImpl implements ConstantValues {
         return "it";
     }
 
+    @Override
+    public String getObjectsFr() {
+        throw new IllegalStateException("not implemented");
+    }
+
+    @Override
+    public String getObjectsJp() {
+        throw new IllegalStateException("not implemented");
+    }
+
+    @Override
+    public String getObjectsEs() {
+        throw new IllegalStateException("not implemented");
+    }
+
+    @Override
+    public String getObjectsPl() {
+        throw new IllegalStateException("not implemented");
+    }
+
+    @Override
+    public String getObjectsDe() {
+        throw new IllegalStateException("not implemented");
+    }
+
     interface Api {
         /**
          * first arg is searchQuery with SPACEs replaced by "%20"
