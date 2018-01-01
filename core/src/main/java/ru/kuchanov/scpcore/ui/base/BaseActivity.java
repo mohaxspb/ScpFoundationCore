@@ -794,6 +794,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     public void showOfferLoginPopup(MaterialDialog.SingleButtonCallback cancelCallback) {
         Timber.d("showOfferLoginPopup");
+        if(!hasWindowFocus()){
+            return;
+        }
         new MaterialDialog.Builder(this)
                 .title(R.string.dialog_offer_login_to_gain_score_title)
                 .content(R.string.dialog_offer_login_to_gain_score_content)
