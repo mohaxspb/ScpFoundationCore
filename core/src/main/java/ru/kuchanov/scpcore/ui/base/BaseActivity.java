@@ -738,13 +738,17 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showError(Throwable throwable) {
-        Snackbar.make(mRoot, throwable.getMessage(), Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(mRoot, throwable.getMessage(), Snackbar.LENGTH_SHORT)
+                .setActionTextColor(ContextCompat.getColor(this, R.color.material_blue_gray_50))
+                .show();
     }
 
     @Override
     public void showMessage(String message) {
         Timber.d("showMessage: %s", message);
-        Snackbar.make(mRoot, message, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(mRoot, message, Snackbar.LENGTH_SHORT)
+                .setActionTextColor(ContextCompat.getColor(this, R.color.material_blue_gray_50))
+                .show();
     }
 
     @Override
@@ -754,7 +758,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showMessageLong(String message) {
-        Snackbar.make(mRoot, message, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(mRoot, message, Snackbar.LENGTH_LONG)
+                .setActionTextColor(ContextCompat.getColor(this, R.color.material_blue_gray_50))
+                .show();
     }
 
     @Override
@@ -794,7 +800,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     public void showOfferLoginPopup(MaterialDialog.SingleButtonCallback cancelCallback) {
         Timber.d("showOfferLoginPopup");
-        if(!hasWindowFocus()){
+        if (!hasWindowFocus()) {
             return;
         }
         new MaterialDialog.Builder(this)
@@ -912,7 +918,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
 
-        //TODO activate it when add Appodeal banner
         Appodeal.onResume(this, Appodeal.BANNER);
     }
 
