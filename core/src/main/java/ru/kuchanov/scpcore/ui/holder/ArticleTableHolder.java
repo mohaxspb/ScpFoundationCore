@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -73,6 +74,7 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
                 "<html>\n" +
                 "    <head>\n" +
                 "        <meta charset=\"utf-8\">\n" +
+                "        <meta name=\"viewport\" content=\"width=device-width, user-scalable=yes\" />" +
                 "        <style>" +
                 "table.wiki-content-table{border-collapse:collapse;border-spacing:0;margin:.5em auto}" +
                 "table.wiki-content-table td{border:1px solid " + textColor + ";color: " + textColor + ";padding:.3em .7em;background-color:" + backgroundColor + "}" +
@@ -84,7 +86,14 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
         fullHtml += "</body>\n" +
                 "</html>";
 
-        webView.getSettings().setJavaScriptEnabled(true);
+        WebSettings settings = webView.getSettings();
+        settings.setMinimumFontSize(18);
+        settings.setLoadWithOverviewMode(true);
+        settings.setUseWideViewPort(true);
+        settings.setBuiltInZoomControls(true);
+        settings.setDisplayZoomControls(false);
+
+        settings.setJavaScriptEnabled(true);
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
