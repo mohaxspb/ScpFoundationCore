@@ -5,15 +5,12 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
-import org.w3c.dom.Attr;
 
 import javax.inject.Inject;
 
@@ -28,7 +25,6 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.model.ArticleTextPartViewModel;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.AttributeGetter;
-import timber.log.Timber;
 
 /**
  * Created by mohax on 11.06.2017.
@@ -70,19 +66,8 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
             itemView.setBackgroundColor(Color.TRANSPARENT);
         }
 
-//        String borderColor = "#888";
-//        String backgroundColor = "#eee";
-//        String borderColor = "#455a64";
-//        String backgroundColor = "#eceff1";
-
-//        String borderColor = "#ff0000";
-//        String backgroundColor = "#00ff00";
-//        String textColor = "#0000ff";
-
-//                String borderColor = "#ff0000";
         String backgroundColor = String.format("#%06X", (0xFFFFFF & AttributeGetter.getColor(context, android.R.attr.windowBackground)));
-//        String textColor = String.format("#%06X", (0xFFFFFF & AttributeGetter.getColor(context, R.attr.colorPrimary)));
-        String textColor = String.format("#%06X", (0xFFFFFF & AttributeGetter.getColor(context, android.R.attr.textColorPrimary)));
+        String textColor = String.format("#%06X", (0xFFFFFF & AttributeGetter.getColor(context, android.R.attr.textColor)));
 
         String fullHtml = "<!DOCTYPE html>\n" +
                 "<html>\n" +
@@ -98,8 +83,6 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
         fullHtml += (String) viewModel.data;
         fullHtml += "</body>\n" +
                 "</html>";
-
-        Timber.d("fullHtml: %s", fullHtml);
 
         webView.getSettings().setJavaScriptEnabled(true);
 

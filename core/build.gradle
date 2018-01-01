@@ -70,10 +70,12 @@ android {
 
     flavorDimensions "mode"
 
+    def buildDateTime = project.hasProperty('devBuild') ? 100 : buildVersionCodeFor3Numbers()
+
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 26
-        versionCode buildVersionCodeFor3Numbers()
+        versionCode buildDateTime
         versionName version
         // Enabling multidex support.
         multiDexEnabled true
@@ -114,9 +116,17 @@ android {
         }
 
         dev {
+            dimension "mode"
+
             manifestPlaceholders = [myDebuggable: true]
 
-            dimension "mode"
+            //PNG optimizations are enabled by default, but are not needed for development builds.
+            //Disable them to speed up your builds.
+            aaptOptions.cruncherEnabled = false
+//            //for faster build
+//            minSdkVersion 21
+            //only package russian translations, and xxhdpi resources
+            resConfigs("ru", "xxhdpi")
         }
 
         libraryVariants.all { variant ->
