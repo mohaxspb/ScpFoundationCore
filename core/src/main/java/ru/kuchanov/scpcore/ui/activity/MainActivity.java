@@ -172,27 +172,32 @@ public class MainActivity
             if (TextUtils.isEmpty(json)) {
                 return;
             }
-            AppLangVersionsJson appLangVersions = new GsonBuilder().create().fromJson(json, AppLangVersionsJson.class);
-            for (AppLangVersionsJson.AppLangVersion version : appLangVersions.langs) {
-                String appToOfferLang = new Locale(version.code).getLanguage();
-                if (deviceLang.equals(appToOfferLang)) {
-                    if (mConstantValues.getAppLang().equals(appToOfferLang)) {
-                        //proper lang version already installed, do nothing
-                        Timber.d("It is the iterated version, do nothing");
-                    } else {
-                        //check if app is not installed yet
-                        if (IntentUtils.isPackageInstalled(this, version.appPackage)) {
-                            Timber.d("correct lang version already installed");
+            try {
+                AppLangVersionsJson appLangVersions = new GsonBuilder().create().fromJson(json, AppLangVersionsJson.class);
+                for (AppLangVersionsJson.AppLangVersion version : appLangVersions.langs) {
+                    String appToOfferLang = new Locale(version.code).getLanguage();
+                    if (deviceLang.equals(appToOfferLang)) {
+                        if (mConstantValues.getAppLang().equals(appToOfferLang)) {
+                            //proper lang version already installed, do nothing
+                            Timber.d("It is the iterated version, do nothing");
                         } else {
-                            //offer app install
-                            mDialogUtils.showAppLangVariantsDialog(this, version);
-                            break;
+                            //check if app is not installed yet
+                            if (IntentUtils.isPackageInstalled(this, version.appPackage)) {
+                                Timber.d("correct lang version already installed");
+                            } else {
+                                //offer app install
+                                mDialogUtils.showAppLangVariantsDialog(this, version);
+                                break;
+                            }
                         }
                     }
                 }
+                //set app version to show release notes on next update
+                mMyPreferenceManager.setCurAppVersion(SystemUtils.getPackageInfo().versionCode);
+            } catch (Exception e) {
+                Timber.e(e);
             }
-            //set app version to show release notes on next update
-            mMyPreferenceManager.setCurAppVersion(SystemUtils.getPackageInfo().versionCode);
+
         } else if (mMyPreferenceManager.getCurAppVersion() != SystemUtils.getPackageInfo().versionCode) {
             DialogFragment dialogFragment = NewVersionDialogFragment.newInstance(getString(R.string.new_version_features));
             dialogFragment.show(getFragmentManager(), NewVersionDialogFragment.TAG);
