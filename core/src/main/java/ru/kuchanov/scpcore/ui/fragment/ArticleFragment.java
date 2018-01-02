@@ -106,18 +106,6 @@ public class ArticleFragment
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        Timber.d("onStart");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Timber.d("onStop");
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_TABS, (ArrayList<TabsViewModel>) mTabsViewModels);

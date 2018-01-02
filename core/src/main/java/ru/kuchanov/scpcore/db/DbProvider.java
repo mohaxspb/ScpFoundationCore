@@ -88,6 +88,15 @@ public class DbProvider implements DbProviderModel<Article> {
                 .filter(RealmResults::isValid);
     }
 
+    public Observable<RealmResults<Article>> getReadArticlesSortedAsync(String field, Sort order) {
+        return mRealm.where(Article.class)
+                .notEqualTo(Article.FIELD_IS_IN_READEN, false)
+                .findAllSortedAsync(field, order)
+                .asObservable()
+                .filter(RealmResults::isLoaded)
+                .filter(RealmResults::isValid);
+    }
+
     public Observable<Pair<Integer, Integer>> saveRecentArticlesList(List<Article> apiData, int offset) {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {

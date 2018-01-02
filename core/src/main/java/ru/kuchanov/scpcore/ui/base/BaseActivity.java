@@ -15,7 +15,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -104,6 +103,7 @@ import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.SocialLoginHolder;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
+import ru.kuchanov.scpcore.util.SystemUtils;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -520,7 +520,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         Snackbar snackbar;
         switch (reason) {
             case REMOVE_ADS:
-                snackbar = Snackbar.make(mRoot, R.string.remove_ads, Snackbar.LENGTH_LONG);
+                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this,R.string.remove_ads), Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.yes_bliad, v -> {
                     snackbar.dismiss();
                     BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
@@ -532,7 +532,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 });
                 break;
             case ENABLE_FONTS:
-                snackbar = Snackbar.make(mRoot, R.string.only_premium, Snackbar.LENGTH_LONG);
+                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this,R.string.only_premium), Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.activate, action -> {
                     BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
                     subsDF.show(getSupportFragmentManager(), subsDF.getTag());
@@ -543,7 +543,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 });
                 break;
             case ENABLE_AUTO_SYNC:
-                snackbar = Snackbar.make(mRoot, R.string.auto_sync_disabled, Snackbar.LENGTH_LONG);
+                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this,R.string.auto_sync_disabled), Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.turn_on, v -> {
                     snackbar.dismiss();
                     BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
@@ -555,7 +555,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 });
                 break;
             case SYNC_NEED_AUTH:
-                snackbar = Snackbar.make(mRoot, R.string.sync_need_auth, Snackbar.LENGTH_LONG);
+                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, R.string.sync_need_auth), Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.authorize, v -> {
                     snackbar.dismiss();
                     showLoginProvidersPopup();
@@ -564,7 +564,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             default:
                 throw new IllegalArgumentException("unexpected callToActionReason");
         }
-        snackbar.setActionTextColor(ContextCompat.getColor(BaseActivity.this, R.color.material_green_500));
         snackbar.show();
     }
 
@@ -738,17 +737,13 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showError(Throwable throwable) {
-        Snackbar.make(mRoot, throwable.getMessage(), Snackbar.LENGTH_SHORT)
-                .setActionTextColor(ContextCompat.getColor(this, R.color.material_blue_gray_50))
-                .show();
+        Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, throwable.getMessage()), Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
     public void showMessage(String message) {
         Timber.d("showMessage: %s", message);
-        Snackbar.make(mRoot, message, Snackbar.LENGTH_SHORT)
-                .setActionTextColor(ContextCompat.getColor(this, R.color.material_blue_gray_50))
-                .show();
+        Snackbar.make(mRoot,  SystemUtils.coloredTextForSnackBar(this, message), Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
@@ -758,9 +753,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showMessageLong(String message) {
-        Snackbar.make(mRoot, message, Snackbar.LENGTH_LONG)
-                .setActionTextColor(ContextCompat.getColor(this, R.color.material_blue_gray_50))
-                .show();
+        Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this,message), Snackbar.LENGTH_LONG).show();
     }
 
     @Override

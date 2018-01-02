@@ -7,7 +7,7 @@ import ru.kuchanov.scpcore.mvp.base.BaseArticlesListMvp;
  * <p>
  * for scp_ru
  */
-public interface OfflineArticles {
+public interface OfflineArticlesMvp {
 
     interface View extends BaseArticlesListMvp.View {
 

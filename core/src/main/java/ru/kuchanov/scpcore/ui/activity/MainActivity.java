@@ -35,6 +35,7 @@ import ru.kuchanov.scpcore.ui.fragment.Objects4ArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.ObjectsRuArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.OfflineArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.RatedArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.ReadArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.RecentArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.SiteSearchArticlesFragment;
 import ru.kuchanov.scpcore.util.IntentUtils;
@@ -121,6 +122,8 @@ public class MainActivity
             mCurrentSelectedDrawerItemId = (R.id.favorite);
         } else if (link.equals(Constants.Urls.OFFLINE)) {
             mCurrentSelectedDrawerItemId = (R.id.offline);
+        } else if (link.equals(Constants.Urls.READ)) {
+            mCurrentSelectedDrawerItemId = (R.id.read);
         } else if (link.equals(Constants.Urls.SEARCH)) {
             mCurrentSelectedDrawerItemId = (R.id.siteSearch);
         } else {
@@ -269,6 +272,10 @@ public class MainActivity
         } else if (id == R.id.offline) {
             mCurrentSelectedDrawerItemId = id;
             showFragment(OfflineArticlesFragment.newInstance(), OfflineArticlesFragment.TAG);
+            return true;
+        } else if (id == R.id.read) {
+            mCurrentSelectedDrawerItemId = id;
+            showFragment(ReadArticlesFragment.newInstance(), ReadArticlesFragment.TAG);
             return true;
         } else if (id == R.id.gallery) {
             startGalleryActivity();

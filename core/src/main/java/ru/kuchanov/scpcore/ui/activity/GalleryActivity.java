@@ -202,6 +202,8 @@ public class GalleryActivity
             link = Constants.Urls.FAVORITES;
         } else if (id == R.id.offline) {
             link = Constants.Urls.OFFLINE;
+        } else if (id == R.id.read) {
+            link = Constants.Urls.READ;
         } else if (id == R.id.gallery) {
             //nothing to do
             return true;
