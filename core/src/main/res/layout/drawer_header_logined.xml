@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
+        android:background="?selectableItemBackground"
         android:orientation="horizontal"
         android:paddingBottom="@dimen/defaultMarginSmall"
         tools:ignore="UseCompoundDrawables"
