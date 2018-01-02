@@ -95,6 +95,12 @@
             android:title="@string/drawer_item_13"
             />
         <item
+            android:id="@+id/read"
+            android:checked="true"
+            android:icon="@drawable/ic_drafts_black_24dp"
+            android:title="@string/drawer_item_read"
+            />
+        <item
             android:id="@+id/gallery"
             android:checkable="false"
             android:checked="false"

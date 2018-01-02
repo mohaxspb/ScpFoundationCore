@@ -5,21 +5,21 @@ import android.view.MenuInflater;
 
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
-import ru.kuchanov.scpcore.mvp.contract.OfflineArticlesMvp;
+import ru.kuchanov.scpcore.mvp.contract.ReadArticlesMvp;
 
 /**
  * Created by mohax on 03.01.2017.
  * <p>
  * for scp_ru
  */
-public class OfflineArticlesFragment
-        extends BaseListArticlesWithSearchFragment<OfflineArticlesMvp.View, OfflineArticlesMvp.Presenter>
-        implements OfflineArticlesMvp.View {
+public class ReadArticlesFragment
+        extends BaseListArticlesWithSearchFragment<ReadArticlesMvp.View, ReadArticlesMvp.Presenter>
+        implements ReadArticlesMvp.View {
 
-    public static final String TAG = OfflineArticlesFragment.class.getSimpleName();
+    public static final String TAG = ReadArticlesFragment.class.getSimpleName();
 
-    public static OfflineArticlesFragment newInstance() {
-        return new OfflineArticlesFragment();
+    public static ReadArticlesFragment newInstance() {
+        return new ReadArticlesFragment();
     }
 
     @Override

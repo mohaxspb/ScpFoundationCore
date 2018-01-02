@@ -10,14 +10,14 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.mvp.contract.OfflineArticlesMvp;
+import ru.kuchanov.scpcore.mvp.contract.ReadArticlesMvp;
 import rx.Observable;
 
-public class OfflineArticlesPresenter
-        extends BaseListArticlesPresenter<OfflineArticlesMvp.View>
-        implements OfflineArticlesMvp.Presenter {
+public class ReadArticlesPresenter
+        extends BaseListArticlesPresenter<ReadArticlesMvp.View>
+        implements ReadArticlesMvp.Presenter {
 
-    public OfflineArticlesPresenter(
+    public ReadArticlesPresenter(
             MyPreferenceManager myPreferencesManager,
             DbProviderFactory dbProviderFactory,
             ApiClient apiClient
@@ -27,7 +27,7 @@ public class OfflineArticlesPresenter
 
     @Override
     protected Observable<RealmResults<Article>> getDbObservable() {
-        return mDbProviderFactory.getDbProvider().getOfflineArticlesSortedAsync(Article.FIELD_LOCAL_UPDATE_TIME_STAMP, Sort.DESCENDING);
+        return mDbProviderFactory.getDbProvider().getReadArticlesSortedAsync(Article.FIELD_LOCAL_UPDATE_TIME_STAMP, Sort.DESCENDING);
     }
 
     @Override

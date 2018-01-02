@@ -79,6 +79,7 @@ public interface Constants {
         String SEARCH = "SEARCH";
         String FAVORITES = "FAVORITES";
         String OFFLINE = "OFFLINE";
+        String READ = "READ";
 
         String[] ALL_LINKS_ARRAY = {MAIN, RATE, NEW_ARTICLES, EXPERIMENTS, INCEDENTS, INTERVIEWS, OTHERS, STORIES, LEAKS, OBJECTS_1, OBJECTS_2, OBJECTS_3, OBJECTS_RU, NEWS};
         String BASE_API_URL = "http://scpfoundation.ru";

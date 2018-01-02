@@ -105,6 +105,8 @@ public class MaterialsActivity
             link = Constants.Urls.FAVORITES;
         } else if (id == R.id.offline) {
             link = Constants.Urls.OFFLINE;
+        } else if (id == R.id.read) {
+            link = Constants.Urls.READ;
         } else if (id == R.id.gallery) {
             startGalleryActivity();
         } else if (id == R.id.siteSearch) {

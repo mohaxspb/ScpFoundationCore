@@ -2,9 +2,11 @@ package ru.kuchanov.scpcore.mvp.presenter;
 
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
+import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.mvp.base.BaseDrawerPresenter;
 import ru.kuchanov.scpcore.mvp.contract.ArticleScreenMvp;
+import ru.kuchanov.scpcore.ui.fragment.ArticleFragment;
 import timber.log.Timber;
 
 public class ArticleScreenPresenter
@@ -34,6 +36,7 @@ public class ArticleScreenPresenter
                         article -> {
                             Timber.d("fav state now is: %s", article);
                             updateArticleInFirebase(article, true);
+                            ((ArticleFragment.ToolbarStateSetter) getView()).setFavoriteState(article.isInFavorite != Article.ORDER_NONE);
                         },
                         Timber::e
                 );

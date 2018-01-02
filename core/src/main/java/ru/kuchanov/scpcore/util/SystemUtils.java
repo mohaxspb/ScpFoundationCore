@@ -5,6 +5,10 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.support.annotation.StringRes;
+import android.support.v4.content.ContextCompat;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Base64;
 
 import com.vk.sdk.util.VKUtil;
@@ -13,6 +17,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.R;
 import timber.log.Timber;
 
 /**
@@ -65,12 +70,21 @@ public class SystemUtils {
     }
 
     public static PackageInfo getPackageInfo() {
-        PackageManager manager = BaseApplication.getAppInstance().getPackageManager();
         try {
+            PackageManager manager = BaseApplication.getAppInstance().getPackageManager();
             return manager.getPackageInfo(BaseApplication.getAppInstance().getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch (Exception e) {
             Timber.e(e);
             return null;
         }
+    }
+
+    public static Spanned coloredTextForSnackBar(Context context, String text) {
+        String textColor = String.format("#%06X", (0xFFFFFF & ContextCompat.getColor(context, R.color.material_blue_gray_50)));
+        return Html.fromHtml("<font color=\"" + textColor + "\">" + text + "</font>");
+    }
+
+    public static Spanned coloredTextForSnackBar(Context context, @StringRes int text) {
+        return coloredTextForSnackBar(context, context.getString(text));
     }
 }

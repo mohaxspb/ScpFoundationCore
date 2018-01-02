@@ -27,8 +27,9 @@ import ru.kuchanov.scpcore.mvp.contract.Objects2Articles;
 import ru.kuchanov.scpcore.mvp.contract.Objects3Articles;
 import ru.kuchanov.scpcore.mvp.contract.Objects4Articles;
 import ru.kuchanov.scpcore.mvp.contract.ObjectsRuArticles;
-import ru.kuchanov.scpcore.mvp.contract.OfflineArticles;
+import ru.kuchanov.scpcore.mvp.contract.OfflineArticlesMvp;
 import ru.kuchanov.scpcore.mvp.contract.RatedArticlesMvp;
+import ru.kuchanov.scpcore.mvp.contract.ReadArticlesMvp;
 import ru.kuchanov.scpcore.mvp.contract.RecentArticlesMvp;
 import ru.kuchanov.scpcore.mvp.contract.SiteSearchArticlesMvp;
 import ru.kuchanov.scpcore.mvp.contract.TagsScreenMvp;
@@ -54,6 +55,7 @@ import ru.kuchanov.scpcore.mvp.presenter.Objects3ArticlesPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.Objects4ArticlesPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.ObjectsRuArticlesPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.OfflineArticlesPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.ReadArticlesPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.SiteSearchArticlesPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.TagSearchResultsArticlesPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.TagsSearchFragmentPresenter;
@@ -179,12 +181,23 @@ public class PresentersModule {
     @Provides
     @Singleton
     @NonNull
-    OfflineArticles.Presenter providesOfflineArticlesPresenter(
+    OfflineArticlesMvp.Presenter providesOfflineArticlesPresenter(
             @NonNull MyPreferenceManager myPreferencesManager,
             @NonNull DbProviderFactory dbProviderFactory,
             @NonNull ApiClient apiClient
     ) {
         return new OfflineArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient);
+    }
+
+    @Provides
+    @Singleton
+    @NonNull
+    ReadArticlesMvp.Presenter providesReadArticlesPresenter(
+            @NonNull MyPreferenceManager myPreferencesManager,
+            @NonNull DbProviderFactory dbProviderFactory,
+            @NonNull ApiClient apiClient
+    ) {
+        return new ReadArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient);
     }
 
     @Provides
