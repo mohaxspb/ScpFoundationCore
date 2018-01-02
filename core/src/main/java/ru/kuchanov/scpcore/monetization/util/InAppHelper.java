@@ -91,11 +91,14 @@ public class InAppHelper {
         //add old old donate subs, new ones and one with free trial period
         List<String> fullVersionSkus = new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.old_skus).split(",")));
         Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.ver_2_skus).split(","));
+        Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.ver3_skus).split(","));
         Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.subs_free_trial).split(","));
+        Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.ver3_subs_free_trial).split(","));
 
         List<String> noAdsSkus = new ArrayList<>();
         noAdsSkus.add(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_old));
         noAdsSkus.add(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_ver_2));
+        noAdsSkus.add(BaseApplication.getAppInstance().getString(R.string.ver3_subs_no_ads));
 
         List<String> ownedSkus = getSkuListFromItemsList(ownedItems);
         noAdsSkus.retainAll(ownedSkus);
@@ -154,7 +157,7 @@ public class InAppHelper {
                     for (Item item : items) {
                         Timber.d("validate item: %s", item.sku);
                         try {
-                            PurchaseValidateResponse purchaseValidateResponse = ((ApiClient)mApiClient).validatePurchaseSync(
+                            PurchaseValidateResponse purchaseValidateResponse = ((ApiClient) mApiClient).validatePurchaseSync(
                                     true,
                                     BaseApplication.getAppInstance().getPackageName(),
                                     item.sku,
@@ -266,7 +269,8 @@ public class InAppHelper {
                 List<Subscription> allSubscriptions = new ArrayList<>();
                 List<String> skuList = new ArrayList<>();
                 //get it from build config
-                Collections.addAll(skuList, BaseApplication.getAppInstance().getString(R.string.inapp_skus).split(","));
+//                Collections.addAll(skuList, BaseApplication.getAppInstance().getString(R.string.inapp_skus).split(","));
+                Collections.addAll(skuList, BaseApplication.getAppInstance().getString(R.string.ver3_inapp_skus).split(","));
                 Timber.d("skuList: %s", skuList);
 
                 Bundle querySkus = new Bundle();
@@ -304,7 +308,7 @@ public class InAppHelper {
     ) {
         String packageName = BaseApplication.getAppInstance().getPackageName();
 
-        return ((ApiClient)mApiClient).validatePurchase(false, packageName, sku, token)
+        return ((ApiClient) mApiClient).validatePurchase(false, packageName, sku, token)
                 .flatMap(purchaseValidateResponse -> {
                     @PurchaseValidateResponse.PurchaseValidationStatus
                     int status = purchaseValidateResponse.getStatus();
@@ -365,20 +369,16 @@ public class InAppHelper {
         }
     }
 
-//    public List<String> getOldSubsSkus() {
-//        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.old_skus).split(",")));
-//    }
-
     public List<String> getNewSubsSkus() {
-        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver_2_skus).split(",")));
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_skus).split(",")));
     }
 
     public List<String> getFreeTrailSubsSkus() {
-        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.subs_free_trial).split(",")));
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_subs_free_trial).split(",")));
     }
 
     public List<String> getNewNoAdsSubsSkus() {
-        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_ver_2).split(",")));
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_subs_no_ads).split(",")));
     }
 
     public static int getMonthsFromSku(String sku) {
