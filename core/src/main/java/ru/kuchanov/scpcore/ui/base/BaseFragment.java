@@ -48,11 +48,9 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
 
     private MaterialDialog mProgressDialog;
 
-//    @Inject
     @NonNull
     @Override
     public P createPresenter() {
-//        mPresenter.attachView((V) this);
         return mPresenter;
     }
 
@@ -122,28 +120,6 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
         super.onDestroyView();
         mUnbinder.unbind();
     }
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        if (this instanceof SharedPreferences.OnSharedPreferenceChangeListener) {
-//            PreferenceManager.getDefaultSharedPreferences(getActivity())
-//                    .registerOnSharedPreferenceChangeListener(
-//                            (SharedPreferences.OnSharedPreferenceChangeListener) this
-//                    );
-//        }
-//    }
-//
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        if (this instanceof SharedPreferences.OnSharedPreferenceChangeListener) {
-//            PreferenceManager.getDefaultSharedPreferences(getActivity())
-//                    .unregisterOnSharedPreferenceChangeListener(
-//                            (SharedPreferences.OnSharedPreferenceChangeListener) this
-//                    );
-//        }
-//    }
 
     @Override
     public void onStart() {

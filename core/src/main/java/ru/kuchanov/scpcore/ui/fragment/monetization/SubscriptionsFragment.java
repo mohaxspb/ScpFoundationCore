@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.ui.dialog;
+package ru.kuchanov.scpcore.ui.fragment.monetization;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -40,16 +40,19 @@ import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
+import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract;
 import ru.kuchanov.scpcore.ui.adapter.SubscriptionsAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseBottomSheetDialogFragment;
+import ru.kuchanov.scpcore.ui.base.BaseFragment;
+import ru.kuchanov.scpcore.ui.base.BaseListFragment;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class SubscriptionsFragmentDialog
-        extends BaseBottomSheetDialogFragment
-        implements SubscriptionsAdapter.SubscriptionClickListener {
+public class SubscriptionsFragment
+        extends BaseFragment<SubscriptionsContract.View, SubscriptionsContract.View>
+        implements SubscriptionsContract.View {
 
     public static final int REQUEST_CODE_SUBSCRIPTION = 1001;
 
@@ -82,24 +85,22 @@ public class SubscriptionsFragmentDialog
 
     private boolean isDataLoaded;
 
-    public static SubscriptionsFragmentDialog newInstance() {
-        return new SubscriptionsFragmentDialog();
+    public static SubscriptionsFragment newInstance() {
+        return new SubscriptionsFragment();
     }
 
     @Override
-    protected void callInjection() {
+    protected void callInjections() {
         BaseApplication.getAppComponent().inject(this);
     }
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.fragment_bottom_sheet_subscriptions;
+        return R.layout.fragment_subscriptions;
     }
 
     @Override
-    public void setupDialog(Dialog dialog, int style) {
-        super.setupDialog(dialog, style);
-
+    protected void initViews() {
         InAppBillingServiceConnectionObservable.getInstance().getServiceStatusObservable()
                 .subscribe(connected -> {
                     if (connected && !isDataLoaded) {
@@ -129,7 +130,6 @@ public class SubscriptionsFragmentDialog
 
     @OnClick(R2.id.removeAdsOneDay)
     void onRemoveAdsOneDayClick() {
-        dismiss();
         getBaseActivity().showFreeAdsDisablePopup();
     }
 
@@ -198,7 +198,7 @@ public class SubscriptionsFragmentDialog
                             recyclerView.setHasFixedSize(true);
                             SubscriptionsAdapter adapter = new SubscriptionsAdapter();
                             adapter.setData(ownedItemsAndSubscriptions.second);
-                            adapter.setArticleClickListener(SubscriptionsFragmentDialog.this);
+                            adapter.setArticleClickListener(SubscriptionsFragment.this);
                             recyclerView.setAdapter(adapter);
                         },
                         e -> {
@@ -223,24 +223,6 @@ public class SubscriptionsFragmentDialog
             Timber.e(e);
             Snackbar.make(mRoot, e.getMessage(), Snackbar.LENGTH_SHORT).show();
         }
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
-
-        dialog.setOnShowListener(dialog1 -> {
-            BottomSheetDialog d = (BottomSheetDialog) dialog1;
-
-            FrameLayout bottomSheet = d.findViewById(android.support.design.R.id.design_bottom_sheet);
-            if (bottomSheet != null) {
-                BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
-            }
-        });
-
-        // Do something with your dialog like setContentView() or whatever
-        return dialog;
     }
 
     @Override

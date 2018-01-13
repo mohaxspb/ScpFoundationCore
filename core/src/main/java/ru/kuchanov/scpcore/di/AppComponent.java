@@ -22,6 +22,7 @@ import ru.kuchanov.scpcore.ui.activity.LicenceActivity;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 import ru.kuchanov.scpcore.ui.activity.SplashActivity;
+import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import ru.kuchanov.scpcore.ui.activity.TagSearchActivity;
 import ru.kuchanov.scpcore.ui.adapter.ArticleAdapter;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
@@ -56,6 +57,7 @@ import ru.kuchanov.scpcore.ui.fragment.RecentArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.SiteSearchArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.TagsSearchFragment;
 import ru.kuchanov.scpcore.ui.fragment.TagsSearchResultsArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment;
 import ru.kuchanov.scpcore.ui.holder.ArticleImageHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleSpoilerHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTableHolder;
@@ -90,6 +92,8 @@ public interface AppComponent {
     void inject(TagSearchActivity activity);
 
     void inject(SplashActivity activity);
+
+    void inject(SubscriptionsActivity activity);
 
     void inject(ArticleFragment fragment);
 
@@ -130,6 +134,8 @@ public interface AppComponent {
     void inject(TagsSearchResultsArticlesFragment fragment);
 
     void inject(ReadArticlesFragment fragment);
+
+    void inject(SubscriptionsFragment fragment);
 
     void inject(TextSizeDialogFragment dialogFragment);
 

@@ -523,8 +523,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this,R.string.remove_ads), Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.yes_bliad, v -> {
                     snackbar.dismiss();
-                    BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
-                    subsDF.show(getSupportFragmentManager(), subsDF.getTag());
+//                    BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
+//                    subsDF.show(getSupportFragmentManager(), subsDF.getTag());
+
 
                     Bundle bundle = new Bundle();
                     bundle.putString(EventParam.PLACE, StartScreen.SNACK_BAR);
