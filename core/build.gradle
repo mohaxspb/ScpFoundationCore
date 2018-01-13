@@ -108,13 +108,20 @@ android {
     }
 }
 
+// This is added automatically if Kotlin is registered in the project, but Kotlin extension functions
+// for Realm can be excluded if needed.
+realm {
+    kotlinExtensionsEnabled = true
+}
+
 dependencies {
     String supportLibraryVersion = '26.1.0'
     String googleLibraryVersion = '11.8.0'
 
     api fileTree(dir: 'libs', include: ['*.jar'])
     //kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+//    api 'com.intellij:annotations:12.0@jar'
     //support libs
     api "com.android.support:appcompat-v7:$supportLibraryVersion"
     api "com.android.support:recyclerview-v7:$supportLibraryVersion"
@@ -145,13 +152,13 @@ dependencies {
     //logs
     api 'com.jakewharton.timber:timber:4.6.0'
     //dagger2
-    String daggerVersion = '2.11'
+    String daggerVersion = '2.13'
     api "com.google.dagger:dagger:$daggerVersion"
-    annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
     //butterKnife
     String butterKnifeVersion = '8.8.1'
     api "com.jakewharton:butterknife:$butterKnifeVersion"
-    annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
+    kapt "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
     //image
     api 'com.github.bumptech.glide:glide:3.8.0'
     api 'com.github.chrisbanes:PhotoView:2.1.3'

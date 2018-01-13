@@ -1,7 +1,5 @@
 package ru.dante.scpfoundation.di.module;
 
-import android.support.annotation.NonNull;
-
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -32,60 +30,60 @@ public class PresentersModuleImpl extends PresentersModule {
 
     @Provides
     @Singleton
-    @NonNull
+    
     ObjectsFrArticles.Presenter providesObjectsFrArticlesPresenter(
-            @NonNull MyPreferenceManager myPreferencesManager,
-            @NonNull DbProviderFactory dbProviderFactory,
-            @NonNull ApiClient apiClient,
-            @NonNull ConstantValues constantValues
+             MyPreferenceManager myPreferencesManager,
+             DbProviderFactory dbProviderFactory,
+             ApiClient apiClient,
+             ConstantValues constantValues
     ) {
         return new ObjectsFrArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
     }
 
     @Provides
     @Singleton
-    @NonNull
+    
     ObjectsJpArticles.Presenter providesObjectsJpArticlesPresenter(
-            @NonNull MyPreferenceManager myPreferencesManager,
-            @NonNull DbProviderFactory dbProviderFactory,
-            @NonNull ApiClient apiClient,
-            @NonNull ConstantValues constantValues
+             MyPreferenceManager myPreferencesManager,
+             DbProviderFactory dbProviderFactory,
+             ApiClient apiClient,
+             ConstantValues constantValues
     ) {
         return new ObjectsJpArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
     }
 
     @Provides
     @Singleton
-    @NonNull
+    
     ObjectsEsArticles.Presenter providesObjectsEsArticlesPresenter(
-            @NonNull MyPreferenceManager myPreferencesManager,
-            @NonNull DbProviderFactory dbProviderFactory,
-            @NonNull ApiClient apiClient,
-            @NonNull ConstantValues constantValues
+             MyPreferenceManager myPreferencesManager,
+             DbProviderFactory dbProviderFactory,
+             ApiClient apiClient,
+             ConstantValues constantValues
     ) {
         return new ObjectsEsArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
     }
 
     @Provides
     @Singleton
-    @NonNull
+    
     ObjectsPlArticles.Presenter providesObjectsPlArticlesPresenter(
-            @NonNull MyPreferenceManager myPreferencesManager,
-            @NonNull DbProviderFactory dbProviderFactory,
-            @NonNull ApiClient apiClient,
-            @NonNull ConstantValues constantValues
+             MyPreferenceManager myPreferencesManager,
+             DbProviderFactory dbProviderFactory,
+             ApiClient apiClient,
+             ConstantValues constantValues
     ) {
         return new ObjectsPlArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
     }
 
     @Provides
     @Singleton
-    @NonNull
+    
     ObjectsDeArticles.Presenter providesObjectsDeArticlesPresenter(
-            @NonNull MyPreferenceManager myPreferencesManager,
-            @NonNull DbProviderFactory dbProviderFactory,
-            @NonNull ApiClient apiClient,
-            @NonNull ConstantValues constantValues
+             MyPreferenceManager myPreferencesManager,
+             DbProviderFactory dbProviderFactory,
+             ApiClient apiClient,
+             ConstantValues constantValues
     ) {
         return new ObjectsDeArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
     }

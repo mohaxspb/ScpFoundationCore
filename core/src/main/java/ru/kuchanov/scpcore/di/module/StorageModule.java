@@ -37,21 +37,18 @@ import timber.log.Timber;
 public class StorageModule {
 
     @Provides
-    @NonNull
     @Singleton
-    SharedPreferences providesSharedPreferences(@NonNull Context context) {
+    SharedPreferences providesSharedPreferences( Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     @Provides
-    @NonNull
     @Singleton
-    MyPreferenceManager providesPreferencesManager(@NonNull Context context, @NonNull Gson gson) {
+    MyPreferenceManager providesPreferencesManager( Context context,  Gson gson) {
         return new MyPreferenceManager(context, gson);
     }
 
     @Provides
-    @NonNull
     @Singleton
     RealmMigration providesRealmMigration() {
         return getRealmMigration();
@@ -120,9 +117,8 @@ public class StorageModule {
     }
 
     @Provides
-    @NonNull
     @Singleton
-    RealmConfiguration providesRealmConfiguration(@NonNull RealmMigration realmMigration, @NonNull Context context) {
+    RealmConfiguration providesRealmConfiguration( RealmMigration realmMigration,  Context context) {
         return new RealmConfiguration.Builder()
                 .schemaVersion(context.getResources().getInteger(R.integer.realm_version))
                 .migration(realmMigration)
@@ -130,12 +126,11 @@ public class StorageModule {
     }
 
     @Provides
-    @NonNull
     @Singleton
     DbProviderFactory providesDbProviderFactory(
-            @NonNull RealmConfiguration configuration,
-            @NonNull MyPreferenceManager preferenceManager,
-            @NonNull ConstantValues constantValues
+             RealmConfiguration configuration,
+             MyPreferenceManager preferenceManager,
+             ConstantValues constantValues
     ) {
         return new DbProviderFactory(configuration, preferenceManager, constantValues);
     }

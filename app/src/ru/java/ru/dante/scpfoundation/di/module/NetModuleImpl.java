@@ -1,7 +1,5 @@
 package ru.dante.scpfoundation.di.module;
 
-import android.support.annotation.NonNull;
-
 import com.google.gson.Gson;
 
 import javax.inject.Named;
@@ -26,13 +24,13 @@ public class NetModuleImpl extends NetModule {
 
     @Override
     protected ApiClient getApiClient(
-            @NonNull OkHttpClient okHttpClient,
-            @Named("vps") @NonNull Retrofit vpsRetrofit,
-            @Named("scp") @NonNull Retrofit scpRetrofit,
-            @NonNull MyPreferenceManager preferencesManager,
-            @NonNull Gson gson,
-            @NonNull ConstantValues constantValues
-            ) {
+            OkHttpClient okHttpClient,
+            @Named("vps") Retrofit vpsRetrofit,
+            @Named("scp") Retrofit scpRetrofit,
+            MyPreferenceManager preferencesManager,
+            Gson gson,
+            ConstantValues constantValues
+    ) {
         return new ApiClientImpl(okHttpClient, vpsRetrofit, scpRetrofit, preferencesManager, gson, constantValues);
     }
 

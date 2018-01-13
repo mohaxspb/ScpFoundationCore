@@ -2,7 +2,6 @@ package ru.kuchanov.scpcore.di.module;
 
 import android.app.Application;
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import javax.inject.Singleton;
 
@@ -19,19 +18,17 @@ public class AppModule {
 
     private Application mApplication;
 
-    public AppModule(@NonNull Application application) {
+    public AppModule(Application application) {
         mApplication = application;
     }
 
     @Provides
-    @NonNull
     @Singleton
     Application providesApplication() {
         return mApplication;
     }
 
     @Provides
-    @NonNull
     @Singleton
     Context providesContext() {
         return mApplication;

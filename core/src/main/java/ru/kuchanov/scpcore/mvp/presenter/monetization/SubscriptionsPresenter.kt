@@ -32,8 +32,5 @@ class SubscriptionsPresenter(
             Timber.e(e)
             view.showError(e)
         }
-
     }
-
-
 }
