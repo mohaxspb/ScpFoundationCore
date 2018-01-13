@@ -2,15 +2,13 @@ package ru.dante.scpfoundation.mvp.presenter;
 
 import android.support.annotation.NonNull;
 
-import ru.dante.scpfoundation.ConstantValuesImpl;
 import ru.dante.scpfoundation.mvp.contract.ObjectsFrArticles;
 import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.mvp.contract.Objects1Articles;
-import ru.kuchanov.scpcore.mvp.presenter.BaseObjectsArticlesPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.articleslists.BaseObjectsArticlesPresenter;
 
 /**
  * Created by y.kuchanov on 21.12.16.

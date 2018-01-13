@@ -10,56 +10,58 @@ import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.mvp.contract.ArticleMvp;
-import ru.kuchanov.scpcore.mvp.contract.ArticleScreenMvp;
-import ru.kuchanov.scpcore.mvp.contract.FavoriteArticlesMvp;
 import ru.kuchanov.scpcore.mvp.contract.GalleryScreenMvp;
 import ru.kuchanov.scpcore.mvp.contract.MainMvp;
-import ru.kuchanov.scpcore.mvp.contract.MaterialsArchiveMvp;
-import ru.kuchanov.scpcore.mvp.contract.MaterialsExperimentsMvp;
-import ru.kuchanov.scpcore.mvp.contract.MaterialsIncidentsMvp;
-import ru.kuchanov.scpcore.mvp.contract.MaterialsInterviewsMvp;
-import ru.kuchanov.scpcore.mvp.contract.MaterialsJokesMvp;
-import ru.kuchanov.scpcore.mvp.contract.MaterialsOtherMvp;
-import ru.kuchanov.scpcore.mvp.contract.MaterialsScreenMvp;
-import ru.kuchanov.scpcore.mvp.contract.Objects1Articles;
-import ru.kuchanov.scpcore.mvp.contract.Objects2Articles;
-import ru.kuchanov.scpcore.mvp.contract.Objects3Articles;
-import ru.kuchanov.scpcore.mvp.contract.Objects4Articles;
-import ru.kuchanov.scpcore.mvp.contract.ObjectsRuArticles;
-import ru.kuchanov.scpcore.mvp.contract.OfflineArticlesMvp;
-import ru.kuchanov.scpcore.mvp.contract.RatedArticlesMvp;
-import ru.kuchanov.scpcore.mvp.contract.ReadArticlesMvp;
-import ru.kuchanov.scpcore.mvp.contract.RecentArticlesMvp;
-import ru.kuchanov.scpcore.mvp.contract.SiteSearchArticlesMvp;
-import ru.kuchanov.scpcore.mvp.contract.TagsScreenMvp;
-import ru.kuchanov.scpcore.mvp.contract.TagsSearchMvp;
-import ru.kuchanov.scpcore.mvp.contract.TagsSearchResultsArticlesMvp;
-import ru.kuchanov.scpcore.mvp.presenter.ArticlePresenter;
-import ru.kuchanov.scpcore.mvp.presenter.ArticleScreenPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.FavoriteArticlesPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.GalleryScreenPresenter;
+import ru.kuchanov.scpcore.mvp.contract.article.ArticleMvp;
+import ru.kuchanov.scpcore.mvp.contract.article.ArticleScreenMvp;
+import ru.kuchanov.scpcore.mvp.contract.articleslists.FavoriteArticlesMvp;
+import ru.kuchanov.scpcore.mvp.contract.articleslists.Objects1Articles;
+import ru.kuchanov.scpcore.mvp.contract.articleslists.Objects2Articles;
+import ru.kuchanov.scpcore.mvp.contract.articleslists.Objects3Articles;
+import ru.kuchanov.scpcore.mvp.contract.articleslists.Objects4Articles;
+import ru.kuchanov.scpcore.mvp.contract.articleslists.ObjectsRuArticles;
+import ru.kuchanov.scpcore.mvp.contract.articleslists.OfflineArticlesMvp;
+import ru.kuchanov.scpcore.mvp.contract.articleslists.RatedArticlesMvp;
+import ru.kuchanov.scpcore.mvp.contract.articleslists.ReadArticlesMvp;
+import ru.kuchanov.scpcore.mvp.contract.articleslists.RecentArticlesMvp;
+import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsArchiveMvp;
+import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsExperimentsMvp;
+import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsIncidentsMvp;
+import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsInterviewsMvp;
+import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsJokesMvp;
+import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsOtherMvp;
+import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsScreenMvp;
+import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract;
+import ru.kuchanov.scpcore.mvp.contract.search.SiteSearchArticlesMvp;
+import ru.kuchanov.scpcore.mvp.contract.tags.TagsScreenMvp;
+import ru.kuchanov.scpcore.mvp.contract.tags.TagsSearchMvp;
+import ru.kuchanov.scpcore.mvp.contract.tags.TagsSearchResultsArticlesMvp;
 import ru.kuchanov.scpcore.mvp.presenter.MainPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.MaterialsArchivePresenter;
-import ru.kuchanov.scpcore.mvp.presenter.MaterialsExperimentsPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.MaterialsIncidentsPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.MaterialsInterviewPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.MaterialsJokesPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.MaterialsOtherPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.MaterialsScreenPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.MostRatedArticlesPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.MostRecentArticlesPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.Objects1ArticlesPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.Objects2ArticlesPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.Objects3ArticlesPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.Objects4ArticlesPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.ObjectsRuArticlesPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.OfflineArticlesPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.ReadArticlesPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.SiteSearchArticlesPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.TagSearchResultsArticlesPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.TagsSearchFragmentPresenter;
-import ru.kuchanov.scpcore.mvp.presenter.TagsSearchScreenPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.article.ArticlePresenter;
+import ru.kuchanov.scpcore.mvp.presenter.article.ArticleScreenPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.articleslists.FavoriteArticlesPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.articleslists.MostRatedArticlesPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.articleslists.MostRecentArticlesPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.articleslists.Objects1ArticlesPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.articleslists.Objects2ArticlesPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.articleslists.Objects3ArticlesPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.articleslists.Objects4ArticlesPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.articleslists.ObjectsRuArticlesPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.articleslists.OfflineArticlesPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.articleslists.ReadArticlesPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.gallery.GalleryScreenPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.materials.MaterialsArchivePresenter;
+import ru.kuchanov.scpcore.mvp.presenter.materials.MaterialsExperimentsPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.materials.MaterialsIncidentsPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.materials.MaterialsInterviewPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.materials.MaterialsJokesPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.materials.MaterialsOtherPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.materials.MaterialsScreenPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsScreenPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.search.SiteSearchArticlesPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.tags.TagSearchResultsArticlesPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.tags.TagsSearchFragmentPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.tags.TagsSearchScreenPresenter;
 
 /**
  * Created by y.kuchanov on 21.12.16.
@@ -330,6 +332,17 @@ public class PresentersModule {
             @NonNull ConstantValues constantValues
     ) {
         return new MaterialsJokesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
+    }
+
+    @Provides
+    @Singleton
+    @NonNull
+    SubscriptionsScreenContract.Presenter providesSubscriptionsScreenPresenter(
+            @NonNull MyPreferenceManager myPreferencesManager,
+            @NonNull DbProviderFactory dbProviderFactory,
+            @NonNull ApiClient apiClient
+    ) {
+        return new SubscriptionsScreenPresenter(myPreferencesManager, dbProviderFactory, apiClient);
     }
 
     @Provides

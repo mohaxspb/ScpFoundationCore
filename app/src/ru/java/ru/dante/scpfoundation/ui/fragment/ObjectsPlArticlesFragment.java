@@ -2,9 +2,8 @@ package ru.dante.scpfoundation.ui.fragment;
 
 import ru.dante.scpfoundation.MyApplicationImpl;
 import ru.dante.scpfoundation.di.AppComponentImpl;
-import ru.dante.scpfoundation.mvp.contract.ObjectsEsArticles;
 import ru.dante.scpfoundation.mvp.contract.ObjectsPlArticles;
-import ru.kuchanov.scpcore.ui.fragment.BaseListArticlesWithSearchFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.BaseListArticlesWithSearchFragment;
 
 /**
  * Created by mohax on 27.10.2017.

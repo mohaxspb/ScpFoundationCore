@@ -3,13 +3,12 @@ package ru.dante.scpfoundation.mvp.presenter;
 import android.support.annotation.NonNull;
 
 import ru.dante.scpfoundation.mvp.contract.ObjectsEsArticles;
-import ru.dante.scpfoundation.mvp.contract.ObjectsFrArticles;
 import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.mvp.presenter.BaseObjectsArticlesPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.articleslists.BaseObjectsArticlesPresenter;
 
 public class ObjectsEsArticlesPresenter
         extends BaseObjectsArticlesPresenter<ObjectsEsArticles.View>
