@@ -52,7 +52,7 @@ class SubscriptionsFragment :
                     }
                 }
 
-        getPresenter().getMarketData(baseActivity.getIInAppBillingService())
+//        getPresenter().getMarketData(baseActivity.getIInAppBillingService())
 
         val freeDownloadEnabled = FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_ALL_ENABLED_FOR_FREE)
 
