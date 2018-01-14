@@ -17,11 +17,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-/**
- * Created by y.kuchanov on 21.12.16.
- * <p>
- * for TappAwards
- */
 public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.View>
         extends BasePresenter<V>
         implements BaseArticlesListMvp.Presenter<V> {

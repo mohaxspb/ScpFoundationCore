@@ -16,11 +16,6 @@ import ru.kuchanov.scpcore.mvp.base.BaseArticlesListMvp;
 import rx.Observable;
 import timber.log.Timber;
 
-/**
- * Created by y.kuchanov on 21.12.16.
- * <p>
- * for TappAwards
- */
 public abstract class BaseObjectsArticlesPresenter<V extends BaseArticlesListMvp.View>
         extends BaseListArticlesPresenter<V>
         implements BaseArticlesListMvp.Presenter<V> {

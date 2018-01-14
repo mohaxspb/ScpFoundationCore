@@ -11,9 +11,14 @@ import ru.kuchanov.scpcore.mvp.base.BaseMvp
  * for scp_ru
  */
 interface SubscriptionsContract : BaseMvp {
-    interface View : BaseMvp.View
+    interface View : BaseMvp.View {
+        fun showProgressCenter(show: Boolean)
+        fun showRefreshButton(show: Boolean)
+    }
 
     interface Presenter : BaseMvp.Presenter<View> {
         fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService)
+        fun getMarketData(service: IInAppBillingService)
+        var isDataLoaded:Boolean
     }
 }

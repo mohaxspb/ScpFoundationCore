@@ -8,6 +8,7 @@ import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.GalleryScreenMvp;
 import ru.kuchanov.scpcore.mvp.contract.MainMvp;
 import ru.kuchanov.scpcore.mvp.contract.article.ArticleMvp;
@@ -326,9 +327,10 @@ public class PresentersModule {
     SubscriptionsContract.Presenter providesSubscriptionsPresenter(
              MyPreferenceManager myPreferencesManager,
              DbProviderFactory dbProviderFactory,
-             ApiClient apiClient
+             ApiClient apiClient,
+             InAppHelper inAppHelper
     ) {
-        return new SubscriptionsPresenter(myPreferencesManager, dbProviderFactory, apiClient);
+        return new SubscriptionsPresenter(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }
 
     @Provides

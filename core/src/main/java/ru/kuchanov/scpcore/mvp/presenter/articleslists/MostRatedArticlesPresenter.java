@@ -14,11 +14,6 @@ import ru.kuchanov.scpcore.mvp.contract.articleslists.RatedArticlesMvp;
 import ru.kuchanov.scpcore.mvp.presenter.articleslists.BaseListArticlesPresenter;
 import rx.Observable;
 
-/**
- * Created by y.kuchanov on 21.12.16.
- * <p>
- * for TappAwards
- */
 public class MostRatedArticlesPresenter
         extends BaseListArticlesPresenter<RatedArticlesMvp.View>
         implements RatedArticlesMvp.Presenter {

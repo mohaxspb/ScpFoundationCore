@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     >
 
     <android.support.v7.widget.RecyclerView
@@ -14,6 +13,34 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
+        />
+
+    <ProgressBar
+        android:id="@+id/progressCenter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:indeterminateTint="?newArticlesTextColor"
+        android:indeterminateTintMode="src_in"
+        android:paddingBottom="@dimen/defaultMargin"
+        android:visibility="visible"
+        tools:targetApi="lollipop"
+        />
+
+    <TextView
+        android:id="@+id/refresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="?selectableItemBackground"
+        android:gravity="center"
+        android:padding="@dimen/defaultMargin"
+        android:text="@string/refresh"
+        android:textColor="@color/colorAccent"
+        android:textSize="21sp"
+        android:visibility="gone"
+        tools:visibility="visible"
         />
 
     <!--<LinearLayout-->
@@ -180,4 +207,4 @@
     <!--</FrameLayout>-->
     <!--</LinearLayout>-->
 
-</LinearLayout>
+</FrameLayout>

@@ -136,6 +136,7 @@ dependencies {
     //rx
     api 'io.reactivex:rxandroid:1.2.1'
     api 'io.reactivex:rxjava:1.3.4'
+    api 'io.reactivex:rxkotlin:1.0.0'
     // Retrofit
     api('com.squareup.retrofit2:retrofit:2.3.0') { exclude module: 'okhttp' }
     api 'com.squareup.okhttp3:okhttp:3.9.0'

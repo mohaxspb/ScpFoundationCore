@@ -93,6 +93,7 @@ import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.ui.activity.ArticleActivity;
 import ru.kuchanov.scpcore.ui.activity.GalleryActivity;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
+import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import ru.kuchanov.scpcore.ui.activity.TagSearchActivity;
 import ru.kuchanov.scpcore.ui.adapter.SocialLoginAdapter;
 import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
@@ -170,7 +171,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     private InterstitialAd mInterstitialAd;
 
-    //    @Inject
     @NonNull
     @Override
     public P createPresenter() {
@@ -523,9 +523,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this,R.string.remove_ads), Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.yes_bliad, v -> {
                     snackbar.dismiss();
-//                    BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
-//                    subsDF.show(getSupportFragmentManager(), subsDF.getTag());
-
+                    SubscriptionsActivity.start(this);
 
                     Bundle bundle = new Bundle();
                     bundle.putString(EventParam.PLACE, StartScreen.SNACK_BAR);
@@ -535,8 +533,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             case ENABLE_FONTS:
                 snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this,R.string.only_premium), Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.activate, action -> {
-                    BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
-                    subsDF.show(getSupportFragmentManager(), subsDF.getTag());
+                    SubscriptionsActivity.start(this);
 
                     Bundle bundle = new Bundle();
                     bundle.putString(EventParam.PLACE, StartScreen.FONT);
@@ -547,8 +544,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this,R.string.auto_sync_disabled), Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.turn_on, v -> {
                     snackbar.dismiss();
-                    BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
-                    subsDF.show(getSupportFragmentManager(), subsDF.getTag());
+                    SubscriptionsActivity.start(this);
 
                     Bundle bundle = new Bundle();
                     bundle.putString(EventParam.PLACE, StartScreen.AUTO_SYNC_SNACKBAR);
@@ -632,7 +628,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void updateOwnedMarketItems() {
-        Timber.d("updateOwnedMarketItems forceSubsValidation: %s");
+        Timber.d("updateOwnedMarketItems");
         mInAppHelper
                 .getValidatedOwnedSubsObservable(mService)
                 .subscribeOn(Schedulers.io())
@@ -854,14 +850,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
         if (i == R.id.settings) {
-            Timber.d("settings pressed");
             BottomSheetDialogFragment settingsDF = SettingsBottomSheetDialogFragment.newInstance();
             settingsDF.show(getSupportFragmentManager(), settingsDF.getTag());
             return true;
         } else if (i == R.id.subscribe) {
-            Timber.d("subscribe pressed");
-            BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
-            subsDF.show(getSupportFragmentManager(), subsDF.getTag());
+            SubscriptionsActivity.start(this);
 
             Bundle bundle = new Bundle();
             bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, StartScreen.MENU);

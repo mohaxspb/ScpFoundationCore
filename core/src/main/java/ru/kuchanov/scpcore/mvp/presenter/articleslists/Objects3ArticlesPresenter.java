@@ -10,11 +10,6 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.mvp.contract.articleslists.Objects3Articles;
 import ru.kuchanov.scpcore.mvp.presenter.articleslists.BaseObjectsArticlesPresenter;
 
-/**
- * Created by y.kuchanov on 21.12.16.
- * <p>
- * for TappAwards
- */
 public class Objects3ArticlesPresenter
         extends BaseObjectsArticlesPresenter<Objects3Articles.View>
         implements Objects3Articles.Presenter {

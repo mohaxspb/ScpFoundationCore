@@ -51,8 +51,8 @@ class SubscriptionsActivity :
 
     companion object {
 
-        fun start(context: Context) {
-            context.startActivity(Intent(context, SubscriptionsActivity::class.java))
-        }
+        @JvmStatic
+        fun start(context: Context) = context.startActivity(Intent(context, SubscriptionsActivity::class.java))
+
     }
 }
