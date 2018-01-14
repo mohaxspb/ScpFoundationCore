@@ -1,11 +1,12 @@
 apply plugin: 'com.android.library'
-
-apply plugin: 'realm-android'
-apply plugin: 'com.jakewharton.butterknife'
 //kotlin
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+//realm
+apply plugin: 'realm-android'
+//butterknife
+apply plugin: 'com.jakewharton.butterknife'
 
 //here is script to generate version code from version name
 //which is set in gradle.properties as value of version var
@@ -106,12 +107,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-}
-
-// This is added automatically if Kotlin is registered in the project, but Kotlin extension functions
-// for Realm can be excluded if needed.
-realm {
-    kotlinExtensionsEnabled = true
 }
 
 dependencies {
