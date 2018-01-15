@@ -2,13 +2,9 @@ package ru.kuchanov.scpcore.ui.fragment.monetization
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import butterknife.ButterKnife
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegatesManager
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
@@ -18,13 +14,17 @@ import org.json.JSONObject
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
-import ru.kuchanov.scpcore.controller.delegate.TextDelegate
-import ru.kuchanov.scpcore.controller.viewmodel.MyListItem
-import ru.kuchanov.scpcore.controller.viewmodel.TextViewModel
+import ru.kuchanov.scpcore.controller.adapter.delegate.InAppDelegate
+import ru.kuchanov.scpcore.controller.adapter.delegate.TextDelegate
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.InAppViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.TextViewModel
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
+import ru.kuchanov.scpcore.monetization.model.Item
+import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
-import ru.kuchanov.scpcore.ui.adapter.BaseRecyclerAdapter
+import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_FREE_ADS_DISABLE
 import ru.kuchanov.scpcore.ui.base.BaseFragment
 import timber.log.Timber
 
@@ -32,7 +32,7 @@ class SubscriptionsFragment :
         BaseFragment<SubscriptionsContract.View, SubscriptionsContract.Presenter>(),
         SubscriptionsContract.View {
 
-    private val items: MutableList<MyListItem> = mutableListOf()
+    //    private val items: MutableList<MyListItem> = mutableListOf()
     private lateinit var adapter: ListDelegationAdapter<List<MyListItem>>
 
     override fun callInjections() = BaseApplication.getAppComponent().inject(this)
@@ -59,6 +59,7 @@ class SubscriptionsFragment :
         recyclerView.layoutManager = LinearLayoutManager(activity)
         val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
         delegateManager.addDelegate(TextDelegate())
+        delegateManager.addDelegate(InAppDelegate { getPresenter().onSubscriptionClick(it, this, baseActivity.getIInAppBillingService()) })
         adapter = ListDelegationAdapter(delegateManager);
         recyclerView.adapter = adapter
     }
@@ -82,9 +83,23 @@ class SubscriptionsFragment :
         getPresenter().getMarketData(baseActivity.getIInAppBillingService())
     }
 
-    override fun showData() {
-        items.add(TextViewModel(getString(R.string.subs_main_text)))
+    //    override fun showData(items: List<MyListItem>) {
+    override fun showData(owned: List<Item>, toBuy: List<Subscription>, curSubsType: Int) {
+//        items.clear()
+//        items.add(TextViewModel(R.string.subs_main_text))
+//        items.add(TextViewModel(R.string.subs_free_actions_title))
         //todo
+        val items: MutableList<MyListItem> = mutableListOf()
+        items.clear()
+        items.add(TextViewModel(R.string.subs_main_text))
+        items.add(TextViewModel(R.string.subs_free_actions_title))
+        items.add(InAppViewModel(
+                R.string.subs_free_actions_card_title,
+                R.string.subs_free_actions_card_description,
+                BaseApplication.getAppInstance().getString(R.string.free),
+                ID_FREE_ADS_DISABLE,
+                R.drawable.ic_free_ads_disable
+        ))
 
         adapter.items = items
         adapter.notifyDataSetChanged()

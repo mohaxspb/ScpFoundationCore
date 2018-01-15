@@ -120,4 +120,6 @@
 
     <color name="bgSubsTop">#bbbfc4</color>
     <color name="bgSubsBottom">#edeff2</color>
+    <color name="subsTextColorBottom">#7e848c</color>
+    <color name="subsTextTitleColor">#474a4f</color>
 </resources>

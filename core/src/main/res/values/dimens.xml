@@ -17,4 +17,5 @@
 
     <dimen name="drawerHeaderHeight">164dp</dimen>
     <dimen name="native_ads_admob_height">250dp</dimen>
+    <dimen name="subs_image_size">70dp</dimen>
 </resources>

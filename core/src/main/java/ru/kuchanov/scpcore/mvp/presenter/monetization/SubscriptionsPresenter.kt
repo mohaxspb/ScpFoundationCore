@@ -7,6 +7,9 @@ import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.api.ApiClient
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.InAppViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.TextViewModel
 import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
 import ru.kuchanov.scpcore.monetization.model.Item
@@ -37,6 +40,8 @@ class SubscriptionsPresenter(
 ), SubscriptionsContract.Presenter {
 
     override var isDataLoaded = false
+
+    val items = mutableListOf<MyListItem>()
 
     override fun getMarketData(service: IInAppBillingService) {
         view.showProgressCenter(true)
@@ -71,17 +76,21 @@ class SubscriptionsPresenter(
                             }
 
                             Timber.d("curSubsText: ${BaseApplication.getAppInstance().getString(curSubsText)}")
-
                             //todo create data and show it in fragment
+//                            items.clear()
+//                            items.add(TextViewModel(R.string.subs_main_text))
+//                            items.add(TextViewModel(R.string.subs_free_actions_title))
+//                            items.add(InAppViewModel(
+//                                    R.string.subs_free_actions_card_title,
+//                                    R.string.subs_free_actions_card_description,
+//                                    BaseApplication.getAppInstance().getString(R.string.free),
+//                                    ID_FREE_ADS_DISABLE,
+//                                    R.drawable.ic_free_ads_disable
+//                            ))
 
+//                            view.showData(items)
 
-
-//                            recyclerView.setLayoutManager(new LinearLayoutManager (getActivity()));
-//                            recyclerView.setHasFixedSize(true);
-//                            SubscriptionsAdapter adapter = new SubscriptionsAdapter();
-//                            adapter.setData(ownedItemsAndSubscriptions.second);
-//                            adapter.setArticleClickListener(SubscriptionsFragment.this);
-//                            recyclerView.setAdapter(adapter);
+                            view.showData(it.first, it.second, type)
                         },
                         onError = {
                             Timber.e(it, "error getting cur subs");
@@ -102,5 +111,9 @@ class SubscriptionsPresenter(
             Timber.e(e)
             view.showError(e)
         }
+    }
+
+    companion object {
+        val ID_FREE_ADS_DISABLE = "ID_FREE_ADS_DISABLE"
     }
 }

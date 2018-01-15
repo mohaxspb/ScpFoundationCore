@@ -305,4 +305,7 @@ E-mail: <a href="mailto:neva.spb.rx@gmail.com">For any questions</a>
 Thanks for using our app!]]></string>
     <!--todo-->
     <string name="subs_main_text">todo</string>
+    <string name="subs_free_actions_title">Disable Ads for FREE!</string>
+    <string name="subs_free_actions_card_title">Support us</string>
+    <string name="subs_free_actions_card_description">Remove ads, increase offline articles limit and earn point for FREE!</string>
 </resources>

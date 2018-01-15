@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:background="@color/bgSubsTop"
+    tools:layout_gravity="center"
+    android:layout_height="wrap_content"
+    >
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/defaultMarginSmall"
+        android:foreground="?selectableItemBackground"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardCornerRadius="@dimen/cardview_default_radius"
+        app:cardElevation="@dimen/cardview_default_elevation"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="6dp"
+            >
+
+            <!--todo set icon-->
+            <ImageView
+                android:id="@+id/iconImageView"
+                android:layout_width="@dimen/subs_image_size"
+                android:layout_height="@dimen/subs_image_size"
+                android:background="@color/bgSubsTop"
+                android:padding="@dimen/defaultMarginSmall"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_free_ads_disable"
+                tools:ignore="ContentDescription"
+                />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingEnd="@dimen/defaultMarginSmall"
+                android:paddingStart="@dimen/defaultMarginSmall"
+                android:paddingTop="5dp"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/defaultMarginTiny"
+                    android:orientation="horizontal"
+                    >
+
+                    <TextView
+                        android:id="@+id/titleTextView"
+                        fontPath="fonts/Roboto-Medium.ttf"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/subsTextTitleColor"
+                        android:textSize="12sp"
+                        tools:ignore="MissingPrefix"
+                        tools:text="Поддержи нас"
+                        />
+
+                    <TextView
+                        android:id="@+id/priceTextView"
+                        fontPath="fonts/Roboto-Medium.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/material_green_500"
+                        android:textSize="12sp"
+                        tools:ignore="MissingPrefix"
+                        tools:text="FREE"
+                        />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/descriptionTextView"
+                    fontPath="fonts/Roboto-Regular.ttf"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/subsTextColorBottom"
+                    android:textSize="12sp"
+                    tools:ignore="MissingPrefix"
+                    tools:text="Отлючи рекламу, увеличь лемит статей и заработай очки БЕСПЛАТНО!"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</FrameLayout>
