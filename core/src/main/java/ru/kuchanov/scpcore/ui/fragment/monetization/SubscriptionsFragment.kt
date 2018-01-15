@@ -3,20 +3,28 @@ package ru.kuchanov.scpcore.ui.fragment.monetization
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import butterknife.ButterKnife
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.hannesdorfmann.adapterdelegates3.AdapterDelegatesManager
+import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import kotlinx.android.synthetic.main.fragment_subscriptions.*
 import org.json.JSONException
 import org.json.JSONObject
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
+import ru.kuchanov.scpcore.controller.delegate.TextDelegate
+import ru.kuchanov.scpcore.controller.viewmodel.MyListItem
+import ru.kuchanov.scpcore.controller.viewmodel.TextViewModel
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
+import ru.kuchanov.scpcore.ui.adapter.BaseRecyclerAdapter
 import ru.kuchanov.scpcore.ui.base.BaseFragment
 import timber.log.Timber
 
@@ -24,21 +32,8 @@ class SubscriptionsFragment :
         BaseFragment<SubscriptionsContract.View, SubscriptionsContract.Presenter>(),
         SubscriptionsContract.View {
 
-//    @BindView(R2.id.progressCenter)
-//    lateinit var progressCenter: ProgressBar
-//    @BindView(R2.id.refresh)
-//    internal var refresh: View? = null
-//    @BindView(R2.id.recyclerView)
-//    internal var recyclerView: RecyclerView? = null
-
-//    @Inject
-//    var mMyPreferenceManager: MyPreferenceManager? = null
-//    @Inject
-//    var mInAppHelper: InAppHelper? = null
-
-//    private var mInAppBillingService: IInAppBillingService? = null
-
-//    private val isDataLoaded: Boolean = false
+    private val items: MutableList<MyListItem> = mutableListOf()
+    private lateinit var adapter: ListDelegationAdapter<List<MyListItem>>
 
     override fun callInjections() = BaseApplication.getAppComponent().inject(this)
 
@@ -60,6 +55,12 @@ class SubscriptionsFragment :
         //                ? R.string.dialog_title_subscriptions : R.string.dialog_title_subscriptions_disabled_free_downloads);
         //        freeActions.setText(freeDownloadEnabled
         //                ? R.string.remove_ads_for_free : R.string.remove_ads_for_free_disabled_free_downloads);
+
+        recyclerView.layoutManager = LinearLayoutManager(activity)
+        val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
+        delegateManager.addDelegate(TextDelegate())
+        adapter = ListDelegationAdapter(delegateManager);
+        recyclerView.adapter = adapter
     }
 
     override fun showProgressCenter(show: Boolean) = progressCenter.setVisibility(if (show) VISIBLE else GONE)
@@ -73,85 +74,21 @@ class SubscriptionsFragment :
 
     //    @OnClick(R2.id.refresh)
     internal fun onRefreshClick() {
-        getMarketData()
+        getPresenter().getMarketData(baseActivity.getIInAppBillingService())
     }
 
     //    @OnClick(R2.id.refreshCurrentSubscriptions)
     internal fun onRefreshCurrentSubscriptionsClick() {
-        getMarketData()
+        getPresenter().getMarketData(baseActivity.getIInAppBillingService())
     }
 
-    private fun getMarketData() {
-        if (!isAdded) {
-            return
-        }
-//        mInAppBillingService = baseActivity.getIInAppBillingService()
-
-//        refresh!!.visibility = View.GONE
-//        progressCenter!!.visibility = View.VISIBLE
-
-//        val skuList = mInAppHelper!!.newSubsSkus
-//        if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
-//            skuList.addAll(mInAppHelper!!.newNoAdsSubsSkus)
-//        }
-
+    override fun showData() {
+        items.add(TextViewModel(getString(R.string.subs_main_text)))
         //todo
-//                mInAppHelper.getValidatedOwnedSubsObservable(mInAppBillingService)
-//                        .flatMap(ownedItems -> mInAppHelper.getSubsListToBuyObservable(mInAppBillingService, skuList)
-//                                .flatMap(toBuy -> Observable.just(new Pair<>(ownedItems, toBuy))))
-//                        .subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                        .subscribe(
-//                                ownedItemsAndSubscriptions -> {
-//                                    if (!isAdded()) {
-//                                        return;
-//                                    }
-//        //                            Timber.d("itemsOwned: %s", ownedItemsAndSubscriptions.first);
-//        //                            Timber.d("subsToBuy: %s", ownedItemsAndSubscriptions.second);
-//
-//                                    isDataLoaded = true;
-//                                    refresh.setVisibility(View.GONE);
-//                                    progressCenter.setVisibility(View.GONE);
-//                                    infoContainer.setVisibility(View.VISIBLE);
-//
-//                                    //show current subscription
-//                                    @InAppHelper.SubscriptionType
-//                                    int type = mInAppHelper.getSubscriptionTypeFromItemsList(ownedItemsAndSubscriptions.first);
-//                                    switch (type) {
-//                                        case InAppHelper.SubscriptionType.NONE:
-//                                            currentSubscriptionValue.setText(getString(R.string.no_subscriptions));
-//                                            break;
-//                                        case InAppHelper.SubscriptionType.NO_ADS:
-//                                            currentSubscriptionValue.setText(getString(R.string.subscription_no_ads_title));
-//                                            break;
-//                                        case InAppHelper.SubscriptionType.FULL_VERSION:
-//                                            currentSubscriptionValue.setText(getString(R.string.subscription_full_version_title));
-//                                            break;
-//                                        default:
-//                                            throw new IllegalArgumentException("unexected subs type: " + type);
-//                                    }
-//
-//                                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-//                                    recyclerView.setHasFixedSize(true);
-//                                    SubscriptionsAdapter adapter = new SubscriptionsAdapter();
-//                                    adapter.setData(ownedItemsAndSubscriptions.second);
-//                                    adapter.setArticleClickListener(SubscriptionsFragment.this);
-//                                    recyclerView.setAdapter(adapter);
-//                                },
-//                                e -> {
-//                                    if (!isAdded()) {
-//                                        return;
-//                                    }
-//                                    Timber.e(e, "error getting cur subs");
-//                                    isDataLoaded = false;
-//
-//                                    Snackbar.make(mRoot, e.getMessage(), Snackbar.LENGTH_SHORT).show();
-//                                    progressCenter.setVisibility(View.GONE);
-//                                    refresh.setVisibility(View.VISIBLE);
-//                                }
-//                        );
-    }
 
+        adapter.items = items
+        adapter.notifyDataSetChanged()
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Timber.d("called in fragment")

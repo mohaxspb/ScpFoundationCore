@@ -73,6 +73,9 @@ class SubscriptionsPresenter(
                             Timber.d("curSubsText: ${BaseApplication.getAppInstance().getString(curSubsText)}")
 
                             //todo create data and show it in fragment
+
+
+
 //                            recyclerView.setLayoutManager(new LinearLayoutManager (getActivity()));
 //                            recyclerView.setHasFixedSize(true);
 //                            SubscriptionsAdapter adapter = new SubscriptionsAdapter();

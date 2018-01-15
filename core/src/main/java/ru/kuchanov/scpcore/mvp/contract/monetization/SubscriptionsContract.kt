@@ -14,6 +14,7 @@ interface SubscriptionsContract : BaseMvp {
     interface View : BaseMvp.View {
         fun showProgressCenter(show: Boolean)
         fun showRefreshButton(show: Boolean)
+        fun showData()
     }
 
     interface Presenter : BaseMvp.Presenter<View> {
