@@ -308,4 +308,8 @@ Thanks for using our app!]]></string>
     <string name="subs_free_actions_title">Disable Ads for FREE!</string>
     <string name="subs_free_actions_card_title">Support us</string>
     <string name="subs_free_actions_card_description">Remove ads, increase offline articles limit and earn point for FREE!</string>
+    <string name="subs_no_ads_title">Laborant</string>
+    <!--todo-->
+    <string name="subs_description">Отлючение рекламы,автоматическая  облачная синхронизация, безлимитное скачивание статей и атмосферные шрифты</string>
+    <string name="subs_level_5_gain">Получить 5-й уровень допуска</string>
 </resources>

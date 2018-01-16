@@ -19,9 +19,11 @@ import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
+import rx.functions.Func3
 import rx.lang.kotlin.subscribeBy
 import rx.schedulers.Schedulers
 import timber.log.Timber
+import java.util.function.BiFunction
 
 /**
  * Created by mohax on 13.01.2018.
@@ -52,11 +54,18 @@ class SubscriptionsPresenter(
             skuList.addAll(inAppHelper.newNoAdsSubsSkus)
         }
 
-        inAppHelper.getValidatedOwnedSubsObservable(service)
-                .flatMap { ownedItems ->
-                    inAppHelper.getSubsListToBuyObservable(service, skuList)
-                            .flatMap { toBuy -> Observable.just(Pair<List<Item>, List<Subscription>>(ownedItems, toBuy)) }
-                }
+
+//        inAppHelper.getValidatedOwnedSubsObservable(service)
+//                .flatMap { ownedItems ->
+//                    inAppHelper.getSubsListToBuyObservable(service, skuList)
+//                            .flatMap { toBuy -> Observable.just(Pair<List<Item>, List<Subscription>>(ownedItems, toBuy)) }
+//                }
+        Observable.zip(
+                inAppHelper.getValidatedOwnedSubsObservable(service),
+                inAppHelper.getSubsListToBuyObservable(service, skuList),
+                inAppHelper.getInAppsListToBuyObservable(service),
+                { t1: List<Item>, t2: List<Subscription>, t3: List<Subscription> -> Triple(t1, t2, t3) }
+        )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
@@ -90,7 +99,7 @@ class SubscriptionsPresenter(
 
 //                            view.showData(items)
 
-                            view.showData(it.first, it.second, type)
+                            view.showData(it.first, it.second, it.third, type)
                         },
                         onError = {
                             Timber.e(it, "error getting cur subs");

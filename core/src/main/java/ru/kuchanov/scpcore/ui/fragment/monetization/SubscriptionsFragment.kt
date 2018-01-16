@@ -84,7 +84,7 @@ class SubscriptionsFragment :
     }
 
     //    override fun showData(items: List<MyListItem>) {
-    override fun showData(owned: List<Item>, toBuy: List<Subscription>, curSubsType: Int) {
+    override fun showData(owned: List<Item>, toBuy: List<Subscription>, inApps: List<Subscription>, curSubsType: Int) {
 //        items.clear()
 //        items.add(TextViewModel(R.string.subs_main_text))
 //        items.add(TextViewModel(R.string.subs_free_actions_title))
@@ -98,7 +98,15 @@ class SubscriptionsFragment :
                 R.string.subs_free_actions_card_description,
                 BaseApplication.getAppInstance().getString(R.string.free),
                 ID_FREE_ADS_DISABLE,
-                R.drawable.ic_free_ads_disable
+                R.drawable.ic_no_money
+        ))
+        val levelUp = inApps.first()
+        items.add(InAppViewModel(
+                R.string.subs_level_5_gain,
+                0,
+                levelUp.price,
+                levelUp.productId,
+                R.drawable.ic_no_money
         ))
 
         adapter.items = items

@@ -25,7 +25,7 @@ class InAppDelegate(val clickListener: (String) -> Unit) : AbsListItemAdapterDel
     override fun onBindViewHolder(item: InAppViewModel, viewHolder: AppViewHolder, payloads: MutableList<Any>) {
         with(viewHolder.itemView) {
             titleTextView.text = context.getString(item.title)
-            descriptionTextView.text = context.getString(item.description)
+            descriptionTextView.text = if (item.description != 0) context.getString(item.description) else null
             priceTextView.text = item.price
             iconImageView.setImageResource(item.icon)
             cardView.setOnClickListener { clickListener(item.id) }
