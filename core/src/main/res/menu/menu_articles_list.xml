@@ -6,7 +6,7 @@
 
     <item
         android:id="@+id/menuItemSort"
-        android:icon="@drawable/ic_sort"
+        android:icon="@drawable/ic_sort_black_24dp"
         android:title="@string/sort"
         app:showAsAction="always"
         tools:ignore="AlwaysShowAction"

@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -15,6 +18,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -520,7 +524,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         Snackbar snackbar;
         switch (reason) {
             case REMOVE_ADS:
-                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this,R.string.remove_ads), Snackbar.LENGTH_LONG);
+                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, R.string.remove_ads), Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.yes_bliad, v -> {
                     snackbar.dismiss();
                     SubscriptionsActivity.start(this);
@@ -531,7 +535,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 });
                 break;
             case ENABLE_FONTS:
-                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this,R.string.only_premium), Snackbar.LENGTH_LONG);
+                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, R.string.only_premium), Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.activate, action -> {
                     SubscriptionsActivity.start(this);
 
@@ -541,7 +545,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 });
                 break;
             case ENABLE_AUTO_SYNC:
-                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this,R.string.auto_sync_disabled), Snackbar.LENGTH_LONG);
+                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, R.string.auto_sync_disabled), Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.turn_on, v -> {
                     snackbar.dismiss();
                     SubscriptionsActivity.start(this);
@@ -728,8 +732,24 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     themeMenuItem.setTitle(R.string.night_mode);
                 }
             }
+
+            for (int i = 0; i < menu.size(); i++) {
+                MenuItem item = menu.getItem(i);
+                Drawable icon = item.getIcon();
+                if (icon != null) {
+                    applyTint(icon);
+                    item.setIcon(icon);
+                }
+            }
         }
         return super.onPrepareOptionsPanel(view, menu);
+    }
+
+    void applyTint(Drawable icon) {
+        icon.setColorFilter(new PorterDuffColorFilter(
+                ContextCompat.getColor(this, R.color.material_blue_gray_50),
+                PorterDuff.Mode.SRC_IN
+        ));
     }
 
     @Override
@@ -740,7 +760,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     public void showMessage(String message) {
         Timber.d("showMessage: %s", message);
-        Snackbar.make(mRoot,  SystemUtils.coloredTextForSnackBar(this, message), Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, message), Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
@@ -750,7 +770,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showMessageLong(String message) {
-        Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this,message), Snackbar.LENGTH_LONG).show();
+        Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, message), Snackbar.LENGTH_LONG).show();
     }
 
     @Override

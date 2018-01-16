@@ -116,7 +116,6 @@ dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
     //kotlin
     api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-//    api 'com.intellij:annotations:12.0@jar'
     //support libs
     api "com.android.support:appcompat-v7:$supportLibraryVersion"
     api "com.android.support:recyclerview-v7:$supportLibraryVersion"
