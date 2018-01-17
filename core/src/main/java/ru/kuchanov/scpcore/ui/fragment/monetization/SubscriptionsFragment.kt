@@ -2,6 +2,7 @@ package ru.kuchanov.scpcore.ui.fragment.monetization
 
 import android.app.Activity
 import android.content.Intent
+import android.support.annotation.StringRes
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -106,8 +107,49 @@ class SubscriptionsFragment :
                 0,
                 levelUp.price,
                 levelUp.productId,
+                //todo set icon
                 R.drawable.ic_no_money
         ))
+        //no ads
+        val noAdsSubsEnabled = FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)
+
+        toBuy.forEach {
+            if (noAdsSubsEnabled && (it.productId in InAppHelper.getNewNoAdsSubsSkus())) {
+                items.add(InAppViewModel(
+                        R.string.subs_no_ads_title,
+                        R.string.subs_no_ads_description,
+                        it.price,
+                        it.productId,
+                        //todo set icon
+                        R.drawable.ic_no_money
+                ))
+            } else {
+                @StringRes
+                val title: Int
+                @StringRes
+                val description: Int
+                when (InAppHelper.getMonthsFromSku(it.productId)) {
+                    1 -> {
+                        title = R.string.subs_1_month_title
+                        description = R.string.subs_1_month_description
+                    }
+                    3 -> {
+                        title = R.string.subs_3_month_title
+                        description = R.string.subs_3_month_description
+                    }
+                    6 -> {
+                        title = R.string.subs_6_month_title
+                        description = R.string.subs_6_month_description
+                    }
+                    12 -> {
+                        title = R.string.subs_12_month_title
+                        description = R.string.subs_12_month_description
+                    }
+                    else -> throw IllegalArgumentException("unexpected subs period")
+                }
+
+            }
+        }
 
         adapter.items = items
         adapter.notifyDataSetChanged()

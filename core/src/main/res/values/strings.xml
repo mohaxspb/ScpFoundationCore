@@ -308,8 +308,13 @@ Thanks for using our app!]]></string>
     <string name="subs_free_actions_title">Disable Ads for FREE!</string>
     <string name="subs_free_actions_card_title">Support us</string>
     <string name="subs_free_actions_card_description">Remove ads, increase offline articles limit and earn point for FREE!</string>
-    <string name="subs_no_ads_title">Laborant</string>
+    <string name="subs_no_ads_title">Протокол “Молчание”</string>
+    <string name="subs_no_ads_description">Запуск мем-агента блокирующего любое проявление рекламного агента в приложении</string>
     <!--todo-->
     <string name="subs_description">Отлючение рекламы,автоматическая  облачная синхронизация, безлимитное скачивание статей и атмосферные шрифты</string>
     <string name="subs_level_5_gain">Получить 5-й уровень допуска</string>
+    <string name="subs_1_month_title">Лаборант</string>
+    <string name="subs_3_month_title">Младший научный сотрудник</string>
+    <string name="subs_6_month_title">Научный сотрудник</string>
+    <string name="subs_12_month_title">Старший научный сотрудник</string>
 </resources>
