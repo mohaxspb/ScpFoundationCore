@@ -87,10 +87,6 @@ class SubscriptionsFragment :
 
     //    override fun showData(items: List<MyListItem>) {
     override fun showData(owned: List<Item>, toBuy: List<Subscription>, inApps: List<Subscription>, curSubsType: Int) {
-//        items.clear()
-//        items.add(TextViewModel(R.string.subs_main_text))
-//        items.add(TextViewModel(R.string.subs_free_actions_title))
-        //todo
         val items: MutableList<MyListItem> = mutableListOf()
         items.clear()
         items.add(TextViewModel(R.string.subs_main_text))
@@ -102,6 +98,8 @@ class SubscriptionsFragment :
                 ID_FREE_ADS_DISABLE,
                 R.drawable.ic_no_money
         ))
+        //levelUp
+        items.add(TextViewModel(R.string.subs_level_5_label))
         val levelUp = inApps.first()
         items.add(InAppViewModel(
                 R.string.subs_level_5_gain,
@@ -110,6 +108,23 @@ class SubscriptionsFragment :
                 levelUp.productId,
                 //todo set icon
                 R.drawable.ic_no_money
+        ))
+        //cur sub
+        val curSubsText = when (curSubsType) {
+            InAppHelper.SubscriptionType.NONE -> R.string.no_subscriptions
+            InAppHelper.SubscriptionType.NO_ADS -> R.string.subscription_no_ads_title
+            InAppHelper.SubscriptionType.FULL_VERSION -> R.string.subscription_full_version_title
+            else -> throw IllegalArgumentException("unexected subs type: " + type);
+        }
+
+        items.add(TextViewModel(R.string.subs_cur_label))
+        items.add(InAppViewModel(
+                title,
+                description,
+                it.price,
+                it.productId,
+                icon,
+                R.color.bgSubsBottom
         ))
         //no ads
         val noAdsSubsEnabled = FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)
@@ -130,7 +145,8 @@ class SubscriptionsFragment :
                         it.price,
                         it.productId,
                         //todo set icon
-                        R.drawable.ic_no_money
+                        R.drawable.ic_no_money,
+                        R.color.bgSubsBottom
                 ))
             } else {
                 @StringRes
@@ -178,7 +194,8 @@ class SubscriptionsFragment :
                         description,
                         it.price,
                         it.productId,
-                        icon
+                        icon,
+                        R.color.bgSubsBottom
                 ))
             }
         }

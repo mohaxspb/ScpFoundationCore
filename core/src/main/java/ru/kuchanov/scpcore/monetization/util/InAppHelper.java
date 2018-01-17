@@ -84,7 +84,7 @@ public class InAppHelper {
     }
 
     @SubscriptionType
-    public int getSubscriptionTypeFromItemsList(@NonNull List<Item> ownedItems) {
+    public static int getSubscriptionTypeFromItemsList(@NonNull List<Item> ownedItems) {
         @SubscriptionType
         int type;
 
@@ -110,7 +110,7 @@ public class InAppHelper {
         return type;
     }
 
-    private List<String> getSkuListFromItemsList(@NonNull List<Item> ownedItems) {
+    private static List<String> getSkuListFromItemsList(@NonNull List<Item> ownedItems) {
         List<String> skus = new ArrayList<>();
         for (Item item : ownedItems) {
             skus.add(item.sku);

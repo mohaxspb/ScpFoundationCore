@@ -29,6 +29,7 @@ class InAppDelegate(val clickListener: (String) -> Unit) : AbsListItemAdapterDel
             priceTextView.text = item.price
             iconImageView.setImageResource(item.icon)
             cardView.setOnClickListener { clickListener(item.id) }
+            root.setBackgroundResource(item.background)
         }
     }
 

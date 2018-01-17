@@ -1,7 +1,9 @@
 package ru.kuchanov.scpcore.controller.adapter.viewmodel
 
+import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
 import android.support.annotation.StringRes
+import ru.kuchanov.scpcore.R
 
 /**
  * Created by mohax on 15.01.2018.
@@ -13,5 +15,6 @@ data class InAppViewModel(
         @StringRes val description: Int,
         val price: String,
         val id: String,
-        @DrawableRes val icon: Int
+        @DrawableRes val icon: Int,
+        @ColorRes val background: Int = R.color.bgSubsTop
 ) : MyListItem

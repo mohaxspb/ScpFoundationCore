@@ -72,15 +72,7 @@ class SubscriptionsPresenter(
 
                             //show current subscription
                             @InAppHelper.SubscriptionType
-                            val type = inAppHelper.getSubscriptionTypeFromItemsList(it.first);
-                            val curSubsText = when (type) {
-                                InAppHelper.SubscriptionType.NONE -> R.string.no_subscriptions
-                                InAppHelper.SubscriptionType.NO_ADS -> R.string.subscription_no_ads_title
-                                InAppHelper.SubscriptionType.FULL_VERSION -> R.string.subscription_full_version_title
-                                else -> throw IllegalArgumentException("unexected subs type: " + type);
-                            }
-
-                            Timber.d("curSubsText: ${BaseApplication.getAppInstance().getString(curSubsText)}")
+                            val type = InAppHelper.getSubscriptionTypeFromItemsList(it.first);
                             //todo create data and show it in fragment
 //                            items.clear()
 //                            items.add(TextViewModel(R.string.subs_main_text))
