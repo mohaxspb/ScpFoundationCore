@@ -317,4 +317,13 @@ Thanks for using our app!]]></string>
     <string name="subs_3_month_title">Младший научный сотрудник</string>
     <string name="subs_6_month_title">Научный сотрудник</string>
     <string name="subs_12_month_title">Старший научный сотрудник</string>
+    <string name="subs_1_month_description">Лаборант</string>
+    <string name="subs_3_month_description">Младший научный сотрудник</string>
+    <string name="subs_6_month_description">Научный сотрудник</string>
+    <string name="subs_12_month_description">Старший научный сотрудник</string>
+    <string name="subs_no_ads_label">Месяц без рекламы</string>
+    <string name="subs_1_month_label">Лаборант</string>
+    <string name="subs_3_month_label">Младший научный сотрудник</string>
+    <string name="subs_6_month_label">Научный сотрудник</string>
+    <string name="subs_12_month_label">Старший научный сотрудник</string>
 </resources>

@@ -2,6 +2,7 @@ package ru.kuchanov.scpcore.ui.fragment.monetization
 
 import android.app.Activity
 import android.content.Intent
+import android.support.annotation.DrawableRes
 import android.support.annotation.StringRes
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View.GONE
@@ -113,8 +114,16 @@ class SubscriptionsFragment :
         //no ads
         val noAdsSubsEnabled = FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)
 
+        val bgColor = R.color.bgSubsBottom
+        val textColor = R.color.subsTextColorBottom
+
         toBuy.forEach {
             if (noAdsSubsEnabled && (it.productId in InAppHelper.getNewNoAdsSubsSkus())) {
+                items.add(TextViewModel(
+                        R.string.subs_no_ads_label,
+                        bgColor,
+                        textColor
+                ))
                 items.add(InAppViewModel(
                         R.string.subs_no_ads_title,
                         R.string.subs_no_ads_description,
@@ -125,29 +134,52 @@ class SubscriptionsFragment :
                 ))
             } else {
                 @StringRes
+                val label: Int
+                @StringRes
                 val title: Int
                 @StringRes
                 val description: Int
+                @DrawableRes
+                val icon: Int
                 when (InAppHelper.getMonthsFromSku(it.productId)) {
                     1 -> {
+                        label = R.string.subs_1_month_label
                         title = R.string.subs_1_month_title
                         description = R.string.subs_1_month_description
+                        icon = R.drawable.ic_no_money
                     }
                     3 -> {
+                        label = R.string.subs_3_month_label
                         title = R.string.subs_3_month_title
                         description = R.string.subs_3_month_description
+                        icon = R.drawable.ic_no_money
                     }
                     6 -> {
+                        label = R.string.subs_6_month_label
                         title = R.string.subs_6_month_title
                         description = R.string.subs_6_month_description
+                        icon = R.drawable.ic_no_money
                     }
                     12 -> {
+                        label = R.string.subs_12_month_label
                         title = R.string.subs_12_month_title
                         description = R.string.subs_12_month_description
+                        icon = R.drawable.ic_no_money
                     }
                     else -> throw IllegalArgumentException("unexpected subs period")
                 }
-
+                items.add(TextViewModel(
+                        label,
+                        bgColor,
+                        textColor
+                ))
+                items.add(InAppViewModel(
+                        title,
+                        description,
+                        it.price,
+                        it.productId,
+                        icon
+                ))
             }
         }
 
