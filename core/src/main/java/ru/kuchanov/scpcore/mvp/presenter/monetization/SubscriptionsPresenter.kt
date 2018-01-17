@@ -7,9 +7,7 @@ import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.api.ApiClient
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.InAppViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.TextViewModel
 import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
 import ru.kuchanov.scpcore.monetization.model.Item
@@ -19,11 +17,9 @@ import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
-import rx.functions.Func3
 import rx.lang.kotlin.subscribeBy
 import rx.schedulers.Schedulers
 import timber.log.Timber
-import java.util.function.BiFunction
 
 /**
  * Created by mohax on 13.01.2018.
@@ -49,9 +45,9 @@ class SubscriptionsPresenter(
         view.showProgressCenter(true)
         view.showRefreshButton(false)
 
-        val skuList = inAppHelper.newSubsSkus
+        val skuList = InAppHelper.getNewSubsSkus()
         if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
-            skuList.addAll(inAppHelper.newNoAdsSubsSkus)
+            skuList.addAll(InAppHelper.getNewNoAdsSubsSkus())
         }
 
 

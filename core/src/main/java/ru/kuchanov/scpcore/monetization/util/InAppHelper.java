@@ -369,15 +369,15 @@ public class InAppHelper {
         }
     }
 
-    public List<String> getNewSubsSkus() {
+    public static List<String> getNewSubsSkus() {
         return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_skus).split(",")));
     }
 
-    public List<String> getFreeTrailSubsSkus() {
+    public static List<String> getFreeTrailSubsSkus() {
         return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_subs_free_trial).split(",")));
     }
 
-    public List<String> getNewNoAdsSubsSkus() {
+    public static List<String> getNewNoAdsSubsSkus() {
         return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_subs_no_ads).split(",")));
     }
 
