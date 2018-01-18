@@ -26,6 +26,7 @@ import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
+import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_CURRENT_SUBS
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_FREE_ADS_DISABLE
 import ru.kuchanov.scpcore.ui.base.BaseFragment
 import timber.log.Timber
@@ -110,22 +111,72 @@ class SubscriptionsFragment :
                 R.drawable.ic_no_money
         ))
         //cur sub
-        val curSubsText = when (curSubsType) {
-            InAppHelper.SubscriptionType.NONE -> R.string.no_subscriptions
-            InAppHelper.SubscriptionType.NO_ADS -> R.string.subscription_no_ads_title
-            InAppHelper.SubscriptionType.FULL_VERSION -> R.string.subscription_full_version_title
-            else -> throw IllegalArgumentException("unexected subs type: " + type);
-        }
+//        val curSubsText = when (curSubsType) {
+//            InAppHelper.SubscriptionType.NONE -> R.string.no_subscriptions
+//            InAppHelper.SubscriptionType.NO_ADS -> R.string.subscription_no_ads_title
+//            InAppHelper.SubscriptionType.FULL_VERSION -> R.string.subscription_full_version_title
+//            else -> throw IllegalArgumentException("unexected subs type: " + curSubsType);
+//        }
 
         items.add(TextViewModel(R.string.subs_cur_label))
-        items.add(InAppViewModel(
-                title,
-                description,
-                it.price,
-                it.productId,
-                icon,
-                R.color.bgSubsBottom
-        ))
+        if (curSubsType == InAppHelper.SubscriptionType.NONE) {
+            //create new ViewModel for it
+        } else {
+            val item: Item?
+            if (owned.any { it.sku.contains("12") }) {
+                item = owned.find { it.sku.contains("12") }
+            } else if (owned.any { it.sku.contains("6") }) {
+                item = owned.find { it.sku.contains("6") }
+            } else if (owned.any { it.sku.contains("3") }) {
+                item = owned.find { it.sku.contains("3") }
+            } else if (owned.any { it.sku.contains("1") }) {
+                item = owned.find { it.sku.contains("1") }
+            } else {
+                throw IllegalArgumentException("unexpected subs period")
+            }
+            if (item == null) {
+                throw IllegalArgumentException("item is null! wtf?!")
+            }
+
+            @StringRes
+            val title: Int
+            @StringRes
+            val description: Int
+            @DrawableRes
+            val icon: Int
+            when (InAppHelper.getMonthsFromSku(item.sku)) {
+                1 -> {
+                    title = R.string.subs_1_month_title
+                    description = R.string.subs_1_month_description
+                    icon = R.drawable.ic_no_money
+                }
+                3 -> {
+                    title = R.string.subs_3_month_title
+                    description = R.string.subs_3_month_description
+                    icon = R.drawable.ic_no_money
+                }
+                6 -> {
+                    title = R.string.subs_6_month_title
+                    description = R.string.subs_6_month_description
+                    icon = R.drawable.ic_no_money
+                }
+                12 -> {
+                    title = R.string.subs_12_month_title
+                    description = R.string.subs_12_month_description
+                    icon = R.drawable.ic_no_money
+                }
+                else -> throw IllegalArgumentException("unexpected subs period")
+            }
+
+            items.add(InAppViewModel(
+                    title,
+                    description,
+                    "",
+                    ID_CURRENT_SUBS,
+                    icon,
+                    R.color.bgSubsBottom
+            ))
+        }
         //no ads
         val noAdsSubsEnabled = FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)
 

@@ -112,5 +112,6 @@ class SubscriptionsPresenter(
 
     companion object {
         val ID_FREE_ADS_DISABLE = "ID_FREE_ADS_DISABLE"
+        val ID_CURRENT_SUBS = "ID_CURRENT_SUBS"
     }
 }

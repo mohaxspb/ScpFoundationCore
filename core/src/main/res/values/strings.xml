@@ -326,6 +326,6 @@ Thanks for using our app!]]></string>
     <string name="subs_3_month_label">Расширенная версия на 3 месяца</string>
     <string name="subs_6_month_label">Расширенная версия на пол года</string>
     <string name="subs_12_month_label">Расширенная версия на год</string>
-    <string name="subs_cur_label">Ваше текущее назначение</string>
+    <string name="subs_cur_label">Ваш текущий статус</string>
     <string name="subs_level_5_label">Получить 5-й уровень допуска</string>
 </resources>
