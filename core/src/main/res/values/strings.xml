@@ -328,4 +328,5 @@ Thanks for using our app!]]></string>
     <string name="subs_12_month_label">Расширенная версия на год</string>
     <string name="subs_cur_label">Ваш текущий статус</string>
     <string name="subs_level_5_label">Получить 5-й уровень допуска</string>
+    <string name="subs_cur_empty_title">██████- не назначено</string>
 </resources>

@@ -16,8 +16,11 @@ import org.json.JSONObject
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
+import ru.kuchanov.scpcore.controller.adapter.delegate.CurSubsDelegate
+import ru.kuchanov.scpcore.controller.adapter.delegate.CurSubsEmptyDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.InAppDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.TextDelegate
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.CurSubsViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.InAppViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.TextViewModel
@@ -63,6 +66,8 @@ class SubscriptionsFragment :
         val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
         delegateManager.addDelegate(TextDelegate())
         delegateManager.addDelegate(InAppDelegate { getPresenter().onSubscriptionClick(it, this, baseActivity.getIInAppBillingService()) })
+        delegateManager.addDelegate(CurSubsDelegate { getPresenter().onCurrentSubscriptionClick(it) })
+        delegateManager.addDelegate(CurSubsEmptyDelegate { getPresenter().onCurrentSubscriptionEmptyClick(it) })
         adapter = ListDelegationAdapter(delegateManager);
         recyclerView.adapter = adapter
     }
@@ -107,20 +112,19 @@ class SubscriptionsFragment :
                 0,
                 levelUp.price,
                 levelUp.productId,
-                //todo set icon
-                R.drawable.ic_no_money
+                R.drawable.ic_05
         ))
         //cur sub
-//        val curSubsText = when (curSubsType) {
-//            InAppHelper.SubscriptionType.NONE -> R.string.no_subscriptions
-//            InAppHelper.SubscriptionType.NO_ADS -> R.string.subscription_no_ads_title
-//            InAppHelper.SubscriptionType.FULL_VERSION -> R.string.subscription_full_version_title
-//            else -> throw IllegalArgumentException("unexected subs type: " + curSubsType);
-//        }
-
         items.add(TextViewModel(R.string.subs_cur_label))
         if (curSubsType == InAppHelper.SubscriptionType.NONE) {
-            //create new ViewModel for it
+            //todo create new ViewModel for it
+        } else if (curSubsType == InAppHelper.SubscriptionType.NO_ADS) {
+            items.add(CurSubsViewModel(
+                    R.string.subs_no_ads_title,
+                    R.string.subs_no_ads_description,
+                    ID_CURRENT_SUBS,
+                    R.drawable.ic_adblock
+            ))
         } else {
             val item: Item?
             if (owned.any { it.sku.contains("12") }) {
@@ -168,13 +172,11 @@ class SubscriptionsFragment :
                 else -> throw IllegalArgumentException("unexpected subs period")
             }
 
-            items.add(InAppViewModel(
+            items.add(CurSubsViewModel(
                     title,
                     description,
-                    "",
                     ID_CURRENT_SUBS,
-                    icon,
-                    R.color.bgSubsBottom
+                    icon
             ))
         }
         //no ads
@@ -195,8 +197,7 @@ class SubscriptionsFragment :
                         R.string.subs_no_ads_description,
                         it.price,
                         it.productId,
-                        //todo set icon
-                        R.drawable.ic_no_money,
+                        R.drawable.ic_adblock,
                         R.color.bgSubsBottom
                 ))
             } else {

@@ -26,5 +26,7 @@ interface SubscriptionsContract : BaseMvp {
         fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService)
         fun getMarketData(service: IInAppBillingService)
         var isDataLoaded: Boolean
+        fun onCurrentSubscriptionClick(id: String)
+        fun onCurrentSubscriptionEmptyClick(id: String)
     }
 }
