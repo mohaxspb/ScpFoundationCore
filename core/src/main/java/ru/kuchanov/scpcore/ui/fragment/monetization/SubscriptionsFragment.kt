@@ -16,10 +16,7 @@ import org.json.JSONObject
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
-import ru.kuchanov.scpcore.controller.adapter.delegate.CurSubsDelegate
-import ru.kuchanov.scpcore.controller.adapter.delegate.CurSubsEmptyDelegate
-import ru.kuchanov.scpcore.controller.adapter.delegate.InAppDelegate
-import ru.kuchanov.scpcore.controller.adapter.delegate.TextDelegate
+import ru.kuchanov.scpcore.controller.adapter.delegate.*
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.*
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
 import ru.kuchanov.scpcore.monetization.model.Item
@@ -63,6 +60,7 @@ class SubscriptionsFragment :
         recyclerView.layoutManager = LinearLayoutManager(activity)
         val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
         delegateManager.addDelegate(TextDelegate())
+        delegateManager.addDelegate(LabelDelegate())
         delegateManager.addDelegate(InAppDelegate { getPresenter().onSubscriptionClick(it, this, baseActivity.getIInAppBillingService()) })
         delegateManager.addDelegate(CurSubsDelegate { getPresenter().onCurrentSubscriptionClick(it) })
         delegateManager.addDelegate(CurSubsEmptyDelegate { getPresenter().onCurrentSubscriptionEmptyClick(it) })
@@ -182,7 +180,7 @@ class SubscriptionsFragment :
 
         toBuy.forEach {
             if (noAdsSubsEnabled && (it.productId in InAppHelper.getNewNoAdsSubsSkus())) {
-                items.add(TextViewModel(
+                items.add(LabelViewModel(
                         R.string.subs_no_ads_label,
                         bgColor,
                         textColor
@@ -227,7 +225,8 @@ class SubscriptionsFragment :
                     }
                     else -> throw IllegalArgumentException("unexpected subs period")
                 }
-                items.add(TextViewModel(
+                //todo use new model with percents
+                items.add(LabelViewModel(
                         label,
                         bgColor,
                         textColor

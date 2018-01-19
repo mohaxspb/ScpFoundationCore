@@ -6,6 +6,8 @@
     fontPath="fonts/Roboto-Medium.ttf"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingEnd="@dimen/defaultMargin"
+    android:paddingStart="@dimen/defaultMargin"
     android:background="@color/bgSubsTop"
     android:textColor="@android:color/white"
     android:textSize="14sp"
