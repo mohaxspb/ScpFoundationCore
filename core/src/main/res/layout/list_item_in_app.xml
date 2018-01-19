@@ -14,7 +14,10 @@
         android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/defaultMarginSmall"
+        android:layout_marginBottom="12dp"
+        android:layout_marginEnd="@dimen/defaultMarginSmall"
+        android:layout_marginStart="@dimen/defaultMarginSmall"
+        android:layout_marginTop="12dp"
         android:foreground="?selectableItemBackground"
         app:cardBackgroundColor="@android:color/white"
         app:cardCornerRadius="@dimen/cardview_default_radius"
@@ -31,10 +34,10 @@
                 android:id="@+id/iconImageView"
                 android:layout_width="@dimen/subs_image_size"
                 android:layout_height="@dimen/subs_image_size"
+                android:layout_gravity="center_vertical"
                 android:layout_marginBottom="6dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginStart="6dp"
-                android:layout_gravity="center_vertical"
                 android:layout_marginTop="6dp"
                 android:background="@color/bgSubsTop"
                 android:padding="@dimen/defaultMarginSmall"
@@ -49,9 +52,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
+                android:paddingBottom="10dp"
                 android:paddingEnd="10dp"
                 android:paddingTop="10dp"
-                android:paddingBottom="10dp"
+                tools:ignore="RtlSymmetry"
                 >
 
                 <LinearLayout
@@ -67,10 +71,11 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:paddingEnd="@dimen/defaultMarginSmall"
                         android:textColor="@color/subsTextTitleColor"
                         android:textSize="14sp"
                         tools:ignore="MissingPrefix"
-                        tools:text="Поддержи нас"
+                        tools:text="@string/subs_full_description"
                         />
 
                     <TextView

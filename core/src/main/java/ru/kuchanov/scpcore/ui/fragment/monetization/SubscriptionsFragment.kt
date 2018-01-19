@@ -20,16 +20,14 @@ import ru.kuchanov.scpcore.controller.adapter.delegate.CurSubsDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.CurSubsEmptyDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.InAppDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.TextDelegate
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.CurSubsViewModel
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.InAppViewModel
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.TextViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.*
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
 import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_CURRENT_SUBS
+import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_CURRENT_SUBS_EMPTY
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_FREE_ADS_DISABLE
 import ru.kuchanov.scpcore.ui.base.BaseFragment
 import timber.log.Timber
@@ -96,7 +94,7 @@ class SubscriptionsFragment :
         val items: MutableList<MyListItem> = mutableListOf()
         items.clear()
         items.add(TextViewModel(R.string.subs_main_text))
-        items.add(TextViewModel(R.string.subs_free_actions_title))
+        items.add(LabelViewModel(R.string.subs_free_actions_title))
         items.add(InAppViewModel(
                 R.string.subs_free_actions_card_title,
                 R.string.subs_free_actions_card_description,
@@ -105,19 +103,19 @@ class SubscriptionsFragment :
                 R.drawable.ic_no_money
         ))
         //levelUp
-        items.add(TextViewModel(R.string.subs_level_5_label))
+        items.add(LabelViewModel(R.string.subs_level_5_label))
         val levelUp = inApps.first()
         items.add(InAppViewModel(
-                R.string.subs_level_5_gain,
+                R.string.subs_level_5_title,
                 0,
                 levelUp.price,
                 levelUp.productId,
                 R.drawable.ic_05
         ))
         //cur sub
-        items.add(TextViewModel(R.string.subs_cur_label))
+        items.add(LabelViewModel(R.string.subs_cur_label))
         if (curSubsType == InAppHelper.SubscriptionType.NONE) {
-            //todo create new ViewModel for it
+            items.add(CurSubsEmptyViewModel(ID_CURRENT_SUBS_EMPTY))
         } else if (curSubsType == InAppHelper.SubscriptionType.NO_ADS) {
             items.add(CurSubsViewModel(
                     R.string.subs_no_ads_title,
@@ -145,29 +143,25 @@ class SubscriptionsFragment :
             @StringRes
             val title: Int
             @StringRes
-            val description: Int
+            val description: Int = R.string.subs_full_description
             @DrawableRes
             val icon: Int
             when (InAppHelper.getMonthsFromSku(item.sku)) {
                 1 -> {
                     title = R.string.subs_1_month_title
-                    description = R.string.subs_1_month_description
-                    icon = R.drawable.ic_no_money
+                    icon = R.drawable.ic_scp_icon_laborant
                 }
                 3 -> {
                     title = R.string.subs_3_month_title
-                    description = R.string.subs_3_month_description
-                    icon = R.drawable.ic_no_money
+                    icon = R.drawable.ic_scp_icon_mns
                 }
                 6 -> {
                     title = R.string.subs_6_month_title
-                    description = R.string.subs_6_month_description
-                    icon = R.drawable.ic_no_money
+                    icon = R.drawable.ic_scp_icon_ns
                 }
                 12 -> {
                     title = R.string.subs_12_month_title
-                    description = R.string.subs_12_month_description
-                    icon = R.drawable.ic_no_money
+                    icon = R.drawable.ic_scp_icon_sns
                 }
                 else -> throw IllegalArgumentException("unexpected subs period")
             }
@@ -179,6 +173,7 @@ class SubscriptionsFragment :
                     icon
             ))
         }
+        //bottom panel
         //no ads
         val noAdsSubsEnabled = FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)
 
@@ -206,33 +201,29 @@ class SubscriptionsFragment :
                 @StringRes
                 val title: Int
                 @StringRes
-                val description: Int
+                val description: Int = R.string.subs_full_description
                 @DrawableRes
                 val icon: Int
                 when (InAppHelper.getMonthsFromSku(it.productId)) {
                     1 -> {
                         label = R.string.subs_1_month_label
                         title = R.string.subs_1_month_title
-                        description = R.string.subs_1_month_description
-                        icon = R.drawable.ic_no_money
+                        icon = R.drawable.ic_scp_icon_laborant
                     }
                     3 -> {
                         label = R.string.subs_3_month_label
                         title = R.string.subs_3_month_title
-                        description = R.string.subs_3_month_description
-                        icon = R.drawable.ic_no_money
+                        icon = R.drawable.ic_scp_icon_mns
                     }
                     6 -> {
                         label = R.string.subs_6_month_label
                         title = R.string.subs_6_month_title
-                        description = R.string.subs_6_month_description
-                        icon = R.drawable.ic_no_money
+                        icon = R.drawable.ic_scp_icon_ns
                     }
                     12 -> {
                         label = R.string.subs_12_month_label
                         title = R.string.subs_12_month_title
-                        description = R.string.subs_12_month_description
-                        icon = R.drawable.ic_no_money
+                        icon = R.drawable.ic_scp_icon_sns
                     }
                     else -> throw IllegalArgumentException("unexpected subs period")
                 }
