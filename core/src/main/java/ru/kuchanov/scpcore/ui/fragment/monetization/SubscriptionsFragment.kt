@@ -48,16 +48,7 @@ class SubscriptionsFragment :
                     }
                 }
 
-//        getPresenter().getMarketData(baseActivity.getIInAppBillingService())
-
-        val freeDownloadEnabled = FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_ALL_ENABLED_FOR_FREE)
-
-        //        dialogTitle.setText(freeDownloadEnabled
-        //                ? R.string.dialog_title_subscriptions : R.string.dialog_title_subscriptions_disabled_free_downloads);
-        //        freeActions.setText(freeDownloadEnabled
-        //                ? R.string.remove_ads_for_free : R.string.remove_ads_for_free_disabled_free_downloads);
-
-        recyclerView.layoutManager = LinearLayoutManager(activity)
+        recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
         delegateManager.addDelegate(TextDelegate())
         delegateManager.addDelegate(LabelDelegate())
@@ -66,20 +57,16 @@ class SubscriptionsFragment :
         delegateManager.addDelegate(CurSubsEmptyDelegate { getPresenter().onCurrentSubscriptionEmptyClick(it) })
         adapter = ListDelegationAdapter(delegateManager);
         recyclerView.adapter = adapter
+
+        refresh.setOnClickListener { getPresenter().getMarketData(baseActivity.getIInAppBillingService()) }
     }
 
     override fun showProgressCenter(show: Boolean) = progressCenter.setVisibility(if (show) VISIBLE else GONE)
 
     override fun showRefreshButton(show: Boolean) = refresh.setVisibility(if (show) VISIBLE else GONE)
 
-    //    @OnClick(R2.id.removeAdsOneDay)
     internal fun onRemoveAdsOneDayClick() {
         baseActivity.showFreeAdsDisablePopup()
-    }
-
-    //    @OnClick(R2.id.refresh)
-    internal fun onRefreshClick() {
-        getPresenter().getMarketData(baseActivity.getIInAppBillingService())
     }
 
     //    @OnClick(R2.id.refreshCurrentSubscriptions)

@@ -41,6 +41,14 @@ class SubscriptionsActivity :
                 .commitAllowingStateLoss()
     }
 
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount <= 1) {
+            finish()
+        } else {
+            super.onBackPressed()
+        }
+    }
+
     override fun getLayoutResId() = R.layout.activity_subscribtions
 
     override fun callInjections() = BaseApplication.getAppComponent().inject(this)
