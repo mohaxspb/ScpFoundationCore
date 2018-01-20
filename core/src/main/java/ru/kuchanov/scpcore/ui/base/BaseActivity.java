@@ -976,6 +976,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showFreeAdsDisablePopup() {
+        //todo launch subs activity with fragment
         android.support.v4.app.DialogFragment dialogFragment = FreeAdsDisablingDialogFragment.newInstance();
         dialogFragment.show(getSupportFragmentManager(), FreeAdsDisablingDialogFragment.TAG);
     }

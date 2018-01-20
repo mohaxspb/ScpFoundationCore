@@ -15,7 +15,10 @@ import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
  *
  * for ScpCore
  */
-class CurSubsEmptyDelegate(val clickListener: (String) -> Unit) : AbsListItemAdapterDelegate<CurSubsEmptyViewModel, MyListItem, CurSubsEmptyDelegate.AppViewHolder>() {
+class CurSubsEmptyDelegate(
+        val clickListener: (String) -> Unit,
+        val refreshClickListener: () -> Unit
+) : AbsListItemAdapterDelegate<CurSubsEmptyViewModel, MyListItem, CurSubsEmptyDelegate.AppViewHolder>() {
 
     override fun isForViewType(item: MyListItem, items: MutableList<MyListItem>, position: Int) = item is CurSubsEmptyViewModel
 
@@ -25,6 +28,7 @@ class CurSubsEmptyDelegate(val clickListener: (String) -> Unit) : AbsListItemAda
     override fun onBindViewHolder(item: CurSubsEmptyViewModel, viewHolder: AppViewHolder, payloads: MutableList<Any>) {
         with(viewHolder.itemView) {
             cardView.setOnClickListener { clickListener(item.id) }
+            refreshImageView.setOnClickListener { refreshClickListener() }
         }
     }
 

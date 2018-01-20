@@ -26,6 +26,7 @@ import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_CURRENT_SUBS
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_CURRENT_SUBS_EMPTY
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_FREE_ADS_DISABLE
+import ru.kuchanov.scpcore.mvp.presenter.monetization.getMonthFromSkuId
 import ru.kuchanov.scpcore.ui.base.BaseFragment
 import timber.log.Timber
 
@@ -41,12 +42,11 @@ class SubscriptionsFragment :
     override fun getLayoutResId(): Int = R.layout.fragment_subscriptions
 
     override fun initViews() {
-        InAppBillingServiceConnectionObservable.getInstance().serviceStatusObservable
-                .subscribe { connected ->
-                    if (connected!! && !getPresenter().isDataLoaded) {
-                        getPresenter().getMarketData(baseActivity.getIInAppBillingService())
-                    }
-                }
+        InAppBillingServiceConnectionObservable.getInstance().serviceStatusObservable.subscribe { connected ->
+            if (connected!! && !getPresenter().isDataLoaded) {
+                getPresenter().getMarketData(baseActivity.getIInAppBillingService())
+            }
+        }
 
         recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
@@ -54,8 +54,11 @@ class SubscriptionsFragment :
         delegateManager.addDelegate(LabelDelegate())
         delegateManager.addDelegate(InAppDelegate { getPresenter().onSubscriptionClick(it, this, baseActivity.getIInAppBillingService()) })
         delegateManager.addDelegate(CurSubsDelegate { getPresenter().onCurrentSubscriptionClick(it) })
-        delegateManager.addDelegate(CurSubsEmptyDelegate { getPresenter().onCurrentSubscriptionEmptyClick(it) })
-        adapter = ListDelegationAdapter(delegateManager);
+        delegateManager.addDelegate(CurSubsEmptyDelegate(
+                { getPresenter().onCurrentSubscriptionEmptyClick(it) },
+                {  getPresenter().getMarketData(baseActivity.getIInAppBillingService()) }
+        ))
+        adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter
 
         refresh.setOnClickListener { getPresenter().getMarketData(baseActivity.getIInAppBillingService()) }
@@ -64,15 +67,6 @@ class SubscriptionsFragment :
     override fun showProgressCenter(show: Boolean) = progressCenter.setVisibility(if (show) VISIBLE else GONE)
 
     override fun showRefreshButton(show: Boolean) = refresh.setVisibility(if (show) VISIBLE else GONE)
-
-    internal fun onRemoveAdsOneDayClick() {
-        baseActivity.showFreeAdsDisablePopup()
-    }
-
-    //    @OnClick(R2.id.refreshCurrentSubscriptions)
-    internal fun onRefreshCurrentSubscriptionsClick() {
-        getPresenter().getMarketData(baseActivity.getIInAppBillingService())
-    }
 
     //    override fun showData(items: List<MyListItem>) {
     override fun showData(owned: List<Item>, toBuy: List<Subscription>, inApps: List<Subscription>, curSubsType: Int) {
@@ -131,7 +125,7 @@ class SubscriptionsFragment :
             val description: Int = R.string.subs_full_description
             @DrawableRes
             val icon: Int
-            when (InAppHelper.getMonthsFromSku(item.sku)) {
+            when (getMonthFromSkuId(item.sku)) {
                 1 -> {
                     title = R.string.subs_1_month_title
                     icon = R.drawable.ic_scp_icon_laborant
@@ -189,7 +183,7 @@ class SubscriptionsFragment :
                 val description: Int = R.string.subs_full_description
                 @DrawableRes
                 val icon: Int
-                when (InAppHelper.getMonthsFromSku(it.productId)) {
+                when (getMonthFromSkuId(it.productId)) {
                     1 -> {
                         label = R.string.subs_1_month_label
                         title = R.string.subs_1_month_title

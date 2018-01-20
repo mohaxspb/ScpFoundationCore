@@ -3,9 +3,7 @@ package ru.kuchanov.scpcore.mvp.presenter.monetization
 import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
-import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.api.ApiClient
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.db.DbProviderFactory
@@ -20,6 +18,25 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.subscribeBy
 import rx.schedulers.Schedulers
 import timber.log.Timber
+import java.util.regex.Pattern
+
+fun getMonthFromSkuId(sku: String): Int {
+//    val monthsString = sku.split("_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+//    for (str in monthsString) {
+//        if (str.contains("0123456789".toRegex())) {
+//            val month = str.replace("month", "")
+//            return month.toInt()
+//        }
+//    }
+
+    val p = Pattern.compile("\\d+")
+    val m = p.matcher(sku)
+    if (m.find()) {
+        return m.group().toInt()
+    }
+
+    throw IllegalArgumentException("cant find month in sku")
+}
 
 /**
  * Created by mohax on 13.01.2018.
@@ -50,12 +67,6 @@ class SubscriptionsPresenter(
             skuList.addAll(InAppHelper.getNewNoAdsSubsSkus())
         }
 
-
-//        inAppHelper.getValidatedOwnedSubsObservable(service)
-//                .flatMap { ownedItems ->
-//                    inAppHelper.getSubsListToBuyObservable(service, skuList)
-//                            .flatMap { toBuy -> Observable.just(Pair<List<Item>, List<Subscription>>(ownedItems, toBuy)) }
-//                }
         Observable.zip(
                 inAppHelper.getValidatedOwnedSubsObservable(service),
                 inAppHelper.getSubsListToBuyObservable(service, skuList),
@@ -115,7 +126,7 @@ class SubscriptionsPresenter(
     }
 
     override fun onCurrentSubscriptionEmptyClick(id: String) {
-       //todo
+        //todo
     }
 
     companion object {

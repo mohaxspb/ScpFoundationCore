@@ -42,7 +42,7 @@
                 android:background="@color/bgSubsTop"
                 android:padding="@dimen/defaultMarginSmall"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_scp_icon_question"
+                android:src="@drawable/ic_scp_question"
                 android:tint="@android:color/white"
                 tools:ignore="ContentDescription"
                 />
