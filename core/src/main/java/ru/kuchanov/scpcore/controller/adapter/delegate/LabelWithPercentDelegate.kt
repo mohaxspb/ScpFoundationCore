@@ -25,6 +25,8 @@ class LabelWithPercentDelegate : AbsListItemAdapterDelegate<LabelWithPercentView
     override fun onBindViewHolder(item: LabelWithPercentViewModel, viewHolder: AppViewHolder, payloads: MutableList<Any>) {
         with(viewHolder.itemView) {
             titleTextView.text = context.getString(item.text)
+            priceTextView.text = item.price
+            percentTextView.text = context.getString(R.string.subs_percent, item.percent)
         }
     }
 

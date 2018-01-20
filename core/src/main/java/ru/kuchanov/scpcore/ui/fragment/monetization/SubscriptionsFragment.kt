@@ -52,11 +52,12 @@ class SubscriptionsFragment :
         val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
         delegateManager.addDelegate(TextDelegate())
         delegateManager.addDelegate(LabelDelegate())
+        delegateManager.addDelegate(LabelWithPercentDelegate())
         delegateManager.addDelegate(InAppDelegate { getPresenter().onSubscriptionClick(it, this, baseActivity.getIInAppBillingService()) })
         delegateManager.addDelegate(CurSubsDelegate { getPresenter().onCurrentSubscriptionClick(it) })
         delegateManager.addDelegate(CurSubsEmptyDelegate(
                 { getPresenter().onCurrentSubscriptionEmptyClick(it) },
-                {  getPresenter().getMarketData(baseActivity.getIInAppBillingService()) }
+                { getPresenter().getMarketData(baseActivity.getIInAppBillingService()) }
         ))
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter
@@ -159,6 +160,11 @@ class SubscriptionsFragment :
         val bgColor = R.color.bgSubsBottom
         val textColor = R.color.subsTextColorBottom
 
+        val subsFullOneMonth = toBuy
+                .filter { it.productId !in InAppHelper.getNewNoAdsSubsSkus() }
+                .filter { getMonthFromSkuId(it.productId) == 1 }
+                .first()
+
         toBuy.forEach {
             if (noAdsSubsEnabled && (it.productId in InAppHelper.getNewNoAdsSubsSkus())) {
                 items.add(LabelViewModel(
@@ -183,7 +189,9 @@ class SubscriptionsFragment :
                 val description: Int = R.string.subs_full_description
                 @DrawableRes
                 val icon: Int
-                when (getMonthFromSkuId(it.productId)) {
+
+                val month = getMonthFromSkuId(it.productId)
+                when (month) {
                     1 -> {
                         label = R.string.subs_1_month_label
                         title = R.string.subs_1_month_title
@@ -206,11 +214,13 @@ class SubscriptionsFragment :
                     }
                     else -> throw IllegalArgumentException("unexpected subs period")
                 }
-                //todo use new model with percents
-                items.add(LabelViewModel(
+
+                val oneMonthPriceForMonths = subsFullOneMonth.price_amount_micros * month
+                val percent = 100L - subsFullOneMonth.price_amount_micros * 100L / oneMonthPriceForMonths
+                items.add(LabelWithPercentViewModel(
                         label,
-                        bgColor,
-                        textColor
+                        if (month != 1) subsFullOneMonth.price else "",
+                        if (month != 1) percent.toString() else ""
                 ))
                 items.add(InAppViewModel(
                         title,

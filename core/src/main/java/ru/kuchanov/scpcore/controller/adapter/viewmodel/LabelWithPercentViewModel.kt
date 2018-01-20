@@ -10,5 +10,5 @@ import android.support.annotation.StringRes
 data class LabelWithPercentViewModel(
         @StringRes val text: Int,
         val price: String,
-        val percent: Int
+        val percent: String
 ) : MyListItem

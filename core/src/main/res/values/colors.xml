@@ -122,4 +122,5 @@
     <color name="bgSubsBottom">#edeff2</color>
     <color name="subsTextColorBottom">#7e848c</color>
     <color name="subsTextTitleColor">#474a4f</color>
+    <color name="priceRedColor">#ff5252</color>
 </resources>
