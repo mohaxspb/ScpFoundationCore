@@ -28,6 +28,7 @@ import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Com
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_FREE_ADS_DISABLE
 import ru.kuchanov.scpcore.mvp.presenter.monetization.getMonthFromSkuId
 import ru.kuchanov.scpcore.ui.base.BaseFragment
+import ru.kuchanov.scpcore.util.SystemUtils
 import timber.log.Timber
 
 class SubscriptionsFragment :
@@ -216,10 +217,10 @@ class SubscriptionsFragment :
                 }
 
                 val oneMonthPriceForMonths = subsFullOneMonth.price_amount_micros * month
-                val percent = 100L - subsFullOneMonth.price_amount_micros * 100L / oneMonthPriceForMonths
+                val percent = 100L - it.price_amount_micros * 100L / oneMonthPriceForMonths
                 items.add(LabelWithPercentViewModel(
                         label,
-                        if (month != 1) subsFullOneMonth.price else "",
+                        if (month != 1) (oneMonthPriceForMonths / 1000000L).toString() + SystemUtils.getCurrencySymbol(it.price_currency_code) else "",
                         if (month != 1) percent.toString() else ""
                 ))
                 items.add(InAppViewModel(

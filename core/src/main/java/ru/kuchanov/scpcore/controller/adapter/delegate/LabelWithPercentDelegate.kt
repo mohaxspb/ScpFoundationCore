@@ -1,6 +1,7 @@
 package ru.kuchanov.scpcore.controller.adapter.delegate
 
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +27,7 @@ class LabelWithPercentDelegate : AbsListItemAdapterDelegate<LabelWithPercentView
         with(viewHolder.itemView) {
             titleTextView.text = context.getString(item.text)
             priceTextView.text = item.price
-            percentTextView.text = context.getString(R.string.subs_percent, item.percent)
+            percentTextView.text = if (!item.percent.isEmpty()) context.getString(R.string.subs_percent, item.percent) else ""
         }
     }
 
