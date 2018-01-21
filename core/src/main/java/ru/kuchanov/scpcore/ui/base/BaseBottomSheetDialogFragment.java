@@ -19,7 +19,7 @@ import butterknife.Unbinder;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
-import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
+import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventName;
@@ -105,8 +105,7 @@ public abstract class BaseBottomSheetDialogFragment extends BottomSheetDialogFra
             case REMOVE_ADS:
                 snackbar = Snackbar.make(mRoot, R.string.remove_ads, Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.yes_bliad, v -> {
-                    BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
-                    subsDF.show(getChildFragmentManager(), subsDF.getTag());
+                    SubscriptionsActivity.start(getActivity());
 
                     Bundle bundle = new Bundle();
                     bundle.putString(EventParam.PLACE, StartScreen.SNACK_BAR);
@@ -116,8 +115,7 @@ public abstract class BaseBottomSheetDialogFragment extends BottomSheetDialogFra
             case ENABLE_FONTS:
                 snackbar = Snackbar.make(mRoot, R.string.only_premium, Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.activate, action -> {
-                    BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
-                    subsDF.show(getChildFragmentManager(), subsDF.getTag());
+                    SubscriptionsActivity.start(getActivity());
 
                     Bundle bundle = new Bundle();
                     bundle.putString(EventParam.PLACE, StartScreen.FONT);
@@ -127,8 +125,7 @@ public abstract class BaseBottomSheetDialogFragment extends BottomSheetDialogFra
             case ENABLE_AUTO_SYNC:
                 snackbar = Snackbar.make(mRoot, R.string.auto_sync_disabled, Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.turn_on, v -> {
-                    BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
-                    subsDF.show(getChildFragmentManager(), subsDF.getTag());
+                    SubscriptionsActivity.start(getActivity());
 
                     Bundle bundle = new Bundle();
                     bundle.putString(EventParam.PLACE, StartScreen.AUTO_SYNC_SNACKBAR);

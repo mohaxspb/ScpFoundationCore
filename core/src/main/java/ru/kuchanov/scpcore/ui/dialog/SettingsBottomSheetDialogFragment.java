@@ -38,6 +38,7 @@ import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyNotificationManager;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
+import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerCardDesignAdapter;
 import ru.kuchanov.scpcore.ui.base.BaseBottomSheetDialogFragment;
@@ -236,8 +237,8 @@ public class SettingsBottomSheetDialogFragment
     void onActivateAutoSyncClicked() {
         Timber.d("onActivateAutoSyncClicked");
         dismiss();
-        BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
-        subsDF.show(getActivity().getSupportFragmentManager(), subsDF.getTag());
+
+        SubscriptionsActivity.start(getActivity());
 
         Bundle bundle = new Bundle();
         bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.StartScreen.AUTO_SYNC_FROM_SETTINGS);

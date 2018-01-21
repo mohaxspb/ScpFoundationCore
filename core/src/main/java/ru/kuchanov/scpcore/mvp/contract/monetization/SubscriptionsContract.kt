@@ -23,6 +23,12 @@ interface SubscriptionsContract : BaseMvp {
     }
 
     interface Presenter : BaseMvp.Presenter<View> {
+        var owned: List<Item>?
+        var subsToBuy: List<Subscription>?
+        var inAppsToBuy: List<Subscription>?
+        @InAppHelper.SubscriptionType
+        var type: Int
+
         fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService)
         fun getMarketData(service: IInAppBillingService)
         var isDataLoaded: Boolean

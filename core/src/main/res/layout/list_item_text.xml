@@ -12,7 +12,7 @@
     android:paddingStart="@dimen/defaultMargin"
     android:paddingTop="@dimen/defaultMargin"
     android:textColor="@android:color/white"
-    android:textSize="14sp"
+    android:textSize="16sp"
     tools:ignore="MissingPrefix"
     tools:text="@string/subs_info"
     />

@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.view.MenuItem
+import kotlinx.android.synthetic.main.activity_subscribtions.*
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract
@@ -23,10 +25,30 @@ class SubscriptionsActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setSupportActionBar(toolbar)
+
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowHomeEnabled(true)
+
+            title = getString(when (intent.getIntExtra(EXTRA_TYPE, TYPE_SUBS)) {
+                TYPE_SUBS, TYPE_DISABLE_ADS_FOR_FREE -> R.string.subs_activity_title
+                TYPE_LEADERBOARD -> R.string.subs_leaderboard_activity_title
+                else -> throw IllegalArgumentException("unexpected type: ${intent.getIntExtra(EXTRA_TYPE, -1)}")
+            })
+        }
+
         //todo
         if (savedInstanceState == null) {
             presenter.showSubscriptionsScreen()
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun showScreen(screen: SubscriptionsScreenContract.Screen) {
@@ -59,8 +81,22 @@ class SubscriptionsActivity :
 
     companion object {
 
+        @kotlin.jvm.JvmOverloads
         @JvmStatic
-        fun start(context: Context) = context.startActivity(Intent(context, SubscriptionsActivity::class.java))
+        fun start(context: Context, type: Int = TYPE_SUBS) {
+            val intent = Intent(context, SubscriptionsActivity::class.java)
+            intent.putExtra(EXTRA_TYPE, type)
+            context.startActivity(Intent(context, SubscriptionsActivity::class.java))
+        }
 
+        @JvmStatic
+        val EXTRA_TYPE = "EXTRA_TYPE"
+
+        @JvmStatic
+        val TYPE_SUBS = 0
+        @JvmStatic
+        val TYPE_DISABLE_ADS_FOR_FREE = 1
+        @JvmStatic
+        val TYPE_LEADERBOARD = 2
     }
 }

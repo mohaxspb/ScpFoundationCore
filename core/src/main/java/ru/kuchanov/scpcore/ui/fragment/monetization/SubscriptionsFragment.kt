@@ -65,6 +65,13 @@ class SubscriptionsFragment :
         recyclerView.adapter = adapter
 
         refresh.setOnClickListener { getPresenter().getMarketData(baseActivity.getIInAppBillingService()) }
+
+        if (presenter.owned == null) {
+            baseActivity.getIInAppBillingService()?.apply { getPresenter().getMarketData(this) }
+        } else {
+            presenter.apply { showData(owned!!, subsToBuy!!, inAppsToBuy!!, type) }
+        }
+//        baseActivity.getIInAppBillingService()?.apply { getPresenter().getMarketData(this) }
     }
 
     override fun showProgressCenter(show: Boolean) = progressContainer.setVisibility(if (show) VISIBLE else GONE)
@@ -73,6 +80,7 @@ class SubscriptionsFragment :
 
     //    override fun showData(items: List<MyListItem>) {
     override fun showData(owned: List<Item>, toBuy: List<Subscription>, inApps: List<Subscription>, curSubsType: Int) {
+        Timber.d("showData")
         val items: MutableList<MyListItem> = mutableListOf()
         items.clear()
         items.add(TextViewModel(R.string.subs_main_text))

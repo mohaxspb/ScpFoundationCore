@@ -104,7 +104,6 @@ import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.FreeAdsDisablingDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
-import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.SocialLoginHolder;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
@@ -206,7 +205,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 .requestEmail()
                 .build();
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .addApi(AppInvite.API)
                 .build();
@@ -276,7 +275,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                                     UserPropertyKey.INVITED,
                                     "true");
                         } else {
-                            Timber.d("attempt to receive already received invite! Ata-ta, %USER_NAME%!");
+                            Timber.d("attempt to receive already received invite! Ata-ta, %%USER_NAME%%!");
                         }
                         mPresenter.onInviteReceived(invitationId);
                         mMyPreferenceManager.setInviteAlreadyReceived(true);
@@ -644,7 +643,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                             mMyPreferenceManager.setLastTimeSubscriptionsValidated(System.currentTimeMillis());
 
                             @InAppHelper.SubscriptionType
-                            int type = mInAppHelper.getSubscriptionTypeFromItemsList(validatedItems);
+                            int type = InAppHelper.getSubscriptionTypeFromItemsList(validatedItems);
                             Timber.d("subscription type: %s", type);
                             switch (type) {
                                 case InAppHelper.SubscriptionType.NONE:
@@ -665,7 +664,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                                     mMyPreferenceManager.setHasSubscription(true);
                                     mMyPreferenceManager.setHasNoAdsSubscription(true);
                                     //remove banner
-                                    AdView banner = ButterKnife.findById(this, R.id.banner);
+                                    AdView banner = findViewById(R.id.banner);
                                     if (banner != null) {
                                         banner.setEnabled(false);
                                         banner.setVisibility(View.GONE);
@@ -836,8 +835,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.StartScreen.AFTER_LEVEL_UP);
                     FirebaseAnalytics.getInstance(this).logEvent(Constants.Firebase.Analitics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
 
-                    BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
-                    subsDF.show(getSupportFragmentManager(), subsDF.getTag());
+                    SubscriptionsActivity.start(BaseActivity.this);
                 })
                 .negativeText(android.R.string.cancel)
                 .onNegative((dialog, which) -> dialog.dismiss())
@@ -850,7 +848,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         Timber.d("showOfferFreeTrialSubscriptionPopup");
 
         showProgressDialog(R.string.wait);
-        mInAppHelper.getSubsListToBuyObservable(mService, mInAppHelper.getFreeTrailSubsSkus())
+        mInAppHelper.getSubsListToBuyObservable(mService, InAppHelper.getFreeTrailSubsSkus())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

@@ -1,7 +1,7 @@
 package ru.kuchanov.scpcore.controller.adapter.delegate
 
 import android.support.v7.widget.RecyclerView
-import android.text.TextUtils
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.list_item_label_with_percent.view.*
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.LabelWithPercentViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
+import ru.kuchanov.scpcore.ui.util.MyHtmlTagHandler
 
 /**
  * Created by mohax on 15.01.2018.
@@ -26,7 +27,7 @@ class LabelWithPercentDelegate : AbsListItemAdapterDelegate<LabelWithPercentView
     override fun onBindViewHolder(item: LabelWithPercentViewModel, viewHolder: AppViewHolder, payloads: MutableList<Any>) {
         with(viewHolder.itemView) {
             titleTextView.text = context.getString(item.text)
-            priceTextView.text = item.price
+            priceTextView.text = Html.fromHtml("<s>${item.price}</s>", null,  MyHtmlTagHandler())
             percentTextView.text = if (!item.percent.isEmpty()) context.getString(R.string.subs_percent, item.percent) else ""
         }
     }

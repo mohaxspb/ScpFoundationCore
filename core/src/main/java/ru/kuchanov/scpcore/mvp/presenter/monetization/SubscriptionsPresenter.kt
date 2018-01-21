@@ -13,7 +13,7 @@ import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
-import rx.Observable
+import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.subscribeBy
 import rx.schedulers.Schedulers
@@ -58,7 +58,14 @@ class SubscriptionsPresenter(
 
     val items = mutableListOf<MyListItem>()
 
+    override var owned: List<Item>? = null
+    override var subsToBuy: List<Subscription>? = null
+    override var inAppsToBuy: List<Subscription>? = null
+    @InAppHelper.SubscriptionType
+    override var type: Int = InAppHelper.SubscriptionType.NONE
+
     override fun getMarketData(service: IInAppBillingService) {
+        Timber.d("getMarketData")
         view.showProgressCenter(true)
         view.showRefreshButton(false)
 
@@ -67,23 +74,24 @@ class SubscriptionsPresenter(
             skuList.addAll(InAppHelper.getNewNoAdsSubsSkus())
         }
 
-        Observable.zip(
-                inAppHelper.getValidatedOwnedSubsObservable(service),
-                inAppHelper.getSubsListToBuyObservable(service, skuList),
-                inAppHelper.getInAppsListToBuyObservable(service),
+        Single.zip(
+                inAppHelper.getValidatedOwnedSubsObservable(service).toSingle(),
+                inAppHelper.getSubsListToBuyObservable(service, skuList).toSingle(),
+                inAppHelper.getInAppsListToBuyObservable(service).toSingle(),
                 { t1: List<Item>, t2: List<Subscription>, t3: List<Subscription> -> Triple(t1, t2, t3) }
         )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                        onNext = {
+                        onSuccess = {
                             isDataLoaded = true;
                             view.showProgressCenter(false)
                             view.showRefreshButton(false)
 
-                            //show current subscription
-                            @InAppHelper.SubscriptionType
-                            val type = InAppHelper.getSubscriptionTypeFromItemsList(it.first);
+                            owned = it.first
+                            subsToBuy = it.second
+                            inAppsToBuy = it.third
+                            type = InAppHelper.getSubscriptionTypeFromItemsList(it.first);
                             //todo create data and show it in fragment
 //                            items.clear()
 //                            items.add(TextViewModel(R.string.subs_main_text))
@@ -107,8 +115,7 @@ class SubscriptionsPresenter(
                             view.showError(it)
                             view.showProgressCenter(false)
                             view.showRefreshButton(true)
-                        },
-                        onCompleted = {}
+                        }
                 );
     }
 

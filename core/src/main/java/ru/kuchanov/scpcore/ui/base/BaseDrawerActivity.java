@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
@@ -40,8 +39,8 @@ import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse;
 import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.monetization.model.PurchaseData;
 import ru.kuchanov.scpcore.mvp.contract.DrawerMvp;
+import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import ru.kuchanov.scpcore.ui.dialog.LeaderboardDialogFragment;
-import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
 import ru.kuchanov.scpcore.ui.holder.HeaderViewHolderLogined;
 import ru.kuchanov.scpcore.ui.holder.HeaderViewHolderUnlogined;
 import rx.android.schedulers.AndroidSchedulers;
@@ -205,8 +204,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
             headerViewHolder.levelContainer.setOnClickListener(mOnLevelUpClickListener);
 
             headerViewHolder.inapp.setOnClickListener(view -> {
-                BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
-                subsDF.show(getSupportFragmentManager(), subsDF.getTag());
+                SubscriptionsActivity.start(this);
 
                 Bundle bundle = new Bundle();
                 bundle.putString(EventParam.PLACE, StartScreen.DRAWER_HEADER_LOGINED);
