@@ -51,6 +51,7 @@ class SubscriptionsFragment :
 
         recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
+        delegateManager.addDelegate(DividerDelegate())
         delegateManager.addDelegate(TextDelegate())
         delegateManager.addDelegate(LabelDelegate())
         delegateManager.addDelegate(LabelWithPercentDelegate())
@@ -66,7 +67,7 @@ class SubscriptionsFragment :
         refresh.setOnClickListener { getPresenter().getMarketData(baseActivity.getIInAppBillingService()) }
     }
 
-    override fun showProgressCenter(show: Boolean) = progressCenter.setVisibility(if (show) VISIBLE else GONE)
+    override fun showProgressCenter(show: Boolean) = progressContainer.setVisibility(if (show) VISIBLE else GONE)
 
     override fun showRefreshButton(show: Boolean) = refresh.setVisibility(if (show) VISIBLE else GONE)
 
@@ -155,10 +156,12 @@ class SubscriptionsFragment :
             ))
         }
         //bottom panel
+        val bgColor = R.color.bgSubsBottom
+        items.add(DividerViewModel(bgColor = bgColor, height = resources.getDimensionPixelSize(R.dimen.defaultMarginMedium)))
+
         //no ads
         val noAdsSubsEnabled = FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)
 
-        val bgColor = R.color.bgSubsBottom
         val textColor = R.color.subsTextColorBottom
 
         val subsFullOneMonth = toBuy
@@ -220,7 +223,7 @@ class SubscriptionsFragment :
                 val percent = 100L - it.price_amount_micros * 100L / oneMonthPriceForMonths
                 items.add(LabelWithPercentViewModel(
                         label,
-                        if (month != 1) (oneMonthPriceForMonths / 1000000L).toString() + SystemUtils.getCurrencySymbol(it.price_currency_code) else "",
+                        if (month != 1) (oneMonthPriceForMonths / 1000000L).toString() + SystemUtils.getCurrencySymbol2(it.price_currency_code) else "",
                         if (month != 1) percent.toString() else ""
                 ))
                 items.add(InAppViewModel(

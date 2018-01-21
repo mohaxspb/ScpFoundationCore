@@ -49,11 +49,14 @@ public class SystemUtils {
         }
     }
 
-
     public static String getCurrencySymbol(String currencyCode) {
         Currency currency = Currency.getInstance(currencyCode);
 //        System.out.println(currencyCode + ":-" + currency.getSymbol(currencyLocaleMap.get(currency)));
         return currency.getSymbol(currencyLocaleMap.get(currency));
+    }
+
+    public static String getCurrencySymbol2(String currencyCod) {
+        return Currency.getInstance(currencyCod).getSymbol(Locale.getDefault());
     }
 
     private static String[] getCertificateFingerprints(Context context) {

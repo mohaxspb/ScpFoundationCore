@@ -5,6 +5,7 @@
 
     <dimen name="defaultMarginBig">24dp</dimen>
     <dimen name="defaultMargin">16dp</dimen>
+    <dimen name="defaultMarginMedium">12dp</dimen>
     <dimen name="defaultMarginSmall">8dp</dimen>
     <dimen name="defaultMarginTiny">4dp</dimen>
 

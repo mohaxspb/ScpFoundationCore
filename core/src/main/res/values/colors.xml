@@ -123,4 +123,6 @@
     <color name="subsTextColorBottom">#7e848c</color>
     <color name="subsTextTitleColor">#474a4f</color>
     <color name="priceRedColor">#ff5252</color>
+    <color name="whiteHalfTransparent">#88ffffff</color>
+    <color name="subs_toolbar_color">#474a4f</color>
 </resources>
