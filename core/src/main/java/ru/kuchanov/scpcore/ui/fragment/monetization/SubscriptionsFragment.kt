@@ -69,9 +69,9 @@ class SubscriptionsFragment :
         if (presenter.owned == null) {
             baseActivity.getIInAppBillingService()?.apply { getPresenter().getMarketData(this) }
         } else {
+            showProgressCenter(false)
             presenter.apply { showData(owned!!, subsToBuy!!, inAppsToBuy!!, type) }
         }
-//        baseActivity.getIInAppBillingService()?.apply { getPresenter().getMarketData(this) }
     }
 
     override fun showProgressCenter(show: Boolean) = progressContainer.setVisibility(if (show) VISIBLE else GONE)
