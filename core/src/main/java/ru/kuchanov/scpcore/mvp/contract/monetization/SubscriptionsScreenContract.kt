@@ -16,6 +16,8 @@ interface SubscriptionsScreenContract : BaseActivityMvp {
     interface Presenter : BaseActivityMvp.Presenter<View> {
 
         fun showSubscriptionsScreen()
+        fun showDisableAdsForFreeScreen()
+        fun showLeaderboardScreen()
     }
 
     enum class Screen {

@@ -18,4 +18,7 @@ class SubscriptionsScreenPresenter(
 
     override fun showSubscriptionsScreen() = view.showScreen(SubscriptionsScreenContract.Screen.SUBS)
 
+    override fun showDisableAdsForFreeScreen() = view.showScreen(SubscriptionsScreenContract.Screen.FREE_ACTIONS)
+
+    override fun showLeaderboardScreen() = view.showScreen(SubscriptionsScreenContract.Screen.LEADERBOARD)
 }

@@ -25,22 +25,29 @@ class SubscriptionsActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val screenToShowType = intent.getIntExtra(EXTRA_TYPE, TYPE_SUBS)
+
         setSupportActionBar(toolbar)
 
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
 
-            title = getString(when (intent.getIntExtra(EXTRA_TYPE, TYPE_SUBS)) {
+
+            title = getString(when (screenToShowType) {
                 TYPE_SUBS, TYPE_DISABLE_ADS_FOR_FREE -> R.string.subs_activity_title
                 TYPE_LEADERBOARD -> R.string.subs_leaderboard_activity_title
-                else -> throw IllegalArgumentException("unexpected type: ${intent.getIntExtra(EXTRA_TYPE, -1)}")
+                else -> throw IllegalArgumentException("unexpected type: $screenToShowType")
             })
         }
 
-        //todo
         if (savedInstanceState == null) {
-            presenter.showSubscriptionsScreen()
+            when (screenToShowType) {
+                TYPE_SUBS -> presenter.showSubscriptionsScreen()
+                TYPE_DISABLE_ADS_FOR_FREE -> presenter.showDisableAdsForFreeScreen()
+                TYPE_LEADERBOARD -> presenter.showLeaderboardScreen()
+                else -> throw IllegalArgumentException("unexpected type: $screenToShowType")
+            }
         }
     }
 

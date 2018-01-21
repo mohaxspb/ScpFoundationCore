@@ -58,7 +58,7 @@ class SubscriptionsFragment :
         delegateManager.addDelegate(InAppDelegate { getPresenter().onSubscriptionClick(it, this, baseActivity.getIInAppBillingService()) })
         delegateManager.addDelegate(CurSubsDelegate { getPresenter().onCurrentSubscriptionClick(it) })
         delegateManager.addDelegate(CurSubsEmptyDelegate(
-                { getPresenter().onCurrentSubscriptionEmptyClick(it) },
+                { getPresenter().onSubscriptionClick(InAppHelper.getNewInAppsSkus().first(), this, baseActivity.getIInAppBillingService()) },
                 { getPresenter().getMarketData(baseActivity.getIInAppBillingService()) }
         ))
         adapter = ListDelegationAdapter(delegateManager)

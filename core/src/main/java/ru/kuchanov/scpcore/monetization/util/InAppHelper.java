@@ -381,6 +381,10 @@ public class InAppHelper {
         return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_subs_no_ads).split(",")));
     }
 
+    public static List<String> getNewInAppsSkus() {
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_inapp_skus).split(",")));
+    }
+
     public static int getMonthsFromSku(String sku) {
         String monthsString = sku.replaceAll("[^\\.0123456789]", "");
         return Integer.parseInt(monthsString);

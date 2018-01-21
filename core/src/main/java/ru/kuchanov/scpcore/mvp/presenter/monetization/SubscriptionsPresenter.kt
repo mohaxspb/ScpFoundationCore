@@ -21,14 +21,6 @@ import timber.log.Timber
 import java.util.regex.Pattern
 
 fun getMonthFromSkuId(sku: String): Int {
-//    val monthsString = sku.split("_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-//    for (str in monthsString) {
-//        if (str.contains("0123456789".toRegex())) {
-//            val month = str.replace("month", "")
-//            return month.toInt()
-//        }
-//    }
-
     val p = Pattern.compile("\\d+")
     val m = p.matcher(sku)
     if (m.find()) {
@@ -120,8 +112,18 @@ class SubscriptionsPresenter(
     }
 
     override fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService) {
+        if (id == ID_FREE_ADS_DISABLE) {
+            //todo open free ads disable
+            return
+        }
+        val type: String
+        if (id in InAppHelper.getNewInAppsSkus()) {
+            type = InAppHelper.InappType.IN_APP
+        } else {
+            type = InAppHelper.InappType.SUBS
+        }
         try {
-            InAppHelper.startSubsBuy(target, inAppBillingService, InAppHelper.InappType.SUBS, id)
+            InAppHelper.startSubsBuy(target, inAppBillingService, type, id)
         } catch (e: Exception) {
             Timber.e(e)
             view.showError(e)
@@ -129,11 +131,7 @@ class SubscriptionsPresenter(
     }
 
     override fun onCurrentSubscriptionClick(id: String) {
-        //todo
-    }
-
-    override fun onCurrentSubscriptionEmptyClick(id: String) {
-        //todo
+        //todo open leaderboard
     }
 
     companion object {

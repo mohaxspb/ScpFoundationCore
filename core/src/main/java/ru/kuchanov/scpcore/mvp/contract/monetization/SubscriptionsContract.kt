@@ -33,6 +33,6 @@ interface SubscriptionsContract : BaseMvp {
         fun getMarketData(service: IInAppBillingService)
         var isDataLoaded: Boolean
         fun onCurrentSubscriptionClick(id: String)
-        fun onCurrentSubscriptionEmptyClick(id: String)
+//        fun onCurrentSubscriptionEmptyClick(id: String)
     }
 }
