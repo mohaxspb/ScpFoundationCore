@@ -1,4 +1,8 @@
 apply plugin: 'com.android.application'
+//kotlin
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 //here is script to generate version code from version name
 //which is set in gradle.properties as value of version var
 //which must be in format major, minor, patch, where patch goes from 0 to 99
@@ -169,23 +173,14 @@ configurations {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
     //dagger2
-    implementation 'com.google.dagger:dagger:2.11'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
+    String daggerVersion = '2.13'
+    api "com.google.dagger:dagger:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
     //core module
-//    compile project(path: ':core', configuration: 'devRelease')
     implementation project(':core')
-
-//    //to use lib via gradle add this lines:
-//    //leakcanary (we need it here too according to https://github.com/square/leakcanary/issues/514#issuecomment-318203708)
-//    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
-//    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-//    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-//    //add core itself at last for each configuration
-//    ruDevReleaseCompile(group: 'ru.kuchanov.scp', name: 'core', version: '1.0.0', ext: 'aar', classifier: 'devRelease'){transitive = true}
-//    //or
-//    ruDevReleaseCompile('ru.kuchanov.scp:core:1.0.1:devRelease@aar') { transitive = true }
 }
 
 apply plugin: 'com.google.gms.google-services'

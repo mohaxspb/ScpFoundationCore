@@ -35,6 +35,7 @@ import ru.kuchanov.scpcore.monetization.model.Subscription;
 import rx.Observable;
 import timber.log.Timber;
 
+import static ru.kuchanov.scpcore.ui.base.BaseDrawerActivity.REQUEST_CODE_INAPP;
 import static ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog.REQUEST_CODE_SUBSCRIPTION;
 
 /**
@@ -84,7 +85,7 @@ public class InAppHelper {
     }
 
     @SubscriptionType
-    public int getSubscriptionTypeFromItemsList(@NonNull List<Item> ownedItems) {
+    public static int getSubscriptionTypeFromItemsList(@NonNull List<Item> ownedItems) {
         @SubscriptionType
         int type;
 
@@ -110,7 +111,7 @@ public class InAppHelper {
         return type;
     }
 
-    private List<String> getSkuListFromItemsList(@NonNull List<Item> ownedItems) {
+    private static List<String> getSkuListFromItemsList(@NonNull List<Item> ownedItems) {
         List<String> skus = new ArrayList<>();
         for (Item item : ownedItems) {
             skus.add(item.sku);
@@ -346,7 +347,8 @@ public class InAppHelper {
         );
         PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
         if (pendingIntent != null) {
-            fragment.startIntentSenderForResult(pendingIntent.getIntentSender(), REQUEST_CODE_SUBSCRIPTION, new Intent(), 0, 0, 0, null);
+            int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
+            fragment.startIntentSenderForResult(pendingIntent.getIntentSender(), requestCode, new Intent(), 0, 0, 0, null);
         }
     }
 
@@ -365,20 +367,26 @@ public class InAppHelper {
         );
         PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
         if (pendingIntent != null) {
-            activity.startIntentSenderForResult(pendingIntent.getIntentSender(), REQUEST_CODE_SUBSCRIPTION, new Intent(), 0, 0, 0, null);
+            int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
+            activity.startIntentSenderForResult(pendingIntent.getIntentSender(), requestCode, new Intent(), 0, 0, 0, null);
         }
+        //todo thinkk if we must handle consuming inapp here
     }
 
-    public List<String> getNewSubsSkus() {
+    public static List<String> getNewSubsSkus() {
         return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_skus).split(",")));
     }
 
-    public List<String> getFreeTrailSubsSkus() {
+    public static List<String> getFreeTrailSubsSkus() {
         return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_subs_free_trial).split(",")));
     }
 
-    public List<String> getNewNoAdsSubsSkus() {
+    public static List<String> getNewNoAdsSubsSkus() {
         return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_subs_no_ads).split(",")));
+    }
+
+    public static List<String> getNewInAppsSkus() {
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_inapp_skus).split(",")));
     }
 
     public static int getMonthsFromSku(String sku) {

@@ -1,7 +1,6 @@
 package ru.kuchanov.scpcore.di.module;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import javax.inject.Singleton;
 
@@ -19,9 +18,8 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 public class NotificationModule {
 
     @Provides
-    @NonNull
     @Singleton
-    MyNotificationManager providesNotificationManager(@NonNull Context context, @NonNull MyPreferenceManager preferenceManager) {
+    MyNotificationManager providesNotificationManager( Context context,  MyPreferenceManager preferenceManager) {
         return new MyNotificationManager(context, preferenceManager);
     }
 }

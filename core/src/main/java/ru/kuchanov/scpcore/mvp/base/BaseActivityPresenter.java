@@ -37,7 +37,7 @@ import timber.log.Timber;
  * <p>
  * for scp_ru
  */
-abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
+public abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
         extends BasePresenter<V>
         implements BaseActivityMvp.Presenter<V> {
 
@@ -105,7 +105,7 @@ abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
         }
     };
 
-    BaseActivityPresenter(
+    public BaseActivityPresenter(
             MyPreferenceManager myPreferencesManager,
             DbProviderFactory dbProviderFactory,
             ApiClient apiClient

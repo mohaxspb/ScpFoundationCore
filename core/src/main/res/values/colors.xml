@@ -117,4 +117,12 @@
     <color name="settings_spinner_selected_dark">#33ECEFF1</color>
     <color name="settings_spinner_unselected_light">#33ECEFF1</color>
     <color name="settings_spinner_unselected_dark">#3337474F</color>
+
+    <color name="bgSubsTop">#bbbfc4</color>
+    <color name="bgSubsBottom">#edeff2</color>
+    <color name="subsTextColorBottom">#7e848c</color>
+    <color name="subsTextTitleColor">#474a4f</color>
+    <color name="priceRedColor">#ff5252</color>
+    <color name="whiteHalfTransparent">#88ffffff</color>
+    <color name="bgSubsToolbarColor">#474a4f</color>
 </resources>

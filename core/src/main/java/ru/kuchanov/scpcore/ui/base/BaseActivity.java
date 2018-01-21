@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -15,6 +18,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -93,13 +97,13 @@ import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.ui.activity.ArticleActivity;
 import ru.kuchanov.scpcore.ui.activity.GalleryActivity;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
+import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import ru.kuchanov.scpcore.ui.activity.TagSearchActivity;
 import ru.kuchanov.scpcore.ui.adapter.SocialLoginAdapter;
 import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.FreeAdsDisablingDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
-import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.SocialLoginHolder;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
@@ -170,7 +174,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     private InterstitialAd mInterstitialAd;
 
-    //    @Inject
     @NonNull
     @Override
     public P createPresenter() {
@@ -202,7 +205,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 .requestEmail()
                 .build();
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .addApi(AppInvite.API)
                 .build();
@@ -272,7 +275,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                                     UserPropertyKey.INVITED,
                                     "true");
                         } else {
-                            Timber.d("attempt to receive already received invite! Ata-ta, %USER_NAME%!");
+                            Timber.d("attempt to receive already received invite! Ata-ta, %%USER_NAME%%!");
                         }
                         mPresenter.onInviteReceived(invitationId);
                         mMyPreferenceManager.setInviteAlreadyReceived(true);
@@ -520,11 +523,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         Snackbar snackbar;
         switch (reason) {
             case REMOVE_ADS:
-                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this,R.string.remove_ads), Snackbar.LENGTH_LONG);
+                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, R.string.remove_ads), Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.yes_bliad, v -> {
                     snackbar.dismiss();
-                    BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
-                    subsDF.show(getSupportFragmentManager(), subsDF.getTag());
+                    SubscriptionsActivity.start(this);
 
                     Bundle bundle = new Bundle();
                     bundle.putString(EventParam.PLACE, StartScreen.SNACK_BAR);
@@ -532,10 +534,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 });
                 break;
             case ENABLE_FONTS:
-                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this,R.string.only_premium), Snackbar.LENGTH_LONG);
+                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, R.string.only_premium), Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.activate, action -> {
-                    BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
-                    subsDF.show(getSupportFragmentManager(), subsDF.getTag());
+                    SubscriptionsActivity.start(this);
 
                     Bundle bundle = new Bundle();
                     bundle.putString(EventParam.PLACE, StartScreen.FONT);
@@ -543,11 +544,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 });
                 break;
             case ENABLE_AUTO_SYNC:
-                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this,R.string.auto_sync_disabled), Snackbar.LENGTH_LONG);
+                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, R.string.auto_sync_disabled), Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.turn_on, v -> {
                     snackbar.dismiss();
-                    BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
-                    subsDF.show(getSupportFragmentManager(), subsDF.getTag());
+                    SubscriptionsActivity.start(this);
 
                     Bundle bundle = new Bundle();
                     bundle.putString(EventParam.PLACE, StartScreen.AUTO_SYNC_SNACKBAR);
@@ -631,7 +631,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void updateOwnedMarketItems() {
-        Timber.d("updateOwnedMarketItems forceSubsValidation: %s");
+        Timber.d("updateOwnedMarketItems");
         mInAppHelper
                 .getValidatedOwnedSubsObservable(mService)
                 .subscribeOn(Schedulers.io())
@@ -643,7 +643,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                             mMyPreferenceManager.setLastTimeSubscriptionsValidated(System.currentTimeMillis());
 
                             @InAppHelper.SubscriptionType
-                            int type = mInAppHelper.getSubscriptionTypeFromItemsList(validatedItems);
+                            int type = InAppHelper.getSubscriptionTypeFromItemsList(validatedItems);
                             Timber.d("subscription type: %s", type);
                             switch (type) {
                                 case InAppHelper.SubscriptionType.NONE:
@@ -664,7 +664,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                                     mMyPreferenceManager.setHasSubscription(true);
                                     mMyPreferenceManager.setHasNoAdsSubscription(true);
                                     //remove banner
-                                    AdView banner = ButterKnife.findById(this, R.id.banner);
+                                    AdView banner = findViewById(R.id.banner);
                                     if (banner != null) {
                                         banner.setEnabled(false);
                                         banner.setVisibility(View.GONE);
@@ -731,8 +731,24 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     themeMenuItem.setTitle(R.string.night_mode);
                 }
             }
+
+            for (int i = 0; i < menu.size(); i++) {
+                MenuItem item = menu.getItem(i);
+                Drawable icon = item.getIcon();
+                if (icon != null) {
+                    applyTint(icon);
+                    item.setIcon(icon);
+                }
+            }
         }
         return super.onPrepareOptionsPanel(view, menu);
+    }
+
+    void applyTint(Drawable icon) {
+        icon.setColorFilter(new PorterDuffColorFilter(
+                ContextCompat.getColor(this, R.color.material_blue_gray_50),
+                PorterDuff.Mode.SRC_IN
+        ));
     }
 
     @Override
@@ -743,7 +759,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     public void showMessage(String message) {
         Timber.d("showMessage: %s", message);
-        Snackbar.make(mRoot,  SystemUtils.coloredTextForSnackBar(this, message), Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, message), Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
@@ -753,7 +769,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showMessageLong(String message) {
-        Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this,message), Snackbar.LENGTH_LONG).show();
+        Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, message), Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -819,8 +835,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.StartScreen.AFTER_LEVEL_UP);
                     FirebaseAnalytics.getInstance(this).logEvent(Constants.Firebase.Analitics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
 
-                    BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
-                    subsDF.show(getSupportFragmentManager(), subsDF.getTag());
+                    SubscriptionsActivity.start(BaseActivity.this);
                 })
                 .negativeText(android.R.string.cancel)
                 .onNegative((dialog, which) -> dialog.dismiss())
@@ -833,7 +848,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         Timber.d("showOfferFreeTrialSubscriptionPopup");
 
         showProgressDialog(R.string.wait);
-        mInAppHelper.getSubsListToBuyObservable(mService, mInAppHelper.getFreeTrailSubsSkus())
+        mInAppHelper.getSubsListToBuyObservable(mService, InAppHelper.getFreeTrailSubsSkus())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -853,14 +868,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
         if (i == R.id.settings) {
-            Timber.d("settings pressed");
             BottomSheetDialogFragment settingsDF = SettingsBottomSheetDialogFragment.newInstance();
             settingsDF.show(getSupportFragmentManager(), settingsDF.getTag());
             return true;
         } else if (i == R.id.subscribe) {
-            Timber.d("subscribe pressed");
-            BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
-            subsDF.show(getSupportFragmentManager(), subsDF.getTag());
+            SubscriptionsActivity.start(this);
 
             Bundle bundle = new Bundle();
             bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, StartScreen.MENU);
@@ -962,6 +974,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showFreeAdsDisablePopup() {
+        //todo launch subs activity with fragment
         android.support.v4.app.DialogFragment dialogFragment = FreeAdsDisablingDialogFragment.newInstance();
         dialogFragment.show(getSupportFragmentManager(), FreeAdsDisablingDialogFragment.TAG);
     }

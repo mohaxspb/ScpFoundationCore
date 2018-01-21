@@ -43,8 +43,8 @@
         <item name="spoilerColorTitle">@color/material_red_800</item>
 
         <!--icons-->
-        <item name="iconShare">@drawable/ic_share_black</item>
-        <item name="iconTextSizeDialog">@drawable/ic_text_size_white_24dp</item>
+        <!--<item name="iconShare">@drawable/ic_share_black</item>-->
+        <!--<item name="iconTextSizeDialog">@drawable/ic_text_fields_black_24dp</item>-->
         <item name="iconArrowUp">@drawable/ic_keyboard_arrow_up_black_24dp</item>
         <item name="iconArrowDown">@drawable/ic_keyboard_arrow_down_black_24dp</item>
 
@@ -116,8 +116,8 @@
         <item name="spoilerColorTitle">@color/material_amber_500</item>
 
         <!--icons-->
-        <item name="iconShare">@drawable/ic_share_blue_grey_50_48dp</item>
-        <item name="iconTextSizeDialog">@drawable/ic_text_size_white_24dp</item>
+        <!--<item name="iconShare">@drawable/ic_share_blue_grey_50_48dp</item>-->
+        <!--<item name="iconTextSizeDialog">@drawable/ic_text_fields_black_24dp</item>-->
         <item name="iconArrowUp">@drawable/ic_keyboard_arrow_up_black_24dp</item>
         <item name="iconArrowDown">@drawable/ic_keyboard_arrow_down_black_24dp</item>
 
@@ -185,10 +185,6 @@
     <style name="navigationStyleLight" parent="SCP.Theme.Light">
         <item name="colorControlHighlight">@color/material_grey_400</item>
         <item name="android:windowBackground">@color/material_blue_gray_50</item>
-    </style>
-
-    <style name="MyTextAppearanceLarge" parent="android:style/TextAppearance.Large">
-        <item name="android:textColor">@color/material_blue_gray_50</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">

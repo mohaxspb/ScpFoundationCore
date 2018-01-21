@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import java.util.List;
 
-import ru.kuchanov.scpcore.ui.fragment.ArticleFragment;
+import ru.kuchanov.scpcore.ui.fragment.article.ArticleFragment;
 
 /**
  * Created by mohax on 07.01.2017.

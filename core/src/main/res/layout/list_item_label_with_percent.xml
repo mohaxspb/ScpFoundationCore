@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bgSubsBottom"
+    tools:layout_gravity="center"
+    >
+
+    <TextView
+        android:id="@+id/titleTextView"
+        fontPath="fonts/Roboto-Medium.ttf"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingEnd="@dimen/defaultMargin"
+        android:paddingStart="@dimen/defaultMargin"
+        android:textColor="@color/subsTextColorBottom"
+        android:textSize="14sp"
+        tools:ignore="MissingPrefix"
+        tools:text="@string/subs_1_month_label"
+        />
+
+    <TextView
+        android:id="@+id/priceTextView"
+        fontPath="fonts/Roboto-Medium.ttf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/defaultMarginTiny"
+        android:layout_marginStart="@dimen/defaultMarginTiny"
+        android:textColor="@color/priceRedColor"
+        android:textSize="14sp"
+        tools:ignore="MissingPrefix"
+        tools:text="160P"
+        />
+
+    <TextView
+        android:id="@+id/percentTextView"
+        fontPath="fonts/Roboto-Medium.ttf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="@dimen/defaultMargin"
+        android:textColor="@color/priceRedColor"
+        android:textSize="14sp"
+        tools:ignore="MissingPrefix"
+        tools:text="-17%"
+        />
+
+</LinearLayout>

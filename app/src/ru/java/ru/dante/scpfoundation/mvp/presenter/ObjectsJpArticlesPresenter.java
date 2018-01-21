@@ -8,7 +8,7 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.mvp.presenter.BaseObjectsArticlesPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.articleslists.BaseObjectsArticlesPresenter;
 
 public class ObjectsJpArticlesPresenter
         extends BaseObjectsArticlesPresenter<ObjectsJpArticles.View>

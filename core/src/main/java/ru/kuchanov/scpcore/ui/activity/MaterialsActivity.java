@@ -13,12 +13,12 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
-import ru.kuchanov.scpcore.mvp.contract.MaterialsScreenMvp;
+import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsScreenMvp;
 import ru.kuchanov.scpcore.ui.base.BaseActivity;
 import ru.kuchanov.scpcore.ui.base.BaseDrawerActivity;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
-import ru.kuchanov.scpcore.ui.fragment.ArticleFragment;
-import ru.kuchanov.scpcore.ui.fragment.MaterialsAllFragment;
+import ru.kuchanov.scpcore.ui.fragment.article.ArticleFragment;
+import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsAllFragment;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
