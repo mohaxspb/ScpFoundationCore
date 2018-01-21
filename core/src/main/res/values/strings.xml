@@ -330,4 +330,5 @@ Thanks for using our app!]]></string>
     <string name="subs_percent">-%s%%</string>
     <string name="subs_leaderboard_activity_title">Leaderboard</string>
     <string name="subs_activity_title">Поддержка разработчиков</string>
+    <string name="subs_level_5_description">10000 очков, повышение рейтинга и увеличение лимита offline статей на 200 статей</string>
 </resources>

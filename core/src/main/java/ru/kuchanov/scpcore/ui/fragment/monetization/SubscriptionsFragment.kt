@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.gson.Gson
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegatesManager
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import kotlinx.android.synthetic.main.fragment_subscriptions.*
@@ -19,7 +20,9 @@ import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.controller.adapter.delegate.*
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.*
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
+import ru.kuchanov.scpcore.manager.MyPreferenceManager
 import ru.kuchanov.scpcore.monetization.model.Item
+import ru.kuchanov.scpcore.monetization.model.PurchaseData
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
@@ -27,13 +30,25 @@ import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Com
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_CURRENT_SUBS_EMPTY
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_FREE_ADS_DISABLE
 import ru.kuchanov.scpcore.mvp.presenter.monetization.getMonthFromSkuId
+import ru.kuchanov.scpcore.ui.base.BaseDrawerActivity.REQUEST_CODE_INAPP
 import ru.kuchanov.scpcore.ui.base.BaseFragment
 import ru.kuchanov.scpcore.util.SystemUtils
+import rx.android.schedulers.AndroidSchedulers
+import rx.lang.kotlin.subscribeBy
+import rx.schedulers.Schedulers
 import timber.log.Timber
+import javax.inject.Inject
 
 class SubscriptionsFragment :
         BaseFragment<SubscriptionsContract.View, SubscriptionsContract.Presenter>(),
         SubscriptionsContract.View {
+
+    @Inject
+    lateinit var mGson: Gson
+    @Inject
+    lateinit var mInAppHelper: InAppHelper
+    @Inject
+    lateinit var myPreferenceManager: MyPreferenceManager
 
     //    private val items: MutableList<MyListItem> = mutableListOf()
     private lateinit var adapter: ListDelegationAdapter<List<MyListItem>>
@@ -59,7 +74,10 @@ class SubscriptionsFragment :
         delegateManager.addDelegate(CurSubsDelegate { getPresenter().onCurrentSubscriptionClick(it) })
         delegateManager.addDelegate(CurSubsEmptyDelegate(
                 { getPresenter().onSubscriptionClick(InAppHelper.getNewInAppsSkus().first(), this, baseActivity.getIInAppBillingService()) },
-                { getPresenter().getMarketData(baseActivity.getIInAppBillingService()) }
+                {
+                    baseActivity.updateOwnedMarketItems()
+                    getPresenter().getMarketData(baseActivity.getIInAppBillingService())
+                }
         ))
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter
@@ -97,7 +115,7 @@ class SubscriptionsFragment :
         val levelUp = inApps.first()
         items.add(InAppViewModel(
                 R.string.subs_level_5_title,
-                0,
+                R.string.subs_level_5_description,
                 levelUp.price,
                 levelUp.productId,
                 R.drawable.ic_05
@@ -254,7 +272,7 @@ class SubscriptionsFragment :
         if (requestCode == REQUEST_CODE_SUBSCRIPTION) {
             if (data == null) {
                 if (isAdded) {
-                    baseActivity.showMessageLong("Error while parse result, please try again")
+                    showMessageLong("Error while parse result, please try again")
                 }
                 return
             }
@@ -272,12 +290,49 @@ class SubscriptionsFragment :
                     baseActivity.updateOwnedMarketItems()
                 } catch (e: JSONException) {
                     Timber.e(e, "Failed to parse purchase data.")
-                    baseActivity.showError(e)
+                    showError(e)
                 }
 
             } else {
                 if (isAdded) {
-                    baseActivity.showMessageLong("Error: response code is not \"0\". Please try again")
+                    showMessageLong("Error: response code is not \"0\". Please try again")
+                }
+            }
+        } else if (requestCode == REQUEST_CODE_INAPP) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (data == null) {
+                    Timber.d("error_inapp data is NULL")
+                    showMessage(R.string.error_inapp)
+                    return
+                }
+                //            int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
+                val purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA")
+                //            String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
+                Timber.d("purchaseData %s", purchaseData)
+                val item = mGson.fromJson(purchaseData, PurchaseData::class.java)
+                Timber.d("You have bought the %s", item.productId)
+
+                if (item.productId == getString(R.string.inapp_skus).split(",").first()) {
+                    //levelUp 5
+                    //add 10 000 score
+                    mInAppHelper.consumeInApp(item.productId, item.purchaseToken, baseActivity.getIInAppBillingService())
+                            .toSingle()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeBy(
+                                    onSuccess = {
+                                        Timber.d("consume inapp successful, so update user score")
+                                        mPresenter.updateUserScoreForInapp(item.productId)
+
+                                        if (!myPreferenceManager.isHasAnySubscription()) {
+                                            baseActivity.showOfferSubscriptionPopup()
+                                        }
+                                    },
+                                    onError = {
+                                        Timber.e(it, "error while consume inapp... X3 what to do)))")
+                                        showError(it)
+                                    }
+                            )
                 }
             }
         } else {

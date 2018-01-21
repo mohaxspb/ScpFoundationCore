@@ -459,15 +459,15 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         }
 
         //increment scoreInFirebase
-        int totalScoreToAdd;
+        int totalScoreToAdd = 10000;
 
-        switch (sku) {
-            case "level_up_to_5":
-                totalScoreToAdd = 10000;
-                break;
-            default:
-                throw new IllegalArgumentException("unexpected sku");
-        }
+//        switch (sku) {
+//            case "level_up_to_5":
+//                totalScoreToAdd = 10000;
+//                break;
+//            default:
+//                throw new IllegalArgumentException("unexpected sku");
+//        }
 
         mApiClient
                 .incrementScoreInFirebaseObservable(totalScoreToAdd)

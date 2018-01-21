@@ -35,6 +35,7 @@ import ru.kuchanov.scpcore.monetization.model.Subscription;
 import rx.Observable;
 import timber.log.Timber;
 
+import static ru.kuchanov.scpcore.ui.base.BaseDrawerActivity.REQUEST_CODE_INAPP;
 import static ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog.REQUEST_CODE_SUBSCRIPTION;
 
 /**
@@ -346,7 +347,8 @@ public class InAppHelper {
         );
         PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
         if (pendingIntent != null) {
-            fragment.startIntentSenderForResult(pendingIntent.getIntentSender(), REQUEST_CODE_SUBSCRIPTION, new Intent(), 0, 0, 0, null);
+            int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
+            fragment.startIntentSenderForResult(pendingIntent.getIntentSender(), requestCode, new Intent(), 0, 0, 0, null);
         }
     }
 
@@ -365,8 +367,10 @@ public class InAppHelper {
         );
         PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
         if (pendingIntent != null) {
-            activity.startIntentSenderForResult(pendingIntent.getIntentSender(), REQUEST_CODE_SUBSCRIPTION, new Intent(), 0, 0, 0, null);
+            int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
+            activity.startIntentSenderForResult(pendingIntent.getIntentSender(), requestCode, new Intent(), 0, 0, 0, null);
         }
+        //todo thinkk if we must handle consuming inapp here
     }
 
     public static List<String> getNewSubsSkus() {
