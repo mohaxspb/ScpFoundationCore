@@ -54,6 +54,7 @@ import ru.kuchanov.scpcore.ui.fragment.articleslists.OfflineArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.RatedArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.ReadArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.RecentArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.monetization.FreeAdsDisableActionsFragment;
 import ru.kuchanov.scpcore.ui.fragment.search.SiteSearchArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.tags.TagsSearchFragment;
 import ru.kuchanov.scpcore.ui.fragment.tags.TagsSearchResultsArticlesFragment;
@@ -136,6 +137,8 @@ public interface AppComponent {
     void inject(ReadArticlesFragment fragment);
 
     void inject(SubscriptionsFragment fragment);
+
+    void inject(FreeAdsDisableActionsFragment fragment);
 
     void inject(TextSizeDialogFragment dialogFragment);
 

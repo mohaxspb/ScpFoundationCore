@@ -30,6 +30,7 @@ import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsInterviewsMvp;
 import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsJokesMvp;
 import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsOtherMvp;
 import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsScreenMvp;
+import ru.kuchanov.scpcore.mvp.contract.monetization.FreeAdsDisableActionsContract;
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract;
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract;
 import ru.kuchanov.scpcore.mvp.contract.search.SiteSearchArticlesMvp;
@@ -57,6 +58,7 @@ import ru.kuchanov.scpcore.mvp.presenter.materials.MaterialsInterviewPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.materials.MaterialsJokesPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.materials.MaterialsOtherPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.materials.MaterialsScreenPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.monetization.FreeAdsDisableActionsPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsScreenPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.search.SiteSearchArticlesPresenter;
@@ -75,18 +77,18 @@ public class PresentersModule {
     @Provides
     @Singleton
     MainMvp.Presenter providesMainPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient
     ) {
         return new MainPresenter(myPreferencesManager, dbProviderFactory, apiClient);
     }
 
     @Provides
     ArticleScreenMvp.Presenter providesArticleScreenPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient
     ) {
         return new ArticleScreenPresenter(myPreferencesManager, dbProviderFactory, apiClient);
     }
@@ -94,9 +96,9 @@ public class PresentersModule {
     @Provides
     @Singleton
     MaterialsScreenMvp.Presenter providesMaterialsScreenPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient
     ) {
         return new MaterialsScreenPresenter(myPreferencesManager, dbProviderFactory, apiClient);
     }
@@ -104,9 +106,9 @@ public class PresentersModule {
     @Provides
     @Singleton
     TagsScreenMvp.Presenter providesTagsSearchScreenPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient
     ) {
         return new TagsSearchScreenPresenter(myPreferencesManager, dbProviderFactory, apiClient);
     }
@@ -114,9 +116,9 @@ public class PresentersModule {
     @Provides
     @Singleton
     GalleryScreenMvp.Presenter providesGalleryScreenPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient
     ) {
         return new GalleryScreenPresenter(myPreferencesManager, dbProviderFactory, apiClient);
     }
@@ -124,9 +126,9 @@ public class PresentersModule {
     @Provides
 //    @Singleton
     ArticleMvp.Presenter providesArticlePresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient
     ) {
         return new ArticlePresenter(myPreferencesManager, dbProviderFactory, apiClient);
     }
@@ -134,9 +136,9 @@ public class PresentersModule {
     @Provides
     @Singleton
     RecentArticlesMvp.Presenter providesRecentArticlesPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient
     ) {
         return new MostRecentArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient);
     }
@@ -144,9 +146,9 @@ public class PresentersModule {
     @Provides
     @Singleton
     RatedArticlesMvp.Presenter providesRatedArticlesPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient
     ) {
         return new MostRatedArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient);
     }
@@ -154,9 +156,9 @@ public class PresentersModule {
     @Provides
     @Singleton
     SiteSearchArticlesMvp.Presenter providesSiteSearchArticlesPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient
     ) {
         return new SiteSearchArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient);
     }
@@ -164,9 +166,9 @@ public class PresentersModule {
     @Provides
     @Singleton
     FavoriteArticlesMvp.Presenter providesFavoriteArticlesPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient
     ) {
         return new FavoriteArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient);
     }
@@ -174,9 +176,9 @@ public class PresentersModule {
     @Provides
     @Singleton
     OfflineArticlesMvp.Presenter providesOfflineArticlesPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient
     ) {
         return new OfflineArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient);
     }
@@ -184,9 +186,9 @@ public class PresentersModule {
     @Provides
     @Singleton
     ReadArticlesMvp.Presenter providesReadArticlesPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient
     ) {
         return new ReadArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient);
     }
@@ -194,10 +196,10 @@ public class PresentersModule {
     @Provides
     @Singleton
     Objects1Articles.Presenter providesObjects1ArticlesPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient,
-             ConstantValues constantValues
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient,
+            ConstantValues constantValues
     ) {
         return new Objects1ArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
     }
@@ -205,10 +207,10 @@ public class PresentersModule {
     @Provides
     @Singleton
     Objects2Articles.Presenter providesObjects2ArticlesPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient,
-             ConstantValues constantValues
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient,
+            ConstantValues constantValues
     ) {
         return new Objects2ArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
     }
@@ -216,10 +218,10 @@ public class PresentersModule {
     @Provides
     @Singleton
     Objects3Articles.Presenter providesObjects3ArticlesPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient,
-             ConstantValues constantValues
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient,
+            ConstantValues constantValues
     ) {
         return new Objects3ArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
     }
@@ -227,10 +229,10 @@ public class PresentersModule {
     @Provides
     @Singleton
     Objects4Articles.Presenter providesObjects4ArticlesPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient,
-             ConstantValues constantValues
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient,
+            ConstantValues constantValues
     ) {
         return new Objects4ArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
     }
@@ -238,10 +240,10 @@ public class PresentersModule {
     @Provides
     @Singleton
     ObjectsRuArticles.Presenter providesObjectsRuArticlesPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient,
-             ConstantValues constantValues
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient,
+            ConstantValues constantValues
     ) {
         return new ObjectsRuArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
     }
@@ -249,10 +251,10 @@ public class PresentersModule {
     @Provides
     @Singleton
     MaterialsExperimentsMvp.Presenter providesMaterialsExperimentsPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient,
-             ConstantValues constantValues
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient,
+            ConstantValues constantValues
     ) {
         return new MaterialsExperimentsPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
     }
@@ -260,10 +262,10 @@ public class PresentersModule {
     @Provides
     @Singleton
     MaterialsInterviewsMvp.Presenter providesMaterialsInterviewsPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient,
-             ConstantValues constantValues
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient,
+            ConstantValues constantValues
     ) {
         return new MaterialsInterviewPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
     }
@@ -271,10 +273,10 @@ public class PresentersModule {
     @Provides
     @Singleton
     MaterialsIncidentsMvp.Presenter providesMaterialsIncidentsPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient,
-             ConstantValues constantValues
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient,
+            ConstantValues constantValues
     ) {
         return new MaterialsIncidentsPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
     }
@@ -282,10 +284,10 @@ public class PresentersModule {
     @Provides
     @Singleton
     MaterialsOtherMvp.Presenter providesMaterialsOtherPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient,
-             ConstantValues constantValues
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient,
+            ConstantValues constantValues
     ) {
         return new MaterialsOtherPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
     }
@@ -293,21 +295,21 @@ public class PresentersModule {
     @Provides
     @Singleton
     MaterialsArchiveMvp.Presenter providesMaterialsArchivePresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient,
-             ConstantValues constantValues
-            ) {
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient,
+            ConstantValues constantValues
+    ) {
         return new MaterialsArchivePresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
     }
 
     @Provides
     @Singleton
     MaterialsJokesMvp.Presenter providesMaterialsJokesPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient,
-             ConstantValues constantValues
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient,
+            ConstantValues constantValues
     ) {
         return new MaterialsJokesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
     }
@@ -315,9 +317,9 @@ public class PresentersModule {
     @Provides
     @Singleton
     SubscriptionsScreenContract.Presenter providesSubscriptionsScreenPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient
     ) {
         return new SubscriptionsScreenPresenter(myPreferencesManager, dbProviderFactory, apiClient);
     }
@@ -325,20 +327,31 @@ public class PresentersModule {
     @Provides
     @Singleton
     SubscriptionsContract.Presenter providesSubscriptionsPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient,
-             InAppHelper inAppHelper
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient,
+            InAppHelper inAppHelper
     ) {
         return new SubscriptionsPresenter(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }
 
     @Provides
     @Singleton
+    FreeAdsDisableActionsContract.Presenter providesFreeAdsDisableActionsPresenter(
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient,
+            InAppHelper inAppHelper
+    ) {
+        return new FreeAdsDisableActionsPresenter(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
+    }
+
+    @Provides
+    @Singleton
     TagsSearchMvp.Presenter providesTagsSearchFragmentPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient
     ) {
         return new TagsSearchFragmentPresenter(myPreferencesManager, dbProviderFactory, apiClient);
     }
@@ -346,10 +359,10 @@ public class PresentersModule {
     @Provides
 //    @Singleton
     TagsSearchResultsArticlesMvp.Presenter providesTagsSearchResultsPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient
     ) {
-        return new TagSearchResultsArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient) ;
+        return new TagSearchResultsArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient);
     }
 }

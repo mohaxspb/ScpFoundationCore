@@ -11,6 +11,7 @@ import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract.Screen.*
 import ru.kuchanov.scpcore.ui.base.BaseActivity
+import ru.kuchanov.scpcore.ui.fragment.monetization.FreeAdsDisableActionsFragment
 import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment
 
 /**
@@ -61,7 +62,7 @@ class SubscriptionsActivity :
     override fun showScreen(screen: SubscriptionsScreenContract.Screen) {
         val fragment: Fragment = when (screen) {
             SUBS -> SubscriptionsFragment.newInstance()
-            FREE_ACTIONS -> TODO()
+            FREE_ACTIONS -> FreeAdsDisableActionsFragment.newInstance()
             LEADERBOARD -> TODO()
         }
         supportFragmentManager.beginTransaction()

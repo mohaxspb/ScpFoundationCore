@@ -55,7 +55,7 @@ class SubscriptionsFragment :
 
     override fun callInjections() = BaseApplication.getAppComponent().inject(this)
 
-    override fun getLayoutResId(): Int = R.layout.fragment_subscriptions
+    override fun getLayoutResId() = R.layout.fragment_subscriptions
 
     override fun initViews() {
         InAppBillingServiceConnectionObservable.getInstance().serviceStatusObservable.subscribe { connected ->
