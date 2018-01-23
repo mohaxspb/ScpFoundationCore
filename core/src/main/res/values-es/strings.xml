@@ -10,12 +10,12 @@
     <string name="drawer_item_7">Serie SCP II</string>
     <string name="drawer_item_8">Serie SCP III</string>
     <string name="drawer_item_9">Serie SCP RU</string>
-    <string name="drawer_item_10">Материалы</string>
-    <string name="drawer_item_11">Рассказы</string>
-    <string name="drawer_item_12">Избранное</string>
-    <string name="drawer_item_13">Статьи Offline</string>
-    <string name="drawer_item_14">Галерея</string>
-    <string name="drawer_item_15">Поиск</string>
+    <string name="drawer_item_10">Datos</string>
+    <string name="drawer_item_11">Relatos</string>
+    <string name="drawer_item_12">Favoritos</string>
+    <string name="drawer_item_13">Páginas Offline</string>
+    <string name="drawer_item_14">Galería</string>
+    <string name="drawer_item_15">Buscar</string>
     <string name="drawer_item_objects4">Serie SCP IV</string>
     <!--настройки-->
     <string name="enter">Entrar</string>
