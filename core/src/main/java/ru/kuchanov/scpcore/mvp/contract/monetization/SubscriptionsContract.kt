@@ -20,6 +20,8 @@ interface SubscriptionsContract : BaseMvp {
         fun showRefreshButton(show: Boolean)
         //        fun showData(items: List<MyListItem>)
         fun showData(owned: List<Item>, toBuy: List<Subscription>, inApps: List<Subscription>, curSubsType: Int)
+
+        fun navigateToDisableAds()
     }
 
     interface Presenter : BaseMvp.Presenter<View> {

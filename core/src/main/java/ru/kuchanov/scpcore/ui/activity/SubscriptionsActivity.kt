@@ -89,7 +89,7 @@ class SubscriptionsActivity :
 
     companion object {
 
-        @kotlin.jvm.JvmOverloads
+        @JvmOverloads
         @JvmStatic
         fun start(context: Context, type: Int = TYPE_SUBS) {
             val intent = Intent(context, SubscriptionsActivity::class.java)

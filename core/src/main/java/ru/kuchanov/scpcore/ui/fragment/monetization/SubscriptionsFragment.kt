@@ -26,10 +26,12 @@ import ru.kuchanov.scpcore.monetization.model.PurchaseData
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
+import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_CURRENT_SUBS
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_CURRENT_SUBS_EMPTY
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_FREE_ADS_DISABLE
 import ru.kuchanov.scpcore.mvp.presenter.monetization.getMonthFromSkuId
+import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity
 import ru.kuchanov.scpcore.ui.base.BaseDrawerActivity.REQUEST_CODE_INAPP
 import ru.kuchanov.scpcore.ui.base.BaseFragment
 import ru.kuchanov.scpcore.util.SystemUtils
@@ -266,6 +268,8 @@ class SubscriptionsFragment :
         adapter.items = items
         adapter.notifyDataSetChanged()
     }
+
+    override fun navigateToDisableAds() = (baseActivity as SubscriptionsActivity).showScreen(SubscriptionsScreenContract.Screen.FREE_ACTIONS)
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Timber.d("called in fragment")

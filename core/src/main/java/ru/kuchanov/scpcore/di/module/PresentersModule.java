@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.di.module;
 
+import com.google.gson.Gson;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -341,9 +343,10 @@ public class PresentersModule {
             MyPreferenceManager myPreferencesManager,
             DbProviderFactory dbProviderFactory,
             ApiClient apiClient,
-            InAppHelper inAppHelper
+            InAppHelper inAppHelper,
+            Gson gson
     ) {
-        return new FreeAdsDisableActionsPresenter(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
+        return new FreeAdsDisableActionsPresenter(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper, gson);
     }
 
     @Provides
