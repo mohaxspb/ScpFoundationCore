@@ -37,12 +37,6 @@ public class FreeAdsDisableAdapter extends BaseRecyclerAdapter<
     private static final int TYPE_SIGN_IN = 6;
 
     @Override
-    public void setData(List<BaseModel> data) {
-        super.setData(data);
-//        Timber.d("data: %s", data);
-    }
-
-    @Override
     public BaseHolder<BaseModel, BaseAdapterClickListener<BaseModel>> onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView;
         switch (viewType) {

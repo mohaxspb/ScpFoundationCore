@@ -10,6 +10,7 @@ import ru.kuchanov.scpcore.controller.adapter.delegate.LabelDelegate
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.mvp.contract.monetization.FreeAdsDisableActionsContract
 import ru.kuchanov.scpcore.ui.base.BaseFragment
+import ru.kuchanov.scpcore.util.toStringWithLineBreaks
 import timber.log.Timber
 
 /**
@@ -43,7 +44,8 @@ class FreeAdsDisableActionsFragment :
     }
 
     override fun showData(data: List<MyListItem>) {
-        Timber.d("showData: $data")
+        Timber.d("showData: ${data.toStringWithLineBreaks()}")
+
 
     }
 
@@ -52,3 +54,5 @@ class FreeAdsDisableActionsFragment :
         fun newInstance(): FreeAdsDisableActionsFragment = FreeAdsDisableActionsFragment()
     }
 }
+
+
