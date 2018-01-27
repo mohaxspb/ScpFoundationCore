@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.controller.adapter.delegate
+package ru.kuchanov.scpcore.controller.adapter.delegate.monetization.subscriptions
 
 import android.support.v7.widget.RecyclerView
 import android.text.Html
@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AbsListItemAdapterDelegate
 import kotlinx.android.synthetic.main.list_item_label_with_percent.view.*
 import ru.kuchanov.scpcore.R
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.LabelWithPercentViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.LabelWithPercentViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.ui.util.MyHtmlTagHandler
 

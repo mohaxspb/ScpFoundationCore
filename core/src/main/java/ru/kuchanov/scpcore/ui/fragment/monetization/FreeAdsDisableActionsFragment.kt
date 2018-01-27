@@ -6,7 +6,8 @@ import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import kotlinx.android.synthetic.main.fragment_free_ads_disable_actions.*
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.R
-import ru.kuchanov.scpcore.controller.adapter.delegate.LabelDelegate
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.LabelDelegate
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.InviteFriendsDelegate
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.mvp.contract.monetization.FreeAdsDisableActionsContract
 import ru.kuchanov.scpcore.ui.base.BaseFragment
@@ -32,6 +33,7 @@ class FreeAdsDisableActionsFragment :
         recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
         delegateManager.addDelegate(LabelDelegate())
+        delegateManager.addDelegate(InviteFriendsDelegate{presenter.onInviteFriendsClick()})
         //todo add delegate
 
         adapter = ListDelegationAdapter(delegateManager)
@@ -46,7 +48,8 @@ class FreeAdsDisableActionsFragment :
     override fun showData(data: List<MyListItem>) {
         Timber.d("showData: ${data.toStringWithLineBreaks()}")
 
-
+        adapter.items = data
+        adapter.notifyDataSetChanged()
     }
 
     companion object {

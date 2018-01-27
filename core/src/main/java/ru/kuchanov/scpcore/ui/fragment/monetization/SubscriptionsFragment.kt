@@ -17,8 +17,16 @@ import org.json.JSONObject
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
-import ru.kuchanov.scpcore.controller.adapter.delegate.*
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.*
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.subscriptions.CurSubsDelegate
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.subscriptions.CurSubsEmptyDelegate
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.subscriptions.InAppDelegate
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.subscriptions.LabelWithPercentDelegate
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.*
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.CurSubsEmptyViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.CurSubsViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.InAppViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.LabelWithPercentViewModel
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
 import ru.kuchanov.scpcore.monetization.model.Item

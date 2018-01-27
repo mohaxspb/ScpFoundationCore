@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.controller.adapter.delegate
+package ru.kuchanov.scpcore.controller.adapter.delegate.monetization
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -9,7 +9,6 @@ import kotlinx.android.synthetic.main.list_item_divider.view.*
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.DividerViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
-import ru.kuchanov.scpcore.util.DimensionUtils
 
 /**
  * Created by mohax on 15.01.2018.

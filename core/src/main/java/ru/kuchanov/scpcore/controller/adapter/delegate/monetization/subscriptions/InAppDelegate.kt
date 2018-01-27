@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.controller.adapter.delegate
+package ru.kuchanov.scpcore.controller.adapter.delegate.monetization.subscriptions
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AbsListItemAdapterDelegate
 import kotlinx.android.synthetic.main.list_item_in_app.view.*
 import ru.kuchanov.scpcore.R
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.InAppViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.InAppViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 
 /**

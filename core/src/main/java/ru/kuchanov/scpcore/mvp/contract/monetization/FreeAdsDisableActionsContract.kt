@@ -18,5 +18,6 @@ interface FreeAdsDisableActionsContract : BaseMvp {
         val data: List<MyListItem>
 
         fun createData()
+        fun onInviteFriendsClick()
     }
 }

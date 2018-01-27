@@ -1,6 +1,7 @@
-package ru.kuchanov.scpcore.controller.adapter.viewmodel
+package ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions
 
 import android.support.annotation.StringRes
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 
 /**
  * Created by mohax on 15.01.2018.
