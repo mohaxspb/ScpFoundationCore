@@ -7,10 +7,7 @@ import kotlinx.android.synthetic.main.fragment_free_ads_disable_actions.*
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.LabelDelegate
-import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.AppToInstallDelegate
-import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.DisableAdsForAuthDelegate
-import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.InviteFriendsDelegate
-import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.RewardedVideoDelegate
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.*
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.mvp.contract.monetization.FreeAdsDisableActionsContract
 import ru.kuchanov.scpcore.ui.base.BaseFragment
@@ -35,12 +32,12 @@ class FreeAdsDisableActionsFragment :
     override fun initViews() {
         recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
-        delegateManager.addDelegate(InviteFriendsDelegate { presenter.onInviteFriendsClick() })
-        delegateManager.addDelegate(RewardedVideoDelegate { presenter.onRewardedVideoClick() })
-        delegateManager.addDelegate(DisableAdsForAuthDelegate { presenter.onAuthClick() })
+        delegateManager.addDelegate(InviteFriendsDelegate { presenter::onInviteFriendsClick })
+        delegateManager.addDelegate(RewardedVideoDelegate { presenter::onRewardedVideoClick })
+        delegateManager.addDelegate(DisableAdsForAuthDelegate { presenter::onAuthClick })
         delegateManager.addDelegate(LabelDelegate())
-        delegateManager.addDelegate(AppToInstallDelegate { presenter.onAppInstallClick(it) })
-        //todo add delegate
+        delegateManager.addDelegate(AppToInstallDelegate { presenter::onAppInstallClick })
+        delegateManager.addDelegate(VkGroupToJoinDelegate { presenter::onVkGroupClick })
 
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter

@@ -22,5 +22,6 @@ interface FreeAdsDisableActionsContract : BaseMvp {
         fun onRewardedVideoClick()
         fun onAuthClick()
         fun onAppInstallClick(id: String)
+        fun onVkGroupClick(id: String)
     }
 }

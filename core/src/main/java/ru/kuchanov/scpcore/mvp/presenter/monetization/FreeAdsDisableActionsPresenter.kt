@@ -10,14 +10,10 @@ import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.api.ApiClient
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.LabelViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.AppToInstallViewModel
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.DisableAdsForAuthViewModel
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.InviteFriendsViewModel
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.RewardedVideoViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.*
 import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
-import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse
-import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication
+import ru.kuchanov.scpcore.monetization.model.*
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.FreeAdsDisableActionsContract
@@ -101,7 +97,6 @@ class FreeAdsDisableActionsPresenter(
                     availableAppsToInstall.add(application)
                 }
                 if (!availableAppsToInstall.isEmpty()) {
-                    //add row with description
                     val numOfMillis = config.getLong(APP_INSTALL_REWARD_IN_MILLIS)
                     val hours = Duration.millis(numOfMillis).toStandardHours().hours
                     val score = config.getLong(SCORE_ACTION_OUR_APP).toInt()
@@ -117,34 +112,40 @@ class FreeAdsDisableActionsPresenter(
                 }
             }
         }
-//        if (config.getBoolean(FREE_VK_GROUPS_ENABLED)) {
-//            val jsonString = config.getString(VK_GROUPS_TO_JOIN_JSON)
-//
-//            var items: List<VkGroupToJoin>? = null
-//            try {
-//                items = mGson.fromJson(jsonString, VkGroupsToJoinResponse::class.java).items
-//            } catch (e: Exception) {
-//                Timber.e(e)
-//            }
-//
-//            if (items != null) {
-//                val availableItems = ArrayList<VkGroupToJoin>()
-//                for (item in items) {
-//                    if (mMyPreferenceManager.isVkGroupJoined(item.id)) {
-//                        continue
-//                    }
-//                    availableItems.add(item)
-//                }
-//                if (!availableItems.isEmpty()) {
-//                    //add row with description
-//                    val numOfMillis = config.getLong(FREE_VK_GROUPS_JOIN_REWARD)
-//                    val hours = numOfMillis / 1000 / 60 / 60
-//                    val score = config.getLong(SCORE_ACTION_VK_GROUP).toInt()
-//                    data.add(AppInstallHeader(context.getString(R.string.vk_group_join_ads_disable_title, hours, score)))
-//                    data.addAll(availableItems)
-//                }
-//            }
-//        }
+        if (config.getBoolean(FREE_VK_GROUPS_ENABLED)) {
+            val jsonString = config.getString(VK_GROUPS_TO_JOIN_JSON)
+
+            var items: List<VkGroupToJoin>? = null
+            try {
+                items = mGson.fromJson(jsonString, VkGroupsToJoinResponse::class.java).items
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
+
+            if (items != null) {
+                val availableItems = ArrayList<VkGroupToJoin>()
+                for (item in items) {
+                    if (mMyPreferenceManager.isVkGroupJoined(item.id)) {
+                        continue
+                    }
+                    availableItems.add(item)
+                }
+                if (!availableItems.isEmpty()) {
+                    val numOfMillis = config.getLong(FREE_VK_GROUPS_JOIN_REWARD)
+                    val hours = Duration.millis(numOfMillis).toStandardHours().hours
+                    val score = config.getLong(SCORE_ACTION_VK_GROUP).toInt()
+                    data.add(LabelViewModel(R.string.free_ads_vk_group_label, R.color.freeAdsBackgroundColor, R.color.freeAdsTextColor))
+                    data.addAll(availableItems.map {
+                        VkGroupToJoinViewModel(
+                                it.id,
+                                context.getString(R.string.free_ads_vk_group_title, hours, score),
+                                it.name,
+                                it.imageUrl
+                        )
+                    })
+                }
+            }
+        }
     }
 
     override fun onInviteFriendsClick() {
@@ -160,6 +161,10 @@ class FreeAdsDisableActionsPresenter(
     }
 
     override fun onAppInstallClick(id: String) {
+        //todo
+    }
+
+    override fun onVkGroupClick(id: String) {
         //todo
     }
 }
