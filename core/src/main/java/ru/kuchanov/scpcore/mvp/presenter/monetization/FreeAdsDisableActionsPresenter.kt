@@ -8,15 +8,20 @@ import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.*
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.api.ApiClient
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.LabelViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.AppToInstallViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.DisableAdsForAuthViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.InviteFriendsViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.RewardedVideoViewModel
 import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
+import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse
+import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.FreeAdsDisableActionsContract
+import ru.kuchanov.scpcore.util.IntentUtils
 import timber.log.Timber
 
 /**
@@ -48,7 +53,7 @@ class FreeAdsDisableActionsPresenter(
                 && FirebaseAuth.getInstance().currentUser == null
                 && !mMyPreferenceManager.isUserAwardedFromAuth()) {
             val numOfMillis = config.getLong(AUTH_COOLDOWN_IN_MILLIS)
-            val hours = numOfMillis / 1000 / 60 / 60
+            val hours = Duration.millis(numOfMillis).toStandardHours().hours
             val score = config.getLong(SCORE_ACTION_AUTH).toInt()
             data.add(DisableAdsForAuthViewModel(
                     R.string.free_ads_auth_title,
@@ -74,37 +79,44 @@ class FreeAdsDisableActionsPresenter(
                     context.getString(R.string.free_ads_simple_subtitle, hours, score)
             ))
         }
-//        if (config.getBoolean(FREE_APPS_INSTALL_ENABLED)) {
-//            val jsonString = config.getString(APPS_TO_INSTALL_JSON)
-//
-//            var applications: List<PlayMarketApplication>? = null
-//            try {
-//                applications = mGson.fromJson(jsonString, ApplicationsResponse::class.java).items
-//            } catch (e: Exception) {
-//                Timber.e(e)
-//            }
-//
-//            if (applications != null) {
-//                val availableAppsToInstall = mutableListOf<PlayMarketApplication>()
-//                for (application in applications) {
-//                    if (mMyPreferenceManager.isAppInstalledForPackage(application.id)) {
-//                        continue
-//                    }
-//                    if (IntentUtils.isPackageInstalled(context, application.id)) {
-//                        continue
-//                    }
-//                    availableAppsToInstall.add(application)
-//                }
-//                if (!availableAppsToInstall.isEmpty()) {
-//                    //add row with description
-//                    val numOfMillis = config.getLong(APP_INSTALL_REWARD_IN_MILLIS)
-//                    val hours = numOfMillis / 1000 / 60 / 60
-//                    val score = config.getLong(SCORE_ACTION_OUR_APP).toInt()
-//                    data.add(AppInstallHeader(context.getString(R.string.app_install_ads_disable_title, hours, score)))
-//                    data.addAll(availableAppsToInstall)
-//                }
-//            }
-//        }
+        if (config.getBoolean(FREE_APPS_INSTALL_ENABLED)) {
+            val jsonString = config.getString(APPS_TO_INSTALL_JSON)
+
+            var applications: List<PlayMarketApplication>? = null
+            try {
+                applications = mGson.fromJson(jsonString, ApplicationsResponse::class.java).items
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
+
+            if (applications != null) {
+                val availableAppsToInstall = mutableListOf<PlayMarketApplication>()
+                for (application in applications) {
+                    if (mMyPreferenceManager.isAppInstalledForPackage(application.id)) {
+                        continue
+                    }
+                    if (IntentUtils.isPackageInstalled(context, application.id)) {
+                        continue
+                    }
+                    availableAppsToInstall.add(application)
+                }
+                if (!availableAppsToInstall.isEmpty()) {
+                    //add row with description
+                    val numOfMillis = config.getLong(APP_INSTALL_REWARD_IN_MILLIS)
+                    val hours = Duration.millis(numOfMillis).toStandardHours().hours
+                    val score = config.getLong(SCORE_ACTION_OUR_APP).toInt()
+                    data.add(LabelViewModel(R.string.free_ads_app_install_label, R.color.freeAdsBackgroundColor, R.color.freeAdsTextColor))
+                    data.addAll(availableAppsToInstall.map {
+                        AppToInstallViewModel(
+                                it.id,
+                                context.getString(R.string.free_ads_app_install_title, hours, score),
+                                it.name,
+                                it.imageUrl
+                        )
+                    })
+                }
+            }
+        }
 //        if (config.getBoolean(FREE_VK_GROUPS_ENABLED)) {
 //            val jsonString = config.getString(VK_GROUPS_TO_JOIN_JSON)
 //
@@ -144,6 +156,10 @@ class FreeAdsDisableActionsPresenter(
     }
 
     override fun onAuthClick() {
+        //todo
+    }
+
+    override fun onAppInstallClick(id: String) {
         //todo
     }
 }

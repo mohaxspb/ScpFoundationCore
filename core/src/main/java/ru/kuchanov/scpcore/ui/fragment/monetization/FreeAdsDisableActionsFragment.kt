@@ -7,6 +7,7 @@ import kotlinx.android.synthetic.main.fragment_free_ads_disable_actions.*
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.LabelDelegate
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.AppToInstallDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.DisableAdsForAuthDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.InviteFriendsDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.RewardedVideoDelegate
@@ -34,10 +35,11 @@ class FreeAdsDisableActionsFragment :
     override fun initViews() {
         recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
+        delegateManager.addDelegate(InviteFriendsDelegate { presenter.onInviteFriendsClick() })
+        delegateManager.addDelegate(RewardedVideoDelegate { presenter.onRewardedVideoClick() })
+        delegateManager.addDelegate(DisableAdsForAuthDelegate { presenter.onAuthClick() })
         delegateManager.addDelegate(LabelDelegate())
-        delegateManager.addDelegate(InviteFriendsDelegate{presenter.onInviteFriendsClick()})
-        delegateManager.addDelegate(RewardedVideoDelegate{presenter.onRewardedVideoClick()})
-        delegateManager.addDelegate(DisableAdsForAuthDelegate{presenter.onAuthClick()})
+        delegateManager.addDelegate(AppToInstallDelegate { presenter.onAppInstallClick(it) })
         //todo add delegate
 
         adapter = ListDelegationAdapter(delegateManager)
