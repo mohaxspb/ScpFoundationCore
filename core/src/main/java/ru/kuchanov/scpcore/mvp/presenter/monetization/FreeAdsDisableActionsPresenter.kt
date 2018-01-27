@@ -5,21 +5,19 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
 import org.joda.time.Duration
 import ru.kuchanov.scpcore.BaseApplication
-import ru.kuchanov.scpcore.Constants
+import ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.*
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.api.ApiClient
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.DisableAdsForAuthViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.InviteFriendsViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.RewardedVideoViewModel
 import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
-import ru.kuchanov.scpcore.monetization.model.*
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.FreeAdsDisableActionsContract
-import ru.kuchanov.scpcore.util.IntentUtils
 import timber.log.Timber
-import ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.*
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.InviteFriendsViewModel
-import java.util.ArrayList
 
 /**
  * Created by mohax on 13.01.2018.
@@ -46,26 +44,35 @@ class FreeAdsDisableActionsPresenter(
         val context = BaseApplication.getAppInstance()
 
         val config = FirebaseRemoteConfig.getInstance()
-//        if (config.getBoolean(FREE_AUTH_ENABLED)
-//                && FirebaseAuth.getInstance().currentUser == null
-//                && !mMyPreferenceManager.isUserAwardedFromAuth()) {
-//            val numOfMillis = config.getLong(AUTH_COOLDOWN_IN_MILLIS)
-//            val hours = numOfMillis / 1000 / 60 / 60
-//            val score = config.getLong(SCORE_ACTION_AUTH).toInt()
-//            data.add(DisableAdsForAuth(context.getString(R.string.sign_in_to_disable_ads, hours, score)))
-//        }
-//        if (config.getBoolean(FREE_REWARDED_VIDEO_ENABLED)) {
-//            val numOfMillis = config.getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS)
-//            val hours = Duration.millis(numOfMillis).toStandardHours().hours
-//            val score = config.getLong(SCORE_ACTION_REWARDED_VIDEO).toInt()
-//            data.add(RewardedVideo(context.getString(R.string.watch_video_to_disable_ads, hours, score)))
-//        }
+        if (config.getBoolean(FREE_AUTH_ENABLED)
+                && FirebaseAuth.getInstance().currentUser == null
+                && !mMyPreferenceManager.isUserAwardedFromAuth()) {
+            val numOfMillis = config.getLong(AUTH_COOLDOWN_IN_MILLIS)
+            val hours = numOfMillis / 1000 / 60 / 60
+            val score = config.getLong(SCORE_ACTION_AUTH).toInt()
+            data.add(DisableAdsForAuthViewModel(
+                    R.string.free_ads_auth_title,
+                    context.getString(R.string.free_ads_simple_subtitle, hours, score)
+            ))
+        }
+        if (config.getBoolean(FREE_REWARDED_VIDEO_ENABLED)) {
+            val numOfMillis = config.getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS)
+            val hours = Duration.millis(numOfMillis).toStandardHours().hours
+            val score = config.getLong(SCORE_ACTION_REWARDED_VIDEO).toInt()
+            data.add(RewardedVideoViewModel(
+                    R.string.free_ads_rewarded_video_title,
+                    context.getString(R.string.free_ads_simple_subtitle, hours, score)
+            ))
+        }
         if (config.getBoolean(FREE_INVITES_ENABLED)) {
             //set num of rewarded no ads period and score
             val numOfMillis = config.getLong(INVITE_REWARD_IN_MILLIS)
             val hours = Duration.millis(numOfMillis).toStandardHours().hours
             val score = config.getLong(SCORE_ACTION_INVITE).toInt()
-            data.add(InviteFriendsViewModel(R.string.free_ads_invite_title, context.getString(R.string.free_ads_invite_subtitle, hours, score)))
+            data.add(InviteFriendsViewModel(
+                    R.string.free_ads_invite_title,
+                    context.getString(R.string.free_ads_simple_subtitle, hours, score)
+            ))
         }
 //        if (config.getBoolean(FREE_APPS_INSTALL_ENABLED)) {
 //            val jsonString = config.getString(APPS_TO_INSTALL_JSON)
@@ -129,6 +136,14 @@ class FreeAdsDisableActionsPresenter(
     }
 
     override fun onInviteFriendsClick() {
+        //todo
+    }
+
+    override fun onRewardedVideoClick() {
+        //todo
+    }
+
+    override fun onAuthClick() {
         //todo
     }
 }

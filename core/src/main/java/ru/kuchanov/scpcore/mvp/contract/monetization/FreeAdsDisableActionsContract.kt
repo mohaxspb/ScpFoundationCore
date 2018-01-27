@@ -19,5 +19,7 @@ interface FreeAdsDisableActionsContract : BaseMvp {
 
         fun createData()
         fun onInviteFriendsClick()
+        fun onRewardedVideoClick()
+        fun onAuthClick()
     }
 }

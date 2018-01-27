@@ -332,5 +332,7 @@ Thanks for using our app!]]></string>
     <string name="subs_activity_title">Поддержка разработчиков</string>
     <string name="subs_level_5_description">10000 очков, повышение рейтинга и увеличение лимита offline статей на 200 статей</string>
     <string name="free_ads_invite_title">Пригласи друзей в приложение</string>
-    <string name="free_ads_invite_subtitle">А мы отключим рекламу на %1$d часа и подарим тебе %2$d очков</string>
+    <string name="free_ads_rewarded_video_title">Посмотри видео</string>
+    <string name="free_ads_auth_title">Авторизуйся</string>
+    <string name="free_ads_simple_subtitle">А мы отключим рекламу на %1$d часа и подарим тебе %2$d очков</string>
 </resources>
