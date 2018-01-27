@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.ui.base;
+package ru.kuchanov.scpcore.ui.activity;
 
 import android.app.DialogFragment;
 import android.content.ComponentName;
@@ -94,11 +94,6 @@ import ru.kuchanov.scpcore.monetization.util.MyRewardedVideoCallbacks;
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp;
 import ru.kuchanov.scpcore.mvp.base.MonetizationActions;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
-import ru.kuchanov.scpcore.ui.activity.ArticleActivity;
-import ru.kuchanov.scpcore.ui.activity.GalleryActivity;
-import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
-import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
-import ru.kuchanov.scpcore.ui.activity.TagSearchActivity;
 import ru.kuchanov.scpcore.ui.adapter.SocialLoginAdapter;
 import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.FreeAdsDisablingDialogFragment;

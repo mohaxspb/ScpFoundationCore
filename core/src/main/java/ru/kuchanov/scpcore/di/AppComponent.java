@@ -35,7 +35,6 @@ import ru.kuchanov.scpcore.ui.dialog.CC3LicenseDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.FreeAdsDisablingDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
-import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.fragment.article.ArticleFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.FavoriteArticlesFragment;
@@ -143,8 +142,6 @@ public interface AppComponent {
     void inject(TextSizeDialogFragment dialogFragment);
 
     void inject(NewVersionDialogFragment dialogFragment);
-
-    void inject(SubscriptionsFragmentDialog dialogFragment);
 
     void inject(FreeAdsDisablingDialogFragment dialogFragment);
 

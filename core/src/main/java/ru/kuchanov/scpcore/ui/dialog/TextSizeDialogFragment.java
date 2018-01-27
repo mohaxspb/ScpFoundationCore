@@ -20,7 +20,6 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.ui.base.BaseBottomSheetDialogFragment;
 import timber.log.Timber;
 
 

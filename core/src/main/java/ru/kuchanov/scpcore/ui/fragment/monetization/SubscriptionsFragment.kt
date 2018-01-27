@@ -40,8 +40,8 @@ import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Com
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_FREE_ADS_DISABLE
 import ru.kuchanov.scpcore.mvp.presenter.monetization.getMonthFromSkuId
 import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity
-import ru.kuchanov.scpcore.ui.base.BaseDrawerActivity.REQUEST_CODE_INAPP
-import ru.kuchanov.scpcore.ui.base.BaseFragment
+import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP
+import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 import ru.kuchanov.scpcore.util.SystemUtils
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.subscribeBy
@@ -358,8 +358,6 @@ class SubscriptionsFragment :
         val REQUEST_CODE_SUBSCRIPTION = 1001
 
         @JvmStatic
-        fun newInstance(): SubscriptionsFragment {
-            return SubscriptionsFragment()
-        }
+        fun newInstance(): SubscriptionsFragment = SubscriptionsFragment()
     }
 }

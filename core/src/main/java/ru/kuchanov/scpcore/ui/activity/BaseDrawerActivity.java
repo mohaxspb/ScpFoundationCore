@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.ui.base;
+package ru.kuchanov.scpcore.ui.activity;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -39,7 +39,6 @@ import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse;
 import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.monetization.model.PurchaseData;
 import ru.kuchanov.scpcore.mvp.contract.DrawerMvp;
-import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import ru.kuchanov.scpcore.ui.dialog.LeaderboardDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.HeaderViewHolderLogined;
 import ru.kuchanov.scpcore.ui.holder.HeaderViewHolderUnlogined;

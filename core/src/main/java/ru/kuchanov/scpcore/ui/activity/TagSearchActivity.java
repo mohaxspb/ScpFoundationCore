@@ -14,7 +14,6 @@ import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.mvp.contract.tags.TagsScreenMvp;
-import ru.kuchanov.scpcore.ui.base.BaseDrawerActivity;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.fragment.article.ArticleFragment;
 import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsAllFragment;

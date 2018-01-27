@@ -10,7 +10,6 @@ import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract.Screen.*
-import ru.kuchanov.scpcore.ui.base.BaseActivity
 import ru.kuchanov.scpcore.ui.fragment.monetization.FreeAdsDisableActionsFragment
 import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment
 

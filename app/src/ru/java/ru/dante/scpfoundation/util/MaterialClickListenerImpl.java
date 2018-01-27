@@ -10,7 +10,7 @@ import ru.dante.scpfoundation.ui.fragment.ObjectsPlArticlesFragment;
 import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
-import ru.kuchanov.scpcore.ui.base.BaseActivity;
+import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsArchiveFragment;
 import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsExperimentsFragment;
 import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsIncidentsFragment;

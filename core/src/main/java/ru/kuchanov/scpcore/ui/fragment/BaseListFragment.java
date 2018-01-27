@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.ui.base;
+package ru.kuchanov.scpcore.ui.fragment;
 
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;

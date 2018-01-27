@@ -10,8 +10,14 @@ import ru.kuchanov.scpcore.mvp.base.BaseMvp
  * for scp_ru
  */
 interface FreeAdsDisableActionsContract : BaseMvp {
+
     interface View : BaseMvp.View {
         fun showData(data: List<MyListItem>)
+        fun onInviteFriendsClick()
+        fun onRewardedVideoClick()
+        fun onAuthClick()
+        fun onAppInstallClick(id: String)
+        fun onVkLoginAttempt()
     }
 
     interface Presenter : BaseMvp.Presenter<View> {

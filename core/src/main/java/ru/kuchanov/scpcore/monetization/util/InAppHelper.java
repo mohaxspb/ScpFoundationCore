@@ -35,8 +35,8 @@ import ru.kuchanov.scpcore.monetization.model.Subscription;
 import rx.Observable;
 import timber.log.Timber;
 
-import static ru.kuchanov.scpcore.ui.base.BaseDrawerActivity.REQUEST_CODE_INAPP;
-import static ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog.REQUEST_CODE_SUBSCRIPTION;
+import static ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP;
+import static ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment.REQUEST_CODE_SUBSCRIPTION;
 
 /**
  * Created by mohax on 02.02.2017.
@@ -370,7 +370,7 @@ public class InAppHelper {
             int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
             activity.startIntentSenderForResult(pendingIntent.getIntentSender(), requestCode, new Intent(), 0, 0, 0, null);
         }
-        //todo thinkk if we must handle consuming inapp here
+        //todo think if we must handle consuming inapp here
     }
 
     public static List<String> getNewSubsSkus() {

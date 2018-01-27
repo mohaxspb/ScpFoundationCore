@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.ui.base;
+package ru.kuchanov.scpcore.ui.fragment;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -30,6 +30,7 @@ import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.mvp.base.BaseMvp;
+import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import timber.log.Timber;
 
 /**
@@ -247,7 +248,18 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
 
     @Override
     public void showSnackBarWithAction(Constants.Firebase.CallToActionReason reason) {
+        if (!isAdded()) {
+            return;
+        }
         getBaseActivity().showSnackBarWithAction(reason);
+    }
+
+    @Override
+    public void showOfferFreeTrialSubscriptionPopup() {
+        if (!isAdded()) {
+            return;
+        }
+        getBaseActivity().showOfferFreeTrialSubscriptionPopup();
     }
 
     @Override

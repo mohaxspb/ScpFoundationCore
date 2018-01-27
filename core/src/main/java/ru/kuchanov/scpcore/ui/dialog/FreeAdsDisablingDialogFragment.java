@@ -40,7 +40,7 @@ import ru.kuchanov.scpcore.monetization.model.RewardedVideo;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
 import ru.kuchanov.scpcore.ui.adapter.FreeAdsDisableAdapter;
-import ru.kuchanov.scpcore.ui.base.BaseActivity;
+import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 

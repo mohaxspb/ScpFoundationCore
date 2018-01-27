@@ -6,7 +6,7 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.VkImage;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.mvp.base.BaseDrawerPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.BaseDrawerPresenter;
 import ru.kuchanov.scpcore.mvp.contract.GalleryScreenMvp;
 import timber.log.Timber;
 

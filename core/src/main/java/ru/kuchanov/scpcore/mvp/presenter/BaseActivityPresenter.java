@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.mvp.base;
+package ru.kuchanov.scpcore.mvp.presenter;
 
 import android.text.TextUtils;
 
@@ -27,6 +27,8 @@ import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.SocialProviderModel;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp;
+import ru.kuchanov.scpcore.mvp.base.BasePresenter;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -51,7 +53,6 @@ public abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
         } else {
             // User is signed out
             Timber.d("onAuthStateChanged: signed_out");
-
             listenToChangesInFirebase(false);
         }
     };

@@ -41,7 +41,6 @@ import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerCardDesignAdapter;
-import ru.kuchanov.scpcore.ui.base.BaseBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import timber.log.Timber;
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils;

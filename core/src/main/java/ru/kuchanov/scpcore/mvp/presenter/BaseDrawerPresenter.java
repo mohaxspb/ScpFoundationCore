@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.mvp.base;
+package ru.kuchanov.scpcore.mvp.presenter;
 
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;

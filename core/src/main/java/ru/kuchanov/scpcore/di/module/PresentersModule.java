@@ -9,6 +9,7 @@ import dagger.Provides;
 import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
+import ru.kuchanov.scpcore.manager.MyNotificationManager;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.GalleryScreenMvp;
@@ -343,10 +344,10 @@ public class PresentersModule {
             MyPreferenceManager myPreferencesManager,
             DbProviderFactory dbProviderFactory,
             ApiClient apiClient,
-            InAppHelper inAppHelper,
-            Gson gson
+            Gson gson,
+            MyNotificationManager mMyNotificationManager
     ) {
-        return new FreeAdsDisableActionsPresenter(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper, gson);
+        return new FreeAdsDisableActionsPresenter(myPreferencesManager, dbProviderFactory, apiClient, gson, mMyNotificationManager);
     }
 
     @Provides

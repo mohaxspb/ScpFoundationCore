@@ -20,7 +20,7 @@ import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.service.DownloadAllServiceDefault;
 import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
-import ru.kuchanov.scpcore.ui.base.BaseActivity;
+import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;

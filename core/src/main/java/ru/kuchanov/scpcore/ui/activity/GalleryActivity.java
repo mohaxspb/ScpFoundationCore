@@ -33,7 +33,6 @@ import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.mvp.contract.GalleryScreenMvp;
 import ru.kuchanov.scpcore.ui.adapter.ImagesAdapter;
 import ru.kuchanov.scpcore.ui.adapter.ImagesPagerAdapter;
-import ru.kuchanov.scpcore.ui.base.BaseDrawerActivity;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import ru.kuchanov.scpcore.util.StorageUtils;
 import timber.log.Timber;

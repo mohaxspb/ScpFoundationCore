@@ -15,7 +15,6 @@ import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.mvp.contract.article.ArticleScreenMvp;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesPagerAdapter;
-import ru.kuchanov.scpcore.ui.base.BaseDrawerActivity;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.fragment.article.ArticleFragment;
 import ru.kuchanov.scpcore.util.IntentUtils;

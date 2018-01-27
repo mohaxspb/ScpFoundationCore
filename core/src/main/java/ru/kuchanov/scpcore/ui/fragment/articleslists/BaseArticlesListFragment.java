@@ -23,7 +23,7 @@ import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.mvp.base.BaseArticlesListMvp;
 import ru.kuchanov.scpcore.mvp.base.BaseListMvp;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
-import ru.kuchanov.scpcore.ui.base.BaseListFragment;
+import ru.kuchanov.scpcore.ui.fragment.BaseListFragment;
 import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.util.EndlessRecyclerViewScrollListener;
 import timber.log.Timber;

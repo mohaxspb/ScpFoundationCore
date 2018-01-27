@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.ui.base;
+package ru.kuchanov.scpcore.ui.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -20,6 +20,7 @@ import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
+import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventName;
