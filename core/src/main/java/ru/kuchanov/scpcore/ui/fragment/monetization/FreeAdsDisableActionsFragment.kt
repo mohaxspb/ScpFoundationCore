@@ -58,6 +58,11 @@ class FreeAdsDisableActionsFragment :
         adapter.notifyDataSetChanged()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.onDestroy()
+    }
+
     override fun onInviteFriendsClick() {
         Timber.d("onInviteFriendsClick")
         if (FirebaseAuth.getInstance().currentUser == null) {

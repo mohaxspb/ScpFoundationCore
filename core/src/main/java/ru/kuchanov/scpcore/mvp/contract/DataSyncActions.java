@@ -15,7 +15,11 @@ import ru.kuchanov.scpcore.db.model.Article;
 public interface DataSyncActions {
 
     @Retention(RetentionPolicy.SOURCE)
-    @StringDef({ScoreAction.FAVORITE})
+    @StringDef({
+            ScoreAction.FAVORITE, ScoreAction.READ, ScoreAction.INTERSTITIAL_SHOWN,
+            ScoreAction.VK_GROUP, ScoreAction.OUR_APP, ScoreAction.REWARDED_VIDEO,
+            ScoreAction.AUTH, ScoreAction.INVITE, ScoreAction.NONE
+    })
     @interface ScoreAction {
         String FAVORITE = "FAVORITE";
         String READ = "READ";

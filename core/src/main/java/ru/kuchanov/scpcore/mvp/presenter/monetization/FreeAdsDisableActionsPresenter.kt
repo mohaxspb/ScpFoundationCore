@@ -50,7 +50,21 @@ class FreeAdsDisableActionsPresenter(
         apiClient
 ), FreeAdsDisableActionsContract.Presenter {
 
+    private val firebaseAuth = FirebaseAuth.getInstance()
+    private val authStateListener: FirebaseAuth.AuthStateListener = FirebaseAuth.AuthStateListener {
+        Timber.d("stateChanged: ${it.currentUser}")
+        createData()
+        view.showData(data)
+    }
+
     override val data = mutableListOf<MyListItem>()
+
+    override fun onCreate() {
+        super.onCreate()
+        firebaseAuth.addAuthStateListener(authStateListener)
+    }
+
+    override fun onDestroy() = firebaseAuth.removeAuthStateListener(authStateListener)
 
     override fun createData() {
         val context = BaseApplication.getAppInstance()
@@ -229,7 +243,8 @@ class FreeAdsDisableActionsPresenter(
                                 NOTIFICATION_ID
                         )
 
-                        data.remove(data.find { it is VkGroupToJoinViewModel && it.id == id })
+//                        data.remove(data.find { it is VkGroupToJoinViewModel && it.id == id })
+                        createData()
                         view.showData(data)
 
                         val bundle = Bundle()
