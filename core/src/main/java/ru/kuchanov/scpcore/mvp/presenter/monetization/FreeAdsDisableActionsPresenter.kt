@@ -56,6 +56,8 @@ class FreeAdsDisableActionsPresenter(
         val context = BaseApplication.getAppInstance()
         val config = FirebaseRemoteConfig.getInstance()
 
+        data.clear()
+
         data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(12)))
 
         if (config.getBoolean(FREE_AUTH_ENABLED)

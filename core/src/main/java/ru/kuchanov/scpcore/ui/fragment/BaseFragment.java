@@ -30,6 +30,8 @@ import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.mvp.base.BaseMvp;
+import ru.kuchanov.scpcore.mvp.contract.ActivityToolbarStateSetter;
+import ru.kuchanov.scpcore.mvp.contract.FragmentToolbarStateSetter;
 import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import timber.log.Timber;
 
@@ -260,6 +262,19 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
             return;
         }
         getBaseActivity().showOfferFreeTrialSubscriptionPopup();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getUserVisibleHint()
+                && getActivity() instanceof ActivityToolbarStateSetter
+                && this instanceof FragmentToolbarStateSetter) {
+            ActivityToolbarStateSetter activityToolbarStateSetter = (ActivityToolbarStateSetter) getActivity();
+            FragmentToolbarStateSetter fragmentToolbarStateSetter = (FragmentToolbarStateSetter) this;
+            activityToolbarStateSetter.setToolbarTitle(fragmentToolbarStateSetter.getToolbarTitle());
+            activityToolbarStateSetter.setToolbarTextColor(fragmentToolbarStateSetter.getToolbarTextColor());
+        }
     }
 
     @Override

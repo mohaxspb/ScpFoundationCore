@@ -1,6 +1,7 @@
 package ru.kuchanov.scpcore.mvp.contract.monetization
 
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp
+import ru.kuchanov.scpcore.mvp.contract.ActivityToolbarStateSetter
 
 /**
  * Created by y.kuchanov on 21.12.16.
@@ -9,7 +10,7 @@ import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp
  */
 interface SubscriptionsScreenContract : BaseActivityMvp {
 
-    interface View : BaseActivityMvp.View {
+    interface View : BaseActivityMvp.View, ActivityToolbarStateSetter {
         fun showScreen(screen: Screen)
     }
 

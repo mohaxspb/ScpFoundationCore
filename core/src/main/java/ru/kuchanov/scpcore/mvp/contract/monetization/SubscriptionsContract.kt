@@ -7,6 +7,7 @@ import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BaseMvp
+import ru.kuchanov.scpcore.mvp.contract.FragmentToolbarStateSetter
 
 /**
  * Created by y.kuchanov on 21.12.16.
@@ -15,7 +16,7 @@ import ru.kuchanov.scpcore.mvp.base.BaseMvp
  * for scp_ru
  */
 interface SubscriptionsContract : BaseMvp {
-    interface View : BaseMvp.View {
+    interface View : BaseMvp.View, FragmentToolbarStateSetter {
         fun showProgressCenter(show: Boolean)
         fun showRefreshButton(show: Boolean)
         //        fun showData(items: List<MyListItem>)

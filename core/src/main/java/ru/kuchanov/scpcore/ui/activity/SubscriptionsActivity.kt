@@ -2,16 +2,21 @@ package ru.kuchanov.scpcore.ui.activity
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.os.Bundle
+import android.support.annotation.StringRes
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_subscribtions.*
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.R
+import ru.kuchanov.scpcore.mvp.contract.FragmentToolbarStateSetter
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract.Screen.*
 import ru.kuchanov.scpcore.ui.fragment.monetization.FreeAdsDisableActionsFragment
 import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment
+
 
 /**
  * Created by mohax on 17.09.2017.
@@ -35,11 +40,17 @@ class SubscriptionsActivity :
 
 
             title = getString(when (screenToShowType) {
-                TYPE_SUBS, TYPE_DISABLE_ADS_FOR_FREE -> R.string.subs_activity_title
+                TYPE_SUBS -> R.string.subs_activity_title
+                TYPE_DISABLE_ADS_FOR_FREE -> R.string.free_ads_activity_title
                 TYPE_LEADERBOARD -> R.string.subs_leaderboard_activity_title
                 else -> throw IllegalArgumentException("unexpected type: $screenToShowType")
             })
         }
+        toolbar.setTitleTextColor(ContextCompat.getColor(this@SubscriptionsActivity, when (screenToShowType) {
+            TYPE_SUBS, TYPE_LEADERBOARD -> android.R.color.white
+            TYPE_DISABLE_ADS_FOR_FREE -> R.color.freeAdsTextColor
+            else -> throw IllegalArgumentException("unexpected type: $screenToShowType")
+        }))
 
         if (savedInstanceState == null) {
             when (screenToShowType) {
@@ -68,6 +79,11 @@ class SubscriptionsActivity :
                 .replace(R.id.content, fragment, screen.name)
                 .addToBackStack(screen.name)
                 .commitAllowingStateLoss()
+
+        if (fragment is FragmentToolbarStateSetter) {
+            setToolbarTextColor(fragment.getToolbarTextColor())
+            setToolbarTitle(getString(fragment.getToolbarTitle()))
+        }
     }
 
     override fun onBackPressed() {
@@ -85,6 +101,18 @@ class SubscriptionsActivity :
     override fun getMenuResId() = 0
 
     override fun isBannerEnabled() = false
+
+    override fun setToolbarTitle(title: String) {
+        supportActionBar?.title = title
+    }
+
+    override fun setToolbarTitle(@StringRes title: Int) = setToolbarTitle(getString(title))
+
+    override fun setToolbarTextColor(toolbarTextColor: Int) {
+        val color = ContextCompat.getColor(this, toolbarTextColor)
+        toolbar.setTitleTextColor(color)
+        toolbar.navigationIcon?.setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
+    }
 
     companion object {
 
@@ -107,3 +135,4 @@ class SubscriptionsActivity :
         val TYPE_LEADERBOARD = 2
     }
 }
+

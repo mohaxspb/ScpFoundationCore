@@ -16,7 +16,6 @@ import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.mvp.contract.monetization.FreeAdsDisableActionsContract
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 import ru.kuchanov.scpcore.util.IntentUtils
-import ru.kuchanov.scpcore.util.toStringWithLineBreaks
 import timber.log.Timber
 
 /**
@@ -55,8 +54,6 @@ class FreeAdsDisableActionsFragment :
     }
 
     override fun showData(data: List<MyListItem>) {
-        Timber.d("showData: ${data.toStringWithLineBreaks()}")
-
         adapter.items = data
         adapter.notifyDataSetChanged()
     }
@@ -89,6 +86,10 @@ class FreeAdsDisableActionsFragment :
     }
 
     override fun onVkLoginAttempt() = VKSdk.login(activity, VKScope.EMAIL, VKScope.GROUPS)
+
+    override fun getToolbarTitle(): Int = R.string.free_ads_activity_title
+
+    override fun getToolbarTextColor(): Int = R.color.freeAdsTextColor
 
     companion object {
 

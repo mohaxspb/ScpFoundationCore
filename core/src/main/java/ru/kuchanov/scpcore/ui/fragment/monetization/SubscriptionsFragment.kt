@@ -352,6 +352,10 @@ class SubscriptionsFragment :
         }
     }
 
+    override fun getToolbarTitle(): Int = R.string.subs_activity_title
+
+    override fun getToolbarTextColor(): Int = android.R.color.white
+
     companion object {
 
         @JvmField
