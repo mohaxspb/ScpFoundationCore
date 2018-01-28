@@ -22,7 +22,7 @@ import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.mvp.contract.tags.TagsSearchMvp;
-import ru.kuchanov.scpcore.ui.base.BaseFragment;
+import ru.kuchanov.scpcore.ui.fragment.BaseFragment;
 import ru.kuchanov.scpcore.ui.fragment.article.ArticleFragment;
 import ru.kuchanov.scpcore.ui.view.TagView;
 import ru.kuchanov.scpcore.util.DimensionUtils;

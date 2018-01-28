@@ -43,7 +43,7 @@ import ru.kuchanov.scpcore.mvp.contract.article.ArticleMvp;
 import ru.kuchanov.scpcore.ui.activity.GalleryActivity;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import ru.kuchanov.scpcore.ui.adapter.ArticleAdapter;
-import ru.kuchanov.scpcore.ui.base.BaseFragment;
+import ru.kuchanov.scpcore.ui.fragment.BaseFragment;
 import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
 import ru.kuchanov.scpcore.ui.model.TabsViewModel;

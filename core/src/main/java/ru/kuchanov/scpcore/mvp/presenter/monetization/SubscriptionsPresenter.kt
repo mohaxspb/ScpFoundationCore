@@ -114,6 +114,7 @@ class SubscriptionsPresenter(
     override fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService) {
         if (id == ID_FREE_ADS_DISABLE) {
             //todo open free ads disable
+            view.navigateToDisableAds()
             return
         }
         val type: String

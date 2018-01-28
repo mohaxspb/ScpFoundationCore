@@ -3,7 +3,7 @@ package ru.kuchanov.scpcore.mvp.presenter.tags;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.mvp.base.BaseDrawerPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.BaseDrawerPresenter;
 import ru.kuchanov.scpcore.mvp.contract.tags.TagsScreenMvp;
 
 /**

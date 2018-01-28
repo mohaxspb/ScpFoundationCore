@@ -17,8 +17,16 @@ import org.json.JSONObject
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
-import ru.kuchanov.scpcore.controller.adapter.delegate.*
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.*
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.subscriptions.CurSubsDelegate
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.subscriptions.CurSubsEmptyDelegate
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.subscriptions.InAppDelegate
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.subscriptions.LabelWithPercentDelegate
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.*
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.CurSubsEmptyViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.CurSubsViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.InAppViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.LabelWithPercentViewModel
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
 import ru.kuchanov.scpcore.monetization.model.Item
@@ -26,12 +34,14 @@ import ru.kuchanov.scpcore.monetization.model.PurchaseData
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
+import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_CURRENT_SUBS
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_CURRENT_SUBS_EMPTY
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_FREE_ADS_DISABLE
 import ru.kuchanov.scpcore.mvp.presenter.monetization.getMonthFromSkuId
-import ru.kuchanov.scpcore.ui.base.BaseDrawerActivity.REQUEST_CODE_INAPP
-import ru.kuchanov.scpcore.ui.base.BaseFragment
+import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity
+import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP
+import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 import ru.kuchanov.scpcore.util.SystemUtils
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.subscribeBy
@@ -55,7 +65,7 @@ class SubscriptionsFragment :
 
     override fun callInjections() = BaseApplication.getAppComponent().inject(this)
 
-    override fun getLayoutResId(): Int = R.layout.fragment_subscriptions
+    override fun getLayoutResId() = R.layout.fragment_subscriptions
 
     override fun initViews() {
         InAppBillingServiceConnectionObservable.getInstance().serviceStatusObservable.subscribe { connected ->
@@ -267,6 +277,8 @@ class SubscriptionsFragment :
         adapter.notifyDataSetChanged()
     }
 
+    override fun navigateToDisableAds() = (baseActivity as SubscriptionsActivity).showScreen(SubscriptionsScreenContract.Screen.FREE_ACTIONS)
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Timber.d("called in fragment")
         if (requestCode == REQUEST_CODE_SUBSCRIPTION) {
@@ -340,14 +352,16 @@ class SubscriptionsFragment :
         }
     }
 
+    override fun getToolbarTitle(): Int = R.string.subs_activity_title
+
+    override fun getToolbarTextColor(): Int = android.R.color.white
+
     companion object {
 
         @JvmField
         val REQUEST_CODE_SUBSCRIPTION = 1001
 
         @JvmStatic
-        fun newInstance(): SubscriptionsFragment {
-            return SubscriptionsFragment()
-        }
+        fun newInstance(): SubscriptionsFragment = SubscriptionsFragment()
     }
 }

@@ -35,7 +35,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         extends MvpNullObjectBasePresenter<V>
         implements BaseMvp.Presenter<V> {
 
-    MyPreferenceManager mMyPreferencesManager;
+    protected MyPreferenceManager mMyPreferencesManager;
     protected DbProviderFactory mDbProviderFactory;
     protected ApiClient mApiClient;
 
@@ -336,26 +336,6 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         String action = ScoreAction.VK_GROUP;
         int totalScoreToAdd = getTotalScoreToAddFromAction(action, mMyPreferencesManager);
 
-//        if (!mMyPreferencesManager.isHasSubscription()) {
-//            long curNumOfAttempts = mMyPreferencesManager.getNumOfAttemptsToAutoSync();
-//            long maxNumOfAttempts = FirebaseRemoteConfig.getInstance()
-//                    .getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_SYNC_ATTEMPTS_BEFORE_CALL_TO_ACTION);
-//
-//            Timber.d("does not have subscription, so no auto sync: %s/%s", curNumOfAttempts, maxNumOfAttempts);
-//
-//            if (curNumOfAttempts >= maxNumOfAttempts) {
-//                //show call to action
-//                mMyPreferencesManager.setNumOfAttemptsToAutoSync(0);
-//                getView().showSnackBarWithAction(Constants.Firebase.CallToActionReason.ENABLE_AUTO_SYNC);
-//            } else {
-//                mMyPreferencesManager.setNumOfAttemptsToAutoSync(curNumOfAttempts + 1);
-//            }
-//
-//            //increment unsynced score to sync it later
-//            mMyPreferencesManager.addUnsyncedVkGroup(id);
-//            return;
-//        }
-
         //increment scoreInFirebase
         mApiClient
                 .isUserJoinedVkGroup(id)
@@ -490,7 +470,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 
     @Override
     public void checkIfUserJoinedAppVkGroup() {
-        Timber.d("checkIfUserJoinedAppVkGroup");
+//        Timber.d("checkIfUserJoinedAppVkGroup");
         if (!VKSdk.isLoggedIn() || !mMyPreferencesManager.isTimeToCheckAppVkGroupJoined()) {
             return;
         }
@@ -541,19 +521,19 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 
         double subscriptionModificator = remoteConfig.getDouble(Constants.Firebase.RemoteConfigKeys.SCORE_MULTIPLIER_SUBSCRIPTION);
         double vkGroupAppModificator = remoteConfig.getDouble(Constants.Firebase.RemoteConfigKeys.SCORE_MULTIPLIER_VK_GROUP_APP);
-        Timber.d("subscriptionModificator/vkGroupAppModificator: %s/%s", subscriptionModificator, vkGroupAppModificator);
+//        Timber.d("subscriptionModificator/vkGroupAppModificator: %s/%s", subscriptionModificator, vkGroupAppModificator);
 
         boolean hasSubscriptionModificator = mMyPreferencesManager.isHasSubscription();
         boolean hasVkGroupAppModificator = mMyPreferencesManager.isAppVkGroupJoined();
-        Timber.d("hasSubscriptionModificator/hasVkGroupAppModificator: %s/%s", hasSubscriptionModificator, hasVkGroupAppModificator);
+//        Timber.d("hasSubscriptionModificator/hasVkGroupAppModificator: %s/%s", hasSubscriptionModificator, hasVkGroupAppModificator);
 
         subscriptionModificator = hasSubscriptionModificator ? subscriptionModificator : 1;
         vkGroupAppModificator = hasVkGroupAppModificator ? vkGroupAppModificator : 1;
-        Timber.d("subscriptionModificator/vkGroupAppModificator: %s/%s", subscriptionModificator, vkGroupAppModificator);
+//        Timber.d("subscriptionModificator/vkGroupAppModificator: %s/%s", subscriptionModificator, vkGroupAppModificator);
         //check if user has subs and joined vk group to add multilplier
 
         int totalScoreToAdd = (int) (score * subscriptionModificator * vkGroupAppModificator);
-        Timber.d("totalScoreToAdd: %s", totalScoreToAdd);
+//        Timber.d("totalScoreToAdd: %s", totalScoreToAdd);
         return totalScoreToAdd;
     }
 }

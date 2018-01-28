@@ -40,7 +40,7 @@ import ru.kuchanov.scpcore.monetization.model.RewardedVideo;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
 import ru.kuchanov.scpcore.ui.adapter.FreeAdsDisableAdapter;
-import ru.kuchanov.scpcore.ui.base.BaseActivity;
+import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
@@ -160,11 +160,9 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
                 }
                 if (!availableItems.isEmpty()) {
                     //add row with description
-                    long numOfMillis = FirebaseRemoteConfig.getInstance()
-                            .getLong(Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD);
+                    long numOfMillis = FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD);
                     long hours = numOfMillis / 1000 / 60 / 60;
-                    int score = (int) FirebaseRemoteConfig.getInstance()
-                            .getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_VK_GROUP);
+                    int score = (int) FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_VK_GROUP);
                     data.add(new AppInstallHeader(getString(R.string.vk_group_join_ads_disable_title, hours, score)));
                     data.addAll(availableItems);
                 }
@@ -180,10 +178,8 @@ public class FreeAdsDisablingDialogFragment extends DialogFragment {
             boolean hasSubscription = mMyPreferenceManager.isHasSubscription() || mMyPreferenceManager.isHasNoAdsSubscription();
             if (!hasSubscription && mMyPreferenceManager.isTimeOfferFreeTrialFromDisableAdsOption()) {
                 Bundle bundle = new Bundle();
-                bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
-                        Constants.Firebase.Analitics.EventValue.ADS_DISABLE);
-                FirebaseAnalytics.getInstance(getBaseActivity())
-                        .logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+                bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.EventValue.ADS_DISABLE);
+                FirebaseAnalytics.getInstance(getBaseActivity()).logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
                 mMyPreferenceManager.setFreeAdsDisableRewardGainedCount(0);
                 getBaseActivity().showOfferFreeTrialSubscriptionPopup();
