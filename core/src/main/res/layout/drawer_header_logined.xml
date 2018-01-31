@@ -93,7 +93,7 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_gravity="center"
-            android:src="@drawable/scplogo"
+            android:src="@mipmap/ic_launcher"
             tools:ignore="ContentDescription"
             />
 

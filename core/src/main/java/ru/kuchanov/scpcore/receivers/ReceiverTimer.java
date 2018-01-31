@@ -110,7 +110,7 @@ public class ReceiverTimer extends BroadcastReceiver {
         builder.setContentIntent(pendingIntent);
 
         // Large icon appears on the left of the notification
-        builder.setLargeIcon(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.ic_launcher));
+        builder.setLargeIcon(BitmapFactory.decodeResource(ctx.getResources(), R.mipmap.ic_launcher));
 
         // Content title, which appears in large type at the top of the notification
         //		builder.setContentTitle("Новые статьи");
