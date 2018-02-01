@@ -32,18 +32,11 @@ import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerCardDesignAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SubscriptionsAdapter;
 import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.CC3LicenseDialogFragment;
-import ru.kuchanov.scpcore.ui.dialog.FreeAdsDisablingDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.fragment.article.ArticleFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.FavoriteArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsArchiveFragment;
-import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsExperimentsFragment;
-import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsIncidentsFragment;
-import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsInterviewsFragment;
-import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsJokesFragment;
-import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsOtherFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects1ArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects2ArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects3ArticlesFragment;
@@ -53,11 +46,17 @@ import ru.kuchanov.scpcore.ui.fragment.articleslists.OfflineArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.RatedArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.ReadArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.RecentArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsArchiveFragment;
+import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsExperimentsFragment;
+import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsIncidentsFragment;
+import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsInterviewsFragment;
+import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsJokesFragment;
+import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsOtherFragment;
 import ru.kuchanov.scpcore.ui.fragment.monetization.FreeAdsDisableActionsFragment;
+import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment;
 import ru.kuchanov.scpcore.ui.fragment.search.SiteSearchArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.tags.TagsSearchFragment;
 import ru.kuchanov.scpcore.ui.fragment.tags.TagsSearchResultsArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment;
 import ru.kuchanov.scpcore.ui.holder.ArticleImageHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleSpoilerHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTableHolder;
@@ -142,8 +141,6 @@ public interface AppComponent {
     void inject(TextSizeDialogFragment dialogFragment);
 
     void inject(NewVersionDialogFragment dialogFragment);
-
-    void inject(FreeAdsDisablingDialogFragment dialogFragment);
 
     void inject(SettingsBottomSheetDialogFragment dialogFragment);
 

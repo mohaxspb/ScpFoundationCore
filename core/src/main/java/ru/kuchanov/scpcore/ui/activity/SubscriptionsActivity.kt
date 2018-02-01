@@ -127,11 +127,11 @@ class SubscriptionsActivity :
         @JvmStatic
         val EXTRA_TYPE = "EXTRA_TYPE"
 
-        @JvmStatic
+        @JvmField
         val TYPE_SUBS = 0
-        @JvmStatic
+        @JvmField
         val TYPE_DISABLE_ADS_FOR_FREE = 1
-        @JvmStatic
+        @JvmField
         val TYPE_LEADERBOARD = 2
     }
 }

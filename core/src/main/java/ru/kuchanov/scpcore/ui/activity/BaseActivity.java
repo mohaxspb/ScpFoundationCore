@@ -96,7 +96,6 @@ import ru.kuchanov.scpcore.mvp.base.MonetizationActions;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.ui.adapter.SocialLoginAdapter;
 import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
-import ru.kuchanov.scpcore.ui.dialog.FreeAdsDisablingDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
@@ -969,9 +968,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showFreeAdsDisablePopup() {
-        //todo launch subs activity with fragment
-        android.support.v4.app.DialogFragment dialogFragment = FreeAdsDisablingDialogFragment.newInstance();
-        dialogFragment.show(getSupportFragmentManager(), FreeAdsDisablingDialogFragment.TAG);
+        SubscriptionsActivity.start(this, SubscriptionsActivity.TYPE_DISABLE_ADS_FOR_FREE);
     }
 
     @Override
