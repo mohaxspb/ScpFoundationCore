@@ -1,10 +1,12 @@
 package ru.kuchanov.scpcore.ui.fragment.monetization
 
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 import com.google.firebase.auth.FirebaseAuth
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegatesManager
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import kotlinx.android.synthetic.main.fragment_free_ads_disable_actions.*
+import kotlinx.android.synthetic.main.fragment_subscriptions.*
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.DividerDelegate
@@ -45,6 +47,8 @@ class LeaderboardFragment :
         }
         showData(presenter.data)
     }
+
+    override fun showProgressCenter(show: Boolean) = progressContainer.setVisibility(if (show) View.VISIBLE else View.GONE)
 
     override fun showData(data: List<MyListItem>) {
         adapter.items = data

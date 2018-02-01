@@ -13,6 +13,7 @@ import ru.kuchanov.scpcore.mvp.contract.FragmentToolbarStateSetter
 interface LeaderboardContract : BaseMvp {
 
     interface View : BaseMvp.View, FragmentToolbarStateSetter {
+        fun showProgressCenter(show: Boolean)
         fun showData(data: List<MyListItem>)
         fun onRewardedVideoClick()
     }
