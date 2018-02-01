@@ -34,6 +34,7 @@ import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsJokesMvp;
 import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsOtherMvp;
 import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsScreenMvp;
 import ru.kuchanov.scpcore.mvp.contract.monetization.FreeAdsDisableActionsContract;
+import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract;
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract;
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract;
 import ru.kuchanov.scpcore.mvp.contract.search.SiteSearchArticlesMvp;
@@ -348,6 +349,17 @@ public class PresentersModule {
             MyNotificationManager mMyNotificationManager
     ) {
         return new FreeAdsDisableActionsPresenter(myPreferencesManager, dbProviderFactory, apiClient, gson, mMyNotificationManager);
+    }
+
+    @Provides
+    @Singleton
+    LeaderboardContract.Presenter providesLeaderboardPresenter(
+            MyPreferenceManager myPreferencesManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient,
+            Gson gson
+    ) {
+        return new LeaderboardPresenter(myPreferencesManager, dbProviderFactory, apiClient, gson);
     }
 
     @Provides
