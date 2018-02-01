@@ -63,6 +63,7 @@ import ru.kuchanov.scpcore.mvp.presenter.materials.MaterialsJokesPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.materials.MaterialsOtherPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.materials.MaterialsScreenPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.monetization.FreeAdsDisableActionsPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.monetization.LeaderboardPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsScreenPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.search.SiteSearchArticlesPresenter;

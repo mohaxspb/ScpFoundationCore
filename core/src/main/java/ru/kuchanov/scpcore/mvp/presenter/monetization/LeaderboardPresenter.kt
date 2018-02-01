@@ -12,6 +12,7 @@ import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
+import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
@@ -20,31 +21,21 @@ import rx.schedulers.Schedulers
 import timber.log.Timber
 import java.util.regex.Pattern
 
-fun getMonthFromSkuId(sku: String): Int {
-    val p = Pattern.compile("\\d+")
-    val m = p.matcher(sku)
-    if (m.find()) {
-        return m.group().toInt()
-    }
-
-    throw IllegalArgumentException("cant find month in sku")
-}
-
 /**
  * Created by mohax on 13.01.2018.
  *
  * for ScpCore
  */
-class SubscriptionsPresenter(
+class LeaderboardPresenter(
         myPreferencesManager: MyPreferenceManager,
         dbProviderFactory: DbProviderFactory,
         apiClient: ApiClient,
         private val inAppHelper: InAppHelper
-) : BasePresenter<SubscriptionsContract.View>(
+) : BasePresenter<LeaderboardContract.View>(
         myPreferencesManager,
         dbProviderFactory,
         apiClient
-), SubscriptionsContract.Presenter {
+), LeaderboardContract.Presenter {
 
     override var isDataLoaded = false
 
@@ -79,13 +70,8 @@ class SubscriptionsPresenter(
                             isDataLoaded = true;
                             view.showProgressCenter(false)
                             view.showRefreshButton(false)
-
-                            owned = it.first
-                            subsToBuy = it.second
-                            inAppsToBuy = it.third
-                            type = InAppHelper.getSubscriptionTypeFromItemsList(it.first);
+                            items.clear()
                             //todo create data and show it in fragment
-//                            items.clear()
 //                            items.add(TextViewModel(R.string.subs_main_text))
 //                            items.add(TextViewModel(R.string.subs_free_actions_title))
 //                            items.add(InAppViewModel(
@@ -96,9 +82,7 @@ class SubscriptionsPresenter(
 //                                    R.drawable.ic_free_ads_disable
 //                            ))
 
-//                            view.showData(items)
-
-                            view.showData(it.first, it.second, it.third, type)
+                            view.showData(items)
                         },
                         onError = {
                             Timber.e(it, "error getting cur subs");
@@ -111,32 +95,22 @@ class SubscriptionsPresenter(
                 );
     }
 
-    override fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService) {
-        if (id == ID_FREE_ADS_DISABLE) {
-            view.navigateToDisableAds()
-            return
-        }
-        val type: String
-        if (id in InAppHelper.getNewInAppsSkus()) {
-            type = InAppHelper.InappType.IN_APP
-        } else {
-            type = InAppHelper.InappType.SUBS
-        }
-        try {
-            InAppHelper.startSubsBuy(target, inAppBillingService, type, id)
-        } catch (e: Exception) {
-            Timber.e(e)
-            view.showError(e)
-        }
-    }
-
-    override fun onCurrentSubscriptionClick(id: String) {
-        //todo open leaderboard
-    }
-
-    companion object {
-        val ID_FREE_ADS_DISABLE = "ID_FREE_ADS_DISABLE"
-        val ID_CURRENT_SUBS = "ID_CURRENT_SUBS"
-        val ID_CURRENT_SUBS_EMPTY = "ID_CURRENT_SUBS_EMPTY"
-    }
+//    override fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService) {
+//        if (id == ID_FREE_ADS_DISABLE) {
+//            view.navigateToDisableAds()
+//            return
+//        }
+//        val type: String
+//        if (id in InAppHelper.getNewInAppsSkus()) {
+//            type = InAppHelper.InappType.IN_APP
+//        } else {
+//            type = InAppHelper.InappType.SUBS
+//        }
+//        try {
+//            InAppHelper.startSubsBuy(target, inAppBillingService, type, id)
+//        } catch (e: Exception) {
+//            Timber.e(e)
+//            view.showError(e)
+//        }
+//    }
 }
