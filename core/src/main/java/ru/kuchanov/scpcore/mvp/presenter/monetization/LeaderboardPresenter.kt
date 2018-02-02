@@ -1,25 +1,22 @@
 package ru.kuchanov.scpcore.mvp.presenter.monetization
 
-import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.api.ApiClient
+import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
-import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
-import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.subscribeBy
 import rx.schedulers.Schedulers
 import timber.log.Timber
-import java.util.regex.Pattern
 
 /**
  * Created by mohax on 13.01.2018.
@@ -39,15 +36,11 @@ class LeaderboardPresenter(
 
     override var isDataLoaded = false
 
-    val items = mutableListOf<MyListItem>()
+    override val data = mutableListOf<MyListItem>()
 
-    override var owned: List<Item>? = null
-    override var subsToBuy: List<Subscription>? = null
-    override var inAppsToBuy: List<Subscription>? = null
-    @InAppHelper.SubscriptionType
-    override var type: Int = InAppHelper.SubscriptionType.NONE
+//    override var inAppsToBuy: List<Subscription>? = null
 
-    override fun getMarketData(service: IInAppBillingService) {
+    override fun loadData(service: IInAppBillingService) {
         Timber.d("getMarketData")
         view.showProgressCenter(true)
         view.showRefreshButton(false)
@@ -58,10 +51,9 @@ class LeaderboardPresenter(
         }
 
         Single.zip(
-                inAppHelper.getValidatedOwnedSubsObservable(service).toSingle(),
-                inAppHelper.getSubsListToBuyObservable(service, skuList).toSingle(),
                 inAppHelper.getInAppsListToBuyObservable(service).toSingle(),
-                { t1: List<Item>, t2: List<Subscription>, t3: List<Subscription> -> Triple(t1, t2, t3) }
+                mApiClient.leaderboard.toSingle(),
+                { t1: List<Subscription>, t2: LeaderBoardResponse -> Pair(t1, t2) }
         )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -70,7 +62,7 @@ class LeaderboardPresenter(
                             isDataLoaded = true;
                             view.showProgressCenter(false)
                             view.showRefreshButton(false)
-                            items.clear()
+                            data.clear()
                             //todo create data and show it in fragment
 //                            items.add(TextViewModel(R.string.subs_main_text))
 //                            items.add(TextViewModel(R.string.subs_free_actions_title))
@@ -82,7 +74,7 @@ class LeaderboardPresenter(
 //                                    R.drawable.ic_free_ads_disable
 //                            ))
 
-                            view.showData(items)
+                            view.showData(data)
                         },
                         onError = {
                             Timber.e(it, "error getting cur subs");
@@ -93,6 +85,10 @@ class LeaderboardPresenter(
                             view.showRefreshButton(true)
                         }
                 );
+    }
+
+    override fun onRewardedVideoClick() {
+        //todo
     }
 
 //    override fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService) {

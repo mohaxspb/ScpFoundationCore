@@ -5,14 +5,14 @@ import android.view.View
 import com.google.firebase.auth.FirebaseAuth
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegatesManager
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
-import kotlinx.android.synthetic.main.fragment_free_ads_disable_actions.*
-import kotlinx.android.synthetic.main.fragment_subscriptions.*
+import kotlinx.android.synthetic.main.fragment_leaderboard.*
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.DividerDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.LabelDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.RewardedVideoDelegate
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
+import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 
@@ -27,25 +27,32 @@ class LeaderboardFragment :
 
     private lateinit var adapter: ListDelegationAdapter<List<MyListItem>>
 
-    override fun getLayoutResId() = R.layout.fragment_free_ads_disable_actions
+    override fun getLayoutResId() = R.layout.fragment_leaderboard
 
     override fun callInjections() = BaseApplication.getAppComponent().inject(this)
 
     override fun initViews() {
+        InAppBillingServiceConnectionObservable.getInstance().serviceStatusObservable.subscribe { connected ->
+            if (connected!! && !getPresenter().isDataLoaded) {
+                getPresenter().loadData(baseActivity.getIInAppBillingService())
+            }
+        }
+
         recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
         delegateManager.addDelegate(DividerDelegate())
         delegateManager.addDelegate(RewardedVideoDelegate { presenter.onRewardedVideoClick() })
         delegateManager.addDelegate(LabelDelegate())
-        //todo
 
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter
 
         if (presenter.data.isEmpty()) {
-            presenter.loadData()
+            baseActivity.getIInAppBillingService()?.apply { getPresenter().loadData(this) }
+        } else {
+            showProgressCenter(false)
+            presenter.apply { showData(data) }
         }
-        showData(presenter.data)
     }
 
     override fun showProgressCenter(show: Boolean) = progressContainer.setVisibility(if (show) View.VISIBLE else View.GONE)
@@ -53,6 +60,10 @@ class LeaderboardFragment :
     override fun showData(data: List<MyListItem>) {
         adapter.items = data
         adapter.notifyDataSetChanged()
+    }
+
+    override fun showRefreshButton(show: Boolean) {
+        //todo
     }
 
     override fun onRewardedVideoClick() {
