@@ -89,7 +89,7 @@ class LeaderboardFragment :
 
     override fun getToolbarTitle(): Int = R.string.leaderboard_activity_title
 
-    override fun getToolbarTextColor(): Int = R.color.subsTextTitleColor
+    override fun getToolbarTextColor(): Int = android.R.color.white
 
     companion object {
 

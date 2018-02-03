@@ -30,8 +30,9 @@
             android:id="@+id/avatarContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginBottom="@dimen/defaultMarginSmall"
-            android:layout_marginStart="@dimen/defaultMargin"
+            android:layout_marginTop="@dimen/defaultMarginSmall"
             >
 
             <ImageView
@@ -50,7 +51,7 @@
                 android:layout_gravity="bottom|end"
                 android:background="@drawable/ic_romb"
                 android:gravity="center"
-                android:textColor="@android:color/white"
+                android:textColor="@color/subsTextTitleColor"
                 android:textSize="14sp"
                 tools:text="1"
                 />
@@ -58,8 +59,8 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="vertical"
             android:paddingEnd="@dimen/defaultMargin"
             android:paddingStart="@dimen/defaultMargin"
@@ -87,12 +88,24 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/userScoreTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:padding="@dimen/defaultMargin"
+            android:textColor="@color/subsTextTitleColor"
+            android:textSize="14sp"
+            tools:text="424242"
+            />
+
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/bottomView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/bgSubsTop"
         android:orientation="horizontal"
         >
 
@@ -101,6 +114,7 @@
             fontPath="fonts/Roboto-Medium.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:paddingBottom="3dp"
             android:paddingEnd="@dimen/defaultMarginSmall"
             android:paddingStart="@dimen/defaultMarginSmall"
@@ -111,23 +125,45 @@
             tools:text="4 level"
             />
 
-        <ProgressBar
-            android:id="@+id/expirienceProgressBar"
-            style="?android:attr/progressBarStyleHorizontal"
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:progressDrawable="@drawable/level_progress"
-            tools:max="1000"
-            tools:progress="600"
-            />
+            >
+
+            <ProgressBar
+                android:id="@+id/experienceProgressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingBottom="2dp"
+                android:paddingTop="2dp"
+                android:progressDrawable="@drawable/level_progress"
+                tools:max="1000"
+                tools:progress="600"
+                />
+
+            <TextView
+                android:id="@+id/maxLevelTextView"
+                fontPath="fonts/Roboto-Medium.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@android:color/black"
+                android:textSize="6sp"
+                tools:ignore="MissingPrefix,SmallSp"
+                tools:text="Max level"
+                />
+
+        </FrameLayout>
 
         <TextView
             android:id="@+id/expToNextLevelTextView"
             fontPath="fonts/Roboto-Medium.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:paddingBottom="3dp"
             android:paddingEnd="@dimen/defaultMarginSmall"
             android:paddingStart="@dimen/defaultMarginSmall"
@@ -137,7 +173,6 @@
             tools:ignore="MissingPrefix,SmallSp"
             tools:text="400 points"
             />
-
 
     </LinearLayout>
 

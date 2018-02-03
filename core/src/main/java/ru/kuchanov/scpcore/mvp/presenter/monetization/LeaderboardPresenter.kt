@@ -8,10 +8,12 @@ import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.api.ApiClient
+import ru.kuchanov.scpcore.api.model.remoteconfig.LevelsJson
 import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.LabelViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LeaderboardUserViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LevelViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.InAppViewModel
 import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.db.model.User
@@ -72,15 +74,21 @@ class LeaderboardPresenter(
                 { inapps: List<Subscription>, leaderboard: LeaderBoardResponse, user: User? -> Triple(inapps, leaderboard, user) }
         )
                 .map {
+                    val levelJson = LevelsJson.getLevelsJson()
                     val viewModels = mutableListOf<MyListItem>()
                     val users = it.second.users
                     users.sortByDescending { it.score }
                     users.subList(0, 3).forEachIndexed { index, user ->
-                        viewModels.add(LabelViewModel(0, textString = BaseApplication.getAppInstance().getString(R.string.leaderboard_place, index)))
+                        viewModels.add(LabelViewModel(0, textString = BaseApplication.getAppInstance().getString(R.string.leaderboard_place, index + 1)))
+                        val level = levelJson.getLevelForScore(user.score)
                         viewModels.add(LeaderboardUserViewModel(
-                                index,
-                                user
-                                //todo level object
+                                index + 1,
+                                user,
+                                LevelViewModel(
+                                        level!!,
+                                        levelJson.scoreToNextLevel(user.score, level),
+                                        levelJson.getLevelMaxScore(level),
+                                        level.id == LevelsJson.MAX_LEVEL_ID)
                         ))
                     }
 
@@ -97,10 +105,15 @@ class LeaderboardPresenter(
                     ))
 
                     viewModels.addAll(users.subList(3, users.size).mapIndexed { index, firebaseObjectUser ->
+                        val level = levelJson.getLevelForScore(firebaseObjectUser.score)
                         LeaderboardUserViewModel(
-                                index + 3,
-                                firebaseObjectUser
-                                //todo level object
+                                index + 3 + 1,
+                                firebaseObjectUser,
+                                LevelViewModel(
+                                        level!!,
+                                        levelJson.scoreToNextLevel(firebaseObjectUser.score, level),
+                                        levelJson.getLevelMaxScore(level),
+                                        level.id == LevelsJson.MAX_LEVEL_ID)
                         )
                     })
 

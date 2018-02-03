@@ -7,12 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.BitmapImageViewTarget
+import com.bumptech.glide.request.target.Target
 import com.hannesdorfmann.adapterdelegates3.AbsListItemAdapterDelegate
 import kotlinx.android.synthetic.main.list_item_leaderboard_user.view.*
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LeaderboardUserViewModel
+import timber.log.Timber
+import java.lang.Exception
 
 /**
  * Created by mohax on 15.01.2018.
@@ -35,6 +39,16 @@ class LeaderboardDelegate : AbsListItemAdapterDelegate<LeaderboardUserViewModel,
                     .load(user.avatar)
                     .asBitmap()
                     .centerCrop()
+                    .listener(object : RequestListener<String, Bitmap> {
+                        override fun onException(e: Exception?, model: String?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
+                            Timber.e("onException: $e")
+                            return false
+                        }
+
+                        override fun onResourceReady(resource: Bitmap?, model: String?, target: Target<Bitmap>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
+                            return false
+                        }
+                    })
                     .into(object : BitmapImageViewTarget(avatarImageView) {
                         override fun setResource(resource: Bitmap) {
                             val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(context.resources, resource)
@@ -45,8 +59,22 @@ class LeaderboardDelegate : AbsListItemAdapterDelegate<LeaderboardUserViewModel,
 
             nameTextView.text = user.fullName
             readArticlesCountTextView.text = context.getString(R.string.leaderboard_articles_read, user.numOfReadArticles)
+            userScoreTextView.text = user.score.toString()
 
-            //todo level info
+            val levelViewModel = item.levelViewModel
+            val level = item.levelViewModel.level
+            levelNumTextView.text = level.id.toString()
+            levelTextView.text = context.getString(R.string.level_num, level.id)
+            if (levelViewModel.isMaxLevel) {
+                experienceProgressBar.max = 1
+                experienceProgressBar.progress = 1
+                maxLevelTextView.visibility = View.VISIBLE
+            } else {
+                maxLevelTextView.visibility = View.GONE
+                experienceProgressBar.max = levelViewModel.nextLevelScore
+                experienceProgressBar.progress = user.score - level.score
+                expToNextLevelTextView.text = context.getString(R.string.score_num, levelViewModel.scoreToNextLevel)
+            }
         }
     }
 

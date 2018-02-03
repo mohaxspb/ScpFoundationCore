@@ -51,7 +51,7 @@ public class LeaderboardHolder extends RecyclerView.ViewHolder {
 
         score.setText(String.valueOf(data.score));
 
-        LevelsJson.Level userLevel = LevelsJson.getLevelForScore(data.score);
+        LevelsJson.Level userLevel = LevelsJson.getLevelsJson().getLevelForScore(data.score);
         level.setText(context.getString(R.string.level, userLevel.id));
 
         Glide.with(image.getContext())

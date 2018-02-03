@@ -24,7 +24,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.android.gms.auth.api.Auth;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 
 import javax.inject.Inject;
@@ -222,7 +221,8 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                     });
 
             //score and level
-            LevelsJson.Level level = LevelsJson.getLevelForScore(user.score);
+            LevelsJson levelsJson = LevelsJson.getLevelsJson();
+            LevelsJson.Level level = levelsJson.getLevelForScore(user.score);
             if (level.id == LevelsJson.MAX_LEVEL_ID) {
                 headerViewHolder.circleProgress.setMaxValue(level.score);
                 headerViewHolder.circleProgress.setValue(level.score);
@@ -232,22 +232,19 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
 
                 headerViewHolder.avatar.setOnClickListener(view -> showLeaderboard());
             } else {
-                String levelsJsonString = FirebaseRemoteConfig.getInstance().getString(Constants.Firebase.RemoteConfigKeys.LEVELS_JSON);
-                LevelsJson levelsJson = mGson.fromJson(levelsJsonString, LevelsJson.class);
-                LevelsJson.Level nextLevel = levelsJson.levels.get(level.id + 1);
-
-                int levelNum = level.id;
                 String levelTitle = level.title;
 
+                LevelsJson.Level nextLevel = levelsJson.levels.get(level.id + 1);
                 int nextLevelScore = nextLevel.score;
 
                 int max = nextLevelScore - level.score;
                 int value = user.score - level.score;
+
                 headerViewHolder.circleProgress.setMaxValue(max);
                 headerViewHolder.circleProgress.setValue(value);
 
                 headerViewHolder.level.setText(levelTitle);
-                headerViewHolder.levelNum.setText(String.valueOf(levelNum));
+                headerViewHolder.levelNum.setText(String.valueOf(level.id));
 
                 headerViewHolder.avatar.setOnClickListener(view -> showLeaderboard());
             }

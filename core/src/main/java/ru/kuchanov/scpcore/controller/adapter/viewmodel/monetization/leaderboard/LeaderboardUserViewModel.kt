@@ -10,5 +10,6 @@ import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
  */
 data class LeaderboardUserViewModel(
         val position: Int,
-        val user: FirebaseObjectUser
+        val user: FirebaseObjectUser,
+        val levelViewModel: LevelViewModel
 ) : MyListItem
