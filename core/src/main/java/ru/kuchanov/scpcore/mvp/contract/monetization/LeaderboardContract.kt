@@ -1,5 +1,6 @@
 package ru.kuchanov.scpcore.mvp.contract.monetization
 
+import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.db.model.User
@@ -32,5 +33,6 @@ interface LeaderboardContract : BaseMvp {
 
         fun onRewardedVideoClick()
         fun loadData(service: IInAppBillingService)
+        fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService)
     }
 }

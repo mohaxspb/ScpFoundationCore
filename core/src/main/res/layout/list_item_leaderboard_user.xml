@@ -48,7 +48,7 @@
                 android:layout_width="@dimen/defaultMarginBig"
                 android:layout_height="@dimen/defaultMarginBig"
                 android:layout_gravity="bottom|end"
-                android:background="@drawable/gradient_circle"
+                android:background="@drawable/ic_romb"
                 android:gravity="center"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
@@ -56,9 +56,41 @@
                 />
         </FrameLayout>
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/defaultMargin"
+            android:paddingStart="@dimen/defaultMargin"
+            android:paddingTop="10dp"
+            >
+
+            <TextView
+                android:id="@+id/nameTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/subsTextTitleColor"
+                android:textSize="14sp"
+                tools:text="Ivan Ivanov"
+                />
+
+            <TextView
+                android:id="@+id/readArticlesCountTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/subsTextColorBottom"
+                android:textSize="10sp"
+                tools:ignore="SmallSp"
+                tools:text="100 articles read"
+                />
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/bottomView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

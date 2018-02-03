@@ -1,7 +1,9 @@
 package ru.kuchanov.scpcore.mvp.presenter.monetization
 
+import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.gson.Gson
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
@@ -18,6 +20,7 @@ import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
+import rx.Observable
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.subscribeBy
@@ -33,7 +36,8 @@ class LeaderboardPresenter(
         myPreferencesManager: MyPreferenceManager,
         dbProviderFactory: DbProviderFactory,
         apiClient: ApiClient,
-        private val inAppHelper: InAppHelper
+        private val inAppHelper: InAppHelper,
+        private val gson: Gson
 ) : BasePresenter<LeaderboardContract.View>(
         myPreferencesManager,
         dbProviderFactory,
@@ -63,19 +67,21 @@ class LeaderboardPresenter(
         Single.zip(
                 inAppHelper.getInAppsListToBuyObservable(service).toSingle(),
                 mApiClient.leaderboard.toSingle(),
-                mDbProviderFactory.dbProvider.userAsync.toSingle(),
-                { inapps: List<Subscription>, leaderboard: LeaderBoardResponse, user: User -> Triple(inapps, leaderboard, user) }
+//                mDbProviderFactory.dbProvider.userSyncUnmanaged.toSingle(),
+                Observable.just(mDbProviderFactory.dbProvider.userUnmanaged).toSingle(),
+                { inapps: List<Subscription>, leaderboard: LeaderBoardResponse, user: User? -> Triple(inapps, leaderboard, user) }
         )
                 .map {
                     val viewModels = mutableListOf<MyListItem>()
                     val users = it.second.users
+                    users.sortByDescending { it.score }
                     users.subList(0, 3).forEachIndexed { index, user ->
-                        viewModels.add(0, LabelViewModel(0, textString = BaseApplication.getAppInstance().getString(R.string.leaderboard_place, index)))
-                        LeaderboardUserViewModel(
+                        viewModels.add(LabelViewModel(0, textString = BaseApplication.getAppInstance().getString(R.string.leaderboard_place, index)))
+                        viewModels.add(LeaderboardUserViewModel(
                                 index,
                                 user
                                 //todo level object
-                        )
+                        ))
                     }
 
                     //todo colors
@@ -92,7 +98,7 @@ class LeaderboardPresenter(
 
                     viewModels.addAll(users.subList(3, users.size).mapIndexed { index, firebaseObjectUser ->
                         LeaderboardUserViewModel(
-                                index,
+                                index + 3,
                                 firebaseObjectUser
                                 //todo level object
                         )
@@ -111,7 +117,7 @@ class LeaderboardPresenter(
 
                             data.addAll(it.first)
 //                            leaderBoardResponse = it.second
-                            myUser = it.third
+                            myUser = it.third!!
 
                             view.showData(data)
                             view.showUpdateDate(it.second.lastUpdated, it.second.timeZone)
@@ -138,22 +144,18 @@ class LeaderboardPresenter(
         //todo
     }
 
-//    override fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService) {
-//        if (id == ID_FREE_ADS_DISABLE) {
-//            view.navigateToDisableAds()
-//            return
-//        }
-//        val type: String
-//        if (id in InAppHelper.getNewInAppsSkus()) {
-//            type = InAppHelper.InappType.IN_APP
-//        } else {
-//            type = InAppHelper.InappType.SUBS
-//        }
-//        try {
-//            InAppHelper.startSubsBuy(target, inAppBillingService, type, id)
-//        } catch (e: Exception) {
-//            Timber.e(e)
-//            view.showError(e)
-//        }
-//    }
+    override fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService) {
+        val type: String
+        if (id in InAppHelper.getNewInAppsSkus()) {
+            type = InAppHelper.InappType.IN_APP
+        } else {
+            type = InAppHelper.InappType.SUBS
+        }
+        try {
+            InAppHelper.startSubsBuy(target, inAppBillingService, type, id)
+        } catch (e: Exception) {
+            Timber.e(e)
+            view.showError(e)
+        }
+    }
 }

@@ -40,6 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:background="@android:color/white"
         android:orientation="vertical"
         >
 
@@ -84,7 +85,7 @@
                     android:layout_width="@dimen/defaultMarginBig"
                     android:layout_height="@dimen/defaultMarginBig"
                     android:layout_gravity="bottom|end"
-                    android:background="@drawable/gradient_circle"
+                    android:background="@drawable/ic_romb"
                     android:gravity="center"
                     android:textColor="@android:color/white"
                     android:textSize="14sp"

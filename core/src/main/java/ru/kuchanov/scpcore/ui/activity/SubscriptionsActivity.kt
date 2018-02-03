@@ -121,7 +121,7 @@ class SubscriptionsActivity :
         fun start(context: Context, type: Int = TYPE_SUBS) {
             val intent = Intent(context, SubscriptionsActivity::class.java)
             intent.putExtra(EXTRA_TYPE, type)
-            context.startActivity(Intent(context, SubscriptionsActivity::class.java))
+            context.startActivity(intent)
         }
 
         @JvmStatic

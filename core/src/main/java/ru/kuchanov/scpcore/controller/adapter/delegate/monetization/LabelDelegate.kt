@@ -25,7 +25,7 @@ class LabelDelegate : AbsListItemAdapterDelegate<LabelViewModel, MyListItem, Lab
 
     override fun onBindViewHolder(item: LabelViewModel, viewHolder: AppViewHolder, payloads: MutableList<Any>) {
         with(viewHolder.itemView.textView) {
-            text = context.getString(item.text)
+            text = if (item.text != 0) context.getString(item.text) else item.textString
             setTextColor(ContextCompat.getColor(context, item.textColor))
             setBackgroundResource(item.bgColor)
         }

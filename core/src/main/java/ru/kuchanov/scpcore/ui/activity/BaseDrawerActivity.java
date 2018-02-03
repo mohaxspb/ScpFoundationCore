@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.GravityCompat;
@@ -35,11 +34,9 @@ import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.api.model.remoteconfig.LevelsJson;
-import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse;
 import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.monetization.model.PurchaseData;
 import ru.kuchanov.scpcore.mvp.contract.DrawerMvp;
-import ru.kuchanov.scpcore.ui.dialog.LeaderboardDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.HeaderViewHolderLogined;
 import ru.kuchanov.scpcore.ui.holder.HeaderViewHolderUnlogined;
 import rx.android.schedulers.AndroidSchedulers;
@@ -233,10 +230,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                 headerViewHolder.level.setText(level.title);
                 headerViewHolder.levelNum.setText(String.valueOf(level.id));
 
-                headerViewHolder.avatar.setOnClickListener(view -> {
-                    showMessageLong(getString(R.string.profile_score_info_max_level, user.score));
-                    mPresenter.onAvatarClicked();
-                });
+                headerViewHolder.avatar.setOnClickListener(view -> showLeaderboard());
             } else {
                 String levelsJsonString = FirebaseRemoteConfig.getInstance().getString(Constants.Firebase.RemoteConfigKeys.LEVELS_JSON);
                 LevelsJson levelsJson = mGson.fromJson(levelsJsonString, LevelsJson.class);
@@ -255,10 +249,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                 headerViewHolder.level.setText(levelTitle);
                 headerViewHolder.levelNum.setText(String.valueOf(levelNum));
 
-                headerViewHolder.avatar.setOnClickListener(view -> {
-                    showMessageLong(getString(R.string.profile_score_info, user.score, max - value));
-                    mPresenter.onAvatarClicked();
-                });
+                headerViewHolder.avatar.setOnClickListener(view -> showLeaderboard());
             }
 
             //check if user score is greater than 1000 and offer him/her a free trial if there is no subscription owned
@@ -338,9 +329,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
     );
 
     @Override
-    public void showLeaderboard(LeaderBoardResponse leaderBoardResponse) {
-//        DialogFragment dialogFragment = LeaderboardDialogFragment.newInstance(leaderBoardResponse);
-//        dialogFragment.show(getSupportFragmentManager(), LeaderboardDialogFragment.TAG);
+    public void showLeaderboard() {
         SubscriptionsActivity.start(this, SubscriptionsActivity.TYPE_LEADERBOARD);
     }
 

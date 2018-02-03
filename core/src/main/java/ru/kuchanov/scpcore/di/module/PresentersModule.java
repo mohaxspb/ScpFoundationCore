@@ -358,9 +358,10 @@ public class PresentersModule {
             MyPreferenceManager myPreferencesManager,
             DbProviderFactory dbProviderFactory,
             ApiClient apiClient,
+            InAppHelper inAppHelper,
             Gson gson
     ) {
-        return new LeaderboardPresenter(myPreferencesManager, dbProviderFactory, apiClient, gson);
+        return new LeaderboardPresenter(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper, gson);
     }
 
     @Provides
