@@ -3,10 +3,14 @@ package ru.kuchanov.scpcore.mvp.presenter.monetization
 import com.android.vending.billing.IInAppBillingService
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import ru.kuchanov.scpcore.Constants
+import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.api.ApiClient
 import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LeaderboardUserViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.InAppViewModel
 import ru.kuchanov.scpcore.db.DbProviderFactory
+import ru.kuchanov.scpcore.db.model.User
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
@@ -38,6 +42,10 @@ class LeaderboardPresenter(
 
     override val data = mutableListOf<MyListItem>()
 
+    override lateinit var leaderBoardResponse: LeaderBoardResponse;
+
+    override lateinit var myUser: User
+
 //    override var inAppsToBuy: List<Subscription>? = null
 
     override fun loadData(service: IInAppBillingService) {
@@ -53,8 +61,24 @@ class LeaderboardPresenter(
         Single.zip(
                 inAppHelper.getInAppsListToBuyObservable(service).toSingle(),
                 mApiClient.leaderboard.toSingle(),
-                { t1: List<Subscription>, t2: LeaderBoardResponse -> Pair(t1, t2) }
+                mDbProviderFactory.dbProvider.userAsync.toSingle(),
+                { inapps: List<Subscription>, leaderboard: LeaderBoardResponse, user: User -> Triple(inapps, leaderboard, user) }
         )
+                .map {
+                    val viewModels = mutableListOf<MyListItem>()
+                    viewModels.addAll(it.second.users.mapIndexed { index, firebaseObjectUser -> LeaderboardUserViewModel(index, firebaseObjectUser) })
+                    val levelUpInApp = it.first.first()
+                    viewModels.add(3, InAppViewModel(
+                            R.string.leaderboard_inapp_title,
+                            R.string.leaderboard_inapp_description,
+                            levelUpInApp.price,
+                            levelUpInApp.productId,
+                            R.drawable.ic_adblock,
+                            R.color.bgSubsBottom
+                    ))
+
+                    return@map Triple(viewModels, it.second, it.third)
+                }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
@@ -63,6 +87,11 @@ class LeaderboardPresenter(
                             view.showProgressCenter(false)
                             view.showRefreshButton(false)
                             data.clear()
+
+                            data.addAll(it.first)
+                            leaderBoardResponse = it.second
+                            myUser = it.third
+
                             //todo create data and show it in fragment
 //                            items.add(TextViewModel(R.string.subs_main_text))
 //                            items.add(TextViewModel(R.string.subs_free_actions_title))
@@ -74,7 +103,7 @@ class LeaderboardPresenter(
 //                                    R.drawable.ic_free_ads_disable
 //                            ))
 
-                            view.showData(data)
+                            view.showData(data, myUser)
                         },
                         onError = {
                             Timber.e(it, "error getting cur subs");
@@ -85,6 +114,12 @@ class LeaderboardPresenter(
                             view.showRefreshButton(true)
                         }
                 );
+    }
+
+    override fun onUserChanged(user: User?) {
+        super.onUserChanged(user)
+        myUser = user!!
+        view.showData(data, myUser)
     }
 
     override fun onRewardedVideoClick() {

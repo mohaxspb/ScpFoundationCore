@@ -1,7 +1,9 @@
 package ru.kuchanov.scpcore.mvp.contract.monetization
 
 import com.android.vending.billing.IInAppBillingService
+import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
+import ru.kuchanov.scpcore.db.model.User
 import ru.kuchanov.scpcore.mvp.base.BaseMvp
 import ru.kuchanov.scpcore.mvp.contract.FragmentToolbarStateSetter
 
@@ -15,7 +17,7 @@ interface LeaderboardContract : BaseMvp {
 
     interface View : BaseMvp.View, FragmentToolbarStateSetter {
         fun showProgressCenter(show: Boolean)
-        fun showData(data: List<MyListItem>)
+        fun showData(data: List<MyListItem>, user: User)
         fun onRewardedVideoClick()
         fun showRefreshButton(show: Boolean)
     }
@@ -24,6 +26,8 @@ interface LeaderboardContract : BaseMvp {
         val isDataLoaded: Boolean
 
         val data: List<MyListItem>
+        var leaderBoardResponse: LeaderBoardResponse
+        var myUser:User
 
         fun onRewardedVideoClick()
         fun loadData(service: IInAppBillingService)

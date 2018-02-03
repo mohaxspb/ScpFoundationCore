@@ -15,6 +15,7 @@ import ru.kuchanov.scpcore.mvp.contract.FragmentToolbarStateSetter
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract.Screen.*
 import ru.kuchanov.scpcore.ui.fragment.monetization.FreeAdsDisableActionsFragment
+import ru.kuchanov.scpcore.ui.fragment.monetization.LeaderboardFragment
 import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment
 
 
@@ -37,7 +38,6 @@ class SubscriptionsActivity :
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
-
 
             title = getString(when (screenToShowType) {
                 TYPE_SUBS -> R.string.subs_activity_title
@@ -73,7 +73,7 @@ class SubscriptionsActivity :
         val fragment: Fragment = when (screen) {
             SUBS -> SubscriptionsFragment.newInstance()
             FREE_ACTIONS -> FreeAdsDisableActionsFragment.newInstance()
-            LEADERBOARD -> TODO()
+            LEADERBOARD -> LeaderboardFragment.newInstance()
         }
         supportFragmentManager.beginTransaction()
                 .replace(R.id.content, fragment, screen.name)

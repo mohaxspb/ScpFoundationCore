@@ -339,8 +339,9 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
 
     @Override
     public void showLeaderboard(LeaderBoardResponse leaderBoardResponse) {
-        DialogFragment dialogFragment = LeaderboardDialogFragment.newInstance(leaderBoardResponse);
-        dialogFragment.show(getSupportFragmentManager(), LeaderboardDialogFragment.TAG);
+//        DialogFragment dialogFragment = LeaderboardDialogFragment.newInstance(leaderBoardResponse);
+//        dialogFragment.show(getSupportFragmentManager(), LeaderboardDialogFragment.TAG);
+        SubscriptionsActivity.start(this, SubscriptionsActivity.TYPE_LEADERBOARD);
     }
 
     @Override

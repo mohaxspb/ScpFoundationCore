@@ -18,7 +18,6 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser;
 import ru.kuchanov.scpcore.api.model.remoteconfig.LevelsJson;
-import ru.kuchanov.scpcore.ui.adapter.LeaderboardRecyclerAdapter;
 
 /**
  * Created by mohax on 06.05.2017.
@@ -38,11 +37,8 @@ public class LeaderboardHolder extends RecyclerView.ViewHolder {
     @BindView(R2.id.score)
     TextView score;
 
-    private LeaderboardRecyclerAdapter.LeaderboardClickListener mClickListener;
-
-    public LeaderboardHolder(View itemView, LeaderboardRecyclerAdapter.LeaderboardClickListener clickListener) {
+    public LeaderboardHolder(View itemView) {
         super(itemView);
-        mClickListener = clickListener;
         ButterKnife.bind(this, itemView);
     }
 
@@ -53,7 +49,6 @@ public class LeaderboardHolder extends RecyclerView.ViewHolder {
 
         name.setText(data.fullName);
 
-//        score.setText(score.getContext().getResources().getQuantityString(R.plurals.plurals_score, data.score, data.score));
         score.setText(String.valueOf(data.score));
 
         LevelsJson.Level userLevel = LevelsJson.getLevelForScore(data.score);
@@ -71,11 +66,5 @@ public class LeaderboardHolder extends RecyclerView.ViewHolder {
                         image.setImageDrawable(circularBitmapDrawable);
                     }
                 });
-
-        itemView.setOnClickListener(view -> {
-            if (mClickListener != null) {
-                mClickListener.onUserClicked(data);
-            }
-        });
     }
 }

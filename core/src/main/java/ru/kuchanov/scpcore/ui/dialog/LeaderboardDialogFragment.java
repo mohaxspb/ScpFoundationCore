@@ -64,16 +64,15 @@ public class LeaderboardDialogFragment extends DialogFragment {
                 .positiveText(android.R.string.cancel);
 
         LeaderboardRecyclerAdapter adapter = new LeaderboardRecyclerAdapter();
-        adapter.setItemClickListener(data -> Timber.d("onUserClicked: %s", data));
         Collections.sort(mLeaderBoardResponse.users, (user1, user) -> user.score - user1.score);
         adapter.setData(mLeaderBoardResponse.users);
 
         dialog = dialogTextSizeBuilder.build();
 
-        TextView content = ButterKnife.findById(dialog, R.id.content);
+        TextView content = (TextView) dialog.findViewById(R.id.content);
         content.setText(getString(R.string.refreshed, refreshed));
 
-        RecyclerView recyclerView = ButterKnife.findById(dialog, R.id.recyclerView);
+        RecyclerView recyclerView = (RecyclerView) dialog.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(adapter);

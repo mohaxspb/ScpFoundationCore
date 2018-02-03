@@ -12,6 +12,7 @@ import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.DividerDeleg
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.LabelDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.RewardedVideoDelegate
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
+import ru.kuchanov.scpcore.db.model.User
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment
@@ -57,9 +58,11 @@ class LeaderboardFragment :
 
     override fun showProgressCenter(show: Boolean) = progressContainer.setVisibility(if (show) View.VISIBLE else View.GONE)
 
-    override fun showData(data: List<MyListItem>) {
+    override fun showData(data: List<MyListItem>, user:User) {
         adapter.items = data
         adapter.notifyDataSetChanged()
+
+        //todo set user data
     }
 
     override fun showRefreshButton(show: Boolean) {

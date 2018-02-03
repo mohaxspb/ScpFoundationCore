@@ -42,7 +42,7 @@
         android:layout_gravity="bottom"
         android:orientation="vertical"
         >
-        <!--todo-->
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,15 +51,15 @@
 
             <TextView
                 android:id="@+id/chartPlaceTextView"
-                android:layout_width="wrap_content"
-                android:layout_gravity="center_vertical"
                 fontPath="fonts/Roboto-Medium.ttf"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:padding="@dimen/defaultMargin"
                 android:textColor="@color/subsTextTitleColor"
                 android:textSize="14sp"
-                tools:text="56"
                 tools:ignore="MissingPrefix"
+                tools:text="56"
                 />
 
             <FrameLayout
@@ -75,8 +75,8 @@
                     android:layout_width="56dp"
                     android:layout_height="56dp"
                     android:layout_gravity="center"
-                    tools:src="@drawable/ic_add"
                     tools:ignore="ContentDescription"
+                    tools:src="@drawable/ic_add"
                     />
 
                 <TextView
