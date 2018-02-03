@@ -40,16 +40,6 @@ class LeaderboardDelegate : AbsListItemAdapterDelegate<LeaderboardUserViewModel,
                     .asBitmap()
                     .centerCrop()
                     .error(R.mipmap.ic_launcher)
-                    .listener(object : RequestListener<String, Bitmap> {
-                        override fun onException(e: Exception?, model: String?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
-                            Timber.e("onException: $e")
-                            return false
-                        }
-
-                        override fun onResourceReady(resource: Bitmap?, model: String?, target: Target<Bitmap>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
-                            return false
-                        }
-                    })
                     .into(object : BitmapImageViewTarget(avatarImageView) {
                         override fun setResource(resource: Bitmap) {
                             val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(context.resources, resource)
