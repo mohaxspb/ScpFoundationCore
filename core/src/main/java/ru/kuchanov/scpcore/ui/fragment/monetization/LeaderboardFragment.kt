@@ -11,6 +11,7 @@ import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.DividerDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.LabelDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.RewardedVideoDelegate
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.leaderboard.LeaderboardDelegate
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.db.model.User
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
@@ -44,6 +45,7 @@ class LeaderboardFragment :
         delegateManager.addDelegate(DividerDelegate())
         delegateManager.addDelegate(RewardedVideoDelegate { presenter.onRewardedVideoClick() })
         delegateManager.addDelegate(LabelDelegate())
+        delegateManager.addDelegate(LeaderboardDelegate())
 
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter
@@ -58,11 +60,17 @@ class LeaderboardFragment :
 
     override fun showProgressCenter(show: Boolean) = progressContainer.setVisibility(if (show) View.VISIBLE else View.GONE)
 
-    override fun showData(data: List<MyListItem>, user:User) {
+    override fun showData(data: List<MyListItem>) {
         adapter.items = data
         adapter.notifyDataSetChanged()
+    }
 
-        //todo set user data
+    override fun showUser(myUser: User) {
+        //todo
+    }
+
+    override fun showUpdateDate(lastUpdated: Long, timeZone: String) {
+        //todo
     }
 
     override fun showRefreshButton(show: Boolean) {

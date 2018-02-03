@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:id="@+id/chartPlaceTextView"
+            fontPath="fonts/Roboto-Medium.ttf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:padding="@dimen/defaultMargin"
+            android:textColor="@color/subsTextTitleColor"
+            android:textSize="14sp"
+            tools:ignore="MissingPrefix"
+            tools:text="56"
+            />
+
+        <FrameLayout
+            android:id="@+id/avatarContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/defaultMarginSmall"
+            android:layout_marginStart="@dimen/defaultMargin"
+            >
+
+            <ImageView
+                android:id="@+id/avatarImageView"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_gravity="center"
+                tools:ignore="ContentDescription"
+                tools:src="@drawable/ic_add"
+                />
+
+            <TextView
+                android:id="@+id/levelNumTextView"
+                android:layout_width="@dimen/defaultMarginBig"
+                android:layout_height="@dimen/defaultMarginBig"
+                android:layout_gravity="bottom|end"
+                android:background="@drawable/gradient_circle"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                tools:text="1"
+                />
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:id="@+id/levelTextView"
+            fontPath="fonts/Roboto-Medium.ttf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="3dp"
+            android:paddingEnd="@dimen/defaultMarginSmall"
+            android:paddingStart="@dimen/defaultMarginSmall"
+            android:paddingTop="3dp"
+            android:textColor="@android:color/black"
+            android:textSize="6sp"
+            tools:ignore="MissingPrefix,SmallSp"
+            tools:text="4 level"
+            />
+
+        <ProgressBar
+            android:id="@+id/expirienceProgressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:progressDrawable="@drawable/level_progress"
+            tools:max="1000"
+            tools:progress="600"
+            />
+
+        <TextView
+            android:id="@+id/expToNextLevelTextView"
+            fontPath="fonts/Roboto-Medium.ttf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="3dp"
+            android:paddingEnd="@dimen/defaultMarginSmall"
+            android:paddingStart="@dimen/defaultMarginSmall"
+            android:paddingTop="3dp"
+            android:textColor="@android:color/black"
+            android:textSize="6sp"
+            tools:ignore="MissingPrefix,SmallSp"
+            tools:text="400 points"
+            />
+
+
+    </LinearLayout>
+
+</LinearLayout>

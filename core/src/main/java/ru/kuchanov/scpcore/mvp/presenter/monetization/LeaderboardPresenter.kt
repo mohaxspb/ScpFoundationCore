@@ -2,10 +2,12 @@ package ru.kuchanov.scpcore.mvp.presenter.monetization
 
 import com.android.vending.billing.IInAppBillingService
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.api.ApiClient
 import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.LabelViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LeaderboardUserViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.InAppViewModel
@@ -42,7 +44,7 @@ class LeaderboardPresenter(
 
     override val data = mutableListOf<MyListItem>()
 
-    override lateinit var leaderBoardResponse: LeaderBoardResponse;
+//    override lateinit var leaderBoardResponse: LeaderBoardResponse;
 
     override lateinit var myUser: User
 
@@ -66,9 +68,20 @@ class LeaderboardPresenter(
         )
                 .map {
                     val viewModels = mutableListOf<MyListItem>()
-                    viewModels.addAll(it.second.users.mapIndexed { index, firebaseObjectUser -> LeaderboardUserViewModel(index, firebaseObjectUser) })
+                    val users = it.second.users
+                    users.subList(0, 3).forEachIndexed { index, user ->
+                        viewModels.add(0, LabelViewModel(0, textString = BaseApplication.getAppInstance().getString(R.string.leaderboard_place, index)))
+                        LeaderboardUserViewModel(
+                                index,
+                                user
+                                //todo level object
+                        )
+                    }
+
+                    //todo colors
+                    viewModels.add(LabelViewModel(R.string.leaderboard_inapp_label))
                     val levelUpInApp = it.first.first()
-                    viewModels.add(3, InAppViewModel(
+                    viewModels.add(InAppViewModel(
                             R.string.leaderboard_inapp_title,
                             R.string.leaderboard_inapp_description,
                             levelUpInApp.price,
@@ -76,6 +89,14 @@ class LeaderboardPresenter(
                             R.drawable.ic_adblock,
                             R.color.bgSubsBottom
                     ))
+
+                    viewModels.addAll(users.subList(3, users.size).mapIndexed { index, firebaseObjectUser ->
+                        LeaderboardUserViewModel(
+                                index,
+                                firebaseObjectUser
+                                //todo level object
+                        )
+                    })
 
                     return@map Triple(viewModels, it.second, it.third)
                 }
@@ -89,21 +110,12 @@ class LeaderboardPresenter(
                             data.clear()
 
                             data.addAll(it.first)
-                            leaderBoardResponse = it.second
+//                            leaderBoardResponse = it.second
                             myUser = it.third
 
-                            //todo create data and show it in fragment
-//                            items.add(TextViewModel(R.string.subs_main_text))
-//                            items.add(TextViewModel(R.string.subs_free_actions_title))
-//                            items.add(InAppViewModel(
-//                                    R.string.subs_free_actions_card_title,
-//                                    R.string.subs_free_actions_card_description,
-//                                    BaseApplication.getAppInstance().getString(R.string.free),
-//                                    ID_FREE_ADS_DISABLE,
-//                                    R.drawable.ic_free_ads_disable
-//                            ))
-
-                            view.showData(data, myUser)
+                            view.showData(data)
+                            view.showUpdateDate(it.second.lastUpdated, it.second.timeZone)
+                            view.showUser(myUser)
                         },
                         onError = {
                             Timber.e(it, "error getting cur subs");
@@ -119,7 +131,7 @@ class LeaderboardPresenter(
     override fun onUserChanged(user: User?) {
         super.onUserChanged(user)
         myUser = user!!
-        view.showData(data, myUser)
+        view.showUser(myUser)
     }
 
     override fun onRewardedVideoClick() {
