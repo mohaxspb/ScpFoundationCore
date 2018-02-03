@@ -39,6 +39,7 @@ class LeaderboardDelegate : AbsListItemAdapterDelegate<LeaderboardUserViewModel,
                     .load(user.avatar)
                     .asBitmap()
                     .centerCrop()
+                    .error(R.mipmap.ic_launcher)
                     .listener(object : RequestListener<String, Bitmap> {
                         override fun onException(e: Exception?, model: String?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
                             Timber.e("onException: $e")
