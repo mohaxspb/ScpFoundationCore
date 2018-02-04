@@ -51,7 +51,7 @@ class LeaderboardPresenter(
 
     override val data = mutableListOf<MyListItem>()
 
-    override lateinit var leaderBoardResponse: LeaderBoardResponse
+    override var leaderBoardResponse: LeaderBoardResponse? = null
 
     override lateinit var myUser: User
 
@@ -107,12 +107,9 @@ class LeaderboardPresenter(
                             R.string.leaderboard_inapp_description,
                             levelUpInApp.price,
                             levelUpInApp.productId,
-                            //todo set icon
-                            R.drawable.ic_adblock,
+                            R.drawable.ic_leaderbord_levelup_icon,
                             R.color.freeAdsBackgroundColor
                     ))
-
-                    viewModels.add(DividerViewModel(R.color.leaderboardBottomBgColor, DimensionUtils.dpToPx(28)))
 
                     viewModels.addAll(users.subList(3, users.size).mapIndexed { index, firebaseObjectUser ->
                         val level = levelJson.getLevelForScore(firebaseObjectUser.score)
@@ -136,7 +133,7 @@ class LeaderboardPresenter(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                         onSuccess = {
-                            isDataLoaded = true;
+                            isDataLoaded = true
                             view.showProgressCenter(false)
                             view.showRefreshButton(false)
                             data.clear()
@@ -149,14 +146,14 @@ class LeaderboardPresenter(
                             view.showUser(it.third)
                         },
                         onError = {
-                            Timber.e(it, "error getting cur subs");
-                            isDataLoaded = false;
+                            Timber.e(it, "error getting cur subs")
+                            isDataLoaded = false
 
                             view.showError(it)
                             view.showProgressCenter(false)
                             view.showRefreshButton(true)
                         }
-                );
+                )
     }
 
     private fun convertUser(user: User, users: List<FirebaseObjectUser>, levelJson: LevelsJson): LeaderboardUserViewModel {
@@ -177,7 +174,8 @@ class LeaderboardPresenter(
     override fun onUserChanged(user: User?) {
         super.onUserChanged(user)
         myUser = user!!
-        view.showUser(convertUser(myUser, leaderBoardResponse.users, LevelsJson.getLevelsJson()))
+
+        leaderBoardResponse?.apply { view.showUser(convertUser(myUser, this.users, LevelsJson.getLevelsJson())) }
     }
 
     override fun onRewardedVideoClick() {

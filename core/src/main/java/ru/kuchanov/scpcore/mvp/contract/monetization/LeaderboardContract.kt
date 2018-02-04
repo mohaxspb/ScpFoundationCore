@@ -30,7 +30,7 @@ interface LeaderboardContract : BaseMvp {
         val isDataLoaded: Boolean
 
         val data: List<MyListItem>
-        var leaderBoardResponse: LeaderBoardResponse
+        var leaderBoardResponse: LeaderBoardResponse?
         var myUser:User
 
         fun onRewardedVideoClick()

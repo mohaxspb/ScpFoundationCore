@@ -29,6 +29,20 @@
 
     </FrameLayout>
 
+    <TextView
+        android:id="@+id/refresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="?selectableItemBackground"
+        android:gravity="center"
+        android:padding="@dimen/defaultMargin"
+        android:text="@string/refresh"
+        android:textColor="@color/colorAccent"
+        android:textSize="21sp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -113,7 +127,7 @@
                         android:layout_gravity="bottom|end"
                         android:background="@drawable/ic_romb"
                         android:gravity="center"
-                        android:textColor="@color/subsTextTitleColor"
+                        android:textColor="@android:color/white"
                         android:textSize="14sp"
                         tools:text="1"
                         />
@@ -164,11 +178,13 @@
             </LinearLayout>
 
             <LinearLayout
+                android:elevation="@dimen/defaultMarginSmall"
                 android:id="@+id/bottomView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/bgSubsTop"
                 android:orientation="horizontal"
+                tools:targetApi="lollipop"
                 >
 
                 <TextView
@@ -198,7 +214,7 @@
                         android:id="@+id/experienceProgressBar"
                         style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/defaultMarginSmall"
+                        android:layout_height="10dp"
                         android:layout_gravity="center_vertical"
                         android:progressDrawable="@drawable/level_progress"
                         tools:max="1000"
@@ -236,6 +252,7 @@
                     />
 
             </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>

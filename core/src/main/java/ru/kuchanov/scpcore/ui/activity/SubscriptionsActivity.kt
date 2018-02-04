@@ -104,6 +104,7 @@ class SubscriptionsActivity :
 
     override fun setToolbarTitle(title: String) {
         supportActionBar?.title = title
+        supportActionBar?.subtitle = ""
     }
 
     override fun setToolbarTitle(@StringRes title: Int) = setToolbarTitle(getString(title))
@@ -111,6 +112,7 @@ class SubscriptionsActivity :
     override fun setToolbarTextColor(toolbarTextColor: Int) {
         val color = ContextCompat.getColor(this, toolbarTextColor)
         toolbar.setTitleTextColor(color)
+        toolbar.setSubtitleTextColor(color)
         toolbar.navigationIcon?.setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
     }
 

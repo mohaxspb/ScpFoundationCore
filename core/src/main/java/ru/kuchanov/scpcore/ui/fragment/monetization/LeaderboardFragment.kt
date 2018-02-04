@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.google.firebase.auth.FirebaseAuth
@@ -23,6 +25,9 @@ import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
 import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 /**
  * Created by mohax on 22.01.2018.
@@ -51,7 +56,6 @@ class LeaderboardFragment :
 
         val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
         delegateManager.addDelegate(DividerDelegate())
-        delegateManager.addDelegate(RewardedVideoDelegate { presenter.onRewardedVideoClick() })
         delegateManager.addDelegate(LabelDelegate())
         delegateManager.addDelegate(LeaderboardDelegate())
         delegateManager.addDelegate(InAppDelegate { presenter.onSubscriptionClick(it, this, baseActivity.getIInAppBillingService()) })
@@ -65,19 +69,22 @@ class LeaderboardFragment :
             showProgressCenter(false)
             presenter.apply { showData(data) }
         }
+
+        refresh.setOnClickListener { baseActivity.getIInAppBillingService()?.apply { getPresenter().loadData(this) } }
     }
 
-    override fun showProgressCenter(show: Boolean) = progressContainer.setVisibility(if (show) View.VISIBLE else View.GONE)
+    override fun showProgressCenter(show: Boolean) {
+        progressContainer.visibility = if (show) View.VISIBLE else View.GONE
+    }
 
     override fun showData(data: List<MyListItem>) {
         adapter.items = data
         adapter.notifyDataSetChanged()
     }
 
-    override fun showUser(item: LeaderboardUserViewModel) {
-        //todo
-        val user = item.user
-        chartPlaceTextView.text = item.position.toString()
+    override fun showUser(myUser: LeaderboardUserViewModel) {
+        val user = myUser.user
+        chartPlaceTextView.text = myUser.position.toString()
 
         Glide.with(context)
                 .load(user.avatar)
@@ -96,8 +103,8 @@ class LeaderboardFragment :
         readArticlesCountTextView.text = context.getString(R.string.leaderboard_articles_read, user.numOfReadArticles)
         userScoreTextView.text = user.score.toString()
 
-        val levelViewModel = item.levelViewModel
-        val level = item.levelViewModel.level
+        val levelViewModel = myUser.levelViewModel
+        val level = myUser.levelViewModel.level
         levelNumTextView.text = level.id.toString()
         levelTextView.text = context.getString(R.string.level_num, level.id)
         if (levelViewModel.isMaxLevel) {
@@ -114,11 +121,19 @@ class LeaderboardFragment :
     }
 
     override fun showUpdateDate(lastUpdated: Long, timeZone: String) {
-        //todo
+        baseActivity.getSupportActionBar()?.apply {
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = lastUpdated
+            calendar.timeZone = TimeZone.getTimeZone(timeZone)
+            val simpleDateFormat = SimpleDateFormat("HH:mm:ss zzzz", Locale.getDefault())
+            val refreshed = simpleDateFormat.format(calendar.time)
+
+            subtitle = getString(R.string.refreshed, refreshed)
+        }
     }
 
     override fun showRefreshButton(show: Boolean) {
-        //todo
+        refresh.visibility = if (show) VISIBLE else GONE
     }
 
     override fun onRewardedVideoClick() {
