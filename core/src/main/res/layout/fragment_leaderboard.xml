@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        />
 
     <FrameLayout
         android:id="@+id/progressContainer"
@@ -35,115 +29,213 @@
 
     </FrameLayout>
 
+
     <LinearLayout
-        android:id="@+id/userDataView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@android:color/white"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         >
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             >
 
-            <TextView
-                android:id="@+id/chartPlaceTextView"
-                fontPath="fonts/Roboto-Medium.ttf"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:padding="@dimen/defaultMargin"
-                android:textColor="@color/subsTextTitleColor"
-                android:textSize="14sp"
-                tools:ignore="MissingPrefix"
-                tools:text="56"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
                 />
 
-            <FrameLayout
-                android:id="@+id/avatarContainer"
-                android:layout_width="wrap_content"
+            <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
+                android:id="@+id/fastScroller"
+                android:layout_width="@dimen/defaultMarginSmall"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                app:rfs_barColor="@android:color/transparent"
+                app:rfs_handleColor="?newArticlesTextColor"
+                />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/userDataView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@android:color/white"
+            android:orientation="vertical"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/defaultMarginSmall"
-                android:layout_marginStart="@dimen/defaultMargin"
+                android:orientation="horizontal"
                 >
 
-                <ImageView
-                    android:id="@+id/avatarImageView"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:layout_gravity="center"
-                    tools:ignore="ContentDescription"
-                    tools:src="@drawable/ic_add"
+                <TextView
+                    android:id="@+id/chartPlaceTextView"
+                    fontPath="fonts/Roboto-Medium.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:padding="@dimen/defaultMargin"
+                    android:textColor="@color/subsTextTitleColor"
+                    android:textSize="14sp"
+                    tools:ignore="MissingPrefix"
+                    tools:text="56"
                     />
+
+                <FrameLayout
+                    android:id="@+id/avatarContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="@dimen/defaultMarginSmall"
+                    android:layout_marginTop="@dimen/defaultMarginSmall"
+                    >
+
+                    <ImageView
+                        android:id="@+id/avatarImageView"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="3dp"
+                        tools:ignore="ContentDescription"
+                        tools:src="@drawable/ic_add"
+                        />
+
+                    <TextView
+                        android:id="@+id/levelNumTextView"
+                        android:layout_width="@dimen/defaultMarginBig"
+                        android:layout_height="@dimen/defaultMarginBig"
+                        android:layout_gravity="bottom|end"
+                        android:background="@drawable/ic_romb"
+                        android:gravity="center"
+                        android:textColor="@color/subsTextTitleColor"
+                        android:textSize="14sp"
+                        tools:text="1"
+                        />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:paddingEnd="@dimen/defaultMargin"
+                    android:paddingStart="@dimen/defaultMargin"
+                    android:paddingTop="10dp"
+                    >
+
+                    <TextView
+                        android:id="@+id/nameTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/subsTextTitleColor"
+                        android:textSize="14sp"
+                        tools:text="Ivan Ivanov"
+                        />
+
+                    <TextView
+                        android:id="@+id/readArticlesCountTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/subsTextColorBottom"
+                        android:textSize="10sp"
+                        tools:ignore="SmallSp"
+                        tools:text="100 articles read"
+                        />
+
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/levelNumTextView"
-                    android:layout_width="@dimen/defaultMarginBig"
-                    android:layout_height="@dimen/defaultMarginBig"
-                    android:layout_gravity="bottom|end"
-                    android:background="@drawable/ic_romb"
-                    android:gravity="center"
-                    android:textColor="@android:color/white"
+                    android:id="@+id/userScoreTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:padding="@dimen/defaultMargin"
+                    android:textColor="@color/subsTextTitleColor"
                     android:textSize="14sp"
-                    tools:text="1"
+                    tools:text="424242"
                     />
-            </FrameLayout>
 
-        </LinearLayout>
+            </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
-
-            <TextView
-                android:id="@+id/levelTextView"
-                fontPath="fonts/Roboto-Medium.ttf"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/bottomView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="3dp"
-                android:paddingEnd="@dimen/defaultMarginSmall"
-                android:paddingStart="@dimen/defaultMarginSmall"
-                android:paddingTop="3dp"
-                android:textColor="@android:color/black"
-                android:textSize="6sp"
-                tools:ignore="MissingPrefix,SmallSp"
-                tools:text="4 level"
-                />
+                android:background="@color/bgSubsTop"
+                android:orientation="horizontal"
+                >
 
-            <ProgressBar
-                android:id="@+id/expirienceProgressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:progressDrawable="@drawable/level_progress"
-                tools:max="1000"
-                tools:progress="600"
-                />
+                <TextView
+                    android:id="@+id/levelTextView"
+                    fontPath="fonts/Roboto-Medium.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingBottom="3dp"
+                    android:paddingEnd="@dimen/defaultMarginSmall"
+                    android:paddingStart="@dimen/defaultMarginSmall"
+                    android:paddingTop="3dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="6sp"
+                    tools:ignore="MissingPrefix,SmallSp"
+                    tools:text="4 level"
+                    />
 
-            <TextView
-                android:id="@+id/expToNextLevelTextView"
-                fontPath="fonts/Roboto-Medium.ttf"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="3dp"
-                android:paddingEnd="@dimen/defaultMarginSmall"
-                android:paddingStart="@dimen/defaultMarginSmall"
-                android:paddingTop="3dp"
-                android:textColor="@android:color/black"
-                android:textSize="6sp"
-                tools:ignore="MissingPrefix,SmallSp"
-                tools:text="400 points"
-                />
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    >
 
+                    <ProgressBar
+                        android:id="@+id/experienceProgressBar"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/defaultMarginSmall"
+                        android:layout_gravity="center_vertical"
+                        android:progressDrawable="@drawable/level_progress"
+                        tools:max="1000"
+                        tools:progress="600"
+                        />
 
+                    <TextView
+                        android:id="@+id/maxLevelTextView"
+                        fontPath="fonts/Roboto-Medium.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textColor="@android:color/black"
+                        android:textSize="6sp"
+                        tools:ignore="MissingPrefix,SmallSp"
+                        tools:text="Max level"
+                        />
+
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/expToNextLevelTextView"
+                    fontPath="fonts/Roboto-Medium.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingBottom="3dp"
+                    android:paddingEnd="@dimen/defaultMarginSmall"
+                    android:paddingStart="@dimen/defaultMarginSmall"
+                    android:paddingTop="3dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="6sp"
+                    tools:ignore="MissingPrefix,SmallSp"
+                    tools:text="400 points"
+                    />
+
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>

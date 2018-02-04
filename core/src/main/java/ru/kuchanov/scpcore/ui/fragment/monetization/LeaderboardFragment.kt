@@ -1,7 +1,11 @@
 package ru.kuchanov.scpcore.ui.fragment.monetization
 
+import android.graphics.Bitmap
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.google.firebase.auth.FirebaseAuth
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegatesManager
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
@@ -14,9 +18,10 @@ import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisab
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.leaderboard.LeaderboardDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.subscriptions.InAppDelegate
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
-import ru.kuchanov.scpcore.db.model.User
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LeaderboardUserViewModel
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
+import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 
 /**
@@ -36,12 +41,14 @@ class LeaderboardFragment :
 
     override fun initViews() {
         InAppBillingServiceConnectionObservable.getInstance().serviceStatusObservable.subscribe { connected ->
-            if (connected!! && !getPresenter().isDataLoaded) {
-                getPresenter().loadData(baseActivity.getIInAppBillingService())
+            if (connected!! && !getPresenter().isDataLoaded && activity is BaseActivity<*, *>) {
+                getPresenter().loadData((activity as BaseActivity<*, *>).getIInAppBillingService())
             }
         }
 
         recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+        fastScroller.setRecyclerView(recyclerView)
+
         val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
         delegateManager.addDelegate(DividerDelegate())
         delegateManager.addDelegate(RewardedVideoDelegate { presenter.onRewardedVideoClick() })
@@ -67,8 +74,43 @@ class LeaderboardFragment :
         adapter.notifyDataSetChanged()
     }
 
-    override fun showUser(myUser: User) {
+    override fun showUser(item: LeaderboardUserViewModel) {
         //todo
+        val user = item.user
+        chartPlaceTextView.text = item.position.toString()
+
+        Glide.with(context)
+                .load(user.avatar)
+                .asBitmap()
+                .centerCrop()
+                .error(R.mipmap.ic_launcher)
+                .into(object : BitmapImageViewTarget(avatarImageView) {
+                    override fun setResource(resource: Bitmap) {
+                        val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(context.resources, resource)
+                        circularBitmapDrawable.isCircular = true
+                        avatarImageView.setImageDrawable(circularBitmapDrawable)
+                    }
+                })
+
+        nameTextView.text = user.fullName
+        readArticlesCountTextView.text = context.getString(R.string.leaderboard_articles_read, user.numOfReadArticles)
+        userScoreTextView.text = user.score.toString()
+
+        val levelViewModel = item.levelViewModel
+        val level = item.levelViewModel.level
+        levelNumTextView.text = level.id.toString()
+        levelTextView.text = context.getString(R.string.level_num, level.id)
+        if (levelViewModel.isMaxLevel) {
+            maxLevelTextView.visibility = View.VISIBLE
+            experienceProgressBar.max = 1
+            experienceProgressBar.progress = 1
+            expToNextLevelTextView.text = ""
+        } else {
+            maxLevelTextView.visibility = View.GONE
+            experienceProgressBar.max = levelViewModel.nextLevelScore
+            experienceProgressBar.progress = user.score - level.score
+            expToNextLevelTextView.text = context.getString(R.string.score_num, levelViewModel.scoreToNextLevel)
+        }
     }
 
     override fun showUpdateDate(lastUpdated: Long, timeZone: String) {

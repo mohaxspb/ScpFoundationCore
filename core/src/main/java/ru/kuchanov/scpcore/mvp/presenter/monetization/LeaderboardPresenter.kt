@@ -7,6 +7,7 @@ import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.api.ApiClient
+import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser
 import ru.kuchanov.scpcore.api.model.remoteconfig.LevelsJson
 import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.DividerViewModel
@@ -50,7 +51,7 @@ class LeaderboardPresenter(
 
     override val data = mutableListOf<MyListItem>()
 
-//    override lateinit var leaderBoardResponse: LeaderBoardResponse;
+    override lateinit var leaderBoardResponse: LeaderBoardResponse
 
     override lateinit var myUser: User
 
@@ -69,7 +70,6 @@ class LeaderboardPresenter(
         Single.zip(
                 inAppHelper.getInAppsListToBuyObservable(service).toSingle(),
                 mApiClient.leaderboard.toSingle(),
-//                mDbProviderFactory.dbProvider.userSyncUnmanaged.toSingle(),
                 Observable.just(mDbProviderFactory.dbProvider.userUnmanaged).toSingle(),
                 { inapps: List<Subscription>, leaderboard: LeaderBoardResponse, user: User? -> Triple(inapps, leaderboard, user) }
         )
@@ -127,9 +127,11 @@ class LeaderboardPresenter(
                                 bgColor = R.color.leaderboardBottomBgColor
                         )
                     })
+                    myUser = it.third!!
 
-                    return@map Triple(viewModels, it.second, it.third)
+                    return@map Triple(viewModels, it.second, convertUser(it.third!!, users, levelJson))
                 }
+                .retry(3)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
@@ -140,12 +142,11 @@ class LeaderboardPresenter(
                             data.clear()
 
                             data.addAll(it.first)
-//                            leaderBoardResponse = it.second
-                            myUser = it.third!!
+                            leaderBoardResponse = it.second
 
                             view.showData(data)
                             view.showUpdateDate(it.second.lastUpdated, it.second.timeZone)
-                            view.showUser(myUser)
+                            view.showUser(it.third)
                         },
                         onError = {
                             Timber.e(it, "error getting cur subs");
@@ -158,14 +159,29 @@ class LeaderboardPresenter(
                 );
     }
 
+    private fun convertUser(user: User, users: List<FirebaseObjectUser>, levelJson: LevelsJson): LeaderboardUserViewModel {
+        val userInFirebase = users.find { firebaseObjectUser -> firebaseObjectUser.uid == user.uid }
+        val level = levelJson.getLevelForScore(userInFirebase!!.score)
+        return LeaderboardUserViewModel(
+                users.indexOf(userInFirebase),
+                userInFirebase,
+                LevelViewModel(
+                        level!!,
+                        levelJson.scoreToNextLevel(userInFirebase.score, level),
+                        levelJson.getLevelMaxScore(level),
+                        level.id == LevelsJson.MAX_LEVEL_ID),
+                bgColor = R.color.leaderboardBottomBgColor
+        )
+    }
+
     override fun onUserChanged(user: User?) {
         super.onUserChanged(user)
         myUser = user!!
-        view.showUser(myUser)
+        view.showUser(convertUser(myUser, leaderBoardResponse.users, LevelsJson.getLevelsJson()))
     }
 
     override fun onRewardedVideoClick() {
-        //todo
+        //nothing to do
     }
 
     override fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService) {

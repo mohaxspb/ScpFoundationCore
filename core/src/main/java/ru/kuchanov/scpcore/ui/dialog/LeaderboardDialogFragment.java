@@ -77,7 +77,7 @@ public class LeaderboardDialogFragment extends DialogFragment {
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(adapter);
 
-        VerticalRecyclerViewFastScroller mVerticalRecyclerViewFastScroller = ButterKnife.findById(dialog, R.id.fastScroller);
+        VerticalRecyclerViewFastScroller mVerticalRecyclerViewFastScroller = (VerticalRecyclerViewFastScroller) dialog.findViewById(R.id.fastScroller);
         mVerticalRecyclerViewFastScroller.setRecyclerView(recyclerView);
 
         // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
