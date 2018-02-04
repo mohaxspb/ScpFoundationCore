@@ -22,181 +22,197 @@
         app:cardElevation="2dp"
         >
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 >
 
-                <TextView
-                    android:id="@+id/chartPlaceTextView"
-                    fontPath="fonts/Roboto-Medium.ttf"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:padding="@dimen/defaultMargin"
-                    android:textColor="@color/subsTextTitleColor"
-                    android:textSize="14sp"
-                    tools:ignore="MissingPrefix"
-                    tools:text="56"
-                    />
-
-                <FrameLayout
-                    android:id="@+id/avatarContainer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginBottom="@dimen/defaultMarginSmall"
-                    android:layout_marginTop="@dimen/defaultMarginSmall"
-                    >
-
-                    <ImageView
-                        android:id="@+id/avatarImageView"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:layout_gravity="center"
-                        android:layout_marginEnd="3dp"
-                        tools:ignore="ContentDescription"
-                        tools:src="@drawable/ic_add"
-                        />
-
-                    <TextView
-                        android:id="@+id/levelNumTextView"
-                        android:layout_width="@dimen/defaultMarginBig"
-                        android:layout_height="@dimen/defaultMarginBig"
-                        android:layout_gravity="bottom|end"
-                        android:background="@drawable/ic_romb"
-                        android:gravity="center"
-                        android:textColor="@android:color/white"
-                        android:textSize="14sp"
-                        tools:text="1"
-                        />
-                </FrameLayout>
-
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:paddingEnd="@dimen/defaultMargin"
-                    android:paddingStart="@dimen/defaultMargin"
-                    android:paddingTop="10dp"
+                    android:orientation="horizontal"
                     >
 
                     <TextView
-                        android:id="@+id/nameTextView"
-                        android:layout_width="match_parent"
+                        android:id="@+id/chartPlaceTextView"
+                        fontPath="fonts/Roboto-Medium.ttf"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:padding="@dimen/defaultMargin"
                         android:textColor="@color/subsTextTitleColor"
                         android:textSize="14sp"
-                        tools:text="Ivan Ivanov"
+                        tools:ignore="MissingPrefix"
+                        tools:text="56"
                         />
 
-                    <TextView
-                        android:id="@+id/readArticlesCountTextView"
-                        android:layout_width="match_parent"
+                    <FrameLayout
+                        android:id="@+id/avatarContainer"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/subsTextColorBottom"
-                        android:textSize="10sp"
-                        tools:ignore="SmallSp"
-                        tools:text="100 articles read"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginBottom="@dimen/defaultMarginSmall"
+                        android:layout_marginTop="@dimen/defaultMarginSmall"
+                        >
+
+                        <ImageView
+                            android:id="@+id/avatarImageView"
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:layout_gravity="center"
+                            android:layout_marginEnd="3dp"
+                            tools:ignore="ContentDescription"
+                            tools:src="@drawable/ic_add"
+                            />
+
+                        <TextView
+                            android:id="@+id/levelNumTextView"
+                            android:layout_width="@dimen/defaultMarginBig"
+                            android:layout_height="@dimen/defaultMarginBig"
+                            android:layout_gravity="bottom|end"
+                            android:background="@drawable/ic_romb"
+                            android:gravity="center"
+                            android:textColor="@android:color/white"
+                            android:textSize="14sp"
+                            tools:text="1"
+                            />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingEnd="@dimen/defaultMargin"
+                        android:paddingStart="@dimen/defaultMargin"
+                        android:paddingTop="10dp"
+                        >
+
+                        <TextView
+                            android:id="@+id/nameTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/subsTextTitleColor"
+                            android:textSize="14sp"
+                            tools:text="Ivan Ivanov"
+                            />
+
+                        <TextView
+                            android:id="@+id/readArticlesCountTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/subsTextColorBottom"
+                            android:textSize="10sp"
+                            tools:ignore="SmallSp"
+                            tools:text="100 articles read"
+                            />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/userScoreTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:padding="@dimen/defaultMargin"
+                        android:textColor="@color/subsTextTitleColor"
+                        android:textSize="14sp"
+                        tools:text="424242"
                         />
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/userScoreTextView"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/bottomView"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:padding="@dimen/defaultMargin"
-                    android:textColor="@color/subsTextTitleColor"
-                    android:textSize="14sp"
-                    tools:text="424242"
-                    />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/bottomView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/bgSubsTop"
-                android:orientation="horizontal"
-                >
-
-                <TextView
-                    android:id="@+id/levelTextView"
-                    fontPath="fonts/Roboto-Medium.ttf"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingBottom="3dp"
-                    android:paddingEnd="@dimen/defaultMarginSmall"
-                    android:paddingStart="@dimen/defaultMarginSmall"
-                    android:paddingTop="3dp"
-                    android:textColor="@android:color/black"
-                    android:textSize="6sp"
-                    tools:ignore="MissingPrefix,SmallSp"
-                    tools:text="4 level"
-                    />
-
-                <FrameLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
+                    android:background="@color/bgSubsTop"
+                    android:orientation="horizontal"
                     >
 
-                    <ProgressBar
-                        android:id="@+id/experienceProgressBar"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="10dp"
-                        android:layout_gravity="center_vertical"
-                        android:progressDrawable="@drawable/level_progress"
-                        tools:max="1000"
-                        tools:progress="600"
-                        />
-
                     <TextView
-                        android:id="@+id/maxLevelTextView"
+                        android:id="@+id/levelTextView"
                         fontPath="fonts/Roboto-Medium.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
+                        android:layout_gravity="center_vertical"
+                        android:paddingBottom="3dp"
+                        android:paddingEnd="@dimen/defaultMarginSmall"
+                        android:paddingStart="@dimen/defaultMarginSmall"
+                        android:paddingTop="3dp"
                         android:textColor="@android:color/black"
                         android:textSize="6sp"
                         tools:ignore="MissingPrefix,SmallSp"
-                        tools:text="Max level"
+                        tools:text="4 level"
                         />
 
-                </FrameLayout>
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        >
 
-                <TextView
-                    android:id="@+id/expToNextLevelTextView"
-                    fontPath="fonts/Roboto-Medium.ttf"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingBottom="3dp"
-                    android:paddingEnd="@dimen/defaultMarginSmall"
-                    android:paddingStart="@dimen/defaultMarginSmall"
-                    android:paddingTop="3dp"
-                    android:textColor="@android:color/black"
-                    android:textSize="6sp"
-                    tools:ignore="MissingPrefix,SmallSp"
-                    tools:text="400 points"
-                    />
+                        <ProgressBar
+                            android:id="@+id/experienceProgressBar"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="10dp"
+                            android:layout_gravity="center_vertical"
+                            android:progressDrawable="@drawable/level_progress"
+                            tools:max="1000"
+                            tools:progress="600"
+                            />
+
+                        <TextView
+                            android:id="@+id/maxLevelTextView"
+                            fontPath="fonts/Roboto-Medium.ttf"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:textColor="@android:color/black"
+                            android:textSize="6sp"
+                            tools:ignore="MissingPrefix,SmallSp"
+                            tools:text="Max level"
+                            />
+
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/expToNextLevelTextView"
+                        fontPath="fonts/Roboto-Medium.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:paddingBottom="3dp"
+                        android:paddingEnd="@dimen/defaultMarginSmall"
+                        android:paddingStart="@dimen/defaultMarginSmall"
+                        android:paddingTop="3dp"
+                        android:textColor="@android:color/black"
+                        android:textSize="6sp"
+                        tools:ignore="MissingPrefix,SmallSp"
+                        tools:text="400 points"
+                        />
+
+                </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/medalImageView"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/bg_triangle"
+                android:tint="@color/material_green_500"
+                android:visibility="gone"
+                tools:ignore="ContentDescription"
+                />
+        </FrameLayout>
     </android.support.v7.widget.CardView>
 </FrameLayout>

@@ -14,5 +14,6 @@ data class LeaderboardUserViewModel(
         val position: Int,
         val user: FirebaseObjectUser,
         val levelViewModel: LevelViewModel,
-        @ColorRes val bgColor: Int = R.color.freeAdsBackgroundColor
+        @ColorRes val bgColor: Int = R.color.freeAdsBackgroundColor,
+        @ColorRes val medalTint:Int = android.R.color.transparent
 ) : MyListItem

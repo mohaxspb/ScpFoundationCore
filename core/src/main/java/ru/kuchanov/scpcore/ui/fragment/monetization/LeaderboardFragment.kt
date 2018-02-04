@@ -83,10 +83,10 @@ class LeaderboardFragment :
 
     override fun showUser(myUser: LeaderboardUserViewModel?) {
         if (myUser == null) {
-            bottomView.visibility = View.GONE
+            userDataView.visibility = View.GONE
             return
         }
-        bottomView.visibility = View.VISIBLE
+        userDataView.visibility = View.VISIBLE
         val user = myUser.user
         chartPlaceTextView.text = myUser.position.toString()
 

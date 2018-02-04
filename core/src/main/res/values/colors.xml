@@ -129,4 +129,8 @@
     <color name="freeAdsBackgroundColor">#474a4f</color>
     <color name="freeAdsCardBackgroundColor">#798190</color>
     <color name="leaderboardBottomBgColor">#b1b1b1</color>
+
+    <color name="medalGold">#ffc200</color>
+    <color name="medalSilver">#bcbbbb</color>
+    <color name="medalBronze">#dd6512</color>
 </resources>

@@ -79,6 +79,7 @@ class LeaderboardPresenter(
                     viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
                     val users = it.second.users
                     users.sortByDescending { it.score }
+                    val medalColorsArr = listOf<Int>(R.color.medalGold, R.color.medalSilver, R.color.medalBronze)
                     users.subList(0, 3).forEachIndexed { index, user ->
                         viewModels.add(LabelViewModel(0, textString = BaseApplication.getAppInstance().getString(R.string.leaderboard_place, index + 1), bgColor = R.color.freeAdsBackgroundColor))
                         viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(8)))
@@ -91,7 +92,8 @@ class LeaderboardPresenter(
                                         level!!,
                                         levelJson.scoreToNextLevel(user.score, level),
                                         levelJson.getLevelMaxScore(level),
-                                        level.id == LevelsJson.MAX_LEVEL_ID)
+                                        level.id == LevelsJson.MAX_LEVEL_ID),
+                                medalTint = medalColorsArr[index]
                         ))
                     }
 
