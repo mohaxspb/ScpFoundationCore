@@ -15,6 +15,7 @@ import ru.kuchanov.scpcore.mvp.contract.FragmentToolbarStateSetter
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract.Screen.*
 import ru.kuchanov.scpcore.ui.fragment.monetization.FreeAdsDisableActionsFragment
+import ru.kuchanov.scpcore.ui.fragment.monetization.LeaderboardFragment
 import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment
 
 
@@ -37,7 +38,6 @@ class SubscriptionsActivity :
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
-
 
             title = getString(when (screenToShowType) {
                 TYPE_SUBS -> R.string.subs_activity_title
@@ -73,7 +73,7 @@ class SubscriptionsActivity :
         val fragment: Fragment = when (screen) {
             SUBS -> SubscriptionsFragment.newInstance()
             FREE_ACTIONS -> FreeAdsDisableActionsFragment.newInstance()
-            LEADERBOARD -> TODO()
+            LEADERBOARD -> LeaderboardFragment.newInstance()
         }
         supportFragmentManager.beginTransaction()
                 .replace(R.id.content, fragment, screen.name)
@@ -104,6 +104,7 @@ class SubscriptionsActivity :
 
     override fun setToolbarTitle(title: String) {
         supportActionBar?.title = title
+        supportActionBar?.subtitle = ""
     }
 
     override fun setToolbarTitle(@StringRes title: Int) = setToolbarTitle(getString(title))
@@ -111,6 +112,7 @@ class SubscriptionsActivity :
     override fun setToolbarTextColor(toolbarTextColor: Int) {
         val color = ContextCompat.getColor(this, toolbarTextColor)
         toolbar.setTitleTextColor(color)
+        toolbar.setSubtitleTextColor(color)
         toolbar.navigationIcon?.setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
     }
 
@@ -121,17 +123,17 @@ class SubscriptionsActivity :
         fun start(context: Context, type: Int = TYPE_SUBS) {
             val intent = Intent(context, SubscriptionsActivity::class.java)
             intent.putExtra(EXTRA_TYPE, type)
-            context.startActivity(Intent(context, SubscriptionsActivity::class.java))
+            context.startActivity(intent)
         }
 
         @JvmStatic
         val EXTRA_TYPE = "EXTRA_TYPE"
 
-        @JvmStatic
+        @JvmField
         val TYPE_SUBS = 0
-        @JvmStatic
+        @JvmField
         val TYPE_DISABLE_ADS_FOR_FREE = 1
-        @JvmStatic
+        @JvmField
         val TYPE_LEADERBOARD = 2
     }
 }

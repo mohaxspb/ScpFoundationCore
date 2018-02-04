@@ -1,7 +1,6 @@
 package ru.kuchanov.scpcore.controller.adapter.viewmodel
 
 import android.support.annotation.ColorRes
-import android.support.annotation.DimenRes
 import ru.kuchanov.scpcore.R
 
 /**
@@ -11,5 +10,8 @@ import ru.kuchanov.scpcore.R
  */
 data class DividerViewModel(
         @ColorRes val bgColor: Int = R.color.bgSubsBottom,
+        /**
+         * height in pixels
+         */
         val height: Int
 ) : MyListItem

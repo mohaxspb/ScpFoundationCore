@@ -340,4 +340,15 @@ Thanks for using our app!]]></string>
     <string name="free_ads_vk_group_label">Вступи в нашу группу в ВК</string>
     <string name="free_ads_vk_group_title">Вступи, а мы отключим рекламу на %1$d часа и подарим тебе %2$d очков</string>
     <string name="free_ads_activity_title">Отключение рекламы</string>
+    <string name="leaderboard_activity_title">Рейтинг агентов</string>
+    <string name="leaderboard_inapp_title">Поднимись в рейтинге</string>
+    <string name="leaderboard_inapp_description">Используй хитрость и свои связи в Фонде чтобы  обойти коллег и подняться в рейтинге</string>
+    <string name="leaderboard_place">%d место</string>
+    <string name="leaderboard_inapp_label">Подняться в рейтинге (+10000 очков)</string>
+    <string name="leaderboard_articles_read">%d статей прочитанно
+</string>
+    <string name="score_num">%d очков</string>
+    <string name="level_num">%d уровень</string>
+    <string name="drawer_item_leaderboard">Рейтинг агентов</string>
+    <string name="max_level">Max level</string>
 </resources>

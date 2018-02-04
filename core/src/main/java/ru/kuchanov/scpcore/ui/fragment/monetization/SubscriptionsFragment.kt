@@ -209,8 +209,8 @@ class SubscriptionsFragment :
             if (noAdsSubsEnabled && (it.productId in InAppHelper.getNewNoAdsSubsSkus())) {
                 items.add(LabelViewModel(
                         R.string.subs_no_ads_label,
-                        bgColor,
-                        textColor
+                        textColor = bgColor,
+                        bgColor = textColor
                 ))
                 items.add(InAppViewModel(
                         R.string.subs_no_ads_title,

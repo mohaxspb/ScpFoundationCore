@@ -48,25 +48,4 @@ public abstract class BaseDrawerPresenter<V extends DrawerMvp.View>
         Timber.d("onNavigationItemClicked: %s", id);
         //nothing to do
     }
-
-    @Override
-    public void onAvatarClicked() {
-        Timber.d("onAvatarClicked");
-        getView().showProgressDialog(R.string.progress_leaderboard);
-        mApiClient.getLeaderboard()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        leaderBoardResponse -> {
-                            Timber.d("getLeaderboard onNext: %s", leaderBoardResponse.users.size());
-                            getView().dismissProgressDialog();
-                            getView().showLeaderboard(leaderBoardResponse);
-                        },
-                        e -> {
-                            Timber.e(e);
-                            getView().dismissProgressDialog();
-                            getView().showError(e);
-                        }
-                );
-    }
 }

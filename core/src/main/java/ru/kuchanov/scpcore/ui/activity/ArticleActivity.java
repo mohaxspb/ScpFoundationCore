@@ -97,6 +97,8 @@ public class ArticleActivity
 
         if (id == R.id.invite) {
             IntentUtils.firebaseInvite(this);
+        } else if (id == R.id.leaderboard) {
+            SubscriptionsActivity.start(this, SubscriptionsActivity.TYPE_LEADERBOARD);
         } else if (id == R.id.about) {
             link = mConstantValues.getAbout();
         } else if (id == R.id.mostRatedArticles) {

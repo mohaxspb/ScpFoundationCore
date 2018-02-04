@@ -11,6 +11,7 @@ import ru.kuchanov.scpcore.R
  */
 data class LabelViewModel(
         @StringRes val text: Int,
+        val textString: String? = null,
         @ColorRes val bgColor: Int = R.color.bgSubsTop,
         @ColorRes val textColor: Int = android.R.color.white
 ) : MyListItem

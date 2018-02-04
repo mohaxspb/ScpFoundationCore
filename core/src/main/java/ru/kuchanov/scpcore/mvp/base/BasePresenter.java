@@ -83,6 +83,10 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         );
     }
 
+    /**
+     * callback for changes in user in db
+     *
+     */
     @Override
     public void onUserChanged(User user) {
         //empty implementation
