@@ -1,6 +1,7 @@
 package ru.kuchanov.scpcore.controller.adapter.delegate.monetization.leaderboard
 
 import android.graphics.Bitmap
+import android.graphics.PorterDuff
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.support.v7.widget.RecyclerView
@@ -31,7 +32,7 @@ class LeaderboardDelegate : AbsListItemAdapterDelegate<LeaderboardUserViewModel,
         with(viewHolder.itemView) {
             containerView.setBackgroundResource(item.bgColor)
 
-            medalImageView.setColorFilter(ContextCompat.getColor(context, item.medalTint))
+            medalImageView.setColorFilter(ContextCompat.getColor(context, item.medalTint), PorterDuff.Mode.MULTIPLY)
 
             val user = item.user
             chartPlaceTextView.text = item.position.toString()

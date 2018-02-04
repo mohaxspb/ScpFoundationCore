@@ -176,10 +176,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
+                            android:text="@string/max_level"
                             android:textColor="@android:color/black"
                             android:textSize="6sp"
                             tools:ignore="MissingPrefix,SmallSp"
-                            tools:text="Max level"
                             />
 
                     </FrameLayout>
@@ -209,9 +209,8 @@
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:src="@drawable/bg_triangle"
-                android:tint="@color/material_green_500"
-                android:visibility="gone"
                 tools:ignore="ContentDescription"
+                tools:tint="@color/zbs_color_red"
                 />
         </FrameLayout>
     </android.support.v7.widget.CardView>
