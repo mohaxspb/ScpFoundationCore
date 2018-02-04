@@ -53,7 +53,7 @@ class LeaderboardPresenter(
 
     override var leaderBoardResponse: LeaderBoardResponse? = null
 
-    override lateinit var myUser: User
+    override var myUser: User? = null
 
 //    override var inAppsToBuy: List<Subscription>? = null
 
@@ -124,9 +124,9 @@ class LeaderboardPresenter(
                                 bgColor = R.color.leaderboardBottomBgColor
                         )
                     })
-                    myUser = it.third!!
+                    myUser = it.third
 
-                    return@map Triple(viewModels, it.second, convertUser(it.third!!, users, levelJson))
+                    return@map Triple(viewModels, it.second, convertUser(myUser, users, levelJson))
                 }
                 .retry(3)
                 .subscribeOn(Schedulers.io())
@@ -156,7 +156,10 @@ class LeaderboardPresenter(
                 )
     }
 
-    private fun convertUser(user: User, users: List<FirebaseObjectUser>, levelJson: LevelsJson): LeaderboardUserViewModel {
+    private fun convertUser(user: User?, users: List<FirebaseObjectUser>, levelJson: LevelsJson): LeaderboardUserViewModel? {
+        if (user == null) {
+            return null
+        }
         val userInFirebase = users.find { firebaseObjectUser -> firebaseObjectUser.uid == user.uid }
         val level = levelJson.getLevelForScore(userInFirebase!!.score)
         return LeaderboardUserViewModel(
@@ -173,9 +176,12 @@ class LeaderboardPresenter(
 
     override fun onUserChanged(user: User?) {
         super.onUserChanged(user)
-        myUser = user!!
-
-        leaderBoardResponse?.apply { view.showUser(convertUser(myUser, this.users, LevelsJson.getLevelsJson())) }
+        myUser = user
+        if (myUser == null) {
+            view.showUser(null)
+        } else {
+            leaderBoardResponse?.apply { view.showUser(convertUser(myUser, this.users, LevelsJson.getLevelsJson())) }
+        }
     }
 
     override fun onRewardedVideoClick() {

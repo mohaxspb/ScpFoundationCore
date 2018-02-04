@@ -349,4 +349,5 @@ Thanks for using our app!]]></string>
 </string>
     <string name="score_num">%d очков</string>
     <string name="level_num">%d уровень</string>
+    <string name="drawer_item_leaderboard">Рейтинг агентов</string>
 </resources>

@@ -23,7 +23,7 @@ interface LeaderboardContract : BaseMvp {
         fun onRewardedVideoClick()
         fun showRefreshButton(show: Boolean)
         fun showUpdateDate(lastUpdated: Long, timeZone: String)
-        fun showUser(myUser: LeaderboardUserViewModel)
+        fun showUser(myUser: LeaderboardUserViewModel?)
     }
 
     interface Presenter : BaseMvp.Presenter<View> {
@@ -31,7 +31,7 @@ interface LeaderboardContract : BaseMvp {
 
         val data: List<MyListItem>
         var leaderBoardResponse: LeaderBoardResponse?
-        var myUser:User
+        var myUser:User?
 
         fun onRewardedVideoClick()
         fun loadData(service: IInAppBillingService)

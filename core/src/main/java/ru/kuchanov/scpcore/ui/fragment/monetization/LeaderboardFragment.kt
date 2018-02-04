@@ -16,7 +16,6 @@ import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.DividerDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.LabelDelegate
-import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.RewardedVideoDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.leaderboard.LeaderboardDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.subscriptions.InAppDelegate
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
@@ -67,7 +66,7 @@ class LeaderboardFragment :
             baseActivity.getIInAppBillingService()?.apply { getPresenter().loadData(this) }
         } else {
             showProgressCenter(false)
-            presenter.apply { showData(data) }
+            presenter.apply { showData(data); onUserChanged(presenter.myUser) }
         }
 
         refresh.setOnClickListener { baseActivity.getIInAppBillingService()?.apply { getPresenter().loadData(this) } }
@@ -82,7 +81,12 @@ class LeaderboardFragment :
         adapter.notifyDataSetChanged()
     }
 
-    override fun showUser(myUser: LeaderboardUserViewModel) {
+    override fun showUser(myUser: LeaderboardUserViewModel?) {
+        if (myUser == null) {
+            bottomView.visibility = View.GONE
+            return
+        }
+        bottomView.visibility = View.VISIBLE
         val user = myUser.user
         chartPlaceTextView.text = myUser.position.toString()
 

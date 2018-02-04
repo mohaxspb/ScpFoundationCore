@@ -233,6 +233,9 @@ public class MainActivity
         if (id == R.id.invite) {
             IntentUtils.firebaseInvite(this);
             return false;
+        } else if (id == R.id.leaderboard) {
+            SubscriptionsActivity.start(this, SubscriptionsActivity.TYPE_LEADERBOARD);
+            return false;
         } else if (id == R.id.about) {
             mCurrentSelectedDrawerItemId = id;
             showFragment(ArticleFragment.newInstance(mConstantValues.getAbout()),
