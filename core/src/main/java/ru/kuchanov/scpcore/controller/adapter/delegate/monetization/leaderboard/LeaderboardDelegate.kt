@@ -7,16 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.BitmapImageViewTarget
-import com.bumptech.glide.request.target.Target
 import com.hannesdorfmann.adapterdelegates3.AbsListItemAdapterDelegate
 import kotlinx.android.synthetic.main.list_item_leaderboard_user.view.*
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LeaderboardUserViewModel
-import timber.log.Timber
-import java.lang.Exception
 
 /**
  * Created by mohax on 15.01.2018.
@@ -32,6 +28,8 @@ class LeaderboardDelegate : AbsListItemAdapterDelegate<LeaderboardUserViewModel,
 
     override fun onBindViewHolder(item: LeaderboardUserViewModel, viewHolder: ViewHolder, payloads: MutableList<Any>) {
         with(viewHolder.itemView) {
+            containerView.setBackgroundResource(item.bgColor)
+
             val user = item.user
             chartPlaceTextView.text = item.position.toString()
 

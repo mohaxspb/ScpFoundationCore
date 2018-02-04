@@ -3,13 +3,13 @@ package ru.kuchanov.scpcore.mvp.presenter.monetization
 import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.gson.Gson
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.api.ApiClient
 import ru.kuchanov.scpcore.api.model.remoteconfig.LevelsJson
 import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.DividerViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.LabelViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LeaderboardUserViewModel
@@ -22,6 +22,7 @@ import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
+import ru.kuchanov.scpcore.util.DimensionUtils
 import rx.Observable
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
@@ -38,8 +39,7 @@ class LeaderboardPresenter(
         myPreferencesManager: MyPreferenceManager,
         dbProviderFactory: DbProviderFactory,
         apiClient: ApiClient,
-        private val inAppHelper: InAppHelper,
-        private val gson: Gson
+        private val inAppHelper: InAppHelper
 ) : BasePresenter<LeaderboardContract.View>(
         myPreferencesManager,
         dbProviderFactory,
@@ -76,10 +76,13 @@ class LeaderboardPresenter(
                 .map {
                     val levelJson = LevelsJson.getLevelsJson()
                     val viewModels = mutableListOf<MyListItem>()
+                    viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
                     val users = it.second.users
                     users.sortByDescending { it.score }
                     users.subList(0, 3).forEachIndexed { index, user ->
-                        viewModels.add(LabelViewModel(0, textString = BaseApplication.getAppInstance().getString(R.string.leaderboard_place, index + 1)))
+                        viewModels.add(LabelViewModel(0, textString = BaseApplication.getAppInstance().getString(R.string.leaderboard_place, index + 1), bgColor = R.color.freeAdsBackgroundColor))
+                        viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(8)))
+
                         val level = levelJson.getLevelForScore(user.score)
                         viewModels.add(LeaderboardUserViewModel(
                                 index + 1,
@@ -92,17 +95,24 @@ class LeaderboardPresenter(
                         ))
                     }
 
-                    //todo colors
-                    viewModels.add(LabelViewModel(R.string.leaderboard_inapp_label))
+                    viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
+                    viewModels.add(LabelViewModel(
+                            R.string.leaderboard_inapp_label,
+                            textColor = R.color.material_green_500,
+                            bgColor = R.color.freeAdsBackgroundColor
+                    ))
                     val levelUpInApp = it.first.first()
                     viewModels.add(InAppViewModel(
                             R.string.leaderboard_inapp_title,
                             R.string.leaderboard_inapp_description,
                             levelUpInApp.price,
                             levelUpInApp.productId,
+                            //todo set icon
                             R.drawable.ic_adblock,
-                            R.color.bgSubsBottom
+                            R.color.freeAdsBackgroundColor
                     ))
+
+                    viewModels.add(DividerViewModel(R.color.leaderboardBottomBgColor, DimensionUtils.dpToPx(28)))
 
                     viewModels.addAll(users.subList(3, users.size).mapIndexed { index, firebaseObjectUser ->
                         val level = levelJson.getLevelForScore(firebaseObjectUser.score)
@@ -113,7 +123,8 @@ class LeaderboardPresenter(
                                         level!!,
                                         levelJson.scoreToNextLevel(firebaseObjectUser.score, level),
                                         levelJson.getLevelMaxScore(level),
-                                        level.id == LevelsJson.MAX_LEVEL_ID)
+                                        level.id == LevelsJson.MAX_LEVEL_ID),
+                                bgColor = R.color.leaderboardBottomBgColor
                         )
                     })
 
