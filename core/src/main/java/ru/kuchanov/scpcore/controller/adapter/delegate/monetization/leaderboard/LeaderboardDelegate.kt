@@ -55,9 +55,10 @@ class LeaderboardDelegate : AbsListItemAdapterDelegate<LeaderboardUserViewModel,
             levelNumTextView.text = level.id.toString()
             levelTextView.text = context.getString(R.string.level_num, level.id)
             if (levelViewModel.isMaxLevel) {
+                maxLevelTextView.visibility = View.VISIBLE
                 experienceProgressBar.max = 1
                 experienceProgressBar.progress = 1
-                maxLevelTextView.visibility = View.VISIBLE
+                expToNextLevelTextView.text = ""
             } else {
                 maxLevelTextView.visibility = View.GONE
                 experienceProgressBar.max = levelViewModel.nextLevelScore
