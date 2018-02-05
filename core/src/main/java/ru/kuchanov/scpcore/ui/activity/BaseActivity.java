@@ -101,6 +101,7 @@ import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.SocialLoginHolder;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
+import ru.kuchanov.scpcore.util.AttributeGetter;
 import ru.kuchanov.scpcore.util.SystemUtils;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -558,6 +559,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             default:
                 throw new IllegalArgumentException("unexpected callToActionReason");
         }
+        snackbar.setActionTextColor(AttributeGetter.getColor(this, R.attr.snackbarActionTextColor));
         snackbar.show();
     }
 

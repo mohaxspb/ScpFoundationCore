@@ -8,7 +8,6 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -19,8 +18,9 @@ import butterknife.Unbinder;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
-import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import ru.kuchanov.scpcore.ui.activity.BaseActivity;
+import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
+import ru.kuchanov.scpcore.util.AttributeGetter;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventName;
@@ -143,7 +143,7 @@ public abstract class BaseBottomSheetDialogFragment extends BottomSheetDialogFra
             default:
                 throw new IllegalArgumentException("unexpected callToActionReason");
         }
-        snackbar.setActionTextColor(ContextCompat.getColor(getActivity(), R.color.material_green_500));
+        snackbar.setActionTextColor(AttributeGetter.getColor(getActivity(), R.attr.snackbarActionTextColor));
         snackbar.show();
     }
 }

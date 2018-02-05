@@ -112,7 +112,8 @@ public class SystemUtils {
     }
 
     public static Spanned coloredTextForSnackBar(Context context, String text) {
-        String textColor = String.format("#%06X", (0xFFFFFF & ContextCompat.getColor(context, R.color.material_blue_gray_50)));
+//        String textColor = String.format("#%06X", (0xFFFFFF & ContextCompat.getColor(context, R.color.material_blue_gray_50)));
+        String textColor = String.format("#%06X", (0xFFFFFF & ContextCompat.getColor(context, android.R.color.white)));
         return Html.fromHtml("<font color=\"" + textColor + "\">" + text + "</font>");
     }
 

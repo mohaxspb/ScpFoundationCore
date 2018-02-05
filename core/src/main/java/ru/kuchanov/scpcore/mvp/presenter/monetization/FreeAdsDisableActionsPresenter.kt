@@ -134,7 +134,7 @@ class FreeAdsDisableActionsPresenter(
                     val score = config.getLong(SCORE_ACTION_OUR_APP).toInt()
 
                     data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(4)))
-                    data.add(LabelViewModel(R.string.free_ads_app_install_label, textColor = R.color.freeAdsBackgroundColor, bgColor = R.color.freeAdsTextColor))
+                    data.add(LabelViewModel(R.string.free_ads_app_install_label, bgColor = R.color.freeAdsBackgroundColor, textColor = R.color.freeAdsTextColor))
                     data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(4)))
 
                     data.addAll(availableAppsToInstall.map {
@@ -167,7 +167,7 @@ class FreeAdsDisableActionsPresenter(
                     val score = config.getLong(SCORE_ACTION_VK_GROUP).toInt()
 
                     data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(4)))
-                    data.add(LabelViewModel(R.string.free_ads_vk_group_label, textColor = R.color.freeAdsBackgroundColor, bgColor = R.color.freeAdsTextColor))
+                    data.add(LabelViewModel(R.string.free_ads_vk_group_label, bgColor = R.color.freeAdsBackgroundColor, textColor = R.color.freeAdsTextColor))
                     data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(4)))
 
                     data.addAll(availableItems.map {
