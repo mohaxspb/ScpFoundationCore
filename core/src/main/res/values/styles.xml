@@ -42,6 +42,7 @@
         <item name="readIconUnselected">@drawable/ic_drafts_black_24dp</item>
         <item name="spoilerColorTitle">@color/material_red_800</item>
 
+        <item name="snackbarActionTextColor">@color/material_green_500</item>
         <!--icons-->
         <!--<item name="iconShare">@drawable/ic_share_black</item>-->
         <!--<item name="iconTextSizeDialog">@drawable/ic_text_fields_black_24dp</item>-->
@@ -115,6 +116,7 @@
         <item name="readIconUnselected">@drawable/ic_drafts_white_24dp</item>
         <item name="spoilerColorTitle">@color/material_amber_500</item>
 
+        <item name="snackbarActionTextColor">@color/material_amber_500</item>
         <!--icons-->
         <!--<item name="iconShare">@drawable/ic_share_blue_grey_50_48dp</item>-->
         <!--<item name="iconTextSizeDialog">@drawable/ic_text_fields_black_24dp</item>-->

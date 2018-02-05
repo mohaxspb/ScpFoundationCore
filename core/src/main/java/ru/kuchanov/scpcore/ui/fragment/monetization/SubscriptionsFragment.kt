@@ -209,8 +209,8 @@ class SubscriptionsFragment :
             if (noAdsSubsEnabled && (it.productId in InAppHelper.getNewNoAdsSubsSkus())) {
                 items.add(LabelViewModel(
                         R.string.subs_no_ads_label,
-                        textColor = bgColor,
-                        bgColor = textColor
+                        textColor = textColor,
+                        bgColor = bgColor
                 ))
                 items.add(InAppViewModel(
                         R.string.subs_no_ads_title,
@@ -218,7 +218,7 @@ class SubscriptionsFragment :
                         it.price,
                         it.productId,
                         R.drawable.ic_adblock,
-                        R.color.bgSubsBottom
+                        bgColor
                 ))
             } else {
                 @StringRes
@@ -268,7 +268,7 @@ class SubscriptionsFragment :
                         it.price,
                         it.productId,
                         icon,
-                        R.color.bgSubsBottom
+                        bgColor
                 ))
             }
         }
