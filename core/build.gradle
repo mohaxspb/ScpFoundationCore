@@ -203,7 +203,8 @@ dependencies {
     api 'com.crystal:crystalrangeseekbar:1.1.3'
     //leakcanary
     String leakcanaryVersion = '1.5.4'
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
+    //remove {-no-op} to use it
+    debugImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanaryVersion"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanaryVersion"
     testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanaryVersion"
     //time operations

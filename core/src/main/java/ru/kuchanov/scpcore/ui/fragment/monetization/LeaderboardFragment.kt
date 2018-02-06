@@ -45,7 +45,7 @@ class LeaderboardFragment :
 
     override fun initViews() {
         InAppBillingServiceConnectionObservable.getInstance().serviceStatusObservable.subscribe { connected ->
-            if (connected!! && !getPresenter().isDataLoaded && activity is BaseActivity<*, *>) {
+            if (connected!! && !getPresenter().isDataLoaded && isAdded && activity is BaseActivity<*, *>) {
                 getPresenter().loadData((activity as BaseActivity<*, *>).getIInAppBillingService())
             }
         }
