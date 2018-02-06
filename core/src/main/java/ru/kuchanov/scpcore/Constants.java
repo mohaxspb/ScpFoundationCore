@@ -19,7 +19,6 @@ public interface Constants {
      */
     int NUM_OF_NATIVE_ADS_PER_SCREEN = 3;
     int NUM_OF_NATIVE_ADS_SOURCES = 2;
-    int NATIVE_ADS_MIN_HEIGHT = 250;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({NativeAdsSource.ALL, NativeAdsSource.AD_MOB, NativeAdsSource.APPODEAL})
@@ -39,7 +38,8 @@ public interface Constants {
          * second - num of page
          */
         String SEARCH_URL = "/search:site/a/p/q/%1$s/p/%2$s";
-        String RANDOM_PAGE_SCRIPT_URL = "https://node.scpfoundation.net/wikidot_random_page";
+        //        String RANDOM_PAGE_SCRIPT_URL = "https://node.scpfoundation.net/wikidot_random_page";
+        String RANDOM_PAGE_SCRIPT_URL = "https://scpdb.org/api/wikidot_random_page";
 
         int NUM_OF_ARTICLES_ON_RECENT_PAGE = 30;
         int NUM_OF_ARTICLES_ON_RATED_PAGE = 20;
