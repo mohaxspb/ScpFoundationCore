@@ -27,7 +27,7 @@
         android:layout_gravity="center_vertical"
         android:layout_margin="@dimen/defaultMarginSmall"
         tools:ignore="ContentDescription"
-        tools:src="@drawable/scplogo"
+        tools:src="@mipmap/ic_launcher"
         />
 
     <LinearLayout

@@ -1,5 +1,0 @@
-<b>Behebt</b>
-<br/>
- - Behebt Abstürze in Artikeln, bei denen es sich um Spoiler in Tabs handelt.
-<br/>
- - Irgendwelche kleineren Korrekturen und Verbesserungen.
