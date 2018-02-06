@@ -39,6 +39,7 @@ import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Com
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_CURRENT_SUBS_EMPTY
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_FREE_ADS_DISABLE
 import ru.kuchanov.scpcore.mvp.presenter.monetization.getMonthFromSkuId
+import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity
 import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment
@@ -69,8 +70,8 @@ class SubscriptionsFragment :
 
     override fun initViews() {
         InAppBillingServiceConnectionObservable.getInstance().serviceStatusObservable.subscribe { connected ->
-            if (connected!! && !getPresenter().isDataLoaded) {
-                getPresenter().getMarketData(baseActivity.getIInAppBillingService())
+            if (connected!! && !getPresenter().isDataLoaded && isAdded && activity is BaseActivity<*, *>) {
+                (activity as? BaseActivity<*, *>)?.apply { presenter.getMarketData(this.getIInAppBillingService()) }
             }
         }
 

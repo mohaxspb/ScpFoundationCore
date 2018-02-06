@@ -45,7 +45,7 @@ class LeaderboardFragment :
 
     override fun initViews() {
         InAppBillingServiceConnectionObservable.getInstance().serviceStatusObservable.subscribe { connected ->
-            if (connected!! && !getPresenter().isDataLoaded && activity is BaseActivity<*, *>) {
+            if (connected!! && !getPresenter().isDataLoaded && isAdded && activity is BaseActivity<*, *>) {
                 getPresenter().loadData((activity as BaseActivity<*, *>).getIInAppBillingService())
             }
         }
@@ -88,7 +88,7 @@ class LeaderboardFragment :
         }
         userDataView.visibility = View.VISIBLE
         val user = myUser.user
-        chartPlaceTextView.text = myUser.position.toString()
+        chartPlaceTextView.text = (myUser.position + 1).toString()
 
         Glide.with(context)
                 .load(user.avatar)
