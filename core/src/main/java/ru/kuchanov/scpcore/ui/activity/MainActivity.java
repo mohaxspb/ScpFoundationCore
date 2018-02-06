@@ -233,6 +233,9 @@ public class MainActivity
         if (id == R.id.invite) {
             IntentUtils.firebaseInvite(this);
             return false;
+        } else if (id == R.id.leaderboard) {
+            SubscriptionsActivity.start(this, SubscriptionsActivity.TYPE_LEADERBOARD);
+            return false;
         } else if (id == R.id.about) {
             mCurrentSelectedDrawerItemId = id;
             showFragment(ArticleFragment.newInstance(mConstantValues.getAbout()),
@@ -371,6 +374,8 @@ public class MainActivity
             title = getString(R.string.drawer_item_objects4);
         } else if (id == R.id.stories) {
             title = getString(R.string.drawer_item_11);
+        } else if (id == R.id.read) {
+            title = getString(R.string.drawer_item_read);
         } else {
             Timber.e("unexpected item ID");
             title = null;

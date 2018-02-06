@@ -12,29 +12,14 @@ import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser;
 import ru.kuchanov.scpcore.ui.holder.LeaderboardHolder;
 import timber.log.Timber;
 
-/**
- * Created by mohax on 25.02.2017.
- * <p>
- * for pacanskiypublic
- */
 public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<LeaderboardHolder> {
 
     protected List<FirebaseObjectUser> mData;
 
-    private LeaderboardClickListener mAdapterClickListener;
-
-    public LeaderboardRecyclerAdapter() {
-        Timber.d("FreeAdsDisableAdapter constructor");
-    }
-
     @Override
     public LeaderboardHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_leaderboard, parent, false);
-        return new LeaderboardHolder(itemView, mAdapterClickListener);
-    }
-
-    public void setItemClickListener(LeaderboardClickListener postClickListener) {
-        this.mAdapterClickListener = postClickListener;
+        return new LeaderboardHolder(itemView);
     }
 
     public void setData(List<FirebaseObjectUser> data) {
@@ -54,9 +39,5 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
     @Override
     public void onBindViewHolder(LeaderboardHolder holder, int position) {
         holder.bind(mData.get(position));
-    }
-
-    public interface LeaderboardClickListener {
-        void onUserClicked(FirebaseObjectUser data);
     }
 }

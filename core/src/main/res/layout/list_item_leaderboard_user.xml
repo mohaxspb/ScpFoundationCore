@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/containerView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/freeAdsBackgroundColor"
+    android:padding="@dimen/defaultMarginSmall"
+    >
+
+    <android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardCornerRadius="2dp"
+        app:cardElevation="2dp"
+        >
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+
+                    <TextView
+                        android:id="@+id/chartPlaceTextView"
+                        fontPath="fonts/Roboto-Medium.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:padding="@dimen/defaultMargin"
+                        android:textColor="@color/subsTextTitleColor"
+                        android:textSize="14sp"
+                        tools:ignore="MissingPrefix"
+                        tools:text="56"
+                        />
+
+                    <FrameLayout
+                        android:id="@+id/avatarContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginBottom="@dimen/defaultMarginSmall"
+                        android:layout_marginTop="@dimen/defaultMarginSmall"
+                        >
+
+                        <ImageView
+                            android:id="@+id/avatarImageView"
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:layout_gravity="center"
+                            android:layout_marginEnd="3dp"
+                            android:layout_marginStart="3dp"
+                            tools:ignore="ContentDescription"
+                            tools:src="@drawable/background_splash"
+                            />
+
+                        <TextView
+                            android:id="@+id/levelNumTextView"
+                            android:layout_width="@dimen/defaultMarginBig"
+                            android:layout_height="@dimen/defaultMarginBig"
+                            android:layout_gravity="bottom|end"
+                            android:background="@drawable/ic_romb"
+                            android:gravity="center"
+                            android:textColor="@android:color/white"
+                            android:textSize="14sp"
+                            tools:text="1"
+                            />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingEnd="@dimen/defaultMargin"
+                        android:paddingStart="@dimen/defaultMargin"
+                        android:paddingTop="10dp"
+                        >
+
+                        <TextView
+                            android:id="@+id/nameTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/subsTextTitleColor"
+                            android:textSize="14sp"
+                            tools:text="Ivan Ivanov"
+                            />
+
+                        <TextView
+                            android:id="@+id/readArticlesCountTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/subsTextColorBottom"
+                            android:textSize="10sp"
+                            tools:ignore="SmallSp"
+                            tools:text="100 articles read"
+                            />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/userScoreTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:padding="@dimen/defaultMargin"
+                        android:textColor="@color/subsTextTitleColor"
+                        android:textSize="14sp"
+                        tools:text="424242"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/bottomView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/bgSubsTop"
+                    android:orientation="horizontal"
+                    >
+
+                    <TextView
+                        android:id="@+id/levelTextView"
+                        fontPath="fonts/Roboto-Medium.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:paddingBottom="3dp"
+                        android:paddingEnd="@dimen/defaultMarginSmall"
+                        android:paddingStart="@dimen/defaultMarginSmall"
+                        android:paddingTop="3dp"
+                        android:textColor="@android:color/black"
+                        android:textSize="6sp"
+                        tools:ignore="MissingPrefix,SmallSp"
+                        tools:text="4 level"
+                        />
+
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        >
+
+                        <ProgressBar
+                            android:id="@+id/experienceProgressBar"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="10dp"
+                            android:layout_gravity="center_vertical"
+                            android:progressDrawable="@drawable/level_progress"
+                            tools:max="1000"
+                            tools:progress="600"
+                            />
+
+                        <TextView
+                            android:id="@+id/maxLevelTextView"
+                            fontPath="fonts/Roboto-Medium.ttf"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="@string/max_level"
+                            android:textColor="@android:color/black"
+                            android:textSize="6sp"
+                            tools:ignore="MissingPrefix,SmallSp"
+                            />
+
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/expToNextLevelTextView"
+                        fontPath="fonts/Roboto-Medium.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:paddingBottom="3dp"
+                        android:paddingEnd="@dimen/defaultMarginSmall"
+                        android:paddingStart="@dimen/defaultMarginSmall"
+                        android:paddingTop="3dp"
+                        android:textColor="@android:color/black"
+                        android:textSize="6sp"
+                        tools:ignore="MissingPrefix,SmallSp"
+                        tools:text="400 points"
+                        />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/medalImageView"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/bg_triangle"
+                tools:ignore="ContentDescription"
+                tools:tint="@color/zbs_color_red"
+                />
+        </FrameLayout>
+    </android.support.v7.widget.CardView>
+</FrameLayout>
