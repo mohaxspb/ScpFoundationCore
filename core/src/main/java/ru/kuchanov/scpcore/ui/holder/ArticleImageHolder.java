@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -85,6 +86,10 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
         String imageUrl = imageTag == null ? null : imageTag.attr("src");
 
         CalligraphyUtils.applyFontToTextView(context, titleTextView, mMyPreferenceManager.getFontPath());
+
+        int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_primary);
+        float articleTextScale = mMyPreferenceManager.getArticleTextScale();
+        titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, articleTextScale * textSizePrimary);
 
         String title;
         if (!document.getElementsByTag("span").isEmpty()) {
