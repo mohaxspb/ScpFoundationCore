@@ -47,9 +47,13 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
      */
     private static final long PERIOD_BETWEEN_SUBSCRIPTIONS_INVALIDATION_IN_MILLIS = Period.hours(6).toStandardDuration().getMillis();
     /**
-     * used to calculate is it time to request new Interstitial ads (5 min)
+     * used to calculate is it time to request new Interstitial ads (15 min)
      */
     private static final long PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS = Period.minutes(15).toStandardDuration().getMillis();
+    /**
+     * used to calculate is it time to request new Interstitial ads (15 min)
+     */
+    private static final long PERIOD_WHEN_WE_NOTIFY_ABOUT_ADS = Period.minutes(15).toStandardDuration().getMillis();
     /**
      * offer free trial every 7 days
      */
@@ -236,11 +240,21 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
      * @return true if there is less then some minutes before we must show it
      */
     public boolean isTimeToLoadAds() {
-        //i.e. 1 hour - (17:56-17:00) = 4 min, which we compate to 5 min
+        //i.e. 1 hour - (17:56-17:00) = 4 min, which we compare to 5 min
         return FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS) -
                 (System.currentTimeMillis() - getLastTimeAdsShows())
                 <= PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS;
 
+    }
+
+    /**
+     * @return true if there is less then some minutes before we show ads
+     */
+    public boolean isTimeToNotifyAboutSoonAdsShowing() {
+        //i.e. 1 hour - (17:56-17:00) = 4 min, which we compare to 5 min
+        return FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS) -
+               (System.currentTimeMillis() - getLastTimeAdsShows())
+               <= PERIOD_WHEN_WE_NOTIFY_ABOUT_ADS;
     }
 
     public void applyAwardFromAds() {
