@@ -7,6 +7,7 @@
     <string name="feedback_email" translatable="false">neva.spb.rx@gmail.com</string>
     <string name="image_title" translatable="false">scp_image</string>
     <string name="image_description" translatable="false">Image from gallery of SCP Foundation app</string>
+    <string name="max_level" translatable="false">Max level</string>
     <!--drawer items-->
     <string name="drawer_item_1">About the SCP Foundation</string>
     <string name="drawer_item_2">Site News Hub</string>
@@ -348,6 +349,5 @@ Thanks for using our app!]]></string>
     <string name="score_num">%d очков</string>
     <string name="level_num">%d уровень</string>
     <string name="drawer_item_leaderboard">Рейтинг агентов</string>
-    <string name="max_level">Max level</string>
     <string name="ads_will_be_shown_soon">Скоро будет показана реклама! Хотите отключить её заранее?</string>
 </resources>

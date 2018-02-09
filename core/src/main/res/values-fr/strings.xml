@@ -285,4 +285,49 @@ Merci d'utiliser notre application!
 <br/><br/>
 Traduit Lucie.]]></string>
     <string name="drawer_item_read">Lisez les articles</string>
+    <string name="subs_main_text">Ici, vous pouvez obtenir une autorisation spéciale de la Fondation et d\'aider les développeurs. Notre application a <![CDATA[<a href="https://github.com/mohaxspb/ScpFoundationCore">code source ouvert</a>]]> и <![CDATA[<a href="https://www.youtube.com/watch?v=5RuwbKvLDs0">Cool Cloud Sync</a>]]>. Si vous aimez notre application, vous pouvez soutenir les développeurs.Tous les fonds vont soutenir le projet. Vous avez également la possibilité de nous soutenir simplement en regardant la publicité.. Nous serons heureux de tout don. Merci!</string>
+    <string name="subs_free_actions_title">Éteignez les annonces gratuitement!</string>
+    <string name="subs_free_actions_card_title">Nous soutenir</string>
+    <string name="subs_free_actions_card_description">Désactiver les annonces, augmenter les articles limite et gagner des points gratuitement!</string>
+    <string name="subs_description">Désactivation des annonces, synchronisation automatique des nuages, téléchargement illimité d\'articles et de polices atmosphériques</string>
+    <string name="subs_level_5_gain">Obtenez le niveau 5</string>
+    <string name="subs_no_ads_title">Protocole “Silence”</string>
+    <string name="subs_no_ads_description">Lancement de l\'agent de blocage meme toute manifestation de l\'agent publicitaire dans l'application.</string>
+    <string name="subs_1_month_title">Laborantin</string>
+    <string name="subs_3_month_title">Attaché de recherche</string>
+    <string name="subs_6_month_title">Chercheur</string>
+    <string name="subs_12_month_title">Chargé de recherche</string>
+    <string name="subs_full_description">Désactivation des annonces, synchronisation automatique des nuages, téléchargement illimité d\'articles et de polices atmosphériques</string>
+    <string name="subs_no_ads_label">Mois sans publicité</string>
+    <string name="subs_1_month_label">Version prolongée pour un mois</string>
+    <string name="subs_3_month_label">Version prolongée pendant 3 mois</string>
+    <string name="subs_6_month_label">Version prolongée pour une demi-année</string>
+    <string name="subs_12_month_label">Version prolongée pour un an</string>
+    <string name="subs_cur_label">Votre statut actuel</string>
+    <string name="subs_level_5_label">Obtenez le niveau 5</string>
+    <string name="subs_cur_empty_title">██████ - Pas assigné</string>
+    <string name="subs_level_5_title">Niveau 5</string>
+    <string name="subs_percent">-%s%%</string>
+    <string name="subs_leaderboard_activity_title">Leaderboard</string>
+    <string name="subs_activity_title">Support développeur</string>
+    <string name="subs_level_5_description">10000 points, augmentant la notation et augmentant la limite des articles hors ligne sur 200 articles</string>
+    <string name="free_ads_invite_title">Invitez vos amis à application</string>
+    <string name="free_ads_rewarded_video_title">Regarde la vidéo</string>
+    <string name="free_ads_auth_title">Connectez-vous</string>
+    <string name="free_ads_simple_subtitle">Et nous allons éteindre l\'annonce pendant %1$d heures et vous donner %2$d points</string>
+    <string name="free_ads_app_install_label">Mettez nos autres applications</string>
+    <string name="free_ads_app_install_title">Installer, et nous allons désactiver l\'annonce par %1$d heures et vous donner %2$d points</string>
+    <string name="free_ads_vk_group_label">Rejoignez notre groupe en VC</string>
+    <string name="free_ads_vk_group_title">Joignez-vous, et nous allons éteindre les annonces par %1$d heures et vous donner  %2$d points</string>
+    <string name="free_ads_activity_title">Éteignez les publicités</string>
+    <string name="leaderboard_activity_title">Agents de cotation</string>
+    <string name="leaderboard_inapp_title">Monter dans le classement</string>
+    <string name="leaderboard_inapp_description">Utilisez l\'astuce et vos connexions dans le Fonds pour contourner les collègues et augmenter dans le classement de la</string>
+    <string name="leaderboard_place">%d Place</string>
+    <string name="leaderboard_inapp_label">Hausse du classement (+10000 points)</string>
+    <string name="leaderboard_articles_read">%d Articles lus</string>
+    <string name="score_num">%d points</string>
+    <string name="level_num">%d Niveau</string>
+    <string name="drawer_item_leaderboard">Agents de cotation</string>
+    <string name="ads_will_be_shown_soon">La publicité sera bientôt affichée! Voulez-vous le désactiver à l\'avance?</string>
 </resources>
