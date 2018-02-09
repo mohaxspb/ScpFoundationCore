@@ -305,4 +305,8 @@
         <key>native_in_article_enabled</key>
         <value>true</value>
     </entry>
+    <entry>
+        <key>offer_subs_instead_of_rewarded_video</key>
+        <value>false</value>
+    </entry>
 </defaultsMap>
