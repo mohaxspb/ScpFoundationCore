@@ -301,4 +301,12 @@
         <key>native_ads_lists_source</key>
         <value>0</value>
     </entry>
+    <entry>
+        <key>native_in_article_enabled</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>offer_subs_instead_of_rewarded_video</key>
+        <value>false</value>
+    </entry>
 </defaultsMap>

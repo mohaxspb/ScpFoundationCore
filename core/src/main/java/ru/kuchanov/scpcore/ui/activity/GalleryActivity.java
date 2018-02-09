@@ -64,8 +64,8 @@ public class GalleryActivity
     private ImagesAdapter mRecyclerAdapter;
     private int mCurPosition;
 
-    public static void startForImage(Context context, String imageUrl, @Nullable String imageDescription) {
-        Intent intent = new Intent(context, GalleryActivity.class);
+    public static void startForImage(final Context context, final String imageUrl, @Nullable final String imageDescription) {
+        final Intent intent = new Intent(context, GalleryActivity.class);
         intent.putExtra(EXTRA_IMAGE_URL, imageUrl);
         intent.putExtra(EXTRA_IMAGE_DESCRIPTION, imageDescription);
         context.startActivity(intent);
@@ -77,21 +77,20 @@ public class GalleryActivity
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(EXTRA_POSITION, mCurPosition);
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (getIntent().hasExtra(EXTRA_SHOW_DISABLE_ADS)) {
             showSnackBarWithAction(Constants.Firebase.CallToActionReason.REMOVE_ADS);
             getIntent().removeExtra(EXTRA_SHOW_DISABLE_ADS);
 
-            @DataSyncActions.ScoreAction
-            String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
+            @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
             mPresenter.updateUserScoreForScoreAction(action);
         }
 
@@ -109,14 +108,13 @@ public class GalleryActivity
             public void onPageSelected(int position) {
                 mCurPosition = position;
                 if (position != 0 && position % FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_GALLERY_PHOTOS_BETWEEN_INTERSITIAL) == 0) {
-                    boolean hasSubscription = mMyPreferenceManager.isHasSubscription() || mMyPreferenceManager.isHasNoAdsSubscription();
+                    final boolean hasSubscription = mMyPreferenceManager.isHasSubscription() || mMyPreferenceManager.isHasNoAdsSubscription();
                     if (!hasSubscription) {
                         if (isAdsLoaded()) {
                             showInterstitial(new MyAdListener() {
                                 @Override
                                 public void onAdClosed() {
-                                    @DataSyncActions.ScoreAction
-                                    String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
+                                    @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
                                     mPresenter.updateUserScoreForScoreAction(action);
                                     showSnackBarWithAction(Constants.Firebase.CallToActionReason.REMOVE_ADS);
                                     requestNewInterstitial();

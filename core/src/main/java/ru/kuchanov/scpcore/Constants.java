@@ -90,7 +90,7 @@ public interface Constants {
         int INVITE_CTA_MAX_LENGTH = 20;
 
         enum CallToActionReason {
-            REMOVE_ADS, ENABLE_AUTO_SYNC, SYNC_NEED_AUTH, ENABLE_FONTS
+            REMOVE_ADS, ENABLE_AUTO_SYNC, SYNC_NEED_AUTH, ENABLE_FONTS, ADS_WILL_SHOWN_SOON
         }
 
         enum SocialProvider {
@@ -192,6 +192,7 @@ public interface Constants {
             String NO_ADS_SUBS_ENABLED = "no_ads_subs_enabled";
 
             String APP_LANG_VERSIONS = "app_lang_versions";
+            String OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO = "offer_subs_instead_of_rewarded_video";
         }
 
         int REQUEST_INVITE = 1024;
@@ -233,6 +234,7 @@ public interface Constants {
                 String AUTO_SYNC_FROM_SETTINGS = "AUTO_SYNC_FROM_SETTINGS";
                 String DOWNLOAD_DIALOG = "DOWNLOAD_DIALOG";
                 String AFTER_LEVEL_UP = "AFTER_LEVEL_UP";
+                String ADS_WILL_SHOWN_SOON = "ADS_WILL_SHOWN_SOON";
                 String REMOVE_ADS_SETTINGS = "REMOVE_ADS_SETTINGS";
             }
 

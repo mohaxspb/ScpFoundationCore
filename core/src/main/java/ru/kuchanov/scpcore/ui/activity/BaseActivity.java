@@ -1,41 +1,5 @@
 package ru.kuchanov.scpcore.ui.activity;
 
-import android.app.DialogFragment;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.android.vending.billing.IInAppBillingService;
-import com.appodeal.ads.Appodeal;
-import com.appodeal.ads.Native;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
@@ -54,6 +18,16 @@ import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.android.vending.billing.IInAppBillingService;
+import com.appodeal.ads.Appodeal;
+import com.appodeal.ads.Native;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
@@ -63,6 +37,36 @@ import com.vk.sdk.api.VKError;
 import com.yandex.metrica.YandexMetrica;
 
 import org.joda.time.Period;
+
+import android.app.DialogFragment;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentSender;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
+import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -128,23 +132,30 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         SharedPreferences.OnSharedPreferenceChangeListener, GoogleApiClient.OnConnectionFailedListener {
 
     public static final String EXTRA_ARTICLES_URLS_LIST = "EXTRA_ARTICLES_URLS_LIST";
+
     public static final String EXTRA_POSITION = "EXTRA_POSITION";
+
     public static final String EXTRA_TAGS = "EXTRA_TAGS";
 
     //google login
     private static final int RC_SIGN_IN = 5555;
+
     protected GoogleApiClient mGoogleApiClient;
+
     //facebook
     private CallbackManager mCallbackManager = CallbackManager.Factory.create();
     ///////////
 
     @BindView(R2.id.root)
     protected View mRoot;
+
     @BindView(R2.id.content)
     protected View mContent;
+
     @Nullable
     @BindView(R2.id.toolBar)
     protected Toolbar mToolbar;
+
     @Nullable
     @BindView(R2.id.banner)
     protected AdView mAdView;
@@ -154,16 +165,22 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Inject
     protected MyPreferenceManager mMyPreferenceManager;
+
     @Inject
     protected MyNotificationManager mMyNotificationManager;
+
     @Inject
     protected ConstantValues mConstantValues;
+
     @Inject
     protected DialogUtils mDialogUtils;
+
     @Inject
     protected ru.kuchanov.scp.downloads.DialogUtils<Article> mDownloadAllChooser;
+
     @Inject
     protected InAppHelper mInAppHelper;
+
     //inapps and ads
     private IInAppBillingService mService;
 
@@ -422,8 +439,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     private void setUpBanner() {
         Timber.d("setUpBanner");
         if (mMyPreferenceManager.isHasAnySubscription()
-                || !isBannerEnabled()
-                || !mMyPreferenceManager.isTimeToShowBannerAds()) {
+            || !isBannerEnabled()
+            || !mMyPreferenceManager.isTimeToShowBannerAds()) {
             if (mAdView != null) {
                 mAdView.setEnabled(false);
                 mAdView.setVisibility(View.GONE);
@@ -444,16 +461,20 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         if (mMyPreferenceManager.isRewardedDescriptionShown()) {
             showRewardedVideo();
         } else {
-            new MaterialDialog.Builder(this)
-                    .title(R.string.ads_reward_description_title)
-                    .content(R.string.ads_reward_description_content)
-                    .positiveText(R.string.ads_reward_ok)
-                    .onPositive((dialog, which) -> {
-                        mMyPreferenceManager.setRewardedDescriptionIsNotShown(true);
-                        startRewardedVideoFlow();
-                    })
-                    .show();
+            showRewardedVideoFlowDescription();
         }
+    }
+
+    private void showRewardedVideoFlowDescription() {
+        new MaterialDialog.Builder(this)
+                .title(R.string.ads_reward_description_title)
+                .content(R.string.ads_reward_description_content)
+                .positiveText(R.string.ads_reward_ok)
+                .onPositive((dialog, which) -> {
+                    mMyPreferenceManager.setRewardedDescriptionIsNotShown(true);
+                    startRewardedVideoFlow();
+                })
+                .show();
     }
 
     @Override
@@ -502,6 +523,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
      */
     @Override
     public void showInterstitial(MyAdListener adListener, boolean showVideoIfNeedAndCan) {
+        //reset offer shown state to notify user before next ad will be shown
+        mMyPreferenceManager.setOfferAlreadyShown(false);
         if (mMyPreferenceManager.isTimeToShowVideoInsteadOfInterstitial() && Appodeal.isLoaded(Appodeal.INTERSTITIAL)) {
             //TODO we should redirect user to desired activity...
             Appodeal.show(this, Appodeal.INTERSTITIAL);
@@ -555,6 +578,30 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     snackbar.dismiss();
                     showLoginProvidersPopup();
                 });
+                break;
+            case ADS_WILL_SHOWN_SOON:
+                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, R.string.ads_will_be_shown_soon), Snackbar.LENGTH_LONG);
+                snackbar.setAction(R.string.yes, action -> {
+                    if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO)) {
+                        try {
+                            InAppHelper.startSubsBuy(this, mService, InAppHelper.InappType.SUBS, InAppHelper.getNewSubsSkus().get(0));
+
+                            final Bundle bundle = new Bundle();
+                            bundle.putString(EventParam.PLACE, StartScreen.ADS_WILL_SHOWN_SOON);
+                            FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.SUBSCRIPTIONS_SHOWN, bundle);
+                        } catch (final RemoteException e) {
+                            Timber.e(e);
+                        } catch (final IntentSender.SendIntentException e) {
+                            Timber.e(e);
+                        }
+                    } else {
+                        //show rewarded video after description
+                        showRewardedVideoFlowDescription();
+                    }
+                });
+                final View snackbarView = snackbar.getView();
+                final TextView textView = snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                textView.setMaxLines(5);
                 break;
             default:
                 throw new IllegalArgumentException("unexpected callToActionReason");
@@ -610,11 +657,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             //but service not connected yet
             //check if user score is greter than 1000 and offer him/her a free trial if there is no subscription owned
             if (!mMyPreferenceManager.isHasAnySubscription()
-                    && mPresenter.getUser() != null
-                    && mPresenter.getUser().score >= 1000
-                    //do not show it after level up gain, where we add 10000 score
-                    && mPresenter.getUser().score < 10000
-                    && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
+                && mPresenter.getUser() != null
+                && mPresenter.getUser().score >= 1000
+                //do not show it after level up gain, where we add 10000 score
+                && mPresenter.getUser().score < 10000
+                && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
                 Bundle bundle = new Bundle();
                 bundle.putString(EventParam.PLACE, EventValue.SCORE_1000_REACHED);
                 FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
@@ -913,6 +960,14 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
         if (!isAdsLoaded() && mMyPreferenceManager.isTimeToLoadAds()) {
             requestNewInterstitial();
+        }
+        //notify user about soon ads showing and offer him appodeal or subscription
+        if (mMyPreferenceManager.isTimeToNotifyAboutSoonAdsShowing()) {
+            Timber.d("isTime to notify about ads");
+            showSnackBarWithAction(Constants.Firebase.CallToActionReason.ADS_WILL_SHOWN_SOON);
+            mMyPreferenceManager.setOfferAlreadyShown(true);
+        } else {
+            Timber.wtf("is NOT time to notify about ads");
         }
 
         setUpBanner();

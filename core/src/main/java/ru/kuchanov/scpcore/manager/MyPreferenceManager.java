@@ -42,14 +42,22 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
      * check if user joined app vk group each 1 day
      */
     private static final long PERIOD_BETWEEN_APP_VK_GROUP_JOINED_CHECK_IN_MILLIS = Period.days(1).toStandardDuration().getMillis(); //Period.days(1).getDays()
+
     /**
      * update user subs every 6 hours
      */
     private static final long PERIOD_BETWEEN_SUBSCRIPTIONS_INVALIDATION_IN_MILLIS = Period.hours(6).toStandardDuration().getMillis();
+
     /**
-     * used to calculate is it time to request new Interstitial ads (5 min)
+     * used to calculate is it time to request new Interstitial ads (15 min)
      */
     private static final long PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS = Period.minutes(15).toStandardDuration().getMillis();
+
+    /**
+     * used to calculate is it time to request new Interstitial ads (15 min)
+     */
+    private static final long PERIOD_WHEN_WE_NOTIFY_ABOUT_ADS = Period.minutes(15).toStandardDuration().getMillis();
+
     /**
      * offer free trial every 7 days
      */
@@ -58,6 +66,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     private static final int NUM_OF_DISABLE_ADS_REWARDS_COUNT_BEFORE_OFFER_SHOWING = 3;
 
     public interface Keys {
+
         String NIGHT_MODE = "NIGHT_MODE";
         String TEXT_SCALE_UI = "TEXT_SCALE_UI";
         String TEXT_SCALE_ARTICLE = "TEXT_SCALE_ARTICLE";
@@ -97,6 +106,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String INVITE_ALREADY_RECEIVED = "INVITE_ALREADY_RECEIVED";
         String ADS_BANNER_IN_ARTICLES_LISTS = "ADS_BANNER_IN_ARTICLES_LISTS";
         String ADS_BANNER_IN_ARTICLE = "ADS_BANNER_IN_ARTICLE";
+        String OFFER_ALREADY_SHOWN = "OFFER_ALREADY_SHOWN";
     }
 
     private Gson mGson;
@@ -229,18 +239,36 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
 
     public boolean isTimeToShowAds() {
         return System.currentTimeMillis() - getLastTimeAdsShows() >=
-                FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS);
+               FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS);
     }
 
     /**
      * @return true if there is less then some minutes before we must show it
      */
     public boolean isTimeToLoadAds() {
-        //i.e. 1 hour - (17:56-17:00) = 4 min, which we compate to 5 min
+        //i.e. 1 hour - (17:56-17:00) = 4 min, which we compare to 5 min
         return FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS) -
-                (System.currentTimeMillis() - getLastTimeAdsShows())
-                <= PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS;
+               (System.currentTimeMillis() - getLastTimeAdsShows())
+               <= PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS;
 
+    }
+
+    /**
+     * @return true if there is less then some minutes before we show ads
+     */
+    public boolean isTimeToNotifyAboutSoonAdsShowing() {
+        //i.e. 1 hour - (17:56-17:00) = 4 min, which we compare to 5 min
+        return FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS) -
+               (System.currentTimeMillis() - getLastTimeAdsShows())
+               <= PERIOD_WHEN_WE_NOTIFY_ABOUT_ADS && !isOfferAlreadyShown();
+    }
+
+    private boolean isOfferAlreadyShown() {
+        return mPreferences.getBoolean(Keys.OFFER_ALREADY_SHOWN, false);
+    }
+
+    public void setOfferAlreadyShown(boolean shown) {
+        mPreferences.edit().putBoolean(Keys.OFFER_ALREADY_SHOWN, shown).apply();
     }
 
     public void applyAwardFromAds() {
@@ -250,7 +278,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
 //        setLastTimeAdsShows(time);
 //        //also set time for which we should disable banners
 //        setTimeForWhichBannersDisabled(time);
-        long time = FirebaseRemoteConfig.getInstance().getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
+        final long time = FirebaseRemoteConfig.getInstance().getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
         increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
         increaseTimeForWhichBannersDisabled(time);
@@ -324,7 +352,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
 
     public boolean isTimeToShowVideoInsteadOfInterstitial() {
         return getNumOfInterstitialsShown() >=
-                FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_INTERSITIAL_BETWEEN_REWARDED);
+               FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_INTERSITIAL_BETWEEN_REWARDED);
     }
 
     /**

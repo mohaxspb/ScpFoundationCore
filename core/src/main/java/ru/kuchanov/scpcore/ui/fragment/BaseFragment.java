@@ -1,5 +1,9 @@
 package ru.kuchanov.scpcore.ui.fragment;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.hannesdorfmann.mosby.mvp.MvpFragment;
+import com.squareup.leakcanary.RefWatcher;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -12,10 +16,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.hannesdorfmann.mosby.mvp.MvpFragment;
-import com.squareup.leakcanary.RefWatcher;
 
 import java.io.IOException;
 
@@ -65,7 +65,7 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
     protected abstract void callInjections();
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         callInjections();
         super.onCreate(savedInstanceState);
 
@@ -82,7 +82,7 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
         inflater.inflate(getMenuResId(), menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -98,13 +98,13 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable final Bundle savedInstanceState) {
         Timber.d("onCreateView");
         return inflater.inflate(getLayoutResId(), container, false);
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(final View view, @Nullable final Bundle savedInstanceState) {
         Timber.d("onViewCreated");
         super.onViewCreated(view, savedInstanceState);
         mUnbinder = ButterKnife.bind(this, view);
@@ -149,7 +149,7 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
     }
 
     @Override
-    public void showError(Throwable throwable) {
+    public void showError(final Throwable throwable) {
         if (!isAdded()) {
             return;
         }
@@ -163,7 +163,7 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
     }
 
     @Override
-    public void showMessage(String message) {
+    public void showMessage(final String message) {
         if (!isAdded()) {
             return;
         }
@@ -171,7 +171,7 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
     }
 
     @Override
-    public void showMessage(@StringRes int message) {
+    public void showMessage(@StringRes final int message) {
         if (!isAdded()) {
             return;
         }
@@ -179,7 +179,7 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
     }
 
     @Override
-    public void showMessageLong(String message) {
+    public void showMessageLong(final String message) {
         if (!isAdded()) {
             return;
         }
@@ -187,7 +187,7 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
     }
 
     @Override
-    public void showMessageLong(@StringRes int message) {
+    public void showMessageLong(@StringRes final int message) {
         if (!isAdded()) {
             return;
         }
@@ -195,7 +195,7 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
     }
 
     @Override
-    public void showProgressDialog(String title) {
+    public void showProgressDialog(final String title) {
         if (!isAdded()) {
             return;
         }
@@ -207,7 +207,7 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
     }
 
     @Override
-    public void showProgressDialog(@StringRes int title) {
+    public void showProgressDialog(@StringRes final int title) {
         if (!isAdded()) {
             return;
         }
@@ -249,7 +249,7 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
     }
 
     @Override
-    public void showSnackBarWithAction(Constants.Firebase.CallToActionReason reason) {
+    public void showSnackBarWithAction(final Constants.Firebase.CallToActionReason reason) {
         if (!isAdded()) {
             return;
         }
@@ -268,10 +268,10 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
     public void onResume() {
         super.onResume();
         if (getUserVisibleHint()
-                && getActivity() instanceof ActivityToolbarStateSetter
-                && this instanceof FragmentToolbarStateSetter) {
-            ActivityToolbarStateSetter activityToolbarStateSetter = (ActivityToolbarStateSetter) getActivity();
-            FragmentToolbarStateSetter fragmentToolbarStateSetter = (FragmentToolbarStateSetter) this;
+            && getActivity() instanceof ActivityToolbarStateSetter
+            && this instanceof FragmentToolbarStateSetter) {
+            final ActivityToolbarStateSetter activityToolbarStateSetter = (ActivityToolbarStateSetter) getActivity();
+            final FragmentToolbarStateSetter fragmentToolbarStateSetter = (FragmentToolbarStateSetter) this;
             activityToolbarStateSetter.setToolbarTitle(fragmentToolbarStateSetter.getToolbarTitle());
             activityToolbarStateSetter.setToolbarTextColor(fragmentToolbarStateSetter.getToolbarTextColor());
         }
@@ -281,7 +281,7 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
     public void onDestroy() {
         Timber.d("onDestroy");
         super.onDestroy();
-        RefWatcher refWatcher = BaseApplication.getAppInstance().getRefWatcher();
+        final RefWatcher refWatcher = BaseApplication.getAppInstance().getRefWatcher();
         refWatcher.watch(this);
     }
 }
