@@ -19,7 +19,6 @@ public interface Constants {
      */
     int NUM_OF_NATIVE_ADS_PER_SCREEN = 3;
     int NUM_OF_NATIVE_ADS_SOURCES = 2;
-    int NATIVE_ADS_MIN_HEIGHT = 250;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({NativeAdsSource.ALL, NativeAdsSource.AD_MOB, NativeAdsSource.APPODEAL})
@@ -39,7 +38,8 @@ public interface Constants {
          * second - num of page
          */
         String SEARCH_URL = "/search:site/a/p/q/%1$s/p/%2$s";
-        String RANDOM_PAGE_SCRIPT_URL = "https://node.scpfoundation.net/wikidot_random_page";
+        //        String RANDOM_PAGE_SCRIPT_URL = "https://node.scpfoundation.net/wikidot_random_page";
+        String RANDOM_PAGE_SCRIPT_URL = "https://scpdb.org/api/wikidot_random_page";
 
         int NUM_OF_ARTICLES_ON_RECENT_PAGE = 30;
         int NUM_OF_ARTICLES_ON_RATED_PAGE = 20;
@@ -79,6 +79,7 @@ public interface Constants {
         String SEARCH = "SEARCH";
         String FAVORITES = "FAVORITES";
         String OFFLINE = "OFFLINE";
+        String READ = "READ";
 
         String[] ALL_LINKS_ARRAY = {MAIN, RATE, NEW_ARTICLES, EXPERIMENTS, INCEDENTS, INTERVIEWS, OTHERS, STORIES, LEAKS, OBJECTS_1, OBJECTS_2, OBJECTS_3, OBJECTS_RU, NEWS};
         String BASE_API_URL = "http://scpfoundation.ru";
@@ -89,7 +90,7 @@ public interface Constants {
         int INVITE_CTA_MAX_LENGTH = 20;
 
         enum CallToActionReason {
-            REMOVE_ADS, ENABLE_AUTO_SYNC, SYNC_NEED_AUTH, ENABLE_FONTS
+            REMOVE_ADS, ENABLE_AUTO_SYNC, SYNC_NEED_AUTH, ENABLE_FONTS, ADS_WILL_SHOWN_SOON
         }
 
         enum SocialProvider {
@@ -191,6 +192,7 @@ public interface Constants {
             String NO_ADS_SUBS_ENABLED = "no_ads_subs_enabled";
 
             String APP_LANG_VERSIONS = "app_lang_versions";
+            String OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO = "offer_subs_instead_of_rewarded_video";
         }
 
         int REQUEST_INVITE = 1024;
@@ -232,6 +234,7 @@ public interface Constants {
                 String AUTO_SYNC_FROM_SETTINGS = "AUTO_SYNC_FROM_SETTINGS";
                 String DOWNLOAD_DIALOG = "DOWNLOAD_DIALOG";
                 String AFTER_LEVEL_UP = "AFTER_LEVEL_UP";
+                String ADS_WILL_SHOWN_SOON = "ADS_WILL_SHOWN_SOON";
                 String REMOVE_ADS_SETTINGS = "REMOVE_ADS_SETTINGS";
             }
 

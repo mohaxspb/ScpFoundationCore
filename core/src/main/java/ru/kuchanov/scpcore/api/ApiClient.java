@@ -99,6 +99,9 @@ import timber.log.Timber;
  */
 public class ApiClient implements ApiClientModel<Article> {
 
+    private static final String REPLACEMENT_HASH = "____";
+    private static final String REPLACEMENT_SLASH = "_REPLACEMENT_SLASH_";
+
     @SuppressWarnings("unused")
     protected MyPreferenceManager mPreferencesManager;
     protected OkHttpClient mOkHttpClient;
@@ -1613,7 +1616,9 @@ public class ApiClient implements ApiClientModel<Article> {
             String url = article.url.replace(mConstantValues.getBaseApiUrl(), "");
 
             //as firebase can't have dots or # in ref path we must replace it...
-            url = url.replaceAll("#", "____");
+            url = url.replaceAll("#", REPLACEMENT_HASH);
+            //also replace all slashes, as they create inner nodes
+            url = url.replaceAll("/", REPLACEMENT_SLASH);
             Timber.d("id: %s", url);
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -1651,7 +1656,8 @@ public class ApiClient implements ApiClientModel<Article> {
             String url = article.url.replace(mConstantValues.getBaseApiUrl(), "");
 
             //as firebase can't have dots or # in ref path we must replace it...
-            url = url.replaceAll("#", "____");
+            url = url.replaceAll("#", REPLACEMENT_HASH);
+            url = url.replaceAll("/", REPLACEMENT_SLASH);
             Timber.d("id: %s", url);
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();

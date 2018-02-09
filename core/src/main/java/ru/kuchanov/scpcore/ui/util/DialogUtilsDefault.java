@@ -2,8 +2,6 @@ package ru.kuchanov.scpcore.ui.util;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -21,8 +19,8 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.service.DownloadAllServiceDefault;
-import ru.kuchanov.scpcore.ui.base.BaseActivity;
-import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
+import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
+import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -78,8 +76,7 @@ public class DialogUtilsDefault extends ru.kuchanov.scp.downloads.DialogUtils<Ar
         bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.StartScreen.DOWNLOAD_DIALOG);
         FirebaseAnalytics.getInstance(context).logEvent(Constants.Firebase.Analitics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
 
-        BottomSheetDialogFragment subsDF = SubscriptionsFragmentDialog.newInstance();
-        subsDF.show(((AppCompatActivity) context).getSupportFragmentManager(), subsDF.getTag());
+        SubscriptionsActivity.start(context);
     }
 
     @Override

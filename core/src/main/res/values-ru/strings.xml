@@ -16,7 +16,8 @@
     <string name="drawer_item_14">Галерея</string>
     <string name="drawer_item_15">Поиск</string>
     <string name="drawer_item_objects4">Объекты IV</string>
-    <!--настройки-->
+    <string name="drawer_item_read">Прочитанные статьи</string>
+    <!--settings-->
     <string name="enter">Войти</string>
     <string name="settings">Настройки</string>
     <string name="night_mode">Ночной режим</string>
@@ -274,7 +275,7 @@
     <!---->
     <string name="contacts_info"><![CDATA[Напоминаем что следить за прогрессом проекта можно на <b>GitHub</b> и в <b>Trello</b>. А связаться с нами можно через группу в <b>ВК</b> или по <b>e-mail</b>. Вот ссылки:
 <br/><br/>
-GitHub: <a href="https://github.com/mohaxspb/ScpFoundationRu.git">Репозиторий ScpFoundationRu</a>
+GitHub: <a href="https://github.com/mohaxspb/ScpFoundationCore.git">Репозиторий ScpFoundationCore</a>
 <br/><br/>
 Trello: <a href="https://trello.com/b/K96g075n/scp">Доска со списком задач для реализации</a>
 <br/><br/>

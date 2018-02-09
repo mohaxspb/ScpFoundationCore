@@ -9,7 +9,6 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.SwitchCompat;
 import android.text.Html;
 import android.widget.FrameLayout;
@@ -33,7 +32,7 @@ import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyNotificationManager;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
-import ru.kuchanov.scpcore.ui.base.BaseBottomSheetDialogFragment;
+import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -97,9 +96,9 @@ public class AdsSettingsBottomSheetDialogFragment
         List<String> skus = new ArrayList<>();
         String noAdsSku;
         if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
-            noAdsSku = mInAppHelper.getNewNoAdsSubsSkus().get(0);
+            noAdsSku = InAppHelper.getNewNoAdsSubsSkus().get(0);
         } else {
-            noAdsSku = mInAppHelper.getNewSubsSkus().get(0);
+            noAdsSku = InAppHelper.getNewSubsSkus().get(0);
         }
         skus.add(noAdsSku);
         mInAppHelper.getSubsListToBuyObservable(getBaseActivity().getIInAppBillingService(), skus)
@@ -147,9 +146,9 @@ public class AdsSettingsBottomSheetDialogFragment
         Timber.d("onRemoveAdsForMonthClick");
         String noAdsSku;
         if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
-            noAdsSku = mInAppHelper.getNewNoAdsSubsSkus().get(0);
+            noAdsSku = InAppHelper.getNewNoAdsSubsSkus().get(0);
         } else {
-            noAdsSku = mInAppHelper.getNewSubsSkus().get(0);
+            noAdsSku = InAppHelper.getNewSubsSkus().get(0);
         }
         try {
             InAppHelper.startSubsBuy(this, getBaseActivity().getIInAppBillingService(), InAppHelper.InappType.SUBS, noAdsSku);
@@ -166,8 +165,7 @@ public class AdsSettingsBottomSheetDialogFragment
     void onRemoveAdsForFreeClick() {
         Timber.d("onRemoveAdsForFreeClick");
         dismiss();
-        DialogFragment subsDF = FreeAdsDisablingDialogFragment.newInstance();
-        subsDF.show(getActivity().getSupportFragmentManager(), subsDF.getTag());
+        SubscriptionsActivity.start(getActivity(), SubscriptionsActivity.TYPE_DISABLE_ADS_FOR_FREE);
     }
 
     @NonNull

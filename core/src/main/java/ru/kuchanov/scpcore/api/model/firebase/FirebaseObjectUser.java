@@ -28,6 +28,8 @@ public class FirebaseObjectUser implements Serializable{
 
     public int score;
 
+    public int numOfReadArticles;
+
     public List<SocialProviderModel> socialProviders;
 
     public Map<String, ArticleInFirebase> articles;

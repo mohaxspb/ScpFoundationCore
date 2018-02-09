@@ -39,6 +39,8 @@ public interface BaseMvp {
         void showNeedLoginPopup();
 
         void showFreeAdsDisablePopup();
+
+        void showOfferFreeTrialSubscriptionPopup();
     }
 
     interface Presenter<V extends MvpView> extends MvpPresenter<V>, DataSyncActions {

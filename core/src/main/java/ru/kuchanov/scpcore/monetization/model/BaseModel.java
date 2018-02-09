@@ -1,11 +1,13 @@
 package ru.kuchanov.scpcore.monetization.model;
 
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem;
+
 /**
  * Created by mohax on 04.03.2017.
  * <p>
  * for Vjux
  */
-public class BaseModel {
+public class BaseModel implements MyListItem {
 
     public String title;
     public String content;

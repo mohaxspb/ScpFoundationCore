@@ -1,7 +1,5 @@
 package ru.kuchanov.scpcore.di.module;
 
-import android.support.annotation.NonNull;
-
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.FieldNamingPolicy;
@@ -52,20 +50,18 @@ public class NetModule {
 
     @Provides
     @Named("logging")
-    @NonNull
     @Singleton
     Interceptor providesLoggingInterceptor() {
         return new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(
-//                BuildConfig.FLAVOR.equals("dev")
-//                ? HttpLoggingInterceptor.Level.BODY
-//                :
+                BuildConfig.FLAVOR.equals("dev")
+                ? HttpLoggingInterceptor.Level.BODY
+                :
                 HttpLoggingInterceptor.Level.NONE
         );
     }
 
     @Provides
     @Named("headers")
-    @NonNull
     @Singleton
     Interceptor providesHeadersInterceptor() {
         return chain -> {
@@ -80,16 +76,14 @@ public class NetModule {
     }
 
     @Provides
-    @NonNull
     @Singleton
     CallAdapter.Factory providesCallAdapterFactory() {
         return RxJavaCallAdapterFactory.create();
     }
 
     @Provides
-    @NonNull
     @Singleton
-    Converter.Factory providesConverterFactory(@NonNull TypeAdapterFactory typeAdapterFactory) {
+    Converter.Factory providesConverterFactory(TypeAdapterFactory typeAdapterFactory) {
         return GsonConverterFactory.create(
                 new GsonBuilder()
                         .setExclusionStrategies(new ExclusionStrategy() {
@@ -129,10 +123,9 @@ public class NetModule {
     }
 
     @Provides
-    @NonNull
     @Singleton
-    OkHttpClient providesOkHttpClient(@NonNull @Named("headers") Interceptor headersInterceptor,
-                                      @NonNull @Named("logging") Interceptor loggingInterceptor) {
+    OkHttpClient providesOkHttpClient(@Named("headers") Interceptor headersInterceptor,
+                                      @Named("logging") Interceptor loggingInterceptor) {
         return new OkHttpClient.Builder()
                 .addInterceptor(headersInterceptor)
                 .addInterceptor(loggingInterceptor)
@@ -143,13 +136,12 @@ public class NetModule {
     }
 
     @Provides
-    @NonNull
     @Named("vps")
     @Singleton
     Retrofit providesVpsRetrofit(
-            @NonNull OkHttpClient okHttpClient,
-            @NonNull Converter.Factory converterFactory,
-            @NonNull CallAdapter.Factory callAdapterFactory
+            OkHttpClient okHttpClient,
+            Converter.Factory converterFactory,
+            CallAdapter.Factory callAdapterFactory
     ) {
         return new Retrofit.Builder()
                 .baseUrl(BuildConfig.TOOLS_API_URL)
@@ -160,13 +152,12 @@ public class NetModule {
     }
 
     @Provides
-    @NonNull
     @Named("scp")
     @Singleton
     Retrofit providesScpRetrofit(
-            @NonNull OkHttpClient okHttpClient,
-            @NonNull Converter.Factory converterFactory,
-            @NonNull CallAdapter.Factory callAdapterFactory
+            OkHttpClient okHttpClient,
+            Converter.Factory converterFactory,
+            CallAdapter.Factory callAdapterFactory
     ) {
         return new Retrofit.Builder()
                 .baseUrl(BuildConfig.SCP_API_URL)
@@ -177,32 +168,30 @@ public class NetModule {
     }
 
     @Provides
-    @NonNull
     @Singleton
     ApiClient providerApiClient(
-            @NonNull OkHttpClient okHttpClient,
-            @Named("vps") @NonNull Retrofit vpsRetrofit,
-            @Named("scp") @NonNull Retrofit scpRetrofit,
-            @NonNull MyPreferenceManager preferencesManager,
-            @NonNull Gson gson,
-            @NonNull ConstantValues constantValues
+            OkHttpClient okHttpClient,
+            @Named("vps") Retrofit vpsRetrofit,
+            @Named("scp") Retrofit scpRetrofit,
+            MyPreferenceManager preferencesManager,
+            Gson gson,
+            ConstantValues constantValues
     ) {
         return getApiClient(okHttpClient, vpsRetrofit, scpRetrofit, preferencesManager, gson, constantValues);
     }
 
     protected ApiClient getApiClient(
-            @NonNull OkHttpClient okHttpClient,
-            @Named("vps") @NonNull Retrofit vpsRetrofit,
-            @Named("scp") @NonNull Retrofit scpRetrofit,
-            @NonNull MyPreferenceManager preferencesManager,
-            @NonNull Gson gson,
-            @NonNull ConstantValues constantValues
+            OkHttpClient okHttpClient,
+            @Named("vps") Retrofit vpsRetrofit,
+            @Named("scp") Retrofit scpRetrofit,
+            MyPreferenceManager preferencesManager,
+            Gson gson,
+            ConstantValues constantValues
     ) {
         return new ApiClient(okHttpClient, vpsRetrofit, scpRetrofit, preferencesManager, gson, constantValues);
     }
 
     @Provides
-    @NonNull
     @Singleton
     TypeAdapterFactory providesTypeAdapterFactory() {
         return new TypeAdapterFactory() {
@@ -234,14 +223,12 @@ public class NetModule {
     }
 
     @Provides
-    @NonNull
     @Singleton
     Gson providesGson() {
         return new GsonBuilder().create();
     }
 
     @Provides
-    @NonNull
     @Singleton
     ConstantValues providesConstants() {
         return getConstants();

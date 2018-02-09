@@ -16,6 +16,8 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.google.gson.Gson;
 
+import org.joda.time.Duration;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -71,9 +73,8 @@ public class AppInstallReceiver extends BroadcastReceiver {
             mMyPreferencesManager.setAppInstalledForPackage(packageName);
             mMyPreferencesManager.applyAwardForAppInstall();
 
-            long numOfMillis = FirebaseRemoteConfig.getInstance()
-                    .getLong(Constants.Firebase.RemoteConfigKeys.APP_INSTALL_REWARD_IN_MILLIS);
-            long hours = numOfMillis / 1000 / 60 / 60;
+            long numOfMillis = FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.APP_INSTALL_REWARD_IN_MILLIS);
+            int hours = Duration.millis(numOfMillis).toStandardHours().getHours();
 
             //update score
             updateScoreFromAppInstall(packageName);

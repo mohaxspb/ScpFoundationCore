@@ -1,6 +1,7 @@
 package ru.kuchanov.scpcore.db;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Pair;
 
@@ -55,7 +56,7 @@ public class DbProvider implements DbProviderModel<Article> {
     }
 
     public Observable<RealmResults<Article>> getArticlesByIds(@NonNull List<String> urls) {
-        if(urls.isEmpty()){
+        if (urls.isEmpty()) {
             throw new IllegalArgumentException("Can't query by empty data list");
         }
         return mRealm.where(Article.class)
@@ -82,6 +83,15 @@ public class DbProvider implements DbProviderModel<Article> {
                 .notEqualTo(Article.FIELD_URL, mConstantValues.getAbout())
                 .notEqualTo(Article.FIELD_URL, mConstantValues.getNews())
                 .notEqualTo(Article.FIELD_URL, mConstantValues.getStories())
+                .findAllSortedAsync(field, order)
+                .asObservable()
+                .filter(RealmResults::isLoaded)
+                .filter(RealmResults::isValid);
+    }
+
+    public Observable<RealmResults<Article>> getReadArticlesSortedAsync(String field, Sort order) {
+        return mRealm.where(Article.class)
+                .notEqualTo(Article.FIELD_IS_IN_READEN, false)
                 .findAllSortedAsync(field, order)
                 .asObservable()
                 .filter(RealmResults::isLoaded)
@@ -199,7 +209,7 @@ public class DbProvider implements DbProviderModel<Article> {
                             case Article.FIELD_IS_IN_OBJECTS_RU:
                                 application.isInObjectsRu = Article.ORDER_NONE;
                                 break;
-                                //other filials
+                            //other filials
                             case Article.FIELD_IS_IN_OBJECTS_FR:
                                 application.isInObjectsFr = Article.ORDER_NONE;
                                 break;
@@ -215,7 +225,7 @@ public class DbProvider implements DbProviderModel<Article> {
                             case Article.FIELD_IS_IN_OBJECTS_DE:
                                 application.isInObjectsDe = Article.ORDER_NONE;
                                 break;
-                                //////
+                            //////
                             case Article.FIELD_IS_IN_EXPERIMETS:
                                 application.isInExperiments = Article.ORDER_NONE;
                                 break;
@@ -262,7 +272,7 @@ public class DbProvider implements DbProviderModel<Article> {
                                 case Article.FIELD_IS_IN_OBJECTS_RU:
                                     applicationInDb.isInObjectsRu = i;
                                     break;
-                                    //other filials
+                                //other filials
                                 case Article.FIELD_IS_IN_OBJECTS_FR:
                                     applicationInDb.isInObjectsFr = i;
                                     break;
@@ -278,7 +288,7 @@ public class DbProvider implements DbProviderModel<Article> {
                                 case Article.FIELD_IS_IN_OBJECTS_DE:
                                     applicationInDb.isInObjectsDe = i;
                                     break;
-                                    //////////
+                                //////////
                                 case Article.FIELD_IS_IN_EXPERIMETS:
                                     applicationInDb.isInExperiments = i;
                                     break;
@@ -681,6 +691,22 @@ public class DbProvider implements DbProviderModel<Article> {
                 .filter(RealmResults::isLoaded)
                 .filter(RealmResults::isValid)
                 .flatMap(users -> Observable.just(users.isEmpty() ? null : mRealm.copyFromRealm(users.first())));
+    }
+
+    /**
+     * @return Observable, that emits unmanaged user
+     */
+    public Observable<User> getUserSyncUnmanaged() {
+        return mRealm.where(User.class)
+                .findAll()
+                .asObservable()
+                .flatMap(users -> Observable.just(users.isEmpty() ? null : mRealm.copyFromRealm(users.first())));
+    }
+
+    @Nullable
+    public User getUserUnmanaged() {
+        User user = mRealm.where(User.class).findFirst();
+        return mRealm.where(User.class).findFirst() == null ? null : mRealm.copyFromRealm(user);
     }
 
     public User getUserSync() {

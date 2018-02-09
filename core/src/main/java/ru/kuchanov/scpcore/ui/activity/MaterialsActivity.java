@@ -13,12 +13,10 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
-import ru.kuchanov.scpcore.mvp.contract.MaterialsScreenMvp;
-import ru.kuchanov.scpcore.ui.base.BaseActivity;
-import ru.kuchanov.scpcore.ui.base.BaseDrawerActivity;
+import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsScreenMvp;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
-import ru.kuchanov.scpcore.ui.fragment.ArticleFragment;
-import ru.kuchanov.scpcore.ui.fragment.MaterialsAllFragment;
+import ru.kuchanov.scpcore.ui.fragment.article.ArticleFragment;
+import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsAllFragment;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
@@ -84,6 +82,9 @@ public class MaterialsActivity
 
         if (id == R.id.invite) {
             IntentUtils.firebaseInvite(this);
+        } else if (id == R.id.leaderboard) {
+            SubscriptionsActivity.start(this, SubscriptionsActivity.TYPE_LEADERBOARD);
+            return true;
         } else  if (id == R.id.about) {
             link = mConstantValues.getAbout();
         } else if (id == R.id.mostRatedArticles) {
@@ -105,6 +106,8 @@ public class MaterialsActivity
             link = Constants.Urls.FAVORITES;
         } else if (id == R.id.offline) {
             link = Constants.Urls.OFFLINE;
+        } else if (id == R.id.read) {
+            link = Constants.Urls.READ;
         } else if (id == R.id.gallery) {
             startGalleryActivity();
         } else if (id == R.id.siteSearch) {

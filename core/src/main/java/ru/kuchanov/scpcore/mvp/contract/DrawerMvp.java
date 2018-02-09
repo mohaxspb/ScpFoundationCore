@@ -1,6 +1,5 @@
 package ru.kuchanov.scpcore.mvp.contract;
 
-import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse;
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp;
 
 /**
@@ -17,14 +16,12 @@ public interface DrawerMvp {
 
         void onReceiveRandomUrl(String url);
 
-        void showLeaderboard(LeaderBoardResponse leaderBoardResponse);
+        void showLeaderboard();
     }
 
     interface Presenter<V extends View> extends BaseActivityMvp.Presenter<V> {
         void onNavigationItemClicked(int id);
 
         void getRandomArticleUrl();
-
-        void onAvatarClicked();
     }
 }

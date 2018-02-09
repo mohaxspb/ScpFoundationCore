@@ -2,7 +2,7 @@ package ru.dante.scpfoundation.util;
 
 import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
-import ru.kuchanov.scpcore.ui.base.BaseActivity;
+import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 
 /**
  * Created by mohax on 24.07.2017.

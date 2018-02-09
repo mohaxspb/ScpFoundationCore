@@ -6,6 +6,8 @@
     <attr name="navigation_view_style" format="reference"/>
     <attr name="navigationViewItemTextColor" format="color|reference"/>
     <attr name="navigationViewItemIconColor" format="color|reference"/>
+    <!--snackbar-->
+    <attr name="snackbarActionTextColor" format="color|reference"/>
     <!---->
     <attr name="colorFAB" format="color|reference"/>
     <attr name="newArticlesTextColor" format="color|reference"/>

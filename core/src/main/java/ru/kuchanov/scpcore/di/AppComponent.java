@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.di;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -22,6 +24,7 @@ import ru.kuchanov.scpcore.ui.activity.LicenceActivity;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 import ru.kuchanov.scpcore.ui.activity.SplashActivity;
+import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import ru.kuchanov.scpcore.ui.activity.TagSearchActivity;
 import ru.kuchanov.scpcore.ui.adapter.ArticleAdapter;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
@@ -31,30 +34,32 @@ import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerCardDesignAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SubscriptionsAdapter;
 import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.CC3LicenseDialogFragment;
-import ru.kuchanov.scpcore.ui.dialog.FreeAdsDisablingDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
-import ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
-import ru.kuchanov.scpcore.ui.fragment.ArticleFragment;
-import ru.kuchanov.scpcore.ui.fragment.FavoriteArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.MaterialsArchiveFragment;
-import ru.kuchanov.scpcore.ui.fragment.MaterialsExperimentsFragment;
-import ru.kuchanov.scpcore.ui.fragment.MaterialsIncidentsFragment;
-import ru.kuchanov.scpcore.ui.fragment.MaterialsInterviewsFragment;
-import ru.kuchanov.scpcore.ui.fragment.MaterialsJokesFragment;
-import ru.kuchanov.scpcore.ui.fragment.MaterialsOtherFragment;
-import ru.kuchanov.scpcore.ui.fragment.Objects1ArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.Objects2ArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.Objects3ArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.Objects4ArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.ObjectsRuArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.OfflineArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.RatedArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.RecentArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.SiteSearchArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.TagsSearchFragment;
-import ru.kuchanov.scpcore.ui.fragment.TagsSearchResultsArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.article.ArticleFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.FavoriteArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects1ArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects2ArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects3ArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects4ArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.ObjectsRuArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.OfflineArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.RatedArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.ReadArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.RecentArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsArchiveFragment;
+import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsExperimentsFragment;
+import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsIncidentsFragment;
+import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsInterviewsFragment;
+import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsJokesFragment;
+import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsOtherFragment;
+import ru.kuchanov.scpcore.ui.fragment.monetization.FreeAdsDisableActionsFragment;
+import ru.kuchanov.scpcore.ui.fragment.monetization.LeaderboardFragment;
+import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment;
+import ru.kuchanov.scpcore.ui.fragment.search.SiteSearchArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.tags.TagsSearchFragment;
+import ru.kuchanov.scpcore.ui.fragment.tags.TagsSearchResultsArticlesFragment;
 import ru.kuchanov.scpcore.ui.holder.ArticleImageHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleSpoilerHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTableHolder;
@@ -89,6 +94,8 @@ public interface AppComponent {
     void inject(TagSearchActivity activity);
 
     void inject(SplashActivity activity);
+
+    void inject(SubscriptionsActivity activity);
 
     void inject(ArticleFragment fragment);
 
@@ -128,13 +135,17 @@ public interface AppComponent {
 
     void inject(TagsSearchResultsArticlesFragment fragment);
 
+    void inject(ReadArticlesFragment fragment);
+
+    void inject(SubscriptionsFragment fragment);
+
+    void inject(FreeAdsDisableActionsFragment fragment);
+
+    void inject(@NotNull LeaderboardFragment leaderboardFragment);
+
     void inject(TextSizeDialogFragment dialogFragment);
 
     void inject(NewVersionDialogFragment dialogFragment);
-
-    void inject(SubscriptionsFragmentDialog dialogFragment);
-
-    void inject(FreeAdsDisablingDialogFragment dialogFragment);
 
     void inject(SettingsBottomSheetDialogFragment dialogFragment);
 

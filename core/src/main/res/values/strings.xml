@@ -7,11 +7,7 @@
     <string name="feedback_email" translatable="false">neva.spb.rx@gmail.com</string>
     <string name="image_title" translatable="false">scp_image</string>
     <string name="image_description" translatable="false">Image from gallery of SCP Foundation app</string>
-
-    <string name="pref_favorites" translatable="false">pref_favorites</string>
-    <string name="read_articles" translatable="false">read_articles</string>
-    <string name="restoring_data" translatable="false">Restoring data</string>
-    <string name="restored_data"  translatable="false">Restored data: read - %1$d, favorites - %2$d</string>
+    <string name="max_level" translatable="false">Max level</string>
     <!--drawer items-->
     <string name="drawer_item_1">About the SCP Foundation</string>
     <string name="drawer_item_2">Site News Hub</string>
@@ -27,10 +23,11 @@
     <string name="drawer_item_14">Gallery</string>
     <string name="drawer_item_15">Search</string>
     <string name="drawer_item_objects4">Series IV</string>
+    <string name="drawer_item_read">Read articles</string>
 
     <string name="drawer_item_11">Tales</string>
     <string name="drawer_item_9">Series Ru</string>
-    <!--настройки-->
+    <!--settings-->
     <string name="settings">Settings</string>
     <string name="night_mode">Night mode</string>
     <string name="text_size">Text size</string>
@@ -307,4 +304,50 @@ Trello: <a href="https://trello.com/b/K96g075n/scp">A taskboard with a list of t
 E-mail: <a href="mailto:neva.spb.rx@gmail.com">For any questions</a>
 <br/><br/>
 Thanks for using our app!]]></string>
+    <!--todo JANUARY release-->
+    <string name="subs_main_text">Здесь можно получить специальные разрешения Фонда и оказать помощь разработчикам. Наше приложение имеет <![CDATA[<a href="https://github.com/mohaxspb/ScpFoundationCore">открытый исходный код</a>]]> и <![CDATA[<a href="https://www.youtube.com/watch?v=5RuwbKvLDs0">крутую облачную синхронизацию</a>]]>. Если тебе понравилось наше приложение, ты  можешь поддержать разработчиков. Все средтва идут на поддержание проекта. Также у вас есть возможность поддержать нас  просто посмотрев рекламу. Мы будем рады любому пожертвованию. Спасибо!</string>
+    <string name="subs_free_actions_title">Отключить рекламу бесплатно!</string>
+    <string name="subs_free_actions_card_title">Поддержи нас</string>
+    <string name="subs_free_actions_card_description">Отлючи рекламу, увеличь лемит статей и заработай очки БЕСПЛАТНО!</string>
+    <string name="subs_description">Отлючение рекламы,автоматическая  облачная синхронизация, безлимитное скачивание статей и атмосферные шрифты</string>
+    <string name="subs_level_5_gain">Получить 5-й уровень допуска</string>
+    <string name="subs_no_ads_title">Протокол “Молчание”</string>
+    <string name="subs_no_ads_description">Запуск мем-агента блокирующего любое проявление рекламного агента в приложении</string>
+    <string name="subs_1_month_title">Лаборант</string>
+    <string name="subs_3_month_title">Младший научный сотрудник</string>
+    <string name="subs_6_month_title">Научный сотрудник</string>
+    <string name="subs_12_month_title">Старший научный сотрудник</string>
+    <string name="subs_full_description">Отлючение рекламы, автоматическая облачная синхронизация, безлимитное скачивание статей и атмосферные шрифты</string>
+    <string name="subs_no_ads_label">Месяц без рекламы</string>
+    <string name="subs_1_month_label">Расширенная версия на месяц</string>
+    <string name="subs_3_month_label">Расширенная версия на 3 месяца</string>
+    <string name="subs_6_month_label">Расширенная версия на пол года</string>
+    <string name="subs_12_month_label">Расширенная версия на год</string>
+    <string name="subs_cur_label">Ваш текущий статус</string>
+    <string name="subs_level_5_label">Получить 5-й уровень допуска</string>
+    <string name="subs_cur_empty_title">██████ - не назначено</string>
+    <string name="subs_level_5_title">5-й уровень допуска</string>
+    <string name="subs_percent">-%s%%</string>
+    <string name="subs_leaderboard_activity_title">Leaderboard</string>
+    <string name="subs_activity_title">Поддержка разработчиков</string>
+    <string name="subs_level_5_description">10000 очков, повышение рейтинга и увеличение лимита offline статей на 200 статей</string>
+    <string name="free_ads_invite_title">Пригласи друзей в приложение</string>
+    <string name="free_ads_rewarded_video_title">Посмотри видео</string>
+    <string name="free_ads_auth_title">Авторизуйся</string>
+    <string name="free_ads_simple_subtitle">А мы отключим рекламу на %1$d часа и подарим тебе %2$d очков</string>
+    <string name="free_ads_app_install_label">Поставь другие наши приложения</string>
+    <string name="free_ads_app_install_title">Установи, а мы отключим рекламу на %1$d часа и подарим тебе %2$d очков</string>
+    <string name="free_ads_vk_group_label">Вступи в нашу группу в ВК</string>
+    <string name="free_ads_vk_group_title">Вступи, а мы отключим рекламу на %1$d часа и подарим тебе %2$d очков</string>
+    <string name="free_ads_activity_title">Отключение рекламы</string>
+    <string name="leaderboard_activity_title">Рейтинг агентов</string>
+    <string name="leaderboard_inapp_title">Поднимись в рейтинге</string>
+    <string name="leaderboard_inapp_description">Используй хитрость и свои связи в Фонде чтобы  обойти коллег и подняться в рейтинге</string>
+    <string name="leaderboard_place">%d место</string>
+    <string name="leaderboard_inapp_label">Подняться в рейтинге (+10000 очков)</string>
+    <string name="leaderboard_articles_read">%d статей прочитанно</string>
+    <string name="score_num">%d очков</string>
+    <string name="level_num">%d уровень</string>
+    <string name="drawer_item_leaderboard">Рейтинг агентов</string>
+    <string name="ads_will_be_shown_soon">Скоро будет показана реклама! Хотите отключить её заранее?</string>
 </resources>

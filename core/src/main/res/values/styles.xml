@@ -7,12 +7,15 @@
         <item name="colorPrimaryDark">@android:color/black</item>
         <!--(индикаторы нажатий(если незадано иначе), цвет ссылок,дефолтный цвет прогрессбара)-->
         <item name="colorAccent">@color/material_indigo_500</item>
+        <item name="android:textColor">@color/material_blue_gray_700</item>
         <!--(цвет стандарного текста левого/правого меню,цает верхнего тулбара)-->
         <item name="android:textColorPrimary">@color/material_blue_gray_50</item>
         <!--(не ясно за что отвечает)-->
         <item name="android:textColorPrimaryInverse">@color/material_green_500</item>
         <!--(иконки в левом меню)-->
         <item name="android:textColorSecondary">@color/material_blue_gray_700</item>
+        <!--overflow menu items-->
+        <item name="android:itemTextAppearance">@style/popupTextAppearanceLight</item>
         <!--(гамбургер,триточки(overflow),не нажатый чекбокс)-->
         <item name="colorControlNormal">@color/material_blue_gray_50</item>
         <item name="android:windowBackground">@color/material_blue_gray_50</item>
@@ -21,9 +24,9 @@
         <item name="quoteBackgroundColor">@color/quote_bg_color_light</item>
         <item name="artListCardBackgroundColor">@color/my_material_grey_300</item>
 
-        <item name="popupMenuStyle">@style/хуй_light</item>
+        <item name="popupMenuStyle">@style/popupLight</item>
         <item name="dropDownListViewStyle">@style/OwerFlowMenuBackgroundLight</item>
-        <item name="android:textAppearanceLargePopupMenu">@style/хуй_light</item>
+        <item name="android:textAppearanceLargePopupMenu">@style/popupLight</item>
         <item name="readTextColor">@color/material_grey_400</item>
         <!--navigationView-->
         <item name="navigation_view_style">@style/navigationStyleLight</item>
@@ -39,9 +42,10 @@
         <item name="readIconUnselected">@drawable/ic_drafts_black_24dp</item>
         <item name="spoilerColorTitle">@color/material_red_800</item>
 
+        <item name="snackbarActionTextColor">@color/material_green_500</item>
         <!--icons-->
-        <item name="iconShare">@drawable/ic_share_black</item>
-        <item name="iconTextSizeDialog">@drawable/ic_text_size_white_24dp</item>
+        <!--<item name="iconShare">@drawable/ic_share_black</item>-->
+        <!--<item name="iconTextSizeDialog">@drawable/ic_text_fields_black_24dp</item>-->
         <item name="iconArrowUp">@drawable/ic_keyboard_arrow_up_black_24dp</item>
         <item name="iconArrowDown">@drawable/ic_keyboard_arrow_down_black_24dp</item>
 
@@ -65,18 +69,6 @@
         <item name="md_negative_color">@color/zbs_color_red</item>
         <!--<item name="md_btn_ripple_color">@color/zbs_color_red</item>-->
         <item name="md_widget_color">@color/zbs_color_red</item>
-        <!--spinner style-->
-        <!--<item name="spinnerStyle">@style/ColoredSpinners.Light</item>-->
-    </style>
-
-    <style name="хуй_light" parent="Base.TextAppearance.AppCompat.Widget.PopupMenu.Large">
-        <!--(цвет текста в правом меню триточки(оверфлоу))-->
-        <item name="android:textColor">@color/material_blue_gray_50</item>
-    </style>
-
-    <style name="OwerFlowMenuBackgroundLight" parent="@style/Widget.AppCompat.ListView.DropDown">
-        <!-- (цвет бекграунда правого меню триточки(оверфлоу))-->
-        <item name="android:background">#724646</item>
     </style>
 
     <style name="SCP.Theme.Light" parent="Base.Theme.Light">
@@ -91,12 +83,13 @@
         <item name="colorPrimaryDark">@android:color/black</item>
         <!--(индикаторы нажатий(если незадано иначе), цвет ссылок,дефолтный цвет прогрессбара)-->
         <item name="colorAccent">@color/material_amber_500</item>
+        <item name="android:textColor">@color/material_blue_gray_50</item>
         <!--(цвет стандарного текста, левого/правого меню, цвет верхнего тулбара(заголовка)-->
         <item name="android:textColorPrimary">@color/material_blue_gray_300</item>
-        <!--(не ясно за что отвечает)-->
-        <item name="android:textColorPrimaryInverse">@color/material_green_500</item>
         <!--(иконки в левом меню)-->
         <item name="android:textColorSecondary">@color/material_blue_gray_100</item>
+        <!--overflow menu items-->
+        <item name="android:itemTextAppearance">@style/popupTextAppearanceDark</item>
         <!--(гамбургер,триточки(overflow),не нажатый чекбокс)-->
         <item name="colorControlNormal">@color/material_blue_gray_50</item>
         <item name="android:windowBackground">@color/material_blue_gray_800</item>
@@ -107,7 +100,7 @@
 
         <!--<item name="popupMenuStyle">@style/OdnakoPopupMenuLight</item>-->
         <item name="dropDownListViewStyle">@style/OwerFlowMenuBackgroundDark</item>
-        <item name="android:textAppearanceLargePopupMenu">@style/хуй_Dark</item>
+        <item name="android:textAppearanceLargePopupMenu">@style/popupDark</item>
         <item name="readTextColor">@color/material_grey_700</item>
         <!--navigation view-->
         <item name="navigation_view_style">@style/navigationStyleDark</item>
@@ -123,9 +116,10 @@
         <item name="readIconUnselected">@drawable/ic_drafts_white_24dp</item>
         <item name="spoilerColorTitle">@color/material_amber_500</item>
 
+        <item name="snackbarActionTextColor">@color/material_amber_500</item>
         <!--icons-->
-        <item name="iconShare">@drawable/ic_share_blue_grey_50_48dp</item>
-        <item name="iconTextSizeDialog">@drawable/ic_text_size_white_24dp</item>
+        <!--<item name="iconShare">@drawable/ic_share_blue_grey_50_48dp</item>-->
+        <!--<item name="iconTextSizeDialog">@drawable/ic_text_fields_black_24dp</item>-->
         <item name="iconArrowUp">@drawable/ic_keyboard_arrow_up_black_24dp</item>
         <item name="iconArrowDown">@drawable/ic_keyboard_arrow_down_black_24dp</item>
 
@@ -153,19 +147,37 @@
         <!--<item name="spinnerStyle">@style/ColoredSpinners.Dark</item>-->
     </style>
 
-    <style name="хуй_Dark" parent="Base.TextAppearance.AppCompat.Widget.PopupMenu.Large">
+    <style name="popupDark" parent="Base.TextAppearance.AppCompat.Widget.PopupMenu.Large">
         <!--(цвет текста в правом меню триточки(оверфлоу))-->
         <item name="android:textColor">@color/material_blue_gray_50</item>
+    </style>
+
+    <style name="popupLight" parent="Base.TextAppearance.AppCompat.Widget.PopupMenu.Large">
+        <item name="android:textColor">@color/material_blue_gray_50</item>
+    </style>
+
+    <style name="popupTextAppearanceLight" parent="Base.TextAppearance.AppCompat.Widget.PopupMenu.Large">
+        <item name="actionMenuTextColor">@color/material_blue_gray_50</item>
+        <item name="android:actionMenuTextColor">@color/material_blue_gray_50</item>
+    </style>
+
+    <style name="popupTextAppearanceDark" parent="Base.TextAppearance.AppCompat.Widget.PopupMenu.Large">
+        <item name="actionMenuTextColor">@color/material_blue_gray_50</item>
+        <item name="android:actionMenuTextColor">@color/material_blue_gray_50</item>
     </style>
 
     <style name="OwerFlowMenuBackgroundDark" parent="@style/Widget.AppCompat.ListView.DropDown">
         <!-- (цвет бекграунда правого меню триточки(оверфлоу))-->
         <item name="android:background">?colorPrimary</item>
-
     </style>
 
-    <style name="SCP.Theme.Dark" parent="Base.Theme.Dark">
+    <style name="OwerFlowMenuBackgroundLight" parent="@style/Widget.AppCompat.ListView.DropDown">
+        <!-- (цвет бекграунда правого меню триточки(оверфлоу))-->
+        <item name="android:background">#724646</item>
+        <item name="android:textColor">@color/material_blue_gray_50</item>
     </style>
+
+    <style name="SCP.Theme.Dark" parent="Base.Theme.Dark"/>
 
     <style name="navigationStyleDark" parent="SCP.Theme.Dark">
         <item name="colorControlHighlight">@color/material_grey_500</item>
@@ -175,10 +187,6 @@
     <style name="navigationStyleLight" parent="SCP.Theme.Light">
         <item name="colorControlHighlight">@color/material_grey_400</item>
         <item name="android:windowBackground">@color/material_blue_gray_50</item>
-    </style>
-
-    <style name="MyTextAppearanceLarge" parent="android:style/TextAppearance.Large">
-        <item name="android:textColor">@color/material_blue_gray_50</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">

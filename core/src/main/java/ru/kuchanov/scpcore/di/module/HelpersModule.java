@@ -1,7 +1,5 @@
 package ru.kuchanov.scpcore.di.module;
 
-import android.support.annotation.NonNull;
-
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -28,62 +26,57 @@ import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 public class HelpersModule {
 
     @Provides
-    @NonNull
 //    @Singleton
     DialogUtils providesDialogUtils(
-            @NonNull MyPreferenceManager preferenceManager,
-            @NonNull DbProviderFactory dbProviderFactory,
-            @NonNull ApiClient apiClient
+             MyPreferenceManager preferenceManager,
+             DbProviderFactory dbProviderFactory,
+             ApiClient apiClient
     ) {
         return new DialogUtils(preferenceManager, dbProviderFactory, apiClient);
     }
 
     @Provides
-    @NonNull
     @Singleton
     ru.kuchanov.scp.downloads.DialogUtils<Article> providesDownloadAllDialogUtils(
-            @NonNull MyPreferenceManager preferenceManager,
-            @NonNull DbProviderFactory dbProviderFactory,
-            @NonNull ApiClient apiClient,
-            @NonNull ConstantValues constantValues
+             MyPreferenceManager preferenceManager,
+             DbProviderFactory dbProviderFactory,
+             ApiClient apiClient,
+             ConstantValues constantValues
     ) {
         return getDownloadAllDialogUtils(preferenceManager, dbProviderFactory, apiClient, constantValues);
     }
 
     protected ru.kuchanov.scp.downloads.DialogUtils<Article> getDownloadAllDialogUtils(
-            @NonNull MyPreferenceManager preferenceManager,
-            @NonNull DbProviderFactory dbProviderFactory,
-            @NonNull ApiClient apiClient,
-            @NonNull ConstantValues constantValues
+             MyPreferenceManager preferenceManager,
+             DbProviderFactory dbProviderFactory,
+             ApiClient apiClient,
+             ConstantValues constantValues
     ) {
         return new DialogUtilsDefault(preferenceManager, dbProviderFactory, apiClient, constantValues, DownloadAllServiceDefault.class);
     }
 
     @Provides
-    @NonNull
     @Singleton
-    SetTextViewHTML providesSetTextViewHTML(@NonNull ConstantValues constantValues) {
+    SetTextViewHTML providesSetTextViewHTML( ConstantValues constantValues) {
         return new SetTextViewHTML(constantValues);
     }
 
     @Provides
-    @NonNull
     @Singleton
-    MaterialsActivity.MaterialClickListener providesMaterialClickListener(@NonNull ConstantValues constantValues) {
+    MaterialsActivity.MaterialClickListener providesMaterialClickListener( ConstantValues constantValues) {
         return getMaterialClickListenerImpl(constantValues);
     }
 
-    protected MaterialsActivity.MaterialClickListener getMaterialClickListenerImpl(@NonNull ConstantValues constantValues) {
+    protected MaterialsActivity.MaterialClickListener getMaterialClickListenerImpl( ConstantValues constantValues) {
         return new MaterialClickListenerDefault(constantValues);
     }
 
     @Provides
-    @NonNull
     @Singleton
     InAppHelper providesInappHelper(
-            @NonNull MyPreferenceManager preferenceManager,
-            @NonNull DbProviderFactory dbProviderFactory,
-            @NonNull ApiClient apiClient
+             MyPreferenceManager preferenceManager,
+             DbProviderFactory dbProviderFactory,
+             ApiClient apiClient
     ) {
         return new InAppHelper(preferenceManager, dbProviderFactory, apiClient);
     }

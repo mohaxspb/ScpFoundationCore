@@ -60,7 +60,7 @@ public class HolderMin extends RecyclerView.ViewHolder {
     }
 
     public void bind(Article article) {
-        this.mData = article;
+        mData = article;
         Context context = itemView.getContext();
 
         float uiTextScale = mMyPreferenceManager.getUiTextScale();

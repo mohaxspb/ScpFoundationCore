@@ -12,7 +12,7 @@
         android:layout_height="100dp"
         android:layout_centerInParent="true"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/ic_launcher"
+        android:src="@mipmap/ic_launcher"
         />
 
     <LinearLayout
@@ -52,9 +52,10 @@
             android:layout_marginBottom="@dimen/defaultMarginSmall"
             android:layout_marginEnd="@dimen/defaultMargin"
             android:layout_marginRight="@dimen/defaultMargin"
+            android:scaleType="fitXY"
             android:background="?selectableItemBackgroundBorderless"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/ic_help_outline_white_48dp"
+            android:src="@drawable/ic_help_outline_white_24dp"
             tools:ignore="RtlHardcoded,RtlSymmetry"
             />
     </LinearLayout>
