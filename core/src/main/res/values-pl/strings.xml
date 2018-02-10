@@ -310,7 +310,7 @@ Dziękujemy za korzystanie z naszej aplikacji!]]></string>
     <string name="subs_level_5_description">10000 punktów, zwiększenie ratingu i limit artykułów offline na 200 artykuły</string>
     <string name="free_ads_invite_title">Zaproś znajomych do aplikacji</string>
     <string name="free_ads_rewarded_video_title">Obejrzyj wideo</string>
-    <string name="free_ads_auth_title">Авторизуйся</string>
+    <string name="free_ads_auth_title">Log in</string>
     <string name="free_ads_simple_subtitle">I wyłączymy reklamę w godzinach %$1d i zwrócimy punkty %$2d</string>
     <string name="free_ads_app_install_label">Umieść nasze inne aplikacje</string>
     <string name="free_ads_app_install_title">Wyłączymy reklamę w godzinach %$1d i zwrócimy punkty %$2d</string>
