@@ -17,18 +17,17 @@ import rx.Observable;
 import timber.log.Timber;
 
 public abstract class BaseObjectsArticlesPresenter<V extends BaseArticlesListMvp.View>
-        extends BaseListArticlesPresenter<V>
-        implements BaseArticlesListMvp.Presenter<V> {
+        extends BaseListArticlesPresenter<V> {
 
     private boolean isAlreadyTriedToLoadInitialData;
 
     protected ConstantValues mConstantValues;
 
     public BaseObjectsArticlesPresenter(
-            MyPreferenceManager myPreferencesManager,
-            DbProviderFactory dbProviderFactory,
-            ApiClient apiClient,
-            ConstantValues constantValues
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient,
+            final ConstantValues constantValues
     ) {
         super(myPreferencesManager, dbProviderFactory, apiClient);
         mConstantValues = constantValues;
@@ -56,12 +55,12 @@ public abstract class BaseObjectsArticlesPresenter<V extends BaseArticlesListMvp
     }
 
     @Override
-    protected Observable<List<Article>> getApiObservable(int offset) {
+    protected Observable<List<Article>> getApiObservable(final int offset) {
         return mApiClient.getObjectsArticles(getObjectsLink());
     }
 
     @Override
-    protected Observable<Pair<Integer, Integer>> getSaveToDbObservable(List<Article> data, int offset) {
+    protected Observable<Pair<Integer, Integer>> getSaveToDbObservable(final List<Article> data, final int offset) {
         return mDbProviderFactory.getDbProvider().saveObjectsArticlesList(data, getObjectsInDbFieldName());
     }
 }

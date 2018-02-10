@@ -53,6 +53,20 @@ public class StorageModuleImpl extends StorageModule {
                 oldVersion++;
             }
 
+            if (oldVersion == 3) {
+                schema.create(LeaderboardUser.class.getSimpleName())
+                        .addField(LeaderboardUser.FIELD_UID, String.class, FieldAttribute.PRIMARY_KEY)
+                        .addField(LeaderboardUser.FIELD_FULL_NAME, String.class)
+                        .addField(LeaderboardUser.FIELD_AVATAR, String.class)
+                        .addField(LeaderboardUser.FIELD_SCORE, Integer.class)
+                        .addField(LeaderboardUser.FIELD_NUM_OF_READ_ARTICLES, Integer.class)
+                        .addField(LeaderboardUser.FIELD_LEVEL_NUM, Integer.class)
+                        .addField(LeaderboardUser.FIELD_SCORE_TO_NEXT_LEVEL, Integer.class)
+                        .addField(LeaderboardUser.FIELD_CUR_LEVEL_SCORE, Integer.class);
+
+                oldVersion++;
+            }
+
             //add new if blocks if schema changed
             if (oldVersion < newVersion) {
                 throw new IllegalStateException(String.format(Locale.ENGLISH, "Migration missing from v%d to v%d", oldVersion, newVersion));

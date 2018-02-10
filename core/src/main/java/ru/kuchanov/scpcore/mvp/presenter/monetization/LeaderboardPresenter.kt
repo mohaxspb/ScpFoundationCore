@@ -40,12 +40,10 @@ class LeaderboardPresenter(
         myPreferencesManager: MyPreferenceManager,
         dbProviderFactory: DbProviderFactory,
         apiClient: ApiClient,
-        private val inAppHelper: InAppHelper
-) : BasePresenter<LeaderboardContract.View>(
+        private val inAppHelper: InAppHelper) : BasePresenter<LeaderboardContract.View>(
         myPreferencesManager,
         dbProviderFactory,
-        apiClient
-), LeaderboardContract.Presenter {
+        apiClient), LeaderboardContract.Presenter {
 
     override var isDataLoaded = false
 
@@ -54,8 +52,6 @@ class LeaderboardPresenter(
     override var leaderBoardResponse: LeaderBoardResponse? = null
 
     override var myUser: User? = null
-
-//    override var inAppsToBuy: List<Subscription>? = null
 
     override fun loadData(service: IInAppBillingService) {
         Timber.d("getMarketData")
@@ -72,7 +68,7 @@ class LeaderboardPresenter(
                 mApiClient.leaderboard.toSingle(),
                 Observable.just(mDbProviderFactory.dbProvider.userUnmanaged).toSingle(),
                 { inapps: List<Subscription>, leaderboard: LeaderBoardResponse, user: User? -> Triple(inapps, leaderboard, user) }
-        )
+                  )
                 .map {
                     val levelJson = LevelsJson.getLevelsJson()
                     val viewModels = mutableListOf<MyListItem>()
@@ -81,7 +77,10 @@ class LeaderboardPresenter(
                     users.sortByDescending { it.score }
                     val medalColorsArr = listOf(R.color.medalGold, R.color.medalSilver, R.color.medalBronze)
                     users.subList(0, 3).forEachIndexed { index, user ->
-                        viewModels.add(LabelViewModel(0, textString = BaseApplication.getAppInstance().getString(R.string.leaderboard_place, index + 1), bgColor = R.color.freeAdsBackgroundColor))
+                        viewModels.add(LabelViewModel(0,
+                                                      textString = BaseApplication.getAppInstance().getString(R.string.leaderboard_place,
+                                                                                                              index + 1),
+                                                      bgColor = R.color.freeAdsBackgroundColor))
                         viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(8)))
 
                         val level = levelJson.getLevelForScore(user.score)
@@ -94,15 +93,14 @@ class LeaderboardPresenter(
                                         levelJson.getLevelMaxScore(level),
                                         level.id == LevelsJson.MAX_LEVEL_ID),
                                 medalTint = medalColorsArr[index]
-                        ))
+                                                               ))
                     }
 
                     viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
                     viewModels.add(LabelViewModel(
                             R.string.leaderboard_inapp_label,
                             textColor = R.color.material_green_500,
-                            bgColor = R.color.freeAdsBackgroundColor
-                    ))
+                            bgColor = R.color.freeAdsBackgroundColor))
                     val levelUpInApp = it.first.first()
                     viewModels.add(InAppViewModel(
                             R.string.leaderboard_inapp_title,
@@ -110,8 +108,7 @@ class LeaderboardPresenter(
                             levelUpInApp.price,
                             levelUpInApp.productId,
                             R.drawable.ic_leaderbord_levelup_icon,
-                            R.color.freeAdsBackgroundColor
-                    ))
+                            R.color.freeAdsBackgroundColor))
 
                     viewModels.addAll(users.subList(3, users.size).mapIndexed { index, firebaseObjectUser ->
                         val level = levelJson.getLevelForScore(firebaseObjectUser.score)
@@ -123,8 +120,7 @@ class LeaderboardPresenter(
                                         levelJson.scoreToNextLevel(firebaseObjectUser.score, level),
                                         levelJson.getLevelMaxScore(level),
                                         level.id == LevelsJson.MAX_LEVEL_ID),
-                                bgColor = R.color.leaderboardBottomBgColor
-                        )
+                                bgColor = R.color.leaderboardBottomBgColor)
                     })
                     myUser = it.third
 
@@ -154,8 +150,7 @@ class LeaderboardPresenter(
                             view.showError(it)
                             view.showProgressCenter(false)
                             view.showRefreshButton(true)
-                        }
-                )
+                        })
     }
 
     private fun convertUser(user: User?, users: List<FirebaseObjectUser>, levelJson: LevelsJson): LeaderboardUserViewModel? {
@@ -172,8 +167,7 @@ class LeaderboardPresenter(
                         levelJson.scoreToNextLevel(userInFirebase.score, level),
                         levelJson.getLevelMaxScore(level),
                         level.id == LevelsJson.MAX_LEVEL_ID),
-                bgColor = R.color.leaderboardBottomBgColor
-        )
+                bgColor = R.color.leaderboardBottomBgColor)
     }
 
     override fun onUserChanged(user: User?) {

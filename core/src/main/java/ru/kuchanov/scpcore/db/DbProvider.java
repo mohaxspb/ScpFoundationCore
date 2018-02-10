@@ -6,8 +6,10 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.facebook.login.LoginManager;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
 import com.vk.sdk.VKSdk;
 
 import java.text.SimpleDateFormat;
@@ -26,6 +28,7 @@ import ru.kuchanov.scpcore.api.model.firebase.ArticleInFirebase;
 import ru.kuchanov.scpcore.db.error.ScpNoArticleForIdError;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
+import ru.kuchanov.scpcore.db.model.LeaderboardUser;
 import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.db.model.VkImage;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
@@ -34,16 +37,20 @@ import timber.log.Timber;
 
 public class DbProvider implements DbProviderModel<Article> {
 
-    private Realm mRealm;
-    private MyPreferenceManager mMyPreferenceManager;
-    private ConstantValues mConstantValues;
+    private final Realm mRealm;
 
-    DbProvider(MyPreferenceManager myPreferenceManager, ConstantValues constantValues) {
+    private final MyPreferenceManager mMyPreferenceManager;
+
+    private final ConstantValues mConstantValues;
+
+    DbProvider(final MyPreferenceManager myPreferenceManager, final ConstantValues constantValues) {
+        super();
         mRealm = Realm.getDefaultInstance();
         mMyPreferenceManager = myPreferenceManager;
         mConstantValues = constantValues;
     }
 
+    @Override
     public void close() {
         Timber.d("close");
         mRealm.close();
@@ -51,11 +58,11 @@ public class DbProvider implements DbProviderModel<Article> {
 
     @Override
     public int getScore() {
-        User user = getUserSync();
+        final User user = getUserSync();
         return user == null ? 0 : user.score;
     }
 
-    public Observable<RealmResults<Article>> getArticlesByIds(@NonNull List<String> urls) {
+    public Observable<RealmResults<Article>> getArticlesByIds(@NonNull final List<String> urls) {
         if (urls.isEmpty()) {
             throw new IllegalArgumentException("Can't query by empty data list");
         }
@@ -67,7 +74,7 @@ public class DbProvider implements DbProviderModel<Article> {
                 .filter(RealmResults::isValid);
     }
 
-    public Observable<RealmResults<Article>> getArticlesSortedAsync(String field, Sort order) {
+    public Observable<RealmResults<Article>> getArticlesSortedAsync(final String field, final Sort order) {
         return mRealm.where(Article.class)
                 .notEqualTo(field, Article.ORDER_NONE)
                 .findAllSortedAsync(field, order)
@@ -76,7 +83,7 @@ public class DbProvider implements DbProviderModel<Article> {
                 .filter(RealmResults::isValid);
     }
 
-    public Observable<RealmResults<Article>> getOfflineArticlesSortedAsync(String field, Sort order) {
+    public Observable<RealmResults<Article>> getOfflineArticlesSortedAsync(final String field, final Sort order) {
         return mRealm.where(Article.class)
                 .notEqualTo(Article.FIELD_TEXT, (String) null)
                 //remove articles from main activity
@@ -89,7 +96,7 @@ public class DbProvider implements DbProviderModel<Article> {
                 .filter(RealmResults::isValid);
     }
 
-    public Observable<RealmResults<Article>> getReadArticlesSortedAsync(String field, Sort order) {
+    public Observable<RealmResults<Article>> getReadArticlesSortedAsync(final String field, final Sort order) {
         return mRealm.where(Article.class)
                 .notEqualTo(Article.FIELD_IS_IN_READEN, false)
                 .findAllSortedAsync(field, order)
@@ -98,22 +105,50 @@ public class DbProvider implements DbProviderModel<Article> {
                 .filter(RealmResults::isValid);
     }
 
-    public Observable<Pair<Integer, Integer>> saveRecentArticlesList(List<Article> apiData, int offset) {
+    public Observable<RealmResults<LeaderboardUser>> getLeaderboardUsers() {
+        return mRealm.where(LeaderboardUser.class)
+                .findAllSortedAsync(LeaderboardUser.FIELD_SCORE, Sort.DESCENDING)
+                .asObservable()
+                .filter(RealmResults::isLoaded)
+                .filter(RealmResults::isValid);
+    }
+
+    public Observable<Integer> saveLeaderboardUsers(final List<LeaderboardUser> data) {
+        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
+                realm -> {
+                    //remove all users
+                    realm.delete(LeaderboardUser.class);
+                    //insert all
+                    realm.insertOrUpdate(data);
+                },
+                () -> {
+                    subscriber.onNext(data.size());
+                    subscriber.onCompleted();
+                    mRealm.close();
+                },
+                e -> {
+                    subscriber.onError(e);
+                    mRealm.close();
+                }
+        ));
+    }
+
+    public Observable<Pair<Integer, Integer>> saveRecentArticlesList(final List<Article> apiData, final int offset) {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //remove all aps from nominees if we update list
                     if (offset == 0) {
-                        List<Article> articles = realm.where(Article.class)
+                        final List<Article> articles = realm.where(Article.class)
                                 .notEqualTo(Article.FIELD_IS_IN_RECENT, Article.ORDER_NONE)
                                 .findAll();
-                        for (Article application : articles) {
+                        for (final Article application : articles) {
                             application.isInRecent = Article.ORDER_NONE;
                         }
                     }
                     //check if we have app in db and update
                     for (int i = 0; i < apiData.size(); i++) {
-                        Article applicationToWrite = apiData.get(i);
-                        Article applicationInDb = realm.where(Article.class)
+                        final Article applicationToWrite = apiData.get(i);
+                        final Article applicationInDb = realm.where(Article.class)
                                 .equalTo(Article.FIELD_URL, applicationToWrite.url)
                                 .findFirst();
                         if (applicationInDb != null) {
@@ -141,25 +176,26 @@ public class DbProvider implements DbProviderModel<Article> {
                 e -> {
                     subscriber.onError(e);
                     mRealm.close();
-                }));
+                }
+        ));
     }
 
-    public Observable<Pair<Integer, Integer>> saveRatedArticlesList(List<Article> data, int offset) {
+    public Observable<Pair<Integer, Integer>> saveRatedArticlesList(final List<Article> data, final int offset) {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //remove all aps from nominees if we update list
                     if (offset == 0) {
-                        List<Article> articleList = realm.where(Article.class)
+                        final List<Article> articleList = realm.where(Article.class)
                                 .notEqualTo(Article.FIELD_IS_IN_MOST_RATED, Article.ORDER_NONE)
                                 .findAll();
-                        for (Article application : articleList) {
+                        for (final Article application : articleList) {
                             application.isInMostRated = Article.ORDER_NONE;
                         }
                     }
                     //check if we have app in db and update
                     for (int i = 0; i < data.size(); i++) {
-                        Article applicationToWrite = data.get(i);
-                        Article applicationInDb = realm.where(Article.class)
+                        final Article applicationToWrite = data.get(i);
+                        final Article applicationInDb = realm.where(Article.class)
                                 .equalTo(Article.FIELD_URL, applicationToWrite.url)
                                 .findFirst();
                         if (applicationInDb != null) {
@@ -180,69 +216,69 @@ public class DbProvider implements DbProviderModel<Article> {
                 e -> {
                     subscriber.onError(e);
                     mRealm.close();
-                }));
+                }
+        ));
     }
 
     @Override
-    public Observable<Pair<Integer, Integer>> saveObjectsArticlesList(List<Article> data, String inDbField) {
+    public Observable<Pair<Integer, Integer>> saveObjectsArticlesList(final List<Article> data, final String inDbField) {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
-                    //remove all aps from this list while update it
-                    List<Article> articleList =
-                            realm.where(Article.class)
-                                    .notEqualTo(inDbField, Article.ORDER_NONE)
-                                    .findAll();
-                    for (Article application : articleList) {
+                    //remove all articles from this list while update it
+                    final List<Article> articleList = realm.where(Article.class)
+                            .notEqualTo(inDbField, Article.ORDER_NONE)
+                            .findAll();
+                    for (final Article article : articleList) {
                         switch (inDbField) {
                             case Article.FIELD_IS_IN_OBJECTS_1:
-                                application.isInObjects1 = Article.ORDER_NONE;
+                                article.isInObjects1 = Article.ORDER_NONE;
                                 break;
                             case Article.FIELD_IS_IN_OBJECTS_2:
-                                application.isInObjects2 = Article.ORDER_NONE;
+                                article.isInObjects2 = Article.ORDER_NONE;
                                 break;
                             case Article.FIELD_IS_IN_OBJECTS_3:
-                                application.isInObjects3 = Article.ORDER_NONE;
+                                article.isInObjects3 = Article.ORDER_NONE;
                                 break;
                             case Article.FIELD_IS_IN_OBJECTS_4:
-                                application.isInObjects4 = Article.ORDER_NONE;
+                                article.isInObjects4 = Article.ORDER_NONE;
                                 break;
                             case Article.FIELD_IS_IN_OBJECTS_RU:
-                                application.isInObjectsRu = Article.ORDER_NONE;
+                                article.isInObjectsRu = Article.ORDER_NONE;
                                 break;
                             //other filials
                             case Article.FIELD_IS_IN_OBJECTS_FR:
-                                application.isInObjectsFr = Article.ORDER_NONE;
+                                article.isInObjectsFr = Article.ORDER_NONE;
                                 break;
                             case Article.FIELD_IS_IN_OBJECTS_JP:
-                                application.isInObjectsJp = Article.ORDER_NONE;
+                                article.isInObjectsJp = Article.ORDER_NONE;
                                 break;
                             case Article.FIELD_IS_IN_OBJECTS_ES:
-                                application.isInObjectsEs = Article.ORDER_NONE;
+                                article.isInObjectsEs = Article.ORDER_NONE;
                                 break;
                             case Article.FIELD_IS_IN_OBJECTS_PL:
-                                application.isInObjectsPl = Article.ORDER_NONE;
+                                article.isInObjectsPl = Article.ORDER_NONE;
                                 break;
                             case Article.FIELD_IS_IN_OBJECTS_DE:
-                                application.isInObjectsDe = Article.ORDER_NONE;
+                                article.isInObjectsDe = Article.ORDER_NONE;
                                 break;
                             //////
                             case Article.FIELD_IS_IN_EXPERIMETS:
-                                application.isInExperiments = Article.ORDER_NONE;
+                                article.isInExperiments = Article.ORDER_NONE;
                                 break;
                             case Article.FIELD_IS_IN_INCIDENTS:
-                                application.isInIncidents = Article.ORDER_NONE;
+                                article.isInIncidents = Article.ORDER_NONE;
                                 break;
                             case Article.FIELD_IS_IN_INTERVIEWS:
-                                application.isInInterviews = Article.ORDER_NONE;
+                                article.isInInterviews = Article.ORDER_NONE;
                                 break;
                             case Article.FIELD_IS_IN_OTHER:
-                                application.isInOther = Article.ORDER_NONE;
+                                article.isInOther = Article.ORDER_NONE;
                                 break;
                             case Article.FIELD_IS_IN_ARCHIVE:
-                                application.isInArchive = Article.ORDER_NONE;
+                                article.isInArchive = Article.ORDER_NONE;
                                 break;
                             case Article.FIELD_IS_IN_JOKES:
-                                application.isInJokes = Article.ORDER_NONE;
+                                article.isInJokes = Article.ORDER_NONE;
                                 break;
                             default:
                                 Timber.e("unexpected inDbField id");
@@ -251,126 +287,126 @@ public class DbProvider implements DbProviderModel<Article> {
                     }
                     //check if we have app in db and update
                     for (int i = 0; i < data.size(); i++) {
-                        Article applicationToWrite = data.get(i);
-                        Article applicationInDb = realm.where(Article.class)
-                                .equalTo(Article.FIELD_URL, applicationToWrite.url)
+                        final Article article = data.get(i);
+                        final Article articleInDb = realm.where(Article.class)
+                                .equalTo(Article.FIELD_URL, article.url)
                                 .findFirst();
-                        if (applicationInDb != null) {
+                        if (articleInDb != null) {
                             switch (inDbField) {
                                 case Article.FIELD_IS_IN_OBJECTS_1:
-                                    applicationInDb.isInObjects1 = i;
+                                    articleInDb.isInObjects1 = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_2:
-                                    applicationInDb.isInObjects2 = i;
+                                    articleInDb.isInObjects2 = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_3:
-                                    applicationInDb.isInObjects3 = i;
+                                    articleInDb.isInObjects3 = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_4:
-                                    applicationInDb.isInObjects4 = i;
+                                    articleInDb.isInObjects4 = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_RU:
-                                    applicationInDb.isInObjectsRu = i;
+                                    articleInDb.isInObjectsRu = i;
                                     break;
                                 //other filials
                                 case Article.FIELD_IS_IN_OBJECTS_FR:
-                                    applicationInDb.isInObjectsFr = i;
+                                    articleInDb.isInObjectsFr = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_JP:
-                                    applicationInDb.isInObjectsJp = i;
+                                    articleInDb.isInObjectsJp = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_ES:
-                                    applicationInDb.isInObjectsEs = i;
+                                    articleInDb.isInObjectsEs = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_PL:
-                                    applicationInDb.isInObjectsPl = i;
+                                    articleInDb.isInObjectsPl = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_DE:
-                                    applicationInDb.isInObjectsDe = i;
+                                    articleInDb.isInObjectsDe = i;
                                     break;
                                 //////////
                                 case Article.FIELD_IS_IN_EXPERIMETS:
-                                    applicationInDb.isInExperiments = i;
+                                    articleInDb.isInExperiments = i;
                                     break;
                                 case Article.FIELD_IS_IN_INCIDENTS:
-                                    applicationInDb.isInIncidents = i;
+                                    articleInDb.isInIncidents = i;
                                     break;
                                 case Article.FIELD_IS_IN_INTERVIEWS:
-                                    applicationInDb.isInInterviews = i;
+                                    articleInDb.isInInterviews = i;
                                     break;
                                 case Article.FIELD_IS_IN_OTHER:
-                                    applicationInDb.isInOther = i;
+                                    articleInDb.isInOther = i;
                                     break;
                                 case Article.FIELD_IS_IN_ARCHIVE:
-                                    applicationInDb.isInArchive = i;
+                                    articleInDb.isInArchive = i;
                                     break;
                                 case Article.FIELD_IS_IN_JOKES:
-                                    applicationInDb.isInJokes = i;
+                                    articleInDb.isInJokes = i;
                                     break;
                                 default:
                                     Timber.e("unexpected inDbField id");
                                     break;
                             }
-                            applicationInDb.title = applicationToWrite.title;
+                            articleInDb.title = article.title;
 
-                            applicationInDb.type = applicationToWrite.type;
+                            articleInDb.type = article.type;
                         } else {
                             switch (inDbField) {
                                 case Article.FIELD_IS_IN_OBJECTS_1:
-                                    applicationToWrite.isInObjects1 = i;
+                                    article.isInObjects1 = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_2:
-                                    applicationToWrite.isInObjects2 = i;
+                                    article.isInObjects2 = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_3:
-                                    applicationToWrite.isInObjects3 = i;
+                                    article.isInObjects3 = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_4:
-                                    applicationToWrite.isInObjects4 = i;
+                                    article.isInObjects4 = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_RU:
-                                    applicationToWrite.isInObjectsRu = i;
+                                    article.isInObjectsRu = i;
                                     break;
                                 //other filials
                                 case Article.FIELD_IS_IN_OBJECTS_FR:
-                                    applicationToWrite.isInObjectsFr = i;
+                                    article.isInObjectsFr = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_JP:
-                                    applicationToWrite.isInObjectsJp = i;
+                                    article.isInObjectsJp = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_ES:
-                                    applicationToWrite.isInObjectsEs = i;
+                                    article.isInObjectsEs = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_PL:
-                                    applicationToWrite.isInObjectsPl = i;
+                                    article.isInObjectsPl = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_DE:
-                                    applicationToWrite.isInObjectsDe = i;
+                                    article.isInObjectsDe = i;
                                     break;
                                 //////////
                                 case Article.FIELD_IS_IN_EXPERIMETS:
-                                    applicationToWrite.isInExperiments = i;
+                                    article.isInExperiments = i;
                                     break;
                                 case Article.FIELD_IS_IN_INCIDENTS:
-                                    applicationToWrite.isInIncidents = i;
+                                    article.isInIncidents = i;
                                     break;
                                 case Article.FIELD_IS_IN_INTERVIEWS:
-                                    applicationToWrite.isInInterviews = i;
+                                    article.isInInterviews = i;
                                     break;
                                 case Article.FIELD_IS_IN_OTHER:
-                                    applicationToWrite.isInOther = i;
+                                    article.isInOther = i;
                                     break;
                                 case Article.FIELD_IS_IN_ARCHIVE:
-                                    applicationToWrite.isInArchive = i;
+                                    article.isInArchive = i;
                                     break;
                                 case Article.FIELD_IS_IN_JOKES:
-                                    applicationToWrite.isInJokes = i;
+                                    article.isInJokes = i;
                                     break;
                                 default:
                                     Timber.e("unexpected inDbField id");
                                     break;
                             }
-                            realm.insertOrUpdate(applicationToWrite);
+                            realm.insertOrUpdate(article);
                         }
                     }
                 },
@@ -382,16 +418,15 @@ public class DbProvider implements DbProviderModel<Article> {
                 e -> {
                     subscriber.onError(e);
                     mRealm.close();
-                }));
+                }
+        ));
     }
 
     /**
      * @param articleUrl used as ID
-     * @return Observable that emits <b>unmanaged</b>, valid and loaded Article
-     * and emits changes to it
-     * or null if there is no one in DB with this url
+     * @return Observable that emits <b>unmanaged</b>, valid and loaded Article and emits changes to it or null if there is no one in DB with this url
      */
-    public Observable<Article> getUnmanagedArticleAsync(String articleUrl) {
+    public Observable<Article> getUnmanagedArticleAsync(final String articleUrl) {
         return mRealm.where(Article.class)
                 .equalTo(Article.FIELD_URL, articleUrl)
                 .findAllAsync()
@@ -401,7 +436,7 @@ public class DbProvider implements DbProviderModel<Article> {
                 .flatMap(arts -> arts.isEmpty() ? Observable.just(null) : Observable.just(mRealm.copyFromRealm(arts.first())));
     }
 
-    public Observable<Article> getUnmanagedArticleAsyncOnes(String articleUrl) {
+    public Observable<Article> getUnmanagedArticleAsyncOnes(final String articleUrl) {
         return mRealm.where(Article.class)
                 .equalTo(Article.FIELD_URL, articleUrl)
                 .findAllAsync()
@@ -413,30 +448,31 @@ public class DbProvider implements DbProviderModel<Article> {
                 .doOnNext(article -> close());
     }
 
-    public Article getUnmanagedArticleSync(String url) {
-        Article articleFromDb = mRealm.where(Article.class).equalTo(Article.FIELD_URL, url).findFirst();
+    @Override
+    public Article getUnmanagedArticleSync(final String url) {
+        final Article articleFromDb = mRealm.where(Article.class).equalTo(Article.FIELD_URL, url).findFirst();
         return articleFromDb == null ? null : mRealm.copyFromRealm(articleFromDb);
     }
 
-    public Article getArticleSync(String url) {
+    public Article getArticleSync(final String url) {
         return mRealm.where(Article.class).equalTo(Article.FIELD_URL, url).findFirst();
     }
 
-    public Observable<List<Article>> saveMultipleArticlesWithoutTextSync(List<Article> data) {
+    public Observable<List<Article>> saveMultipleArticlesWithoutTextSync(final List<Article> data) {
         mRealm.executeTransaction(realm -> {
 //            realm.insertOrUpdate(articles);
             //check if we have app in db and update
             for (int i = 0; i < data.size(); i++) {
-                Article applicationToWrite = data.get(i);
-                Article applicationInDb = realm.where(Article.class)
-                        .equalTo(Article.FIELD_URL, applicationToWrite.url)
+                final Article articleToWrite = data.get(i);
+                final Article articleInDb = realm.where(Article.class)
+                        .equalTo(Article.FIELD_URL, articleToWrite.url)
                         .findFirst();
-                if (applicationInDb != null) {
+                if (articleInDb != null) {
 //                    applicationInDb.isInMostRated = offset + i;
 //                    applicationInDb.rating = applicationToWrite.rating;
                 } else {
 //                    applicationToWrite.isInMostRated = offset + i;
-                    realm.insertOrUpdate(applicationToWrite);
+                    realm.insertOrUpdate(articleToWrite);
                 }
             }
         });
@@ -448,7 +484,7 @@ public class DbProvider implements DbProviderModel<Article> {
      * @param article obj to save
      * @return Observable that emits unmanaged saved article on successful insert or throws error
      */
-    public Observable<Article> saveArticle(Article article) {
+    public Observable<Article> saveArticle(final Article article) {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> saveArticleToRealm(article, realm),
                 () -> {
@@ -459,20 +495,22 @@ public class DbProvider implements DbProviderModel<Article> {
                 e -> {
                     subscriber.onError(e);
                     mRealm.close();
-                }));
+                }
+        ));
     }
 
     /**
      * @param article obj to save
      * @return Observable that emits unmanaged saved article on successful insert or throws error
      */
-    public Observable<Article> saveArticleSync(Article article) {
+    public Observable<Article> saveArticleSync(final Article article) {
         mRealm.executeTransaction(realm -> saveArticleToRealm(article, realm));
         mRealm.close();
         return Observable.just(article);
     }
 
-    public void saveArticleSync(Article article, boolean closeRealm) {
+    @Override
+    public void saveArticleSync(final Article article, final boolean closeRealm) {
         mRealm.executeTransaction(realm -> saveArticleToRealm(article, realm));
         if (closeRealm) {
             mRealm.close();
@@ -485,9 +523,9 @@ public class DbProvider implements DbProviderModel<Article> {
      * @param articles obj to save
      * @return Observable that emits unmanaged saved article on successful insert or throws error
      */
-    public Observable<List<Article>> saveMultipleArticlesSync(List<Article> articles) {
+    public Observable<List<Article>> saveMultipleArticlesSync(final List<Article> articles) {
         mRealm.executeTransaction(realm -> {
-            for (Article article : articles) {
+            for (final Article article : articles) {
                 saveArticleToRealm(article, realm);
             }
         });
@@ -495,14 +533,14 @@ public class DbProvider implements DbProviderModel<Article> {
         return Observable.just(articles);
     }
 
-    private void saveArticleToRealm(Article article, Realm realm) {
+    private void saveArticleToRealm(final Article article, final Realm realm) {
         //if not have subscription
         //check if we have limit in downloads
         //if so - delete one article to save this
         if (!mMyPreferenceManager.isHasSubscription()) {
-            FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+            final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
             if (!config.getBoolean(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_ALL_ENABLED_FOR_FREE)) {
-                long numOfArtsInDb = realm.where(Article.class)
+                final long numOfArtsInDb = realm.where(Article.class)
                         .notEqualTo(Article.FIELD_TEXT, (String) null)
                         //remove articles from main activity
                         .notEqualTo(Article.FIELD_URL, mConstantValues.getAbout())
@@ -511,21 +549,21 @@ public class DbProvider implements DbProviderModel<Article> {
                         .count();
                 Timber.d("numOfArtsInDb: %s", numOfArtsInDb);
 //                long limit = config.getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_FREE_ARTICLES_LIMIT);
-                FirebaseRemoteConfig remConf = FirebaseRemoteConfig.getInstance();
+                final FirebaseRemoteConfig remConf = FirebaseRemoteConfig.getInstance();
                 int limit = (int) remConf.getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_FREE_ARTICLES_LIMIT);
-                int numOfScorePerArt = (int) remConf.getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_SCORE_PER_ARTICLE);
+                final int numOfScorePerArt = (int) remConf.getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_SCORE_PER_ARTICLE);
 
-                User user = realm.where(User.class).findFirst();
+                final User user = realm.where(User.class).findFirst();
                 if (user != null) {
                     limit += user.score / numOfScorePerArt;
                 }
 
                 Timber.d("limit: %s", limit);
                 if (numOfArtsInDb + 1 > limit) {
-                    int numOfArtsToDelete = (int) (numOfArtsInDb + 1 - limit);
+                    final int numOfArtsToDelete = (int) (numOfArtsInDb + 1 - limit);
                     Timber.d("numOfArtsToDelete: %s", numOfArtsToDelete);
                     for (int i = 0; i < numOfArtsToDelete; i++) {
-                        RealmResults<Article> articlesToDelete = realm.where(Article.class)
+                        final RealmResults<Article> articlesToDelete = realm.where(Article.class)
                                 .notEqualTo(Article.FIELD_TEXT, (String) null)
                                 .notEqualTo(Article.FIELD_URL, article.url)
                                 //remove articles from main activity
@@ -542,8 +580,8 @@ public class DbProvider implements DbProviderModel<Article> {
             }
         }
 
-        long timeStamp = System.currentTimeMillis();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault());
+        final long timeStamp = System.currentTimeMillis();
+        final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault());
         Timber.d("insert/update: %s/%s", article.title, sdf.format(timeStamp));
 
         //check if we have app in db and update
@@ -582,11 +620,11 @@ public class DbProvider implements DbProviderModel<Article> {
         }
     }
 
-    public Observable<Article> toggleFavorite(String url) {
+    public Observable<Article> toggleFavorite(final String url) {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //check if we have app in db and update
-                    Article articleInDb = realm.where(Article.class)
+                    final Article articleInDb = realm.where(Article.class)
                             .equalTo(Article.FIELD_URL, url)
                             .findFirst();
                     if (articleInDb != null) {
@@ -612,19 +650,19 @@ public class DbProvider implements DbProviderModel<Article> {
                 e -> {
                     subscriber.onError(e);
                     mRealm.close();
-                }));
+                }
+        ));
     }
 
     /**
      * @param url used as Article ID
-     * @return observable, that emits updated article
-     * or error if no article found
+     * @return observable, that emits updated article or error if no article found
      */
-    public Observable<String> toggleReaden(String url) {
+    public Observable<String> toggleReaden(final String url) {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //check if we have app in db and update
-                    Article article = realm.where(Article.class)
+                    final Article article = realm.where(Article.class)
                             .equalTo(Article.FIELD_URL, url)
                             .findFirst();
                     if (article != null) {
@@ -649,14 +687,15 @@ public class DbProvider implements DbProviderModel<Article> {
                 e -> {
                     subscriber.onError(e);
                     mRealm.close();
-                }));
+                }
+        ));
     }
 
-    public Observable<String> deleteArticlesText(String url) {
+    public Observable<String> deleteArticlesText(final String url) {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //check if we have app in db and update
-                    Article articleInDb = realm.where(Article.class)
+                    final Article articleInDb = realm.where(Article.class)
                             .equalTo(Article.FIELD_URL, url)
                             .findFirst();
                     if (articleInDb != null) {
@@ -678,7 +717,8 @@ public class DbProvider implements DbProviderModel<Article> {
                 e -> {
                     subscriber.onError(e);
                     mRealm.close();
-                }));
+                }
+        ));
     }
 
     /**
@@ -705,7 +745,7 @@ public class DbProvider implements DbProviderModel<Article> {
 
     @Nullable
     public User getUserUnmanaged() {
-        User user = mRealm.where(User.class).findFirst();
+        final User user = mRealm.where(User.class).findFirst();
         return mRealm.where(User.class).findFirst() == null ? null : mRealm.copyFromRealm(user);
     }
 
@@ -713,7 +753,7 @@ public class DbProvider implements DbProviderModel<Article> {
         return mRealm.where(User.class).findFirst();
     }
 
-    public Observable<User> saveUser(User user) {
+    public Observable<User> saveUser(final User user) {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> realm.insertOrUpdate(user),
                 () -> {
@@ -724,7 +764,8 @@ public class DbProvider implements DbProviderModel<Article> {
                 e -> {
                     subscriber.onError(e);
                     mRealm.close();
-                }));
+                }
+        ));
     }
 
     private Observable<Void> deleteUserData() {
@@ -753,12 +794,13 @@ public class DbProvider implements DbProviderModel<Article> {
                 e -> {
                     subscriber.onError(e);
                     mRealm.close();
-                }));
+                }
+        ));
     }
 
     public Observable<Void> logout() {
         //run loop through enum with providers and logout from each of them
-        for (Constants.Firebase.SocialProvider provider : Constants.Firebase.SocialProvider.values()) {
+        for (final Constants.Firebase.SocialProvider provider : Constants.Firebase.SocialProvider.values()) {
             switch (provider) {
                 case VK:
                     VKSdk.logout();
@@ -777,7 +819,7 @@ public class DbProvider implements DbProviderModel<Article> {
         return deleteUserData();
     }
 
-    public Observable<Void> saveImages(List<VkImage> vkImages) {
+    public Observable<Void> saveImages(final List<VkImage> vkImages) {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //clear
@@ -792,7 +834,8 @@ public class DbProvider implements DbProviderModel<Article> {
                 e -> {
                     subscriber.onError(e);
                     mRealm.close();
-                }));
+                }
+        ));
     }
 
     public Observable<List<VkImage>> getGalleryImages() {
@@ -804,13 +847,13 @@ public class DbProvider implements DbProviderModel<Article> {
                 .flatMap(realmResults -> Observable.just(mRealm.copyFromRealm(realmResults)));
     }
 
-    public Observable<List<ArticleInFirebase>> saveArticlesFromFirebase(List<ArticleInFirebase> inFirebaseList) {
+    public Observable<List<ArticleInFirebase>> saveArticlesFromFirebase(final List<ArticleInFirebase> inFirebaseList) {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     Collections.sort(inFirebaseList, (articleInFirebase, t1) ->
                             articleInFirebase.updated < t1.updated ? -1 : articleInFirebase.updated > t1.updated ? 1 : 0);
                     long counter = 0;
-                    for (ArticleInFirebase article : inFirebaseList) {
+                    for (final ArticleInFirebase article : inFirebaseList) {
                         Article realmArticle = realm.where(Article.class).equalTo(Article.FIELD_URL, article.url).findFirst();
                         if (realmArticle == null) {
                             realmArticle = new Article();
@@ -848,17 +891,18 @@ public class DbProvider implements DbProviderModel<Article> {
                 e -> {
                     mRealm.close();
                     subscriber.onError(e);
-                })
+                }
+                )
         );
     }
 
-    public Observable<Article> setArticleSynced(Article article, boolean synced) {
+    public Observable<Article> setArticleSynced(final Article article, final boolean synced) {
         Timber.d("setArticleSynced url: %s, newState: %s", article.url, synced);
-        boolean managed = article.isManaged();
-        String url = article.url;
+        final boolean managed = article.isManaged();
+        final String url = article.url;
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
-                    Article articleInDb = realm.where(Article.class).equalTo(Article.FIELD_URL, url).findFirst();
+                    final Article articleInDb = realm.where(Article.class).equalTo(Article.FIELD_URL, url).findFirst();
                     if (articleInDb != null) {
                         articleInDb.synced = synced ? Article.SYNCED_OK : Article.SYNCED_NEED;
                     } else {
@@ -876,7 +920,8 @@ public class DbProvider implements DbProviderModel<Article> {
                 e -> {
                     mRealm.close();
                     subscriber.onError(e);
-                })
+                }
+                )
         );
     }
 
@@ -893,17 +938,17 @@ public class DbProvider implements DbProviderModel<Article> {
     /**
      * @return observable that emits num of updated articles
      */
-    public Observable<Integer> setArticlesSynced(List<Article> articles, boolean synced) {
+    public Observable<Integer> setArticlesSynced(final List<Article> articles, final boolean synced) {
         Timber.d("setArticlesSynced size: %s, new state: %s", articles.size(), synced);
-        List<String> urls = new ArrayList<>();
-        for (Article article : articles) {
+        final List<String> urls = new ArrayList<>();
+        for (final Article article : articles) {
             urls.add(article.url);
         }
-        int articlesToSyncSize = articles.size();
+        final int articlesToSyncSize = articles.size();
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
-                    for (String url : urls) {
-                        Article articleInDb = realm.where(Article.class).equalTo(Article.FIELD_URL, url).findFirst();
+                    for (final String url : urls) {
+                        final Article articleInDb = realm.where(Article.class).equalTo(Article.FIELD_URL, url).findFirst();
                         if (articleInDb != null) {
                             articleInDb.synced = synced ? Article.SYNCED_OK : Article.SYNCED_NEED;
                         }
@@ -917,16 +962,17 @@ public class DbProvider implements DbProviderModel<Article> {
                 e -> {
                     subscriber.onError(e);
                     mRealm.close();
-                })
+                }
+                )
         );
     }
 
-    public Observable<Integer> updateUserScore(int totalScore) {
+    public Observable<Integer> updateUserScore(final int totalScore) {
         Timber.d("updateUserScore: %s", totalScore);
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //check if we have app in db and update
-                    User user = realm.where(User.class).findFirst();
+                    final User user = realm.where(User.class).findFirst();
                     if (user != null) {
                         user.score = totalScore;
                     } else {
@@ -953,7 +999,7 @@ public class DbProvider implements DbProviderModel<Article> {
                 .filter(RealmResults::isValid);
     }
 
-    public Observable<List<ArticleTag>> saveArticleTags(List<ArticleTag> data) {
+    public Observable<List<ArticleTag>> saveArticleTags(final List<ArticleTag> data) {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> realm.insertOrUpdate(data),
                 () -> {
@@ -966,32 +1012,5 @@ public class DbProvider implements DbProviderModel<Article> {
                     subscriber.onError(e);
                 })
         );
-    }
-
-    public Observable<List<Article>> insertRestoredArticlesSync(List<Article> articles) {
-        return Observable.unsafeCreate(subscriber -> {
-            mRealm.executeTransaction(
-                    realm -> {
-                        for (Article article : articles) {
-                            Article articleInDb = realm.where(Article.class)
-                                    .equalTo(Article.FIELD_URL, article.url)
-                                    .findFirst();
-                            if (articleInDb != null) {
-                                articleInDb.isInFavorite = (long) realm.where(Article.class)
-                                        .max(Article.FIELD_IS_IN_FAVORITE) + 1;
-                                if (article.isInReaden) {
-                                    articleInDb.isInReaden = true;
-                                }
-                                articleInDb.synced = Article.SYNCED_NEED;
-                            } else {
-                                article.synced = Article.SYNCED_NEED;
-                                realm.insertOrUpdate(article);
-                            }
-                        }
-                    });
-            mRealm.close();
-            subscriber.onNext(articles);
-            subscriber.onCompleted();
-        });
     }
 }
