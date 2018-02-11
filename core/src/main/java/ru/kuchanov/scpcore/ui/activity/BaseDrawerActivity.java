@@ -221,30 +221,30 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                     });
 
             //score and level
-            LevelsJson levelsJson = LevelsJson.getLevelsJson();
+            LevelsJson levelsJson = LevelsJson.Companion.getLevelsJson();
             LevelsJson.Level level = levelsJson.getLevelForScore(user.score);
-            if (level.id == LevelsJson.MAX_LEVEL_ID) {
-                headerViewHolder.circleProgress.setMaxValue(level.score);
-                headerViewHolder.circleProgress.setValue(level.score);
+            if (level.getId() == LevelsJson.Companion.getMAX_LEVEL_ID()) {
+                headerViewHolder.circleProgress.setMaxValue(level.getScore());
+                headerViewHolder.circleProgress.setValue(level.getScore());
 
-                headerViewHolder.level.setText(level.title);
-                headerViewHolder.levelNum.setText(String.valueOf(level.id));
+                headerViewHolder.level.setText(level.getTitle());
+                headerViewHolder.levelNum.setText(String.valueOf(level.getId()));
 
                 headerViewHolder.avatar.setOnClickListener(view -> showLeaderboard());
             } else {
-                String levelTitle = level.title;
+                String levelTitle = level.getTitle();
 
-                LevelsJson.Level nextLevel = levelsJson.levels.get(level.id + 1);
-                int nextLevelScore = nextLevel.score;
+                LevelsJson.Level nextLevel = levelsJson.getLevels().get(level.getId() + 1);
+                int nextLevelScore = nextLevel.getScore();
 
-                int max = nextLevelScore - level.score;
-                int value = user.score - level.score;
+                int max = nextLevelScore - level.getScore();
+                int value = user.score - level.getScore();
 
                 headerViewHolder.circleProgress.setMaxValue(max);
                 headerViewHolder.circleProgress.setValue(value);
 
                 headerViewHolder.level.setText(levelTitle);
-                headerViewHolder.levelNum.setText(String.valueOf(level.id));
+                headerViewHolder.levelNum.setText(String.valueOf(level.getId()));
 
                 headerViewHolder.avatar.setOnClickListener(view -> showLeaderboard());
             }

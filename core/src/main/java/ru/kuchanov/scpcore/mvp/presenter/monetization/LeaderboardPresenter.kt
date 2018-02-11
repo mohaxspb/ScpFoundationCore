@@ -72,7 +72,7 @@ class LeaderboardPresenter(
             { inapps: List<Subscription>, leaderboard: LeaderBoardResponse, user: User? -> Triple(inapps, leaderboard, user) }
         )
                 .map {
-                    val levelJson = LevelsJson.getLevelsJson()
+                    val levelJson = LevelsJson.levelsJson
                     val viewModels = mutableListOf<MyListItem>()
                     viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
                     val users = it.second.users
@@ -192,7 +192,7 @@ class LeaderboardPresenter(
         if (myUser == null) {
             view.showUser(null)
         } else {
-            leaderBoardResponse?.apply { view.showUser(convertUser(myUser, this.users, LevelsJson.getLevelsJson())) }
+            leaderBoardResponse?.apply { view.showUser(convertUser(myUser, this.users, LevelsJson.levelsJson)) }
         }
     }
 
