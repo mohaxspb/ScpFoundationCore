@@ -291,7 +291,7 @@ Grazie per aver utilizzato la nostra applicazione!]]></string>
     <string name="subs_description">Disattivazione degli annunci, sincronizzazione automatica delle nuvole, download illimitato di articoli e font atmosferici</string>
     <string name="subs_level_5_gain">Ottieni livello 5</string>
     <string name="subs_no_ads_title">Protocollo "Silenzio"</string>
-    <string name="subs_no_ads_description">Esecuzione di un agente di blocco meme qualsiasi manifestazione dell'agente pubblicitario nell'applicazione</string>
+    <string name="subs_no_ads_description">Esecuzione di un agente di blocco meme qualsiasi manifestazione dell\'agente pubblicitario nell\'applicazione</string>
     <string name="subs_1_month_title">Assistente di laboratorio</string>
     <string name="subs_3_month_title">Ricercatore Junior</string>
     <string name="subs_6_month_title">collaboratore di ricerche scientifiche</string>
@@ -301,7 +301,7 @@ Grazie per aver utilizzato la nostra applicazione!]]></string>
     <string name="subs_1_month_label">Versione mensile estesa</string>
     <string name="subs_3_month_label">Versione estesa per 3 mesi</string>
     <string name="subs_6_month_label">Metà anno versione estesa</string>
-    <string name="subs_12_month_label">Versione estesa per l'anno/string>
+    <string name="subs_12_month_label">Versione estesa per l\'anno</string>
     <string name="subs_cur_label">Lo stato attuale</string>
     <string name="subs_level_5_label">Ottieni livello 5</string>
     <string name="subs_cur_empty_title">██████ - Non assegnati</string>
