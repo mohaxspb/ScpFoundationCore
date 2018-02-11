@@ -1,5 +1,4 @@
 <resources>
-    <!--no need to translate-->
     <!--drawer items-->
     <string name="drawer_item_1">About the SCP Foundation</string>
     <string name="drawer_item_2">Site News Hub</string>
@@ -285,13 +284,12 @@ Trello: <a href="https://trello.com/b/K96g075n/scp">A taskboard with a list of t
 E-mail: <a href="mailto:neva.spb.rx@gmail.com">For any questions</a>
 <br/><br/>
 Thanks for using our app!]]></string>
-    <string name="subs_main_text">Here you can get special permission from the foundation and help the developers. Our application has open source code and cool cloud synchronization. If you like our app, you can support developers. All funding resources are going to maintain the project. Also you have the opportunity to support us just by looking at the advertisement. We will be glad to any donation. Thank you!</string>
+    <string name="subs_main_text">Here you can get special permission from the foundation and help the developers. Our application has <![CDATA[<a href="https://github.com/mohaxspb/ScpFoundationCore">open source code</a>]]> and <![CDATA[<a href="https://www.youtube.com/watch?v=5RuwbKvLDs0">cool cloud synchronization</a>]]>. If you like our app, you can support developers. All funding resources are going to maintain the project. Also you have the opportunity to support us just by looking at the advertisement. We will be glad to any donation. Thank you!</string>
     <string name="subs_free_actions_title">Disable Ads for FREE!</string>
     <string name="subs_free_actions_card_title">Support us</string>
     <string name="subs_free_actions_card_description">Remove ads, increase offline articles limit and earn point for FREE!</string>
     <string name="subs_no_ads_title">Protocol “Silence”</string>
     <string name="subs_no_ads_description">Launch of the meme agent blocking any manifestation of the advertising agent in the application</string>
-    <!--todo-->
     <string name="subs_description">Disabling ads, automatic cloud Sync, unlimited download of articles and atmospheric fonts</string>
     <string name="subs_level_5_gain">Get the 5th level</string>
     <string name="subs_1_month_title">Laboratory Assistant</string>
