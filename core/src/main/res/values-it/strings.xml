@@ -313,11 +313,11 @@ Grazie per aver utilizzato la nostra applicazione!]]></string>
     <string name="free_ads_invite_title">Invita i tuoi amici all\'app</string>
     <string name="free_ads_rewarded_video_title">Guarda il video</string>
     <string name="free_ads_auth_title">Log in</string>
-    <string name="free_ads_simple_subtitle">E noi disabilitare la pubblicità a %$1d ore e darvi %$2d punti</string>
+    <string name="free_ads_simple_subtitle">E noi disabilitare la pubblicità a %1$d ore e darvi %2$d punti</string>
     <string name="free_ads_app_install_label">Mettere le nostre altre applicazioni</string>
-    <string name="free_ads_app_install_title">Installare, e noi disattiveremo l\'annuncio %$1d ore e vi darò %$2d punti</string>
+    <string name="free_ads_app_install_title">Installare, e noi disattiveremo l\'annuncio %1$d ore e vi darò %2$d punti</string>
     <string name="free_ads_vk_group_label">Unisciti al nostro gruppo in VC</string>
-    <string name="free_ads_vk_group_title">Iscriviti, e noi disabilitare la pubblicità a %$1d ore e vi darà %$2d punti</string>
+    <string name="free_ads_vk_group_title">Iscriviti, e noi disabilitare la pubblicità a %1$d ore e vi darà %2$d punti</string>
     <string name="free_ads_activity_title">Disattivazione degli annunci</string>
     <string name="leaderboard_activity_title">Agenti di rating</string>
     <string name="leaderboard_inapp_title">Alzarsi in classifica</string>
