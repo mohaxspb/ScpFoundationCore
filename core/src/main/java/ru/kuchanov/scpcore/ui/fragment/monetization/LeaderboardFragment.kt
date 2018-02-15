@@ -124,12 +124,11 @@ class LeaderboardFragment :
         }
     }
 
-    override fun showUpdateDate(lastUpdated: Long, timeZone: String) {
+    override fun showUpdateDate(lastUpdated: Long) {
         baseActivity.getSupportActionBar()?.apply {
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = lastUpdated
-            calendar.timeZone = TimeZone.getTimeZone(timeZone)
-            val simpleDateFormat = SimpleDateFormat("HH:mm:ss zzzz", Locale.getDefault())
+            val simpleDateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
             val refreshed = simpleDateFormat.format(calendar.time)
 
             subtitle = getString(R.string.refreshed, refreshed)

@@ -2,16 +2,17 @@ package ru.kuchanov.scpcore.db.model
 
 import io.realm.RealmObject
 
-class LeaderboardUser(
-    val uid: String,
-    val fullName: String,
-    val avatar: String,
-    val score: Int,
-    val numOfReadArticles: Int,
-    val levelNum: Int,
-    val scoreToNextLevel: Int,
-    val curLevelScore: Int
+open class LeaderboardUser(
+    var uid: String = "",
+    var fullName: String = "",
+    var avatar: String = "",
+    var score: Int = 0,
+    var numOfReadArticles: Int = 0,
+    var levelNum: Int = 0,
+    var scoreToNextLevel: Int = 0,
+    var curLevelScore: Int = 0
 ) : RealmObject() {
+
     companion object {
         @JvmField
         val FIELD_UID = "uid"

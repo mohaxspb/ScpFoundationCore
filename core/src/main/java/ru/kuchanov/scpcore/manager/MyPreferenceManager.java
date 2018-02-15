@@ -1,14 +1,14 @@
 package ru.kuchanov.scpcore.manager;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.Period;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
 
@@ -107,6 +107,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String ADS_BANNER_IN_ARTICLES_LISTS = "ADS_BANNER_IN_ARTICLES_LISTS";
         String ADS_BANNER_IN_ARTICLE = "ADS_BANNER_IN_ARTICLE";
         String OFFER_ALREADY_SHOWN = "OFFER_ALREADY_SHOWN";
+        String LEADERBOARD_UPDATE_TIME = "LEADERBOARD_UPDATE_TIME";
     }
 
     private final Gson mGson;
@@ -634,10 +635,9 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         mPreferences.edit().putLong(Keys.LEADERBOARD_UPDATE_TIME, timeInMillis).apply();
     }
 
-    private long getLeaderBoardUpdatedTime() {
+    public long getLeaderBoardUpdatedTime() {
         return mPreferences.getLong(Keys.LEADERBOARD_UPDATE_TIME, 0);
     }
-
 
     //check vk group joined
     public void setLastTimeAppVkGroupJoinedChecked(final long timeInMillis) {

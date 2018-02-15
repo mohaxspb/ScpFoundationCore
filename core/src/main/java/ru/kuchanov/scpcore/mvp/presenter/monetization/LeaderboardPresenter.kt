@@ -3,16 +3,14 @@ package ru.kuchanov.scpcore.mvp.presenter.monetization
 import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import io.realm.RealmResults
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
-import org.joda.time.LocalDate
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.api.ApiClient
-import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser
 import ru.kuchanov.scpcore.api.model.remoteconfig.LevelsJson
-import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.DividerViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.LabelViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
@@ -29,7 +27,6 @@ import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
 import ru.kuchanov.scpcore.util.DimensionUtils
 import rx.Observable
-import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.subscribeBy
 import rx.schedulers.Schedulers
@@ -54,7 +51,7 @@ class LeaderboardPresenter(
 
     override val data = mutableListOf<MyListItem>()
 
-    override var leaderBoardResponse: LeaderBoardResponse? = null
+    override var users: RealmResults<LeaderboardUser>? = null
 
     override var myUser: User? = null
 
@@ -68,18 +65,17 @@ class LeaderboardPresenter(
             skuList.addAll(InAppHelper.getNewNoAdsSubsSkus())
         }
 
-        Single.zip(
-            inAppHelper.getInAppsListToBuyObservable(service).toSingle(),
-            mApiClient.leaderboard.toSingle(),
-            Observable.just(mDbProviderFactory.dbProvider.userUnmanaged).toSingle(),
-            { inapps: List<Subscription>, leaderboard: LeaderBoardResponse, user: User? -> Triple(inapps, leaderboard, user) }
+        Observable.zip(
+            inAppHelper.getInAppsListToBuyObservable(service),
+            mDbProviderFactory.dbProvider.leaderboardUsers,
+            Observable.just(mDbProviderFactory.dbProvider.userUnmanaged),
+            { inapps: List<Subscription>, users: List<LeaderboardUser>, user: User? -> Triple(inapps, users, user) }
         )
                 .map {
                     val levelJson = LevelsJson.levelsJson
                     val viewModels = mutableListOf<MyListItem>()
                     viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
-                    val users = it.second.users
-                    users.sortByDescending { it.score }
+                    val users = it.second
                     val medalColorsArr = listOf(R.color.medalGold, R.color.medalSilver, R.color.medalBronze)
                     users.subList(0, 3).forEachIndexed { index, user ->
                         viewModels.add(
@@ -140,17 +136,16 @@ class LeaderboardPresenter(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onSuccess = {
+                    onNext = {
                         isDataLoaded = true
                         view.showProgressCenter(false)
                         view.showRefreshButton(false)
                         data.clear()
 
                         data.addAll(it.first)
-                        leaderBoardResponse = it.second
 
                         view.showData(data)
-                        view.showUpdateDate(it.second.lastUpdated, it.second.timeZone)
+                        view.showUpdateDate(mMyPreferencesManager.leaderBoardUpdatedTime)
                         view.showUser(it.third)
                     },
                     onError = {
@@ -163,7 +158,7 @@ class LeaderboardPresenter(
                     })
     }
 
-    fun updateLeaderboardFromApi() = mApiClient.leaderboard.toSingle()
+    override fun updateLeaderboardFromApi() = mApiClient.leaderboard.toSingle()
             .map { leaderBoardResponse ->
                 val realmUsers = leaderBoardResponse.users.map {
                     LeaderboardUser(
@@ -185,13 +180,16 @@ class LeaderboardPresenter(
             .subscribeBy(
                 onSuccess = {
                     val utcTime = DateTime(it.first, DateTimeZone.forID(it.second)).withZone(DateTimeZone.UTC).millis
-                    mMyPreferencesManager.setLeaderBoardUpdatedTime(utcTime)
+                    mMyPreferencesManager.leaderBoardUpdatedTime = utcTime
                 },
-                onError = {}
+                onError = {
+                    Timber.e(it)
+                    view.showError(it)
+                }
             )
 
 
-    private fun convertUser(user: User?, users: List<FirebaseObjectUser>, levelJson: LevelsJson): LeaderboardUserViewModel? {
+    private fun convertUser(user: User?, users: List<LeaderboardUser>, levelJson: LevelsJson): LeaderboardUserViewModel? {
         if (user == null) {
             return null
         }
@@ -214,7 +212,7 @@ class LeaderboardPresenter(
         if (myUser == null) {
             view.showUser(null)
         } else {
-            leaderBoardResponse?.apply { view.showUser(convertUser(myUser, this.users, LevelsJson.levelsJson)) }
+            users?.apply { view.showUser(convertUser(myUser, this, LevelsJson.levelsJson)) }
         }
     }
 
@@ -223,11 +221,10 @@ class LeaderboardPresenter(
     }
 
     override fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService) {
-        val type: String
-        if (id in InAppHelper.getNewInAppsSkus()) {
-            type = InAppHelper.InappType.IN_APP
+        val type = if (id in InAppHelper.getNewInAppsSkus()) {
+            InAppHelper.InappType.IN_APP
         } else {
-            type = InAppHelper.InappType.SUBS
+            InAppHelper.InappType.SUBS
         }
         try {
             InAppHelper.startSubsBuy(target, inAppBillingService, type, id)

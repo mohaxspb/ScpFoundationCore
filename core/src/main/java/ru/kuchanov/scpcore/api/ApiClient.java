@@ -107,8 +107,8 @@ public class ApiClient implements ApiClientModel<Article> {
     protected OkHttpClient mOkHttpClient;
     protected Gson mGson;
 
-    private VpsServer mVpsServer;
-    private ScpServer mScpServer;
+    private final VpsServer mVpsServer;
+    private final ScpServer mScpServer;
 
     protected ConstantValues mConstantValues;
 
@@ -120,6 +120,7 @@ public class ApiClient implements ApiClientModel<Article> {
             Gson gson,
             ConstantValues constantValues
     ) {
+        super();
         mPreferencesManager = preferencesManager;
         mOkHttpClient = okHttpClient;
         mGson = gson;
@@ -1711,27 +1712,27 @@ public class ApiClient implements ApiClientModel<Article> {
     public Observable<Boolean> isUserRewardedForAuth() {
         Timber.d("isUserRewardedForAuth");
         return Observable.unsafeCreate(subscriber -> {
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser == null) {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
                 return;
             }
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference reference = database.getReference()
+            final FirebaseDatabase database = FirebaseDatabase.getInstance();
+            final DatabaseReference reference = database.getReference()
                     .child(Constants.Firebase.Refs.USERS)
                     .child(firebaseUser.getUid())
                     .child(Constants.Firebase.Refs.SIGN_IN_REWARD_GAINED);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    Boolean data = dataSnapshot.getValue(Boolean.class);
+                    final Boolean data = dataSnapshot.getValue(Boolean.class);
                     Timber.d("dataSnapshot.getValue(): %s", data);
                     subscriber.onNext(data != null && data);
                     subscriber.onCompleted();
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(final DatabaseError databaseError) {
                     subscriber.onError(databaseError.toException());
                 }
             });
@@ -1908,13 +1909,13 @@ public class ApiClient implements ApiClientModel<Article> {
 
     public Observable<Void> setCrackedInFirebase() {
         return Observable.unsafeCreate(subscriber -> {
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser == null) {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
                 return;
             }
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference reference = database.getReference()
+            final FirebaseDatabase database = FirebaseDatabase.getInstance();
+            final DatabaseReference reference = database.getReference()
                     .child(Constants.Firebase.Refs.USERS)
                     .child(firebaseUser.getUid())
                     .child(Constants.Firebase.Refs.CRACKED);
@@ -1933,11 +1934,11 @@ public class ApiClient implements ApiClientModel<Article> {
         return bindWithUtils(mVpsServer.getLeaderboard(mConstantValues.getAppLang()));
     }
 
-    public Observable<List<Article>> getArticlesByTags(List<ArticleTag> tags) {
+    public Observable<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {
         return bindWithUtils(mScpServer.getArticlesByTags(getScpServerWiki(), ArticleTag.getStringsFromTags(tags)))
                 .map(ArticleFromSearchTagsOnSite::getArticlesFromSiteArticles)
                 .map(articles -> {
-                    for (Article article : articles) {
+                    for (final Article article : articles) {
                         if (!article.url.startsWith("http://")) {
                             String start = mConstantValues.getBaseApiUrl();
                             if (!article.url.startsWith("/")) {
@@ -1953,8 +1954,8 @@ public class ApiClient implements ApiClientModel<Article> {
     public Observable<List<ArticleTag>> getTagsFromSite() {
         return bindWithUtils(mScpServer.getTagsList(getScpServerWiki())
                 .map(strings -> {
-                    List<ArticleTag> tags = new ArrayList<>();
-                    for (String divWithTagData : strings) {
+                    final List<ArticleTag> tags = new ArrayList<>();
+                    for (final String divWithTagData : strings) {
                         tags.add(new ArticleTag(divWithTagData));
                     }
                     return tags;

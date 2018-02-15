@@ -223,7 +223,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
             //score and level
             LevelsJson levelsJson = LevelsJson.Companion.getLevelsJson();
             LevelsJson.Level level = levelsJson.getLevelForScore(user.score);
-            if (level.getId() == LevelsJson.Companion.getMAX_LEVEL_ID()) {
+            if (level.getId() == LevelsJson.MAX_LEVEL_ID) {
                 headerViewHolder.circleProgress.setMaxValue(level.getScore());
                 headerViewHolder.circleProgress.setValue(level.getScore());
 
