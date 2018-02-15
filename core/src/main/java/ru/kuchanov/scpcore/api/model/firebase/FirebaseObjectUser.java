@@ -16,7 +16,7 @@ import ru.kuchanov.scpcore.db.model.User;
  * We need it as Realm stores List as RealmList, but firebase uses ArrayList
  * so we need to convert types...
  */
-public class FirebaseObjectUser implements Serializable{
+public class FirebaseObjectUser implements Serializable {
 
     public String uid;
 
@@ -36,6 +36,12 @@ public class FirebaseObjectUser implements Serializable{
 
     public boolean signInRewardGained;
 
+    public int levelNum;
+
+    public int scoreToNextLevel;
+
+    public int curLevelScore;
+
     public User toRealmUser() {
         return new User(uid, fullName, avatar, email, score, new RealmList<SocialProviderModel>() {{
             addAll(socialProviders);
@@ -45,13 +51,18 @@ public class FirebaseObjectUser implements Serializable{
     @Override
     public String toString() {
         return "FirebaseObjectUser{" +
-                "uid='" + uid + '\'' +
-                ", fullName='" + fullName + '\'' +
-                ", avatar='" + avatar + '\'' +
-                ", email='" + email + '\'' +
-                ", score=" + score +
-                ", socialProviders=" + socialProviders +
-                ", articles=" + articles +
-                '}';
+               "uid='" + uid + '\'' +
+               ", fullName='" + fullName + '\'' +
+               ", avatar='" + avatar + '\'' +
+               ", email='" + email + '\'' +
+               ", score=" + score +
+               ", numOfReadArticles=" + numOfReadArticles +
+               ", socialProviders=" + socialProviders +
+               ", articles=" + articles +
+               ", signInRewardGained=" + signInRewardGained +
+               ", levelNum=" + levelNum +
+               ", scoreToNextLevel=" + scoreToNextLevel +
+               ", curLevelScore=" + curLevelScore +
+               '}';
     }
 }

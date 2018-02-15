@@ -3,6 +3,9 @@ package ru.kuchanov.scpcore.mvp.presenter.monetization
 import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
+import org.joda.time.LocalDate
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
@@ -88,14 +91,14 @@ class LeaderboardPresenter(
                                 bgColor = R.color.freeAdsBackgroundColor))
                         viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(8)))
 
-                        val level = levelJson.getLevelForScore(user.score)
+                        val level = levelJson.levels[user.levelNum]
                         viewModels.add(
                             LeaderboardUserViewModel(
                                 index + 1,
                                 user,
                                 LevelViewModel(
-                                    level!!,
-                                    levelJson.scoreToNextLevel(user.score, level),
+                                    level,
+                                    user.scoreToNextLevel,
                                     levelJson.getLevelMaxScore(level),
                                     level.id == LevelsJson.MAX_LEVEL_ID),
                                 medalTint = medalColorsArr[index]
@@ -119,13 +122,13 @@ class LeaderboardPresenter(
                             R.color.freeAdsBackgroundColor))
 
                     viewModels.addAll(users.subList(3, users.size).mapIndexed { index, firebaseObjectUser ->
-                        val level = levelJson.getLevelForScore(firebaseObjectUser.score)
+                        val level = levelJson.levels[firebaseObjectUser.levelNum]
                         LeaderboardUserViewModel(
                             index + 3 + 1,
                             firebaseObjectUser,
                             LevelViewModel(
-                                level!!,
-                                levelJson.scoreToNextLevel(firebaseObjectUser.score, level),
+                                level,
+                                firebaseObjectUser.scoreToNextLevel,
                                 levelJson.getLevelMaxScore(level),
                                 level.id == LevelsJson.MAX_LEVEL_ID),
                             bgColor = R.color.leaderboardBottomBgColor)
@@ -134,7 +137,6 @@ class LeaderboardPresenter(
 
                     return@map Triple(viewModels, it.second, convertUser(myUser, users, levelJson))
                 }
-                .retry(3)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
@@ -161,13 +163,33 @@ class LeaderboardPresenter(
                     })
     }
 
-    fun updateLeaderboardFromApi()=mApiClient.leaderboard
-            .map { leaderBoardResponse -> leaderBoardResponse.users.map { LeaderboardUser(
-                it.uid
-            //todo
-            ) } }
+    fun updateLeaderboardFromApi() = mApiClient.leaderboard.toSingle()
+            .map { leaderBoardResponse ->
+                val realmUsers = leaderBoardResponse.users.map {
+                    LeaderboardUser(
+                        it.uid,
+                        it.fullName,
+                        it.avatar,
+                        it.score,
+                        it.numOfReadArticles,
+                        it.levelNum,
+                        it.scoreToNextLevel,
+                        it.curLevelScore
+                    )
+                }
+                return@map Triple(leaderBoardResponse.lastUpdated, leaderBoardResponse.timeZone, realmUsers)
+            }
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .flatMap { mDbProviderFactory.dbProvider.saveLeaderboardUsers(it.users) }
+            .flatMap { triple -> mDbProviderFactory.dbProvider.saveLeaderboardUsers(triple.third).toSingle().map { triple } }
+            .subscribeBy(
+                onSuccess = {
+                    val utcTime = DateTime(it.first, DateTimeZone.forID(it.second)).withZone(DateTimeZone.UTC).millis
+                    mMyPreferencesManager.setLeaderBoardUpdatedTime(utcTime)
+                },
+                onError = {}
+            )
+
 
     private fun convertUser(user: User?, users: List<FirebaseObjectUser>, levelJson: LevelsJson): LeaderboardUserViewModel? {
         if (user == null) {

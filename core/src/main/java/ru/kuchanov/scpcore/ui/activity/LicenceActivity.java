@@ -42,7 +42,7 @@ public class LicenceActivity extends AppCompatActivity {
 
     @OnClick(R2.id.accept)
     public void onAcceptClick() {
-        mMyPreferenceManager.setLicenceAccepted(true);
+        mMyPreferenceManager.setLicenceAccepted();
         startActivity(new Intent(this, getLaunchActivityClass()).putExtra(EXTRA_SHOW_ABOUT, true));
         finish();
     }

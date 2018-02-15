@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.Period;
 
 import java.util.ArrayList;
@@ -96,7 +97,6 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String UNSYNCED_APPS = "UNSYNCED_APPS";
         String APP_VK_GROUP_JOINED_LAST_TIME_CHECKED = "APP_VK_GROUP_JOINED_LAST_TIME_CHECKED";
         String APP_VK_GROUP_JOINED = "APP_VK_GROUP_JOINED";
-        String DATA_RESTORED = "DATA_RESTORED";
         String LAST_TIME_SUBSCRIPTIONS_INVALIDATED = "LAST_TIME_SUBSCRIPTIONS_INVALIDATED";
         String PERSONAL_DATA_ACCEPTED = "PERSONAL_DATA_ACCEPTED";
         String AWARD_FROM_AUTH_GAINED = "AWARD_FROM_AUTH_GAINED";
@@ -109,24 +109,26 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String OFFER_ALREADY_SHOWN = "OFFER_ALREADY_SHOWN";
     }
 
-    private Gson mGson;
+    private final Gson mGson;
 
-    private SharedPreferences mPreferences;
+    private final SharedPreferences mPreferences;
 
-    public MyPreferenceManager(Context context, Gson gson) {
+    public MyPreferenceManager(@NotNull final Context context, @NotNull final Gson gson) {
+        super();
         mPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         mGson = gson;
     }
 
-    public void setIsNightMode(boolean isInNightMode) {
+    public void setIsNightMode(final boolean isInNightMode) {
         mPreferences.edit().putBoolean(Keys.NIGHT_MODE, isInNightMode).apply();
     }
 
+    @Override
     public boolean isNightMode() {
         return mPreferences.getBoolean(Keys.NIGHT_MODE, false);
     }
 
-    public void setUiTextScale(float uiTextScale) {
+    public void setUiTextScale(final float uiTextScale) {
         mPreferences.edit().putFloat(Keys.TEXT_SCALE_UI, uiTextScale).apply();
     }
 
@@ -138,7 +140,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return mPreferences.getFloat(Keys.TEXT_SCALE_ARTICLE, .75f);
     }
 
-    public void setArticleTextScale(float textScale) {
+    public void setArticleTextScale(final float textScale) {
         mPreferences.edit().putFloat(Keys.TEXT_SCALE_ARTICLE, textScale).apply();
     }
 
@@ -147,18 +149,17 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return !mPreferences.getString(Keys.DESIGN_LIST_TYPE, SettingsBottomSheetDialogFragment.ListItemType.MIDDLE).equals(SettingsBottomSheetDialogFragment.ListItemType.MIN);
     }
 
-    public void setListDesignType(@SettingsBottomSheetDialogFragment.ListItemType String type) {
+    public void setListDesignType(@SettingsBottomSheetDialogFragment.ListItemType final String type) {
         mPreferences.edit().putString(Keys.DESIGN_LIST_TYPE, type).apply();
     }
 
     @SettingsBottomSheetDialogFragment.ListItemType
     public String getListDesignType() {
-        @SettingsBottomSheetDialogFragment.ListItemType
-        String type = mPreferences.getString(Keys.DESIGN_LIST_TYPE, SettingsBottomSheetDialogFragment.ListItemType.MIDDLE);
+        @SettingsBottomSheetDialogFragment.ListItemType final String type = mPreferences.getString(Keys.DESIGN_LIST_TYPE, SettingsBottomSheetDialogFragment.ListItemType.MIDDLE);
         return type;
     }
 
-    public void setFontPath(String type) {
+    public void setFontPath(final String type) {
         mPreferences.edit().putString(Keys.DESIGN_FONT_PATH, type).apply();
     }
 
@@ -179,7 +180,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return mPreferences.getBoolean(Keys.NOTIFICATION_IS_ON, true);
     }
 
-    public void setNotificationEnabled(boolean enabled) {
+    public void setNotificationEnabled(final boolean enabled) {
         mPreferences.edit().putBoolean(Keys.NOTIFICATION_IS_ON, enabled).apply();
     }
 
@@ -187,7 +188,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return mPreferences.getBoolean(Keys.NOTIFICATION_VIBRATION_IS_ON, false);
     }
 
-    public void setNotificationVibrationEnabled(boolean enabled) {
+    public void setNotificationVibrationEnabled(final boolean enabled) {
         mPreferences.edit().putBoolean(Keys.NOTIFICATION_VIBRATION_IS_ON, enabled).apply();
     }
 
@@ -195,7 +196,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return mPreferences.getBoolean(Keys.NOTIFICATION_LED_IS_ON, false);
     }
 
-    public void setNotificationLedEnabled(boolean enabled) {
+    public void setNotificationLedEnabled(final boolean enabled) {
         mPreferences.edit().putBoolean(Keys.NOTIFICATION_LED_IS_ON, enabled).apply();
     }
 
@@ -203,7 +204,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return mPreferences.getBoolean(Keys.NOTIFICATION_SOUND_IS_ON, false);
     }
 
-    public void setNotificationSoundEnabled(boolean enabled) {
+    public void setNotificationSoundEnabled(final boolean enabled) {
         mPreferences.edit().putBoolean(Keys.NOTIFICATION_SOUND_IS_ON, enabled).apply();
     }
 
@@ -213,9 +214,9 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
      * @return user settings of remote config value (banner is enabled and native is disabled)
      */
     public boolean isBannerInArticlesListsEnabled() {
-        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-        boolean bannerIsEnabled = !config.getBoolean(MAIN_BANNER_DISABLED);
-        boolean nativeIsEnabled = config.getBoolean(NATIVE_ADS_LISTS_ENABLED);
+        final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        final boolean bannerIsEnabled = !config.getBoolean(MAIN_BANNER_DISABLED);
+        final boolean nativeIsEnabled = config.getBoolean(NATIVE_ADS_LISTS_ENABLED);
         return mPreferences.getBoolean(Keys.ADS_BANNER_IN_ARTICLES_LISTS, bannerIsEnabled && !nativeIsEnabled);
     }
 
@@ -223,17 +224,17 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
      * @return user settings of remote config value (banner is enabled and native is disabled)
      */
     public boolean isBannerInArticleEnabled() {
-        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-        boolean bannerIsEnabled = !config.getBoolean(ARTICLE_BANNER_DISABLED);
-        boolean nativeIsEnabled = config.getBoolean(NATIVE_IN_ARTICLE_ENABLED);
+        final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        final boolean bannerIsEnabled = !config.getBoolean(ARTICLE_BANNER_DISABLED);
+        final boolean nativeIsEnabled = config.getBoolean(NATIVE_IN_ARTICLE_ENABLED);
         return mPreferences.getBoolean(Keys.ADS_BANNER_IN_ARTICLE, bannerIsEnabled && !nativeIsEnabled);
     }
 
-    public void setBannerInArticlesListsEnabled(boolean enabled) {
+    public void setBannerInArticlesListsEnabled(final boolean enabled) {
         mPreferences.edit().putBoolean(Keys.ADS_BANNER_IN_ARTICLES_LISTS, enabled).apply();
     }
 
-    public void setBannerInArticleEnabled(boolean enabled) {
+    public void setBannerInArticleEnabled(final boolean enabled) {
         mPreferences.edit().putBoolean(Keys.ADS_BANNER_IN_ARTICLE, enabled).apply();
     }
 
@@ -250,7 +251,6 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS) -
                (System.currentTimeMillis() - getLastTimeAdsShows())
                <= PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS;
-
     }
 
     /**
@@ -267,7 +267,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return mPreferences.getBoolean(Keys.OFFER_ALREADY_SHOWN, false);
     }
 
-    public void setOfferAlreadyShown(boolean shown) {
+    public void setOfferAlreadyShown(final boolean shown) {
         mPreferences.edit().putBoolean(Keys.OFFER_ALREADY_SHOWN, shown).apply();
     }
 
@@ -290,8 +290,8 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return mPreferences.getBoolean(Keys.ADS_REWARDED_DESCRIPTION_IS_SHOWN, false);
     }
 
-    public void setRewardedDescriptionIsNotShown(boolean isShown) {
-        mPreferences.edit().putBoolean(Keys.ADS_REWARDED_DESCRIPTION_IS_SHOWN, isShown).apply();
+    public void setRewardedDescriptionIsNotShown() {
+        mPreferences.edit().putBoolean(Keys.ADS_REWARDED_DESCRIPTION_IS_SHOWN, true).apply();
     }
 
     //invite
@@ -299,12 +299,12 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return mPreferences.getBoolean(Keys.INVITE_ALREADY_RECEIVED, false);
     }
 
-    public void setInviteAlreadyReceived(boolean received) {
-        mPreferences.edit().putBoolean(Keys.INVITE_ALREADY_RECEIVED, received).apply();
+    public void setInviteAlreadyReceived() {
+        mPreferences.edit().putBoolean(Keys.INVITE_ALREADY_RECEIVED, true).apply();
     }
 
     public void applyAwardForInvite() {
-        long time = FirebaseRemoteConfig.getInstance().getLong(INVITE_REWARD_IN_MILLIS);
+        final long time = FirebaseRemoteConfig.getInstance().getLong(INVITE_REWARD_IN_MILLIS);
 
         increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
@@ -316,11 +316,11 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
 
     //END invite
 
-    public void setLastTimeAdsShows(long timeInMillis) {
+    public void setLastTimeAdsShows(final long timeInMillis) {
         mPreferences.edit().putLong(Keys.ADS_LAST_TIME_SHOWS, timeInMillis).apply();
     }
 
-    private void increaseLastTimeAdsShows(long timeInMillis) {
+    private void increaseLastTimeAdsShows(final long timeInMillis) {
         long currentTime = getLastTimeAdsShows();
         if (currentTime == 0) {
             currentTime = System.currentTimeMillis();
@@ -342,7 +342,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return mPreferences.getLong(Keys.ADS_LAST_TIME_SHOWS, 0);
     }
 
-    public void setNumOfInterstitialsShown(int numOfInterstitialsShown) {
+    public void setNumOfInterstitialsShown(final int numOfInterstitialsShown) {
         mPreferences.edit().putInt(Keys.ADS_NUM_OF_INTERSTITIALS_SHOWN, numOfInterstitialsShown).apply();
     }
 
@@ -362,11 +362,11 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return System.currentTimeMillis() >= getTimeForWhichBannersDisabled();
     }
 
-    public void setTimeForWhichBannersDisabled(long timeInMillis) {
+    public void setTimeForWhichBannersDisabled(final long timeInMillis) {
         mPreferences.edit().putLong(Keys.TIME_FOR_WHICH_BANNERS_DISABLED, timeInMillis).apply();
     }
 
-    private void increaseTimeForWhichBannersDisabled(long timeInMillis) {
+    private void increaseTimeForWhichBannersDisabled(final long timeInMillis) {
         Timber.d("increaseTimeForWhichBannersDisabled: %s", timeInMillis);
         long currentTime = getTimeForWhichBannersDisabled();
         if (currentTime == 0) {
@@ -385,11 +385,11 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     //app installs
-    public boolean isAppInstalledForPackage(String packageName) {
+    public boolean isAppInstalledForPackage(final String packageName) {
         return mPreferences.getBoolean(Keys.PACKAGE_INSTALLED + packageName, false);
     }
 
-    public void setAppInstalledForPackage(String packageName) {
+    public void setAppInstalledForPackage(final String packageName) {
         mPreferences.edit().putBoolean(Keys.PACKAGE_INSTALLED + packageName, true).apply();
     }
 
@@ -400,7 +400,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
 //        setLastTimeAdsShows(time);
 //        //also set time for which we should disable banners
 //        setTimeForWhichBannersDisabled(time);
-        long time = FirebaseRemoteConfig.getInstance().getLong(APP_INSTALL_REWARD_IN_MILLIS);
+        final long time = FirebaseRemoteConfig.getInstance().getLong(APP_INSTALL_REWARD_IN_MILLIS);
 
         increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
@@ -410,11 +410,11 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     //vk groups join
-    public boolean isVkGroupJoined(String id) {
+    public boolean isVkGroupJoined(final String id) {
         return mPreferences.getBoolean(Keys.VK_GROUP_JOINED + id, false);
     }
 
-    public void setVkGroupJoined(String id) {
+    public void setVkGroupJoined(final String id) {
         mPreferences.edit().putBoolean(Keys.VK_GROUP_JOINED + id, true).apply();
         if (id.equals(FirebaseRemoteConfig.getInstance().getString(Constants.Firebase.RemoteConfigKeys.VK_APP_GROUP_ID))) {
             setAppVkGroupJoined(true);
@@ -425,7 +425,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return mPreferences.getBoolean(Keys.APP_VK_GROUP_JOINED, false);
     }
 
-    public void setAppVkGroupJoined(boolean joined) {
+    public void setAppVkGroupJoined(final boolean joined) {
         mPreferences.edit().putBoolean(Keys.APP_VK_GROUP_JOINED, joined).apply();
     }
 
@@ -435,7 +435,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
 //        setLastTimeAdsShows(time);
 //        //also set time for which we should disable banners
 //        setTimeForWhichBannersDisabled(time);
-        long time = FirebaseRemoteConfig.getInstance().getLong(FREE_VK_GROUPS_JOIN_REWARD);
+        final long time = FirebaseRemoteConfig.getInstance().getLong(FREE_VK_GROUPS_JOIN_REWARD);
         increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
         increaseTimeForWhichBannersDisabled(time);
@@ -449,18 +449,18 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
 //        setLastTimeAdsShows(time);
 //        //also set time for which we should disable banners
 //        setTimeForWhichBannersDisabled(time);
-        long time = FirebaseRemoteConfig.getInstance().getLong(AUTH_COOLDOWN_IN_MILLIS);
+        final long time = FirebaseRemoteConfig.getInstance().getLong(AUTH_COOLDOWN_IN_MILLIS);
         increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
         increaseTimeForWhichBannersDisabled(time);
 
-        setUserAwardedFromAuth(true);
+        setUserAwardedFromAuth();
 
         setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
     }
 
-    private void setUserAwardedFromAuth(boolean awardedFromAuth) {
-        mPreferences.edit().putBoolean(Keys.AWARD_FROM_AUTH_GAINED, awardedFromAuth).apply();
+    private void setUserAwardedFromAuth() {
+        mPreferences.edit().putBoolean(Keys.AWARD_FROM_AUTH_GAINED, true).apply();
     }
 
     public boolean isUserAwardedFromAuth() {
@@ -468,10 +468,11 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     //subscription
-    public void setHasSubscription(boolean hasSubscription) {
+    public void setHasSubscription(final boolean hasSubscription) {
         mPreferences.edit().putBoolean(Keys.HAS_SUBSCRIPTION, hasSubscription).apply();
     }
 
+    @Override
     public boolean isHasSubscription() {
         return mPreferences.getBoolean(Keys.HAS_SUBSCRIPTION, false);
 ////       FIX ME test
@@ -488,7 +489,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     /**
      * its a subscription that only removes ads
      */
-    public void setHasNoAdsSubscription(boolean hasSubscription) {
+    public void setHasNoAdsSubscription(final boolean hasSubscription) {
         mPreferences.edit().putBoolean(Keys.HAS_NO_ADS_SUBSCRIPTION, hasSubscription).apply();
     }
 
@@ -503,7 +504,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return mPreferences.getInt(Keys.FREE_ADS_DISABLE_REWARD_GAINED_COUNT, 0);
     }
 
-    public void setFreeAdsDisableRewardGainedCount(int count) {
+    public void setFreeAdsDisableRewardGainedCount(final int count) {
         mPreferences.edit().putInt(Keys.FREE_ADS_DISABLE_REWARD_GAINED_COUNT, count).apply();
     }
 
@@ -511,7 +512,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return getFreeAdsDisableRewardGainedCount() >= NUM_OF_DISABLE_ADS_REWARDS_COUNT_BEFORE_OFFER_SHOWING;
     }
 
-    public void setLastTimePeriodicalFreeTrialOffered(long timeInMillis) {
+    public void setLastTimePeriodicalFreeTrialOffered(final long timeInMillis) {
         mPreferences.edit().putLong(Keys.FREE_TRIAL_OFFERED_PERIODICAL, timeInMillis).apply();
     }
 
@@ -529,8 +530,8 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return System.currentTimeMillis() - getLastTimePeriodicalFreeTrialOffered() >= FREE_TRIAL_OFFERED_PERIOD;
     }
 
-    public void setFreeTrialOfferedAfterGetting1000Score(boolean alreadyOffered) {
-        mPreferences.edit().putBoolean(Keys.FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE, alreadyOffered).apply();
+    public void setFreeTrialOfferedAfterGetting1000Score() {
+        mPreferences.edit().putBoolean(Keys.FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE, true).apply();
     }
 
     public boolean isFreeTrialOfferedAfterGetting1000Score() {
@@ -554,7 +555,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     //auto sync
-    public void setNumOfAttemptsToAutoSync(long numOfAttemptsToAutoSync) {
+    public void setNumOfAttemptsToAutoSync(final long numOfAttemptsToAutoSync) {
         mPreferences.edit().putLong(Keys.AUTO_SYNC_ATTEMPTS, numOfAttemptsToAutoSync).apply();
     }
 
@@ -562,8 +563,8 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return mPreferences.getLong(Keys.AUTO_SYNC_ATTEMPTS, 0);
     }
 
-    public void addUnsyncedScore(int scoreToAdd) {
-        int newTotalScore = getNumOfUnsyncedScore() + scoreToAdd;
+    public void addUnsyncedScore(final int scoreToAdd) {
+        final int newTotalScore = getNumOfUnsyncedScore() + scoreToAdd;
         mPreferences.edit().putInt(Keys.UNSYNCED_SCORE, newTotalScore).apply();
     }
 
@@ -573,7 +574,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
             data = new VkGroupsToJoinResponse();
             data.items = new ArrayList<>();
         }
-        VkGroupToJoin item = new VkGroupToJoin(id);
+        final VkGroupToJoin item = new VkGroupToJoin(id);
         if (!data.items.contains(item)) {
             data.items.add(item);
             mPreferences.edit().putString(Keys.UNSYNCED_VK_GROUPS, mGson.toJson(data)).apply();
@@ -588,19 +589,19 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         VkGroupsToJoinResponse data = null;
         try {
             data = mGson.fromJson(mPreferences.getString(Keys.UNSYNCED_VK_GROUPS, null), VkGroupsToJoinResponse.class);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Timber.e(e);
         }
         return data;
     }
 
-    public void addUnsyncedApp(String id) {
+    public void addUnsyncedApp(final String id) {
         ApplicationsResponse data = getUnsyncedAppsJson();
         if (data == null) {
             data = new ApplicationsResponse();
             data.items = new ArrayList<>();
         }
-        PlayMarketApplication item = new PlayMarketApplication(id);
+        final PlayMarketApplication item = new PlayMarketApplication(id);
         if (!data.items.contains(item)) {
             data.items.add(item);
             mPreferences.edit().putString(Keys.UNSYNCED_APPS, mGson.toJson(data)).apply();
@@ -615,13 +616,13 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         ApplicationsResponse data = null;
         try {
             data = mGson.fromJson(mPreferences.getString(Keys.UNSYNCED_APPS, null), ApplicationsResponse.class);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Timber.e(e);
         }
         return data;
     }
 
-    public void setNumOfUnsyncedScore(int totalScore) {
+    public void setNumOfUnsyncedScore(final int totalScore) {
         mPreferences.edit().putInt(Keys.UNSYNCED_SCORE, totalScore).apply();
     }
 
@@ -629,13 +630,22 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return mPreferences.getInt(Keys.UNSYNCED_SCORE, 0);
     }
 
+    public void setLeaderBoardUpdatedTime(final long timeInMillis) {
+        mPreferences.edit().putLong(Keys.LEADERBOARD_UPDATE_TIME, timeInMillis).apply();
+    }
+
+    private long getLeaderBoardUpdatedTime() {
+        return mPreferences.getLong(Keys.LEADERBOARD_UPDATE_TIME, 0);
+    }
+
+
     //check vk group joined
-    public void setLastTimeAppVkGroupJoinedChecked(long timeInMillis) {
+    public void setLastTimeAppVkGroupJoinedChecked(final long timeInMillis) {
         mPreferences.edit().putLong(Keys.APP_VK_GROUP_JOINED_LAST_TIME_CHECKED, timeInMillis).apply();
     }
 
     private long getLastTimeAppVkGroupJoinedChecked() {
-        long timeFromLastShow = mPreferences.getLong(Keys.APP_VK_GROUP_JOINED_LAST_TIME_CHECKED, 0);
+        final long timeFromLastShow = mPreferences.getLong(Keys.APP_VK_GROUP_JOINED_LAST_TIME_CHECKED, 0);
         if (timeFromLastShow == 0) {
             setLastTimeAppVkGroupJoinedChecked(System.currentTimeMillis());
         }
@@ -647,12 +657,12 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
 
     //periodical update of subscriptions
-    public void setLastTimeSubscriptionsValidated(long timeInMillis) {
+    public void setLastTimeSubscriptionsValidated(final long timeInMillis) {
         mPreferences.edit().putLong(Keys.LAST_TIME_SUBSCRIPTIONS_INVALIDATED, timeInMillis).apply();
     }
 
     private long getLastTimeSubscriptionsValidated() {
-        long timeFromLastShow = mPreferences.getLong(Keys.LAST_TIME_SUBSCRIPTIONS_INVALIDATED, 0);
+        final long timeFromLastShow = mPreferences.getLong(Keys.LAST_TIME_SUBSCRIPTIONS_INVALIDATED, 0);
         if (timeFromLastShow == 0) {
             setLastTimeSubscriptionsValidated(System.currentTimeMillis());
         }
@@ -668,31 +678,23 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return mPreferences.getBoolean(Keys.LICENCE_ACCEPTED, false);
     }
 
-    public void setLicenceAccepted(boolean accepted) {
-        mPreferences.edit().putBoolean(Keys.LICENCE_ACCEPTED, accepted).apply();
+    public void setLicenceAccepted() {
+        mPreferences.edit().putBoolean(Keys.LICENCE_ACCEPTED, true).apply();
     }
 
     public boolean isPersonalDataAccepted() {
         return mPreferences.getBoolean(Keys.PERSONAL_DATA_ACCEPTED, false);
     }
 
-    public void setPersonalDataAccepted(boolean accepted) {
+    public void setPersonalDataAccepted(final boolean accepted) {
         mPreferences.edit().putBoolean(Keys.PERSONAL_DATA_ACCEPTED, accepted).apply();
-    }
-
-    public boolean isDataRestored() {
-        return mPreferences.getBoolean(Keys.DATA_RESTORED, false);
-    }
-
-    public void setDataIsRestored(boolean restored) {
-        mPreferences.edit().putBoolean(Keys.DATA_RESTORED, restored).apply();
     }
 
     public int getCurAppVersion() {
         return mPreferences.getInt(Keys.CUR_APP_VERSION, 0);
     }
 
-    public void setCurAppVersion(int versionCode) {
+    public void setCurAppVersion(final int versionCode) {
         mPreferences.edit().putInt(Keys.CUR_APP_VERSION, versionCode).apply();
     }
 }

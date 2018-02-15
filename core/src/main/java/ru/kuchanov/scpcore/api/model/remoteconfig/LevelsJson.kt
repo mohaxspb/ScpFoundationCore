@@ -11,9 +11,7 @@ import java.util.*
  *
  * for scp_ru
  */
-class LevelsJson {
-
-    var levels: List<Level>? = null
+data class LevelsJson(val levels: List<Level>) {
 
     /**
      * returns NO_SCORE_TO_MAX_LEVEL if level is already MAX_LEVEL_ID
@@ -22,7 +20,7 @@ class LevelsJson {
         if (curLevel.id == MAX_LEVEL_ID) {
             return NO_SCORE_TO_MAX_LEVEL
         }
-        val nextLevel = levels!![curLevel.id + 1]
+        val nextLevel = levels[curLevel.id + 1]
 
         val nextLevelScore = nextLevel.score
 
@@ -36,7 +34,7 @@ class LevelsJson {
         if (curLevel.id == MAX_LEVEL_ID) {
             return NO_SCORE_TO_MAX_LEVEL
         }
-        val nextLevel = levels!![curLevel.id + 1]
+        val nextLevel = levels[curLevel.id + 1]
 
         val nextLevelScore = nextLevel.score
 
@@ -45,59 +43,36 @@ class LevelsJson {
 
     fun getLevelForScore(score: Int): Level? {
         var userLevel: Level? = null
-            Collections.reverse(levels!!)
-            for (i in levels!!.indices) {
-                val level = levelsJson.levels!![i]
-                if (score >= level.score) {
-                    userLevel = level
-                    break
-                } else if (i == levels!!.size - 1) {
-                    //so max level reached
-                    userLevel = level
-                }
+        Collections.reverse(levels)
+        for (i in levels.indices) {
+            val level = levelsJson.levels[i]
+            if (score >= level.score) {
+                userLevel = level
+                break
+            } else if (i == levels.size - 1) {
+                //so max level reached
+                userLevel = level
             }
+        }
         return userLevel
     }
 
-    class Level {
+    fun getLevel(levelNum: Int) = levels[levelNum]
 
-        var id: Int = 0
-        var title: String? = null
-        var score: Int = 0
-
-        override fun equals(o: Any?): Boolean {
-            if (this === o) return true
-            if (o == null || javaClass != o.javaClass) return false
-
-            val level = o as Level?
-
-            return id == level!!.id
-        }
-
-        override fun hashCode(): Int {
-            return id
-        }
-
-        override fun toString(): String {
-            return "Level{" +
-                    "id=" + id +
-                    ", title='" + title + '\''.toString() +
-                    ", score=" + score +
-                    '}'.toString()
-        }
-    }
-
-    override fun toString(): String {
-        return "LevelsJson{" +
-                "levels=" + levels +
-                '}'.toString()
-    }
+    data class Level(val id: Int,
+        val title: String,
+        val score: Int
+    )
 
     companion object {
 
+        @JvmField
         val MAX_LEVEL_ID = 5
+        @JvmField
         val NO_SCORE_TO_MAX_LEVEL = -1
 
+
+        @JvmStatic
         val levelsJson: LevelsJson
             get() {
                 val levelsJsonString = FirebaseRemoteConfig.getInstance().getString(Constants.Firebase.RemoteConfigKeys.LEVELS_JSON)

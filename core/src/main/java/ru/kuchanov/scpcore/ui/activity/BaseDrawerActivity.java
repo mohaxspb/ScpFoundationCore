@@ -261,7 +261,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                 FirebaseAnalytics.getInstance(this)
                         .logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
-                mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score(true);
+                mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score();
                 showOfferFreeTrialSubscriptionPopup();
             }
         } else {

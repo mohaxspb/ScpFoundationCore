@@ -290,7 +290,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                             Timber.d("attempt to receive already received invite! Ata-ta, %%USER_NAME%%!");
                         }
                         mPresenter.onInviteReceived(invitationId);
-                        mMyPreferenceManager.setInviteAlreadyReceived(true);
+                        mMyPreferenceManager.setInviteAlreadyReceived();
                     }
                 })
                 .addOnFailureListener(this, e -> Timber.e(e, "getDynamicLink:onFailure"));
@@ -471,7 +471,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 .content(R.string.ads_reward_description_content)
                 .positiveText(R.string.ads_reward_ok)
                 .onPositive((dialog, which) -> {
-                    mMyPreferenceManager.setRewardedDescriptionIsNotShown(true);
+                    mMyPreferenceManager.setRewardedDescriptionIsNotShown();
                     startRewardedVideoFlow();
                 })
                 .show();
@@ -667,7 +667,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
                 showOfferFreeTrialSubscriptionPopup();
-                mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score(true);
+                mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score();
             }
         }
     };
