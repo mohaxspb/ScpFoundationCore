@@ -12,6 +12,8 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import com.vk.sdk.VKSdk;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -111,6 +113,15 @@ public class DbProvider implements DbProviderModel<Article> {
                 .asObservable()
                 .filter(RealmResults::isLoaded)
                 .filter(RealmResults::isValid);
+    }
+
+
+
+    @NotNull
+    public List<LeaderboardUser> getLeaderboardUsersUnmanaged() {
+        List<LeaderboardUser> users = mRealm.where(LeaderboardUser.class)
+                .findAllSorted(LeaderboardUser.FIELD_SCORE, Sort.DESCENDING);
+        return users.isEmpty() ? Collections.emptyList() : mRealm.copyFromRealm(users);
     }
 
     public Observable<Integer> saveLeaderboardUsers(final List<LeaderboardUser> data) {

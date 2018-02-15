@@ -8,27 +8,6 @@
     android:layout_height="match_parent"
     >
 
-    <FrameLayout
-        android:id="@+id/progressContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/whiteHalfTransparent"
-        >
-
-        <ProgressBar
-            android:id="@+id/progressCenter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminate="true"
-            android:indeterminateTint="?newArticlesTextColor"
-            android:indeterminateTintMode="src_in"
-            android:paddingBottom="@dimen/defaultMargin"
-            tools:targetApi="lollipop"
-            />
-
-    </FrameLayout>
-
     <TextView
         android:id="@+id/refresh"
         android:layout_width="match_parent"
@@ -60,7 +39,6 @@
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scrollbars="vertical"
                 />
 
             <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
@@ -256,5 +234,26 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/progressContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/whiteHalfTransparent"
+        >
+
+        <ProgressBar
+            android:id="@+id/progressCenter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateTint="?newArticlesTextColor"
+            android:indeterminateTintMode="src_in"
+            android:paddingBottom="@dimen/defaultMargin"
+            tools:targetApi="lollipop"
+            />
+
+    </FrameLayout>
 
 </FrameLayout>

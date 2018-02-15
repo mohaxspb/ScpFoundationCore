@@ -4,8 +4,8 @@ import io.realm.RealmObject
 
 open class LeaderboardUser(
     var uid: String = "",
-    var fullName: String = "",
-    var avatar: String = "",
+    var fullName: String? = "",
+    var avatar: String? = "",
     var score: Int = 0,
     var numOfReadArticles: Int = 0,
     var levelNum: Int = 0,

@@ -6,6 +6,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.realm.RealmResults
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
+import org.joda.time.Period
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
@@ -25,6 +26,8 @@ import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
+import ru.kuchanov.scpcore.ui.activity.BaseActivity
+import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 import ru.kuchanov.scpcore.util.DimensionUtils
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
@@ -55,6 +58,8 @@ class LeaderboardPresenter(
 
     override var myUser: User? = null
 
+    private var updated = false;
+
     override fun loadData(service: IInAppBillingService) {
         Timber.d("getMarketData")
         view.showProgressCenter(true)
@@ -67,68 +72,72 @@ class LeaderboardPresenter(
 
         Observable.zip(
             inAppHelper.getInAppsListToBuyObservable(service),
-            mDbProviderFactory.dbProvider.leaderboardUsers,
+            Observable.just(mDbProviderFactory.dbProvider.leaderboardUsersUnmanaged),
             Observable.just(mDbProviderFactory.dbProvider.userUnmanaged),
             { inapps: List<Subscription>, users: List<LeaderboardUser>, user: User? -> Triple(inapps, users, user) }
         )
                 .map {
                     val levelJson = LevelsJson.levelsJson
                     val viewModels = mutableListOf<MyListItem>()
-                    viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
+
                     val users = it.second
-                    val medalColorsArr = listOf(R.color.medalGold, R.color.medalSilver, R.color.medalBronze)
-                    users.subList(0, 3).forEachIndexed { index, user ->
+                    if (!users.isEmpty()) {
+                        viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
+                        val medalColorsArr = listOf(R.color.medalGold, R.color.medalSilver, R.color.medalBronze)
+                        users.subList(0, 3).forEachIndexed { index, user ->
+                            viewModels.add(
+                                LabelViewModel(
+                                    0,
+                                    textString = BaseApplication.getAppInstance().getString(
+                                        R.string.leaderboard_place,
+                                        index + 1),
+                                    bgColor = R.color.freeAdsBackgroundColor))
+                            viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(8)))
+
+                            val level = levelJson.levels[user.levelNum]
+                            viewModels.add(
+                                LeaderboardUserViewModel(
+                                    index + 1,
+                                    user,
+                                    LevelViewModel(
+                                        level,
+                                        user.scoreToNextLevel,
+                                        levelJson.getLevelMaxScore(level),
+                                        level.id == LevelsJson.MAX_LEVEL_ID),
+                                    medalTint = medalColorsArr[index]
+                                ))
+                        }
+
+
+                        viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
                         viewModels.add(
                             LabelViewModel(
-                                0,
-                                textString = BaseApplication.getAppInstance().getString(
-                                    R.string.leaderboard_place,
-                                    index + 1),
+                                R.string.leaderboard_inapp_label,
+                                textColor = R.color.material_green_500,
                                 bgColor = R.color.freeAdsBackgroundColor))
-                        viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(8)))
-
-                        val level = levelJson.levels[user.levelNum]
+                        val levelUpInApp = it.first.first()
                         viewModels.add(
+                            InAppViewModel(
+                                R.string.leaderboard_inapp_title,
+                                R.string.leaderboard_inapp_description,
+                                levelUpInApp.price,
+                                levelUpInApp.productId,
+                                R.drawable.ic_leaderbord_levelup_icon,
+                                R.color.freeAdsBackgroundColor))
+
+                        viewModels.addAll(users.subList(3, users.size).mapIndexed { index, firebaseObjectUser ->
+                            val level = levelJson.levels[firebaseObjectUser.levelNum]
                             LeaderboardUserViewModel(
-                                index + 1,
-                                user,
+                                index + 3 + 1,
+                                firebaseObjectUser,
                                 LevelViewModel(
                                     level,
-                                    user.scoreToNextLevel,
+                                    firebaseObjectUser.scoreToNextLevel,
                                     levelJson.getLevelMaxScore(level),
                                     level.id == LevelsJson.MAX_LEVEL_ID),
-                                medalTint = medalColorsArr[index]
-                            ))
+                                bgColor = R.color.leaderboardBottomBgColor)
+                        })
                     }
-
-                    viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
-                    viewModels.add(
-                        LabelViewModel(
-                            R.string.leaderboard_inapp_label,
-                            textColor = R.color.material_green_500,
-                            bgColor = R.color.freeAdsBackgroundColor))
-                    val levelUpInApp = it.first.first()
-                    viewModels.add(
-                        InAppViewModel(
-                            R.string.leaderboard_inapp_title,
-                            R.string.leaderboard_inapp_description,
-                            levelUpInApp.price,
-                            levelUpInApp.productId,
-                            R.drawable.ic_leaderbord_levelup_icon,
-                            R.color.freeAdsBackgroundColor))
-
-                    viewModels.addAll(users.subList(3, users.size).mapIndexed { index, firebaseObjectUser ->
-                        val level = levelJson.levels[firebaseObjectUser.levelNum]
-                        LeaderboardUserViewModel(
-                            index + 3 + 1,
-                            firebaseObjectUser,
-                            LevelViewModel(
-                                level,
-                                firebaseObjectUser.scoreToNextLevel,
-                                levelJson.getLevelMaxScore(level),
-                                level.id == LevelsJson.MAX_LEVEL_ID),
-                            bgColor = R.color.leaderboardBottomBgColor)
-                    })
                     myUser = it.third
 
                     return@map Triple(viewModels, it.second, convertUser(myUser, users, levelJson))
@@ -147,6 +156,11 @@ class LeaderboardPresenter(
                         view.showData(data)
                         view.showUpdateDate(mMyPreferencesManager.leaderBoardUpdatedTime)
                         view.showUser(it.third)
+
+                        if (!updated) {
+                            view.showProgressCenter(true)
+                            updateLeaderboardFromApi()
+                        }
                     },
                     onError = {
                         Timber.e(it, "error getting cur subs")
@@ -161,6 +175,7 @@ class LeaderboardPresenter(
     override fun updateLeaderboardFromApi() = mApiClient.leaderboard.toSingle()
             .map { leaderBoardResponse ->
                 val realmUsers = leaderBoardResponse.users.map {
+                    //                    Timber.d("user: $it")
                     LeaderboardUser(
                         it.uid,
                         it.fullName,
@@ -179,12 +194,17 @@ class LeaderboardPresenter(
             .flatMap { triple -> mDbProviderFactory.dbProvider.saveLeaderboardUsers(triple.third).toSingle().map { triple } }
             .subscribeBy(
                 onSuccess = {
-                    val utcTime = DateTime(it.first, DateTimeZone.forID(it.second)).withZone(DateTimeZone.UTC).millis
-                    mMyPreferencesManager.leaderBoardUpdatedTime = utcTime
+                    Timber.d("serverTime: ${DateTime(it.first, DateTimeZone.forID(it.second))}")
+                    val utcTime = DateTime(it.first, DateTimeZone.forID(it.second)).withZone(DateTimeZone.UTC)
+                    Timber.d("utcTime: $utcTime")
+                    mMyPreferencesManager.leaderBoardUpdatedTime = utcTime.millis
+                    updated = true
+                    loadData((view as BaseFragment<*, *>).getBaseActivity().getIInAppBillingService())
                 },
                 onError = {
                     Timber.e(it)
                     view.showError(it)
+                    view.showProgressCenter(false)
                 }
             )
 
