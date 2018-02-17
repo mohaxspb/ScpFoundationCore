@@ -47,8 +47,14 @@ class LeaderboardFragment :
 
     override fun initViews() {
         InAppBillingServiceConnectionObservable.getInstance().serviceStatusObservable.subscribe { connected ->
-            if (connected!! && !getPresenter().isDataLoaded && isAdded && activity is BaseActivity<*, *>) {
-                getPresenter().loadData((activity as BaseActivity<*, *>).getIInAppBillingService())
+            if(!isAdded){
+                return@subscribe
+            }
+            if (connected && isAdded && activity is BaseActivity<*, *>) {
+                getPresenter().inAppService = (activity as BaseActivity<*, *>).getIInAppBillingService()
+                if (!getPresenter().isDataLoaded) {
+                    getPresenter().loadData()
+                }
             }
         }
 
@@ -70,25 +76,20 @@ class LeaderboardFragment :
         delegateManager.addDelegate(DividerDelegate())
         delegateManager.addDelegate(LabelDelegate())
         delegateManager.addDelegate(LeaderboardDelegate())
-        delegateManager.addDelegate(InAppDelegate {
-            presenter.onSubscriptionClick(
-                it,
-                this,
-                baseActivity.getIInAppBillingService())
-        })
+        delegateManager.addDelegate(InAppDelegate { presenter.onSubscriptionClick(it, this) })
 
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter
 
         if (presenter.data.isEmpty()) {
             enableSwipeRefresh(false)
-            baseActivity.getIInAppBillingService()?.apply { getPresenter().loadData(this) }
+            getPresenter().loadData()
         } else {
             showProgressCenter(false)
             presenter.apply { showData(data); onUserChanged(presenter.myUser); showUpdateDate(updateTime) }
         }
 
-        refresh.setOnClickListener { baseActivity.getIInAppBillingService()?.apply { getPresenter().loadData(this) } }
+        refresh.setOnClickListener { getPresenter().loadData() }
     }
 
     override fun showProgressCenter(show: Boolean) {

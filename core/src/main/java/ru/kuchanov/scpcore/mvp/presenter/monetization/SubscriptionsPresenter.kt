@@ -135,8 +135,8 @@ class SubscriptionsPresenter(
     }
 
     companion object {
-        val ID_FREE_ADS_DISABLE = "ID_FREE_ADS_DISABLE"
-        val ID_CURRENT_SUBS = "ID_CURRENT_SUBS"
-        val ID_CURRENT_SUBS_EMPTY = "ID_CURRENT_SUBS_EMPTY"
+        const val ID_FREE_ADS_DISABLE = "ID_FREE_ADS_DISABLE"
+        const val ID_CURRENT_SUBS = "ID_CURRENT_SUBS"
+        const val ID_CURRENT_SUBS_EMPTY = "ID_CURRENT_SUBS_EMPTY"
     }
 }

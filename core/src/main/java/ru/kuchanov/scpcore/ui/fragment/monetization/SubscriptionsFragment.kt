@@ -70,6 +70,9 @@ class SubscriptionsFragment :
 
     override fun initViews() {
         InAppBillingServiceConnectionObservable.getInstance().serviceStatusObservable.subscribe { connected ->
+            if(!isAdded){
+                return@subscribe
+            }
             if (connected!! && !getPresenter().isDataLoaded && isAdded && activity is BaseActivity<*, *>) {
                 (activity as? BaseActivity<*, *>)?.apply { presenter.getMarketData(this.getIInAppBillingService()) }
             }
@@ -81,19 +84,29 @@ class SubscriptionsFragment :
         delegateManager.addDelegate(TextDelegate())
         delegateManager.addDelegate(LabelDelegate())
         delegateManager.addDelegate(LabelWithPercentDelegate())
-        delegateManager.addDelegate(InAppDelegate { getPresenter().onSubscriptionClick(it, this, baseActivity.getIInAppBillingService()) })
+        delegateManager.addDelegate(InAppDelegate {
+            getPresenter().onSubscriptionClick(
+                it,
+                this,
+                baseActivity.getIInAppBillingService())
+        })
         delegateManager.addDelegate(CurSubsDelegate { getPresenter().onCurrentSubscriptionClick(it) })
         delegateManager.addDelegate(CurSubsEmptyDelegate(
-                { getPresenter().onSubscriptionClick(InAppHelper.getNewInAppsSkus().first(), this, baseActivity.getIInAppBillingService()) },
-                {
-                    baseActivity.updateOwnedMarketItems()
-                    getPresenter().getMarketData(baseActivity.getIInAppBillingService())
-                }
+            {
+                getPresenter().onSubscriptionClick(
+                    InAppHelper.getNewInAppsSkus().first(),
+                    this,
+                    baseActivity.getIInAppBillingService())
+            },
+            {
+                baseActivity.updateOwnedMarketItems()
+                getPresenter().getMarketData(baseActivity.getIInAppBillingService())
+            }
         ))
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter
 
-        refresh.setOnClickListener { getPresenter().getMarketData(baseActivity.getIInAppBillingService()) }
+        refresh.setOnClickListener { baseActivity.getIInAppBillingService()?.apply { getPresenter().getMarketData(this) } }
 
         if (presenter.owned == null) {
             baseActivity.getIInAppBillingService()?.apply { getPresenter().getMarketData(this) }
@@ -103,9 +116,13 @@ class SubscriptionsFragment :
         }
     }
 
-    override fun showProgressCenter(show: Boolean) = progressContainer.setVisibility(if (show) VISIBLE else GONE)
+    override fun showProgressCenter(show: Boolean) {
+        progressContainer.visibility = if (show) VISIBLE else GONE
+    }
 
-    override fun showRefreshButton(show: Boolean) = refresh.setVisibility(if (show) VISIBLE else GONE)
+    override fun showRefreshButton(show: Boolean) {
+        refresh.visibility = if (show) VISIBLE else GONE
+    }
 
     //    override fun showData(items: List<MyListItem>) {
     override fun showData(owned: List<Item>, toBuy: List<Subscription>, inApps: List<Subscription>, curSubsType: Int) {
@@ -114,83 +131,79 @@ class SubscriptionsFragment :
         items.clear()
         items.add(TextViewModel(R.string.subs_main_text))
         items.add(LabelViewModel(R.string.subs_free_actions_title))
-        items.add(InAppViewModel(
+        items.add(
+            InAppViewModel(
                 R.string.subs_free_actions_card_title,
                 R.string.subs_free_actions_card_description,
                 BaseApplication.getAppInstance().getString(R.string.free),
                 ID_FREE_ADS_DISABLE,
                 R.drawable.ic_no_money
-        ))
+            ))
         //levelUp
         items.add(LabelViewModel(R.string.subs_level_5_label))
         val levelUp = inApps.first()
-        items.add(InAppViewModel(
+        items.add(
+            InAppViewModel(
                 R.string.subs_level_5_title,
                 R.string.subs_level_5_description,
                 levelUp.price,
                 levelUp.productId,
                 R.drawable.ic_05
-        ))
+            ))
         //cur sub
         items.add(LabelViewModel(R.string.subs_cur_label))
-        if (curSubsType == InAppHelper.SubscriptionType.NONE) {
-            items.add(CurSubsEmptyViewModel(ID_CURRENT_SUBS_EMPTY))
-        } else if (curSubsType == InAppHelper.SubscriptionType.NO_ADS) {
-            items.add(CurSubsViewModel(
+        when (curSubsType) {
+            InAppHelper.SubscriptionType.NONE -> items.add(CurSubsEmptyViewModel(ID_CURRENT_SUBS_EMPTY))
+            InAppHelper.SubscriptionType.NO_ADS -> items.add(
+                CurSubsViewModel(
                     R.string.subs_no_ads_title,
                     R.string.subs_no_ads_description,
                     ID_CURRENT_SUBS,
                     R.drawable.ic_adblock
-            ))
-        } else {
-            val item: Item?
-            if (owned.any { it.sku.contains("12") }) {
-                item = owned.find { it.sku.contains("12") }
-            } else if (owned.any { it.sku.contains("6") }) {
-                item = owned.find { it.sku.contains("6") }
-            } else if (owned.any { it.sku.contains("3") }) {
-                item = owned.find { it.sku.contains("3") }
-            } else if (owned.any { it.sku.contains("1") }) {
-                item = owned.find { it.sku.contains("1") }
-            } else {
-                throw IllegalArgumentException("unexpected subs period")
-            }
-            if (item == null) {
-                throw IllegalArgumentException("item is null! wtf?!")
-            }
+                ))
+            else -> {
+                val item: Item = when {
+                    owned.any { it.sku.contains("12") } -> owned.find { it.sku.contains("12") }
+                    owned.any { it.sku.contains("6") } -> owned.find { it.sku.contains("6") }
+                    owned.any { it.sku.contains("3") } -> owned.find { it.sku.contains("3") }
+                    owned.any { it.sku.contains("1") } -> owned.find { it.sku.contains("1") }
+                    else -> throw IllegalArgumentException("unexpected subs period")
+                } ?: throw IllegalArgumentException("item is null! wtf?!")
 
-            @StringRes
-            val title: Int
-            @StringRes
-            val description: Int = R.string.subs_full_description
-            @DrawableRes
-            val icon: Int
-            when (getMonthFromSkuId(item.sku)) {
-                1 -> {
-                    title = R.string.subs_1_month_title
-                    icon = R.drawable.ic_scp_icon_laborant
+                @StringRes
+                val title: Int
+                @StringRes
+                val description: Int = R.string.subs_full_description
+                @DrawableRes
+                val icon: Int
+                when (getMonthFromSkuId(item.sku)) {
+                    1 -> {
+                        title = R.string.subs_1_month_title
+                        icon = R.drawable.ic_scp_icon_laborant
+                    }
+                    3 -> {
+                        title = R.string.subs_3_month_title
+                        icon = R.drawable.ic_scp_icon_mns
+                    }
+                    6 -> {
+                        title = R.string.subs_6_month_title
+                        icon = R.drawable.ic_scp_icon_ns
+                    }
+                    12 -> {
+                        title = R.string.subs_12_month_title
+                        icon = R.drawable.ic_scp_icon_sns
+                    }
+                    else -> throw IllegalArgumentException("unexpected subs period")
                 }
-                3 -> {
-                    title = R.string.subs_3_month_title
-                    icon = R.drawable.ic_scp_icon_mns
-                }
-                6 -> {
-                    title = R.string.subs_6_month_title
-                    icon = R.drawable.ic_scp_icon_ns
-                }
-                12 -> {
-                    title = R.string.subs_12_month_title
-                    icon = R.drawable.ic_scp_icon_sns
-                }
-                else -> throw IllegalArgumentException("unexpected subs period")
-            }
 
-            items.add(CurSubsViewModel(
-                    title,
-                    description,
-                    ID_CURRENT_SUBS,
-                    icon
-            ))
+                items.add(
+                    CurSubsViewModel(
+                        title,
+                        description,
+                        ID_CURRENT_SUBS,
+                        icon
+                    ))
+            }
         }
         //bottom panel
         val bgColor = R.color.bgSubsBottom
@@ -203,24 +216,25 @@ class SubscriptionsFragment :
 
         val subsFullOneMonth = toBuy
                 .filter { it.productId !in InAppHelper.getNewNoAdsSubsSkus() }
-                .filter { getMonthFromSkuId(it.productId) == 1 }
-                .first()
+                .first { getMonthFromSkuId(it.productId) == 1 }
 
         toBuy.forEach {
             if (noAdsSubsEnabled && (it.productId in InAppHelper.getNewNoAdsSubsSkus())) {
-                items.add(LabelViewModel(
+                items.add(
+                    LabelViewModel(
                         R.string.subs_no_ads_label,
                         textColor = textColor,
                         bgColor = bgColor
-                ))
-                items.add(InAppViewModel(
+                    ))
+                items.add(
+                    InAppViewModel(
                         R.string.subs_no_ads_title,
                         R.string.subs_no_ads_description,
                         it.price,
                         it.productId,
                         R.drawable.ic_adblock,
                         bgColor
-                ))
+                    ))
             } else {
                 @StringRes
                 val label: Int
@@ -258,19 +272,21 @@ class SubscriptionsFragment :
 
                 val oneMonthPriceForMonths = subsFullOneMonth.price_amount_micros * month
                 val percent = 100L - it.price_amount_micros * 100L / oneMonthPriceForMonths
-                items.add(LabelWithPercentViewModel(
+                items.add(
+                    LabelWithPercentViewModel(
                         label,
                         if (month != 1) (oneMonthPriceForMonths / 1000000L).toString() + SystemUtils.getCurrencySymbol2(it.price_currency_code) else "",
                         if (month != 1) percent.toString() else ""
-                ))
-                items.add(InAppViewModel(
+                    ))
+                items.add(
+                    InAppViewModel(
                         title,
                         description,
                         it.price,
                         it.productId,
                         icon,
                         bgColor
-                ))
+                    ))
             }
         }
 
@@ -333,18 +349,18 @@ class SubscriptionsFragment :
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeBy(
-                                    onSuccess = {
-                                        Timber.d("consume inapp successful, so update user score")
-                                        mPresenter.updateUserScoreForInapp(item.productId)
+                                onSuccess = {
+                                    Timber.d("consume inapp successful, so update user score")
+                                    mPresenter.updateUserScoreForInapp(item.productId)
 
-                                        if (!myPreferenceManager.isHasAnySubscription()) {
-                                            baseActivity.showOfferSubscriptionPopup()
-                                        }
-                                    },
-                                    onError = {
-                                        Timber.e(it, "error while consume inapp... X3 what to do)))")
-                                        showError(it)
+                                    if (!myPreferenceManager.isHasAnySubscription) {
+                                        baseActivity.showOfferSubscriptionPopup()
                                     }
+                                },
+                                onError = {
+                                    Timber.e(it, "error while consume inapp... X3 what to do)))")
+                                    showError(it)
+                                }
                             )
                 }
             }

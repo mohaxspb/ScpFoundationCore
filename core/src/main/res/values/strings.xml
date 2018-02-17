@@ -8,6 +8,7 @@
     <string name="image_title" translatable="false">scp_image</string>
     <string name="image_description" translatable="false">Image from gallery of SCP Foundation app</string>
     <string name="max_level" translatable="false">Max level</string>
+    <string name="google_services_not_connected" translatable="false">Google services not connected</string>
     <!--drawer items-->
     <string name="drawer_item_1">About the SCP Foundation</string>
     <string name="drawer_item_2">Site News Hub</string>
