@@ -50,6 +50,8 @@
                 app:rfs_handleColor="?newArticlesTextColor" />
         </FrameLayout>
 
+
+
         <LinearLayout
             android:id="@+id/userDataView"
             android:layout_width="match_parent"
