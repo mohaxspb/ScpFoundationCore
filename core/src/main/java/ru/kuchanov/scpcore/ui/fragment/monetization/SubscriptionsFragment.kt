@@ -70,7 +70,7 @@ class SubscriptionsFragment :
 
     override fun initViews() {
         InAppBillingServiceConnectionObservable.getInstance().serviceStatusObservable.subscribe { connected ->
-            if(!isAdded){
+            if (!isAdded) {
                 return@subscribe
             }
             if (connected!! && !getPresenter().isDataLoaded && isAdded && activity is BaseActivity<*, *>) {
@@ -85,31 +85,35 @@ class SubscriptionsFragment :
         delegateManager.addDelegate(LabelDelegate())
         delegateManager.addDelegate(LabelWithPercentDelegate())
         delegateManager.addDelegate(InAppDelegate {
-            getPresenter().onSubscriptionClick(
-                it,
-                this,
-                baseActivity.getIInAppBillingService())
+            baseActivity?.apply {
+                this@SubscriptionsFragment.getPresenter().onSubscriptionClick(
+                    it,
+                    this@SubscriptionsFragment,
+                    getIInAppBillingService())
+            }
         })
         delegateManager.addDelegate(CurSubsDelegate { getPresenter().onCurrentSubscriptionClick(it) })
         delegateManager.addDelegate(CurSubsEmptyDelegate(
             {
-                getPresenter().onSubscriptionClick(
-                    InAppHelper.getNewInAppsSkus().first(),
-                    this,
-                    baseActivity.getIInAppBillingService())
+                baseActivity?.apply {
+                    this@SubscriptionsFragment.getPresenter().onSubscriptionClick(
+                        InAppHelper.getNewInAppsSkus().first(),
+                        this@SubscriptionsFragment,
+                        getIInAppBillingService())
+                }
             },
             {
-                baseActivity.updateOwnedMarketItems()
-                getPresenter().getMarketData(baseActivity.getIInAppBillingService())
+                baseActivity?.updateOwnedMarketItems()
+                baseActivity?.getIInAppBillingService()?.apply { this@SubscriptionsFragment.getPresenter().getMarketData(this) }
             }
         ))
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter
 
-        refresh.setOnClickListener { baseActivity.getIInAppBillingService()?.apply { getPresenter().getMarketData(this) } }
+        refresh.setOnClickListener { baseActivity?.getIInAppBillingService()?.apply { getPresenter().getMarketData(this) } }
 
         if (presenter.owned == null) {
-            baseActivity.getIInAppBillingService()?.apply { getPresenter().getMarketData(this) }
+            baseActivity?.getIInAppBillingService()?.apply { getPresenter().getMarketData(this) }
         } else {
             showProgressCenter(false)
             presenter.apply { showData(owned!!, subsToBuy!!, inAppsToBuy!!, type) }
@@ -316,7 +320,7 @@ class SubscriptionsFragment :
                     Timber.d("You have bought the %s", sku)
 
                     //validate subs list
-                    baseActivity.updateOwnedMarketItems()
+                    baseActivity?.updateOwnedMarketItems()
                 } catch (e: JSONException) {
                     Timber.e(e, "Failed to parse purchase data.")
                     showError(e)
@@ -344,7 +348,7 @@ class SubscriptionsFragment :
                 if (item.productId == getString(R.string.inapp_skus).split(",").first()) {
                     //levelUp 5
                     //add 10 000 score
-                    mInAppHelper.consumeInApp(item.productId, item.purchaseToken, baseActivity.getIInAppBillingService())
+                    mInAppHelper.consumeInApp(item.productId, item.purchaseToken, baseActivity?.getIInAppBillingService())
                             .toSingle()
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -354,7 +358,7 @@ class SubscriptionsFragment :
                                     mPresenter.updateUserScoreForInapp(item.productId)
 
                                     if (!myPreferenceManager.isHasAnySubscription) {
-                                        baseActivity.showOfferSubscriptionPopup()
+                                        baseActivity?.showOfferSubscriptionPopup()
                                     }
                                 },
                                 onError = {

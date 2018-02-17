@@ -241,7 +241,11 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
         getBaseActivity().showFreeAdsDisablePopup();
     }
 
+    @Nullable
     public BaseActivity getBaseActivity() {
+        if(!isAdded()){
+            return null;
+        }
         if (!(getActivity() instanceof BaseActivity)) {
             throw new RuntimeException("Activity must extend BaseActivity");
         }

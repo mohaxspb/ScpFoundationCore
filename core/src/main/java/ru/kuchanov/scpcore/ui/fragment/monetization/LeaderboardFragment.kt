@@ -111,7 +111,7 @@ class LeaderboardFragment :
 
     override fun showUser(myUser: LeaderboardUserViewModel?) {
         if (myUser == null) {
-            userDataView.visibility = View.GONE
+            //todo
             return
         }
         userDataView.visibility = View.VISIBLE
@@ -153,7 +153,7 @@ class LeaderboardFragment :
     }
 
     override fun showUpdateDate(lastUpdated: Long) {
-        baseActivity.getSupportActionBar()?.apply {
+        baseActivity?.getSupportActionBar()?.apply {
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = lastUpdated
             val simpleDateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
@@ -169,9 +169,9 @@ class LeaderboardFragment :
 
     override fun onRewardedVideoClick() {
         if (FirebaseAuth.getInstance().currentUser == null) {
-            baseActivity.showOfferLoginPopup { _, _ -> baseActivity.startRewardedVideoFlow() }
+            baseActivity?.showOfferLoginPopup { _, _ -> baseActivity?.startRewardedVideoFlow() }
         } else {
-            baseActivity.startRewardedVideoFlow()
+            baseActivity?.startRewardedVideoFlow()
         }
     }
 

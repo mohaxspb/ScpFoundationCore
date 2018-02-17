@@ -45,7 +45,8 @@ class LeaderboardPresenter(
 ) : BasePresenter<LeaderboardContract.View>(
     myPreferencesManager,
     dbProviderFactory,
-    apiClient), LeaderboardContract.Presenter {
+    apiClient
+), LeaderboardContract.Presenter {
 
     override var isDataLoaded = false
 
@@ -253,10 +254,6 @@ class LeaderboardPresenter(
         } else {
             users?.apply { view.showUser(convertUser(myUser, this, LevelsJson.levelsJson)) }
         }
-    }
-
-    override fun onRewardedVideoClick() {
-        //nothing to do
     }
 
     override fun onSubscriptionClick(id: String, target: Fragment) {

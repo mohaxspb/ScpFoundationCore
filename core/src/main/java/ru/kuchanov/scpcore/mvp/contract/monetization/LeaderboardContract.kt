@@ -39,7 +39,6 @@ interface LeaderboardContract : BaseMvp {
 
         var inAppService: IInAppBillingService?
 
-        fun onRewardedVideoClick()
         fun loadData()
         fun onSubscriptionClick(id: String, target: Fragment)
         fun updateLeaderboardFromApi()
