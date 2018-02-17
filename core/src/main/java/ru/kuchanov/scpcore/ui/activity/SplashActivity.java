@@ -39,7 +39,7 @@ public class SplashActivity extends AppCompatActivity {
         } else {
             if (!mMyPreferenceManager.isLicenceAccepted()) {
                 intent = new Intent(this, MainActivity.class).putExtra(EXTRA_SHOW_ABOUT, true);
-                mMyPreferenceManager.setLicenceAccepted(true);
+                mMyPreferenceManager.setLicenceAccepted();
             } else {
                 intent = new Intent(this, MainActivity.class);
             }

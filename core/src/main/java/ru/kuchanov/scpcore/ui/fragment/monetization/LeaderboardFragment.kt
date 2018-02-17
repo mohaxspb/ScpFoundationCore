@@ -2,7 +2,9 @@ package ru.kuchanov.scpcore.ui.fragment.monetization
 
 import android.graphics.Bitmap
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
+import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.SimpleItemAnimator
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -53,20 +55,37 @@ class LeaderboardFragment :
         recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         fastScroller.setRecyclerView(recyclerView)
 
+        (recyclerView.getItemAnimator() as DefaultItemAnimator).supportsChangeAnimations = false
+        val animator = recyclerView.itemAnimator
+
+        if (animator is SimpleItemAnimator) {
+            animator.supportsChangeAnimations = false
+        }
+        recyclerView.itemAnimator.changeDuration = 0
+
+        swipeRefresh.setColorSchemeResources(R.color.zbs_color_red)
+        swipeRefresh.setOnRefreshListener { mPresenter.updateLeaderboardFromApi() }
+
         val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
         delegateManager.addDelegate(DividerDelegate())
         delegateManager.addDelegate(LabelDelegate())
         delegateManager.addDelegate(LeaderboardDelegate())
-        delegateManager.addDelegate(InAppDelegate { presenter.onSubscriptionClick(it, this, baseActivity.getIInAppBillingService()) })
+        delegateManager.addDelegate(InAppDelegate {
+            presenter.onSubscriptionClick(
+                it,
+                this,
+                baseActivity.getIInAppBillingService())
+        })
 
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter
 
         if (presenter.data.isEmpty()) {
+            enableSwipeRefresh(false)
             baseActivity.getIInAppBillingService()?.apply { getPresenter().loadData(this) }
         } else {
             showProgressCenter(false)
-            presenter.apply { showData(data); onUserChanged(presenter.myUser) }
+            presenter.apply { showData(data); onUserChanged(presenter.myUser); showUpdateDate(updateTime) }
         }
 
         refresh.setOnClickListener { baseActivity.getIInAppBillingService()?.apply { getPresenter().loadData(this) } }
@@ -79,6 +98,14 @@ class LeaderboardFragment :
     override fun showData(data: List<MyListItem>) {
         adapter.items = data
         adapter.notifyDataSetChanged()
+    }
+
+    override fun showSwipeRefreshProgress(show: Boolean) {
+        swipeRefresh.isRefreshing = show
+    }
+
+    override fun enableSwipeRefresh(enable: Boolean) {
+        swipeRefresh.isEnabled = enable
     }
 
     override fun showUser(myUser: LeaderboardUserViewModel?) {
@@ -124,12 +151,11 @@ class LeaderboardFragment :
         }
     }
 
-    override fun showUpdateDate(lastUpdated: Long, timeZone: String) {
+    override fun showUpdateDate(lastUpdated: Long) {
         baseActivity.getSupportActionBar()?.apply {
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = lastUpdated
-            calendar.timeZone = TimeZone.getTimeZone(timeZone)
-            val simpleDateFormat = SimpleDateFormat("HH:mm:ss zzzz", Locale.getDefault())
+            val simpleDateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
             val refreshed = simpleDateFormat.format(calendar.time)
 
             subtitle = getString(R.string.refreshed, refreshed)

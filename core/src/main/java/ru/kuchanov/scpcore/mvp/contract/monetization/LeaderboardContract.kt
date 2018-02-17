@@ -2,9 +2,10 @@ package ru.kuchanov.scpcore.mvp.contract.monetization
 
 import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
-import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse
+import io.realm.RealmResults
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LeaderboardUserViewModel
+import ru.kuchanov.scpcore.db.model.LeaderboardUser
 import ru.kuchanov.scpcore.db.model.User
 import ru.kuchanov.scpcore.mvp.base.BaseMvp
 import ru.kuchanov.scpcore.mvp.contract.FragmentToolbarStateSetter
@@ -22,19 +23,23 @@ interface LeaderboardContract : BaseMvp {
         fun showData(data: List<MyListItem>)
         fun onRewardedVideoClick()
         fun showRefreshButton(show: Boolean)
-        fun showUpdateDate(lastUpdated: Long, timeZone: String)
+        fun showUpdateDate(lastUpdated: Long)
         fun showUser(myUser: LeaderboardUserViewModel?)
+        fun showSwipeRefreshProgress(show: Boolean)
+        fun enableSwipeRefresh(enable: Boolean)
     }
 
     interface Presenter : BaseMvp.Presenter<View> {
         val isDataLoaded: Boolean
 
         val data: List<MyListItem>
-        var leaderBoardResponse: LeaderBoardResponse?
+        var users: RealmResults<LeaderboardUser>?
         var myUser:User?
+        var updateTime: Long
 
         fun onRewardedVideoClick()
         fun loadData(service: IInAppBillingService)
         fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService)
+        fun updateLeaderboardFromApi()
     }
 }
