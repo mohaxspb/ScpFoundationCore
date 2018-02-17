@@ -3,7 +3,6 @@ package ru.kuchanov.scpcore.mvp.presenter.monetization
 import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import io.realm.RealmResults
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import ru.kuchanov.scpcore.BaseApplication
@@ -52,7 +51,7 @@ class LeaderboardPresenter(
 
     override val data = mutableListOf<MyListItem>()
 
-    override var users: RealmResults<LeaderboardUser>? = null
+    override var users: List<LeaderboardUser> = listOf()
 
     override var myUser: User? = null
 
@@ -64,12 +63,14 @@ class LeaderboardPresenter(
 
     override fun loadData() {
         if (inAppService == null) {
-            view.showMessage(R.string.google_services_not_connected)
+//            view.showMessage(R.string.google_services_not_connected)
             return
         }
         Timber.d("getMarketData")
         view.showProgressCenter(true)
         view.showRefreshButton(false)
+        updateTime = mMyPreferencesManager.leaderBoardUpdatedTime
+        view.showUpdateDate(updateTime)
 
         val skuList = InAppHelper.getNewSubsSkus()
         if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
@@ -80,13 +81,13 @@ class LeaderboardPresenter(
             inAppHelper.getInAppsListToBuyObservable(inAppService),
             Observable.just(mDbProviderFactory.dbProvider.leaderboardUsersUnmanaged),
             Observable.just(mDbProviderFactory.dbProvider.userUnmanaged),
-            { inapps: List<Subscription>, users: List<LeaderboardUser>, user: User? -> Triple(inapps, users, user) }
+            { inApps: List<Subscription>, users: List<LeaderboardUser>, user: User? -> Triple(inApps, users, user) }
         )
                 .map {
                     val levelJson = LevelsJson.levelsJson
                     val viewModels = mutableListOf<MyListItem>()
 
-                    val users = it.second
+                    users = it.second
                     if (!users.isEmpty()) {
                         viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
                         val medalColorsArr = listOf(R.color.medalGold, R.color.medalSilver, R.color.medalBronze)
@@ -247,12 +248,13 @@ class LeaderboardPresenter(
     }
 
     override fun onUserChanged(user: User?) {
+//        Timber.d("onUserChanged: $user")
         super.onUserChanged(user)
         myUser = user
         if (myUser == null) {
             view.showUser(null)
         } else {
-            users?.apply { view.showUser(convertUser(myUser, this, LevelsJson.levelsJson)) }
+            view.showUser(convertUser(myUser, users, LevelsJson.levelsJson))
         }
     }
 

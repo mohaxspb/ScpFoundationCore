@@ -66,7 +66,7 @@ class FreeAdsDisableActionsFragment :
     override fun onInviteFriendsClick() {
         Timber.d("onInviteFriendsClick")
         if (FirebaseAuth.getInstance().currentUser == null) {
-            baseActivity.showOfferLoginPopup { _, _ -> IntentUtils.firebaseInvite(activity) }
+            baseActivity?.showOfferLoginPopup { _, _ -> IntentUtils.firebaseInvite(activity) }
         } else {
             IntentUtils.firebaseInvite(activity)
         }
@@ -74,17 +74,19 @@ class FreeAdsDisableActionsFragment :
 
     override fun onRewardedVideoClick() {
         if (FirebaseAuth.getInstance().currentUser == null) {
-            baseActivity.showOfferLoginPopup { _, _ -> baseActivity.startRewardedVideoFlow() }
+            baseActivity?.showOfferLoginPopup { _, _ -> baseActivity?.startRewardedVideoFlow() }
         } else {
-            baseActivity.startRewardedVideoFlow()
+            baseActivity?.startRewardedVideoFlow()
         }
     }
 
-    override fun onAuthClick() = baseActivity.showLoginProvidersPopup()
+    override fun onAuthClick() {
+        baseActivity?.showLoginProvidersPopup()
+    }
 
     override fun onAppInstallClick(id: String) {
         if (FirebaseAuth.getInstance().currentUser == null) {
-            baseActivity.showOfferLoginPopup { _, _ -> IntentUtils.tryOpenPlayMarket(activity, id) }
+            baseActivity?.showOfferLoginPopup { _, _ -> IntentUtils.tryOpenPlayMarket(activity, id) }
         } else {
             IntentUtils.tryOpenPlayMarket(activity, id)
         }

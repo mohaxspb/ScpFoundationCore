@@ -17,29 +17,34 @@ public class SocialLoginHolder
         extends BaseHolder<SocialLoginHolder.SocialLoginModel, BaseAdapterClickListener<SocialLoginHolder.SocialLoginModel>> {
 
     @BindView(R2.id.image)
-    ImageView image;
+    public ImageView imageView;
     @BindView(R2.id.title)
-    TextView title;
+    public TextView titleTextView;
 
-    public SocialLoginHolder(View itemView) {
+    public SocialLoginHolder(final View itemView, final BaseAdapterClickListener<SocialLoginModel> adapterClickListener) {
+        super(itemView, adapterClickListener);
+    }
+
+    public SocialLoginHolder(final View itemView) {
         super(itemView);
     }
 
     @Override
-    public void bind(SocialLoginHolder.SocialLoginModel data) {
+    public void bind(final SocialLoginHolder.SocialLoginModel data) {
         super.bind(data);
 
-        title.setText(data.getSocialProvider().getTitle());
-        image.setImageResource(data.getSocialProvider().getIcon());
+        titleTextView.setText(data.getSocialProvider().getTitle());
+        imageView.setImageResource(data.getSocialProvider().getIcon());
 
         itemView.setOnClickListener(view -> mAdapterClickListener.onItemClick(data));
     }
 
     public static class SocialLoginModel extends BaseModel {
 
-        private Constants.Firebase.SocialProvider mSocialProvider;
+        private final Constants.Firebase.SocialProvider mSocialProvider;
 
-        public SocialLoginModel(Constants.Firebase.SocialProvider socialProvider) {
+        public SocialLoginModel(final Constants.Firebase.SocialProvider socialProvider) {
+            super();
             mSocialProvider = socialProvider;
         }
 
@@ -47,7 +52,7 @@ public class SocialLoginHolder
             return mSocialProvider;
         }
 
-        public static SocialLoginModel getModelForProvider(Constants.Firebase.SocialProvider socialProvider) {
+        public static SocialLoginModel getModelForProvider(final Constants.Firebase.SocialProvider socialProvider) {
             return new SocialLoginModel(socialProvider);
         }
 
@@ -59,9 +64,9 @@ public class SocialLoginHolder
 //            return models;
 //        }
 
-        public static List<SocialLoginModel> getModels(List<Constants.Firebase.SocialProvider> providers) {
-            List<SocialLoginModel> models = new ArrayList<>();
-            for (Constants.Firebase.SocialProvider provider : providers) {
+        public static List<SocialLoginModel> getModels(final Iterable<Constants.Firebase.SocialProvider> providers) {
+            final List<SocialLoginModel> models = new ArrayList<>();
+            for (final Constants.Firebase.SocialProvider provider : providers) {
                 models.add(getModelForProvider(provider));
             }
             return models;
