@@ -232,13 +232,13 @@ class LeaderboardPresenter(
         if (user == null) {
             return null
         }
-        val userInFirebase = users.find { firebaseObjectUser -> firebaseObjectUser.uid == user.uid }
-        val level = levelJson.getLevelForScore(userInFirebase!!.score)
+        val userInFirebase = users.find { leaderboardUser -> leaderboardUser.uid == user.uid } ?: return null
+        val level = levelJson.levels[userInFirebase.levelNum]
         return LeaderboardUserViewModel(
             users.indexOf(userInFirebase),
             userInFirebase,
             LevelViewModel(
-                level!!,
+                level,
                 levelJson.scoreToNextLevel(userInFirebase.score, level),
                 levelJson.getLevelMaxScore(level),
                 level.id == LevelsJson.MAX_LEVEL_ID),
