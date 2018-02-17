@@ -158,7 +158,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             );
         }
 
-//        Map data = remoteMessage.getData();
+//        Map data = remoteMessage.loadData();
 //        String type = (String) data.get(Constants.PushFields.PUSH_FIELD_TYPE);
 //
 //        if (TextUtils.isEmpty(type)) {

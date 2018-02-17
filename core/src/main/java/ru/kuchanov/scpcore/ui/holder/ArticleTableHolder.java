@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -21,6 +22,7 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
+import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.model.ArticleTextPartViewModel;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.AttributeGetter;
@@ -39,6 +41,8 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
 
     @Inject
     ConstantValues mConstantValues;
+    @Inject
+    MyPreferenceManager mMyPreferenceManager;
 
     public ArticleTableHolder(View itemView, SetTextViewHTML.TextItemsClickListener clickListener) {
         super(itemView);
@@ -63,18 +67,33 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
             itemView.setBackgroundColor(Color.TRANSPARENT);
         }
 
+        String backgroundColor = String.format("#%06X", (0xFFFFFF & AttributeGetter.getColor(context, android.R.attr.windowBackground)));
+        String textColor = String.format("#%06X", (0xFFFFFF & AttributeGetter.getColor(context, android.R.attr.textColor)));
+
         String fullHtml = "<!DOCTYPE html>\n" +
                 "<html>\n" +
                 "    <head>\n" +
                 "        <meta charset=\"utf-8\">\n" +
-                "        <style>table.wiki-content-table{border-collapse:collapse;border-spacing:0;margin:.5em auto}table.wiki-content-table td{border:1px solid #888;padding:.3em .7em}table.wiki-content-table th{border:1px solid #888;padding:.3em .7em;background-color:#eee}</style>\n" +
+                "        <meta name=\"viewport\" content=\"width=device-width, user-scalable=yes\" />" +
+                "        <style>" +
+                "table.wiki-content-table{border-collapse:collapse;border-spacing:0;margin:.5em auto}" +
+                "table.wiki-content-table td{border:1px solid " + textColor + ";color: " + textColor + ";padding:.3em .7em;background-color:" + backgroundColor + "}" +
+                "table.wiki-content-table th{border:1px solid " + textColor + ";color: " + textColor + ";padding:.3em .7em;background-color:" + backgroundColor + "}" +
+                "</style>\n" +
                 "    </head>\n" +
                 "    <body>";
         fullHtml += (String) viewModel.data;
         fullHtml += "</body>\n" +
                 "</html>";
 
-        webView.getSettings().setJavaScriptEnabled(true);
+        WebSettings settings = webView.getSettings();
+        settings.setMinimumFontSize(18);
+        settings.setLoadWithOverviewMode(true);
+        settings.setUseWideViewPort(true);
+        settings.setBuiltInZoomControls(true);
+        settings.setDisplayZoomControls(false);
+
+        settings.setJavaScriptEnabled(true);
 
         webView.setWebViewClient(new WebViewClient() {
             @Override

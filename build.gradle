@@ -1,4 +1,7 @@
 buildscript {
+
+    ext.kotlin_version = '1.2.21'
+
     repositories {
         jcenter()
         google()
@@ -7,18 +10,11 @@ buildscript {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0'
+        classpath 'com.android.tools.build:gradle:3.0.1'
         classpath 'com.google.gms:google-services:3.1.1'
         classpath "io.realm:realm-gradle-plugin:3.7.2"
-//        classpath 'com.jakewharton:butterknife-gradle-plugin:8.8.1'
         classpath 'com.jakewharton:butterknife-gradle-plugin:9.0.0-SNAPSHOT'
-        //for publishing to jcenter
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
-
-//        classpath 'com.github.dcendents:android-maven-plugin:1.2'
-
-//        classpath 'com.novoda:bintray-release:0.7.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 

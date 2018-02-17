@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
+        android:background="?selectableItemBackground"
         android:orientation="horizontal"
         android:paddingBottom="@dimen/defaultMarginSmall"
         tools:ignore="UseCompoundDrawables"
@@ -92,7 +93,7 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_gravity="center"
-            android:src="@drawable/scplogo"
+            android:src="@drawable/ic_adblock"
             tools:ignore="ContentDescription"
             />
 

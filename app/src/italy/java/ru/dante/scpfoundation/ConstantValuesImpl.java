@@ -182,11 +182,11 @@ public class ConstantValuesImpl implements ConstantValues {
         //it's not really new ones, it is recently changes. We can't get really new, as they use JS here
         String NEW_ARTICLES = BASE_API_URL + "/system:recent-changes";
 
-        String OBJECTS_1 = BASE_API_URL + "/scp-serie-i-001-999";
-        String OBJECTS_2 = BASE_API_URL + "/scp-serie-ii-1000-1999";
-        String OBJECTS_3 = BASE_API_URL + "/scp-serie-iii-2000-2999";
+        String OBJECTS_1 = BASE_API_URL + "/scp-series";
+        String OBJECTS_2 = BASE_API_URL + "/scp-series-2";
+        String OBJECTS_3 = BASE_API_URL + "/scp-series-3";
         //TODO add when it arrives
-        String OBJECTS_4 = BASE_API_URL + "/scp-serie-iiii-3000-3999";
+        String OBJECTS_4 = BASE_API_URL + "/scp-series-4";
 
         String OBJECTS_IT = BASE_API_URL + "/scp-it-serie-i";
 

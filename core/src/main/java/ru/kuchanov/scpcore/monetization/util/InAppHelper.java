@@ -35,7 +35,8 @@ import ru.kuchanov.scpcore.monetization.model.Subscription;
 import rx.Observable;
 import timber.log.Timber;
 
-import static ru.kuchanov.scpcore.ui.dialog.SubscriptionsFragmentDialog.REQUEST_CODE_SUBSCRIPTION;
+import static ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP;
+import static ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment.REQUEST_CODE_SUBSCRIPTION;
 
 /**
  * Created by mohax on 02.02.2017.
@@ -84,18 +85,21 @@ public class InAppHelper {
     }
 
     @SubscriptionType
-    public int getSubscriptionTypeFromItemsList(@NonNull List<Item> ownedItems) {
+    public static int getSubscriptionTypeFromItemsList(@NonNull List<Item> ownedItems) {
         @SubscriptionType
         int type;
 
         //add old old donate subs, new ones and one with free trial period
         List<String> fullVersionSkus = new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.old_skus).split(",")));
         Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.ver_2_skus).split(","));
+        Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.ver3_skus).split(","));
         Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.subs_free_trial).split(","));
+        Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.ver3_subs_free_trial).split(","));
 
         List<String> noAdsSkus = new ArrayList<>();
         noAdsSkus.add(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_old));
         noAdsSkus.add(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_ver_2));
+        noAdsSkus.add(BaseApplication.getAppInstance().getString(R.string.ver3_subs_no_ads));
 
         List<String> ownedSkus = getSkuListFromItemsList(ownedItems);
         noAdsSkus.retainAll(ownedSkus);
@@ -107,7 +111,7 @@ public class InAppHelper {
         return type;
     }
 
-    private List<String> getSkuListFromItemsList(@NonNull List<Item> ownedItems) {
+    private static List<String> getSkuListFromItemsList(@NonNull List<Item> ownedItems) {
         List<String> skus = new ArrayList<>();
         for (Item item : ownedItems) {
             skus.add(item.sku);
@@ -154,7 +158,7 @@ public class InAppHelper {
                     for (Item item : items) {
                         Timber.d("validate item: %s", item.sku);
                         try {
-                            PurchaseValidateResponse purchaseValidateResponse = ((ApiClient)mApiClient).validatePurchaseSync(
+                            PurchaseValidateResponse purchaseValidateResponse = ((ApiClient) mApiClient).validatePurchaseSync(
                                     true,
                                     BaseApplication.getAppInstance().getPackageName(),
                                     item.sku,
@@ -266,7 +270,8 @@ public class InAppHelper {
                 List<Subscription> allSubscriptions = new ArrayList<>();
                 List<String> skuList = new ArrayList<>();
                 //get it from build config
-                Collections.addAll(skuList, BaseApplication.getAppInstance().getString(R.string.inapp_skus).split(","));
+//                Collections.addAll(skuList, BaseApplication.getAppInstance().getString(R.string.inapp_skus).split(","));
+                Collections.addAll(skuList, BaseApplication.getAppInstance().getString(R.string.ver3_inapp_skus).split(","));
                 Timber.d("skuList: %s", skuList);
 
                 Bundle querySkus = new Bundle();
@@ -304,7 +309,7 @@ public class InAppHelper {
     ) {
         String packageName = BaseApplication.getAppInstance().getPackageName();
 
-        return ((ApiClient)mApiClient).validatePurchase(false, packageName, sku, token)
+        return ((ApiClient) mApiClient).validatePurchase(false, packageName, sku, token)
                 .flatMap(purchaseValidateResponse -> {
                     @PurchaseValidateResponse.PurchaseValidationStatus
                     int status = purchaseValidateResponse.getStatus();
@@ -342,7 +347,8 @@ public class InAppHelper {
         );
         PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
         if (pendingIntent != null) {
-            fragment.startIntentSenderForResult(pendingIntent.getIntentSender(), REQUEST_CODE_SUBSCRIPTION, new Intent(), 0, 0, 0, null);
+            int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
+            fragment.startIntentSenderForResult(pendingIntent.getIntentSender(), requestCode, new Intent(), 0, 0, 0, null);
         }
     }
 
@@ -361,24 +367,26 @@ public class InAppHelper {
         );
         PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
         if (pendingIntent != null) {
-            activity.startIntentSenderForResult(pendingIntent.getIntentSender(), REQUEST_CODE_SUBSCRIPTION, new Intent(), 0, 0, 0, null);
+            int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
+            activity.startIntentSenderForResult(pendingIntent.getIntentSender(), requestCode, new Intent(), 0, 0, 0, null);
         }
+        //todo think if we must handle consuming inapp here
     }
 
-//    public List<String> getOldSubsSkus() {
-//        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.old_skus).split(",")));
-//    }
-
-    public List<String> getNewSubsSkus() {
-        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver_2_skus).split(",")));
+    public static List<String> getNewSubsSkus() {
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_skus).split(",")));
     }
 
-    public List<String> getFreeTrailSubsSkus() {
-        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.subs_free_trial).split(",")));
+    public static List<String> getFreeTrailSubsSkus() {
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_subs_free_trial).split(",")));
     }
 
-    public List<String> getNewNoAdsSubsSkus() {
-        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_ver_2).split(",")));
+    public static List<String> getNewNoAdsSubsSkus() {
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_subs_no_ads).split(",")));
+    }
+
+    public static List<String> getNewInAppsSkus() {
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_inapp_skus).split(",")));
     }
 
     public static int getMonthsFromSku(String sku) {

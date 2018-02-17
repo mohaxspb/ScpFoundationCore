@@ -18,7 +18,7 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.model.remoteconfig.AppLangVersionsJson;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
-import ru.kuchanov.scpcore.ui.base.BaseActivity;
+import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 

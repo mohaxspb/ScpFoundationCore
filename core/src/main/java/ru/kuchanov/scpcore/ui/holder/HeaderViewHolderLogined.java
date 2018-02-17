@@ -16,6 +16,8 @@ import ru.kuchanov.scpcore.R2;
  */
 public class HeaderViewHolderLogined {
 
+    @BindView(R2.id.levelContainer)
+    public View levelContainer;
     @BindView(R2.id.level)
     public TextView level;
     @BindView(R2.id.levelUp)

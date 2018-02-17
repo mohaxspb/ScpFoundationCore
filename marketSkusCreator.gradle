@@ -29,15 +29,22 @@ ext {
             def properties = new Properties()
             properties.load(new FileInputStream(marketSkusPropertiesFile))
 
+            //version 01.18
+//            logger.lifecycle('pathToFileWithData: {}', pathToFileWithData)
+//            logger.lifecycle('properties: {}', properties.propertyNames().toList().toListString())
+            variant.resValue('string', 'ver3_skus', properties.get("marketSkusVer3"))
+            variant.resValue('string', 'ver3_inapp_skus', properties.get("marketSkusInappVer3"))
+            variant.resValue('string', 'ver3_subs_no_ads', properties.get("noAdsSkuVer3"))
+            variant.resValue('string', 'ver3_subs_free_trial', properties.get("subsFreeTrialVer3"))
+
+            //deprecated
             variant.resValue('string', 'old_skus', properties.get("marketSkusOld"))
             variant.resValue('string', 'ver_2_skus', properties.get("marketSkusVer2"))
+            //level up inapp
             variant.resValue('string', 'inapp_skus', properties.get("marketSkusInapp"))
-
             //no ads subs
             variant.resValue('string', 'subs_no_ads_old', properties.get("noAdsSkuOld"))
-
             variant.resValue('string', 'subs_no_ads_ver_2', properties.get("noAdsSkuVer2"))
-
             //free trail subs
             variant.resValue('string', 'subs_free_trial', properties.get("subsFreeTrial"))
         } else {

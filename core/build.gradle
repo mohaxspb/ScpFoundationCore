@@ -1,10 +1,12 @@
 apply plugin: 'com.android.library'
-
+//kotlin
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+//realm
 apply plugin: 'realm-android'
+//butterknife
 apply plugin: 'com.jakewharton.butterknife'
-
-//apply plugin: 'com.novoda.bintray-release'
-//apply plugin: 'com.github.dcendents.android-maven'
 
 //here is script to generate version code from version name
 //which is set in gradle.properties as value of version var
@@ -13,43 +15,6 @@ apply from: '../versioning.gradle'
 
 apply from: '../marketSkusCreator.gradle'
 apply from: '../apiKeysCreator.gradle'
-
-ext {
-    bintrayRepo = 'scp-core'
-    bintrayName = 'scp-core'
-
-    publishedGroupId = 'ru.kuchanov.scp'
-    libraryName = 'core'
-    artifact = 'core'
-
-    libraryDescription = 'ScpFoundation android app core'
-
-    siteUrl = 'https://github.com/mohaxspb/ScpFoundationCore'
-    gitUrl = 'https://github.com/mohaxspb/ScpFoundationCore.git'
-
-    libraryVersion = version
-
-    developerId = 'mohaxspb'
-    developerName = 'Yuri K'
-    developerEmail = 'mohax.spb@gmail.com'
-
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
-
-    PUBLISH_GROUP_ID = 'ru.kuchanov.scp'
-    PUBLISH_ARTIFACT_ID = 'core'
-    PUBLISH_VERSION = version
-}
-
-//publish {
-//    userOrg = 'mohaxspb'
-//    groupId = 'ru.kuchanov.scp'
-//    artifactId = 'core'
-//    publishVersion = project.version
-//    desc = 'Oh hi, this is a nice description for a project, right?'
-//    website = 'https://github.com/novoda/bintray-release'
-//}
 
 android {
     compileSdkVersion 26
@@ -70,12 +35,13 @@ android {
 
     flavorDimensions "mode"
 
+    def buildDateTime = project.hasProperty('devBuild') ? 100 : buildVersionCodeFor3Numbers()
+
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 26
-        versionCode buildVersionCodeFor3Numbers()
+        versionCode buildDateTime
         versionName version
-        // Enabling multidex support.
         multiDexEnabled true
 
         manifestPlaceholders = [debuggable: true]
@@ -103,8 +69,6 @@ android {
         }
     }
 
-//    publishNonDefault true
-
     productFlavors {
         prod {
             manifestPlaceholders = [myDebuggable: false]
@@ -114,9 +78,15 @@ android {
         }
 
         dev {
+            dimension "mode"
+
             manifestPlaceholders = [myDebuggable: true]
 
-            dimension "mode"
+            //PNG optimizations are enabled by default, but are not needed for development builds.
+            //Disable them to speed up your builds.
+            aaptOptions.cruncherEnabled = false
+            //only package russian translations, and xxhdpi resources
+            resConfigs("ru", "xxhdpi")
         }
 
         libraryVariants.all { variant ->
@@ -141,9 +111,11 @@ android {
 
 dependencies {
     String supportLibraryVersion = '26.1.0'
-    String googleLibraryVersion = '11.4.2'
+    String googleLibraryVersion = '11.8.0'
 
     api fileTree(dir: 'libs', include: ['*.jar'])
+    //kotlin
+    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     //support libs
     api "com.android.support:appcompat-v7:$supportLibraryVersion"
     api "com.android.support:recyclerview-v7:$supportLibraryVersion"
@@ -158,9 +130,12 @@ dependencies {
     api "com.android.support:support-compat:$supportLibraryVersion"
     //multidex to support more than 65K methods
     api 'com.android.support:multidex:1.0.2'
+    //adapter delegates
+    api 'com.hannesdorfmann:adapterdelegates3:3.0.1'
     //rx
     api 'io.reactivex:rxandroid:1.2.1'
-    api 'io.reactivex:rxjava:1.3.2'
+    api 'io.reactivex:rxjava:1.3.4'
+    api 'io.reactivex:rxkotlin:1.0.0'
     // Retrofit
     api('com.squareup.retrofit2:retrofit:2.3.0') { exclude module: 'okhttp' }
     api 'com.squareup.okhttp3:okhttp:3.9.0'
@@ -170,15 +145,15 @@ dependencies {
     //jsoup
     api 'org.jsoup:jsoup:1.10.3'
     //logs
-    api 'com.jakewharton.timber:timber:4.5.1'
+    api 'com.jakewharton.timber:timber:4.6.0'
     //dagger2
-    String daggerVersion = '2.11'
+    String daggerVersion = '2.13'
     api "com.google.dagger:dagger:$daggerVersion"
-    annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
     //butterKnife
     String butterKnifeVersion = '8.8.1'
     api "com.jakewharton:butterknife:$butterKnifeVersion"
-    annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
+    kapt "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
     //image
     api 'com.github.bumptech.glide:glide:3.8.0'
     api 'com.github.chrisbanes:PhotoView:2.1.3'
@@ -193,8 +168,6 @@ dependencies {
     api 'com.vk:androidsdk:1.6.9'
     //facebook
     api 'com.facebook.android:facebook-android-sdk:4.27.0'
-    //dialogs
-//    api 'com.afollestad.material-dialogs:core:0.9.4.5'
     //fonts
     api 'uk.co.chrisjenx:calligraphy:2.3.0'
     //firebase
@@ -212,9 +185,10 @@ dependencies {
     //appodeal
     api "com.google.android.gms:play-services-ads:$googleLibraryVersion"
     api "com.google.android.gms:play-services-location:$googleLibraryVersion"
-    api 'com.squareup.picasso:picasso:2.5.2' //for Inmobi
+    //for Inmobi
+    api 'com.squareup.picasso:picasso:2.5.2'
     api 'com.adcolony:sdk:3.2.1'
-    compile 'com.google.android.exoplayer:exoplayer:r2.5.4'
+    api 'com.google.android.exoplayer:exoplayer:r2.5.4'
     //end of appodeal
     // AppMetrica
     //we add it here and delete jar from appodeal
@@ -229,7 +203,8 @@ dependencies {
     api 'com.crystal:crystalrangeseekbar:1.1.3'
     //leakcanary
     String leakcanaryVersion = '1.5.4'
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
+    //remove {-no-op} to use it
+    debugImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanaryVersion"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanaryVersion"
     testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanaryVersion"
     //time operations
@@ -240,20 +215,5 @@ dependencies {
     api('ru.kuchanov.utils:rate:1.0.5@aar') { transitive = true }
 }
 
-//add aar dependencies same as in appodeal sample project
-//https://github.com/appodeal/appodeal-android-demo/blob/master/app/build.gradle
-//fileTree(dir: 'libs-aar', include: '*.aar').each { File file ->
-//    dependencies.add("compile", [name: file.name.replaceFirst(~/\.[^\.]+$/, ''), ext: 'aar'])
-//}
-
 //add it only in project build.gradle, not in lib
 //apply plugin: 'com.google.gms.google-services'
-
-//Place it at the end of the file for publishing to bintray
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
-//use own implementation as we fix here issue with java doc generating
-//apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
-apply from: '../bintrayv1.gradle'
-//TODO try to use this to transite dependencies - https://github.com/bintray/gradle-bintray-plugin
-
-//apply from: 'https://raw.githubusercontent.com/blundell/release-android-library/master/android-release-aar.gradle'

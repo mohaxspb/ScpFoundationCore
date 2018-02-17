@@ -5,9 +5,15 @@
         android:checkableBehavior="single">
 
         <item
+            android:id="@+id/leaderboard"
+            android:checked="true"
+            android:icon="@drawable/ic_leaderboard"
+            android:title="@string/drawer_item_leaderboard"
+            />
+        <item
             android:id="@+id/invite"
             android:checked="true"
-            android:icon="@drawable/ic_contact_mail"
+            android:icon="@drawable/ic_contact_mail_black_24dp"
             android:title="@string/drawer_item_invite_friends"
             />
         <item
@@ -96,6 +102,12 @@
             android:checked="true"
             android:icon="@drawable/ic_drawer_offline"
             android:title="@string/drawer_item_13"
+            />
+        <item
+            android:id="@+id/read"
+            android:checked="true"
+            android:icon="@drawable/ic_drafts_black_24dp"
+            android:title="@string/drawer_item_read"
             />
         <item
             android:id="@+id/gallery"

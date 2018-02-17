@@ -22,21 +22,21 @@ import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.model.remoteconfig.AppLangVersionsJson;
 import ru.kuchanov.scpcore.mvp.contract.MainMvp;
-import ru.kuchanov.scpcore.ui.base.BaseDrawerActivity;
 import ru.kuchanov.scpcore.ui.dialog.CC3LicenseDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
-import ru.kuchanov.scpcore.ui.fragment.ArticleFragment;
-import ru.kuchanov.scpcore.ui.fragment.FavoriteArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.Objects1ArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.Objects2ArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.Objects3ArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.Objects4ArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.ObjectsRuArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.OfflineArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.RatedArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.RecentArticlesFragment;
-import ru.kuchanov.scpcore.ui.fragment.SiteSearchArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.article.ArticleFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.FavoriteArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects1ArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects2ArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects3ArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects4ArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.ObjectsRuArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.OfflineArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.RatedArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.ReadArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.RecentArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.search.SiteSearchArticlesFragment;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import ru.kuchanov.scpcore.util.SystemUtils;
 import timber.log.Timber;
@@ -121,6 +121,8 @@ public class MainActivity
             mCurrentSelectedDrawerItemId = (R.id.favorite);
         } else if (link.equals(Constants.Urls.OFFLINE)) {
             mCurrentSelectedDrawerItemId = (R.id.offline);
+        } else if (link.equals(Constants.Urls.READ)) {
+            mCurrentSelectedDrawerItemId = (R.id.read);
         } else if (link.equals(Constants.Urls.SEARCH)) {
             mCurrentSelectedDrawerItemId = (R.id.siteSearch);
         } else {
@@ -172,27 +174,32 @@ public class MainActivity
             if (TextUtils.isEmpty(json)) {
                 return;
             }
-            AppLangVersionsJson appLangVersions = new GsonBuilder().create().fromJson(json, AppLangVersionsJson.class);
-            for (AppLangVersionsJson.AppLangVersion version : appLangVersions.langs) {
-                String appToOfferLang = new Locale(version.code).getLanguage();
-                if (deviceLang.equals(appToOfferLang)) {
-                    if (mConstantValues.getAppLang().equals(appToOfferLang)) {
-                        //proper lang version already installed, do nothing
-                        Timber.d("It is the iterated version, do nothing");
-                    } else {
-                        //check if app is not installed yet
-                        if (IntentUtils.isPackageInstalled(this, version.appPackage)) {
-                            Timber.d("correct lang version already installed");
+            try {
+                AppLangVersionsJson appLangVersions = new GsonBuilder().create().fromJson(json, AppLangVersionsJson.class);
+                for (AppLangVersionsJson.AppLangVersion version : appLangVersions.langs) {
+                    String appToOfferLang = new Locale(version.code).getLanguage();
+                    if (deviceLang.equals(appToOfferLang)) {
+                        if (mConstantValues.getAppLang().equals(appToOfferLang)) {
+                            //proper lang version already installed, do nothing
+                            Timber.d("It is the iterated version, do nothing");
                         } else {
-                            //offer app install
-                            mDialogUtils.showAppLangVariantsDialog(this, version);
-                            break;
+                            //check if app is not installed yet
+                            if (IntentUtils.isPackageInstalled(this, version.appPackage)) {
+                                Timber.d("correct lang version already installed");
+                            } else {
+                                //offer app install
+                                mDialogUtils.showAppLangVariantsDialog(this, version);
+                                break;
+                            }
                         }
                     }
                 }
+                //set app version to show release notes on next update
+                mMyPreferenceManager.setCurAppVersion(SystemUtils.getPackageInfo().versionCode);
+            } catch (Exception e) {
+                Timber.e(e);
             }
-            //set app version to show release notes on next update
-            mMyPreferenceManager.setCurAppVersion(SystemUtils.getPackageInfo().versionCode);
+
         } else if (mMyPreferenceManager.getCurAppVersion() != SystemUtils.getPackageInfo().versionCode) {
             DialogFragment dialogFragment = NewVersionDialogFragment.newInstance(getString(R.string.new_version_features));
             dialogFragment.show(getFragmentManager(), NewVersionDialogFragment.TAG);
@@ -225,6 +232,9 @@ public class MainActivity
         setToolbarTitleByDrawerItemId(id);
         if (id == R.id.invite) {
             IntentUtils.firebaseInvite(this);
+            return false;
+        } else if (id == R.id.leaderboard) {
+            SubscriptionsActivity.start(this, SubscriptionsActivity.TYPE_LEADERBOARD);
             return false;
         } else if (id == R.id.about) {
             mCurrentSelectedDrawerItemId = id;
@@ -264,6 +274,10 @@ public class MainActivity
         } else if (id == R.id.offline) {
             mCurrentSelectedDrawerItemId = id;
             showFragment(OfflineArticlesFragment.newInstance(), OfflineArticlesFragment.TAG);
+            return true;
+        } else if (id == R.id.read) {
+            mCurrentSelectedDrawerItemId = id;
+            showFragment(ReadArticlesFragment.newInstance(), ReadArticlesFragment.TAG);
             return true;
         } else if (id == R.id.gallery) {
             startGalleryActivity();
@@ -360,6 +374,8 @@ public class MainActivity
             title = getString(R.string.drawer_item_objects4);
         } else if (id == R.id.stories) {
             title = getString(R.string.drawer_item_11);
+        } else if (id == R.id.read) {
+            title = getString(R.string.drawer_item_read);
         } else {
             Timber.e("unexpected item ID");
             title = null;

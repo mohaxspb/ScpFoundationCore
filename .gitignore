@@ -6,8 +6,7 @@
 /build
 /captures
 keystore.properties
-gradlew
-gradlew.bat
+core/pom.xml
 *.keystore
 *.jks
 *.apk

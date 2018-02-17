@@ -1,5 +1,0 @@
-<b>Fixes</b>
-<br/>
- - Fix crashes in articles where are spoilers in tabs.
-<br/>
- - Some small fixes and improvements.
