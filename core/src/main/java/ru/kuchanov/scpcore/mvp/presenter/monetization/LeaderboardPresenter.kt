@@ -58,6 +58,8 @@ class LeaderboardPresenter(
 
     override var myUser: User? = null
 
+    override var updateTime: Long = 0
+
     private var updated = false;
 
     override fun loadData(service: IInAppBillingService) {
@@ -148,17 +150,19 @@ class LeaderboardPresenter(
                     onNext = {
                         isDataLoaded = true
                         view.showProgressCenter(false)
+                        view.enableSwipeRefresh(true)
+                        view.showSwipeRefreshProgress(false)
                         view.showRefreshButton(false)
                         data.clear()
 
                         data.addAll(it.first)
 
                         view.showData(data)
-                        view.showUpdateDate(mMyPreferencesManager.leaderBoardUpdatedTime)
+                        view.showUpdateDate(updateTime)
                         view.showUser(it.third)
 
                         if (!updated) {
-                            view.showProgressCenter(true)
+                            view.showSwipeRefreshProgress(true)
                             updateLeaderboardFromApi()
                         }
                     },
@@ -168,46 +172,58 @@ class LeaderboardPresenter(
 
                         view.showError(it)
                         view.showProgressCenter(false)
+                        view.enableSwipeRefresh(true)
+                        view.showSwipeRefreshProgress(false)
                         view.showRefreshButton(true)
                     })
     }
 
-    override fun updateLeaderboardFromApi() = mApiClient.leaderboard.toSingle()
-            .map { leaderBoardResponse ->
-                val realmUsers = leaderBoardResponse.users.map {
-                    //                    Timber.d("user: $it")
-                    LeaderboardUser(
-                        it.uid,
-                        it.fullName,
-                        it.avatar,
-                        it.score,
-                        it.numOfReadArticles,
-                        it.levelNum,
-                        it.scoreToNextLevel,
-                        it.curLevelScore
-                    )
+    override fun updateLeaderboardFromApi() {
+//        view.enableSwipeRefresh(false)
+        if (data.isEmpty()) {
+            view.showProgressCenter(true)
+        } else {
+            view.showSwipeRefreshProgress(true)
+        }
+        mApiClient.leaderboard.toSingle()
+                .map { leaderBoardResponse ->
+                    val realmUsers = leaderBoardResponse.users.map {
+                        //                    Timber.d("user: $it")
+                        LeaderboardUser(
+                            it.uid,
+                            it.fullName,
+                            it.avatar,
+                            it.score,
+                            it.numOfReadArticles,
+                            it.levelNum,
+                            it.scoreToNextLevel,
+                            it.curLevelScore
+                        )
+                    }
+                    return@map Triple(leaderBoardResponse.lastUpdated, leaderBoardResponse.timeZone, realmUsers)
                 }
-                return@map Triple(leaderBoardResponse.lastUpdated, leaderBoardResponse.timeZone, realmUsers)
-            }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .flatMap { triple -> mDbProviderFactory.dbProvider.saveLeaderboardUsers(triple.third).toSingle().map { triple } }
-            .subscribeBy(
-                onSuccess = {
-                    Timber.d("serverTime: ${DateTime(it.first, DateTimeZone.forID(it.second))}")
-                    val utcTime = DateTime(it.first, DateTimeZone.forID(it.second)).withZone(DateTimeZone.UTC)
-                    Timber.d("utcTime: $utcTime")
-                    mMyPreferencesManager.leaderBoardUpdatedTime = utcTime.millis
-                    updated = true
-                    loadData((view as BaseFragment<*, *>).getBaseActivity().getIInAppBillingService())
-                },
-                onError = {
-                    Timber.e(it)
-                    view.showError(it)
-                    view.showProgressCenter(false)
-                }
-            )
-
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap { triple -> mDbProviderFactory.dbProvider.saveLeaderboardUsers(triple.third).toSingle().map { triple } }
+                .subscribeBy(
+                    onSuccess = {
+                        Timber.d("serverTime: ${DateTime(it.first, DateTimeZone.forID(it.second))}")
+                        val utcTime = DateTime(it.first, DateTimeZone.forID(it.second)).withZone(DateTimeZone.UTC)
+                        Timber.d("utcTime: $utcTime")
+                        mMyPreferencesManager.leaderBoardUpdatedTime = utcTime.millis
+                        updateTime = utcTime.millis
+                        updated = true
+                        loadData((view as BaseFragment<*, *>).getBaseActivity().getIInAppBillingService())
+                    },
+                    onError = {
+                        Timber.e(it)
+                        view.showError(it)
+//                        view.enableSwipeRefresh(true)
+                        view.showProgressCenter(false)
+                        view.showSwipeRefreshProgress(false)
+                    }
+                )
+    }
 
     private fun convertUser(user: User?, users: List<LeaderboardUser>, levelJson: LevelsJson): LeaderboardUserViewModel? {
         if (user == null) {

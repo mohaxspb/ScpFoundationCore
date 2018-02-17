@@ -3,7 +3,8 @@ package ru.kuchanov.scpcore.manager;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 
-public class InAppBillingServiceConnectionObservable {
+public final class InAppBillingServiceConnectionObservable {
+
     private static InAppBillingServiceConnectionObservable ourInstance = new InAppBillingServiceConnectionObservable();
 
     public static InAppBillingServiceConnectionObservable getInstance() {
@@ -13,9 +14,10 @@ public class InAppBillingServiceConnectionObservable {
         return ourInstance;
     }
 
-    private Subject<Boolean, Boolean> accessDeniedObservable;
+    private final Subject<Boolean, Boolean> accessDeniedObservable;
 
     private InAppBillingServiceConnectionObservable() {
+        super();
         accessDeniedObservable = PublishSubject.create();
     }
 
