@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="?selectableItemBackgroundBorderless"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/defaultMargin"
+    android:paddingRight="@dimen/defaultMargin"
+    android:paddingTop="@dimen/defaultMarginSmall"
+    tools:ignore="UseCompoundDrawables"
+    tools:layout_gravity="center">
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center_horizontal"
+        tools:ignore="ContentDescription,RtlHardcoded"
+        tools:src="@drawable/ic_social_google" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:padding="@dimen/defaultMarginSmall"
+        android:textSize="21sp"
+        tools:text="@string/social_provider_google_title" />
+
+</LinearLayout>

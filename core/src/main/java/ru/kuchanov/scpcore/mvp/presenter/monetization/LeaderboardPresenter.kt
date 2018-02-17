@@ -3,10 +3,8 @@ package ru.kuchanov.scpcore.mvp.presenter.monetization
 import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import io.realm.RealmResults
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
-import org.joda.time.Period
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
@@ -26,8 +24,6 @@ import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
-import ru.kuchanov.scpcore.ui.activity.BaseActivity
-import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 import ru.kuchanov.scpcore.util.DimensionUtils
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
@@ -48,24 +44,33 @@ class LeaderboardPresenter(
 ) : BasePresenter<LeaderboardContract.View>(
     myPreferencesManager,
     dbProviderFactory,
-    apiClient), LeaderboardContract.Presenter {
+    apiClient
+), LeaderboardContract.Presenter {
 
     override var isDataLoaded = false
 
     override val data = mutableListOf<MyListItem>()
 
-    override var users: RealmResults<LeaderboardUser>? = null
+    override var users: List<LeaderboardUser> = listOf()
 
     override var myUser: User? = null
 
     override var updateTime: Long = 0
 
-    private var updated = false;
+    override var inAppService: IInAppBillingService? = null
 
-    override fun loadData(service: IInAppBillingService) {
+    private var updated = false
+
+    override fun loadData() {
+        if (inAppService == null) {
+//            view.showMessage(R.string.google_services_not_connected)
+            return
+        }
         Timber.d("getMarketData")
         view.showProgressCenter(true)
         view.showRefreshButton(false)
+        updateTime = mMyPreferencesManager.leaderBoardUpdatedTime
+        view.showUpdateDate(updateTime)
 
         val skuList = InAppHelper.getNewSubsSkus()
         if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
@@ -73,16 +78,16 @@ class LeaderboardPresenter(
         }
 
         Observable.zip(
-            inAppHelper.getInAppsListToBuyObservable(service),
+            inAppHelper.getInAppsListToBuyObservable(inAppService),
             Observable.just(mDbProviderFactory.dbProvider.leaderboardUsersUnmanaged),
             Observable.just(mDbProviderFactory.dbProvider.userUnmanaged),
-            { inapps: List<Subscription>, users: List<LeaderboardUser>, user: User? -> Triple(inapps, users, user) }
+            { inApps: List<Subscription>, users: List<LeaderboardUser>, user: User? -> Triple(inApps, users, user) }
         )
                 .map {
                     val levelJson = LevelsJson.levelsJson
                     val viewModels = mutableListOf<MyListItem>()
 
-                    val users = it.second
+                    users = it.second
                     if (!users.isEmpty()) {
                         viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
                         val medalColorsArr = listOf(R.color.medalGold, R.color.medalSilver, R.color.medalBronze)
@@ -213,7 +218,7 @@ class LeaderboardPresenter(
                         mMyPreferencesManager.leaderBoardUpdatedTime = utcTime.millis
                         updateTime = utcTime.millis
                         updated = true
-                        loadData((view as BaseFragment<*, *>).getBaseActivity().getIInAppBillingService())
+                        loadData()
                     },
                     onError = {
                         Timber.e(it)
@@ -229,13 +234,13 @@ class LeaderboardPresenter(
         if (user == null) {
             return null
         }
-        val userInFirebase = users.find { firebaseObjectUser -> firebaseObjectUser.uid == user.uid }
-        val level = levelJson.getLevelForScore(userInFirebase!!.score)
+        val userInFirebase = users.find { leaderboardUser -> leaderboardUser.uid == user.uid } ?: return null
+        val level = levelJson.levels[userInFirebase.levelNum]
         return LeaderboardUserViewModel(
             users.indexOf(userInFirebase),
             userInFirebase,
             LevelViewModel(
-                level!!,
+                level,
                 levelJson.scoreToNextLevel(userInFirebase.score, level),
                 levelJson.getLevelMaxScore(level),
                 level.id == LevelsJson.MAX_LEVEL_ID),
@@ -243,27 +248,24 @@ class LeaderboardPresenter(
     }
 
     override fun onUserChanged(user: User?) {
+//        Timber.d("onUserChanged: $user")
         super.onUserChanged(user)
         myUser = user
         if (myUser == null) {
             view.showUser(null)
         } else {
-            users?.apply { view.showUser(convertUser(myUser, this, LevelsJson.levelsJson)) }
+            view.showUser(convertUser(myUser, users, LevelsJson.levelsJson))
         }
     }
 
-    override fun onRewardedVideoClick() {
-        //nothing to do
-    }
-
-    override fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService) {
+    override fun onSubscriptionClick(id: String, target: Fragment) {
         val type = if (id in InAppHelper.getNewInAppsSkus()) {
             InAppHelper.InappType.IN_APP
         } else {
             InAppHelper.InappType.SUBS
         }
         try {
-            InAppHelper.startSubsBuy(target, inAppBillingService, type, id)
+            InAppHelper.startSubsBuy(target, inAppService, type, id)
         } catch (e: Exception) {
             Timber.e(e)
             view.showError(e)

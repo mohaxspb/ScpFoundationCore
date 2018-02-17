@@ -31,8 +31,8 @@
             android:layout_weight="1">
 
             <android.support.v4.widget.SwipeRefreshLayout
-                android:layout_width="match_parent"
                 android:id="@+id/swipeRefresh"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <android.support.v7.widget.RecyclerView
@@ -49,6 +49,30 @@
                 app:rfs_barColor="@android:color/transparent"
                 app:rfs_handleColor="?newArticlesTextColor" />
         </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/loginView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:background="@android:color/white"
+            android:paddingTop="@dimen/defaultMarginSmall"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/login"
+                android:textSize="19sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/providersContainer" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/userDataView"

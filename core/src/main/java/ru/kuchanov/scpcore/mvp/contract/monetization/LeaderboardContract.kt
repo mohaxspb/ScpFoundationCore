@@ -2,7 +2,6 @@ package ru.kuchanov.scpcore.mvp.contract.monetization
 
 import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
-import io.realm.RealmResults
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LeaderboardUserViewModel
 import ru.kuchanov.scpcore.db.model.LeaderboardUser
@@ -33,13 +32,14 @@ interface LeaderboardContract : BaseMvp {
         val isDataLoaded: Boolean
 
         val data: List<MyListItem>
-        var users: RealmResults<LeaderboardUser>?
+        var users: List<LeaderboardUser>
         var myUser:User?
         var updateTime: Long
 
-        fun onRewardedVideoClick()
-        fun loadData(service: IInAppBillingService)
-        fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService)
+        var inAppService: IInAppBillingService?
+
+        fun loadData()
+        fun onSubscriptionClick(id: String, target: Fragment)
         fun updateLeaderboardFromApi()
     }
 }

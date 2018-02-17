@@ -13,6 +13,7 @@ open class LeaderboardUser(
     var curLevelScore: Int = 0
 ) : RealmObject() {
 
+
     companion object {
         @JvmField
         val FIELD_UID = "uid"
@@ -30,5 +31,9 @@ open class LeaderboardUser(
         val FIELD_SCORE_TO_NEXT_LEVEL = "scoreToNextLevel"
         @JvmField
         val FIELD_CUR_LEVEL_SCORE = "curLevelScore"
+    }
+
+    override fun toString(): String {
+        return "LeaderboardUser(uid='$uid', fullName=$fullName, avatar=$avatar, score=$score, numOfReadArticles=$numOfReadArticles, levelNum=$levelNum, scoreToNextLevel=$scoreToNextLevel, curLevelScore=$curLevelScore)"
     }
 }
