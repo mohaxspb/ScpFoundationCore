@@ -39,47 +39,49 @@ import timber.log.Timber;
 public class ApiClientImpl extends ApiClient {
 
     public ApiClientImpl(
-            OkHttpClient okHttpClient,
-            Retrofit vpsRetrofit,
-            Retrofit scpRetrofit,
-            MyPreferenceManager preferencesManager,
-            Gson gson,
-            ConstantValues constantValues
+            final OkHttpClient okHttpClient,
+            final Retrofit vpsRetrofit,
+            final Retrofit scpRetrofit,
+            final MyPreferenceManager preferencesManager,
+            final Gson gson,
+            final ConstantValues constantValues
     ) {
         super(okHttpClient, vpsRetrofit, scpRetrofit, preferencesManager, gson, constantValues);
     }
 
-    //fixme
+    @Override
     public Observable<String> getRandomUrl() {
-        Timber.d("getRandomUrl");
         return bindWithUtils(Observable.unsafeCreate(subscriber -> {
-            Request.Builder request = new Request.Builder();
+            final Request.Builder request = new Request.Builder();
             request.url(mConstantValues.getRandomPageUrl());
             request.get();
 
             try {
-                OkHttpClient client = new OkHttpClient.Builder()
-//                        .followRedirects(false)
-                        .addInterceptor(new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(BuildConfig.FLAVOR.equals("dev")
-                                                                                                          ? HttpLoggingInterceptor.Level.BODY
-                                                                                                          : HttpLoggingInterceptor.Level.NONE))
+                final OkHttpClient client = new OkHttpClient.Builder()
+                        .addInterceptor(new HttpLoggingInterceptor(
+                                message -> Timber.d(message)).setLevel(BuildConfig.FLAVOR.equals("dev")
+                                                                       ? HttpLoggingInterceptor.Level.BODY
+                                                                       : HttpLoggingInterceptor.Level.NONE)
+                        )
                         .build();
-                Response response = client.newCall(request.build()).execute();
+                final Response response = client.newCall(request.build()).execute();
 
-                ResponseBody requestResult = response.body();
+                final ResponseBody requestResult = response.body();
                 if (requestResult != null) {
-                    String html = requestResult.string();
-                    String patternToFindUrl = "<iframe src=\"http://snippets.wdfiles.com/local--code/code:iframe-redirect#";
-                    html = html.substring(html.indexOf(patternToFindUrl) + patternToFindUrl.length());
-                    html = html.substring(0, html.indexOf("\""));
-                    String randomURL = html;
-                    Timber.d("randomUrl = " + randomURL);
+                    final String html = requestResult.string();
+                    final Document doc = Jsoup.parse(html);
+
+                    final Element aTag = doc.getElementById("page-content")
+                            .getElementsByTag("h1").first()
+                            .getElementsByTag("a").first();
+                    final String randomURL = mConstantValues.getBaseApiUrl() + aTag.attr("href");
+                    Timber.d("randomURL = %s", randomURL);
                     subscriber.onNext(randomURL);
                     subscriber.onCompleted();
                 } else {
                     subscriber.onError(new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse)));
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 Timber.e(e);
                 subscriber.onError(e);
             }
@@ -90,35 +92,35 @@ public class ApiClientImpl extends ApiClient {
     @Override
     public Observable<Integer> getRecentArticlesPageCountObservable() {
         return bindWithUtils(Observable.<Integer>unsafeCreate(subscriber -> {
-            Request request = new Request.Builder()
+            final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();
 
-            String responseBody = null;
+            final String responseBody;
             try {
-                Response response = mOkHttpClient.newCall(request).execute();
-                ResponseBody body = response.body();
+                final Response response = mOkHttpClient.newCall(request).execute();
+                final ResponseBody body = response.body();
                 if (body != null) {
                     responseBody = body.string();
                 } else {
                     subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(ru.kuchanov.scpcore.R.string.error_parse)));
                     return;
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection)));
                 return;
             }
             try {
-                Document doc = Jsoup.parse(responseBody);
+                final Document doc = Jsoup.parse(responseBody);
 
                 //get num of pages
-                Element spanWithNumber = doc.getElementsByClass("pager-no").first();
-                String text = spanWithNumber.text();
-                Integer numOfPages = Integer.valueOf(text.substring(text.lastIndexOf(" ") + 1));
+                final Element spanWithNumber = doc.getElementsByClass("pager-no").first();
+                final String text = spanWithNumber.text();
+                final Integer numOfPages = Integer.valueOf(text.substring(text.lastIndexOf(" ") + 1));
 
                 subscriber.onNext(numOfPages);
                 subscriber.onCompleted();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
@@ -127,26 +129,26 @@ public class ApiClientImpl extends ApiClient {
 
     //fixme
     @Override
-    protected List<Article> parseForRecentArticles(Document doc) throws ScpParseException {
-        Element contentTypeDescription = doc.getElementsByClass("content-type-description").first();
-        Element pageContent = contentTypeDescription.getElementsByTag("table").first();
+    protected List<Article> parseForRecentArticles(final Document doc) throws ScpParseException {
+        final Element contentTypeDescription = doc.getElementsByClass("content-type-description").first();
+        final Element pageContent = contentTypeDescription.getElementsByTag("table").first();
         if (pageContent == null) {
             throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
         }
 
         final List<Article> articles = new ArrayList<>();
-        Elements listOfElements = pageContent.getElementsByTag("tr");
+        final Elements listOfElements = pageContent.getElementsByTag("tr");
         for (int i = 1/*start from 1 as first row is tables header*/; i < listOfElements.size(); i++) {
             final Elements listOfTd = listOfElements.get(i).getElementsByTag("td");
-            Element firstTd = listOfTd.first();
-            Element tagA = firstTd.getElementsByTag("a").first();
+            final Element firstTd = listOfTd.first();
+            final Element tagA = firstTd.getElementsByTag("a").first();
 
-            String title = tagA.text();
-            String url = mConstantValues.getBaseApiUrl() + tagA.attr("href");
+            final String title = tagA.text();
+            final String url = mConstantValues.getBaseApiUrl() + tagA.attr("href");
             //4 Jun 2017, 22:25
             //createdDate
-            Element createdDateNode = listOfTd.get(1);
-            String createdDate = createdDateNode.text().trim();
+            final Element createdDateNode = listOfTd.get(1);
+            final String createdDate = createdDateNode.text().trim();
 
             final Article article = new Article();
             article.title = title;
@@ -195,7 +197,6 @@ public class ApiClientImpl extends ApiClient {
         return articles;
     }
 
-    //fixme
     @Override
     protected List<Article> parseForObjectArticles(final Document doc) throws ScpParseException {
         final Element pageContent = doc.getElementById("page-content");
@@ -229,7 +230,6 @@ public class ApiClientImpl extends ApiClient {
         return articles;
     }
 
-    //fixme
     @Override
     public Observable<List<ArticleTag>> getTagsFromSite() {
         return bindWithUtils(Observable.<List<ArticleTag>>unsafeCreate(subscriber -> {
@@ -277,20 +277,14 @@ public class ApiClientImpl extends ApiClient {
         }));
     }
 
-    //fixme
     @Override
     public Observable<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {
-//        Timber.d("getArticlesByTags: %s", tags);
-//        String tagName = tags.get(0).title;
-//        Timber.d("tagName: %s", tagName);
         final List<String> tagsTitles = ArticleTag.getStringsFromTags(tags);
         //fix index of bounds error
         if (tagsTitles.isEmpty()) {
             return Observable.just(Collections.emptyList());
         }
-//        Timber.d("tagsTitles: %s", tagsTitles);
         final String tagTitle = tagsTitles.get(0);
-//        Timber.d("tagTitle: %s", tagTitle);
         return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getBaseApiUrl() + "/system:page-tags/tag/" + tagTitle)
