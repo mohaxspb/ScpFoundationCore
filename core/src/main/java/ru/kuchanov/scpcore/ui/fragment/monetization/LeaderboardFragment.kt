@@ -130,7 +130,7 @@ class LeaderboardFragment :
             val socialProviders = SocialLoginHolder.SocialLoginModel.getModels(providers)
 
             providersContainer.removeAllViews()
-            val startView = Space(activity)
+            val startView = Space(activity!!)
             providersContainer.addView(startView)
             (startView.layoutParams as LinearLayout.LayoutParams).weight = 1f
             val inflater = LayoutInflater.from(activity)
@@ -143,7 +143,7 @@ class LeaderboardFragment :
                 )
                 holder.bind(loginModel)
 
-                val endView = Space(activity)
+                val endView = Space(activity!!)
                 providersContainer.addView(endView)
                 (endView.layoutParams as LinearLayout.LayoutParams).weight = 1f
             }

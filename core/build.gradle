@@ -212,7 +212,7 @@ dependencies {
 
     //sub project modules
     api('ru.kuchanov.scp:downloads:1.0.24@aar') { transitive = true }
-    api('ru.kuchanov.utils:rate:1.0.5@aar') { transitive = true }
+    api('ru.kuchanov.utils:rate:1.2.0@aar') { transitive = true }
 }
 
 //add it only in project build.gradle, not in lib
