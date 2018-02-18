@@ -51,9 +51,9 @@ public class MainActivity
     public static final String EXTRA_LINK = "EXTRA_LINK";
     public static final String EXTRA_SHOW_DISABLE_ADS = "EXTRA_SHOW_DISABLE_ADS";
 
-    public static void startActivity(Context context, String link) {
+    public static void startActivity(final Context context, final String link) {
         Timber.d("startActivity: %s", link);
-        Intent intent = new Intent(context, MainActivity.class);
+        final Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(EXTRA_LINK, link);
         context.startActivity(intent);
@@ -65,7 +65,7 @@ public class MainActivity
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
+    protected void onNewIntent(final Intent intent) {
         Timber.d("onNewIntent");
         super.onNewIntent(intent);
 
@@ -78,12 +78,12 @@ public class MainActivity
         setToolbarTitleByDrawerItemId(mCurrentSelectedDrawerItemId);
     }
 
-    private void setDrawerFromIntent(Intent intent) {
+    private void setDrawerFromIntent(final Intent intent) {
         if (intent.hasExtra(EXTRA_LINK)) {
             setDrawerItemFromLink(intent.getStringExtra(EXTRA_LINK));
         } else if (intent.getAction() != null && intent.getAction().equals(Intent.ACTION_VIEW)) {
-            String link = intent.getDataString();
-            for (String pressedLink : mConstantValues.getAllLinksArray()) {
+            final String link = intent.getDataString();
+            for (final String pressedLink : mConstantValues.getAllLinksArray()) {
                 if (pressedLink.equals(link)) {
                     setDrawerItemFromLink(link);
                     return;
@@ -93,7 +93,7 @@ public class MainActivity
         }
     }
 
-    private void setDrawerItemFromLink(String link) {
+    private void setDrawerItemFromLink(final String link) {
         Timber.d("setDrawerItemFromLink: %s", link);
         if (link.equals(mConstantValues.getAbout())) {
             mCurrentSelectedDrawerItemId = (R.id.about);
@@ -132,9 +132,9 @@ public class MainActivity
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
 
         if ("ru.kuchanov.scpcore.open.NEW".equals(intent.getAction())) {
             mCurrentSelectedDrawerItemId = (R.id.mostRecentArticles);
@@ -153,13 +153,13 @@ public class MainActivity
         setToolbarTitleByDrawerItemId(mCurrentSelectedDrawerItemId);
 
         if (!mMyPreferenceManager.isPersonalDataAccepted()) {
-            DialogFragment dialogFragment = CC3LicenseDialogFragment.newInstance();
+            final DialogFragment dialogFragment = CC3LicenseDialogFragment.newInstance();
             dialogFragment.show(getFragmentManager(), CC3LicenseDialogFragment.TAG);
         } else {
             Timber.d("mMyPreferenceManager.getCurAppVersion(): %s", mMyPreferenceManager.getCurAppVersion());
             Timber.d("SystemUtils.getPackageInfo().versionCode: %s", SystemUtils.getPackageInfo().versionCode);
             if (mMyPreferenceManager.getCurAppVersion() != SystemUtils.getPackageInfo().versionCode) {
-                DialogFragment dialogFragment = NewVersionDialogFragment.newInstance(getString(R.string.new_version_features));
+                final DialogFragment dialogFragment = NewVersionDialogFragment.newInstance(getString(R.string.new_version_features));
                 dialogFragment.show(getFragmentManager(), NewVersionDialogFragment.TAG);
             }
         }
@@ -169,15 +169,15 @@ public class MainActivity
         //first time check for device locale and offer proper lang app version if it is
         //else - show new version features
         if (mMyPreferenceManager.getCurAppVersion() == 0) {
-            String deviceLang = Locale.getDefault().getLanguage();
-            String json = FirebaseRemoteConfig.getInstance().getString(APP_LANG_VERSIONS);
+            final String json = FirebaseRemoteConfig.getInstance().getString(APP_LANG_VERSIONS);
             if (TextUtils.isEmpty(json)) {
                 return;
             }
             try {
-                AppLangVersionsJson appLangVersions = new GsonBuilder().create().fromJson(json, AppLangVersionsJson.class);
-                for (AppLangVersionsJson.AppLangVersion version : appLangVersions.langs) {
-                    String appToOfferLang = new Locale(version.code).getLanguage();
+                final AppLangVersionsJson appLangVersions = new GsonBuilder().create().fromJson(json, AppLangVersionsJson.class);
+                final String deviceLang = Locale.getDefault().getLanguage();
+                for (final AppLangVersionsJson.AppLangVersion version : appLangVersions.langs) {
+                    final String appToOfferLang = new Locale(version.code).getLanguage();
                     if (deviceLang.equals(appToOfferLang)) {
                         if (mConstantValues.getAppLang().equals(appToOfferLang)) {
                             //proper lang version already installed, do nothing
@@ -196,12 +196,12 @@ public class MainActivity
                 }
                 //set app version to show release notes on next update
                 mMyPreferenceManager.setCurAppVersion(SystemUtils.getPackageInfo().versionCode);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Timber.e(e);
             }
 
         } else if (mMyPreferenceManager.getCurAppVersion() != SystemUtils.getPackageInfo().versionCode) {
-            DialogFragment dialogFragment = NewVersionDialogFragment.newInstance(getString(R.string.new_version_features));
+            final DialogFragment dialogFragment = NewVersionDialogFragment.newInstance(getString(R.string.new_version_features));
             dialogFragment.show(getFragmentManager(), NewVersionDialogFragment.TAG);
         }
     }
@@ -227,7 +227,7 @@ public class MainActivity
     }
 
     @Override
-    public boolean onNavigationItemClicked(int id) {
+    public boolean onNavigationItemClicked(final int id) {
         Timber.d("onNavigationItemClicked with id: %s", id);
         setToolbarTitleByDrawerItemId(id);
         if (id == R.id.invite) {
@@ -313,10 +313,10 @@ public class MainActivity
         }
     }
 
-    private void showFragment(Fragment fragmentToShow, String tag) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    private void showFragment(final Fragment fragmentToShow, final String tag) {
+        final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         hideFragments(transaction);
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
+        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
         if (fragment == null) {
             transaction.add(mContent.getId(), fragmentToShow, tag).commit();
         } else {
@@ -327,12 +327,12 @@ public class MainActivity
     /**
      * adds all found fragments to transaction via hide method
      */
-    private void hideFragments(FragmentTransaction transaction) {
-        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+    private void hideFragments(final FragmentTransaction transaction) {
+        final List<Fragment> fragments = getSupportFragmentManager().getFragments();
         if (fragments == null || fragments.isEmpty()) {
             return;
         }
-        for (Fragment fragment : fragments) {
+        for (final Fragment fragment : fragments) {
             if (fragment != null && fragment.isAdded()) {
                 transaction.hide(fragment);
             } else {
@@ -343,11 +343,11 @@ public class MainActivity
     }
 
     @Override
-    public void setToolbarTitleByDrawerItemId(int id) {
+    public void setToolbarTitleByDrawerItemId(final int id) {
         Timber.d("setToolbarTitleByDrawerItemId with id: %s", id);
         //maybe we can move to separate interface and inject correct impl for lang each flavor
         //but it works now without any problems... So..
-        String title;
+        final String title;
         if (id == R.id.about) {
             title = getString(R.string.drawer_item_1);
         } else if (id == R.id.mostRatedArticles) {
@@ -398,10 +398,10 @@ public class MainActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int i = item.getItemId();
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        final int i = item.getItemId();
         if (i == R.id.text_size) {
-            BottomSheetDialogFragment fragmentDialogTextAppearance =
+            final BottomSheetDialogFragment fragmentDialogTextAppearance =
                     TextSizeDialogFragment.newInstance(TextSizeDialogFragment.TextSizeType.UI);
             fragmentDialogTextAppearance.show(getSupportFragmentManager(), TextSizeDialogFragment.TAG);
             return true;
@@ -412,8 +412,6 @@ public class MainActivity
 
     @Override
     public boolean isBannerEnabled() {
-//        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-//        return !config.getBoolean(MAIN_BANNER_DISABLED) && !config.getBoolean(NATIVE_ADS_LISTS_ENABLED);
         return mMyPreferenceManager.isBannerInArticlesListsEnabled();
     }
 }

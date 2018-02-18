@@ -43,8 +43,8 @@ public abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
         extends BasePresenter<V>
         implements BaseActivityMvp.Presenter<V> {
 
-    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private FirebaseAuth.AuthStateListener mAuthListener = mAuth -> {
+    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private final FirebaseAuth.AuthStateListener mAuthListener = mAuth -> {
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
         if (firebaseUser != null) {
             // User is signed in
@@ -60,13 +60,13 @@ public abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
     private DatabaseReference mFirebaseArticlesRef;
     private DatabaseReference mFirebaseScoreRef;
 
-    private ValueEventListener articlesChangeListener = new ValueEventListener() {
+    private final ValueEventListener articlesChangeListener = new ValueEventListener() {
         @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
+        public void onDataChange(final DataSnapshot dataSnapshot) {
             Timber.d("articles in user changed!");
-            GenericTypeIndicator<Map<String, ArticleInFirebase>> t = new GenericTypeIndicator<Map<String, ArticleInFirebase>>() {
+            final GenericTypeIndicator<Map<String, ArticleInFirebase>> t = new GenericTypeIndicator<Map<String, ArticleInFirebase>>() {
             };
-            Map<String, ArticleInFirebase> map = dataSnapshot.getValue(t);
+            final Map<String, ArticleInFirebase> map = dataSnapshot.getValue(t);
 
             if (map != null) {
                 mDbProviderFactory.getDbProvider()
@@ -79,16 +79,16 @@ public abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
         }
 
         @Override
-        public void onCancelled(DatabaseError databaseError) {
+        public void onCancelled(final DatabaseError databaseError) {
             Timber.e(databaseError.toException());
         }
     };
 
-    private ValueEventListener scoreChangeListener = new ValueEventListener() {
+    private final ValueEventListener scoreChangeListener = new ValueEventListener() {
         @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
+        public void onDataChange(final DataSnapshot dataSnapshot) {
             Timber.d("score in user changed!");
-            Integer score = dataSnapshot.getValue(Integer.class);
+            final Integer score = dataSnapshot.getValue(Integer.class);
 
             if (score != null) {
                 mDbProviderFactory.getDbProvider()
@@ -101,15 +101,15 @@ public abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
         }
 
         @Override
-        public void onCancelled(DatabaseError databaseError) {
+        public void onCancelled(final DatabaseError databaseError) {
             Timber.e(databaseError.toException());
         }
     };
 
     public BaseActivityPresenter(
-            MyPreferenceManager myPreferencesManager,
-            DbProviderFactory dbProviderFactory,
-            ApiClient apiClient
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient
     ) {
         super(myPreferencesManager, dbProviderFactory, apiClient);
     }
@@ -118,7 +118,7 @@ public abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
      * @param provider login provider to use to login to firebase
      */
     @Override
-    public void startFirebaseLogin(Constants.Firebase.SocialProvider provider, String id) {
+    public void startFirebaseLogin(final Constants.Firebase.SocialProvider provider, final String id) {
         getView().showProgressDialog(R.string.login_in_progress_custom_token);
         mApiClient.getAuthInFirebaseWithSocialProviderObservable(provider, id)
                 .flatMap(firebaseUser -> {
@@ -258,10 +258,10 @@ public abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
         listenToChangesInFirebase(false);
     }
 
-    private void listenToChangesInFirebase(boolean listen) {
+    private void listenToChangesInFirebase(final boolean listen) {
         Timber.d("listenToChangesInFirebase: %s", listen);
         if (listen) {
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser != null && !TextUtils.isEmpty(firebaseUser.getUid())) {
                 if (mFirebaseArticlesRef != null) {
                     mFirebaseArticlesRef.removeEventListener(articlesChangeListener);
@@ -320,7 +320,7 @@ public abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
     }
 
     @Override
-    public void onInviteReceived(String inviteId) {
+    public void onInviteReceived(final String inviteId) {
         //After invite receive we'll check if it's first time invite received and,
         //if so, send its ID to server, which will check for ID existing and will send push to sender and delete inviteID-pushID pair,
         //else we'll send to server command to delete IDs pair, to prevent collecting useless data.
@@ -334,7 +334,7 @@ public abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
     }
 
     @Override
-    public void onInviteSent(String inviteId) {
+    public void onInviteSent(final String inviteId) {
         mApiClient.inviteSent(inviteId, FirebaseInstanceId.getInstance().getToken())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
