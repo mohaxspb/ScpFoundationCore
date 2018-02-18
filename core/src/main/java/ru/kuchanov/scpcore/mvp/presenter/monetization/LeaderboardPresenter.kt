@@ -184,9 +184,9 @@ class LeaderboardPresenter(
     }
 
     override fun updateLeaderboardFromApi() {
-//        view.enableSwipeRefresh(false)
         if (data.isEmpty()) {
             view.showProgressCenter(true)
+            view.enableSwipeRefresh(false)
         } else {
             view.showSwipeRefreshProgress(true)
         }
@@ -258,7 +258,13 @@ class LeaderboardPresenter(
         }
     }
 
-    override fun onSubscriptionClick(id: String, target: Fragment) {
+    override fun onSubscriptionClick(id: String, target: Fragment, ignoreUserCheck: Boolean) {
+        //show warning if user not logged in
+        if (!ignoreUserCheck && user == null) {
+            view.showOfferLoginForLevelUpPopup()
+            return;
+        }
+
         val type = if (id in InAppHelper.getNewInAppsSkus()) {
             InAppHelper.InappType.IN_APP
         } else {

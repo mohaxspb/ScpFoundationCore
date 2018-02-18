@@ -834,7 +834,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showNeedLoginPopup() {
-        Timber.d("showNeedLoginPopup");
         new MaterialDialog.Builder(this)
                 .title(R.string.need_login)
                 .content(R.string.need_login_content)
@@ -848,7 +847,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showOfferLoginPopup(final MaterialDialog.SingleButtonCallback cancelCallback) {
-        Timber.d("showOfferLoginPopup");
         if (!hasWindowFocus()) {
             return;
         }

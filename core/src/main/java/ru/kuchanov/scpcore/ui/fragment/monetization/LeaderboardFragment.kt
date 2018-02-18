@@ -11,6 +11,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.LinearLayout
+import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.google.firebase.auth.FirebaseAuth
@@ -201,6 +202,20 @@ class LeaderboardFragment :
             val refreshed = simpleDateFormat.format(calendar.time)
 
             subtitle = getString(R.string.refreshed, refreshed)
+        }
+    }
+
+    override fun showOfferLoginForLevelUpPopup() {
+        baseActivity?.apply {
+            MaterialDialog.Builder(this)
+                    .title(R.string.need_login)
+                    .content(R.string.need_login_for_level_up_content)
+                    .positiveText(R.string.authorize)
+                    .onPositive { _, _ -> showLoginProvidersPopup() }
+                    .negativeText(android.R.string.cancel)
+                    .onNegative { dialog: MaterialDialog, _ -> dialog.dismiss() }
+                    .build()
+                    .show()
         }
     }
 
