@@ -329,4 +329,5 @@ E-mail: <a href="mailto:neva.spb.rx@gmail.com">По всем вопросам</a
     <string name="level_num">%d уровень</string>
     <string name="drawer_item_leaderboard">Рейтинг агентов</string>
     <string name="ads_will_be_shown_soon">Скоро будет показана реклама! Хотите отключить её заранее?</string>
+    <string name="need_login_for_level_up_content">Чтобы принять участие в рейтинге агентов, вам необходимо авторизоваться.</string>
 </resources>

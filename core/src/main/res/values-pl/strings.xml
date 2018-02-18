@@ -327,4 +327,5 @@ Dziękujemy za korzystanie z naszej aplikacji!]]></string>
     <string name="level_num">%d poziom</string>
     <string name="drawer_item_leaderboard">Agenci ratingowi</string>
     <string name="ads_will_be_shown_soon">Reklama pojawi się wkrótce! Chcesz go wyłączyć z wyprzedzeniem?</string>
+    <string name="need_login_for_level_up_content">Aby wziąć udział w ocenie agentów, musisz autoryzować.</string>
 </resources>

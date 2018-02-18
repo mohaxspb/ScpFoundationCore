@@ -26,6 +26,7 @@ interface LeaderboardContract : BaseMvp {
         fun showUser(myUser: LeaderboardUserViewModel?)
         fun showSwipeRefreshProgress(show: Boolean)
         fun enableSwipeRefresh(enable: Boolean)
+        fun showOfferLoginForLevelUpPopup()
     }
 
     interface Presenter : BaseMvp.Presenter<View> {
@@ -33,13 +34,13 @@ interface LeaderboardContract : BaseMvp {
 
         val data: List<MyListItem>
         var users: List<LeaderboardUser>
-        var myUser:User?
+        var myUser: User?
         var updateTime: Long
 
         var inAppService: IInAppBillingService?
 
         fun loadData()
-        fun onSubscriptionClick(id: String, target: Fragment)
+        fun onSubscriptionClick(id: String, target: Fragment, ignoreUserCheck: Boolean = false)
         fun updateLeaderboardFromApi()
     }
 }

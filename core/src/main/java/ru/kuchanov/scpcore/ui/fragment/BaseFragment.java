@@ -33,6 +33,7 @@ import ru.kuchanov.scpcore.mvp.base.BaseMvp;
 import ru.kuchanov.scpcore.mvp.contract.ActivityToolbarStateSetter;
 import ru.kuchanov.scpcore.mvp.contract.FragmentToolbarStateSetter;
 import ru.kuchanov.scpcore.ui.activity.BaseActivity;
+import ru.kuchanov.scpcore.util.SystemUtils;
 import timber.log.Timber;
 
 /**
@@ -159,7 +160,7 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
         } else if (throwable instanceof ScpParseException) {
             message = getString(R.string.error_parse);
         }
-        Snackbar.make(mRoot, message, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(getActivity(), message), Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
@@ -167,7 +168,7 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
         if (!isAdded()) {
             return;
         }
-        Snackbar.make(mRoot, message, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(getActivity(), message), Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
@@ -183,7 +184,7 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
         if (!isAdded()) {
             return;
         }
-        Snackbar.make(mRoot, message, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(getActivity(), message), Snackbar.LENGTH_LONG).show();
     }
 
     @Override
