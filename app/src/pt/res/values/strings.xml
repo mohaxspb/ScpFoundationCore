@@ -1,0 +1,17 @@
+<resources>
+    <!--no need to translate-->
+    <string name="app_name" translatable="false">SCP Foundation Portuguese On/Offline</string>
+    <!--end no need to translate-->
+
+
+    <!--<string name="drawer_item_9">Lista PL I</string>-->
+    <!--<string name="type_ru">Lista PL I</string>-->
+
+    <!--fixme-->
+    <string-array name="materials_titles">
+        <item>Joke SCP</item>
+        <item>Anomalne SCP</item>
+        <item>Nadnaturalne SCP</item>
+        <item>Lokacje niewyjaśnione</item>
+    </string-array>
+</resources>
