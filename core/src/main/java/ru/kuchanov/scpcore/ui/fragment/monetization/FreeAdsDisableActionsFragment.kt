@@ -92,7 +92,7 @@ class FreeAdsDisableActionsFragment :
         }
     }
 
-    override fun onVkLoginAttempt() = VKSdk.login(activity, VKScope.EMAIL, VKScope.GROUPS)
+    override fun onVkLoginAttempt() = VKSdk.login(baseActivity!!, VKScope.EMAIL, VKScope.GROUPS)
 
     override fun getToolbarTitle(): Int = R.string.free_ads_activity_title
 
