@@ -5,6 +5,8 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.mvp.contract.DrawerMvp;
+import rx.Observable;
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -14,9 +16,9 @@ public abstract class BaseDrawerPresenter<V extends DrawerMvp.View>
         implements DrawerMvp.Presenter<V> {
 
     public BaseDrawerPresenter(
-            MyPreferenceManager myPreferencesManager,
-            DbProviderFactory dbProviderFactory,
-            ApiClient apiClient
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient
     ) {
         super(myPreferencesManager, dbProviderFactory, apiClient);
     }
@@ -28,23 +30,25 @@ public abstract class BaseDrawerPresenter<V extends DrawerMvp.View>
             getView().showMessage(R.string.random_article_warning);
         }
         getView().showProgressDialog(R.string.dialog_random_page_message);
-        mApiClient.getRandomUrl()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        url -> {
-                            getView().dismissProgressDialog();
-                            getView().onReceiveRandomUrl(url);
-                        },
-                        e -> {
-                            getView().dismissProgressDialog();
-                            getView().showError(e);
-                        }
-                );
+        final Single<String> randomUrlObservable = mMyPreferencesManager.isOfflineRandomEnabled()
+                                                       ? mDbProviderFactory.getDbProvider().getRandomUrl().toSingle()
+                                                       : mApiClient.getRandomUrl().toSingle()
+                                                               .subscribeOn(Schedulers.io())
+                                                               .observeOn(AndroidSchedulers.mainThread());
+        randomUrlObservable.subscribe(
+                url -> {
+                    getView().dismissProgressDialog();
+                    getView().onReceiveRandomUrl(url);
+                },
+                e -> {
+                    getView().dismissProgressDialog();
+                    getView().showError(e);
+                }
+        );
     }
 
     @Override
-    public void onNavigationItemClicked(int id) {
+    public void onNavigationItemClicked(final int id) {
         Timber.d("onNavigationItemClicked: %s", id);
         //nothing to do
     }
