@@ -49,6 +49,7 @@ public class MainActivity
         implements MainMvp.View {
 
     public static final String EXTRA_LINK = "EXTRA_LINK";
+
     public static final String EXTRA_SHOW_DISABLE_ADS = "EXTRA_SHOW_DISABLE_ADS";
 
     public static void startActivity(final Context context, final String link) {
@@ -100,8 +101,8 @@ public class MainActivity
         } else if (link.equals(mConstantValues.getNews())) {
             mCurrentSelectedDrawerItemId = (R.id.news);
         } else if (link.equals(mConstantValues.getBaseApiUrl())
-                || link.equals(mConstantValues.getBaseApiUrl() + "/")
-                || link.equals(mConstantValues.getMostRated())) {
+                   || link.equals(mConstantValues.getBaseApiUrl() + "/")
+                   || link.equals(mConstantValues.getMostRated())) {
             mCurrentSelectedDrawerItemId = R.id.mostRatedArticles;
         } else if (link.equals(mConstantValues.getNewArticles())) {
             mCurrentSelectedDrawerItemId = R.id.mostRecentArticles;
@@ -208,7 +209,11 @@ public class MainActivity
 
     @Override
     protected int getDefaultNavItemId() {
-        return getIntent().hasExtra(EXTRA_SHOW_ABOUT) ? R.id.about : R.id.mostRatedArticles;
+        return getIntent().hasExtra(EXTRA_SHOW_ABOUT)
+               ? R.id.about
+               : getResources().getBoolean(R.bool.siteHasRatedArticlesList)
+                 ? R.id.mostRatedArticles
+                 : R.id.objects_I;
     }
 
     @Override
@@ -239,7 +244,8 @@ public class MainActivity
         } else if (id == R.id.about) {
             mCurrentSelectedDrawerItemId = id;
             showFragment(ArticleFragment.newInstance(mConstantValues.getAbout()),
-                    ArticleFragment.TAG + "#" + mConstantValues.getAbout());
+                    ArticleFragment.TAG + "#" + mConstantValues.getAbout()
+            );
             return true;
         } else if (id == R.id.mostRatedArticles) {
             mCurrentSelectedDrawerItemId = id;
@@ -296,7 +302,8 @@ public class MainActivity
         } else if (id == R.id.news) {
             mCurrentSelectedDrawerItemId = id;
             showFragment(ArticleFragment.newInstance(mConstantValues.getNews()),
-                    ArticleFragment.TAG + "#" + mConstantValues.getNews());
+                    ArticleFragment.TAG + "#" + mConstantValues.getNews()
+            );
             return true;
         } else if (id == R.id.objects_IV) {
             mCurrentSelectedDrawerItemId = id;
@@ -305,7 +312,8 @@ public class MainActivity
         } else if (id == R.id.stories) {
             mCurrentSelectedDrawerItemId = id;
             showFragment(ArticleFragment.newInstance(mConstantValues.getStories()),
-                    ArticleFragment.TAG + "#" + mConstantValues.getStories());
+                    ArticleFragment.TAG + "#" + mConstantValues.getStories()
+            );
             return true;
         } else {
             Timber.e("unexpected item ID");

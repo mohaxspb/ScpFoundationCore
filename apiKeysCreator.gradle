@@ -64,6 +64,8 @@ ext {
             variant.resValue('bool', 'social_login_vk_enabled', properties.get("socialLoginVkEnabled"))
 
             variant.resValue('bool', 'multiTagSearchEnabled', properties.get("multiTagSearchEnabled"))
+
+            variant.resValue('bool', 'siteHasRatedArticlesList', properties.get("siteHasRatedArticlesList"))
         } else {
             logger.lifecycle('pathToFileWithData: {}', pathToFileWithData)
             throw new GradleException("You need to have apiKeys.properties file in projectRoot/config/{FLAVOR_NAME} with " +
@@ -75,7 +77,7 @@ ext {
                     "vpsApiAddress" +
                     "webApplicationId" +
                     "vpsApiAddress" +
-                    " variables to build project")
+                    " etc variables to build project")
         }
     }
 }
