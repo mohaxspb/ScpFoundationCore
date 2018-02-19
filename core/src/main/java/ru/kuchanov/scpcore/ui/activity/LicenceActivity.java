@@ -48,7 +48,7 @@ public class LicenceActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BaseApplication.getAppComponent().inject(this);
         if (mMyPreferenceManager.isLicenceAccepted()) {
@@ -59,9 +59,9 @@ public class LicenceActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         try {
-            String licence = StorageUtils.readFromAssets(this, "licence.txt");
+            final String licence = StorageUtils.readFromAssets(this, "licence.txt");
             text.setText(Html.fromHtml(licence));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             Timber.e(e, "error while read licence from file");
             Snackbar.make(mRoot, R.string.error_read_licence, Snackbar.LENGTH_SHORT).show();
         }

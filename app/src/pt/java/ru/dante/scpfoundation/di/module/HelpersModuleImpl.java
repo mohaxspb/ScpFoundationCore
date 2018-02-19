@@ -25,10 +25,10 @@ public class HelpersModuleImpl extends HelpersModule {
 
     @Override
     protected DialogUtils<Article> getDownloadAllDialogUtils(
-            @NonNull MyPreferenceManager preferenceManager,
-            @NonNull DbProviderFactory dbProviderFactory,
-            @NonNull ApiClient apiClient,
-            @NonNull ConstantValues constantValues
+            @NonNull final MyPreferenceManager preferenceManager,
+            @NonNull final DbProviderFactory dbProviderFactory,
+            @NonNull final ApiClient apiClient,
+            @NonNull final ConstantValues constantValues
     ) {
         return new DialogUtilsImpl(
                 preferenceManager,
@@ -40,7 +40,9 @@ public class HelpersModuleImpl extends HelpersModule {
     }
 
     @Override
-    protected MaterialsActivity.MaterialClickListener getMaterialClickListenerImpl(@NonNull ConstantValues constantValues) {
+    protected MaterialsActivity.MaterialClickListener getMaterialClickListenerImpl(
+            @NonNull final ConstantValues constantValues
+    ) {
         return new MaterialClickListenerImpl(constantValues);
     }
 }

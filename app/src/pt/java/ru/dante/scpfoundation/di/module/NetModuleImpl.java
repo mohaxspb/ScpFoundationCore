@@ -26,12 +26,12 @@ public class NetModuleImpl extends NetModule {
 
     @Override
     protected ApiClient getApiClient(
-            @NonNull OkHttpClient okHttpClient,
-            @Named("vps") @NonNull Retrofit vpsRetrofit,
-            @Named("scp") @NonNull Retrofit scpRetrofit,
-            @NonNull MyPreferenceManager preferencesManager,
-            @NonNull Gson gson,
-            @NonNull ConstantValues constantValues
+            @NonNull final OkHttpClient okHttpClient,
+            @Named("vps") @NonNull final Retrofit vpsRetrofit,
+            @Named("scp") @NonNull final Retrofit scpRetrofit,
+            @NonNull final MyPreferenceManager preferencesManager,
+            @NonNull final Gson gson,
+            @NonNull final ConstantValues constantValues
             ) {
         return new ApiClientImpl(okHttpClient, vpsRetrofit, scpRetrofit, preferencesManager, gson, constantValues);
     }
