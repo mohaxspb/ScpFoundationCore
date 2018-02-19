@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -35,6 +36,7 @@ import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.db.model.VkImage;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import timber.log.Timber;
 
 public class DbProvider implements DbProviderModel<Article> {
@@ -115,11 +117,9 @@ public class DbProvider implements DbProviderModel<Article> {
                 .filter(RealmResults::isValid);
     }
 
-
-
     @NotNull
     public List<LeaderboardUser> getLeaderboardUsersUnmanaged() {
-        List<LeaderboardUser> users = mRealm.where(LeaderboardUser.class)
+        final List<LeaderboardUser> users = mRealm.where(LeaderboardUser.class)
                 .findAllSorted(LeaderboardUser.FIELD_SCORE, Sort.DESCENDING);
         return users.isEmpty() ? Collections.emptyList() : mRealm.copyFromRealm(users);
     }
@@ -542,6 +542,25 @@ public class DbProvider implements DbProviderModel<Article> {
         });
         mRealm.close();
         return Observable.just(articles);
+    }
+
+    public Observable<String> getRandomUrl() {
+        return mRealm.where(Article.class).notEqualTo(Article.FIELD_TEXT, (String) null)
+                //remove articles from main activity
+                .notEqualTo(Article.FIELD_URL, mConstantValues.getAbout())
+                .notEqualTo(Article.FIELD_URL, mConstantValues.getNews())
+                .notEqualTo(Article.FIELD_URL, mConstantValues.getStories())
+                .findAllAsync()
+                .asObservable()
+                .filter(RealmResults::isLoaded)
+                .filter(RealmResults::isValid)
+                .first()
+                .flatMap(articles -> articles.isEmpty()
+                                     ? Observable.error(new IllegalStateException("No offline articles"))
+                                     : Observable.just(articles))
+                .map(articles -> articles.get(new Random().nextInt(articles.size())).url)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     private void saveArticleToRealm(final Article article, final Realm realm) {
@@ -998,7 +1017,8 @@ public class DbProvider implements DbProviderModel<Article> {
                 e -> {
                     subscriber.onError(e);
                     mRealm.close();
-                })
+                }
+                )
         );
     }
 
@@ -1021,7 +1041,8 @@ public class DbProvider implements DbProviderModel<Article> {
                 e -> {
                     mRealm.close();
                     subscriber.onError(e);
-                })
+                }
+                )
         );
     }
 }

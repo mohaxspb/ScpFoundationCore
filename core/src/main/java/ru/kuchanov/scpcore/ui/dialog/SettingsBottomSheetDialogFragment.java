@@ -1,5 +1,8 @@
 package ru.kuchanov.scpcore.ui.dialog;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
+
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
@@ -18,9 +21,6 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -61,6 +61,7 @@ public class SettingsBottomSheetDialogFragment
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface ListItemType {
+
         String MIN = "MIN";
         String MIDDLE = "MIDDLE";
         String MAX = "MAX";
@@ -69,31 +70,47 @@ public class SettingsBottomSheetDialogFragment
     //design
     @BindView(R2.id.listItemStyle)
     View listItemStyle;
+
     @BindView(R2.id.listItemSpinner)
     Spinner listItemSpinner;
+
     @BindView(R2.id.fontPreferedTitle)
     TextView fontPreferedTitle;
+
     @BindView(R2.id.fontPrefered)
     View fontPrefered;
+
     @BindView(R2.id.fontPreferedSpinner)
     Spinner fontPreferedSpinner;
+
     //notif
     @BindView(R2.id.notifIsOnSwitch)
     SwitchCompat notifIsOnSwitch;
+
     @BindView(R2.id.notifLedisOnSwitch)
     SwitchCompat notifLedIsOnSwitch;
+
     @BindView(R2.id.notifSoundIsOnSwitch)
     SwitchCompat notifSoundIsOnSwitch;
+
     @BindView(R2.id.notifVibrateIsOnSwitch)
     SwitchCompat notifVibrateIsOnSwitch;
+
+    @BindView(R2.id.randomOfflineIsOnSwitch)
+    SwitchCompat randomOfflineIsOnSwitch;
+
+    @BindView(R2.id.offlineRandomTextView)
+    TextView offlineRandomTextView;
 
     @BindView(R2.id.buy)
     TextView mActivateAutoSync;
 
     @Inject
     MyPreferenceManager mMyPreferenceManager;
+
     @Inject
     MyNotificationManager mMyNotificationManager;
+
     @Inject
     InAppHelper mInAppHelper;
 
@@ -112,23 +129,22 @@ public class SettingsBottomSheetDialogFragment
     }
 
     @Override
-    public void setupDialog(Dialog dialog, int style) {
+    public void setupDialog(final Dialog dialog, final int style) {
         super.setupDialog(dialog, style);
 
         //design
         //card style
         listItemStyle.setOnClickListener(view -> listItemSpinner.performClick());
-        String[] types = new String[]{ListItemType.MIN, ListItemType.MIDDLE, ListItemType.MAX};
-        @ListItemType
-        List<String> typesList = Arrays.asList(types);
+        final String[] types = {ListItemType.MIN, ListItemType.MIDDLE, ListItemType.MAX};
+        @ListItemType final List<String> typesList = Arrays.asList(types);
 
-        ArrayAdapter<String> adapterCard =
+        final ArrayAdapter<String> adapterCard =
                 new SettingsSpinnerCardDesignAdapter(getActivity(), R.layout.design_list_spinner_item, typesList);
         adapterCard.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        Drawable.ConstantState spinnerDrawableConstantState = listItemSpinner.getBackground().getConstantState();
+        final Drawable.ConstantState spinnerDrawableConstantState = listItemSpinner.getBackground().getConstantState();
         if (spinnerDrawableConstantState != null) {
-            Drawable spinnerDrawable = spinnerDrawableConstantState.newDrawable();
+            final Drawable spinnerDrawable = spinnerDrawableConstantState.newDrawable();
             spinnerDrawable.setColorFilter(AttributeGetter.getColor(getActivity(), R.attr.newArticlesTextColor), PorterDuff.Mode.SRC_ATOP);
             listItemSpinner.setBackground(spinnerDrawable);
         }
@@ -139,12 +155,12 @@ public class SettingsBottomSheetDialogFragment
             listItemSpinner.setSelection(typesList.indexOf(mMyPreferenceManager.getListDesignType()));
             listItemSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                public void onItemSelected(final AdapterView<?> adapterView, final View view, final int i, final long l) {
                     mMyPreferenceManager.setListDesignType(types[i]);
                 }
 
                 @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
+                public void onNothingSelected(final AdapterView<?> adapterView) {
 
                 }
             });
@@ -153,17 +169,16 @@ public class SettingsBottomSheetDialogFragment
         CalligraphyUtils.applyFontToTextView(getActivity(), fontPreferedTitle, mMyPreferenceManager.getFontPath());
         fontPrefered.setOnClickListener(view -> fontPreferedSpinner.performClick());
 
-        List<String> fontsPathsList = Arrays.asList(getResources().getStringArray(R.array.fonts));
-        @ListItemType
-        List<String> fontsList = Arrays.asList(getResources().getStringArray(R.array.fonts_names));
+        final List<String> fontsPathsList = Arrays.asList(getResources().getStringArray(R.array.fonts));
+        @ListItemType final List<String> fontsList = Arrays.asList(getResources().getStringArray(R.array.fonts_names));
 
-        ArrayAdapter<String> adapter =
+        final ArrayAdapter<String> adapter =
                 new SettingsSpinnerAdapter(getActivity(), R.layout.design_list_spinner_item_font, fontsList, fontsPathsList);
         adapter.setDropDownViewResource(R.layout.design_list_spinner_item_font);
 
-        Drawable.ConstantState fontsSpinnerDrawableConstantState = fontPreferedSpinner.getBackground().getConstantState();
+        final Drawable.ConstantState fontsSpinnerDrawableConstantState = fontPreferedSpinner.getBackground().getConstantState();
         if (fontsSpinnerDrawableConstantState != null) {
-            Drawable spinnerDrawable = fontsSpinnerDrawableConstantState.newDrawable();
+            final Drawable spinnerDrawable = fontsSpinnerDrawableConstantState.newDrawable();
             spinnerDrawable.setColorFilter(AttributeGetter.getColor(getActivity(), R.attr.newArticlesTextColor), PorterDuff.Mode.SRC_ATOP);
             fontPreferedSpinner.setBackground(spinnerDrawable);
         }
@@ -176,12 +191,9 @@ public class SettingsBottomSheetDialogFragment
             fontPreferedSpinner.setSelection(fontsList.indexOf(mMyPreferenceManager.getFontPath()));
             fontPreferedSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                    Timber.d("onItemSelected position: %s, font: %s", position, fontsList.get(position));
+                public void onItemSelected(final AdapterView<?> adapterView, final View view, final int position, final long id) {
                     //close all except 2 for unsubscribed
-//                    if (position > 1 && !getBaseActivity().getOwnedItems().isEmpty()) {
                     if (position > 1 && !mMyPreferenceManager.isHasSubscription()) {
-                        Timber.d("show subs dialog");
 
                         fontPreferedSpinner.setSelection(fontsPathsList.indexOf(mMyPreferenceManager.getFontPath()));
                         showSnackBarWithAction(Constants.Firebase.CallToActionReason.ENABLE_FONTS);
@@ -191,7 +203,7 @@ public class SettingsBottomSheetDialogFragment
                 }
 
                 @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
+                public void onNothingSelected(final AdapterView<?> adapterView) {
                     Timber.d("onNothingSelected");
                 }
             });
@@ -204,49 +216,48 @@ public class SettingsBottomSheetDialogFragment
         notifVibrateIsOnSwitch.setChecked(mMyPreferenceManager.isNotificationVibrationEnabled());
 
         notifIsOnSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
-            Timber.d("notifOnCheckChanged checked: %s", checked);
             mMyPreferenceManager.setNotificationEnabled(checked);
             mMyNotificationManager.checkAlarm();
         });
 
         notifLedIsOnSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
-            Timber.d("notifOnCheckChanged checked: %s", checked);
             mMyPreferenceManager.setNotificationLedEnabled(checked);
             mMyNotificationManager.checkAlarm();
         });
 
         notifSoundIsOnSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
-            Timber.d("notifOnCheckChanged checked: %s", checked);
             mMyPreferenceManager.setNotificationSoundEnabled(checked);
             mMyNotificationManager.checkAlarm();
         });
 
         notifVibrateIsOnSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
-            Timber.d("notifOnCheckChanged checked: %s", checked);
             mMyPreferenceManager.setNotificationVibrationEnabled(checked);
             mMyNotificationManager.checkAlarm();
         });
 
+        randomOfflineIsOnSwitch.setChecked(mMyPreferenceManager.isOfflineRandomEnabled());
+        final String randomLabel = getString(R.string.drawer_item_5) + " offline";
+        offlineRandomTextView.setText(randomLabel);
+        randomOfflineIsOnSwitch.setOnCheckedChangeListener((compoundButton, checked) -> mMyPreferenceManager.setOfflineRandomEnabled(checked));
+
         //hide activate subs for good users
-        boolean noFullSubscription = !mMyPreferenceManager.isHasSubscription();
+        final boolean noFullSubscription = !mMyPreferenceManager.isHasSubscription();
         mActivateAutoSync.setVisibility(noFullSubscription ? View.VISIBLE : View.GONE);
     }
 
     @OnClick(R2.id.buy)
     void onActivateAutoSyncClicked() {
-        Timber.d("onActivateAutoSyncClicked");
         dismiss();
 
         SubscriptionsActivity.start(getActivity());
 
-        Bundle bundle = new Bundle();
+        final Bundle bundle = new Bundle();
         bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.StartScreen.AUTO_SYNC_FROM_SETTINGS);
         FirebaseAnalytics.getInstance(getActivity()).logEvent(Constants.Firebase.Analitics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
     }
 
     @OnClick(R2.id.sync)
     void onSyncClicked() {
-        Timber.d("onSyncClicked");
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             showSnackBarWithAction(Constants.Firebase.CallToActionReason.SYNC_NEED_AUTH);
             return;
@@ -257,13 +268,13 @@ public class SettingsBottomSheetDialogFragment
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
+    public Dialog onCreateDialog(final Bundle savedInstanceState) {
+        final BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
 
         dialog.setOnShowListener(dialog1 -> {
-            BottomSheetDialog d = (BottomSheetDialog) dialog1;
+            final BottomSheetDialog d = (BottomSheetDialog) dialog1;
 
-            FrameLayout bottomSheet = d.findViewById(android.support.design.R.id.design_bottom_sheet);
+            final FrameLayout bottomSheet = d.findViewById(android.support.design.R.id.design_bottom_sheet);
             if (bottomSheet != null) {
                 BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
             }
@@ -286,7 +297,7 @@ public class SettingsBottomSheetDialogFragment
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+    public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
         if (!isAdded()) {
             return;
         }

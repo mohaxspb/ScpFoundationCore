@@ -108,6 +108,7 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String ADS_BANNER_IN_ARTICLE = "ADS_BANNER_IN_ARTICLE";
         String OFFER_ALREADY_SHOWN = "OFFER_ALREADY_SHOWN";
         String LEADERBOARD_UPDATE_TIME = "LEADERBOARD_UPDATE_TIME";
+        String OFFLINE_RANDOM = "OFFLINE_RANDOM";
     }
 
     private final Gson mGson;
@@ -207,6 +208,14 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
 
     public void setNotificationSoundEnabled(final boolean enabled) {
         mPreferences.edit().putBoolean(Keys.NOTIFICATION_SOUND_IS_ON, enabled).apply();
+    }
+
+    public boolean isOfflineRandomEnabled() {
+        return mPreferences.getBoolean(Keys.OFFLINE_RANDOM, false);
+    }
+
+    public void setOfflineRandomEnabled(final boolean enabled) {
+        mPreferences.edit().putBoolean(Keys.OFFLINE_RANDOM, enabled).apply();
     }
 
     //ads
