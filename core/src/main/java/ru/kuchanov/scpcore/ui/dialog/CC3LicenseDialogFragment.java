@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.ui.dialog;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -9,17 +11,13 @@ import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import javax.inject.Inject;
 
-import butterknife.ButterKnife;
 import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
-import timber.log.Timber;
 
 public class CC3LicenseDialogFragment extends DialogFragment {
 
@@ -113,16 +111,17 @@ public class CC3LicenseDialogFragment extends DialogFragment {
             fr.setOnClickListener(view -> setContentText(content, getString(R.string.license_fr, mConstantValues.getBaseApiUrl(), mConstantValues.getBaseApiUrl())));
             es.setOnClickListener(view -> setContentText(content, getString(R.string.license_es, mConstantValues.getBaseApiUrl(), mConstantValues.getBaseApiUrl())));
             it.setOnClickListener(view -> setContentText(content, getString(R.string.license_it, mConstantValues.getBaseApiUrl(), mConstantValues.getBaseApiUrl())));
+            pt.setOnClickListener(view -> setContentText(content, getString(R.string.license_pt, mConstantValues.getBaseApiUrl(), mConstantValues.getBaseApiUrl())));
         }
         return dialog;
     }
 
-    private void setContentText(TextView content, String text) {
+    private void setContentText(final TextView content, final String text) {
         content.setText(Html.fromHtml(text));
     }
 
     @Override
-    public void onDismiss(DialogInterface dialog) {
+    public void onDismiss(final DialogInterface dialog) {
         super.onDismiss(dialog);
 
         if (getActivity() != null && getActivity() instanceof MainActivity) {
