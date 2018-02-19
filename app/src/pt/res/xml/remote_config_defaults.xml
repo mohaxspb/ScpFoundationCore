@@ -10,29 +10,6 @@
         <value>{
             "items": [
             {
-            "id": "ru.spb.android.borscha",
-            "name": "Борщ",
-            "description": "Генератор юмора. Свежие шутки, приколы, гифки, cамый популярный паблик,
-            журнал.",
-            "imageUrl":
-            "https://lh3.googleusercontent.com/q1Xyzne1iSjQbf2YftlO9hprdmJbYAdcYsmxu3tDhlayvzwR0f3798Ov1s3EVkyNWg=w300-rw"
-            },
-            {
-            "id": "ru.spb.android.palata6",
-            "name": "Палата № 6",
-            "description": "Радость, грусть, сочувствие, любовь, страх, безразличие, удовольствие и
-            другие эмоции",
-            "imageUrl":
-            "https://lh3.googleusercontent.com/2oXjwIeltn-wSrZ8zQB3aGTFPW-w9ef-y2Yi_EeOTLLrTO6Jg9VtejzwDtM6iKPv3bh2=w300-rw"
-            },
-            {
-            "id": "ru.dante.scpfoundation.eng",
-            "name": "SCP Foundation EN On/Offline",
-            "description": "Англоязычное приложение для англоязычной части Фонда",
-            "imageUrl":
-            "https://lh3.googleusercontent.com/IQuXO0zOC1hBS6YUmBo91-G_2WcYPFc2pjIuxTXr_NvbiH-APDSk_rJcbJTijGxwwtcQ=w300-rw"
-            },
-            {
             "id": "ru.kuchanov.vjux",
             "name": "Котик Вжух - Кот волшебник Мем",
             "description": "Вжух и ты волшебник, создай свой вжух взмахом руки.",

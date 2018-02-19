@@ -1,9 +1,8 @@
 package ru.dante.scpfoundation.util;
 
-import ru.dante.scpfoundation.ConstantValuesImpl;
 import ru.kuchanov.scp.downloads.ConstantValues;
-import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 import ru.kuchanov.scpcore.ui.activity.BaseActivity;
+import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 
 /**
  * Created by mohax on 24.07.2017.
@@ -12,26 +11,18 @@ import ru.kuchanov.scpcore.ui.activity.BaseActivity;
  */
 public class MaterialClickListenerImpl implements MaterialsActivity.MaterialClickListener {
 
-    private ConstantValues mConstantValues;
+    private final ConstantValues mConstantValues;
 
-    public MaterialClickListenerImpl(ConstantValues constantValues) {
+    public MaterialClickListenerImpl(final ConstantValues constantValues) {
+        super();
         mConstantValues = constantValues;
     }
 
     @Override
-    public void onMaterialClick(int position, BaseActivity activity) {
+    public void onMaterialClick(final int position, final BaseActivity activity) {
         switch (position) {
             case 0:
                 activity.startArticleActivity(mConstantValues.getJokes());
-                break;
-            case 1:
-                activity.startArticleActivity(ConstantValuesImpl.Urls.ANOMALS);
-                break;
-            case 2:
-                activity.startArticleActivity(ConstantValuesImpl.Urls.NADNATURALNE);
-                break;
-            case 3:
-                activity.startArticleActivity(ConstantValuesImpl.Urls.LOCATIONS);
                 break;
             default:
                 throw new RuntimeException("unexpected position in materials list");

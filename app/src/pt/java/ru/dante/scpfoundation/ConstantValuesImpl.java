@@ -131,7 +131,7 @@ public class ConstantValuesImpl implements ConstantValues {
 
     @Override
     public String getAppLang() {
-        return "pl";
+        return "pt";
     }
 
     @Override
@@ -160,20 +160,16 @@ public class ConstantValuesImpl implements ConstantValues {
     }
 
     interface Api {
-        String MOST_RECENT_URL = "/ostatnio-stworzone/p/";
         /**
          * first arg is searchQuery with SPACEs replaced by "%20"
          * second - num of page
          */
-        //fixme
         String SEARCH_URL = "/search:site/a/p/q/%1$s/p/%2$s";
-        //fixme
         String RANDOM_PAGE_SCRIPT_URL = Urls.BASE_API_URL + "/random:random-scp";
-        //fixme
+        //not used
         int NUM_OF_ARTICLES_ON_RECENT_PAGE = 30;
-        //fixme
+        //not used
         int NUM_OF_ARTICLES_ON_RATED_PAGE = 20;
-        //fixme
         int NUM_OF_ARTICLES_ON_SEARCH_PAGE = 10;
     }
 
@@ -183,41 +179,38 @@ public class ConstantValuesImpl implements ConstantValues {
         String MAIN = BASE_API_URL + "/";
 
         String ABOUT_SCP = BASE_API_URL + "/sobre";
-        //fixme
+        //not used
         String NEWS = BASE_API_URL + "/news";
-        //fixme
+        //not used
         String RATE = BASE_API_URL + "/najwyzej-ocenione";
-        //fixme
+        //not used
         String NEW_ARTICLES = BASE_API_URL + "/ostatnio-stworzone";
 
         String OBJECTS_1 = BASE_API_URL + "/scp-series";
         String OBJECTS_2 = BASE_API_URL + "/scp-series2";
-        //fixme
+        //not used
         String OBJECTS_3 = BASE_API_URL + "/lista-eng-3";
-        //fixme
+        //not used
         String OBJECTS_4 = BASE_API_URL + "/lista-eng-4";
 
-        //fixme
+        //not used
         String OBJECTS_PL = BASE_API_URL + "/lista-pl";
 
         String SEARCH = "SEARCH";
 
-        //fixme
-        String JOKES = BASE_API_URL + "/joke";
+        String JOKES = BASE_API_URL + "/piadas";
 
-        //fixme
+        //not used
         String ARCHIVE = BASE_API_URL + "/archived-scps";
-        //fixme
+        //not used
         String SCP_EX = BASE_API_URL + "/scp-ex";
-        //fixme
+        //not used
         String LOCATIONS = BASE_API_URL + "/niewyjasnione";
-        //fixme
+        //not used
         String EVENTS = BASE_API_URL + "/log-of-extranormal-events";
-        //fixme
+        //not used
         String ANOMALS = BASE_API_URL + "/anomalne";
-        //fixme
-        String NADNATURALNE = BASE_API_URL + "/nadnaturalne";
-        //fixme
+        //not used
         String INCEDENTS = BASE_API_URL + "/incident-reports-eye-witness-interviews-and-personal-logs";
 
         String[] ALL_LINKS_ARRAY = {MAIN, RATE, NEW_ARTICLES,
