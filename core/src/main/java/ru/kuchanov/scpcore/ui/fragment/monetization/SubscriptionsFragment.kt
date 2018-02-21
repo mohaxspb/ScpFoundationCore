@@ -298,7 +298,11 @@ class SubscriptionsFragment :
         adapter.notifyDataSetChanged()
     }
 
-    override fun navigateToDisableAds() = (baseActivity as SubscriptionsActivity).showScreen(SubscriptionsScreenContract.Screen.FREE_ACTIONS)
+    override fun navigateToDisableAds() = (baseActivity as SubscriptionsActivity)
+            .showScreen(SubscriptionsScreenContract.Screen.FREE_ACTIONS)
+
+    override fun navigateToLeaderboard() = (baseActivity as SubscriptionsActivity)
+            .showScreen(SubscriptionsScreenContract.Screen.LEADERBOARD)
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Timber.d("called in fragment")

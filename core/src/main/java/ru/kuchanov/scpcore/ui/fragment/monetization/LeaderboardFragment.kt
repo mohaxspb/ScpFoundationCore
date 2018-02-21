@@ -69,10 +69,10 @@ class LeaderboardFragment :
         recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         fastScroller.setRecyclerView(recyclerView)
 
-        (recyclerView.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
         val animator = recyclerView.itemAnimator
-
-        if (animator is SimpleItemAnimator) {
+        if (animator is DefaultItemAnimator) {
+            animator.supportsChangeAnimations = false
+        } else if (animator is SimpleItemAnimator) {
             animator.supportsChangeAnimations = false
         }
         recyclerView.itemAnimator.changeDuration = 0
