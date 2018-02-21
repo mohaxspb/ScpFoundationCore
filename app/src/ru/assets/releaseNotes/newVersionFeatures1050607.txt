@@ -1,6 +1,6 @@
 <b>Важное</b>
 <br/>
- - Встречайте Португальский филиал фонда! https://play.google.com/store/apps/details?id=ru.dante.scpfoundation.pt
+ - Встречайте <a href="https://play.google.com/store/apps/details?id=ru.dante.scpfoundation.pt">Португальский филиал фонда!</a>
 <br/><br/>
 <b>Новые возможности</b>
 <br/>

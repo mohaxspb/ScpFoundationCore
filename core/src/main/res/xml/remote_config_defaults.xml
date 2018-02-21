@@ -309,4 +309,8 @@
         <key>offer_subs_instead_of_rewarded_video</key>
         <value>false</value>
     </entry>
+    <entry>
+        <key>offer_trial_for_year</key>
+        <value>false</value>
+    </entry>
 </defaultsMap>

@@ -33,18 +33,18 @@ import timber.log.Timber;
 public class DialogUtilsDefault extends ru.kuchanov.scp.downloads.DialogUtils<Article> {
 
     public DialogUtilsDefault(
-            MyPreferenceManagerModel preferenceManager,
-            DbProviderFactoryModel dbProviderFactory,
-            ApiClientModel<Article> apiClient,
-            ConstantValues constantValues,
-            Class clazz
+            final MyPreferenceManagerModel preferenceManager,
+            final DbProviderFactoryModel dbProviderFactory,
+            final ApiClientModel<Article> apiClient,
+            final ConstantValues constantValues,
+            final Class clazz
     ) {
         super(preferenceManager, dbProviderFactory, apiClient, constantValues, clazz);
     }
 
     @Override
-    public List<DownloadEntry> getDownloadTypesEntries(Context context) {
-        List<DownloadEntry> downloadEntries = new ArrayList<>();
+    public List<DownloadEntry> getDownloadTypesEntries(final Context context) {
+        final List<DownloadEntry> downloadEntries = new ArrayList<>();
 
         downloadEntries.add(new DownloadEntry(R.string.type_1, context.getString(R.string.type_1), Constants.Urls.OBJECTS_1, Article.FIELD_IS_IN_OBJECTS_1));
         downloadEntries.add(new DownloadEntry(R.string.type_2, context.getString(R.string.type_2), Constants.Urls.OBJECTS_2, Article.FIELD_IS_IN_OBJECTS_2));
@@ -69,10 +69,8 @@ public class DialogUtilsDefault extends ru.kuchanov.scp.downloads.DialogUtils<Ar
     }
 
     @Override
-    protected void onIncreaseLimitClick(Context context) {
-        Timber.d("onIncreaseLimitClick");
-
-        Bundle bundle = new Bundle();
+    protected void onIncreaseLimitClick(final Context context) {
+        final Bundle bundle = new Bundle();
         bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.StartScreen.DOWNLOAD_DIALOG);
         FirebaseAnalytics.getInstance(context).logEvent(Constants.Firebase.Analitics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
 
@@ -80,33 +78,33 @@ public class DialogUtilsDefault extends ru.kuchanov.scp.downloads.DialogUtils<Ar
     }
 
     @Override
-    protected void logDownloadAttempt(DownloadEntry type) {
+    protected void logDownloadAttempt(final DownloadEntry type) {
         Timber.d("logDownloadAttempt: %s", type);
 
-        Bundle bundle = new Bundle();
+        final Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, type.name);
         FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(Constants.Firebase.Analitics.EventName.MASS_DOWNLOAD, bundle);
     }
 
     @Override
-    public void showFreeTrialOfferDialog(Context context) {
-        Bundle bundle = new Bundle();
+    public void showFreeTrialOfferDialog(final Context context) {
+        final Bundle bundle = new Bundle();
         bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
                 Constants.Firebase.Analitics.EventValue.DOWNLOAD_RANGE);
         FirebaseAnalytics.getInstance(context)
                 .logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
-        BaseActivity baseActivity = (BaseActivity) context;
-        DialogUtils dialogUtils = new DialogUtils(mPreferenceManager, mDbProviderFactory, mApiClient);
+        final BaseActivity baseActivity = (BaseActivity) context;
+        final DialogUtils dialogUtils = new DialogUtils(mPreferenceManager, mDbProviderFactory, mApiClient);
         dialogUtils.showProgressDialog(context, R.string.wait);
-        InAppHelper mInAppHelper = new InAppHelper(mPreferenceManager, mDbProviderFactory, mApiClient);
-        mInAppHelper.getSubsListToBuyObservable(baseActivity.getIInAppBillingService(), mInAppHelper.getFreeTrailSubsSkus())
+        final InAppHelper mInAppHelper = new InAppHelper(mPreferenceManager, mDbProviderFactory, mApiClient);
+        mInAppHelper.getSubsListToBuyObservable(baseActivity.getIInAppBillingService(), InAppHelper.getFreeTrailSubsSkus())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         subscriptions -> {
                             dialogUtils.dismissProgressDialog();
-                            dialogUtils.showFreeTrialSubscriptionOfferDialog(baseActivity, subscriptions.get(0).freeTrialPeriodInDays());
+                            dialogUtils.showFreeTrialSubscriptionOfferDialog(baseActivity, subscriptions);
                         },
                         e -> {
                             Timber.e(e);

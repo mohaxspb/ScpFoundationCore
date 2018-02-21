@@ -1,12 +1,16 @@
 package ru.kuchanov.scpcore.ui.util;
 
-import android.content.Context;
-import android.support.annotation.StringRes;
-
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.GsonBuilder;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
+import org.jetbrains.annotations.NotNull;
+
+import android.content.Context;
+import android.support.annotation.StringRes;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -17,6 +21,7 @@ import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.model.remoteconfig.AppLangVersionsJson;
 import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.monetization.model.Subscription;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import ru.kuchanov.scpcore.util.IntentUtils;
@@ -29,33 +34,26 @@ import timber.log.Timber;
  */
 public class DialogUtils {
 
-    private MyPreferenceManagerModel mPreferenceManager;
-    private DbProviderFactoryModel mDbProviderFactory;
-    private ApiClientModel<Article> mApiClient;
+    private final MyPreferenceManagerModel mPreferenceManager;
+
+    private final DbProviderFactoryModel mDbProviderFactory;
+
+    private final ApiClientModel<Article> mApiClient;
 
     private MaterialDialog mProgressDialog;
 
-//    public DialogUtils(
-//            MyPreferenceManager preferenceManager,
-//            DbProviderFactory dbProviderFactory,
-//            ApiClient apiClient
-//    ) {
-//        mPreferenceManager = preferenceManager;
-//        mDbProviderFactory = dbProviderFactory;
-//        mApiClient = apiClient;
-//    }
-
     public DialogUtils(
-            MyPreferenceManagerModel preferenceManager,
-            DbProviderFactoryModel dbProviderFactory,
-            ApiClientModel<Article> apiClient
+            final MyPreferenceManagerModel preferenceManager,
+            final DbProviderFactoryModel dbProviderFactory,
+            final ApiClientModel<Article> apiClient
     ) {
+        super();
         mPreferenceManager = preferenceManager;
         mDbProviderFactory = dbProviderFactory;
         mApiClient = apiClient;
     }
 
-    public void showFaqDialog(Context context) {
+    public void showFaqDialog(final Context context) {
         new MaterialDialog.Builder(context)
                 .title(R.string.faq)
                 .positiveText(R.string.close)
@@ -74,8 +72,8 @@ public class DialogUtils {
                 .show();
     }
 
-    public void showAppLangVariantsDialog(Context context, AppLangVersionsJson.AppLangVersion version) {
-        String langName = new Locale(version.code).getDisplayLanguage();
+    public void showAppLangVariantsDialog(final Context context, final AppLangVersionsJson.AppLangVersion version) {
+        final String langName = new Locale(version.code).getDisplayLanguage();
         new MaterialDialog.Builder(context)
                 .content(context.getString(R.string.offer_app_lang_version_content, langName, langName))
                 .title(version.title)
@@ -85,11 +83,12 @@ public class DialogUtils {
                 .show();
     }
 
-    public void showAllAppLangVariantsDialog(Context context) {
-        List<AppLangVersionsJson.AppLangVersion> appLangVersions = new GsonBuilder().create()
-                .fromJson(FirebaseRemoteConfig.getInstance()
-                                .getString(Constants.Firebase.RemoteConfigKeys.APP_LANG_VERSIONS),
-                        AppLangVersionsJson.class).langs;
+    public void showAllAppLangVariantsDialog(final Context context) {
+        final List<AppLangVersionsJson.AppLangVersion> appLangVersions = new GsonBuilder().create()
+                .fromJson(
+                        FirebaseRemoteConfig.getInstance().getString(Constants.Firebase.RemoteConfigKeys.APP_LANG_VERSIONS),
+                        AppLangVersionsJson.class
+                ).langs;
         new MaterialDialog.Builder(context)
                 .title(R.string.menuAppLangVersions)
                 .positiveText(R.string.close)
@@ -101,14 +100,25 @@ public class DialogUtils {
                 .show();
     }
 
-    public void showFreeTrialSubscriptionOfferDialog(BaseActivity baseActivity, int freeTrialDaysCount) {
+    public void showFreeTrialSubscriptionOfferDialog(final BaseActivity baseActivity, @NotNull final List<Subscription> subscriptions) {
+        final boolean trialForYearEnabled = FirebaseRemoteConfig.getInstance()
+                .getBoolean(Constants.Firebase.RemoteConfigKeys.OFFER_TRIAL_FOR_YEAR);
+        Collections.sort(subscriptions, Subscription.COMPARATOR_MONTH);
+        final Subscription subscription = subscriptions.get(trialForYearEnabled ? subscriptions.size() - 1 : 0);
+        final String sku = subscription.productId;
+        final int freeTrialDays = subscription.freeTrialPeriodInDays();
         new MaterialDialog.Builder(baseActivity)
                 .title(R.string.dialog_offer_free_trial_subscription_title)
-                .content(baseActivity.getString(R.string.dialog_offer_free_trial_subscription_content, freeTrialDaysCount, freeTrialDaysCount))
+                .content(baseActivity.getString(R.string.dialog_offer_free_trial_subscription_content, freeTrialDays, freeTrialDays))
                 .positiveText(R.string.yes_bliad)
                 .onPositive((dialog, which) -> {
                     try {
-                        InAppHelper.startSubsBuy(baseActivity, baseActivity.getIInAppBillingService(), InAppHelper.InappType.SUBS, baseActivity.getString(R.string.subs_free_trial).split(",")[0]);
+                        InAppHelper.startSubsBuy(
+                                baseActivity,
+                                baseActivity.getIInAppBillingService(),
+                                InAppHelper.InappType.SUBS,
+                                sku
+                        );
                     } catch (Exception e) {
                         Timber.e(e);
                         baseActivity.showError(e);
@@ -120,7 +130,7 @@ public class DialogUtils {
                 .show();
     }
 
-    public void showProgressDialog(Context context, String title) {
+    public void showProgressDialog(final Context context, final String title) {
         if (mProgressDialog != null) {
             mProgressDialog.dismiss();
             mProgressDialog = null;
@@ -133,7 +143,7 @@ public class DialogUtils {
         mProgressDialog.show();
     }
 
-    public void showProgressDialog(Context context, @StringRes int title) {
+    public void showProgressDialog(final Context context, @StringRes final int title) {
         showProgressDialog(context, context.getString(title));
     }
 

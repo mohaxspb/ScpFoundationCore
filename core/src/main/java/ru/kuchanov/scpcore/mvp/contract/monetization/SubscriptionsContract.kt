@@ -23,6 +23,7 @@ interface SubscriptionsContract : BaseMvp {
         fun showData(owned: List<Item>, toBuy: List<Subscription>, inApps: List<Subscription>, curSubsType: Int)
 
         fun navigateToDisableAds()
+        fun navigateToLeaderboard()
     }
 
     interface Presenter : BaseMvp.Presenter<View> {

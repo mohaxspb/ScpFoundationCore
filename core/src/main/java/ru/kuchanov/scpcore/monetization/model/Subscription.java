@@ -19,26 +19,34 @@ import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 public class Subscription {
 
     private static final int NO_TRIAL_PERIOD = -1;
+
     /**
      * aka SKU
      */
     public String productId;
+
     @InAppHelper.InappType
     public String type;
+
     /**
      * Formatted price of the item, including its currency sign. The price does not include tax.
      */
     public String price;
+
     /**
      * Price in micro-units, where 1,000,000 micro-units equal one unit of the currency. For example, if price is "€7.99", price_amount_micros is "7990000". This value represents the localized, rounded price for a particular currency.
      */
     public long price_amount_micros;
+
     /**
      * ISO 4217 currency code for price. For example, if price is specified in British pounds sterling, price_currency_code is "GBP".
      */
     public String price_currency_code;
+
     public String title;
+
     public String description;
+
     /**
      * Subscription period, specified in ISO 8601 format. For example, P1W equates to one week, P1M equates to one month, P3M equates to three months, P6M equates to six months, and P1Y equates to one year.
      * Note: Returned only for subscriptions.
@@ -78,20 +86,21 @@ public class Subscription {
      * @see <a href="https://developer.android.com/google/play/billing/billing_reference.html#getSkuDetails">docs</a>
      */
     public Subscription(
-            String productId,
-            String type,
-            String price,
-            long price_amount_micros,
-            String price_currency_code,
-            String title,
-            String description,
-            String subscriptionPeriod,
-            String freeTrialPeriod,
-            String introductoryPrice,
-            long introductoryPriceAmountMicros,
-            String introductoryPricePeriod,
-            int introductoryPriceCycles
+            final String productId,
+            final String type,
+            final String price,
+            final long price_amount_micros,
+            final String price_currency_code,
+            final String title,
+            final String description,
+            final String subscriptionPeriod,
+            final String freeTrialPeriod,
+            final String introductoryPrice,
+            final long introductoryPriceAmountMicros,
+            final String introductoryPricePeriod,
+            final int introductoryPriceCycles
     ) {
+        super();
         this.productId = productId;
         this.type = type;
         this.price = price;
@@ -110,28 +119,28 @@ public class Subscription {
     @Override
     public String toString() {
         return "Subscription{" +
-                "productId='" + productId + '\'' +
-                ", type='" + type + '\'' +
-                ", price='" + price + '\'' +
-                ", price_amount_micros=" + price_amount_micros +
-                ", price_currency_code='" + price_currency_code + '\'' +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", subscriptionPeriod='" + subscriptionPeriod + '\'' +
-                ", freeTrialPeriod='" + freeTrialPeriod + '\'' +
-                ", introductoryPrice='" + introductoryPrice + '\'' +
-                ", introductoryPriceAmountMicros=" + introductoryPriceAmountMicros +
-                ", introductoryPricePeriod='" + introductoryPricePeriod + '\'' +
-                ", introductoryPriceCycles=" + introductoryPriceCycles +
-                '}';
+               "productId='" + productId + '\'' +
+               ", type='" + type + '\'' +
+               ", price='" + price + '\'' +
+               ", price_amount_micros=" + price_amount_micros +
+               ", price_currency_code='" + price_currency_code + '\'' +
+               ", title='" + title + '\'' +
+               ", description='" + description + '\'' +
+               ", subscriptionPeriod='" + subscriptionPeriod + '\'' +
+               ", freeTrialPeriod='" + freeTrialPeriod + '\'' +
+               ", introductoryPrice='" + introductoryPrice + '\'' +
+               ", introductoryPriceAmountMicros=" + introductoryPriceAmountMicros +
+               ", introductoryPricePeriod='" + introductoryPricePeriod + '\'' +
+               ", introductoryPriceCycles=" + introductoryPriceCycles +
+               '}';
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(final Object o) {
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
 
-        Subscription item = (Subscription) o;
+        final Subscription item = (Subscription) o;
 
         return productId.equals(item.productId);
     }
@@ -153,6 +162,9 @@ public class Subscription {
         }
     };
 
+    public static final Comparator<Subscription> COMPARATOR_MONTH = (d, d1) ->
+            Integer.valueOf(d.freeTrialPeriodInDays()).compareTo(d1.freeTrialPeriodInDays());
+
     public int freeTrialPeriodInDays() {
         if (TextUtils.isEmpty(freeTrialPeriod)) {
             return NO_TRIAL_PERIOD;
@@ -162,10 +174,10 @@ public class Subscription {
 //        Duration duration = Duration.parse("PT20.345S");
 //        return (int) duration.toDays();
 
-        PeriodFormatter formatter = ISOPeriodFormat.standard();
-        Period p = formatter.parsePeriod(freeTrialPeriod);
+        final PeriodFormatter formatter = ISOPeriodFormat.standard();
+        final Period p = formatter.parsePeriod(freeTrialPeriod);
 
-        Days days = p.toStandardDays();
+        final Days days = p.toStandardDays();
         return days.getDays();
     }
 }
