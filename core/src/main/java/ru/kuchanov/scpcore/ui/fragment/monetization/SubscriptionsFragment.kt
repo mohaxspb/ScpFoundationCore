@@ -17,12 +17,17 @@ import org.json.JSONObject
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
-import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.*
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.DividerDelegate
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.LabelDelegate
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.TextDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.subscriptions.CurSubsDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.subscriptions.CurSubsEmptyDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.subscriptions.InAppDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.subscriptions.LabelWithPercentDelegate
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.*
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.DividerViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.LabelViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.TextViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.CurSubsEmptyViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.CurSubsViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.InAppViewModel
@@ -40,8 +45,8 @@ import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Com
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_FREE_ADS_DISABLE
 import ru.kuchanov.scpcore.mvp.presenter.monetization.getMonthFromSkuId
 import ru.kuchanov.scpcore.ui.activity.BaseActivity
-import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity
 import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP
+import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 import ru.kuchanov.scpcore.util.SystemUtils
 import rx.android.schedulers.AndroidSchedulers
@@ -130,7 +135,7 @@ class SubscriptionsFragment :
 
     //    override fun showData(items: List<MyListItem>) {
     override fun showData(owned: List<Item>, toBuy: List<Subscription>, inApps: List<Subscription>, curSubsType: Int) {
-        Timber.d("showData")
+//        Timber.d("showData curSubsType: $curSubsType, owned: $owned, toBuy: $toBuy")
         val items: MutableList<MyListItem> = mutableListOf()
         items.clear()
         items.add(TextViewModel(R.string.subs_main_text))
@@ -157,14 +162,18 @@ class SubscriptionsFragment :
         //cur sub
         items.add(LabelViewModel(R.string.subs_cur_label))
         when (curSubsType) {
-            InAppHelper.SubscriptionType.NONE -> items.add(CurSubsEmptyViewModel(ID_CURRENT_SUBS_EMPTY))
-            InAppHelper.SubscriptionType.NO_ADS -> items.add(
-                CurSubsViewModel(
-                    R.string.subs_no_ads_title,
-                    R.string.subs_no_ads_description,
-                    ID_CURRENT_SUBS,
-                    R.drawable.ic_adblock
-                ))
+            InAppHelper.SubscriptionType.NONE -> {
+                items.add(CurSubsEmptyViewModel(ID_CURRENT_SUBS_EMPTY))
+            }
+            InAppHelper.SubscriptionType.NO_ADS -> {
+                items.add(
+                    CurSubsViewModel(
+                        R.string.subs_no_ads_title,
+                        R.string.subs_no_ads_description,
+                        ID_CURRENT_SUBS,
+                        R.drawable.ic_adblock
+                    ))
+            }
             else -> {
                 val item: Item = when {
                     owned.any { it.sku.contains("12") } -> owned.find { it.sku.contains("12") }
@@ -349,7 +358,7 @@ class SubscriptionsFragment :
                 val item = mGson.fromJson(purchaseData, PurchaseData::class.java)
                 Timber.d("You have bought the %s", item.productId)
 
-                if (item.productId == getString(R.string.inapp_skus).split(",").first()) {
+                if (item.productId == InAppHelper.getNewInAppsSkus().first()) {
                     //levelUp 5
                     //add 10 000 score
                     mInAppHelper.consumeInApp(item.productId, item.purchaseToken, baseActivity?.getIInAppBillingService())
@@ -377,9 +386,9 @@ class SubscriptionsFragment :
         }
     }
 
-    override fun getToolbarTitle(): Int = R.string.subs_activity_title
+    override fun getToolbarTitle() = R.string.subs_activity_title
 
-    override fun getToolbarTextColor(): Int = android.R.color.white
+    override fun getToolbarTextColor() = android.R.color.white
 
     companion object {
 

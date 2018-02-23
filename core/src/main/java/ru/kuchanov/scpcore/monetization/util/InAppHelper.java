@@ -20,6 +20,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -92,16 +93,15 @@ public class InAppHelper {
     }
 
     @SubscriptionType
-    public static int getSubscriptionTypeFromItemsList(@NonNull final List<Item> ownedItems) {
-
+    public static int getSubscriptionTypeFromItemsList(@NonNull final Iterable<Item> ownedItems) {
         //add old old donate subs, new ones and one with free trial period
-        final List<String> fullVersionSkus = new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.old_skus).split(",")));
+        final Collection<String> fullVersionSkus = new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.old_skus).split(",")));
         Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.ver_2_skus).split(","));
         Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.ver3_skus).split(","));
         Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.subs_free_trial).split(","));
         Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.ver3_subs_free_trial).split(","));
 
-        final List<String> noAdsSkus = new ArrayList<>();
+        final Collection<String> noAdsSkus = new ArrayList<>();
         noAdsSkus.add(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_old));
         noAdsSkus.add(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_ver_2));
         noAdsSkus.add(BaseApplication.getAppInstance().getString(R.string.ver3_subs_no_ads));
@@ -110,17 +110,23 @@ public class InAppHelper {
         noAdsSkus.retainAll(ownedSkus);
         fullVersionSkus.retainAll(ownedSkus);
 
-        @SubscriptionType
-        final int type = !fullVersionSkus.isEmpty()
-                                           ? SubscriptionType.FULL_VERSION
-                                           : !noAdsSkus.isEmpty()
-                                             ? SubscriptionType.NO_ADS
-                                             : SubscriptionType.NONE;
+//        @SubscriptionType
+//        final int type = !fullVersionSkus.isEmpty()
+//                                           ? SubscriptionType.FULL_VERSION
+//                                           : !noAdsSkus.isEmpty()
+//                                             ? SubscriptionType.NO_ADS
+//                                             : SubscriptionType.NONE;
+
+        @SubscriptionType final int type = fullVersionSkus.isEmpty()
+                                           ? noAdsSkus.isEmpty()
+                                             ? SubscriptionType.NONE
+                                             : SubscriptionType.NO_ADS
+                                           : SubscriptionType.FULL_VERSION;
 
         return type;
     }
 
-    private static List<String> getSkuListFromItemsList(@NonNull final List<Item> ownedItems) {
+    private static List<String> getSkuListFromItemsList(@NonNull final Iterable<Item> ownedItems) {
         final List<String> skus = new ArrayList<>();
         for (final Item item : ownedItems) {
             skus.add(item.sku);
