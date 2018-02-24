@@ -1,9 +1,11 @@
 package ru.kuchanov.scpcore.db.model
 
 import io.realm.RealmObject
+import io.realm.annotations.Index
+import io.realm.annotations.PrimaryKey
 
 open class LeaderboardUser(
-    var uid: String = "",
+    @PrimaryKey @Index var uid: String = "",
     var fullName: String? = "",
     var avatar: String? = "",
     var score: Int = 0,

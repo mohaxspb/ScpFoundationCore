@@ -55,15 +55,31 @@ public class StorageModuleImpl extends StorageModule {
             }
 
             if (oldVersion == 3) {
-                schema.create(LeaderboardUser.class.getSimpleName())
-                        .addField(LeaderboardUser.FIELD_UID, String.class, FieldAttribute.PRIMARY_KEY)
+                final RealmObjectSchema articleSchema = schema.create(LeaderboardUser.class.getSimpleName());
+                articleSchema
+                        .addField(
+                                LeaderboardUser.FIELD_UID,
+                                String.class,
+                                FieldAttribute.PRIMARY_KEY,
+                                FieldAttribute.INDEXED,
+                                FieldAttribute.REQUIRED
+                        )
                         .addField(LeaderboardUser.FIELD_FULL_NAME, String.class)
+                        .setRequired(LeaderboardUser.FIELD_FULL_NAME, true)
+                        .setNullable(LeaderboardUser.FIELD_FULL_NAME, true)
                         .addField(LeaderboardUser.FIELD_AVATAR, String.class)
+                        .setRequired(LeaderboardUser.FIELD_AVATAR, true)
+                        .setNullable(LeaderboardUser.FIELD_AVATAR, true)
                         .addField(LeaderboardUser.FIELD_SCORE, Integer.class)
+                        .setRequired(LeaderboardUser.FIELD_SCORE, true)
                         .addField(LeaderboardUser.FIELD_NUM_OF_READ_ARTICLES, Integer.class)
+                        .setRequired(LeaderboardUser.FIELD_NUM_OF_READ_ARTICLES, true)
                         .addField(LeaderboardUser.FIELD_LEVEL_NUM, Integer.class)
+                        .setRequired(LeaderboardUser.FIELD_LEVEL_NUM, true)
                         .addField(LeaderboardUser.FIELD_SCORE_TO_NEXT_LEVEL, Integer.class)
-                        .addField(LeaderboardUser.FIELD_CUR_LEVEL_SCORE, Integer.class);
+                        .setRequired(LeaderboardUser.FIELD_SCORE_TO_NEXT_LEVEL, true)
+                        .addField(LeaderboardUser.FIELD_CUR_LEVEL_SCORE, Integer.class)
+                        .setRequired(LeaderboardUser.FIELD_CUR_LEVEL_SCORE, true);
 
                 oldVersion++;
             }

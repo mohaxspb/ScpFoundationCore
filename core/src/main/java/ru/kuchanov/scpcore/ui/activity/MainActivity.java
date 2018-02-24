@@ -200,7 +200,6 @@ public class MainActivity
             } catch (final Exception e) {
                 Timber.e(e);
             }
-
         } else if (mMyPreferenceManager.getCurAppVersion() != SystemUtils.getPackageInfo().versionCode) {
             final DialogFragment dialogFragment = NewVersionDialogFragment.newInstance(getString(R.string.new_version_features));
             dialogFragment.show(getFragmentManager(), NewVersionDialogFragment.TAG);

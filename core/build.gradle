@@ -209,5 +209,11 @@ dependencies {
     api('ru.kuchanov.utils:rate:1.2.1@aar') { transitive = true }
 }
 
+kapt {
+    arguments {
+        arg("realm.ignoreKotlinNullability", true)
+    }
+}
+
 //add it only in project build.gradle, not in lib
 //apply plugin: 'com.google.gms.google-services'
