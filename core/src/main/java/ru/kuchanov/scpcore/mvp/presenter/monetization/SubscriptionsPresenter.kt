@@ -1,3 +1,5 @@
+@file:JvmName("SubscriptionsPresenterUtils")
+
 package ru.kuchanov.scpcore.mvp.presenter.monetization
 
 import android.support.v4.app.Fragment
@@ -20,6 +22,7 @@ import rx.schedulers.Schedulers
 import timber.log.Timber
 import java.util.regex.Pattern
 
+
 fun getMonthFromSkuId(sku: String): Int {
     val p = Pattern.compile("\\d+")
     val m = p.matcher(sku)
@@ -36,14 +39,14 @@ fun getMonthFromSkuId(sku: String): Int {
  * for ScpCore
  */
 class SubscriptionsPresenter(
-        myPreferencesManager: MyPreferenceManager,
-        dbProviderFactory: DbProviderFactory,
-        apiClient: ApiClient,
-        private val inAppHelper: InAppHelper
+    myPreferencesManager: MyPreferenceManager,
+    dbProviderFactory: DbProviderFactory,
+    apiClient: ApiClient,
+    private val inAppHelper: InAppHelper
 ) : BasePresenter<SubscriptionsContract.View>(
-        myPreferencesManager,
-        dbProviderFactory,
-        apiClient
+    myPreferencesManager,
+    dbProviderFactory,
+    apiClient
 ), SubscriptionsContract.Presenter {
 
     override var isDataLoaded = false
@@ -67,24 +70,24 @@ class SubscriptionsPresenter(
         }
 
         Single.zip(
-                inAppHelper.getValidatedOwnedSubsObservable(service).toSingle(),
-                inAppHelper.getSubsListToBuyObservable(service, skuList).toSingle(),
-                inAppHelper.getInAppsListToBuyObservable(service).toSingle(),
-                { t1: List<Item>, t2: List<Subscription>, t3: List<Subscription> -> Triple(t1, t2, t3) }
+            inAppHelper.getValidatedOwnedSubsObservable(service).toSingle(),
+            inAppHelper.getSubsListToBuyObservable(service, skuList).toSingle(),
+            inAppHelper.getInAppsListToBuyObservable(service).toSingle(),
+            { t1: List<Item>, t2: List<Subscription>, t3: List<Subscription> -> Triple(t1, t2, t3) }
         )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                        onSuccess = {
-                            isDataLoaded = true;
-                            view.showProgressCenter(false)
-                            view.showRefreshButton(false)
+                    onSuccess = {
+                        isDataLoaded = true
+                        view.showProgressCenter(false)
+                        view.showRefreshButton(false)
 
-                            owned = it.first
-                            subsToBuy = it.second
-                            inAppsToBuy = it.third
-                            type = InAppHelper.getSubscriptionTypeFromItemsList(it.first);
-                            //todo create data and show it in fragment
+                        owned = it.first
+                        subsToBuy = it.second
+                        inAppsToBuy = it.third
+                        type = InAppHelper.getSubscriptionTypeFromItemsList(it.first)
+                        //todo create data and show it in fragment
 //                            items.clear()
 //                            items.add(TextViewModel(R.string.subs_main_text))
 //                            items.add(TextViewModel(R.string.subs_free_actions_title))
@@ -98,17 +101,17 @@ class SubscriptionsPresenter(
 
 //                            view.showData(items)
 
-                            view.showData(it.first, it.second, it.third, type)
-                        },
-                        onError = {
-                            Timber.e(it, "error getting cur subs");
-                            isDataLoaded = false;
+                        view.showData(it.first, it.second, it.third, type)
+                    },
+                    onError = {
+                        Timber.e(it, "error getting cur subs")
+                        isDataLoaded = false
 
-                            view.showError(it)
-                            view.showProgressCenter(false)
-                            view.showRefreshButton(true)
-                        }
-                );
+                        view.showError(it)
+                        view.showProgressCenter(false)
+                        view.showRefreshButton(true)
+                    }
+                )
     }
 
     override fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService) {
@@ -116,11 +119,10 @@ class SubscriptionsPresenter(
             view.navigateToDisableAds()
             return
         }
-        val type: String
-        if (id in InAppHelper.getNewInAppsSkus()) {
-            type = InAppHelper.InappType.IN_APP
+        val type: String = if (id in InAppHelper.getNewInAppsSkus()) {
+            InAppHelper.InappType.IN_APP
         } else {
-            type = InAppHelper.InappType.SUBS
+            InAppHelper.InappType.SUBS
         }
         try {
             InAppHelper.startSubsBuy(target, inAppBillingService, type, id)
@@ -130,13 +132,11 @@ class SubscriptionsPresenter(
         }
     }
 
-    override fun onCurrentSubscriptionClick(id: String) {
-        //todo open leaderboard
-    }
+    override fun onCurrentSubscriptionClick(id: String) = view.navigateToDisableAds()
 
     companion object {
-        val ID_FREE_ADS_DISABLE = "ID_FREE_ADS_DISABLE"
-        val ID_CURRENT_SUBS = "ID_CURRENT_SUBS"
-        val ID_CURRENT_SUBS_EMPTY = "ID_CURRENT_SUBS_EMPTY"
+        const val ID_FREE_ADS_DISABLE = "ID_FREE_ADS_DISABLE"
+        const val ID_CURRENT_SUBS = "ID_CURRENT_SUBS"
+        const val ID_CURRENT_SUBS_EMPTY = "ID_CURRENT_SUBS_EMPTY"
     }
 }

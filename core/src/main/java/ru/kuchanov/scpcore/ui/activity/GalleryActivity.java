@@ -105,7 +105,7 @@ public class GalleryActivity
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
-            public void onPageSelected(int position) {
+            public void onPageSelected(final int position) {
                 mCurPosition = position;
                 if (position != 0 && position % FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_GALLERY_PHOTOS_BETWEEN_INTERSITIAL) == 0) {
                     final boolean hasSubscription = mMyPreferenceManager.isHasSubscription() || mMyPreferenceManager.isHasNoAdsSubscription();
@@ -173,7 +173,7 @@ public class GalleryActivity
     }
 
     @Override
-    public boolean onNavigationItemClicked(int id) {
+    public boolean onNavigationItemClicked(final int id) {
         Timber.d("onNavigationItemClicked with id: %s", id);
         String link = null;
 
@@ -228,9 +228,9 @@ public class GalleryActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         Timber.d("onOptionsItemSelected with id: %s", item);
-        int i = item.getItemId();
+        final int i = item.getItemId();
         if (i == R.id.share) {
             if (mPagerAdapter.getData().isEmpty()) {
                 return true;
@@ -238,8 +238,8 @@ public class GalleryActivity
             mPagerAdapter.downloadImage(GalleryActivity.this, mViewPager.getCurrentItem(),
                     new SimpleTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) {
                         @Override
-                        public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
-                            String desc = mPagerAdapter.getData().get(mViewPager.getCurrentItem()).description;
+                        public void onResourceReady(final Bitmap resource, final GlideAnimation glideAnimation) {
+                            final String desc = mPagerAdapter.getData().get(mViewPager.getCurrentItem()).description;
                             IntentUtils.shareBitmapWithText(GalleryActivity.this, desc, resource);
                         }
                     });
@@ -251,7 +251,7 @@ public class GalleryActivity
             mPagerAdapter.downloadImage(GalleryActivity.this, mViewPager.getCurrentItem(),
                     new SimpleTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) {
                         @Override
-                        public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
+                        public void onResourceReady(final Bitmap resource, final GlideAnimation glideAnimation) {
                             if (StorageUtils.saveImageToGallery(GalleryActivity.this, resource) != null) {
                                 Toast.makeText(GalleryActivity.this, R.string.image_saved, Toast.LENGTH_SHORT).show();
                             } else {
@@ -266,8 +266,7 @@ public class GalleryActivity
     }
 
     @Override
-    public void showData(List<VkImage> data) {
-        Timber.d("showData: %s", data.size());
+    public void showData(final List<VkImage> data) {
         mPagerAdapter.setData(data);
         mRecyclerAdapter.setData(data);
 
@@ -275,26 +274,22 @@ public class GalleryActivity
     }
 
     @Override
-    public void showCenterProgress(boolean show) {
-        Timber.d("showCenterProgress: %s", show);
+    public void showCenterProgress(final boolean show) {
         mProgressContainer.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     @Override
-    public void showEmptyPlaceholder(boolean show) {
-        Timber.d("showEmptyPlaceholder: %s", show);
+    public void showEmptyPlaceholder(final boolean show) {
         mPlaceHolder.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     @OnClick(R2.id.refresh)
     public void onRefreshClicked() {
-        Timber.d("onRefreshClicked");
         mPresenter.updateData();
     }
 
     @Override
     public boolean isBannerEnabled() {
-        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-        return !config.getBoolean(GALLERY_BANNER_DISABLED);
+        return !FirebaseRemoteConfig.getInstance().getBoolean(GALLERY_BANNER_DISABLED);
     }
 }

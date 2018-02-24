@@ -21,16 +21,9 @@ public class SocialLoginAdapter extends BaseRecyclerAdapter<
         SocialLoginHolder
         > {
 
-    public SocialLoginAdapter(List<SocialLoginHolder.SocialLoginModel> models, BaseAdapterClickListener<SocialLoginHolder.SocialLoginModel> baseAdapterClickListener) {
-        super(models, baseAdapterClickListener);
-    }
-
-    public SocialLoginAdapter() {
-    }
-
     @Override
-    public SocialLoginHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_social_login, parent, false);
+    public SocialLoginHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_social_login, parent, false);
         return new SocialLoginHolder(view);
     }
 }

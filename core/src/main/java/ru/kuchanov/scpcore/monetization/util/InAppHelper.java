@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
 import com.android.vending.billing.IInAppBillingService;
+
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,6 +48,7 @@ import static ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment
 public class InAppHelper {
 
     private final static int API_VERSION_3 = 3;
+
     public static final int RESULT_OK = 0;
 
     @Retention(RetentionPolicy.SOURCE)
@@ -54,6 +57,7 @@ public class InAppHelper {
             InappType.SUBS
     })
     public @interface InappType {
+
         String IN_APP = "inapp";
         String SUBS = "subs";
     }
@@ -65,61 +69,72 @@ public class InAppHelper {
             SubscriptionType.NONE
     })
     public @interface SubscriptionType {
+
         int NONE = -1;
         int NO_ADS = 0;
         int FULL_VERSION = 1;
     }
 
-    private ApiClientModel<Article> mApiClient;
-    private MyPreferenceManagerModel mMyPreferenceManager;
-    private DbProviderFactoryModel mDbProviderFactory;
+    private final ApiClientModel<Article> mApiClient;
+
+    private final MyPreferenceManagerModel mMyPreferenceManager;
+
+    private final DbProviderFactoryModel mDbProviderFactory;
 
     public InAppHelper(
-            MyPreferenceManagerModel preferenceManager,
-            DbProviderFactoryModel dbProviderFactory,
-            ApiClientModel<Article> apiClient
+            final MyPreferenceManagerModel preferenceManager,
+            final DbProviderFactoryModel dbProviderFactory,
+            final ApiClientModel<Article> apiClient
     ) {
+        super();
         mMyPreferenceManager = preferenceManager;
         mDbProviderFactory = dbProviderFactory;
         mApiClient = apiClient;
     }
 
     @SubscriptionType
-    public static int getSubscriptionTypeFromItemsList(@NonNull List<Item> ownedItems) {
-        @SubscriptionType
-        int type;
-
+    public static int getSubscriptionTypeFromItemsList(@NonNull final Iterable<Item> ownedItems) {
         //add old old donate subs, new ones and one with free trial period
-        List<String> fullVersionSkus = new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.old_skus).split(",")));
+        final Collection<String> fullVersionSkus = new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.old_skus).split(",")));
         Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.ver_2_skus).split(","));
         Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.ver3_skus).split(","));
         Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.subs_free_trial).split(","));
         Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.ver3_subs_free_trial).split(","));
 
-        List<String> noAdsSkus = new ArrayList<>();
+        final Collection<String> noAdsSkus = new ArrayList<>();
         noAdsSkus.add(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_old));
         noAdsSkus.add(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_ver_2));
         noAdsSkus.add(BaseApplication.getAppInstance().getString(R.string.ver3_subs_no_ads));
 
-        List<String> ownedSkus = getSkuListFromItemsList(ownedItems);
+        final List<String> ownedSkus = getSkuListFromItemsList(ownedItems);
         noAdsSkus.retainAll(ownedSkus);
         fullVersionSkus.retainAll(ownedSkus);
 
-        type = !fullVersionSkus.isEmpty()
-                ? SubscriptionType.FULL_VERSION : !noAdsSkus.isEmpty() ? SubscriptionType.NO_ADS : SubscriptionType.NONE;
+//        @SubscriptionType
+//        final int type = !fullVersionSkus.isEmpty()
+//                                           ? SubscriptionType.FULL_VERSION
+//                                           : !noAdsSkus.isEmpty()
+//                                             ? SubscriptionType.NO_ADS
+//                                             : SubscriptionType.NONE;
+
+        @SubscriptionType final int type = fullVersionSkus.isEmpty()
+                                           ? noAdsSkus.isEmpty()
+                                             ? SubscriptionType.NONE
+                                             : SubscriptionType.NO_ADS
+                                           : SubscriptionType.FULL_VERSION;
 
         return type;
     }
 
-    private static List<String> getSkuListFromItemsList(@NonNull List<Item> ownedItems) {
-        List<String> skus = new ArrayList<>();
-        for (Item item : ownedItems) {
+    private static List<String> getSkuListFromItemsList(@NonNull final Iterable<Item> ownedItems) {
+        final List<String> skus = new ArrayList<>();
+        for (final Item item : ownedItems) {
             skus.add(item.sku);
         }
         return skus;
     }
 
-    public Observable<List<Item>> getValidatedOwnedSubsObservable(IInAppBillingService mInAppBillingService) {
+    public Observable<List<Item>> getValidatedOwnedSubsObservable(final IInAppBillingService mInAppBillingService) {
         return Observable.<List<Item>>unsafeCreate(subscriber -> {
             try {
                 Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "subs", null);
@@ -154,11 +169,11 @@ public class InAppHelper {
             }
         })
                 .flatMap(items -> {
-                    List<Item> validatedItems = new ArrayList<>();
-                    for (Item item : items) {
+                    final List<Item> validatedItems = new ArrayList<>();
+                    for (final Item item : items) {
                         Timber.d("validate item: %s", item.sku);
                         try {
-                            PurchaseValidateResponse purchaseValidateResponse = ((ApiClient) mApiClient).validatePurchaseSync(
+                            final PurchaseValidateResponse purchaseValidateResponse = ((ApiClient) mApiClient).validatePurchaseSync(
                                     true,
                                     BaseApplication.getAppInstance().getPackageName(),
                                     item.sku,
@@ -179,7 +194,7 @@ public class InAppHelper {
                                 default:
                                     return Observable.error(new IllegalArgumentException("Unexpected validation status: " + purchaseValidateResponse.getStatus()));
                             }
-                        } catch (IOException e) {
+                        } catch (final IOException e) {
                             Timber.e(e, "failed validation request to vps server");
                             return Observable.error(e);
                         }
@@ -188,26 +203,26 @@ public class InAppHelper {
                 });
     }
 
-    public Observable<List<Item>> getOwnedInAppsObservable(IInAppBillingService mInAppBillingService) {
+    public Observable<List<Item>> getOwnedInAppsObservable(final IInAppBillingService mInAppBillingService) {
         return Observable.unsafeCreate(subscriber -> {
             try {
-                Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "inapp", null);
+                final Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "inapp", null);
 
                 Timber.d("ownedItems bundle: %s", ownedItemsBundle);
                 if (ownedItemsBundle.getInt("RESPONSE_CODE") == RESULT_OK) {
-                    List<String> ownedSkus = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
-                    List<String> purchaseDataList = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_DATA_LIST");
-                    List<String> signatureList = ownedItemsBundle.getStringArrayList("INAPP_DATA_SIGNATURE_LIST");
-                    String continuationToken = ownedItemsBundle.getString("INAPP_CONTINUATION_TOKEN");
+                    final List<String> ownedSkus = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
+                    final List<String> purchaseDataList = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_DATA_LIST");
+                    final List<String> signatureList = ownedItemsBundle.getStringArrayList("INAPP_DATA_SIGNATURE_LIST");
+                    final String continuationToken = ownedItemsBundle.getString("INAPP_CONTINUATION_TOKEN");
 
                     if (ownedSkus == null || purchaseDataList == null || signatureList == null) {
                         subscriber.onError(new IllegalStateException("some of owned items info is null while get owned items"));
                     } else {
-                        List<Item> ownedItemsList = new ArrayList<>();
+                        final List<Item> ownedItemsList = new ArrayList<>();
                         for (int i = 0; i < purchaseDataList.size(); ++i) {
-                            String purchaseData = purchaseDataList.get(i);
-                            String signature = signatureList.get(i);
-                            String sku = ownedSkus.get(i);
+                            final String purchaseData = purchaseDataList.get(i);
+                            final String signature = signatureList.get(i);
+                            final String sku = ownedSkus.get(i);
                             ownedItemsList.add(new Item(purchaseData, signature, sku, continuationToken));
                         }
                         Timber.d("ownedItemsList: %s", ownedItemsList);
@@ -217,7 +232,7 @@ public class InAppHelper {
                 } else {
                     subscriber.onError(new IllegalStateException("ownedItemsBundle.getInt(\"RESPONSE_CODE\") is not 0"));
                 }
-            } catch (RemoteException e) {
+            } catch (final RemoteException e) {
                 Timber.e(e);
                 subscriber.onError(e);
             }
@@ -225,28 +240,26 @@ public class InAppHelper {
     }
 
     public Observable<List<Subscription>> getSubsListToBuyObservable(
-            IInAppBillingService mInAppBillingService,
-            List<String> skus
+            final IInAppBillingService mInAppBillingService,
+            final List<String> skus
     ) {
         return Observable.unsafeCreate(subscriber -> {
             try {
                 //get all subs detailed info
-                List<Subscription> allSubscriptions = new ArrayList<>();
-                Timber.d("skuList: %s", skus);
-
-                Bundle querySkus = new Bundle();
+                final Bundle querySkus = new Bundle();
                 querySkus.putStringArrayList("ITEM_ID_LIST", (ArrayList<String>) skus);
-                Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "subs", querySkus);
+                final Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "subs", querySkus);
                 Timber.d("skuDetails: %s", skuDetails);
                 if (skuDetails.getInt("RESPONSE_CODE") == RESULT_OK) {
-                    List<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
+                    final List<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
                     if (responseList == null) {
                         subscriber.onError(new IllegalStateException("responseList is null while get subs details"));
                         return;
                     }
 
-                    for (String thisResponse : responseList) {
-                        Subscription subscription = new GsonBuilder().create().fromJson(thisResponse, Subscription.class);
+                    final List<Subscription> allSubscriptions = new ArrayList<>();
+                    for (final String thisResponse : responseList) {
+                        final Subscription subscription = new GsonBuilder().create().fromJson(thisResponse, Subscription.class);
                         allSubscriptions.add(subscription);
                     }
                     Collections.sort(allSubscriptions, Subscription.COMPARATOR_PRICE);
@@ -256,37 +269,37 @@ public class InAppHelper {
                 } else {
                     subscriber.onError(new IllegalStateException("ownedItemsBundle.getInt(\"RESPONSE_CODE\") is not 0"));
                 }
-            } catch (RemoteException e) {
+            } catch (final RemoteException e) {
                 Timber.e(e);
                 subscriber.onError(e);
             }
         });
     }
 
-    public Observable<List<Subscription>> getInAppsListToBuyObservable(IInAppBillingService mInAppBillingService) {
+    public Observable<List<Subscription>> getInAppsListToBuyObservable(final IInAppBillingService mInAppBillingService) {
         return Observable.unsafeCreate(subscriber -> {
             try {
                 //get all subs detailed info
-                List<Subscription> allSubscriptions = new ArrayList<>();
-                List<String> skuList = new ArrayList<>();
+                final List<String> skuList = new ArrayList<>();
                 //get it from build config
 //                Collections.addAll(skuList, BaseApplication.getAppInstance().getString(R.string.inapp_skus).split(","));
                 Collections.addAll(skuList, BaseApplication.getAppInstance().getString(R.string.ver3_inapp_skus).split(","));
                 Timber.d("skuList: %s", skuList);
 
-                Bundle querySkus = new Bundle();
+                final Bundle querySkus = new Bundle();
                 querySkus.putStringArrayList("ITEM_ID_LIST", (ArrayList<String>) skuList);
-                Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "inapp", querySkus);
+                final Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "inapp", querySkus);
                 Timber.d("skuDetails: %s", skuDetails);
                 if (skuDetails.getInt("RESPONSE_CODE") == RESULT_OK) {
-                    List<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
+                    final List<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
                     if (responseList == null) {
                         subscriber.onError(new IllegalStateException("responseList is null while get subs details"));
                         return;
                     }
 
-                    for (String thisResponse : responseList) {
-                        Subscription subscription = new GsonBuilder().create().fromJson(thisResponse, Subscription.class);
+                    final List<Subscription> allSubscriptions = new ArrayList<>();
+                    for (final String thisResponse : responseList) {
+                        final Subscription subscription = new GsonBuilder().create().fromJson(thisResponse, Subscription.class);
                         allSubscriptions.add(subscription);
                     }
                     Collections.sort(allSubscriptions, Subscription.COMPARATOR_PRICE);
@@ -296,30 +309,29 @@ public class InAppHelper {
                 } else {
                     subscriber.onError(new IllegalStateException("ownedItemsBundle.getInt(\"RESPONSE_CODE\") is not 0"));
                 }
-            } catch (RemoteException e) {
+            } catch (final RemoteException e) {
                 subscriber.onError(e);
             }
         });
     }
 
     public Observable<Integer> consumeInApp(
-            String sku,
-            String token,
-            IInAppBillingService mInAppBillingService
+            final String sku,
+            final String token,
+            final IInAppBillingService mInAppBillingService
     ) {
-        String packageName = BaseApplication.getAppInstance().getPackageName();
+        final String packageName = BaseApplication.getAppInstance().getPackageName();
 
         return ((ApiClient) mApiClient).validatePurchase(false, packageName, sku, token)
                 .flatMap(purchaseValidateResponse -> {
-                    @PurchaseValidateResponse.PurchaseValidationStatus
-                    int status = purchaseValidateResponse.getStatus();
+                    @PurchaseValidateResponse.PurchaseValidationStatus final int status = purchaseValidateResponse.getStatus();
                     Timber.d("PurchaseValidationStatus: %s", status);
                     switch (status) {
                         case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_VALID:
                             try {
-                                int response = mInAppBillingService.consumePurchase(API_VERSION_3, packageName, token);
+                                final int response = mInAppBillingService.consumePurchase(API_VERSION_3, packageName, token);
                                 return Observable.just(response);
-                            } catch (RemoteException e) {
+                            } catch (final RemoteException e) {
                                 return Observable.error(e);
                             }
                         case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_INVALID:
@@ -333,41 +345,41 @@ public class InAppHelper {
     }
 
     public static void startSubsBuy(
-            Fragment fragment,
-            IInAppBillingService mInAppBillingService,
-            @InappType String type,
-            String sku
+            final Fragment fragment,
+            final IInAppBillingService mInAppBillingService,
+            @InappType final String type,
+            final String sku
     ) throws RemoteException, IntentSender.SendIntentException {
-        Bundle buyIntentBundle = mInAppBillingService.getBuyIntent(
+        final Bundle buyIntentBundle = mInAppBillingService.getBuyIntent(
                 API_VERSION_3,
                 BaseApplication.getAppInstance().getPackageName(),
                 sku,
                 type,
                 String.valueOf(System.currentTimeMillis())
         );
-        PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
+        final PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
         if (pendingIntent != null) {
-            int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
+            final int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
             fragment.startIntentSenderForResult(pendingIntent.getIntentSender(), requestCode, new Intent(), 0, 0, 0, null);
         }
     }
 
     public static void startSubsBuy(
-            FragmentActivity activity,
-            IInAppBillingService mInAppBillingService,
-            @InappType String type,
-            String sku
+            final FragmentActivity activity,
+            final IInAppBillingService mInAppBillingService,
+            @InappType final String type,
+            final String sku
     ) throws RemoteException, IntentSender.SendIntentException {
-        Bundle buyIntentBundle = mInAppBillingService.getBuyIntent(
+        final Bundle buyIntentBundle = mInAppBillingService.getBuyIntent(
                 API_VERSION_3,
                 BaseApplication.getAppInstance().getPackageName(),
                 sku,
                 type,
                 String.valueOf(System.currentTimeMillis())
         );
-        PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
+        final PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
         if (pendingIntent != null) {
-            int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
+            final int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
             activity.startIntentSenderForResult(pendingIntent.getIntentSender(), requestCode, new Intent(), 0, 0, 0, null);
         }
         //todo think if we must handle consuming inapp here
@@ -387,10 +399,5 @@ public class InAppHelper {
 
     public static List<String> getNewInAppsSkus() {
         return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_inapp_skus).split(",")));
-    }
-
-    public static int getMonthsFromSku(String sku) {
-        String monthsString = sku.replaceAll("[^\\.0123456789]", "");
-        return Integer.parseInt(monthsString);
     }
 }

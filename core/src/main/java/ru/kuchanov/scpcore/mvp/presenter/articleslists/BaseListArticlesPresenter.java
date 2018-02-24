@@ -24,7 +24,11 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
     protected RealmResults<Article> mData;
     protected boolean isLoading;
 
-    public BaseListArticlesPresenter(MyPreferenceManager myPreferencesManager, DbProviderFactory dbProviderFactory, ApiClient apiClient) {
+    public BaseListArticlesPresenter(
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient
+    ) {
         super(myPreferencesManager, dbProviderFactory, apiClient);
     }
 
@@ -80,7 +84,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
     }
 
     @Override
-    public void getDataFromApi(int offset) {
+    public void getDataFromApi(final int offset) {
         Timber.d("getDataFromApi with offset: %s", offset);
         if (mData != null && mData.isValid() && !mData.isEmpty()) {
             getView().showCenterProgress(false);
@@ -144,7 +148,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
     }
 
     @Override
-    public void toggleFavoriteState(Article article) {
+    public void toggleFavoriteState(final Article article) {
 //        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
 //            getView().showNeedLoginPopup();
 //            return;
@@ -161,7 +165,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
     }
 
     @Override
-    public void toggleReadState(Article article) {
+    public void toggleReadState(final Article article) {
 //        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
 //            getView().showNeedLoginPopup();
 //            return;
@@ -180,7 +184,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
 
     //TODO think if we need to manage state of loading during confChanges
     @Override
-    public void toggleOfflineState(Article article) {
+    public void toggleOfflineState(final Article article) {
         if (!article.isValid()) {
             return;
         }
@@ -199,9 +203,9 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
     }
 
     @Override
-    public void toggleOfflineState(String url) {
+    public void toggleOfflineState(final String url) {
         Timber.d("toggleOfflineState: %s", url);
-        Article article = new Article();
+        final Article article = new Article();
         article.url = url;
         toggleOfflineState(article);
     }
@@ -215,12 +219,12 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
             }
 
             @Override
-            public void onError(Throwable e) {
+            public void onError(final Throwable e) {
                 Timber.e(e, "error toggle favs state...");
             }
 
             @Override
-            public void onNext(Article article) {
+            public void onNext(final Article article) {
                 Timber.d("favs state now is: %s", article.isInFavorite != Article.ORDER_NONE);
                 updateArticleInFirebase(article, true);
             }
@@ -236,12 +240,12 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
             }
 
             @Override
-            public void onError(Throwable e) {
+            public void onError(final Throwable e) {
                 Timber.e(e, "error toggle read state...");
             }
 
             @Override
-            public void onNext(Article article) {
+            public void onNext(final Article article) {
                 Timber.d("read state now is: %s", article.isInFavorite != Article.ORDER_NONE);
                 updateArticleInFirebase(article, false);
             }
@@ -257,12 +261,12 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
             }
 
             @Override
-            public void onError(Throwable e) {
+            public void onError(final Throwable e) {
                 Timber.e(e, "error delete text...");
             }
 
             @Override
-            public void onNext(String stringBooleanPair) {
+            public void onNext(final String stringBooleanPair) {
                 Timber.d("deleted");
             }
         };
@@ -277,13 +281,13 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
             }
 
             @Override
-            public void onError(Throwable e) {
+            public void onError(final Throwable e) {
                 Timber.e(e, "error download article");
                 getView().showError(e);
             }
 
             @Override
-            public void onNext(Article article) {
+            public void onNext(final Article article) {
                 Timber.d("getDownloadArticleSubscriber onNext article: %s", article.url);
             }
         };

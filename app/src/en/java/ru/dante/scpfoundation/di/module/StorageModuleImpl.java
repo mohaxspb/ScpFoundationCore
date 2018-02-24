@@ -3,10 +3,12 @@ package ru.dante.scpfoundation.di.module;
 import java.util.Locale;
 
 import dagger.Module;
+import io.realm.FieldAttribute;
 import io.realm.RealmMigration;
 import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
 import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.db.model.LeaderboardUser;
 import ru.kuchanov.scpcore.di.module.StorageModule;
 import timber.log.Timber;
 
@@ -68,6 +70,36 @@ public class StorageModuleImpl extends StorageModule {
                             .addField(Article.FIELD_IS_IN_OBJECTS_PL, long.class)
                             .addField(Article.FIELD_IS_IN_OBJECTS_DE, long.class);
                 }
+                oldVersion++;
+            }
+
+            if (oldVersion == 4) {
+                final RealmObjectSchema articleSchema = schema.create(LeaderboardUser.class.getSimpleName());
+                articleSchema
+                        .addField(
+                                LeaderboardUser.FIELD_UID,
+                                String.class,
+                                FieldAttribute.PRIMARY_KEY,
+                                FieldAttribute.INDEXED,
+                                FieldAttribute.REQUIRED
+                        )
+                        .addField(LeaderboardUser.FIELD_FULL_NAME, String.class)
+                        .setRequired(LeaderboardUser.FIELD_FULL_NAME, true)
+                        .setNullable(LeaderboardUser.FIELD_FULL_NAME, true)
+                        .addField(LeaderboardUser.FIELD_AVATAR, String.class)
+                        .setRequired(LeaderboardUser.FIELD_AVATAR, true)
+                        .setNullable(LeaderboardUser.FIELD_AVATAR, true)
+                        .addField(LeaderboardUser.FIELD_SCORE, Integer.class)
+                        .setRequired(LeaderboardUser.FIELD_SCORE, true)
+                        .addField(LeaderboardUser.FIELD_NUM_OF_READ_ARTICLES, Integer.class)
+                        .setRequired(LeaderboardUser.FIELD_NUM_OF_READ_ARTICLES, true)
+                        .addField(LeaderboardUser.FIELD_LEVEL_NUM, Integer.class)
+                        .setRequired(LeaderboardUser.FIELD_LEVEL_NUM, true)
+                        .addField(LeaderboardUser.FIELD_SCORE_TO_NEXT_LEVEL, Integer.class)
+                        .setRequired(LeaderboardUser.FIELD_SCORE_TO_NEXT_LEVEL, true)
+                        .addField(LeaderboardUser.FIELD_CUR_LEVEL_SCORE, Integer.class)
+                        .setRequired(LeaderboardUser.FIELD_CUR_LEVEL_SCORE, true);
+
                 oldVersion++;
             }
 

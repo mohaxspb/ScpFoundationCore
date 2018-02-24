@@ -28,23 +28,24 @@ import timber.log.Timber;
 
 public class SetTextViewHTML {
 
-    private ConstantValues mConstantValues;
+    private final ConstantValues mConstantValues;
 
-    public SetTextViewHTML(ConstantValues constantValues) {
+    public SetTextViewHTML(final ConstantValues constantValues) {
+        super();
         mConstantValues = constantValues;
     }
 
-    public void setText(TextView textView, String html, TextItemsClickListener textItemsClickListener) {
-        URLImageParser imgGetter = new URLImageParser(textView);
-        MyHtmlTagHandler myHtmlTagHandler = new MyHtmlTagHandler();
-        CharSequence sequence = Html.fromHtml(html, imgGetter, myHtmlTagHandler);
-        SpannableStringBuilder strBuilder = new SpannableStringBuilder(sequence);
-        URLSpan[] urls = strBuilder.getSpans(0, sequence.length(), URLSpan.class);
-        for (URLSpan span : urls) {
+    public void setText(final TextView textView, final String html, final TextItemsClickListener textItemsClickListener) {
+        final Html.ImageGetter imgGetter = new URLImageParser(textView);
+        final Html.TagHandler myHtmlTagHandler = new MyHtmlTagHandler();
+        final CharSequence sequence = Html.fromHtml(html, imgGetter, myHtmlTagHandler);
+        final SpannableStringBuilder strBuilder = new SpannableStringBuilder(sequence);
+        final URLSpan[] urls = strBuilder.getSpans(0, sequence.length(), URLSpan.class);
+        for (final URLSpan span : urls) {
             makeLinkClickable(strBuilder, span, textItemsClickListener);
         }
-        ImageSpan[] imgs = strBuilder.getSpans(0, sequence.length(), ImageSpan.class);
-        for (ImageSpan span : imgs) {
+        final ImageSpan[] imgs = strBuilder.getSpans(0, sequence.length(), ImageSpan.class);
+        for (final ImageSpan span : imgs) {
             makeImgsClickable(strBuilder, span, textItemsClickListener);
         }
         replaceQuoteSpans(textView.getContext(), strBuilder);
@@ -52,16 +53,16 @@ public class SetTextViewHTML {
     }
 
     private void makeLinkClickable(
-            SpannableStringBuilder strBuilder,
-            URLSpan span,
-            TextItemsClickListener textItemsClickListener
+            final Spannable strBuilder,
+            final URLSpan span,
+            final TextItemsClickListener textItemsClickListener
     ) {
-        int start = strBuilder.getSpanStart(span);
-        int end = strBuilder.getSpanEnd(span);
-        int flags = strBuilder.getSpanFlags(span);
-        ClickableSpan clickable = new ClickableSpan() {
+        final int start = strBuilder.getSpanStart(span);
+        final int end = strBuilder.getSpanEnd(span);
+        final int flags = strBuilder.getSpanFlags(span);
+        final ClickableSpan clickable = new ClickableSpan() {
             @Override
-            public void updateDrawState(TextPaint ds) {
+            public void updateDrawState(final TextPaint ds) {
                 super.updateDrawState(ds);
                 if (span.getURL().startsWith(Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL)) {
                     ds.setColor(ContextCompat.getColor(BaseApplication.getAppInstance(), R.color.material_red_500));
@@ -69,7 +70,7 @@ public class SetTextViewHTML {
             }
 
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 Timber.d("Link clicked: %s", span.getURL());
 
                 String link = span.getURL();
@@ -116,7 +117,7 @@ public class SetTextViewHTML {
 
                 if (link.startsWith(Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL)) {
                     if (textItemsClickListener != null) {
-                        String url = link.split(Constants.Api.NOT_TRANSLATED_ARTICLE_URL_DELIMITER)[1];
+                        final String url = link.split(Constants.Api.NOT_TRANSLATED_ARTICLE_URL_DELIMITER)[1];
                         textItemsClickListener.onNotTranslatedArticleClick(url);
                     }
                     return;
@@ -140,27 +141,27 @@ public class SetTextViewHTML {
     }
 
     private static void makeImgsClickable(
-            SpannableStringBuilder strBuilder,
-            ImageSpan span,
-            TextItemsClickListener textItemsClickListener
+            final SpannableStringBuilder strBuilder,
+            final ImageSpan span,
+            final TextItemsClickListener textItemsClickListener
     ) {
         final String imageSrc = span.getSource();
         final int start = strBuilder.getSpanStart(span);
         final int end = strBuilder.getSpanEnd(span);
 
-        ClickableSpan click_span = new ClickableSpan() {
+        final ClickableSpan click_span = new ClickableSpan() {
             @Override
-            public void onClick(View widget) {
+            public void onClick(final View widget) {
                 Timber.d("makeImgsClickable Click: %s", imageSrc);
                 if (textItemsClickListener != null) {
                     textItemsClickListener.onImageClicked(imageSrc, null);
                 }
             }
         };
-        ClickableSpan[] click_spans = strBuilder.getSpans(start, end, ClickableSpan.class);
+        final ClickableSpan[] click_spans = strBuilder.getSpans(start, end, ClickableSpan.class);
 
         if (click_spans.length != 0) {
-            for (ClickableSpan c_span : click_spans) {
+            for (final ClickableSpan c_span : click_spans) {
                 strBuilder.removeSpan(c_span);
             }
         }
@@ -172,17 +173,17 @@ public class SetTextViewHTML {
      *
      * @see <a href="http://stackoverflow.com/a/29114976/3212712">en-SO</a>
      */
-    private static void replaceQuoteSpans(Context context, Spannable spannable) {
-        int colorBackground = AttributeGetter.getColor(context, R.attr.quoteBackgroundColor);
-        int colorStripe = AttributeGetter.getColor(context, R.attr.colorAccent);
+    private static void replaceQuoteSpans(final Context context, final Spannable spannable) {
+        final int colorBackground = AttributeGetter.getColor(context, R.attr.quoteBackgroundColor);
+        final int colorStripe = AttributeGetter.getColor(context, R.attr.colorAccent);
 
-        QuoteSpan[] quoteSpans = spannable.getSpans(0, spannable.length(), QuoteSpan.class);
+        final QuoteSpan[] quoteSpans = spannable.getSpans(0, spannable.length(), QuoteSpan.class);
 
-        for (QuoteSpan quoteSpan : quoteSpans) {
+        for (final QuoteSpan quoteSpan : quoteSpans) {
 //            Timber.d("replaceQuoteSpans quoteSpan: %s", quoteSpan);
-            int start = spannable.getSpanStart(quoteSpan);
-            int end = spannable.getSpanEnd(quoteSpan);
-            int flags = spannable.getSpanFlags(quoteSpan);
+            final int start = spannable.getSpanStart(quoteSpan);
+            final int end = spannable.getSpanEnd(quoteSpan);
+            final int flags = spannable.getSpanFlags(quoteSpan);
             spannable.removeSpan(quoteSpan);
             spannable.setSpan(
                     new CustomQuoteSpan(

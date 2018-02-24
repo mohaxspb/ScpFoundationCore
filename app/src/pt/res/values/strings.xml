@@ -1,0 +1,10 @@
+<resources>
+    <!--no need to translate-->
+    <string name="app_name" translatable="false">SCP Foundation Portuguese On/Offline</string>
+    <!--end no need to translate-->
+
+    <string-array name="materials_titles">
+        <item>Piadas-SCPs</item>
+    </string-array>
+
+</resources>

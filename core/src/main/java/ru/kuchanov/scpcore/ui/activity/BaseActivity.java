@@ -38,6 +38,7 @@ import com.yandex.metrica.YandexMetrica;
 
 import org.joda.time.Period;
 
+import android.annotation.SuppressLint;
 import android.app.DialogFragment;
 import android.content.ComponentName;
 import android.content.Context;
@@ -129,7 +130,7 @@ import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_AD
 public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends BaseActivityMvp.Presenter<V>>
         extends MvpActivity<V, P>
         implements BaseActivityMvp.View,
-        SharedPreferences.OnSharedPreferenceChangeListener, GoogleApiClient.OnConnectionFailedListener {
+                   SharedPreferences.OnSharedPreferenceChangeListener, GoogleApiClient.OnConnectionFailedListener {
 
     public static final String EXTRA_ARTICLES_URLS_LIST = "EXTRA_ARTICLES_URLS_LIST";
 
@@ -143,7 +144,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     protected GoogleApiClient mGoogleApiClient;
 
     //facebook
-    private CallbackManager mCallbackManager = CallbackManager.Factory.create();
+    private final CallbackManager mCallbackManager = CallbackManager.Factory.create();
     ///////////
 
     @BindView(R2.id.root)
@@ -193,7 +194,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         Timber.d("onCreate");
         callInjections();
         if (mMyPreferenceManager.isNightMode()) {
@@ -212,7 +213,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         setSupportActionBar(mToolbar);
 
         //google login
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        final GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.web_application_id))
                 .requestEmail()
                 .build();
@@ -224,7 +225,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         //facebook login
         LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
-            public void onSuccess(LoginResult loginResult) {
+            public void onSuccess(final LoginResult loginResult) {
                 Timber.d("onSuccess: %s", loginResult);
                 mPresenter.startFirebaseLogin(Constants.Firebase.SocialProvider.FACEBOOK, loginResult.getAccessToken().getToken());
             }
@@ -235,7 +236,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             }
 
             @Override
-            public void onError(FacebookException error) {
+            public void onError(final FacebookException error) {
                 Timber.e(error);
             }
         });
@@ -246,7 +247,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         mMyNotificationManager.checkAlarm();
 
         //initAds subs service
-        Intent serviceIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
+        final Intent serviceIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
         serviceIntent.setPackage("com.android.vending");
         bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
 
@@ -285,12 +286,13 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                                     .logEvent(EventName.INVITE_RECEIVED, null);
                             FirebaseAnalytics.getInstance(BaseActivity.this).setUserProperty(
                                     UserPropertyKey.INVITED,
-                                    "true");
+                                    "true"
+                            );
                         } else {
                             Timber.d("attempt to receive already received invite! Ata-ta, %%USER_NAME%%!");
                         }
                         mPresenter.onInviteReceived(invitationId);
-                        mMyPreferenceManager.setInviteAlreadyReceived(true);
+                        mMyPreferenceManager.setInviteAlreadyReceived();
                     }
                 })
                 .addOnFailureListener(this, e -> Timber.e(e, "getDynamicLink:onFailure"));
@@ -298,13 +300,12 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showLoginProvidersPopup() {
-        MaterialDialog dialog;
-        List<Constants.Firebase.SocialProvider> providers = new ArrayList<>(Arrays.asList(Constants.Firebase.SocialProvider.values()));
+        final List<Constants.Firebase.SocialProvider> providers = new ArrayList<>(Arrays.asList(Constants.Firebase.SocialProvider.values()));
         if (!getResources().getBoolean(R.bool.social_login_vk_enabled)) {
             providers.remove(Constants.Firebase.SocialProvider.VK);
         }
-        SocialLoginAdapter adapter = new SocialLoginAdapter();
-        dialog = new MaterialDialog.Builder(this)
+        final SocialLoginAdapter adapter = new SocialLoginAdapter();
+        final MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .title(R.string.dialog_social_login_title)
                 .items(providers)
                 .adapter(adapter, new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false))
@@ -320,13 +321,13 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
-    public void startLogin(Constants.Firebase.SocialProvider provider) {
+    public void startLogin(final Constants.Firebase.SocialProvider provider) {
         switch (provider) {
             case VK:
                 VKSdk.login(this, VKScope.EMAIL, VKScope.GROUPS);
                 break;
             case GOOGLE:
-                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+                final Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
                 startActivityForResult(signInIntent, RC_SIGN_IN);
                 break;
             case FACEBOOK:
@@ -358,7 +359,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             //so it's first time we check it after install (or app data clearing)
             //so add 3 day to current time to disable it for 3 days to increase user experience
             //3 days, as we use 2 day interval before asking for review
-            long initialAdsDisablePeriodInMillis = Period.days(3).toStandardDuration().getMillis();
+            final long initialAdsDisablePeriodInMillis = Period.days(3).toStandardDuration().getMillis();
             mMyPreferenceManager.setLastTimeAdsShows(System.currentTimeMillis() + initialAdsDisablePeriodInMillis);
             //also disable banners for same period
             mMyPreferenceManager.setTimeForWhichBannersDisabled(System.currentTimeMillis() + initialAdsDisablePeriodInMillis);
@@ -399,15 +400,14 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             public void onRewardedVideoFinished(int i, String s) {
                 super.onRewardedVideoFinished(i, s);
 //                mMyPreferenceManager.applyAwardFromAds();
-                long numOfMillis = FirebaseRemoteConfig.getInstance()
+                final long numOfMillis = FirebaseRemoteConfig.getInstance()
                         .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
-                long hours = numOfMillis / 1000 / 60 / 60;
+                final long hours = numOfMillis / 1000 / 60 / 60;
                 showMessage(getString(R.string.ads_reward_gained, hours));
 
                 FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventType.REWARD_GAINED, null);
 
-                @DataSyncActions.ScoreAction
-                String action = DataSyncActions.ScoreAction.REWARDED_VIDEO;
+                @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.REWARDED_VIDEO;
                 mPresenter.updateUserScoreForScoreAction(action);
 
                 mRoot.postDelayed(() -> mMyPreferenceManager.applyAwardFromAds(), 500);
@@ -417,13 +417,12 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             @Override
             public void onInterstitialClosed() {
                 super.onInterstitialClosed();
-                @DataSyncActions.ScoreAction
-                String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
+                @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
                 mPresenter.updateUserScoreForScoreAction(action);
             }
         });
 
-        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         if (config.getBoolean(NATIVE_ADS_LISTS_ENABLED)) {
             Appodeal.setNativeCallbacks(new MyAppodealNativeCallbacks());
             Appodeal.cache(this, Appodeal.NATIVE, Constants.NUM_OF_NATIVE_ADS_PER_SCREEN);
@@ -471,7 +470,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 .content(R.string.ads_reward_description_content)
                 .positiveText(R.string.ads_reward_ok)
                 .onPositive((dialog, which) -> {
-                    mMyPreferenceManager.setRewardedDescriptionIsNotShown(true);
+                    mMyPreferenceManager.setRewardedDescriptionIsNotShown();
                     startRewardedVideoFlow();
                 })
                 .show();
@@ -503,14 +502,13 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
      */
     @Override
     public void showInterstitial() {
-        MyAdListener adListener = new MyAdListener() {
+        final MyAdListener adListener = new MyAdListener() {
             @Override
             public void onAdClosed() {
                 super.onAdClosed();
                 showSnackBarWithAction(Constants.Firebase.CallToActionReason.REMOVE_ADS);
 
-                @DataSyncActions.ScoreAction
-                String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
+                @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
                 mPresenter.updateUserScoreForScoreAction(action);
             }
         };
@@ -522,7 +520,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
      * and it's ready and shows rewarded video or interstitial
      */
     @Override
-    public void showInterstitial(MyAdListener adListener, boolean showVideoIfNeedAndCan) {
+    public void showInterstitial(final MyAdListener adListener, final boolean showVideoIfNeedAndCan) {
         //reset offer shown state to notify user before next ad will be shown
         mMyPreferenceManager.setOfferAlreadyShown(false);
         if (mMyPreferenceManager.isTimeToShowVideoInsteadOfInterstitial() && Appodeal.isLoaded(Appodeal.INTERSTITIAL)) {
@@ -536,9 +534,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
-    public void showSnackBarWithAction(Constants.Firebase.CallToActionReason reason) {
+    public void showSnackBarWithAction(final Constants.Firebase.CallToActionReason reason) {
         Timber.d("showSnackBarWithAction: %s", reason);
-        Snackbar snackbar;
+        final Snackbar snackbar;
         switch (reason) {
             case REMOVE_ADS:
                 snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, R.string.remove_ads), Snackbar.LENGTH_LONG);
@@ -546,7 +544,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     snackbar.dismiss();
                     SubscriptionsActivity.start(this);
 
-                    Bundle bundle = new Bundle();
+                    final Bundle bundle = new Bundle();
                     bundle.putString(EventParam.PLACE, StartScreen.SNACK_BAR);
                     FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.SUBSCRIPTIONS_SHOWN, bundle);
                 });
@@ -556,7 +554,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 snackbar.setAction(R.string.activate, action -> {
                     SubscriptionsActivity.start(this);
 
-                    Bundle bundle = new Bundle();
+                    final Bundle bundle = new Bundle();
                     bundle.putString(EventParam.PLACE, StartScreen.FONT);
                     FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.SUBSCRIPTIONS_SHOWN, bundle);
                 });
@@ -567,7 +565,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     snackbar.dismiss();
                     SubscriptionsActivity.start(this);
 
-                    Bundle bundle = new Bundle();
+                    final Bundle bundle = new Bundle();
                     bundle.putString(EventParam.PLACE, StartScreen.AUTO_SYNC_SNACKBAR);
                     FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.SUBSCRIPTIONS_SHOWN, bundle);
                 });
@@ -624,16 +622,16 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         return mService;
     }
 
-    private ServiceConnection mServiceConn = new ServiceConnection() {
+    private final ServiceConnection mServiceConn = new ServiceConnection() {
         @Override
-        public void onServiceDisconnected(ComponentName name) {
+        public void onServiceDisconnected(final ComponentName name) {
             Timber.d("onServiceDisconnected");
             mService = null;
             InAppBillingServiceConnectionObservable.getInstance().getServiceStatusObservable().onNext(false);
         }
 
         @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
+        public void onServiceConnected(final ComponentName name, final IBinder service) {
             Timber.d("onServiceConnected");
             mService = IInAppBillingService.Stub.asInterface(service);
             InAppBillingServiceConnectionObservable.getInstance().getServiceStatusObservable().onNext(true);
@@ -645,7 +643,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             //offer free trial every week for non subscribed users
             //check here as we need to have connected service
             if (!mMyPreferenceManager.isHasAnySubscription() && mMyPreferenceManager.isTimeToPeriodicalOfferFreeTrial()) {
-                Bundle bundle = new Bundle();
+                final Bundle bundle = new Bundle();
                 bundle.putString(EventParam.PLACE, EventValue.PERIODICAL);
                 FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
@@ -662,12 +660,12 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 //do not show it after level up gain, where we add 10000 score
                 && mPresenter.getUser().score < 10000
                 && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
-                Bundle bundle = new Bundle();
+                final Bundle bundle = new Bundle();
                 bundle.putString(EventParam.PLACE, EventValue.SCORE_1000_REACHED);
                 FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
                 showOfferFreeTrialSubscriptionPopup();
-                mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score(true);
+                mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score();
             }
         }
     };
@@ -685,8 +683,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
                             mMyPreferenceManager.setLastTimeSubscriptionsValidated(System.currentTimeMillis());
 
-                            @InAppHelper.SubscriptionType
-                            int type = InAppHelper.getSubscriptionTypeFromItemsList(validatedItems);
+                            @InAppHelper.SubscriptionType final int type = InAppHelper.getSubscriptionTypeFromItemsList(validatedItems);
                             Timber.d("subscription type: %s", type);
                             switch (type) {
                                 case InAppHelper.SubscriptionType.NONE:
@@ -707,7 +704,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                                     mMyPreferenceManager.setHasSubscription(true);
                                     mMyPreferenceManager.setHasNoAdsSubscription(true);
                                     //remove banner
-                                    AdView banner = findViewById(R.id.banner);
+                                    final AdView banner = findViewById(R.id.banner);
                                     if (banner != null) {
                                         banner.setEnabled(false);
                                         banner.setVisibility(View.GONE);
@@ -740,7 +737,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     protected abstract int getMenuResId();
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         if (getMenuResId() != 0) {
             getMenuInflater().inflate(getMenuResId(), menu);
         }
@@ -751,20 +748,20 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
      * workaround from http://stackoverflow.com/a/30337653/3212712 to show menu icons
      */
     @Override
-    protected boolean onPrepareOptionsPanel(View view, Menu menu) {
+    protected boolean onPrepareOptionsPanel(final View view, final Menu menu) {
         if (menu != null) {
             if (menu.getClass().getSimpleName().equals("MenuBuilder")) {
                 try {
-                    Method m = menu.getClass().getDeclaredMethod("setOptionalIconsVisible", Boolean.TYPE);
+                    @SuppressLint("PrivateApi") final Method m = menu.getClass().getDeclaredMethod("setOptionalIconsVisible", Boolean.TYPE);
                     m.setAccessible(true);
                     m.invoke(menu, true);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     Timber.e(e, "onMenuOpened...unable to set icons for overflow menu");
                 }
             }
 
-            boolean nightModeIsOn = mMyPreferenceManager.isNightMode();
-            MenuItem themeMenuItem = menu.findItem(R.id.night_mode_item);
+            final boolean nightModeIsOn = mMyPreferenceManager.isNightMode();
+            final MenuItem themeMenuItem = menu.findItem(R.id.night_mode_item);
             if (themeMenuItem != null) {
                 if (nightModeIsOn) {
                     themeMenuItem.setIcon(R.drawable.ic_brightness_low_white_24dp);
@@ -776,8 +773,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             }
 
             for (int i = 0; i < menu.size(); i++) {
-                MenuItem item = menu.getItem(i);
-                Drawable icon = item.getIcon();
+                final MenuItem item = menu.getItem(i);
+                final Drawable icon = item.getIcon();
                 if (icon != null) {
                     applyTint(icon);
                     item.setIcon(icon);
@@ -787,7 +784,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         return super.onPrepareOptionsPanel(view, menu);
     }
 
-    void applyTint(Drawable icon) {
+    void applyTint(final Drawable icon) {
         icon.setColorFilter(new PorterDuffColorFilter(
                 ContextCompat.getColor(this, R.color.material_blue_gray_50),
                 PorterDuff.Mode.SRC_IN
@@ -795,38 +792,38 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
-    public void showError(Throwable throwable) {
+    public void showError(final Throwable throwable) {
         Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, throwable.getMessage()), Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
-    public void showMessage(String message) {
+    public void showMessage(final String message) {
         Timber.d("showMessage: %s", message);
         Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, message), Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
-    public void showMessage(@StringRes int message) {
+    public void showMessage(@StringRes final int message) {
         showMessage(getString(message));
     }
 
     @Override
-    public void showMessageLong(String message) {
+    public void showMessageLong(final String message) {
         Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, message), Snackbar.LENGTH_LONG).show();
     }
 
     @Override
-    public void showMessageLong(@StringRes int message) {
+    public void showMessageLong(@StringRes final int message) {
         showMessageLong(getString(message));
     }
 
     @Override
-    public void showProgressDialog(String title) {
+    public void showProgressDialog(final String title) {
         mDialogUtils.showProgressDialog(this, title);
     }
 
     @Override
-    public void showProgressDialog(@StringRes int title) {
+    public void showProgressDialog(@StringRes final int title) {
         mDialogUtils.showProgressDialog(this, getString(title));
     }
 
@@ -837,7 +834,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showNeedLoginPopup() {
-        Timber.d("showNeedLoginPopup");
         new MaterialDialog.Builder(this)
                 .title(R.string.need_login)
                 .content(R.string.need_login_content)
@@ -850,8 +846,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
-    public void showOfferLoginPopup(MaterialDialog.SingleButtonCallback cancelCallback) {
-        Timber.d("showOfferLoginPopup");
+    public void showOfferLoginPopup(final MaterialDialog.SingleButtonCallback cancelCallback) {
         if (!hasWindowFocus()) {
             return;
         }
@@ -888,8 +883,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showOfferFreeTrialSubscriptionPopup() {
-        Timber.d("showOfferFreeTrialSubscriptionPopup");
-
         showProgressDialog(R.string.wait);
         mInAppHelper.getSubsListToBuyObservable(mService, InAppHelper.getFreeTrailSubsSkus())
                 .subscribeOn(Schedulers.io())
@@ -897,7 +890,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 .subscribe(
                         subscriptions -> {
                             dismissProgressDialog();
-                            mDialogUtils.showFreeTrialSubscriptionOfferDialog(this, subscriptions.get(0).freeTrialPeriodInDays());
+                            mDialogUtils.showFreeTrialSubscriptionOfferDialog(this, subscriptions);
                         },
                         e -> {
                             Timber.e(e);
@@ -908,32 +901,32 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int i = item.getItemId();
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        final int i = item.getItemId();
         if (i == R.id.settings) {
-            BottomSheetDialogFragment settingsDF = SettingsBottomSheetDialogFragment.newInstance();
+            final BottomSheetDialogFragment settingsDF = SettingsBottomSheetDialogFragment.newInstance();
             settingsDF.show(getSupportFragmentManager(), settingsDF.getTag());
             return true;
         } else if (i == R.id.subscribe) {
             SubscriptionsActivity.start(this);
 
-            Bundle bundle = new Bundle();
+            final Bundle bundle = new Bundle();
             bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, StartScreen.MENU);
             FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
             return true;
         } else if (i == R.id.removeAds) {
-            BottomSheetDialogFragment subsDF = AdsSettingsBottomSheetDialogFragment.newInstance();
+            final BottomSheetDialogFragment subsDF = AdsSettingsBottomSheetDialogFragment.newInstance();
             subsDF.show(getSupportFragmentManager(), subsDF.getTag());
             return true;
         } else if (i == R.id.night_mode_item) {
             mMyPreferenceManager.setIsNightMode(!mMyPreferenceManager.isNightMode());
             return true;
         } else if (i == R.id.text_size) {
-            BottomSheetDialogFragment fragmentDialogTextAppearance = TextSizeDialogFragment.newInstance(TextSizeDialogFragment.TextSizeType.ALL);
+            final BottomSheetDialogFragment fragmentDialogTextAppearance = TextSizeDialogFragment.newInstance(TextSizeDialogFragment.TextSizeType.ALL);
             fragmentDialogTextAppearance.show(getSupportFragmentManager(), TextSizeDialogFragment.TAG);
             return true;
         } else if (i == R.id.info) {
-            DialogFragment dialogFragment = NewVersionDialogFragment.newInstance(getString(R.string.app_info));
+            final DialogFragment dialogFragment = NewVersionDialogFragment.newInstance(getString(R.string.app_info));
             dialogFragment.show(getFragmentManager(), NewVersionDialogFragment.TAG);
             return true;
         } else if (i == R.id.menuItemDownloadAll) {
@@ -987,7 +980,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+    public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
         //ignore facebook analytics log spam
         if (key.startsWith("com.facebook")) {
             return;
@@ -1019,7 +1012,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
      * we need this for calligraphy
      */
     @Override
-    protected void attachBaseContext(Context newBase) {
+    protected void attachBaseContext(final Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
@@ -1038,10 +1031,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        VKCallback<VKAccessToken> vkCallback = new VKCallback<VKAccessToken>() {
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        final VKCallback<VKAccessToken> vkCallback = new VKCallback<VKAccessToken>() {
             @Override
-            public void onResult(VKAccessToken vkAccessToken) {
+            public void onResult(final VKAccessToken vkAccessToken) {
                 //Пользователь успешно авторизовался
                 Timber.d("Auth successful: %s", vkAccessToken.email);
                 if (vkAccessToken.email != null) {
@@ -1060,7 +1053,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             }
 
             @Override
-            public void onError(VKError error) {
+            public void onError(final VKError error) {
                 // Произошла ошибка авторизации (например, пользователь запретил авторизацию)
                 Timber.e(error.errorMessage);
                 Toast.makeText(BaseActivity.this, error.errorMessage, Toast.LENGTH_SHORT).show();
@@ -1070,17 +1063,17 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             Timber.d("Vk receives and handled onActivityResult");
             super.onActivityResult(requestCode, resultCode, data);
         } else if (requestCode == RC_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            final GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
                 Timber.d("Auth successful: %s", result);
                 // Signed in successfully, show authenticated UI.
-                GoogleSignInAccount acct = result.getSignInAccount();
+                final GoogleSignInAccount acct = result.getSignInAccount();
                 if (acct == null) {
                     Timber.wtf("GoogleSignInAccount is NULL!");
                     showMessage("GoogleSignInAccount is NULL!");
                     return;
                 }
-                String email = acct.getEmail();
+                final String email = acct.getEmail();
                 if (!TextUtils.isEmpty(email)) {
                     mPresenter.startFirebaseLogin(Constants.Firebase.SocialProvider.GOOGLE, acct.getIdToken());
                 } else {
@@ -1094,8 +1087,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         } else if (requestCode == Constants.Firebase.REQUEST_INVITE) {
             if (resultCode == RESULT_OK) {
                 // Get the invitation IDs of all sent messages
-                String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
-                for (String id : ids) {
+                final String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
+                for (final String id : ids) {
                     Timber.d("onActivityResult: sent invitation %s", id);
                     //todo we need to be able to send multiple IDs in one request
                     mPresenter.onInviteSent(id);
@@ -1114,19 +1107,19 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
-    public void updateUser(User user) {
+    public void updateUser(final User user) {
         //nothing to do here
     }
 
     private void initAndUpdateRemoteConfig() {
         //remote config
-        FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        final FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
 
         // Create Remote Config Setting to enable developer mode.
         // Fetching configs from the server is normally limited to 5 requests per hour.
         // Enabling developer mode allows many more requests to be made per hour, so developers
         // can test different config values during development.
-        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+        final FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
                 .setDeveloperModeEnabled(BuildConfig.FLAVOR.equals("dev"))
                 .build();
         mFirebaseRemoteConfig.setConfigSettings(configSettings);
@@ -1162,14 +1155,14 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull final ConnectionResult connectionResult) {
         Timber.e("onConnectionFailed: %s", connectionResult);
     }
 
-    public void startArticleActivity(List<String> urls, int position) {
+    public void startArticleActivity(final List<String> urls, final int position) {
         Timber.d("startActivity: urls.size() %s, position: %s", urls.size(), position);
 
-        Intent intent = new Intent(this, getArticleActivityClass());
+        final Intent intent = new Intent(this, getArticleActivityClass());
         intent.putExtra(EXTRA_ARTICLES_URLS_LIST, new ArrayList<>(urls));
         intent.putExtra(EXTRA_POSITION, position);
 
@@ -1193,7 +1186,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         startActivity(intent);
     }
 
-    public void startArticleActivity(String url) {
+    public void startArticleActivity(final String url) {
         Timber.d("startActivity: %s", url);
         startArticleActivity(Collections.singletonList(url), 0);
     }
@@ -1201,7 +1194,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     public void startMaterialsActivity() {
         Timber.d("startActivity");
 
-        Intent intent = new Intent(BaseActivity.this, getMaterialsActivityClass());
+        final Intent intent = new Intent(BaseActivity.this, getMaterialsActivityClass());
 
         if (isTimeToShowAds()) {
             if (isAdsLoaded()) {
@@ -1227,7 +1220,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     public void startGalleryActivity() {
         Timber.d("startActivity");
 
-        Intent intent = new Intent(this, getGalleryActivityClass());
+        final Intent intent = new Intent(this, getGalleryActivityClass());
 
         if (isTimeToShowAds()) {
             if (isAdsLoaded()) {
@@ -1249,10 +1242,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         startActivity(intent);
     }
 
-    public void startTagsSearchActivity(List<ArticleTag> tagList) {
+    public void startTagsSearchActivity(final List<ArticleTag> tagList) {
         Timber.d("startActivity");
 
-        Intent intent = new Intent(BaseActivity.this, getTagsSearchActivityClass());
+        final Intent intent = new Intent(BaseActivity.this, getTagsSearchActivityClass());
         intent.putExtra(EXTRA_TAGS, new ArrayList<>(ArticleTag.getStringsFromTags(tagList)));
 
         if (isTimeToShowAds()) {
@@ -1278,7 +1271,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     public void startTagsSearchActivity() {
         Timber.d("startActivity");
 
-        Intent intent = new Intent(this, getTagsSearchActivityClass());
+        final Intent intent = new Intent(this, getTagsSearchActivityClass());
 
         if (isTimeToShowAds()) {
             if (isAdsLoaded()) {

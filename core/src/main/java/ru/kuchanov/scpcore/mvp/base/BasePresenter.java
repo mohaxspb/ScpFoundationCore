@@ -6,6 +6,7 @@ import android.support.v4.util.Pair;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 import com.vk.sdk.VKSdk;
 
@@ -36,7 +37,9 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         implements BaseMvp.Presenter<V> {
 
     protected MyPreferenceManager mMyPreferencesManager;
+
     protected DbProviderFactory mDbProviderFactory;
+
     protected ApiClient mApiClient;
 
     private User mUser;
@@ -45,7 +48,12 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         return true;
     }
 
-    public BasePresenter(MyPreferenceManager myPreferencesManager, DbProviderFactory dbProviderFactory, ApiClient apiClient) {
+    public BasePresenter(
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient
+    ) {
+        super();
         mMyPreferencesManager = myPreferencesManager;
         mDbProviderFactory = dbProviderFactory;
         mApiClient = apiClient;
@@ -56,7 +64,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     }
 
     @Override
-    public void attachView(@NonNull V view) {
+    public void attachView(@NonNull final V view) {
         super.attachView(view);
         if (!getUserInConstructor()) {
             getUserFromDb();
@@ -71,24 +79,26 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     @Override
     public void getUserFromDb() {
         Timber.d("getUserFromDb");
-        mDbProviderFactory.getDbProvider().getUserAsync().subscribe(
-                user -> {
-                    mUser = user;
-                    if (getView() instanceof LoginActions.View) {
-                        ((LoginActions.View) getView()).updateUser(mUser);
-                    }
-                    onUserChanged(mUser);
-                },
-                e -> Timber.e(e, "error while get user from DB")
-        );
+        mDbProviderFactory.getDbProvider().getUserAsync()
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        user -> {
+                            mUser = user;
+                            if (getView() instanceof LoginActions.View) {
+                                ((LoginActions.View) getView()).updateUser(mUser);
+                            }
+                            onUserChanged(mUser);
+                        },
+                        e -> Timber.e(e, "error while get user from DB")
+                );
     }
 
     /**
      * callback for changes in user in db
-     *
      */
     @Override
-    public void onUserChanged(User user) {
+    public void onUserChanged(final User user) {
         //empty implementation
     }
 
@@ -98,12 +108,12 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     }
 
     @Override
-    public void updateArticleInFirebase(Article article, boolean showResultMessage) {
+    public void updateArticleInFirebase(final Article article, final boolean showResultMessage) {
         Timber.d("updateArticleInFirebase: %s", article.url);
 
         if (!mMyPreferencesManager.isHasSubscription()) {
-            long curNumOfAttempts = mMyPreferencesManager.getNumOfAttemptsToAutoSync();
-            long maxNumOfAttempts = FirebaseRemoteConfig.getInstance()
+            final long curNumOfAttempts = mMyPreferencesManager.getNumOfAttemptsToAutoSync();
+            final long maxNumOfAttempts = FirebaseRemoteConfig.getInstance()
                     .getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_SYNC_ATTEMPTS_BEFORE_CALL_TO_ACTION);
 
             Timber.d("does not have subscription, so no auto sync: %s/%s", curNumOfAttempts, maxNumOfAttempts);
@@ -126,20 +136,19 @@ public abstract class BasePresenter<V extends BaseMvp.View>
             return;
         }
 
-        @ScoreAction
-        String action = article.isInReaden ? ScoreAction.READ :
-                article.isInFavorite != Article.ORDER_NONE ? ScoreAction.FAVORITE : ScoreAction.NONE;
+        @ScoreAction final String action = article.isInReaden ? ScoreAction.READ :
+                                           article.isInFavorite != Article.ORDER_NONE ? ScoreAction.FAVORITE : ScoreAction.NONE;
 
-        int totalScoreToAdd = getTotalScoreToAddFromAction(action, mMyPreferencesManager);
+        final int totalScoreToAdd = getTotalScoreToAddFromAction(action, mMyPreferencesManager);
 
         //update score for articles, that is not in firebase, than write/update them
         mApiClient
                 .getArticleFromFirebase(article)
                 .flatMap(articleInFirebase -> articleInFirebase == null ?
-                        mApiClient.incrementScoreInFirebaseObservable(totalScoreToAdd)
-                                //score will be added to firebase user object
-                                .flatMap(newTotalScore -> Observable.just(article))
-                        : Observable.just(article))
+                                              mApiClient.incrementScoreInFirebaseObservable(totalScoreToAdd)
+                                                      //score will be added to firebase user object
+                                                      .flatMap(newTotalScore -> Observable.just(article))
+                                                                        : Observable.just(article))
                 .flatMap(article1 -> mApiClient.writeArticleToFirebase(article1))
                 .flatMap(article1 -> mDbProviderFactory.getDbProvider().setArticleSynced(article1, true))
                 .subscribe(
@@ -160,54 +169,54 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     }
 
     @Override
-    public void syncData(boolean showResultMessage) {
+    public void syncData(final boolean showResultMessage) {
         Timber.d("syncData showResultMessage: %s", showResultMessage);
         //get unsynced articles from DB
         //write them to firebase
         //mark them as synced
-        DbProvider dbProvider = mDbProviderFactory.getDbProvider();
+        final DbProvider dbProvider = mDbProviderFactory.getDbProvider();
         dbProvider.getUnsyncedArticlesManaged()
                 .doOnNext(articles -> Timber.d("articles: %s", articles))
                 .flatMap(articles -> articles.isEmpty() ? Observable.just(new Pair<>(0, 0)) :
-                        //need to calculate and add score for firstly synced articles
-                        //caclulate how many new articles we add and return it to calculate hoц much score we should add
-                        //I think that this can be done via calculate initial childs of ARTICLE ref minus result childs of ARTICLE ref
-                        Observable.from(articles)
-                                .flatMap(article -> {
-                                    //ignore articles which not starts with base domain
-                                    if (!article.url.startsWith(mApiClient.getConstantValues().getBaseApiUrl())) {
-                                        Timber.e("Article from no main domain MUST IGNORE");
-                                        return mDbProviderFactory.getDbProvider().setArticleSynced(article, true)
-                                                .flatMap(art -> Observable.just(new Pair<>(article, 0)));
-                                    }
+                                     //need to calculate and add score for firstly synced articles
+                                     //caclulate how many new articles we add and return it to calculate hoц much score we should add
+                                     //I think that this can be done via calculate initial childs of ARTICLE ref minus result childs of ARTICLE ref
+                                     Observable.from(articles)
+                                             .flatMap(article -> {
+                                                 //ignore articles which not starts with base domain
+                                                 if (!article.url.startsWith(mApiClient.getConstantValues().getBaseApiUrl())) {
+                                                     Timber.e("Article from no main domain MUST IGNORE");
+                                                     return mDbProviderFactory.getDbProvider().setArticleSynced(article, true)
+                                                             .flatMap(art -> Observable.just(new Pair<>(article, 0)));
+                                                 }
 
-                                    @ScoreAction
-                                    String action = article.isInReaden ? ScoreAction.READ :
-                                            article.isInFavorite != Article.ORDER_NONE ? ScoreAction.FAVORITE : ScoreAction.NONE;
+                                                 @ScoreAction
+                                                 String action = article.isInReaden ? ScoreAction.READ :
+                                                                 article.isInFavorite != Article.ORDER_NONE ? ScoreAction.FAVORITE : ScoreAction.NONE;
 
-                                    int totalScoreToAdd = getTotalScoreToAddFromAction(action, mMyPreferencesManager);
+                                                 int totalScoreToAdd = getTotalScoreToAddFromAction(action, mMyPreferencesManager);
 
-                                    return mApiClient
-                                            .getArticleFromFirebase(article)
-                                            .flatMap(articleInFirebase -> articleInFirebase == null ?
-                                                    mApiClient.incrementScoreInFirebaseObservable(totalScoreToAdd)
-                                                            .flatMap(firebaseUserScore -> mDbProviderFactory.getDbProvider().updateUserScore(firebaseUserScore))
-                                                            .flatMap(integer -> Observable.just((new Pair<>(article, totalScoreToAdd))))
-                                                    : Observable.just(new Pair<>(article, 0)))
-                                            .flatMap(articleAndScore -> mApiClient.writeArticleToFirebase(articleAndScore.first).flatMap(article1 -> Observable.just(articleAndScore)))
-                                            .flatMap(articleAndScore -> mDbProviderFactory.getDbProvider().setArticleSynced(articleAndScore.first, true).flatMap(article1 -> Observable.just(articleAndScore)))
-                                            //try not to break whole operation if error ocures
-                                            .doOnError(Timber::e)
-                                            .onErrorResumeNext(error -> mDbProviderFactory.getDbProvider().setArticleSynced(article, true).flatMap(article1 -> Observable.just(new Pair<>(article, 0))));
-                                })
-                                .toList()
-                                .flatMap(articleAndScores -> {
-                                    int totalAddedScore = 0;
-                                    for (Pair<Article, Integer> articleAndScore : articleAndScores) {
-                                        totalAddedScore += articleAndScore.second;
-                                    }
-                                    return Observable.just(new Pair<>(articleAndScores.size(), totalAddedScore));
-                                })
+                                                 return mApiClient
+                                                         .getArticleFromFirebase(article)
+                                                         .flatMap(articleInFirebase -> articleInFirebase == null ?
+                                                                                       mApiClient.incrementScoreInFirebaseObservable(totalScoreToAdd)
+                                                                                               .flatMap(firebaseUserScore -> mDbProviderFactory.getDbProvider().updateUserScore(firebaseUserScore))
+                                                                                               .flatMap(integer -> Observable.just((new Pair<>(article, totalScoreToAdd))))
+                                                                                                                 : Observable.just(new Pair<>(article, 0)))
+                                                         .flatMap(articleAndScore -> mApiClient.writeArticleToFirebase(articleAndScore.first).flatMap(article1 -> Observable.just(articleAndScore)))
+                                                         .flatMap(articleAndScore -> mDbProviderFactory.getDbProvider().setArticleSynced(articleAndScore.first, true).flatMap(article1 -> Observable.just(articleAndScore)))
+                                                         //try not to break whole operation if error ocures
+                                                         .doOnError(Timber::e)
+                                                         .onErrorResumeNext(error -> mDbProviderFactory.getDbProvider().setArticleSynced(article, true).flatMap(article1 -> Observable.just(new Pair<>(article, 0))));
+                                             })
+                                             .toList()
+                                             .flatMap(articleAndScores -> {
+                                                 int totalAddedScore = 0;
+                                                 for (Pair<Article, Integer> articleAndScore : articleAndScores) {
+                                                     totalAddedScore += articleAndScore.second;
+                                                 }
+                                                 return Observable.just(new Pair<>(articleAndScores.size(), totalAddedScore));
+                                             })
                 )
                 //also increment user score from unsynced score
                 .flatMap(articlesCountAndAddedScore -> {
@@ -242,17 +251,18 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                                 .doOnNext(id -> Timber.d("vkGroup id to check: %s", id))
                                 .flatMap(vkGroupToJoinId -> mApiClient.isUserJoinedVkGroup(vkGroupToJoinId)
                                         .flatMap(isUserJoinedVkGroup -> isUserJoinedVkGroup ?
-                                                Observable.empty() :
-                                                //TODO add error handling
-                                                mApiClient.incrementScoreInFirebaseObservable(actionScore)
-                                                        .flatMap(newTotalScore -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
-                                                        .flatMap(newTotalScore -> mApiClient.addJoinedVkGroup(vkGroupToJoinId).flatMap(aVoid -> Observable.just(actionScore)))))
+                                                                        Observable.empty() :
+                                                                        //TODO add error handling
+                                                                        mApiClient.incrementScoreInFirebaseObservable(actionScore)
+                                                                                .flatMap(newTotalScore -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
+                                                                                .flatMap(newTotalScore -> mApiClient.addJoinedVkGroup(vkGroupToJoinId).flatMap(aVoid -> Observable.just(actionScore)))))
                                 .toList()
                                 .flatMap(integers -> {
                                     mMyPreferencesManager.deleteUnsyncedVkGroups();
                                     return Observable.just(new Pair<>(
-                                            artsAndScoreAdded.first,
-                                            artsAndScoreAdded.second + actionScore * integers.size())
+                                                    artsAndScoreAdded.first,
+                                                    artsAndScoreAdded.second + actionScore * integers.size()
+                                            )
                                     );
                                 });
                     }
@@ -273,17 +283,18 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                                 .doOnNext(id -> Timber.d("application id to check: %s", id))
                                 .flatMap(itemId -> mApiClient.isUserInstallApp(itemId)
                                         .flatMap(isUserInstallApp -> isUserInstallApp ?
-                                                Observable.empty() :
-                                                //TODO add error handling
-                                                mApiClient.incrementScoreInFirebaseObservable(actionScore)
-                                                        .flatMap(newTotalScore -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
-                                                        .flatMap(newTotalScore -> mApiClient.addInstalledApp(itemId).flatMap(aVoid -> Observable.just(actionScore)))))
+                                                                     Observable.empty() :
+                                                                     //TODO add error handling
+                                                                     mApiClient.incrementScoreInFirebaseObservable(actionScore)
+                                                                             .flatMap(newTotalScore -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
+                                                                             .flatMap(newTotalScore -> mApiClient.addInstalledApp(itemId).flatMap(aVoid -> Observable.just(actionScore)))))
                                 .toList()
                                 .flatMap(integers -> {
                                     mMyPreferencesManager.deleteUnsyncedApps();
                                     return Observable.just(new Pair<>(
-                                            artsAndScoreAdded.first,
-                                            artsAndScoreAdded.second + actionScore * integers.size())
+                                                    artsAndScoreAdded.first,
+                                                    artsAndScoreAdded.second + actionScore * integers.size()
+                                            )
                                     );
                                 });
                     }
@@ -311,7 +322,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                         e -> {
                             Timber.e(e);
                             if (showResultMessage) {
-                                String errorMessage = e.getMessage() != null ? e.getMessage() : e.toString();
+                                final String errorMessage = e.getMessage() != null ? e.getMessage() : e.toString();
                                 getView().showMessage(BaseApplication.getAppInstance().getString(R.string.error_while_all_data_sync, errorMessage));
                             }
                             dbProvider.close();
@@ -328,7 +339,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
      * and if so - do not increment it
      */
     @Override
-    public void updateUserScoreForVkGroup(String id) {
+    public void updateUserScoreForVkGroup(final String id) {
         Timber.d("updateUserScore: %s", id);
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
@@ -336,18 +347,17 @@ public abstract class BasePresenter<V extends BaseMvp.View>
             return;
         }
 
-        @ScoreAction
-        String action = ScoreAction.VK_GROUP;
-        int totalScoreToAdd = getTotalScoreToAddFromAction(action, mMyPreferencesManager);
+        @ScoreAction final String action = ScoreAction.VK_GROUP;
+        final int totalScoreToAdd = getTotalScoreToAddFromAction(action, mMyPreferencesManager);
 
         //increment scoreInFirebase
         mApiClient
                 .isUserJoinedVkGroup(id)
                 .flatMap(isUserJoinedVkGroup -> isUserJoinedVkGroup ?
-                        Observable.empty() :
-                        mApiClient
-                                .incrementScoreInFirebaseObservable(totalScoreToAdd)
-                                .flatMap(newTotalScore -> mApiClient.addJoinedVkGroup(id).flatMap(aVoid -> Observable.just(newTotalScore)))
+                                                Observable.empty() :
+                                                mApiClient
+                                                        .incrementScoreInFirebaseObservable(totalScoreToAdd)
+                                                        .flatMap(newTotalScore -> mApiClient.addJoinedVkGroup(id).flatMap(aVoid -> Observable.just(newTotalScore)))
                 )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -355,7 +365,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                 .subscribe(
                         newTotalScore -> {
                             Timber.d("new total score is: %s", newTotalScore);
-                            Context context = BaseApplication.getAppInstance();
+                            final Context context = BaseApplication.getAppInstance();
                             getView().showMessage(context.getString(R.string.score_increased, context.getResources().getQuantityString(R.plurals.plurals_score, totalScoreToAdd, totalScoreToAdd)));
                         },
                         e -> {
@@ -376,7 +386,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
      * and if so - do not increment it
      */
     @Override
-    public void updateUserScoreForScoreAction(@ScoreAction String action) {
+    public void updateUserScoreForScoreAction(@ScoreAction final String action) {
         Timber.d("updateUserScore: %s", action);
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
@@ -384,11 +394,11 @@ public abstract class BasePresenter<V extends BaseMvp.View>
             return;
         }
 
-        int totalScoreToAdd = getTotalScoreToAddFromAction(action, mMyPreferencesManager);
+        final int totalScoreToAdd = getTotalScoreToAddFromAction(action, mMyPreferencesManager);
 
         if (!action.equals(ScoreAction.REWARDED_VIDEO) && !mMyPreferencesManager.isHasSubscription()) {
-            long curNumOfAttempts = mMyPreferencesManager.getNumOfAttemptsToAutoSync();
-            long maxNumOfAttempts = FirebaseRemoteConfig.getInstance()
+            final long curNumOfAttempts = mMyPreferencesManager.getNumOfAttemptsToAutoSync();
+            final long maxNumOfAttempts = FirebaseRemoteConfig.getInstance()
                     .getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_SYNC_ATTEMPTS_BEFORE_CALL_TO_ACTION);
 
             Timber.d("does not have subscription, so no auto sync: %s/%s", curNumOfAttempts, maxNumOfAttempts);
@@ -417,10 +427,10 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                 .subscribe(
                         newTotalScore -> {
                             Timber.d("new total score is: %s", newTotalScore);
-                            Context context = BaseApplication.getAppInstance();
+                            final Context context = BaseApplication.getAppInstance();
                             if (action.equals(ScoreAction.REWARDED_VIDEO)
-                                    || action.equals(ScoreAction.VK_GROUP)
-                                    || action.equals(ScoreAction.OUR_APP)) {
+                                || action.equals(ScoreAction.VK_GROUP)
+                                || action.equals(ScoreAction.OUR_APP)) {
                                 getView().showMessage(context.getString(R.string.score_increased, context.getResources().getQuantityString(R.plurals.plurals_score, totalScoreToAdd, totalScoreToAdd)));
                             }
                         },
@@ -434,7 +444,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     }
 
     @Override
-    public void updateUserScoreForInapp(String sku) {
+    public void updateUserScoreForInapp(final String sku) {
         Timber.d("updateUserScore: %s", sku);
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
@@ -443,7 +453,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         }
 
         //increment scoreInFirebase
-        int totalScoreToAdd = 10000;
+        final int totalScoreToAdd = 10000;
 
 //        switch (sku) {
 //            case "level_up_to_5":
@@ -460,7 +470,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                 .subscribe(
                         newTotalScore -> {
                             Timber.d("new total score is: %s", newTotalScore);
-                            Context context = BaseApplication.getAppInstance();
+                            final Context context = BaseApplication.getAppInstance();
                             getView().showMessage(context.getString(R.string.score_increased, context.getResources().getQuantityString(R.plurals.plurals_score, totalScoreToAdd, totalScoreToAdd)));
                         },
                         e -> {
@@ -479,18 +489,21 @@ public abstract class BasePresenter<V extends BaseMvp.View>
             return;
         }
         mMyPreferencesManager.setLastTimeAppVkGroupJoinedChecked(System.currentTimeMillis());
-        String appVkGroupId = FirebaseRemoteConfig.getInstance().getString(Constants.Firebase.RemoteConfigKeys.VK_APP_GROUP_ID);
+        final String appVkGroupId = FirebaseRemoteConfig.getInstance().getString(Constants.Firebase.RemoteConfigKeys.VK_APP_GROUP_ID);
         mApiClient.isUserJoinedVkGroup(appVkGroupId).subscribe(
                 isJoinedAppVkGroup -> mMyPreferencesManager.setAppVkGroupJoined(isJoinedAppVkGroup),
                 Timber::e
         );
     }
 
-    public static int getTotalScoreToAddFromAction(@ScoreAction String action, MyPreferenceManager mMyPreferencesManager) {
-        long score;
+    public static int getTotalScoreToAddFromAction(
+            @ScoreAction final String action,
+            final MyPreferenceManager mMyPreferencesManager
+    ) {
+        final long score;
 
         //switch by action to get initial score value
-        FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
+        final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
         switch (action) {
             case ScoreAction.FAVORITE:
                 score = remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_FAVORITE);
@@ -527,8 +540,8 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         double vkGroupAppModificator = remoteConfig.getDouble(Constants.Firebase.RemoteConfigKeys.SCORE_MULTIPLIER_VK_GROUP_APP);
 //        Timber.d("subscriptionModificator/vkGroupAppModificator: %s/%s", subscriptionModificator, vkGroupAppModificator);
 
-        boolean hasSubscriptionModificator = mMyPreferencesManager.isHasSubscription();
-        boolean hasVkGroupAppModificator = mMyPreferencesManager.isAppVkGroupJoined();
+        final boolean hasSubscriptionModificator = mMyPreferencesManager.isHasSubscription();
+        final boolean hasVkGroupAppModificator = mMyPreferencesManager.isAppVkGroupJoined();
 //        Timber.d("hasSubscriptionModificator/hasVkGroupAppModificator: %s/%s", hasSubscriptionModificator, hasVkGroupAppModificator);
 
         subscriptionModificator = hasSubscriptionModificator ? subscriptionModificator : 1;
@@ -536,8 +549,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 //        Timber.d("subscriptionModificator/vkGroupAppModificator: %s/%s", subscriptionModificator, vkGroupAppModificator);
         //check if user has subs and joined vk group to add multilplier
 
-        int totalScoreToAdd = (int) (score * subscriptionModificator * vkGroupAppModificator);
-//        Timber.d("totalScoreToAdd: %s", totalScoreToAdd);
-        return totalScoreToAdd;
+        //        Timber.d("totalScoreToAdd: %s", totalScoreToAdd);
+        return (int) (score * subscriptionModificator * vkGroupAppModificator);
     }
 }

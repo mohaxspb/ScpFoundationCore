@@ -118,6 +118,13 @@ android {
             matchingFallbacks = ['debug', 'release']
         }
 
+        pt {
+            dimension "lang"
+
+            applicationIdSuffix ".pt"
+            matchingFallbacks = ['debug', 'release']
+        }
+
         applicationVariants.all { variant ->
             println('variantApp: ' + variant.getName())
 
@@ -161,6 +168,7 @@ configurations {
     frDevReleaseCompile
     esDevReleaseCompile
     italyDevReleaseCompile
+    ptDevReleaseCompile
     //prod
     ruProdReleaseCompile
     enProdReleaseCompile
@@ -169,6 +177,7 @@ configurations {
     frProdReleaseCompile
     esProdReleaseCompile
     italyProdReleaseCompile
+    ptProdReleaseCompile
 }
 
 dependencies {
