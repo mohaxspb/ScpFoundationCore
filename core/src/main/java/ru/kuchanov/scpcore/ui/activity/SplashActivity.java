@@ -24,7 +24,7 @@ public class SplashActivity extends AppCompatActivity {
     MyPreferenceManager mMyPreferenceManager;
 
     @Override
-    protected void onCreate(@Nullable final Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         BaseApplication.getAppComponent().inject(this);
@@ -33,7 +33,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void startNextActivity() {
-        final Intent intent;
+        Intent intent;
         if (StorageUtils.fileExistsInAssets("licence.txt") && !mMyPreferenceManager.isLicenceAccepted()) {
             intent = new Intent(this, LicenceActivity.class);
         } else {
