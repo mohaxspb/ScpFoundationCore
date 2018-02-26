@@ -18,7 +18,7 @@ apply from: '../apiKeysCreator.gradle'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    buildToolsVersion '26.0.2'
 
     compileOptions.encoding = 'utf-8'
 
@@ -139,13 +139,13 @@ dependencies {
     //jsoup
     api 'org.jsoup:jsoup:1.10.3'
     //logs
-    api 'com.jakewharton.timber:timber:4.6.0'
+    api 'com.jakewharton.timber:timber:4.5.1'
     //dagger2
     String daggerVersion = '2.13'
     api "com.google.dagger:dagger:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
     //butterKnife
-    String butterKnifeVersion = '8.8.1'
+    String butterKnifeVersion = '8.5.1'
     api "com.jakewharton:butterknife:$butterKnifeVersion"
     kapt "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
     //image

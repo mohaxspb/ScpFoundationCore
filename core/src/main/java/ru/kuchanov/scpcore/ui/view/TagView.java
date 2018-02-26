@@ -41,23 +41,23 @@ public class TagView extends FrameLayout {
 
     private OnTagClickListener mOnTagClickListener;
 
-    public TagView(Context context) {
+    public TagView(final Context context) {
         super(context);
         init();
     }
 
-    public TagView(Context context, @Nullable AttributeSet attrs) {
+    public TagView(final Context context, @Nullable final AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public TagView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public TagView(final Context context, @Nullable final AttributeSet attrs, final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public TagView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public TagView(final Context context, @Nullable final AttributeSet attrs, final int defStyleAttr, final int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }
@@ -79,7 +79,7 @@ public class TagView extends FrameLayout {
         return mTag;
     }
 
-    public void setTag(ArticleTag tag) {
+    public void setTag(final ArticleTag tag) {
         mTag = tag;
 
         mTitle.setText(tag.title);
@@ -89,10 +89,9 @@ public class TagView extends FrameLayout {
         mTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, sizeInSp);
     }
 
-    public void setActionImage(@DrawableRes @Action int actionImage) {
+    public void setActionImage(@DrawableRes @Action final int actionImage) {
 //        Timber.d("setActionImage: %s", actionImage == Action.NONE);
-        @DrawableRes
-        int drawableResId;
+        @DrawableRes final int drawableResId;
         switch (actionImage) {
             case Action.ADD:
                 drawableResId = R.drawable.ic_add;
@@ -112,10 +111,14 @@ public class TagView extends FrameLayout {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-        TagView tagView = (TagView) o;
+        final TagView tagView = (TagView) o;
 
         return mTag != null ? mTag.equals(tagView.mTag) : tagView.mTag == null;
     }
@@ -129,7 +132,7 @@ public class TagView extends FrameLayout {
         return mOnTagClickListener;
     }
 
-    public void setOnTagClickListener(OnTagClickListener onTagClickListener) {
+    public void setOnTagClickListener(final OnTagClickListener onTagClickListener) {
         mOnTagClickListener = onTagClickListener;
     }
 
