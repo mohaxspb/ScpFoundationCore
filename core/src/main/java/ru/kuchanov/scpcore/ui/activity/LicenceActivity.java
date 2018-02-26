@@ -38,7 +38,7 @@ public class LicenceActivity extends AppCompatActivity {
     View mRoot;
 
     @Inject
-    protected MyPreferenceManager mMyPreferenceManager;
+    MyPreferenceManager mMyPreferenceManager;
 
     @OnClick(R2.id.accept)
     public void onAcceptClick() {
