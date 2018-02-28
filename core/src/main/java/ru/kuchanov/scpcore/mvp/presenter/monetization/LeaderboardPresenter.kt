@@ -235,6 +235,8 @@ class LeaderboardPresenter(
             return null
         }
         val userInFirebase = users.find { leaderboardUser -> leaderboardUser.uid == user.uid } ?: return null
+        //set score from realm
+        userInFirebase.score = user.score
         val level = levelJson.levels[userInFirebase.levelNum]
         return LeaderboardUserViewModel(
             users.indexOf(userInFirebase),
