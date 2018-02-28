@@ -41,21 +41,7 @@ data class LevelsJson(val levels: List<Level>) {
         return nextLevelScore - curLevel.score
     }
 
-    fun getLevelForScore(score: Int): Level? {
-        var userLevel: Level? = null
-        Collections.reverse(levels)
-        for (i in levels.indices) {
-            val level = levelsJson.levels[i]
-            if (score >= level.score) {
-                userLevel = level
-                break
-            } else if (i == levels.size - 1) {
-                //so max level reached
-                userLevel = level
-            }
-        }
-        return userLevel
-    }
+    fun getLevelForScore(score: Int): Level? = levels.findLast { score > it.score }
 
     fun getLevel(levelNum: Int) = levels[levelNum]
 
