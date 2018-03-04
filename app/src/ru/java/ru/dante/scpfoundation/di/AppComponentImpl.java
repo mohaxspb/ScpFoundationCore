@@ -3,6 +3,7 @@ package ru.dante.scpfoundation.di;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import ru.dante.scpfoundation.api.ApiClientImpl;
 import ru.dante.scpfoundation.di.module.HelpersModuleImpl;
 import ru.dante.scpfoundation.di.module.NetModuleImpl;
 import ru.dante.scpfoundation.di.module.PresentersModuleImpl;
@@ -39,4 +40,6 @@ public interface AppComponentImpl extends AppComponent {
     void inject(ObjectsPlArticlesFragment fragment);
 
     void inject(ObjectsDeArticlesFragment fragment);
+
+    void inject(ApiClientImpl apiClient);
 }

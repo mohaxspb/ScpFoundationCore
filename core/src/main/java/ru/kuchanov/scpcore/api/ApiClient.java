@@ -774,7 +774,7 @@ public class ApiClient implements ApiClientModel<Article> {
             }
 
             return article;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Timber.e(e);
             throw e;
         }
@@ -785,11 +785,11 @@ public class ApiClient implements ApiClientModel<Article> {
      *
      * @return Element with article content
      */
-    protected Element getArticlePageContentTag(Document doc) {
+    protected Element getArticlePageContentTag(final Document doc) {
         return doc.getElementById("page-content");
     }
 
-    public Observable<Article> getArticle(String url) {
+    public Observable<Article> getArticle(final String url) {
         Timber.d("start download article: %s", url);
         return bindWithUtils(Observable.<Article>unsafeCreate(subscriber -> {
             try {

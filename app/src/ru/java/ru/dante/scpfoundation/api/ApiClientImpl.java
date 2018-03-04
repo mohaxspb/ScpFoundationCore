@@ -7,12 +7,19 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
+import ru.dante.scpfoundation.api.model.response.RandomArticleResponse;
+import ru.dante.scpfoundation.api.service.ScpRuApi;
+import ru.dante.scpfoundation.di.AppComponentImpl;
 import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.api.ApiClient;
@@ -27,79 +34,68 @@ import timber.log.Timber;
  */
 public class ApiClientImpl extends ApiClient {
 
+    @Inject
+    @Named("scpRuApi")
+    Retrofit scpRuApiRetrofit;
+
+    private final ScpRuApi scpRuApi;
+
     public ApiClientImpl(
-            OkHttpClient okHttpClient,
-            Retrofit vpsRetrofit,
-            Retrofit scpRetrofit,
-            MyPreferenceManager preferencesManager,
-            Gson gson,
-            ConstantValues constantValues
+            final OkHttpClient okHttpClient,
+            final Retrofit vpsRetrofit,
+            final Retrofit scpRetrofit,
+            final MyPreferenceManager preferencesManager,
+            final Gson gson,
+            final ConstantValues constantValues
     ) {
         super(okHttpClient, vpsRetrofit, scpRetrofit, preferencesManager, gson, constantValues);
+
+        ((AppComponentImpl) BaseApplication.getAppComponent()).inject(this);
+
+        scpRuApi = scpRuApiRetrofit.create(ScpRuApi.class);
     }
 
+    @Override
     public Observable<String> getRandomUrl() {
-        Timber.d("getRandomUrl");
-        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
-            Request.Builder request = new Request.Builder();
-            request.url(mConstantValues.getRandomPageUrl());
-            request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-            request.addHeader("Accept-Encoding", "gzip, deflate, br");
-            request.addHeader("Accept-Language", "en-US,en;q=0.8,de-DE;q=0.5,de;q=0.3");
-            request.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0");
-            request.get();
-
-            try {
-                Response response = mOkHttpClient.newCall(request.build()).execute();
-
-                Request requestResult = response.request();
-                Timber.d("requestResult:" + requestResult);
-                Timber.d("requestResult.url().url():" + requestResult.url().url());
-
-                String randomURL = requestResult.url().url().toString();
-                Timber.d("randomUrl = " + randomURL);
-
-                subscriber.onNext(randomURL);
-                subscriber.onCompleted();
-            } catch (IOException e) {
-                Timber.e(e);
-                subscriber.onError(e);
-            }
-        }));
+        return bindWithUtils(
+                scpRuApi.getRandomUrl()
+                        .map(RandomArticleResponse::getName)
+                        .map(url -> mConstantValues.getBaseApiUrl() + "/" + url)
+        );
     }
 
     @Override
     public Observable<Integer> getRecentArticlesPageCountObservable() {
         return bindWithUtils(Observable.<Integer>unsafeCreate(subscriber -> {
-            Request request = new Request.Builder()
+            final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();
 
-            String responseBody = null;
+            final String responseBody;
             try {
-                Response response = mOkHttpClient.newCall(request).execute();
-                ResponseBody body = response.body();
-                if (body != null) {
-                    responseBody = body.string();
+                final Response response = mOkHttpClient.newCall(request).execute();
+                final AtomicReference<ResponseBody> body = new AtomicReference<>(response.body());
+                if (body.get() != null) {
+                    responseBody = body.get().string();
                 } else {
                     subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(ru.kuchanov.scpcore.R.string.error_parse)));
                     return;
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(ru.kuchanov.scpcore.R.string.error_connection)));
                 return;
             }
             try {
-                Document doc = Jsoup.parse(responseBody);
+                final Document doc = Jsoup.parse(responseBody);
 
                 //get num of pages
-                Element spanWithNumber = doc.getElementsByClass("pager-no").first();
-                String text = spanWithNumber.text();
-                Integer numOfPages = Integer.valueOf(text.substring(text.lastIndexOf(" ") + 1));
+                final Element spanWithNumber = doc.getElementsByClass("pager-no").first();
+                final String text = spanWithNumber.text();
+                final Integer numOfPages = Integer.valueOf(text.substring(text.lastIndexOf(" ") + 1));
 
                 subscriber.onNext(numOfPages);
                 subscriber.onCompleted();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
