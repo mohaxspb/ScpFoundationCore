@@ -40,10 +40,10 @@ import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract
+import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_CURRENT_SUBS
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_CURRENT_SUBS_EMPTY
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_FREE_ADS_DISABLE
-import ru.kuchanov.scpcore.mvp.presenter.monetization.getMonthFromSkuId
 import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP
 import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity
@@ -189,7 +189,7 @@ class SubscriptionsFragment :
                 val description: Int = R.string.subs_full_description
                 @DrawableRes
                 val icon: Int
-                when (getMonthFromSkuId(item.sku)) {
+                when (SubscriptionsPresenter.getMonthFromSkuId(item.sku)) {
                     1 -> {
                         title = R.string.subs_1_month_title
                         icon = R.drawable.ic_scp_icon_laborant
@@ -229,7 +229,7 @@ class SubscriptionsFragment :
 
         val subsFullOneMonth = toBuy
                 .filter { it.productId !in InAppHelper.getNewNoAdsSubsSkus() }
-                .first { getMonthFromSkuId(it.productId) == 1 }
+                .first { SubscriptionsPresenter.getMonthFromSkuId(it.productId) == 1 }
 
         toBuy.forEach {
             if (noAdsSubsEnabled && (it.productId in InAppHelper.getNewNoAdsSubsSkus())) {
@@ -258,7 +258,7 @@ class SubscriptionsFragment :
                 @DrawableRes
                 val icon: Int
 
-                val month = getMonthFromSkuId(it.productId)
+                val month = SubscriptionsPresenter.getMonthFromSkuId(it.productId)
                 when (month) {
                     1 -> {
                         label = R.string.subs_1_month_label
