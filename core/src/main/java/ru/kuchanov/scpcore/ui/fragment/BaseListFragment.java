@@ -64,7 +64,7 @@ public abstract class BaseListFragment<V extends BaseListMvp.View, P extends Bas
     }
 
     @Override
-    public void showSwipeProgress(boolean show) {
+    public void showSwipeProgress(final boolean show) {
         if (!isAdded() || mSwipeRefreshLayout == null) {
             return;
         }
@@ -76,7 +76,7 @@ public abstract class BaseListFragment<V extends BaseListMvp.View, P extends Bas
     }
 
     @Override
-    public void showCenterProgress(boolean show) {
+    public void showCenterProgress(final boolean show) {
         if (!isAdded() || mProgressBarCenter == null) {
             return;
         }
@@ -93,13 +93,13 @@ public abstract class BaseListFragment<V extends BaseListMvp.View, P extends Bas
     }
 
     @Override
-    public void showBottomProgress(boolean show) {
+    public void showBottomProgress(final boolean show) {
         if (!isAdded() || mSwipeRefreshLayout == null) {
             return;
         }
 
         if (show) {
-            int screenHeight = DimensionUtils.getScreenHeight();
+            final int screenHeight = DimensionUtils.getScreenHeight();
             mSwipeRefreshLayout.setProgressViewEndTarget(false, screenHeight - DimensionUtils.getActionBarHeight(getActivity()) * 2);
         }
 
@@ -107,7 +107,7 @@ public abstract class BaseListFragment<V extends BaseListMvp.View, P extends Bas
     }
 
     @Override
-    public void enableSwipeRefresh(boolean enable) {
+    public void enableSwipeRefresh(final boolean enable) {
         if (!isAdded() || mSwipeRefreshLayout == null || !isSwipeRefreshEnabled()) {
             return;
         }
@@ -115,7 +115,7 @@ public abstract class BaseListFragment<V extends BaseListMvp.View, P extends Bas
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+    public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
         switch (key) {
             case MyPreferenceManager.Keys.TEXT_SCALE_UI:
                 onTextSizeUiChanged();

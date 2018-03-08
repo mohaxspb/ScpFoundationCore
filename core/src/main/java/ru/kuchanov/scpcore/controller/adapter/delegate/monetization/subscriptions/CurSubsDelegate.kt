@@ -15,9 +15,13 @@ import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
  *
  * for ScpCore
  */
-class CurSubsDelegate(val clickListener: (String) -> Unit) : AbsListItemAdapterDelegate<CurSubsViewModel, MyListItem, CurSubsDelegate.AppViewHolder>() {
+class CurSubsDelegate(
+    val clickListener: (String) -> Unit,
+    private val refreshClickListener: () -> Unit
+) : AbsListItemAdapterDelegate<CurSubsViewModel, MyListItem, CurSubsDelegate.AppViewHolder>() {
 
-    override fun isForViewType(item: MyListItem, items: MutableList<MyListItem>, position: Int) = item is CurSubsViewModel
+    override fun isForViewType(item: MyListItem, items: MutableList<MyListItem>, position: Int) =
+            item is CurSubsViewModel
 
     override fun onCreateViewHolder(parent: ViewGroup) =
             AppViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.list_item_cur_subs, parent, false))
@@ -28,6 +32,7 @@ class CurSubsDelegate(val clickListener: (String) -> Unit) : AbsListItemAdapterD
             descriptionTextView.text = if (item.description != 0) context.getString(item.description) else null
             iconImageView.setImageResource(item.icon)
             cardView.setOnClickListener { clickListener(item.id) }
+            refreshImageView.setOnClickListener { refreshClickListener() }
         }
     }
 
