@@ -1,5 +1,9 @@
 package ru.kuchanov.scpcore.monetization.util;
 
+import com.google.gson.GsonBuilder;
+
+import com.android.vending.billing.IInAppBillingService;
+
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -10,10 +14,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-
-import com.android.vending.billing.IInAppBillingService;
-
-import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.lang.annotation.Retention;
@@ -32,6 +32,7 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
 import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Item;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
 import rx.Observable;
@@ -77,7 +78,7 @@ public class InAppHelper {
 
     private final ApiClientModel<Article> mApiClient;
 
-    private final MyPreferenceManagerModel mMyPreferenceManager;
+    private final MyPreferenceManager mMyPreferenceManager;
 
     private final DbProviderFactoryModel mDbProviderFactory;
 
@@ -87,7 +88,7 @@ public class InAppHelper {
             final ApiClientModel<Article> apiClient
     ) {
         super();
-        mMyPreferenceManager = preferenceManager;
+        mMyPreferenceManager = (MyPreferenceManager) preferenceManager;
         mDbProviderFactory = dbProviderFactory;
         mApiClient = apiClient;
     }
@@ -134,7 +135,7 @@ public class InAppHelper {
         return skus;
     }
 
-    public Observable<List<Item>> getValidatedOwnedSubsObservable(final IInAppBillingService mInAppBillingService) {
+    private Observable<List<Item>> getValidatedOwnedSubsObservable(final IInAppBillingService mInAppBillingService) {
         return Observable.<List<Item>>unsafeCreate(subscriber -> {
             try {
                 Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "subs", null);
@@ -341,6 +342,38 @@ public class InAppHelper {
                         default:
                             return Observable.error(new IllegalArgumentException("Unexpected validation status: " + status));
                     }
+                });
+    }
+
+    public Observable<List<Item>> validateSubsObservable(final IInAppBillingService service) {
+        return getValidatedOwnedSubsObservable(service)
+                .flatMap(validatedItems -> {
+                    Timber.d("market validatedItems: %s", validatedItems);
+
+                    mMyPreferenceManager.setLastTimeSubscriptionsValidated(System.currentTimeMillis());
+
+                    @InAppHelper.SubscriptionType final int type = InAppHelper.getSubscriptionTypeFromItemsList(validatedItems);
+                    Timber.d("subscription type: %s", type);
+                    switch (type) {
+                        case InAppHelper.SubscriptionType.NONE:
+                            mMyPreferenceManager.setHasNoAdsSubscription(false);
+                            mMyPreferenceManager.setHasSubscription(false);
+                            break;
+                        case InAppHelper.SubscriptionType.NO_ADS: {
+                            mMyPreferenceManager.setHasNoAdsSubscription(true);
+                            mMyPreferenceManager.setHasSubscription(false);
+                            break;
+                        }
+                        case InAppHelper.SubscriptionType.FULL_VERSION: {
+                            mMyPreferenceManager.setHasSubscription(true);
+                            mMyPreferenceManager.setHasNoAdsSubscription(true);
+                            break;
+                        }
+                        default:
+                            throw new IllegalArgumentException("unexpected type: " + type);
+                    }
+
+                    return Observable.just(validatedItems);
                 });
     }
 

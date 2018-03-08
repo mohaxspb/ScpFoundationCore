@@ -17,10 +17,11 @@ import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
  */
 class CurSubsEmptyDelegate(
         val clickListener: (String) -> Unit,
-        val refreshClickListener: () -> Unit
+        private val refreshClickListener: () -> Unit
 ) : AbsListItemAdapterDelegate<CurSubsEmptyViewModel, MyListItem, CurSubsEmptyDelegate.AppViewHolder>() {
 
-    override fun isForViewType(item: MyListItem, items: MutableList<MyListItem>, position: Int) = item is CurSubsEmptyViewModel
+    override fun isForViewType(item: MyListItem, items: MutableList<MyListItem>, position: Int) =
+            item is CurSubsEmptyViewModel
 
     override fun onCreateViewHolder(parent: ViewGroup) =
             AppViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.list_item_cur_subs_empty, parent, false))

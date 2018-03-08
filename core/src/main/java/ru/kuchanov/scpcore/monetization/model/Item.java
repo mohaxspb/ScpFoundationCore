@@ -10,11 +10,17 @@ import com.google.gson.GsonBuilder;
 public class Item {
 
     public PurchaseData purchaseData;
-    public String signature;
+    private final String signature;
     public String sku;
-    public String continuationToken;
+    private final String continuationToken;
 
-    public Item(String purchaseData, String signature, String sku, String continuationToken) {
+    public Item(
+            final String purchaseData,
+            final String signature,
+            final String sku,
+            final String continuationToken
+    ) {
+        super();
         this.purchaseData = new GsonBuilder().create().fromJson(purchaseData, PurchaseData.class);
         this.signature = signature;
         this.sku = sku;
@@ -22,11 +28,15 @@ public class Item {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-        Item item = (Item) o;
+        final Item item = (Item) o;
 
         return sku.equals(item.sku);
     }

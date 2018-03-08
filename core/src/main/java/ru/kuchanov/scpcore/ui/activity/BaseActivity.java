@@ -674,40 +674,21 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     public void updateOwnedMarketItems() {
         Timber.d("updateOwnedMarketItems");
         mInAppHelper
-                .getValidatedOwnedSubsObservable(mService)
+                .validateSubsObservable(mService)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         validatedItems -> {
-                            Timber.d("market validatedItems: %s", validatedItems);
-
-                            mMyPreferenceManager.setLastTimeSubscriptionsValidated(System.currentTimeMillis());
-
                             @InAppHelper.SubscriptionType final int type = InAppHelper.getSubscriptionTypeFromItemsList(validatedItems);
-                            Timber.d("subscription type: %s", type);
                             switch (type) {
                                 case InAppHelper.SubscriptionType.NONE:
-                                    mMyPreferenceManager.setHasNoAdsSubscription(false);
-                                    mMyPreferenceManager.setHasSubscription(false);
                                     break;
-                                case InAppHelper.SubscriptionType.NO_ADS: {
-                                    mMyPreferenceManager.setHasNoAdsSubscription(true);
-                                    mMyPreferenceManager.setHasSubscription(false);
+                                case InAppHelper.SubscriptionType.NO_ADS:
+                                case InAppHelper.SubscriptionType.FULL_VERSION: {
                                     //remove banner
                                     if (mAdView != null) {
                                         mAdView.setEnabled(false);
                                         mAdView.setVisibility(View.GONE);
-                                    }
-                                    break;
-                                }
-                                case InAppHelper.SubscriptionType.FULL_VERSION: {
-                                    mMyPreferenceManager.setHasSubscription(true);
-                                    mMyPreferenceManager.setHasNoAdsSubscription(true);
-                                    //remove banner
-                                    final AdView banner = findViewById(R.id.banner);
-                                    if (banner != null) {
-                                        banner.setEnabled(false);
-                                        banner.setVisibility(View.GONE);
                                     }
                                     break;
                                 }

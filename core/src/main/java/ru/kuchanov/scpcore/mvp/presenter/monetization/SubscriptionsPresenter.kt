@@ -60,7 +60,7 @@ class SubscriptionsPresenter(
         }
 
         Single.zip(
-            inAppHelper.getValidatedOwnedSubsObservable(service).toSingle(),
+            inAppHelper.validateSubsObservable(service).toSingle(),
             inAppHelper.getSubsListToBuyObservable(service, skuList).toSingle(),
             inAppHelper.getInAppsListToBuyObservable(service).toSingle(),
             { t1: List<Item>, t2: List<Subscription>, t3: List<Subscription> -> Triple(t1, t2, t3) }

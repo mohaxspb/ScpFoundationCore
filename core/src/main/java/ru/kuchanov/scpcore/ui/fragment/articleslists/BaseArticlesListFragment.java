@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.ui.fragment.articleslists;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialogFragment;
@@ -8,8 +10,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,10 +21,9 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.mvp.base.BaseArticlesListMvp;
-import ru.kuchanov.scpcore.mvp.base.BaseListMvp;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
-import ru.kuchanov.scpcore.ui.fragment.BaseListFragment;
 import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
+import ru.kuchanov.scpcore.ui.fragment.BaseListFragment;
 import ru.kuchanov.scpcore.ui.util.EndlessRecyclerViewScrollListener;
 import timber.log.Timber;
 
@@ -34,8 +33,7 @@ import timber.log.Timber;
  * for scp_ru
  */
 public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.View, P extends BaseArticlesListMvp.Presenter<V>>
-        extends BaseListFragment<V, P>
-        implements BaseListMvp.View {
+        extends BaseListFragment<V, P> {
 
     private static final String EXTRA_SORT_TYPE = "EXTRA_SORT_TYPE";
 
@@ -43,7 +41,7 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
     private ArticlesListAdapter.SortType mSortType = ArticlesListAdapter.SortType.NONE;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             mSortType = (ArticlesListAdapter.SortType) savedInstanceState.getSerializable(EXTRA_SORT_TYPE);
@@ -51,7 +49,7 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(EXTRA_SORT_TYPE, mSortType);
     }
@@ -109,10 +107,10 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int i = item.getItemId();
-        if (i == R.id.menuItemSort) {
-            List<ArticlesListAdapter.SortType> sortTypes = new ArrayList<>(Arrays.asList(ArticlesListAdapter.SortType.values()));
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        final int itemId = item.getItemId();
+        if (itemId == R.id.menuItemSort) {
+            final List<ArticlesListAdapter.SortType> sortTypes = new ArrayList<>(Arrays.asList(ArticlesListAdapter.SortType.values()));
             if (!getResources().getBoolean(R.bool.filter_by_type_enabled)) {
                 sortTypes.remove(ArticlesListAdapter.SortType.EUCLID);
                 sortTypes.remove(ArticlesListAdapter.SortType.KETER);
@@ -121,7 +119,7 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
                 sortTypes.remove(ArticlesListAdapter.SortType.THAUMIEL);
             }
 
-            int selectedIndex = sortTypes.indexOf(getAdapter().getSortType());
+            final int selectedIndex = sortTypes.indexOf(getAdapter().getSortType());
 
             new MaterialDialog.Builder(getActivity())
                     .title(R.string.dialog_sort_title)
@@ -147,9 +145,9 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(final Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        MenuItem item = menu.findItem(R.id.menuItemSort);
+        final MenuItem item = menu.findItem(R.id.menuItemSort);
         if (item != null && getActivity() != null) {
             if (mSortType != ArticlesListAdapter.SortType.NONE) {
                 item.getIcon().setColorFilter(ContextCompat.getColor(getActivity(), R.color.material_green_500), PorterDuff.Mode.SRC_ATOP);
@@ -190,7 +188,7 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
     protected void initAdapter() {
         getAdapter().setArticleClickListener(new ArticlesListAdapter.ArticleClickListener() {
             @Override
-            public void onArticleClick(Article article) {
+            public void onArticleClick(final Article article) {
                 Timber.d("onArticleClick: %s", article.title);
                 if (!isAdded()) {
                     return;
@@ -199,25 +197,25 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
             }
 
             @Override
-            public void toggleReadenState(Article article) {
+            public void toggleReadenState(final Article article) {
                 Timber.d("toggleReadenState: %s", article.title);
                 mPresenter.toggleReadState(article);
             }
 
             @Override
-            public void toggleFavoriteState(Article article) {
+            public void toggleFavoriteState(final Article article) {
                 Timber.d("toggleFavoriteState: %s", article.title);
                 mPresenter.toggleFavoriteState(article);
             }
 
             @Override
-            public void onOfflineClick(Article article) {
+            public void onOfflineClick(final Article article) {
                 Timber.d("onOfflineClick: %s", article.title);
                 mPresenter.toggleOfflineState(article);
             }
 
             @Override
-            public void onTagClick(ArticleTag tag) {
+            public void onTagClick(final ArticleTag tag) {
                 Timber.d("onTagClick: %s", tag);
                 getBaseActivity().startTagsSearchActivity(new ArrayList<>(Collections.singletonList(tag)));
             }
@@ -227,8 +225,8 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
                 if (!isAdded()) {
                     return;
                 }
-                BottomSheetDialogFragment subsDF = AdsSettingsBottomSheetDialogFragment.newInstance();
-                subsDF.show(getActivity().getSupportFragmentManager(), subsDF.getTag());
+                final BottomSheetDialogFragment dialogFragment = AdsSettingsBottomSheetDialogFragment.newInstance();
+                dialogFragment.show(getActivity().getSupportFragmentManager(), dialogFragment.getTag());
             }
 
             @Override
@@ -250,7 +248,7 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
     }
 
     @Override
-    public void updateData(List<Article> data) {
+    public void updateData(final List<Article> data) {
         Timber.d("updateData size: %s", data == null ? "data is null" : data.size());
         if (!isAdded()) {
             return;
