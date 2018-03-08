@@ -250,7 +250,6 @@ class LeaderboardPresenter(
     }
 
     override fun onUserChanged(user: User?) {
-//        Timber.d("onUserChanged: $user")
         super.onUserChanged(user)
         myUser = user
         if (myUser == null) {
@@ -264,7 +263,7 @@ class LeaderboardPresenter(
         //show warning if user not logged in
         if (!ignoreUserCheck && user == null) {
             view.showOfferLoginForLevelUpPopup()
-            return;
+            return
         }
 
         val type = if (id in InAppHelper.getNewInAppsSkus()) {

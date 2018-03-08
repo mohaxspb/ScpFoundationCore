@@ -5,8 +5,8 @@
     android:layout_height="wrap_content"
     android:background="?selectableItemBackgroundBorderless"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/defaultMargin"
-    android:paddingRight="@dimen/defaultMargin"
+    android:paddingLeft="@dimen/defaultMarginSmall"
+    android:paddingRight="@dimen/defaultMarginSmall"
     android:paddingTop="@dimen/defaultMarginSmall"
     tools:ignore="UseCompoundDrawables"
     tools:layout_gravity="center">
@@ -24,7 +24,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:padding="@dimen/defaultMarginSmall"
+        android:paddingTop="@dimen/defaultMarginSmall"
+        android:paddingBottom="@dimen/defaultMarginSmall"
         android:textSize="21sp"
         tools:text="@string/social_provider_google_title" />
 
