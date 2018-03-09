@@ -37,6 +37,9 @@ import com.vk.sdk.api.VKError;
 import com.yandex.metrica.YandexMetrica;
 
 import org.joda.time.Period;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.XML;
 
 import android.annotation.SuppressLint;
 import android.app.DialogFragment;
@@ -46,6 +49,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.XmlResourceParser;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
@@ -69,11 +73,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -107,6 +114,7 @@ import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.SocialLoginHolder;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
 import ru.kuchanov.scpcore.util.AttributeGetter;
+import ru.kuchanov.scpcore.util.StorageUtils;
 import ru.kuchanov.scpcore.util.SystemUtils;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -1036,8 +1044,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             @Override
             public void onError(final VKError error) {
                 // Произошла ошибка авторизации (например, пользователь запретил авторизацию)
-                Timber.e(error.errorMessage);
-                Toast.makeText(BaseActivity.this, error.errorMessage, Toast.LENGTH_SHORT).show();
+                String errorMessage = error == null ? getString(R.string.error_unexpected) : error.errorMessage;
+                Timber.e("error/errMsg: %s/%s", error, errorMessage);
+                Toast.makeText(BaseActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
             }
         };
         if (VKSdk.onActivityResult(requestCode, resultCode, data, vkCallback)) {
@@ -1093,8 +1102,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     private void initAndUpdateRemoteConfig() {
-        //remote config
-        final FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        Timber.d("initAndUpdateRemoteConfig");
+        final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
 
         // Create Remote Config Setting to enable developer mode.
         // Fetching configs from the server is normally limited to 5 requests per hour.
@@ -1103,7 +1112,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         final FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
                 .setDeveloperModeEnabled(BuildConfig.FLAVOR.equals("dev"))
                 .build();
-        mFirebaseRemoteConfig.setConfigSettings(configSettings);
+        remoteConfig.setConfigSettings(configSettings);
 
         // Set default Remote Config values. In general you should have in app defaults for all
         // values that you may configure using Remote Config later on. The idea is that you
@@ -1112,25 +1121,47 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         // server, the updated value will be used. You can set defaults via an xml file like done
         // here or you can set defaults inline by using one of the other setDefaults methods.S
         // [START set_default_values]
-        mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults);
+//        remoteConfig.setDefaults(R.xml.remote_config_defaults);
+
+        //this woks
+        Map<String, Object> defaults = new HashMap<>();
+        defaults.put(
+                "app_lang_versions",
+                "{\"langs\":[{\"code\":\"ru\",\"title\":\"Русский филиал\",\"package\":\"ru.dante.scpfoundation\",\"icon\":\"https://lh3.googleusercontent.com/nxy_ouZM-1PTsve_PXDI9-CoErm1Q2XRwKML7_967K-eR5TmVlI5RHDUJsc4WhjsLaI=w300-rw\"},{\"code\":\"en\",\"title\":\"English version\",\"package\":\"ru.dante.scpfoundation.eng\",\"icon\":\"https://lh3.googleusercontent.com/dIv6quzx1zwwht9xZHje_vjCGx5zO6r0DxwukqiC1g-9_szMkfsEoFzXLpbxLS5hj4Q=w300-rw\"},{\"code\":\"pl\",\"title\":\"Polska Filia\",\"package\":\"ru.dante.scpfoundation.pl\",\"icon\":\"https://lh3.googleusercontent.com/rgAVhH8ouKmkn-Ne6dlJayCATeMoXw_205QYeJVa01bWeu1_iXDOvU9HNKenaiDCbQ=w300-rw\"},{\"code\":\"de\",\"title\":\"SCP Foundation in Deutschland\",\"package\":\"ru.dante.scpfoundation.de\",\"icon\":\"https://lh3.googleusercontent.com/UkkT3sSskUzUdQsRs2OM8_vRRCxfuF-MfWbft-shvBf3PiqtimhvH6-n0HuxD4Zgzw=w300-rw\"},{\"code\":\"fr\",\"title\":\"SCP Foundation Branche Francophone\",\"package\":\"ru.dante.scpfoundation.fr\",\"icon\":\"https://lh3.googleusercontent.com/kyP6zGVcBNgE8bbBBbXzRRsuapeBwkDt2sRkdaMaeveWJyElUbAoNR3h3Q9D_lDNQhQ=w300-rw\"},{\"code\":\"es\",\"title\":\"Scp Foundation Spanish\",\"package\":\"ru.dante.scpfoundation.es\",\"icon\":\"https://lh3.googleusercontent.com/l4In7GH-zQq5ExVxFO2NeqbpXUapeRkMAtWLXzwzNdizV2y7n8DGMb_PuKxyRYPygBU=w300-rw\"},{\"code\":\"it\",\"title\":\"Scp Foundation Italian\",\"package\":\"ru.dante.scpfoundation.it\",\"icon\":\"https://lh3.googleusercontent.com/KlX_J6DWFxg1ByjraVRRE3KuGBKlzBvMAjTe89oG8AMKO5wUjMFP-FfwECTV-xAnsw=w300-rw\"},{\"code\":\"pt\",\"title\":\"Scp Fundação\",\"package\":\"ru.dante.scpfoundation.pt\",\"icon\":\"https://lh3.googleusercontent.com/bh_Ukym68K1x_E1Yk_SKjPkI_pkMW6sC73It_jNdSHrF-hH8ySZs4nKoCF02WpawPg=w300-rw\"}]}"
+        );
+        remoteConfig.setDefaults(defaults);
+
+        try {
+            final String xmlString = StorageUtils.readFromAssets(this, "config/remote_config_defaults.xml");
+//
+//            final XmlResourceParser xmlResourceParser = getResources().getXml(R.xml.remote_config_defaults);
+//            Timber.d("xmlResourceParser: %s", xmlResourceParser.getName());
+//            final String xml = xmlResourceParser.toString();
+//            Timber.d("xml: %s", xml);
+            final JSONObject xmlJSONObj = XML.toJSONObject(xmlString);
+            final String jsonPrettyPrintString = xmlJSONObj.toString(4);
+            Timber.d("jsonPrettyPrintString: %s", jsonPrettyPrintString);
+        } catch (final IOException| JSONException e) {
+            Timber.e(e);
+        }
 
         // cacheExpirationSeconds is set to cacheExpiration here, indicating that any previously
         // fetched and cached config would be considered expired because it would have been fetched
         // more than cacheExpiration seconds ago. Thus the next fetch would go to the server unless
         // throttling is in progress. The default expiration duration is 43200 (12 hours).
         long cacheExpiration = 20000; //default 43200
-        if (mFirebaseRemoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
+        if (remoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
             cacheExpiration = 60 * 5;//for 5 min
         }
         //comment this if you want to use local data
-        mFirebaseRemoteConfig.fetch(cacheExpiration).addOnCompleteListener(task -> {
+        remoteConfig.fetch(cacheExpiration).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Timber.d("Fetch Succeeded");
                 // Once the config is successfully fetched it must be activated before newly fetched
                 // values are returned.
-                mFirebaseRemoteConfig.activateFetched();
+                remoteConfig.activateFetched();
             } else {
-                Timber.d("Fetch Failed");
+                Timber.e("Fetch Failed");
             }
         });
     }
@@ -1141,8 +1172,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     public void startArticleActivity(final List<String> urls, final int position) {
-        Timber.d("startActivity: urls.size() %s, position: %s", urls.size(), position);
-
         final Intent intent = new Intent(this, getArticleActivityClass());
         intent.putExtra(EXTRA_ARTICLES_URLS_LIST, new ArrayList<>(urls));
         intent.putExtra(EXTRA_POSITION, position);
@@ -1168,13 +1197,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     public void startArticleActivity(final String url) {
-        Timber.d("startActivity: %s", url);
         startArticleActivity(Collections.singletonList(url), 0);
     }
 
     public void startMaterialsActivity() {
-        Timber.d("startActivity");
-
         final Intent intent = new Intent(BaseActivity.this, getMaterialsActivityClass());
 
         if (isTimeToShowAds()) {
@@ -1199,8 +1225,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     public void startGalleryActivity() {
-        Timber.d("startActivity");
-
         final Intent intent = new Intent(this, getGalleryActivityClass());
 
         if (isTimeToShowAds()) {
@@ -1224,8 +1248,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     public void startTagsSearchActivity(final List<ArticleTag> tagList) {
-        Timber.d("startActivity");
-
         final Intent intent = new Intent(BaseActivity.this, getTagsSearchActivityClass());
         intent.putExtra(EXTRA_TAGS, new ArrayList<>(ArticleTag.getStringsFromTags(tagList)));
 
@@ -1250,8 +1272,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     public void startTagsSearchActivity() {
-        Timber.d("startActivity");
-
         final Intent intent = new Intent(this, getTagsSearchActivityClass());
 
         if (isTimeToShowAds()) {

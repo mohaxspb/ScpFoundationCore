@@ -13,26 +13,26 @@ public class MyRewardedVideoCallbacks implements RewardedVideoCallbacks {
 
     @Override
     public void onRewardedVideoLoaded() {
-        Timber.d("onRewardedVideoLoaded");
+//        Timber.d("onRewardedVideoLoaded");
     }
 
     @Override
     public void onRewardedVideoFailedToLoad() {
-        Timber.d("onRewardedVideoFailedToLoad");
+//        Timber.d("onRewardedVideoFailedToLoad");
     }
 
     @Override
     public void onRewardedVideoShown() {
-        Timber.d("onRewardedVideoShown");
+//        Timber.d("onRewardedVideoShown");
     }
 
     @Override
-    public void onRewardedVideoFinished(int i, String s) {
-        Timber.d("onRewardedVideoFinished: %s, %s", i, s);
+    public void onRewardedVideoFinished(final int i, final String s) {
+//        Timber.d("onRewardedVideoFinished: %s, %s", i, s);
     }
 
     @Override
-    public void onRewardedVideoClosed(boolean b) {
-        Timber.d("onRewardedVideoClosed: %s", b);
+    public void onRewardedVideoClosed(final boolean b) {
+//        Timber.d("onRewardedVideoClosed: %s", b);
     }
 }
