@@ -322,6 +322,7 @@ Dziękujemy za korzystanie z naszej aplikacji!]]></string>
     <string name="leaderboard_inapp_description">Użyj trick i połączeń w Funduszu, aby ominąć kolegów i wzrost w rankingu</string>
     <string name="leaderboard_place">%d miejsce</string>
     <string name="leaderboard_inapp_label">Wzrost w rankingu (+ 10000 punktów)</string>
+    <string name="leaderboard_inapp_label_undefined">Wzrost w rankingu (+ %d punktów)</string>
     <string name="leaderboard_articles_read">%d Artykuły Przeczytaj</string>
     <string name="score_num">%d Punktów</string>
     <string name="level_num">%d poziom</string>

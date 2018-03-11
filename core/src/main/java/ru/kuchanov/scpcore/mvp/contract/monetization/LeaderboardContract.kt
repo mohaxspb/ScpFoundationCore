@@ -42,5 +42,6 @@ interface LeaderboardContract : BaseMvp {
         fun loadData()
         fun onSubscriptionClick(id: String, target: Fragment, ignoreUserCheck: Boolean = false)
         fun updateLeaderboardFromApi()
+        fun onRewardedVideoClick()
     }
 }

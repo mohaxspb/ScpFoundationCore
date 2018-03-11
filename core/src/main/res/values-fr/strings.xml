@@ -325,6 +325,7 @@ Traduit Lucie.]]></string>
     <string name="leaderboard_inapp_description">Utilisez l\'astuce et vos connexions dans le Fonds pour contourner les collègues et augmenter dans le classement de la</string>
     <string name="leaderboard_place">%d Place</string>
     <string name="leaderboard_inapp_label">Hausse du classement (+10000 points)</string>
+    <string name="leaderboard_inapp_label_undefined">Hausse du classement (+%d points)</string>
     <string name="leaderboard_articles_read">%d Articles lus</string>
     <string name="score_num">%d points</string>
     <string name="level_num">%d Niveau</string>

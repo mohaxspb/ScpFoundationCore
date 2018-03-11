@@ -324,6 +324,7 @@ Thanks for using our app!]]></string>
     <string name="leaderboard_inapp_description">Use the trick and your connections in the fund to get around the colleagues and rise in the ranking</string>
     <string name="leaderboard_place">%d place</string>
     <string name="leaderboard_inapp_label">Climb in the rankings (+ 10000 points)</string>
+    <string name="leaderboard_inapp_label_undefined">Climb in the rankings (+ %d points)</string>
     <string name="leaderboard_articles_read">%d pages read</string>
     <string name="score_num">%d points</string>
     <string name="level_num">%d level</string>

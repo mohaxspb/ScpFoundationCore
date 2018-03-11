@@ -322,6 +322,7 @@ Vielen Dank für die Nutzung unserer App!]]></string>
     <string name="leaderboard_inapp_description">Verwenden Sie den Trick und ihre Verbindungen in den Fonds, um rund um die Kollegen und steigen in der Rangliste</string>
     <string name="leaderboard_place">%d Ort</string>
     <string name="leaderboard_inapp_label">Anstieg des Ratings (+ 10000 Punkte)</string>
+    <string name="leaderboard_inapp_label_undefined">Anstieg des Ratings (+ %d Punkte)</string>
     <string name="leaderboard_articles_read">%d Seiten lesen</string>
     <string name="score_num">%d Punkte</string>
     <string name="level_num">%d Ebene</string>

@@ -325,6 +325,7 @@ E-mail: <a href="mailto:neva.spb.rx@gmail.com">Para cualquier pregunta</a>
     <string name="leaderboard_inapp_description">Utilizar la astucia y sus conexiones en el fondo para conseguir alrededor de los colegas y elevarse en el ranking</string>
     <string name="leaderboard_place">%d lugar</string>
     <string name="leaderboard_inapp_label">Aumento de rating (+ 10000 puntos)</string>
+    <string name="leaderboard_inapp_label_undefined">Aumento de rating (+ %d puntos)</string>
     <string name="leaderboard_articles_read">%d Páginas leídas</string>
     <string name="score_num">%d Puntos</string>
     <string name="level_num">%d Nivel</string>

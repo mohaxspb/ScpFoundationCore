@@ -324,6 +324,7 @@ Grazie per aver utilizzato la nostra applicazione!]]></string>
     <string name="leaderboard_inapp_description">Utilizzare astuzia e le connessioni nel fondo per aggirare i colleghi e salire nella classifica</string>
     <string name="leaderboard_place">%d Posto</string>
     <string name="leaderboard_inapp_label">Aumento di rating (+ 10000 punti)</string>
+    <string name="leaderboard_inapp_label_undefined">Aumento di rating (+ %d punti)</string>
     <string name="leaderboard_articles_read">%d Pagine lette</string>
     <string name="score_num">%d Punti</string>
     <string name="level_num">%d livello</string>
