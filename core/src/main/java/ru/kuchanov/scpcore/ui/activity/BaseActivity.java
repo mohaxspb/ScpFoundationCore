@@ -18,6 +18,7 @@ import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
+import com.google.gson.Gson;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.vending.billing.IInAppBillingService;
@@ -36,10 +37,8 @@ import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
 import com.yandex.metrica.YandexMetrica;
 
+import org.joda.time.Duration;
 import org.joda.time.Period;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.XML;
 
 import android.annotation.SuppressLint;
 import android.app.DialogFragment;
@@ -49,7 +48,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.res.XmlResourceParser;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
@@ -114,6 +112,8 @@ import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.SocialLoginHolder;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
 import ru.kuchanov.scpcore.util.AttributeGetter;
+import ru.kuchanov.scpcore.util.Entry;
+import ru.kuchanov.scpcore.util.RemoteConfigJsonModel;
 import ru.kuchanov.scpcore.util.StorageUtils;
 import ru.kuchanov.scpcore.util.SystemUtils;
 import rx.android.schedulers.AndroidSchedulers;
@@ -410,7 +410,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 //                mMyPreferenceManager.applyAwardFromAds();
                 final long numOfMillis = FirebaseRemoteConfig.getInstance()
                         .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
-                final long hours = numOfMillis / 1000 / 60 / 60;
+                final long hours = Duration.millis(numOfMillis).toStandardHours().getHours();
                 showMessage(getString(R.string.ads_reward_gained, hours));
 
                 FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventType.REWARD_GAINED, null);
@@ -418,7 +418,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.REWARDED_VIDEO;
                 mPresenter.updateUserScoreForScoreAction(action);
 
-                mRoot.postDelayed(() -> mMyPreferenceManager.applyAwardFromAds(), 500);
+                mRoot.postDelayed(() -> mMyPreferenceManager.applyAwardFromAds(), Constants.POST_DELAYED_MILLIS);
             }
         });
         Appodeal.setInterstitialCallbacks(new MyAppodealInterstitialCallbacks() {
@@ -1044,7 +1044,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             @Override
             public void onError(final VKError error) {
                 // Произошла ошибка авторизации (например, пользователь запретил авторизацию)
-                String errorMessage = error == null ? getString(R.string.error_unexpected) : error.errorMessage;
+                final String errorMessage = error == null ? getString(R.string.error_unexpected) : error.errorMessage;
                 Timber.e("error/errMsg: %s/%s", error, errorMessage);
                 Toast.makeText(BaseActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
             }
@@ -1054,6 +1054,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             super.onActivityResult(requestCode, resultCode, data);
         } else if (requestCode == RC_SIGN_IN) {
             final GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result == null) {
+                Timber.wtf("GoogleSignInResult is NULL!!!");
+                Toast.makeText(this, R.string.error_unexpected, Toast.LENGTH_LONG).show();
+                return;
+            }
             if (result.isSuccess()) {
                 Timber.d("Auth successful: %s", result);
                 // Signed in successfully, show authenticated UI.
@@ -1121,27 +1126,20 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         // server, the updated value will be used. You can set defaults via an xml file like done
         // here or you can set defaults inline by using one of the other setDefaults methods.S
         // [START set_default_values]
+        //this is not working for some reason
 //        remoteConfig.setDefaults(R.xml.remote_config_defaults);
-
         //this woks
-        Map<String, Object> defaults = new HashMap<>();
-        defaults.put(
-                "app_lang_versions",
-                "{\"langs\":[{\"code\":\"ru\",\"title\":\"Русский филиал\",\"package\":\"ru.dante.scpfoundation\",\"icon\":\"https://lh3.googleusercontent.com/nxy_ouZM-1PTsve_PXDI9-CoErm1Q2XRwKML7_967K-eR5TmVlI5RHDUJsc4WhjsLaI=w300-rw\"},{\"code\":\"en\",\"title\":\"English version\",\"package\":\"ru.dante.scpfoundation.eng\",\"icon\":\"https://lh3.googleusercontent.com/dIv6quzx1zwwht9xZHje_vjCGx5zO6r0DxwukqiC1g-9_szMkfsEoFzXLpbxLS5hj4Q=w300-rw\"},{\"code\":\"pl\",\"title\":\"Polska Filia\",\"package\":\"ru.dante.scpfoundation.pl\",\"icon\":\"https://lh3.googleusercontent.com/rgAVhH8ouKmkn-Ne6dlJayCATeMoXw_205QYeJVa01bWeu1_iXDOvU9HNKenaiDCbQ=w300-rw\"},{\"code\":\"de\",\"title\":\"SCP Foundation in Deutschland\",\"package\":\"ru.dante.scpfoundation.de\",\"icon\":\"https://lh3.googleusercontent.com/UkkT3sSskUzUdQsRs2OM8_vRRCxfuF-MfWbft-shvBf3PiqtimhvH6-n0HuxD4Zgzw=w300-rw\"},{\"code\":\"fr\",\"title\":\"SCP Foundation Branche Francophone\",\"package\":\"ru.dante.scpfoundation.fr\",\"icon\":\"https://lh3.googleusercontent.com/kyP6zGVcBNgE8bbBBbXzRRsuapeBwkDt2sRkdaMaeveWJyElUbAoNR3h3Q9D_lDNQhQ=w300-rw\"},{\"code\":\"es\",\"title\":\"Scp Foundation Spanish\",\"package\":\"ru.dante.scpfoundation.es\",\"icon\":\"https://lh3.googleusercontent.com/l4In7GH-zQq5ExVxFO2NeqbpXUapeRkMAtWLXzwzNdizV2y7n8DGMb_PuKxyRYPygBU=w300-rw\"},{\"code\":\"it\",\"title\":\"Scp Foundation Italian\",\"package\":\"ru.dante.scpfoundation.it\",\"icon\":\"https://lh3.googleusercontent.com/KlX_J6DWFxg1ByjraVRRE3KuGBKlzBvMAjTe89oG8AMKO5wUjMFP-FfwECTV-xAnsw=w300-rw\"},{\"code\":\"pt\",\"title\":\"Scp Fundação\",\"package\":\"ru.dante.scpfoundation.pt\",\"icon\":\"https://lh3.googleusercontent.com/bh_Ukym68K1x_E1Yk_SKjPkI_pkMW6sC73It_jNdSHrF-hH8ySZs4nKoCF02WpawPg=w300-rw\"}]}"
-        );
-        remoteConfig.setDefaults(defaults);
-
         try {
-            final String xmlString = StorageUtils.readFromAssets(this, "config/remote_config_defaults.xml");
-//
-//            final XmlResourceParser xmlResourceParser = getResources().getXml(R.xml.remote_config_defaults);
-//            Timber.d("xmlResourceParser: %s", xmlResourceParser.getName());
-//            final String xml = xmlResourceParser.toString();
-//            Timber.d("xml: %s", xml);
-            final JSONObject xmlJSONObj = XML.toJSONObject(xmlString);
-            final String jsonPrettyPrintString = xmlJSONObj.toString(4);
-            Timber.d("jsonPrettyPrintString: %s", jsonPrettyPrintString);
-        } catch (final IOException| JSONException e) {
+            final Map<String, Object> defaults = new HashMap<>();
+            final RemoteConfigJsonModel remoteConfigJsonModel = new Gson().fromJson(
+                    StorageUtils.readFromAssets(this, mConstantValues.getAppLang()+".json"),
+                    RemoteConfigJsonModel.class
+            );
+            for (final Entry entry : remoteConfigJsonModel.getDefaultsMap().getEntry()) {
+                defaults.put(entry.getKey(), entry.getValue());
+            }
+            remoteConfig.setDefaults(defaults);
+        } catch (final IOException e) {
             Timber.e(e);
         }
 
@@ -1149,9 +1147,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         // fetched and cached config would be considered expired because it would have been fetched
         // more than cacheExpiration seconds ago. Thus the next fetch would go to the server unless
         // throttling is in progress. The default expiration duration is 43200 (12 hours).
-        long cacheExpiration = 20000; //default 43200
+        long cacheExpiration = Constants.Firebase.RemoteConfigKeys.CACHE_EXPIRATION_SECONDS; //default 43200
         if (remoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
-            cacheExpiration = 60 * 5;//for 5 min
+            cacheExpiration = Period.minutes(5).toStandardSeconds().getSeconds();//for 5 min
+
         }
         //comment this if you want to use local data
         remoteConfig.fetch(cacheExpiration).addOnCompleteListener(task -> {

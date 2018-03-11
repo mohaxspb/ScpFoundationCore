@@ -80,9 +80,8 @@ class FreeAdsDisableActionsFragment :
         }
     }
 
-    override fun onAuthClick() {
-        baseActivity?.showLoginProvidersPopup()
-    }
+    override fun onAuthClick() = baseActivity?.showLoginProvidersPopup() ?: Unit
+
 
     override fun onAppInstallClick(id: String) {
         if (FirebaseAuth.getInstance().currentUser == null) {
