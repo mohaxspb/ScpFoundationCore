@@ -19,6 +19,7 @@ public interface Constants {
      */
     int NUM_OF_NATIVE_ADS_PER_SCREEN = 3;
     int NUM_OF_NATIVE_ADS_SOURCES = 2;
+    long POST_DELAYED_MILLIS = 500;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({NativeAdsSource.ALL, NativeAdsSource.AD_MOB, NativeAdsSource.APPODEAL})
@@ -194,6 +195,7 @@ public interface Constants {
             String APP_LANG_VERSIONS = "app_lang_versions";
             String OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO = "offer_subs_instead_of_rewarded_video";
             String OFFER_TRIAL_FOR_YEAR = "offer_trial_for_year";
+            long CACHE_EXPIRATION_SECONDS = 20000;
         }
 
         int REQUEST_INVITE = 1024;

@@ -237,7 +237,6 @@ public abstract class BaseActivityPresenter<V extends BaseActivityMvp.View>
 
     @Override
     public void logoutUser() {
-        Timber.d("logoutUser");
         mDbProviderFactory.getDbProvider().logout().subscribe(
                 result -> Timber.d("logout successful"),
                 e -> Timber.e(e, "error while logout user")

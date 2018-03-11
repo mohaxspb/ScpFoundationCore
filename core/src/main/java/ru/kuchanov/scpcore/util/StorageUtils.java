@@ -10,6 +10,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -28,8 +30,8 @@ import static ru.kuchanov.scpcore.util.IntentUtils.MY_PERMISSIONS_REQUEST_WRITE_
  */
 public class StorageUtils {
 
-    public static String saveImageToGallery(Activity activity, Bitmap image) {
-        int permissionCheck = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    public static String saveImageToGallery(final Activity activity, final Bitmap image) {
+        final int permissionCheck = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
             return MediaStore.Images.Media.insertImage(
                     activity.getContentResolver(),
@@ -40,27 +42,27 @@ public class StorageUtils {
         } else {
             ActivityCompat.requestPermissions(
                     activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                    MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
+            );
         }
         return null;
     }
 
-    public static boolean fileExistsInAssets(String path) {
+    public static boolean fileExistsInAssets(final String path) {
         try {
-            List<String> assetsFiles = Arrays.asList(BaseApplication.getAppInstance().getResources().getAssets().list(""));
-//            Timber.d("assetsFiles: %s", assetsFiles);
+            final List<String> assetsFiles = Arrays.asList(BaseApplication.getAppInstance().getResources().getAssets().list(""));
             return assetsFiles.contains(path);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             Timber.e(e);
             return false;
         }
     }
 
-    public static String readFromAssets(Context context, String filename) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(context.getAssets().open(filename), "UTF-8"));
+    public static String readFromAssets(final Context context, final String filename) throws IOException {
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(context.getAssets().open(filename), "UTF-8"));
 
         // do reading, usually loop until end of file reading
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         String mLine = reader.readLine();
         while (mLine != null) {
             sb.append(mLine); // process line
@@ -68,5 +70,25 @@ public class StorageUtils {
         }
         reader.close();
         return sb.toString();
+    }
+
+    public static void writeFileOnDevice(final String fileName, final String content) {
+        try {
+            final File root = new File(BaseApplication.getAppInstance().getFilesDir(), "test");
+            if (!root.exists()) {
+                root.mkdirs();
+            }
+            final File myFile = new File(root, fileName);
+            if(!myFile.exists()){
+                myFile.createNewFile();
+            }
+            final FileWriter writer = new FileWriter(myFile);
+            writer.write(content);
+            writer.flush();
+            writer.close();
+            Timber.d("Saved: %s", myFile.getAbsolutePath());
+        } catch (final IOException e) {
+            Timber.e(e);
+        }
     }
 }

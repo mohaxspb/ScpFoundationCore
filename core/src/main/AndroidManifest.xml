@@ -1,6 +1,5 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="ru.kuchanov.scpcore"
     >
 
@@ -28,6 +27,17 @@
         android:allowBackup="true"
         android:supportsRtl="true"
         >
+
+        <!--to share internal files-->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="ru.kuchanov.scpcore.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
 
         <!--ads by appodeal-->
         <activity

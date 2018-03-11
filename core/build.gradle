@@ -7,6 +7,8 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'realm-android'
 //butterknife
 apply plugin: 'com.jakewharton.butterknife'
+//new crash reporting
+apply plugin: 'io.fabric'
 
 //here is script to generate version code from version name
 //which is set in gradle.properties as value of version var
@@ -123,7 +125,7 @@ dependencies {
     api "com.android.support:cardview-v7:$supportLibraryVersion"
     //need this as gradle place warning on libs versions
     //multidex to support more than 65K methods
-    api 'com.android.support:multidex:1.0.2'
+    api 'com.android.support:multidex:1.0.3'
     //adapter delegates
     api 'com.hannesdorfmann:adapterdelegates3:3.0.1'
     //rx
@@ -139,7 +141,7 @@ dependencies {
     //jsoup
     api 'org.jsoup:jsoup:1.10.3'
     //logs
-    api 'com.jakewharton.timber:timber:4.5.1'
+    api 'com.jakewharton.timber:timber:4.6.0'
     //dagger2
     String daggerVersion = '2.13'
     api "com.google.dagger:dagger:$daggerVersion"
@@ -166,7 +168,7 @@ dependencies {
     api 'uk.co.chrisjenx:calligraphy:2.3.0'
     //firebase
     api "com.google.firebase:firebase-config:$googleLibraryVersion"
-    api "com.google.firebase:firebase-crash:$googleLibraryVersion"
+//    api "com.google.firebase:firebase-crash:$googleLibraryVersion"
     api "com.google.firebase:firebase-core:$googleLibraryVersion"
     api "com.google.firebase:firebase-analytics:$googleLibraryVersion"
     api "com.google.firebase:firebase-invites:$googleLibraryVersion"
@@ -203,6 +205,14 @@ dependencies {
     testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanaryVersion"
     //time operations
     api 'joda-time:joda-time:2.9.9'
+
+    //xml to json
+    compile 'org.json:json:20180130'
+
+    //new crash reporting
+    compile('com.crashlytics.sdk.android:crashlytics:2.9.1@aar') {
+        transitive = true
+    }
 
     //sub project modules
     api('ru.kuchanov.scp:downloads:1.1.2@aar') { transitive = true }
