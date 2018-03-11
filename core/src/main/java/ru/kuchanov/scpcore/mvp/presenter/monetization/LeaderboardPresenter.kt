@@ -115,7 +115,7 @@ class LeaderboardPresenter(
                                 ))
                         }
 
-
+                        //levelUp inapp
                         viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
                         viewModels.add(
                             LabelViewModel(
@@ -130,6 +130,25 @@ class LeaderboardPresenter(
                                 levelUpInApp.price,
                                 levelUpInApp.productId,
                                 R.drawable.ic_leaderbord_levelup_icon,
+                                R.color.freeAdsBackgroundColor))
+                        //appodeal rewarded video
+                        val score: Int = FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_REWARDED_VIDEO).toInt()
+                        viewModels.add(
+                            LabelViewModel(
+                                0,
+                                textString = BaseApplication.getAppInstance().getString(
+                                    R.string.leaderboard_inapp_label_undefined,
+                                    score
+                                ),
+                                textColor = R.color.material_green_500,
+                                bgColor = R.color.freeAdsBackgroundColor))
+                        viewModels.add(
+                            InAppViewModel(
+                                R.string.leaderboard_inapp_title,
+                                R.string.leaderboard_appodeal_description,
+                                "FREE",
+                                APPODEAL_ID,
+                                R.drawable.ic_inspect,
                                 R.color.freeAdsBackgroundColor))
 
                         viewModels.addAll(users.subList(3, users.size).mapIndexed { index, firebaseObjectUser ->
@@ -277,5 +296,13 @@ class LeaderboardPresenter(
             Timber.e(e)
             view.showError(e)
         }
+    }
+
+    override fun onRewardedVideoClick() {
+        view.onRewardedVideoClick()
+    }
+
+    companion object {
+        const val APPODEAL_ID = "appodeal"
     }
 }

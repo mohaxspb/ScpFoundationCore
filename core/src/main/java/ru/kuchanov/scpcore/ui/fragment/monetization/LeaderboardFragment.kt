@@ -30,6 +30,7 @@ import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LeaderboardUserViewModel
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
+import ru.kuchanov.scpcore.mvp.presenter.monetization.LeaderboardPresenter
 import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 import ru.kuchanov.scpcore.ui.holder.SocialLoginHolder
@@ -84,7 +85,12 @@ class LeaderboardFragment :
         delegateManager.addDelegate(DividerDelegate())
         delegateManager.addDelegate(LabelDelegate())
         delegateManager.addDelegate(LeaderboardDelegate())
-        delegateManager.addDelegate(InAppDelegate { presenter.onSubscriptionClick(it, this) })
+        delegateManager.addDelegate(InAppDelegate {
+            when (it) {
+                LeaderboardPresenter.APPODEAL_ID -> presenter.onRewardedVideoClick()
+                else -> presenter.onSubscriptionClick(it, this)
+            }
+        })
 
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter

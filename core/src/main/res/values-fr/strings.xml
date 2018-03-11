@@ -325,10 +325,14 @@ Traduit Lucie.]]></string>
     <string name="leaderboard_inapp_description">Utilisez l\'astuce et vos connexions dans le Fonds pour contourner les collègues et augmenter dans le classement de la</string>
     <string name="leaderboard_place">%d Place</string>
     <string name="leaderboard_inapp_label">Hausse du classement (+10000 points)</string>
+    <string name="leaderboard_inapp_label_undefined">Hausse du classement (+%d points)</string>
     <string name="leaderboard_articles_read">%d Articles lus</string>
     <string name="score_num">%d points</string>
     <string name="level_num">%d Niveau</string>
     <string name="drawer_item_leaderboard">Agents de cotation</string>
     <string name="ads_will_be_shown_soon">La publicité sera bientôt affichée! Voulez-vous le désactiver à l\'avance?</string>
     <string name="need_login_for_level_up_content">Pour participer à la notation des agents, vous devez autoriser.</string>
+
+    <!---->
+    <string name="leaderboard_appodeal_description">Pas de contacts de haut niveau dans le Fonds? Essayez de trouver du matériel compromettant et de monter dans le classement.</string>
 </resources>

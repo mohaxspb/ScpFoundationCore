@@ -322,6 +322,7 @@ Vielen Dank für die Nutzung unserer App!]]></string>
     <string name="leaderboard_inapp_description">Verwenden Sie den Trick und ihre Verbindungen in den Fonds, um rund um die Kollegen und steigen in der Rangliste</string>
     <string name="leaderboard_place">%d Ort</string>
     <string name="leaderboard_inapp_label">Anstieg des Ratings (+ 10000 Punkte)</string>
+    <string name="leaderboard_inapp_label_undefined">Anstieg des Ratings (+ %d Punkte)</string>
     <string name="leaderboard_articles_read">%d Seiten lesen</string>
     <string name="score_num">%d Punkte</string>
     <string name="level_num">%d Ebene</string>
@@ -329,4 +330,6 @@ Vielen Dank für die Nutzung unserer App!]]></string>
     <string name="ads_will_be_shown_soon">Werbung wird bald gezeigt! Möchten Sie es im Voraus deaktivieren?</string>
     <string name="need_login_for_level_up_content">Um an der Bewertung von Agents teilzunehmen, müssen Sie autorisieren.</string>
 
+    <!---->
+    <string name="leaderboard_appodeal_description">Keine High-Level-Verbindungen in den Fonds? Versuchen Sie, Kompromisse Material und bewegen sich in der Rangliste.</string>
 </resources>
