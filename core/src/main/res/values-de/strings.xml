@@ -329,4 +329,6 @@ Vielen Dank für die Nutzung unserer App!]]></string>
     <string name="ads_will_be_shown_soon">Werbung wird bald gezeigt! Möchten Sie es im Voraus deaktivieren?</string>
     <string name="need_login_for_level_up_content">Um an der Bewertung von Agents teilzunehmen, müssen Sie autorisieren.</string>
 
+    <!---->
+    <string name="leaderboard_appodeal_description">Keine High-Level-Verbindungen in den Fonds? Versuchen Sie, Kompromisse Material und bewegen sich in der Rangliste.</string>
 </resources>
