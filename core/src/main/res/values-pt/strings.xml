@@ -285,6 +285,54 @@
 	<br/><br/>
 	Obrigado por usar a nossa aplicação!]]></string>
 
+    <string name="subs_main_text">Aqui você pode obter a permissão especial da Fundação e ajudar os desenvolvedores. Nosso aplicativo tem <![CDATA[<a href="https://github.com/mohaxspb/ScpFoundationCore"> Open Source</a>]]> e  <![CDATA[<a href="https://www.youtube.com/watch?v=5RuwbKvLDs0">cool Cloud Sync</a>]]>. Se você gosta de nosso aplicativo, você pode apoiar os desenvolvedores. Todos os fundos vão manter o projeto. Também você tem a oportunidade de apoiar-nos apenas olhando para o anúncio. Nós estaremos contentes com qualquer doação. Obrigado!</string>
+    <string name="subs_free_actions_title">Desativar anúncios de graça!</string>
+    <string name="subs_free_actions_card_title">Apoiar-nos</string>
+    <string name="subs_free_actions_card_description">Desativar a publicidade, aumentar o limite de artigos e ganhar pontos de graça!</string>
+    <string name="subs_description"> Desativar anúncios, sincronização automática de nuvem, download ilimitado de artigos e fontes atmosféricas.</string>
+    <string name="subs_level_5_gain">Pegue o nível 5</string>
+    <string name="subs_no_ads_title">Protocolo "silêncio"</string>
+    <string name="subs_no_ads_description">Lançamento do meme agente de bloqueio qualquer manifestação do agente publicitário na aplicação</string>
+    <string name="subs_1_month_title">Assistente</string>
+    <string name="subs_3_month_title">Associado de pesquisa Júnior</string>
+    <string name="subs_6_month_title">Assistente de pesquisa</string>
+    <string name="subs_12_month_title">Cientista sênior da pesquisa </string>
+    <string name="subs_full_description">Desativar anúncios, sincronização automática de nuvem, download ilimitado de artigos e fontes atmosféricas.</string>
+    <string name="subs_no_ads_label">Mês sem publicidade </string>
+    <string name="subs_1_month_label">Versão estendida por um mês</string>
+    <string name="subs_3_month_label">Versão estendida por 3 meses</string>
+    <string name="subs_6_month_label">Versão estendida por meio ano</string>
+    <string name="subs_12_month_label">Versão estendida por um ano</string>
+    <string name="subs_cur_label">Seu status atual</string>
+    <string name="subs_level_5_label">Pegue o nível 5</string>
+    <string name="subs_cur_empty_title">██████ - não nomeado</string>
+    <string name="subs_level_5_title">Nível 5</string>
+    <string name="subs_percent">-%s%%</string>
+    <string name="subs_leaderboard_activity_title">Leaderboard</string>
+    <string name="subs_activity_title">Suporte ao desenvolvedor</string>
+    <string name="subs_level_5_description">10000 pontos, aumento de rating e aumento do limite de artigos offline em 200 artigos</string>
+    <string name="free_ads_invite_title">Convide seus amigos para o aplicativo</string>
+    <string name="free_ads_rewarded_video_title">Assista ao vídeo</string>
+    <string name="free_ads_auth_title">Autorizar</string>
+    <string name="free_ads_simple_subtitle">E nós vamos desligar o anúncio por %1$d horas e dar-lhe %2$d pontos</string>
+    <string name="free_ads_app_install_label">Coloque nossos outros aplicativos</string>
+    <string name="free_ads_app_install_title">Instalar, e vamos desligar o anúncio por %1$d horas e dar-lhe %2$d pontos</string>
+    <string name="free_ads_vk_group_label">Junte-se ao nosso grupo em vc</string>
+    <string name="free_ads_vk_group_title">Junte-se, e nós vamos desligar o anúncio por %1$d horas e dar-lhe %2$d pontos</string>
+    <string name="free_ads_activity_title">Desligue os anúncios</string>
+    <string name="leaderboard_activity_title">Agentes de classificação</string>
+    <string name="leaderboard_inapp_title">Aumenta o ranking </string>
+    <string name="leaderboard_inapp_description">Use o truque e suas conexões no fundo para contornar os colegas e subir no ranking</string>
+    <string name="leaderboard_place">%d Lugar</string>
+    <string name="leaderboard_inapp_label">Aumento da classificação (+ 10000 pontos)</string>
+    <string name="leaderboard_inapp_label_undefined">Aumento da classificação (+%d pontos)</string>
+    <string name="leaderboard_articles_read">%d Artigos lidos</string>
+    <string name="score_num">%d pontos</string>
+    <string name="level_num">%d Nível</string>
+    <string name="drawer_item_leaderboard">Agentes de classificação</string>
+    <string name="ads_will_be_shown_soon">A publicidade será exibida em breve! Deseja desativá-lo com antecedência?</string>
+    <string name="need_login_for_level_up_content">Para participar da classificação de agentes, você precisa autorizar</string>
+
     <!---->
     <string name="leaderboard_appodeal_description">Nenhuma conexão de alto nível no fundo? Tente encontrar material comprometedor e subir no ranking.</string>
 </resources>
