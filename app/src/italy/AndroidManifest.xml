@@ -31,6 +31,17 @@
         tools:ignore="GoogleAppIndexingWarning,HardcodedDebugMode"
         tools:replace="android:supportsRtl,android:allowBackup">
 
+        <!--to share internal files-->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="ru.dante.scpfoundation.it.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+
         <activity
             android:name="ru.kuchanov.scpcore.ui.activity.MainActivity"
             tools:node="replace">
