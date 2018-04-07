@@ -163,7 +163,8 @@ dependencies {
     //vk
     api 'com.vk:androidsdk:1.6.9'
     //facebook
-    api 'com.facebook.android:facebook-android-sdk:4.27.0'
+    api 'com.facebook.android:facebook-core:4.31.0'
+    api 'com.facebook.android:facebook-login:4.31.0'
     //fonts
     api 'uk.co.chrisjenx:calligraphy:2.3.0'
     //firebase

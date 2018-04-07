@@ -253,7 +253,22 @@ class LeaderboardPresenter(
         if (user == null) {
             return null
         }
-        val userInFirebase = users.find { leaderboardUser -> leaderboardUser.uid == user.uid } ?: return null
+        var userInFirebase = users.find { leaderboardUser -> leaderboardUser.uid == user.uid }
+
+        if (userInFirebase == null) {
+            val level = levelJson.getLevelForScore(user.score) ?: return null
+            userInFirebase = LeaderboardUser(
+                user.uid,
+                user.fullName,
+                user.avatar,
+                user.score,
+                LeaderboardUser.READ_ARTICLES_COUNT_NONE,
+                levelNum = level.id,
+                scoreToNextLevel = levelJson.scoreToNextLevel(user.score, level),
+                curLevelScore = user.score - level.score
+            )
+        }
+
         //set score from realm
         userInFirebase.score = user.score
         val level = levelJson.levels[userInFirebase.levelNum]
@@ -271,6 +286,8 @@ class LeaderboardPresenter(
     override fun onUserChanged(user: User?) {
         super.onUserChanged(user)
         myUser = user
+        Timber.d("onUserChanged: $user")
+        Timber.d("onUserChanged: $myUser")
         if (myUser == null) {
             view.showUser(null)
         } else {

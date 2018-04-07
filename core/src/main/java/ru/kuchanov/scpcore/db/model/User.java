@@ -24,15 +24,15 @@ public class User extends RealmObject {
 
     public int score;
 
-    public RealmList<SocialProviderModel> socialProviders;
+    private RealmList<SocialProviderModel> socialProviders;
 
     public User(
-            String uid,
-            String fullName,
-            String avatar,
-            String email,
-            int score,
-            RealmList<SocialProviderModel> socialProviders
+            final String uid,
+            final String fullName,
+            final String avatar,
+            final String email,
+            final int score,
+            final RealmList<SocialProviderModel> socialProviders
     ) {
         this.uid = uid;
         this.fullName = fullName;
