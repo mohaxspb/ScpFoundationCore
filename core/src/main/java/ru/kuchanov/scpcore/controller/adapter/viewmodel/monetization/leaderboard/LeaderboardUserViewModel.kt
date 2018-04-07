@@ -11,9 +11,13 @@ import ru.kuchanov.scpcore.db.model.LeaderboardUser
  * for ScpCore
  */
 data class LeaderboardUserViewModel(
-        val position: Int,
-        val user: LeaderboardUser,
-        val levelViewModel: LevelViewModel,
-        @ColorRes val bgColor: Int = R.color.freeAdsBackgroundColor,
-        @ColorRes val medalTint:Int = android.R.color.transparent
-) : MyListItem
+    val position: Int,
+    val user: LeaderboardUser,
+    val levelViewModel: LevelViewModel,
+    @ColorRes val bgColor: Int = R.color.freeAdsBackgroundColor,
+    @ColorRes val medalTint: Int = android.R.color.transparent
+) : MyListItem {
+    companion object {
+        const val POSITION_NONE = -1;
+    }
+}

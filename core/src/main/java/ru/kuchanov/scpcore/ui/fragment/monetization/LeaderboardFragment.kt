@@ -28,6 +28,7 @@ import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.leaderboard.
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.subscriptions.InAppDelegate
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LeaderboardUserViewModel
+import ru.kuchanov.scpcore.db.model.LeaderboardUser
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
 import ru.kuchanov.scpcore.mvp.presenter.monetization.LeaderboardPresenter
@@ -161,7 +162,11 @@ class LeaderboardFragment :
         val user = myUser.user
         Timber.d("user: $user")
         with(userDataView) {
-            chartPlaceTextView.text = (myUser.position + 1).toString()
+            chartPlaceTextView.text = if (myUser.position == LeaderboardUserViewModel.POSITION_NONE) {
+                "N/A"
+            } else {
+                (myUser.position + 1).toString()
+            }
 
             Glide.with(context)
                     .load(user.avatar)
@@ -177,7 +182,12 @@ class LeaderboardFragment :
                     })
 
             nameTextView.text = user.fullName
-            readArticlesCountTextView.text = context.getString(R.string.leaderboard_articles_read, user.numOfReadArticles)
+            readArticlesCountTextView.text = if (user.numOfReadArticles == LeaderboardUser.READ_ARTICLES_COUNT_NONE) {
+                "N/A"
+            } else {
+                context.getString(R.string.leaderboard_articles_read, user.numOfReadArticles)
+            }
+
             userScoreTextView.text = user.score.toString()
 
             val levelViewModel = myUser.levelViewModel
