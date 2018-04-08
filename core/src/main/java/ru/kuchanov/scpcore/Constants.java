@@ -22,18 +22,15 @@ public interface Constants {
     long POST_DELAYED_MILLIS = 500;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({NativeAdsSource.ALL, NativeAdsSource.AD_MOB, NativeAdsSource.APPODEAL})
+    @IntDef({NativeAdsSource.ALL, NativeAdsSource.APPODEAL})
     @interface NativeAdsSource {
         int ALL = 0;
-        int AD_MOB = 1;
         int APPODEAL = 2;
     }
 
     interface Api {
         int ZERO_OFFSET = 0;
 
-        String MOST_RECENT_URL = "/most-recently-created/p/";
-        String MOST_RATED_URL = "/top-rated-pages/p/";
         /**
          * first arg is searchQuery with SPACEs replaced by "%20"
          * second - num of page
@@ -105,7 +102,7 @@ public interface Constants {
             @DrawableRes
             private final int icon;
 
-            SocialProvider(int title, int icon) {
+            SocialProvider(final int title, final int icon) {
                 this.title = title;
                 this.icon = icon;
             }
