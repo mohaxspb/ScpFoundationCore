@@ -2,7 +2,7 @@ package ru.kuchanov.scpcore.ui.fragment.monetization
 
 import android.graphics.Bitmap
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
-import android.support.v4.widget.Space
+import android.widget.Space
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SimpleItemAnimator
