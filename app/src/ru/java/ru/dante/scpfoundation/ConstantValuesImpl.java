@@ -1,6 +1,6 @@
 package ru.dante.scpfoundation;
 
-import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import rx.exceptions.OnErrorNotImplementedException;
 

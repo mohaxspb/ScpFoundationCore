@@ -1,26 +1,26 @@
 package ru.kuchanov.scpcore.ui.util;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import android.content.Context;
 import android.os.Bundle;
-
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.kuchanov.scp.downloads.ApiClientModel;
-import ru.kuchanov.scp.downloads.ConstantValues;
-import ru.kuchanov.scp.downloads.DbProviderFactoryModel;
-import ru.kuchanov.scp.downloads.DownloadEntry;
-import ru.kuchanov.scp.downloads.MyPreferenceManagerModel;
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
+import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.downloads.DownloadEntry;
+import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.service.DownloadAllServiceDefault;
-import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import ru.kuchanov.scpcore.ui.activity.BaseActivity;
+import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -30,12 +30,12 @@ import timber.log.Timber;
  * <p>
  * for ScpFoundationRu
  */
-public class DialogUtilsDefault extends ru.kuchanov.scp.downloads.DialogUtils<Article> {
+public class DialogUtilsDefault extends ru.kuchanov.scpcore.downloads.DialogUtils {
 
     public DialogUtilsDefault(
-            final MyPreferenceManagerModel preferenceManager,
-            final DbProviderFactoryModel dbProviderFactory,
-            final ApiClientModel<Article> apiClient,
+            final MyPreferenceManager preferenceManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient,
             final ConstantValues constantValues,
             final Class clazz
     ) {

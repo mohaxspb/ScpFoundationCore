@@ -5,11 +5,7 @@ import javax.inject.Inject;
 import ru.dante.scpfoundation.MyApplicationImpl;
 import ru.dante.scpfoundation.R;
 import ru.dante.scpfoundation.di.AppComponentImpl;
-import ru.kuchanov.scp.downloads.ApiClientModel;
-import ru.kuchanov.scp.downloads.ConstantValues;
-import ru.kuchanov.scp.downloads.DbProviderModel;
-import ru.kuchanov.scp.downloads.DownloadAllService;
-import ru.kuchanov.scp.downloads.DownloadEntry;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
@@ -54,12 +50,12 @@ public class DownloadAllServiceImpl extends DownloadAllService<Article> {
     }
 
     @Override
-    public ApiClientModel<Article> getApiClient() {
+    public ApiClient getApiClient() {
         return mApiClient;
     }
 
     @Override
-    protected DbProviderModel<Article> getDbProviderModel() {
+    protected DbProvider getDbProviderModel() {
         return mDbProviderFactory.getDbProvider();
     }
 }

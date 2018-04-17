@@ -4,10 +4,9 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
-import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.service.DownloadAllServiceDefault;
@@ -28,55 +27,55 @@ public class HelpersModule {
     @Provides
 //    @Singleton
     DialogUtils providesDialogUtils(
-             MyPreferenceManager preferenceManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient
+             final MyPreferenceManager preferenceManager,
+             final DbProviderFactory dbProviderFactory,
+             final ApiClient apiClient
     ) {
         return new DialogUtils(preferenceManager, dbProviderFactory, apiClient);
     }
 
     @Provides
     @Singleton
-    ru.kuchanov.scp.downloads.DialogUtils<Article> providesDownloadAllDialogUtils(
-             MyPreferenceManager preferenceManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient,
-             ConstantValues constantValues
+    ru.kuchanov.scpcore.downloads.DialogUtils providesDownloadAllDialogUtils(
+             final MyPreferenceManager preferenceManager,
+             final DbProviderFactory dbProviderFactory,
+             final ApiClient apiClient,
+             final ConstantValues constantValues
     ) {
         return getDownloadAllDialogUtils(preferenceManager, dbProviderFactory, apiClient, constantValues);
     }
 
-    protected ru.kuchanov.scp.downloads.DialogUtils<Article> getDownloadAllDialogUtils(
-             MyPreferenceManager preferenceManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient,
-             ConstantValues constantValues
+    protected ru.kuchanov.scpcore.downloads.DialogUtils getDownloadAllDialogUtils(
+             final MyPreferenceManager preferenceManager,
+             final DbProviderFactory dbProviderFactory,
+             final ApiClient apiClient,
+             final ConstantValues constantValues
     ) {
         return new DialogUtilsDefault(preferenceManager, dbProviderFactory, apiClient, constantValues, DownloadAllServiceDefault.class);
     }
 
     @Provides
     @Singleton
-    SetTextViewHTML providesSetTextViewHTML( ConstantValues constantValues) {
+    SetTextViewHTML providesSetTextViewHTML( final ConstantValues constantValues) {
         return new SetTextViewHTML(constantValues);
     }
 
     @Provides
     @Singleton
-    MaterialsActivity.MaterialClickListener providesMaterialClickListener( ConstantValues constantValues) {
+    MaterialsActivity.MaterialClickListener providesMaterialClickListener( final ConstantValues constantValues) {
         return getMaterialClickListenerImpl(constantValues);
     }
 
-    protected MaterialsActivity.MaterialClickListener getMaterialClickListenerImpl( ConstantValues constantValues) {
+    protected MaterialsActivity.MaterialClickListener getMaterialClickListenerImpl( final ConstantValues constantValues) {
         return new MaterialClickListenerDefault(constantValues);
     }
 
     @Provides
     @Singleton
     InAppHelper providesInappHelper(
-             MyPreferenceManager preferenceManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient
+             final MyPreferenceManager preferenceManager,
+             final DbProviderFactory dbProviderFactory,
+             final ApiClient apiClient
     ) {
         return new InAppHelper(preferenceManager, dbProviderFactory, apiClient);
     }

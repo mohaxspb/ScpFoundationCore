@@ -1,17 +1,5 @@
 package ru.kuchanov.scpcore.api;
 
-import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.text.TextUtils;
-import android.util.Pair;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-import com.facebook.Profile;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,6 +14,13 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.facebook.Profile;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
@@ -46,6 +41,12 @@ import org.jsoup.nodes.Node;
 import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
 
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.util.Pair;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,11 +60,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
-import ru.kuchanov.scp.downloads.ApiClientModel;
-import ru.kuchanov.scp.downloads.ConstantValues;
-import ru.kuchanov.scp.downloads.ScpParseException;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.BuildConfig;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.error.ScpException;
@@ -83,6 +82,7 @@ import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.db.model.SocialProviderModel;
 import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.db.model.VkImage;
+import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
@@ -98,17 +98,21 @@ import timber.log.Timber;
  * <p>
  * for scp_ru
  */
-public class ApiClient implements ApiClientModel<Article> {
+public class ApiClient {
 
     private static final String REPLACEMENT_HASH = "____";
+
     private static final String REPLACEMENT_SLASH = "_REPLACEMENT_SLASH_";
 
     @SuppressWarnings("unused")
     protected MyPreferenceManager mPreferencesManager;
+
     protected OkHttpClient mOkHttpClient;
+
     protected Gson mGson;
 
     private final VpsServer mVpsServer;
+
     private final ScpServer mScpServer;
 
     protected ConstantValues mConstantValues;
@@ -165,14 +169,13 @@ public class ApiClient implements ApiClientModel<Article> {
 
                 subscriber.onNext(randomURL);
                 subscriber.onCompleted();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 Timber.e(e);
                 subscriber.onError(e);
             }
         }));
     }
 
-    @Override
     public Observable<Integer> getRecentArticlesPageCountObservable() {
         return bindWithUtils(Observable.<Integer>unsafeCreate((Subscriber<? super Integer> subscriber) -> {
             final Request request = new Request.Builder()
@@ -215,7 +218,6 @@ public class ApiClient implements ApiClientModel<Article> {
         return getRecentArticlesForPage(page);
     }
 
-    @Override
     public Observable<List<Article>> getRecentArticlesForPage(final int page) {
         return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
             final Request request = new Request.Builder()
@@ -670,7 +672,7 @@ public class ApiClient implements ApiClientModel<Article> {
 
                 //also fix scp-3000, where image and spoiler are in div tag, fucking shit! Web monkeys, ARGH!!!
                 if (!element.children().isEmpty() && element.children().size() == 2
-                        && element.child(0).tagName().equals("img") && element.child(1).className().equals("collapsible-block")) {
+                    && element.child(0).tagName().equals("img") && element.child(1).className().equals("collapsible-block")) {
                     element.before(element.childNode(0));
                     element.after(element.childNode(1));
                     element.remove();
@@ -700,8 +702,8 @@ public class ApiClient implements ApiClientModel<Article> {
                 //replace all links to not translated articles
                 if (a.className().equals("newpage")) {
                     a.attr("href", Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL
-                            + Constants.Api.NOT_TRANSLATED_ARTICLE_URL_DELIMITER
-                            + a.attr("href")
+                                   + Constants.Api.NOT_TRANSLATED_ARTICLE_URL_DELIMITER
+                                   + a.attr("href")
                     );
                 } else if (a.attr("href").startsWith("/")) {
                     a.attr("href", mConstantValues.getBaseApiUrl() + a.attr("href"));
@@ -923,33 +925,32 @@ public class ApiClient implements ApiClientModel<Article> {
 
                 doc = Jsoup.parse(allHtml);
 
-                Element h2withIdToc1 = doc.getElementById("toc1");
+                final Element h2withIdToc1 = doc.getElementById("toc1");
                 h2withIdToc1.remove();
 
-                Elements allh2Tags = doc.getElementsByTag("h2");
-                for (Element h2Tag : allh2Tags) {
-                    Element brTag = new Element(Tag.valueOf("br"), "");
+                final Elements allh2Tags = doc.getElementsByTag("h2");
+                for (final Element h2Tag : allh2Tags) {
+                    final Element brTag = new Element(Tag.valueOf("br"), "");
                     h2Tag.replaceWith(brTag);
                 }
-                Elements allP = doc.getElementsByTag("p");
+                final Elements allP = doc.getElementsByTag("p");
                 allP.remove();
-                Elements allUl = doc.getElementsByTag("ul");
+                final Elements allUl = doc.getElementsByTag("ul");
                 allUl.remove();
 
-                List<Article> articles = new ArrayList<>();
+                final List<Article> articles = new ArrayList<>();
 
-                String allArticles = doc.getElementsByTag("body").first().html();
-                String[] arrayOfArticles = allArticles.split("<br>");
-                for (String arrayItem : arrayOfArticles) {
+                final String allArticles = doc.getElementsByTag("body").first().html();
+                final String[] arrayOfArticles = allArticles.split("<br>");
+                for (final String arrayItem : arrayOfArticles) {
                     doc = Jsoup.parse(arrayItem);
-                    String imageURL = doc.getElementsByTag("img").first().attr("src");
-                    String url = mConstantValues.getBaseApiUrl() + doc.getElementsByTag("a").first().attr("href");
-                    String title = doc.text();
+                    final String imageURL = doc.getElementsByTag("img").first().attr("src");
+                    final String url = mConstantValues.getBaseApiUrl() + doc.getElementsByTag("a").first().attr("href");
+                    final String title = doc.text();
 
-                    @Article.ObjectType
-                    String type = getObjectTypeByImageUrl(imageURL);
+                    @Article.ObjectType final String type = getObjectTypeByImageUrl(imageURL);
 
-                    Article article = new Article();
+                    final Article article = new Article();
                     article.url = url;
                     article.type = type;
                     article.title = title;
@@ -958,7 +959,7 @@ public class ApiClient implements ApiClientModel<Article> {
                 //parse end
                 subscriber.onNext(articles);
                 subscriber.onCompleted();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
@@ -967,27 +968,27 @@ public class ApiClient implements ApiClientModel<Article> {
 
     public Observable<List<Article>> getMaterialsJokesArticles() {
         return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
-            Request request = new Request.Builder()
+            final Request request = new Request.Builder()
                     .url(mConstantValues.getJokes())
                     .build();
 
-            String responseBody;
+            final String responseBody;
             try {
-                Response response = mOkHttpClient.newCall(request).execute();
-                ResponseBody body = response.body();
+                final Response response = mOkHttpClient.newCall(request).execute();
+                final ResponseBody body = response.body();
                 if (body != null) {
                     responseBody = body.string();
                 } else {
                     subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection)));
                 return;
             }
             try {
                 Document doc = Jsoup.parse(responseBody);
-                Element pageContent = doc.getElementById("page-content");
+                final Element pageContent = doc.getElementById("page-content");
                 if (pageContent == null) {
                     subscriber.onError(new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
@@ -995,17 +996,17 @@ public class ApiClient implements ApiClientModel<Article> {
 
                 //now we will remove all html code before tag h2,with id toc1
                 String allHtml = pageContent.html();
-                int indexOfh2WithIdToc1 = allHtml.indexOf("<h2 id=\"toc1\">");
+                final int indexOfh2WithIdToc1 = allHtml.indexOf("<h2 id=\"toc1\">");
                 allHtml = allHtml.substring(indexOfh2WithIdToc1);
 
                 doc = Jsoup.parse(allHtml);
 
-                Element h2withIdToc1 = doc.getElementById("toc1");
+                final Element h2withIdToc1 = doc.getElementById("toc1");
                 h2withIdToc1.remove();
 
-                Elements allh2Tags = doc.getElementsByTag("h2");
-                for (Element h2Tag : allh2Tags) {
-                    Element brTag = new Element(Tag.valueOf("br"), "");
+                final Elements allh2Tags = doc.getElementsByTag("h2");
+                for (final Element h2Tag : allh2Tags) {
+                    final Element brTag = new Element(Tag.valueOf("br"), "");
                     h2Tag.replaceWith(brTag);
                 }
 
@@ -1042,21 +1043,21 @@ public class ApiClient implements ApiClientModel<Article> {
         }));
     }
 
-    public Observable<Boolean> joinVkGroup(String groupId) {
+    public Observable<Boolean> joinVkGroup(final String groupId) {
         Timber.d("joinVkGroup with groupId: %s", groupId);
         return bindWithUtils(Observable.<Boolean>unsafeCreate(subscriber -> {
-                    VKParameters parameters = VKParameters.from(
+                    final VKParameters parameters = VKParameters.from(
                             VKApiConst.GROUP_ID, groupId,
                             VKApiConst.ACCESS_TOKEN, VKAccessToken.currentToken(),
                             VKApiConst.VERSION, BuildConfig.VK_API_VERSION
                     );
 
-                    VKRequest vkRequest = VKApi.groups().join(parameters);
+                    final VKRequest vkRequest = VKApi.groups().join(parameters);
                     vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
                         @Override
-                        public void onComplete(VKResponse response) {
+                        public void onComplete(final VKResponse response) {
                             Timber.d("onComplete: %s", response.responseString);
-                            VkGroupJoinResponse vkGroupJoinResponse = mGson
+                            final VkGroupJoinResponse vkGroupJoinResponse = mGson
                                     .fromJson(response.responseString, VkGroupJoinResponse.class);
                             Timber.d("vkGroupJoinResponse: %s", vkGroupJoinResponse);
                             subscriber.onNext(vkGroupJoinResponse.response == 1);
@@ -1064,7 +1065,7 @@ public class ApiClient implements ApiClientModel<Article> {
                         }
 
                         @Override
-                        public void onError(VKError error) {
+                        public void onError(final VKError error) {
                             Timber.d("onError: %s", error);
                             subscriber.onError(new Throwable(error.toString()));
                         }
@@ -1074,9 +1075,8 @@ public class ApiClient implements ApiClientModel<Article> {
     }
 
     @Article.ObjectType
-    private String getObjectTypeByImageUrl(String imageURL) {
-        @Article.ObjectType
-        String type;
+    private String getObjectTypeByImageUrl(final String imageURL) {
+        @Article.ObjectType final String type;
 
         switch (imageURL) {
             case "http://scp-ru.wdfiles.com/local--files/scp-list-4/na.png":
@@ -1164,28 +1164,28 @@ public class ApiClient implements ApiClientModel<Article> {
     public Observable<List<VkImage>> getGallery() {
         Timber.d("getGallery");
         return bindWithUtils(Observable.unsafeCreate(subscriber -> {
-                    VKParameters parameters = VKParameters.from(
+                    final VKParameters parameters = VKParameters.from(
                             VKApiConst.OWNER_ID, Constants.Api.GALLERY_VK_GROUP_ID,
                             VKApiConst.ALBUM_ID, Constants.Api.GALLERY_VK_ALBUM_ID,
                             VKApiConst.VERSION, BuildConfig.VK_API_VERSION
                     );
 
-                    VKRequest vkRequest = new VKRequest("photos.get", parameters);
+                    final VKRequest vkRequest = new VKRequest("photos.get", parameters);
                     vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
                         @Override
-                        public void onComplete(VKResponse response) {
+                        public void onComplete(final VKResponse response) {
                             Timber.d("onComplete");
 //                            Timber.d("onComplete: %s", response.responseString);
-                            VkGalleryResponse attachments = mGson
+                            final VkGalleryResponse attachments = mGson
                                     .fromJson(response.responseString, VkGalleryResponse.class);
 //                            Timber.d("attachments: %s", attachments);
-                            List<VkImage> images = convertAttachmentsToImage(attachments.response.items);
+                            final List<VkImage> images = convertAttachmentsToImage(attachments.response.items);
                             subscriber.onNext(images);
                             subscriber.onCompleted();
                         }
 
                         @Override
-                        public void onError(VKError error) {
+                        public void onError(final VKError error) {
                             Timber.d("onError: %s", error);
                             subscriber.onError(new Throwable(error.toString()));
                         }
@@ -1194,15 +1194,15 @@ public class ApiClient implements ApiClientModel<Article> {
         );
     }
 
-    private List<VkImage> convertAttachmentsToImage(List<VKApiPhoto> attachments) {
-        List<VkImage> images = new ArrayList<>();
-        for (VKAttachments.VKApiAttachment attachment : attachments) {
+    private List<VkImage> convertAttachmentsToImage(final List<VKApiPhoto> attachments) {
+        final List<VkImage> images = new ArrayList<>();
+        for (final VKAttachments.VKApiAttachment attachment : attachments) {
             if (attachment.getId() == 456239049) {
                 continue;
             }
-            VKApiPhoto vkApiPhoto = (VKApiPhoto) attachment;
+            final VKApiPhoto vkApiPhoto = (VKApiPhoto) attachment;
 
-            VkImage image = new VkImage();
+            final VkImage image = new VkImage();
             image.id = vkApiPhoto.id;
             image.ownerId = vkApiPhoto.owner_id;
             image.date = vkApiPhoto.date;
@@ -1248,9 +1248,9 @@ public class ApiClient implements ApiClientModel<Article> {
     private Observable<VKApiUser> getUserDataFromVk() {
         return Observable.unsafeCreate(subscriber -> VKApi.users().get(VKParameters.from(VKApiConst.FIELDS, "photo_200")).executeWithListener(new VKRequest.VKRequestListener() {
             @Override
-            public void onComplete(VKResponse response) {
+            public void onComplete(final VKResponse response) {
                 //noinspection unchecked
-                VKApiUser vkApiUser = ((VKList<VKApiUser>) response.parsedModel).get(0);
+                final VKApiUser vkApiUser = ((VKList<VKApiUser>) response.parsedModel).get(0);
                 Timber.d("User name %s %s", vkApiUser.first_name, vkApiUser.last_name);
 
                 subscriber.onNext(vkApiUser);
@@ -1258,13 +1258,13 @@ public class ApiClient implements ApiClientModel<Article> {
             }
 
             @Override
-            public void onError(VKError error) {
+            public void onError(final VKError error) {
                 subscriber.onError(error.httpError);
             }
         }));
     }
 
-    private Observable<FirebaseUser> authWithCustomToken(String token) {
+    private Observable<FirebaseUser> authWithCustomToken(final String token) {
         return Observable.unsafeCreate(subscriber ->
                 FirebaseAuth.getInstance().signInWithCustomToken(token).addOnCompleteListener(task -> {
                     Timber.d("signInWithCustomToken:onComplete: %s", task.isSuccessful());
@@ -1283,31 +1283,31 @@ public class ApiClient implements ApiClientModel<Article> {
 
     //todo use it via retrofit and update server to return JSON with request result
     public Observable<FirebaseUser> getAuthInFirebaseWithSocialProviderObservable(
-            Constants.Firebase.SocialProvider provider,
-            String id
+            final Constants.Firebase.SocialProvider provider,
+            final String id
     ) {
-        Observable<FirebaseUser> authToFirebaseObservable;
+        final Observable<FirebaseUser> authToFirebaseObservable;
         switch (provider) {
             case VK:
                 authToFirebaseObservable = Observable.<String>unsafeCreate(subscriber -> {
                     String url = BuildConfig.TOOLS_API_URL + "scp-ru-1/MyServlet";
                     String params = "?provider=vk&token=" +
-                            id +
-                            "&email=" + VKAccessToken.currentToken().email +
-                            "&id=" + VKAccessToken.currentToken().userId;
+                                    id +
+                                    "&email=" + VKAccessToken.currentToken().email +
+                                    "&id=" + VKAccessToken.currentToken().userId;
                     Request request = new Request.Builder()
                             .url(url + params)
                             .build();
                     mOkHttpClient.newCall(request).enqueue(new Callback() {
                         @Override
-                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
                             subscriber.onError(e);
                         }
 
                         @Override
-                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                            String responseBody;
-                            ResponseBody body = response.body();
+                        public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
+                            final String responseBody;
+                            final ResponseBody body = response.body();
                             if (body != null) {
                                 responseBody = body.string();
                             } else {
@@ -1320,20 +1320,20 @@ public class ApiClient implements ApiClientModel<Article> {
                     });
                 })
                         .flatMap(response -> TextUtils.isEmpty(response) ?
-                                Observable.error(new IllegalArgumentException("empty token")) :
-                                Observable.just(response))
+                                             Observable.error(new IllegalArgumentException("empty token")) :
+                                             Observable.just(response))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .flatMap(this::authWithCustomToken);
                 break;
             case GOOGLE:
                 authToFirebaseObservable = Observable.unsafeCreate(subscriber -> {
-                    AuthCredential credential = GoogleAuthProvider.getCredential(id, null);
+                    final AuthCredential credential = GoogleAuthProvider.getCredential(id, null);
                     FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Timber.d("signInWithCredential:success");
-                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                             subscriber.onNext(user);
                             subscriber.onCompleted();
                         } else {
@@ -1346,13 +1346,13 @@ public class ApiClient implements ApiClientModel<Article> {
                 break;
             case FACEBOOK:
                 authToFirebaseObservable = Observable.unsafeCreate(subscriber -> {
-                    AuthCredential credential = FacebookAuthProvider.getCredential(id);
+                    final AuthCredential credential = FacebookAuthProvider.getCredential(id);
                     FirebaseAuth.getInstance().signInWithCredential(credential)
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
                                     // Sign in success, update UI with the signed-in user's information
                                     Timber.d("signInWithCredential:success");
-                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                     subscriber.onNext(user);
                                     subscriber.onCompleted();
                                 } else {
@@ -1371,22 +1371,22 @@ public class ApiClient implements ApiClientModel<Article> {
 
     public Observable<FirebaseObjectUser> getUserObjectFromFirebaseObservable() {
         return Observable.unsafeCreate(subscriber -> {
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser != null) {
-                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
                 firebaseDatabase.getReference()
                         .child(Constants.Firebase.Refs.USERS)
                         .child(firebaseUser.getUid())
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                FirebaseObjectUser userFromFireBase = dataSnapshot.getValue(FirebaseObjectUser.class);
+                            public void onDataChange(final DataSnapshot dataSnapshot) {
+                                final FirebaseObjectUser userFromFireBase = dataSnapshot.getValue(FirebaseObjectUser.class);
                                 subscriber.onNext(userFromFireBase);
                                 subscriber.onCompleted();
                             }
 
                             @Override
-                            public void onCancelled(DatabaseError databaseError) {
+                            public void onCancelled(final DatabaseError databaseError) {
                                 Timber.e(databaseError.toException(), "onCancelled");
                                 subscriber.onError(databaseError.toException());
                             }
@@ -1705,7 +1705,7 @@ public class ApiClient implements ApiClientModel<Article> {
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(final DatabaseError databaseError) {
                     subscriber.onError(databaseError.toException());
                 }
             });

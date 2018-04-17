@@ -1,6 +1,6 @@
 package ru.dante.scpfoundation;
 
-import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.ConstantValues;
 
 /**
  * Created by mohax on 15.07.2017.

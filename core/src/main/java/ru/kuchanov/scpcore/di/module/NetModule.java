@@ -32,7 +32,7 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.ConstantValuesDefault;
 import ru.kuchanov.scpcore.api.ApiClient;

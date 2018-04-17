@@ -17,7 +17,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;

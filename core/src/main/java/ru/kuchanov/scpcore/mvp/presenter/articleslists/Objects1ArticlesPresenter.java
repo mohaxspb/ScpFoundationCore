@@ -2,7 +2,7 @@ package ru.kuchanov.scpcore.mvp.presenter.articleslists;
 
 import android.support.annotation.NonNull;
 
-import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;

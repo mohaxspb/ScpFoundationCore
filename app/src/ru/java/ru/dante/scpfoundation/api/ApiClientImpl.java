@@ -20,7 +20,7 @@ import retrofit2.Retrofit;
 import ru.dante.scpfoundation.api.model.response.RandomArticleResponse;
 import ru.dante.scpfoundation.api.service.ScpRuApi;
 import ru.dante.scpfoundation.di.AppComponentImpl;
-import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;

@@ -12,7 +12,6 @@ import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
 
-import ru.kuchanov.scp.downloads.MyPreferenceManagerModel;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
@@ -37,7 +36,7 @@ import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.REWARDED_V
  * <p>
  * for scp_ru
  */
-public class MyPreferenceManager implements MyPreferenceManagerModel {
+public class MyPreferenceManager {
 
     /**
      * check if user joined app vk group each 1 day
@@ -125,7 +124,6 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         mPreferences.edit().putBoolean(Keys.NIGHT_MODE, isInNightMode).apply();
     }
 
-    @Override
     public boolean isNightMode() {
         return mPreferences.getBoolean(Keys.NIGHT_MODE, false);
     }
@@ -482,11 +480,8 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         mPreferences.edit().putBoolean(Keys.HAS_SUBSCRIPTION, hasSubscription).apply();
     }
 
-    @Override
     public boolean isHasSubscription() {
         return mPreferences.getBoolean(Keys.HAS_SUBSCRIPTION, false);
-////       FIX ME test
-//        return true;
     }
 
     /**
@@ -549,17 +544,14 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
     //subscriptions end
 
-    @Override
     public boolean isDownloadAllEnabledForFree() {
         return FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_ALL_ENABLED_FOR_FREE);
     }
 
-    @Override
     public int getScorePerArt() {
         return (int) FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_SCORE_PER_ARTICLE);
     }
 
-    @Override
     public int getFreeOfflineLimit() {
         return (int) FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_FREE_ARTICLES_LIMIT);
     }

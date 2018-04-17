@@ -84,8 +84,8 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.BuildConfig;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
@@ -185,7 +185,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     protected DialogUtils mDialogUtils;
 
     @Inject
-    protected ru.kuchanov.scp.downloads.DialogUtils<Article> mDownloadAllChooser;
+    protected ru.kuchanov.scpcore.downloads.DialogUtils mDownloadAllChooser;
 
     @Inject
     protected InAppHelper mInAppHelper;
