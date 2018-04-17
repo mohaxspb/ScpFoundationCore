@@ -14,13 +14,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import ru.kuchanov.scp.downloads.ApiClientModel;
-import ru.kuchanov.scp.downloads.DbProviderFactoryModel;
-import ru.kuchanov.scp.downloads.MyPreferenceManagerModel;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
+import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.api.model.remoteconfig.AppLangVersionsJson;
-import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.db.DbProviderFactory;
+import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.ui.activity.BaseActivity;
@@ -34,18 +33,18 @@ import timber.log.Timber;
  */
 public class DialogUtils {
 
-    private final MyPreferenceManagerModel mPreferenceManager;
+    private final MyPreferenceManager mPreferenceManager;
 
-    private final DbProviderFactoryModel mDbProviderFactory;
+    private final DbProviderFactory mDbProviderFactory;
 
-    private final ApiClientModel<Article> mApiClient;
+    private final ApiClient mApiClient;
 
     private MaterialDialog mProgressDialog;
 
     public DialogUtils(
-            final MyPreferenceManagerModel preferenceManager,
-            final DbProviderFactoryModel dbProviderFactory,
-            final ApiClientModel<Article> apiClient
+            final MyPreferenceManager preferenceManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient
     ) {
         super();
         mPreferenceManager = preferenceManager;

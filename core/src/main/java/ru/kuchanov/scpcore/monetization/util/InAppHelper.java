@@ -24,14 +24,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import ru.kuchanov.scp.downloads.ApiClientModel;
-import ru.kuchanov.scp.downloads.DbProviderFactoryModel;
-import ru.kuchanov.scp.downloads.MyPreferenceManagerModel;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
-import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Item;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
@@ -76,16 +73,16 @@ public class InAppHelper {
         int FULL_VERSION = 1;
     }
 
-    private final ApiClientModel<Article> mApiClient;
+    private final ApiClient mApiClient;
 
     private final MyPreferenceManager mMyPreferenceManager;
 
-    private final DbProviderFactoryModel mDbProviderFactory;
+    private final DbProviderFactory mDbProviderFactory;
 
     public InAppHelper(
-            final MyPreferenceManagerModel preferenceManager,
-            final DbProviderFactoryModel dbProviderFactory,
-            final ApiClientModel<Article> apiClient
+            final MyPreferenceManager preferenceManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient
     ) {
         super();
         mMyPreferenceManager = (MyPreferenceManager) preferenceManager;

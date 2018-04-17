@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:layout_gravity="center"
+    tools:layout_width="300dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="@dimen/defaultMargin">
+
+            <TextView
+                android:id="@+id/userLimit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/defaultMargin"
+                android:textSize="16sp"
+                tools:text="Your offline limit: 30" />
+
+            <TextView
+                android:id="@+id/articlesSelected"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                tools:text="Selected: 40" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="@dimen/defaultMargin"
+            android:src="@drawable/ic_info_outline"
+            tools:ignore="ContentDescription"
+            tools:tint="@color/zbs_color_red" />
+
+    </LinearLayout>
+
+    <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
+        android:id="@+id/rangeSeekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/defaultMargin"
+        app:bar_highlight_color="?colorAccent"
+        app:corner_radius="10"
+        app:data_type="_integer"
+        app:left_thumb_color="?colorAccent"
+        app:left_thumb_color_pressed="?colorAccent"
+        app:right_thumb_color="?colorAccent"
+        app:right_thumb_color_pressed="?colorAccent"
+        app:steps="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/min"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/defaultMargin"
+            android:textColor="?colorAccent"
+            android:textSize="16sp"
+            tools:text="30" />
+
+        <TextView
+            android:id="@+id/increaseLimit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="?selectableItemBackground"
+            android:gravity="center"
+            android:padding="@dimen/defaultMargin"
+            android:text="@string/increase_limit"
+            android:textColor="@color/material_green_500"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/max"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/defaultMargin"
+            android:textColor="?colorAccent"
+            android:textSize="16sp"
+            tools:text="80" />
+    </LinearLayout>
+</LinearLayout>

@@ -12,14 +12,13 @@ import java.util.List;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
-import ru.kuchanov.scp.downloads.ArticleModel;
 
 /**
  * Created by mohax on 03.01.2017.
  * <p>
  * for scp_ru
  */
-public class Article extends RealmObject implements ArticleModel, Serializable {
+public class Article extends RealmObject implements Serializable {
 
     public static final String FIELD_IS_IN_READEN = "isInReaden";
     public static final String FIELD_IS_IN_RECENT = "isInRecent";
@@ -61,12 +60,10 @@ public class Article extends RealmObject implements ArticleModel, Serializable {
 
     public static final int ORDER_NONE = -1;
 
-    @Override
     public String getUrl() {
         return url;
     }
 
-    @Override
     public String getText() {
         return text;
     }

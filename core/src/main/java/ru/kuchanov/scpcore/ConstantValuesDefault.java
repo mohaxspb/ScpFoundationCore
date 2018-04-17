@@ -1,7 +1,5 @@
 package ru.kuchanov.scpcore;
 
-import ru.kuchanov.scp.downloads.ConstantValues;
-
 /**
  * Created by mohax on 15.07.2017.
  * <p>

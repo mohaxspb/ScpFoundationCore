@@ -32,7 +32,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import butterknife.BindView;
-import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;

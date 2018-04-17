@@ -215,7 +215,6 @@ dependencies {
     }
 
     //sub project modules
-    api('ru.kuchanov.scp:downloads:1.1.2@aar') { transitive = true }
     api('ru.kuchanov.utils:rate:1.2.1@aar') { transitive = true }
 }
 

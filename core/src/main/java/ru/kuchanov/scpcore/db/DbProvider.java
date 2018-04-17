@@ -1,18 +1,17 @@
 package ru.kuchanov.scpcore.db;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
+import com.facebook.login.LoginManager;
+import com.vk.sdk.VKSdk;
+
+import org.jetbrains.annotations.NotNull;
+
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Pair;
-
-import com.facebook.login.LoginManager;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-
-import com.vk.sdk.VKSdk;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,8 +23,7 @@ import java.util.Random;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
-import ru.kuchanov.scp.downloads.ConstantValues;
-import ru.kuchanov.scp.downloads.DbProviderModel;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.api.model.firebase.ArticleInFirebase;
 import ru.kuchanov.scpcore.db.error.ScpNoArticleForIdError;
@@ -39,7 +37,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import timber.log.Timber;
 
-public class DbProvider implements DbProviderModel<Article> {
+public class DbProvider {
 
     private final Realm mRealm;
 
@@ -54,13 +52,11 @@ public class DbProvider implements DbProviderModel<Article> {
         mConstantValues = constantValues;
     }
 
-    @Override
     public void close() {
         Timber.d("close");
         mRealm.close();
     }
 
-    @Override
     public int getScore() {
         final User user = getUserSync();
         return user == null ? 0 : user.score;
@@ -231,7 +227,6 @@ public class DbProvider implements DbProviderModel<Article> {
         ));
     }
 
-    @Override
     public Observable<Pair<Integer, Integer>> saveObjectsArticlesList(final List<Article> data, final String inDbField) {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
@@ -459,7 +454,6 @@ public class DbProvider implements DbProviderModel<Article> {
                 .doOnNext(article -> close());
     }
 
-    @Override
     public Article getUnmanagedArticleSync(final String url) {
         final Article articleFromDb = mRealm.where(Article.class).equalTo(Article.FIELD_URL, url).findFirst();
         return articleFromDb == null ? null : mRealm.copyFromRealm(articleFromDb);
@@ -520,7 +514,6 @@ public class DbProvider implements DbProviderModel<Article> {
         return Observable.just(article);
     }
 
-    @Override
     public void saveArticleSync(final Article article, final boolean closeRealm) {
         mRealm.executeTransaction(realm -> saveArticleToRealm(article, realm));
         if (closeRealm) {
