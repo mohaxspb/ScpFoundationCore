@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.downloads;
 
+import org.jetbrains.annotations.NotNull;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -16,10 +18,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProvider;
+import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.util.NotificationUtilsKt;
 import rx.Observable;
 import rx.Subscription;
@@ -57,6 +64,18 @@ public abstract class DownloadAllService extends Service {
     private static final String CHANEL_NAME = "DOWNLOADS_CHANEL_NAME";
 
     protected static DownloadAllService instance;
+
+    @Inject
+    protected MyPreferenceManager mMyPreferenceManager;
+
+    @Inject
+    protected ApiClient mApiClient;
+
+    @Inject
+    protected DbProviderFactory mDbProviderFactory;
+
+    @Inject
+    protected ConstantValues mConstantValues;
 
     private int rangeStart;
 
@@ -111,9 +130,10 @@ public abstract class DownloadAllService extends Service {
 
     @Override
     public void onCreate() {
-        Timber.d("onCreate");
         super.onCreate();
         instance = this;
+
+        callInject();
     }
 
     private void stopDownloadAndRemoveNotif() {
@@ -152,6 +172,11 @@ public abstract class DownloadAllService extends Service {
     }
 
     protected abstract void download(DownloadEntry type);
+
+    /**
+     * inject here
+     */
+    protected abstract void callInject();
 
     public abstract ApiClient getApiClient();
 
@@ -296,8 +321,19 @@ public abstract class DownloadAllService extends Service {
                             if (articleDownloaded != null) {
                                 dbProvider.saveArticleSync(articleDownloaded, false);
 
-                                //todo here we can download inner articles
-                                List<String> innerArticlesUrls = articleDownloaded.getInnerArticlesUrls();
+                                if (mMyPreferenceManager.isHasSubscription()) {
+                                    //todo use method
+                                    List<String> innerArticlesUrls = articleDownloaded.getInnerArticlesUrls();
+                                    for (String innerUrl : innerArticlesUrls) {
+                                        Timber.d("save inner article: %s", innerUrl);
+                                        try {
+                                            Article innerArticleDownloaded = getApiClient().getArticleFromApi(innerUrl);
+                                            dbProvider.saveArticleSync(innerArticleDownloaded, false);
+                                        } catch (Exception e) {
+                                            Timber.e(e, "error while save inner article");
+                                        }
+                                    }
+                                }
 
                                 Timber.d("downloaded: %s", articleDownloaded.getUrl());
                                 mCurProgress++;
@@ -355,6 +391,10 @@ public abstract class DownloadAllService extends Service {
         }
         return articles;
     };
+
+    private void getAndSaveInnerArticle(@NotNull final Article article) {
+        //todo
+    }
 
     private void showNotificationDownloadList() {
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getChanelId());

@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.ui.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -28,14 +30,19 @@ import timber.log.Timber;
 
 public class SetTextViewHTML {
 
+    @NotNull
     private final ConstantValues mConstantValues;
 
-    public SetTextViewHTML(final ConstantValues constantValues) {
+    public SetTextViewHTML(@NotNull final ConstantValues constantValues) {
         super();
         mConstantValues = constantValues;
     }
 
-    public void setText(final TextView textView, final String html, final TextItemsClickListener textItemsClickListener) {
+    public void setText(
+            @NotNull final TextView textView,
+            @NotNull final String html,
+            @NotNull final TextItemsClickListener textItemsClickListener
+    ) {
         final Html.ImageGetter imgGetter = new URLImageParser(textView);
         final Html.TagHandler myHtmlTagHandler = new MyHtmlTagHandler();
         final CharSequence sequence = Html.fromHtml(html, imgGetter, myHtmlTagHandler);
@@ -174,7 +181,7 @@ public class SetTextViewHTML {
 
         JAVASCRIPT, SNOSKA, BIBLIOGRAPHY, TOC, MUSIC, NOT_TRANSLATED, EXTERNAL, INNER;
 
-        static LinkType getLinkType(final String link, final ConstantValues mConstantValues) {
+        public static LinkType getLinkType(final String link, final ConstantValues mConstantValues) {
             if (link.contains("javascript")) {
                 return JAVASCRIPT;
             }
@@ -200,7 +207,7 @@ public class SetTextViewHTML {
             return INNER;
         }
 
-        static String getFormattedUrl(final String url, final ConstantValues constantValues) {
+        public static String getFormattedUrl(final String url, final ConstantValues constantValues) {
             final LinkType type = getLinkType(url, constantValues);
             switch (type) {
                 case JAVASCRIPT:

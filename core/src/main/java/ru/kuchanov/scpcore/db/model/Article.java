@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.db.model;
 
+import org.jetbrains.annotations.NotNull;
+
 import android.support.annotation.StringDef;
 
 import java.io.Serializable;
@@ -72,6 +74,8 @@ public class Article extends RealmObject implements Serializable {
     public static final String FIELD_SYNCED = "synced";
 
     public static final String FIELD_TAGS = "tags";
+
+    public static final String FIELD_INNER_ARTICLES_URLS = "innerArticlesUrls";
 
     public static final int SYNCED_OK = 1;
 
@@ -168,6 +172,8 @@ public class Article extends RealmObject implements Serializable {
     //images
     public RealmList<RealmString> imagesUrls;
 
+    public RealmList<RealmString> innerArticlesUrls;
+
     //site info
     @PrimaryKey
     public String url;
@@ -210,10 +216,10 @@ public class Article extends RealmObject implements Serializable {
     public String preview;
 
     public List<String> getInnerArticlesUrls() {
-        return null;
+        return RealmString.toStringList(innerArticlesUrls);
     }
 
-    public static List<String> getListOfUrls(final List<Article> articles) {
+    public static List<String> getListOfUrls(@NotNull final List<Article> articles) {
         final List<String> urls = new ArrayList<>();
         for (final Article article : articles) {
             urls.add(article.url);

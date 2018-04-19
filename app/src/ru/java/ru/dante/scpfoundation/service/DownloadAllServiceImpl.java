@@ -1,14 +1,10 @@
 package ru.dante.scpfoundation.service;
 
-import javax.inject.Inject;
-
 import ru.dante.scpfoundation.MyApplicationImpl;
 import ru.dante.scpfoundation.R;
 import ru.dante.scpfoundation.di.AppComponentImpl;
-import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProvider;
-import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.downloads.DownloadAllService;
 import ru.kuchanov.scpcore.downloads.DownloadEntry;
 import timber.log.Timber;
@@ -20,21 +16,13 @@ import timber.log.Timber;
  */
 public class DownloadAllServiceImpl extends DownloadAllService {
 
-    @Inject
-    ApiClient mApiClient;
-    @Inject
-    DbProviderFactory mDbProviderFactory;
-    @Inject
-    ConstantValues mConstantValues;
-
     @Override
-    public void onCreate() {
-        super.onCreate();
+    protected void callInject() {
         ((AppComponentImpl) MyApplicationImpl.getAppComponent()).inject(this);
     }
 
     @Override
-    protected void download(DownloadEntry type) {
+    protected void download(final DownloadEntry type) {
         Timber.d("download: %s", type);
         switch (type.resId) {
             case R.string.type_all:
