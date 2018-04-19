@@ -157,7 +157,7 @@ public abstract class DownloadAllService extends Service {
 
     protected abstract int getNumOfArticlesOnRecentPage();
 
-    protected abstract DbProvider getDbProviderModel();
+    protected abstract DbProvider getDbProvider();
 
     protected void downloadAll() {
         Timber.d("downloadAll");
@@ -248,7 +248,7 @@ public abstract class DownloadAllService extends Service {
                 .onExceptionResumeNext(Observable.<List<Article>>empty().delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(articles -> getDbProviderModel()
+                .flatMap(articles -> getDbProvider()
                         .<Pair<Integer, Integer>>saveObjectsArticlesList(articles, type.dbField)
                         .flatMap(integerIntegerPair -> Observable.just(articles)))
                 .subscribeOn(AndroidSchedulers.mainThread())
@@ -268,10 +268,12 @@ public abstract class DownloadAllService extends Service {
 
     private Observable<List<Article>> downloadAndSaveArticles(final List<Article> articlesToDwonload) {
         return Observable.just(articlesToDwonload)
+                //decrease amount by limit
                 .map(limitArticles)
+                //check for already downloaded articles
                 .map(articles -> {
                     List<Article> articlesToDownload = new ArrayList<>();
-                    DbProvider dbProvider = getDbProviderModel();
+                    DbProvider dbProvider = getDbProvider();
                     for (Article article : articles) {
                         Article articleInDb = dbProvider.getUnmanagedArticleSync(article.getUrl());
                         if (articleInDb == null || articleInDb.getText() == null) {
@@ -286,13 +288,17 @@ public abstract class DownloadAllService extends Service {
                     return articlesToDownload;
                 })
                 .flatMap(articles -> {
-                    DbProvider dbProvider = getDbProviderModel();
+                    DbProvider dbProvider = getDbProvider();
                     for (int i = 0; i < articles.size(); i++) {
                         Article articleToDownload = articles.get(i);
                         try {
                             Article articleDownloaded = getApiClient().getArticleFromApi(articleToDownload.getUrl());
                             if (articleDownloaded != null) {
                                 dbProvider.saveArticleSync(articleDownloaded, false);
+
+                                //todo here we can download inner articles
+                                List<String> innerArticlesUrls = articleDownloaded.getInnerArticlesUrls();
+
                                 Timber.d("downloaded: %s", articleDownloaded.getUrl());
                                 mCurProgress++;
                                 Timber.d("mCurProgress %s, mMaxProgress: %s", mCurProgress, mMaxProgress);

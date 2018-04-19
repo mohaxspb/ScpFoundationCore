@@ -72,67 +72,42 @@ public class SetTextViewHTML {
             @Override
             public void onClick(final View view) {
                 Timber.d("Link clicked: %s", span.getURL());
-
-                String link = span.getURL();
-                if (link.contains("javascript")) {
-                    if (textItemsClickListener != null) {
-                        textItemsClickListener.onUnsupportedLinkPressed(link);
-                    }
-                    return;
-                }
-                if (TextUtils.isDigitsOnly(link)) {
-                    if (textItemsClickListener != null) {
-                        textItemsClickListener.onSnoskaClicked(link);
-                    }
-                    return;
-                }
-                if (link.startsWith("scp://")) {
-                    if (textItemsClickListener != null) {
-                        textItemsClickListener.onSnoskaClicked(link.replace("scp://", ""));
-                    }
-                    return;
-                }
-                if (link.startsWith("bibitem-")) {
-                    if (textItemsClickListener != null) {
-                        textItemsClickListener.onBibliographyClicked(link);
-                    }
-                    return;
-                }
-                if (link.startsWith("#")) {
-                    if (textItemsClickListener != null) {
-                        textItemsClickListener.onTocClicked(link);
-                    }
-                    return;
-                }
-                if (!link.startsWith("http") && !link.startsWith(Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL)) {
-                    link = mConstantValues.getBaseApiUrl() + link;
-                }
-
-                if (link.endsWith(".mp3")) {
-                    if (textItemsClickListener != null) {
-                        textItemsClickListener.onMusicClicked(link);
-                    }
+                if (textItemsClickListener == null) {
+                    Timber.wtf("textItemsClickListener is NULL!!!11");
                     return;
                 }
 
-                if (link.startsWith(Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL)) {
-                    if (textItemsClickListener != null) {
-                        final String url = link.split(Constants.Api.NOT_TRANSLATED_ARTICLE_URL_DELIMITER)[1];
+                final String link = span.getURL();
+                final LinkType linkType = LinkType.getLinkType(link, mConstantValues);
+                final String url = LinkType.getFormattedUrl(link, mConstantValues);
+
+                switch (linkType) {
+                    case JAVASCRIPT:
+                        textItemsClickListener.onUnsupportedLinkPressed(url);
+                        break;
+                    case SNOSKA:
+                        textItemsClickListener.onSnoskaClicked(url);
+                        break;
+                    case BIBLIOGRAPHY:
+                        textItemsClickListener.onBibliographyClicked(url);
+                        break;
+                    case TOC:
+                        textItemsClickListener.onTocClicked(url);
+                        break;
+                    case MUSIC:
+                        textItemsClickListener.onMusicClicked(url);
+                        break;
+                    case NOT_TRANSLATED:
                         textItemsClickListener.onNotTranslatedArticleClick(url);
-                    }
-                    return;
-                }
-
-                if (!link.startsWith(mConstantValues.getBaseApiUrl())
-                        || link.startsWith(mConstantValues.getBaseApiUrl() + "/forum")) {
-                    if (textItemsClickListener != null) {
-                        textItemsClickListener.onExternalDomenUrlClicked(link);
-                    }
-                    return;
-                }
-
-                if (textItemsClickListener != null) {
-                    textItemsClickListener.onLinkClicked(link);
+                        break;
+                    case EXTERNAL:
+                        textItemsClickListener.onExternalDomenUrlClicked(url);
+                        break;
+                    case INNER:
+                        textItemsClickListener.onLinkClicked(url);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("unexpected url type");
                 }
             }
         };
@@ -192,6 +167,64 @@ public class SetTextViewHTML {
                             5,
                             10
                     ), start, end, flags);
+        }
+    }
+
+    public enum LinkType {
+
+        JAVASCRIPT, SNOSKA, BIBLIOGRAPHY, TOC, MUSIC, NOT_TRANSLATED, EXTERNAL, INNER;
+
+        static LinkType getLinkType(final String link, final ConstantValues mConstantValues) {
+            if (link.contains("javascript")) {
+                return JAVASCRIPT;
+            }
+            if (TextUtils.isDigitsOnly(link) || link.startsWith("scp://")) {
+                return SNOSKA;
+            }
+            if (link.startsWith("bibitem-")) {
+                return BIBLIOGRAPHY;
+            }
+            if (link.startsWith("#")) {
+                return TOC;
+            }
+            if (link.endsWith(".mp3")) {
+                return MUSIC;
+            }
+            if (link.startsWith(Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL)) {
+                return NOT_TRANSLATED;
+            }
+            if (!link.startsWith(mConstantValues.getBaseApiUrl()) ||
+                link.startsWith(mConstantValues.getBaseApiUrl() + "/forum")) {
+                return EXTERNAL;
+            }
+            return INNER;
+        }
+
+        static String getFormattedUrl(final String url, final ConstantValues constantValues) {
+            final LinkType type = getLinkType(url, constantValues);
+            switch (type) {
+                case JAVASCRIPT:
+                case INNER:
+                case TOC:
+                case MUSIC:
+                case EXTERNAL:
+                case BIBLIOGRAPHY:
+                    if (!url.startsWith("http") && !url.startsWith(Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL)) {
+                        return constantValues.getBaseApiUrl() + url;
+                    }
+                    return url;
+                case SNOSKA:
+                    if (url.startsWith("scp://")) {
+                        return url.replace("scp://", "");
+                    }
+                    return url;
+                case NOT_TRANSLATED:
+                    if (url.startsWith(Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL)) {
+                        return url.split(Constants.Api.NOT_TRANSLATED_ARTICLE_URL_DELIMITER)[1];
+                    }
+                    return url;
+            }
+            return url;
         }
     }
 

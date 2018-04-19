@@ -57,7 +57,7 @@ public class DownloadAllServiceImpl extends DownloadAllService {
     }
 
     @Override
-    protected DbProvider getDbProviderModel() {
+    protected DbProvider getDbProvider() {
         return mDbProviderFactory.getDbProvider();
     }
 }

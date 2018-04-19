@@ -52,18 +52,26 @@ public class ArticleAdapter
 
     //TODO realize via enum
     private static final int TYPE_TEXT = 0;
+
     private static final int TYPE_SPOILER = 1;
+
     private static final int TYPE_IMAGE = 2;
+
     private static final int TYPE_TITLE = 3;
+
     private static final int TYPE_TABLE = 4;
+
     private static final int TYPE_TAGS = 5;
+
     private static final int TYPE_TABS = 6;
+
     private static final int TYPE_NATIVE_APPODEAL = 8;
 
     @Inject
     MyPreferenceManager mMyPreferenceManager;
 
     private final List<ArticleTextPartViewModel> mAdsModelsList = new ArrayList<>();
+
     private final List<ArticleTextPartViewModel> mViewModels = new ArrayList<>();
 
     private List<TabsViewModel> mTabsViewModelList = new ArrayList<>();
@@ -71,6 +79,7 @@ public class ArticleAdapter
     private List<SpoilerViewModel> mExpandedSpoilers = new ArrayList<>();
 
     public ArticleAdapter() {
+        super();
         BaseApplication.getAppComponent().inject(this);
     }
 
@@ -226,7 +235,6 @@ public class ArticleAdapter
 
         addAds();
 
-
         //log
         @ParseHtmlUtils.TextType final List<String> types = new ArrayList<>();
         final List<Boolean> isInSpoilerList = new ArrayList<>();
@@ -252,8 +260,8 @@ public class ArticleAdapter
 //            return;
 //        }
         if (mMyPreferenceManager.isHasAnySubscription()
-                || !mMyPreferenceManager.isTimeToShowBannerAds()
-                || mMyPreferenceManager.isBannerInArticleEnabled()) {
+            || !mMyPreferenceManager.isTimeToShowBannerAds()
+            || mMyPreferenceManager.isBannerInArticleEnabled()) {
             return;
         }
         if (mAdsModelsList.isEmpty()) {
