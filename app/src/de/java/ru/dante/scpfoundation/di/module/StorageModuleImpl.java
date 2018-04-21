@@ -84,6 +84,14 @@ public class StorageModuleImpl extends StorageModule {
                 oldVersion++;
             }
 
+            if (oldVersion == 4) {
+                final RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
+                articleSchema
+                        .addRealmListField(Article.FIELD_INNER_ARTICLES_URLS, schema.get(RealmString.class.getSimpleName()));
+
+                oldVersion++;
+            }
+
             //add new if blocks if schema changed
             if (oldVersion < newVersion) {
                 throw new IllegalStateException(String.format(Locale.ENGLISH, "Migration missing from v%d to v%d", oldVersion, newVersion));

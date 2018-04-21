@@ -31,7 +31,11 @@ public class StorageModuleImpl extends StorageModule {
             Timber.d("providesRealmMigration: %s/%s", oldVersion, newVersion);
 
             if (oldVersion == 1) {
-                //todo realize if change
+                final RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
+                articleSchema
+                        .addRealmListField(Article.FIELD_INNER_ARTICLES_URLS, schema.get(RealmString.class.getSimpleName()));
+
+                oldVersion++;
             }
 
             //add new if blocks if schema changed
