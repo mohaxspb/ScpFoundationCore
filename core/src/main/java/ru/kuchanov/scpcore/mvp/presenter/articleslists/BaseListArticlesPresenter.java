@@ -8,6 +8,7 @@ import io.realm.RealmResults;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.downloads.DownloadAllService;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.mvp.base.BaseArticlesListMvp;
 import ru.kuchanov.scpcore.mvp.base.BasePresenter;
@@ -22,6 +23,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
         implements BaseArticlesListMvp.Presenter<V> {
 
     protected RealmResults<Article> mData;
+
     protected boolean isLoading;
 
     public BaseListArticlesPresenter(
@@ -193,6 +195,21 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .flatMap(apiData -> mDbProviderFactory.getDbProvider().saveArticle(apiData))
+                    .observeOn(Schedulers.io())
+                    .map(downloadedArticle -> {
+                        if (mMyPreferencesManager.isHasSubscription() && mMyPreferencesManager.getInnerArticlesDepth() != 0) {
+                            DownloadAllService.getAndSaveInnerArticles(
+                                    mDbProviderFactory.getDbProvider(),
+                                    mApiClient,
+                                    downloadedArticle,
+                                    0,
+                                    mMyPreferencesManager.getInnerArticlesDepth()
+                            );
+                        }
+
+                        return downloadedArticle;
+                    })
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(getDownloadArticleSubscriber());
         } else {
             mDbProviderFactory.getDbProvider().deleteArticlesText(article.url)

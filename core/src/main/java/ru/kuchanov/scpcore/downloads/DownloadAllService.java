@@ -333,7 +333,7 @@ public abstract class DownloadAllService extends Service {
                                 dbProvider.saveArticleSync(articleDownloaded, false);
 
                                 if (mMyPreferenceManager.isHasSubscription() && mInnerArticlesDepth != 0) {
-                                    getAndSaveInnerArticles(dbProvider, articleDownloaded, 0);
+                                    getAndSaveInnerArticles(dbProvider, getApiClient(), articleDownloaded, 0, mInnerArticlesDepth);
                                 }
 
                                 Timber.d("downloaded: %s", articleDownloaded.getUrl());
@@ -393,12 +393,14 @@ public abstract class DownloadAllService extends Service {
         }
     };
 
-    private void getAndSaveInnerArticles(
+    public static void getAndSaveInnerArticles(
             @NotNull final DbProvider dbProvider,
+            @NotNull final ApiClient apiClient,
             @NotNull final Article articleDownloaded,
-            final int depthLevel
+            final int depthLevel,
+            final int maxDepth
     ) {
-        if (depthLevel >= mInnerArticlesDepth) {
+        if (depthLevel >= maxDepth) {
             return;
         }
         Timber.d("getAndSaveInnerArticles: %s/%s", articleDownloaded.title, depthLevel);
@@ -407,13 +409,13 @@ public abstract class DownloadAllService extends Service {
         for (final String innerUrl : innerArticlesUrls) {
             Timber.d("save inner article: %s", innerUrl);
             try {
-                final Article innerArticleDownloaded = getApiClient().getArticleFromApi(innerUrl);
+                final Article innerArticleDownloaded = apiClient.getArticleFromApi(innerUrl);
                 if (innerArticleDownloaded == null) {
                     continue;
                 }
                 dbProvider.saveArticleSync(innerArticleDownloaded, false);
 
-                getAndSaveInnerArticles(dbProvider, innerArticleDownloaded, depthLevel + 1);
+                getAndSaveInnerArticles(dbProvider, apiClient, innerArticleDownloaded, depthLevel + 1, maxDepth);
             } catch (Exception | ScpParseException e) {
                 Timber.e(e, "error while save inner article");
             }
