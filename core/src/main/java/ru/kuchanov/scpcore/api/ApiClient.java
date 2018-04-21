@@ -539,15 +539,15 @@ public class ApiClient {
     }
 
     @Nullable
-    public Article getArticleFromApi(String url) throws Exception, ScpParseException {
-        Request request = new Request.Builder()
+    public Article getArticleFromApi(final String url) throws Exception, ScpParseException {
+        final Request request = new Request.Builder()
                 .url(url)
                 .build();
 
-        String responseBody;
+        final String responseBody;
         try {
-            Response response = mOkHttpClient.newCall(request).execute();
-            ResponseBody body = response.body();
+            final Response response = mOkHttpClient.newCall(request).execute();
+            final ResponseBody body = response.body();
             if (body != null) {
                 responseBody = body.string();
             } else {
@@ -561,6 +561,7 @@ public class ApiClient {
             final Document doc = Jsoup.parse(responseBody);
             final Element pageContent = getArticlePageContentTag(doc);
             if (pageContent == null) {
+                Timber.wtf("pageContent is NULL for: %s", url);
                 throw new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse));
             }
             final Element p404 = pageContent.getElementById("404-message");
