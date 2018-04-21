@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<LinearLayout android:id="@+id/root"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/root"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:windowBackground"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/defaultMargin"
-    >
+    android:paddingBottom="@dimen/defaultMargin">
 
     <TextView
         android:id="@+id/title"
@@ -16,8 +15,7 @@
         android:padding="@dimen/defaultMargin"
         android:text="@string/text_size"
         android:textSize="21sp"
-        android:textStyle="bold"
-        />
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textSizeUi"
@@ -25,15 +23,15 @@
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/defaultMargin"
         android:paddingRight="@dimen/defaultMargin"
-        android:text="@string/text_size_lists"
-        />
+        android:text="@string/text_size_lists" />
 
     <SeekBar
         android:id="@+id/seekbarUi"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/defaultMargin"
-        />
+        android:progressBackgroundTint="?windowBackgroundDark"
+        tools:targetApi="lollipop" />
 
     <TextView
         android:id="@+id/textSizeArticle"
@@ -41,14 +39,14 @@
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/defaultMargin"
         android:paddingRight="@dimen/defaultMargin"
-        android:text="@string/text_size_article"
-        />
+        android:text="@string/text_size_article" />
 
     <SeekBar
         android:id="@+id/seekbarArticle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/defaultMargin"
-        />
+        android:progressBackgroundTint="?windowBackgroundDark"
+        tools:targetApi="lollipop" />
 
 </LinearLayout>

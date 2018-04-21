@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -54,18 +55,18 @@ public class SettingsBottomSheetDialogFragment
         extends BaseBottomSheetDialogFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    @StringDef({
-            ListItemType.MIN,
-            ListItemType.MIDDLE,
-            ListItemType.MAX
-    })
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface ListItemType {
-
-        String MIN = "MIN";
-        String MIDDLE = "MIDDLE";
-        String MAX = "MAX";
+    public static BottomSheetDialogFragment newInstance() {
+        return new SettingsBottomSheetDialogFragment();
     }
+
+    @Inject
+    MyPreferenceManager mMyPreferenceManager;
+
+    @Inject
+    MyNotificationManager mMyNotificationManager;
+
+    @Inject
+    InAppHelper mInAppHelper;
 
     //design
     @BindView(R2.id.listItemStyle)
@@ -102,21 +103,20 @@ public class SettingsBottomSheetDialogFragment
     @BindView(R2.id.offlineRandomTextView)
     TextView offlineRandomTextView;
 
+    //downloads
+    @BindView(R2.id.downloadsForceUpdateSwitch)
+    SwitchCompat downloadsForceUpdateSwitch;
+
+    @BindView(R2.id.downloadInnerDepthValueTextView)
+    TextView downloadInnerDepthValueTextView;
+
+    @BindView(R2.id.downloadsDepthSeekbar)
+    SeekBar downloadsDepthSeekbar;
+
+    //downloads END
+
     @BindView(R2.id.buy)
     TextView mActivateAutoSync;
-
-    @Inject
-    MyPreferenceManager mMyPreferenceManager;
-
-    @Inject
-    MyNotificationManager mMyNotificationManager;
-
-    @Inject
-    InAppHelper mInAppHelper;
-
-    public static BottomSheetDialogFragment newInstance() {
-        return new SettingsBottomSheetDialogFragment();
-    }
 
     @Override
     protected int getLayoutResId() {
@@ -240,6 +240,30 @@ public class SettingsBottomSheetDialogFragment
         offlineRandomTextView.setText(randomLabel);
         randomOfflineIsOnSwitch.setOnCheckedChangeListener((compoundButton, checked) -> mMyPreferenceManager.setOfflineRandomEnabled(checked));
 
+        //downloads
+        downloadsForceUpdateSwitch.setChecked(mMyPreferenceManager.isDownloadForceUpdateEnabled());
+        downloadsForceUpdateSwitch.setOnCheckedChangeListener((compoundButton, checked) -> mMyPreferenceManager.setDownloadForceUpdateEnabled(checked));
+
+        downloadsDepthSeekbar.setMax(MyPreferenceManager.MAX_DOWNLOADS_DEPTH);
+        downloadsDepthSeekbar.setProgress(mMyPreferenceManager.getInnerArticlesDepth());
+        downloadsDepthSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onStopTrackingTouch(final SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStartTrackingTouch(final SeekBar seekBar) {
+            }
+
+            @Override
+            public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
+                downloadInnerDepthValueTextView.setText(String.valueOf(progress));
+                mMyPreferenceManager.setInnerArticlesDepth(progress);
+            }
+        });
+        downloadInnerDepthValueTextView.setText(String.valueOf(mMyPreferenceManager.getInnerArticlesDepth()));
+        //downloads END
+
         //hide activate subs for good users
         final boolean noFullSubscription = !mMyPreferenceManager.isHasSubscription();
         mActivateAutoSync.setVisibility(noFullSubscription ? View.VISIBLE : View.GONE);
@@ -309,5 +333,18 @@ public class SettingsBottomSheetDialogFragment
                 //do nothing
                 break;
         }
+    }
+
+    @StringDef({
+            ListItemType.MIN,
+            ListItemType.MIDDLE,
+            ListItemType.MAX
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ListItemType {
+
+        String MIN = "MIN";
+        String MIDDLE = "MIDDLE";
+        String MAX = "MAX";
     }
 }
