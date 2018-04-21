@@ -236,6 +236,7 @@ public interface Constants {
                 String AFTER_LEVEL_UP = "AFTER_LEVEL_UP";
                 String ADS_WILL_SHOWN_SOON = "ADS_WILL_SHOWN_SOON";
                 String REMOVE_ADS_SETTINGS = "REMOVE_ADS_SETTINGS";
+                String INNER_DOWNLOADS_FROM_SETTINGS = "INNER_DOWNLOADS_FROM_SETTINGS";
             }
 
             interface UserPropertyKey {

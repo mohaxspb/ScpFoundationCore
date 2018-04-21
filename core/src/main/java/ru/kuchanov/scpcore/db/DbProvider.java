@@ -605,7 +605,7 @@ public class DbProvider {
 
         final long timeStamp = System.currentTimeMillis();
         final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault());
-        Timber.d("insert/update: %s/%s", article.title, sdf.format(timeStamp));
+//        Timber.d("insert/update: %s/%s", article.title, sdf.format(timeStamp));
 
         //check if we have app in db and update
         Article articleInDb = realm.where(Article.class)

@@ -10,6 +10,7 @@ import io.realm.RealmSchema;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.LeaderboardUser;
+import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.db.model.SocialProviderModel;
 import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.di.module.StorageModule;
@@ -26,11 +27,11 @@ public class StorageModuleImpl extends StorageModule {
     @Override
     protected RealmMigration getRealmMigration() {
         return (realm, oldVersion, newVersion) -> {
-            RealmSchema schema = realm.getSchema();
+            final RealmSchema schema = realm.getSchema();
 
             Timber.d("providesRealmMigration: %s/%s", oldVersion, newVersion);
 
-            for (RealmObjectSchema realmObjectSchema : schema.getAll()) {
+            for (final RealmObjectSchema realmObjectSchema : schema.getAll()) {
                 Timber.d("realmObjectSchema: %s", realmObjectSchema.getClassName());
                 Timber.d("realmObjectSchema: %s", realmObjectSchema.getFieldNames());
             }
@@ -80,7 +81,7 @@ public class StorageModuleImpl extends StorageModule {
             }
 
             if (oldVersion == 3) {
-                RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
+                final RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
                 if (articleSchema != null) {
                     articleSchema
                             .removeField("tabsTitles")
@@ -91,7 +92,7 @@ public class StorageModuleImpl extends StorageModule {
             }
 
             if (oldVersion == 4) {
-                RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
+                final RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
                 if (articleSchema != null) {
                     articleSchema
                             .addField(Article.FIELD_IS_IN_OBJECTS_FR, long.class)
@@ -129,6 +130,14 @@ public class StorageModuleImpl extends StorageModule {
                         .setRequired(LeaderboardUser.FIELD_SCORE_TO_NEXT_LEVEL, true)
                         .addField(LeaderboardUser.FIELD_CUR_LEVEL_SCORE, Integer.class)
                         .setRequired(LeaderboardUser.FIELD_CUR_LEVEL_SCORE, true);
+
+                oldVersion++;
+            }
+
+            if (oldVersion == 6) {
+                final RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
+                articleSchema
+                        .addRealmListField(Article.FIELD_INNER_ARTICLES_URLS, schema.get(RealmString.class.getSimpleName()));
 
                 oldVersion++;
             }

@@ -65,6 +65,8 @@ public class MyPreferenceManager {
 
     private static final int NUM_OF_DISABLE_ADS_REWARDS_COUNT_BEFORE_OFFER_SHOWING = 3;
 
+    public static final int MAX_DOWNLOADS_DEPTH = 5;
+
     public interface Keys {
 
         String NIGHT_MODE = "NIGHT_MODE";
@@ -108,6 +110,8 @@ public class MyPreferenceManager {
         String OFFER_ALREADY_SHOWN = "OFFER_ALREADY_SHOWN";
         String LEADERBOARD_UPDATE_TIME = "LEADERBOARD_UPDATE_TIME";
         String OFFLINE_RANDOM = "OFFLINE_RANDOM";
+        String INNER_ARTICLES_DEPTH = "INNER_ARTICLES_DEPTH";
+        String DOWNLOAD_FORCE_UPDATE_ENABLED = "DOWNLOAD_FORCE_UPDATE_ENABLED";
     }
 
     private final Gson mGson;
@@ -167,14 +171,28 @@ public class MyPreferenceManager {
         return mPreferences.getString(Keys.DESIGN_FONT_PATH, "fonts/Roboto-Regular.ttf");
     }
 
+    //download all settings
+    public int getInnerArticlesDepth() {
+        return mPreferences.getInt(Keys.INNER_ARTICLES_DEPTH, 0);
+    }
+
+    public void setInnerArticlesDepth(final int innerArticlesDepth) {
+        mPreferences.edit().putInt(Keys.INNER_ARTICLES_DEPTH, innerArticlesDepth).apply();
+    }
+
+    public boolean isDownloadForceUpdateEnabled() {
+        return mPreferences.getBoolean(Keys.DOWNLOAD_FORCE_UPDATE_ENABLED, false);
+    }
+
+    public void setDownloadForceUpdateEnabled(final boolean downloadForceUpdateEnabled) {
+        mPreferences.edit().putBoolean(Keys.DOWNLOAD_FORCE_UPDATE_ENABLED, downloadForceUpdateEnabled).apply();
+    }
+    //download all settings END
+
     //new arts notifications
     int getNotificationPeriodInMinutes() {
         return mPreferences.getInt(Keys.NOTIFICATION_PERIOD, 60);
     }
-
-//    public void setNotificationPeriodInMinutes(int minutes) {
-//        mPreferences.edit().putInt(Keys.NOTIFICATION_PERIOD, minutes).apply();
-//    }
 
     public boolean isNotificationEnabled() {
         return mPreferences.getBoolean(Keys.NOTIFICATION_IS_ON, true);

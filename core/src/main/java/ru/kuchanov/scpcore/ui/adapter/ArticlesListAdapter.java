@@ -33,7 +33,6 @@ import ru.kuchanov.scpcore.ui.holder.HolderMedium;
 import ru.kuchanov.scpcore.ui.holder.HolderMin;
 import ru.kuchanov.scpcore.ui.holder.NativeAdsArticleListHolder;
 import ru.kuchanov.scpcore.ui.model.ArticlesListModel;
-import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_INTERVAL;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_SOURCE;
@@ -105,6 +104,7 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private boolean shouldShowPreview;
 
     public ArticlesListAdapter() {
+        super();
         BaseApplication.getAppComponent().inject(this);
     }
 
@@ -128,7 +128,7 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public void sortByType(final SortType sortType) {
-        Timber.d("sortByType: %s", sortType);
+//        Timber.d("sortByType: %s", sortType);
         mSortType = sortType;
         if (mData == null) {
             return;

@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.downloads;
 
+import org.jetbrains.annotations.NotNull;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -16,10 +18,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProvider;
+import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.util.NotificationUtilsKt;
 import rx.Observable;
 import rx.Subscription;
@@ -58,6 +65,18 @@ public abstract class DownloadAllService extends Service {
 
     protected static DownloadAllService instance;
 
+    @Inject
+    protected MyPreferenceManager mMyPreferenceManager;
+
+    @Inject
+    protected ApiClient mApiClient;
+
+    @Inject
+    protected DbProviderFactory mDbProviderFactory;
+
+    @Inject
+    protected ConstantValues mConstantValues;
+
     private int rangeStart;
 
     private int rangeEnd;
@@ -67,6 +86,8 @@ public abstract class DownloadAllService extends Service {
     private int mMaxProgress;
 
     private int mNumOfErrors;
+
+    private int mInnerArticlesDepth;
 
     private CompositeSubscription mCompositeSubscription;
 
@@ -111,9 +132,10 @@ public abstract class DownloadAllService extends Service {
 
     @Override
     public void onCreate() {
-        Timber.d("onCreate");
         super.onCreate();
         instance = this;
+
+        callInject();
     }
 
     private void stopDownloadAndRemoveNotif() {
@@ -145,6 +167,9 @@ public abstract class DownloadAllService extends Service {
         rangeEnd = intent.getIntExtra(EXTRA_RANGE_END, RANGE_NONE);
         Timber.d("rangeStart/rangeEnd: %s/%s", rangeStart, rangeEnd);
 
+        mInnerArticlesDepth = mMyPreferenceManager.getInnerArticlesDepth();
+        Timber.d("mInnerArticlesDepth: %s", mInnerArticlesDepth);
+
         final DownloadEntry type = (DownloadEntry) intent.getSerializableExtra(EXTRA_DOWNLOAD_TYPE);
         download(type);
 
@@ -153,11 +178,16 @@ public abstract class DownloadAllService extends Service {
 
     protected abstract void download(DownloadEntry type);
 
+    /**
+     * inject here
+     */
+    protected abstract void callInject();
+
     public abstract ApiClient getApiClient();
 
     protected abstract int getNumOfArticlesOnRecentPage();
 
-    protected abstract DbProvider getDbProviderModel();
+    protected abstract DbProvider getDbProvider();
 
     protected void downloadAll() {
         Timber.d("downloadAll");
@@ -248,7 +278,7 @@ public abstract class DownloadAllService extends Service {
                 .onExceptionResumeNext(Observable.<List<Article>>empty().delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(articles -> getDbProviderModel()
+                .flatMap(articles -> getDbProvider()
                         .<Pair<Integer, Integer>>saveObjectsArticlesList(articles, type.dbField)
                         .flatMap(integerIntegerPair -> Observable.just(articles)))
                 .subscribeOn(AndroidSchedulers.mainThread())
@@ -268,10 +298,18 @@ public abstract class DownloadAllService extends Service {
 
     private Observable<List<Article>> downloadAndSaveArticles(final List<Article> articlesToDwonload) {
         return Observable.just(articlesToDwonload)
+                //decrease amount by limit
                 .map(limitArticles)
+                //check for already downloaded articles
                 .map(articles -> {
+                    Timber.d("limited articles: %s/%s/%s",
+                            articles.size(), articles.get(0).title, articles.get(articles.size() - 1).title
+                    );
+                    if (mMyPreferenceManager.isDownloadForceUpdateEnabled()) {
+                        return articles;
+                    }
                     List<Article> articlesToDownload = new ArrayList<>();
-                    DbProvider dbProvider = getDbProviderModel();
+                    DbProvider dbProvider = getDbProvider();
                     for (Article article : articles) {
                         Article articleInDb = dbProvider.getUnmanagedArticleSync(article.getUrl());
                         if (articleInDb == null || articleInDb.getText() == null) {
@@ -286,13 +324,18 @@ public abstract class DownloadAllService extends Service {
                     return articlesToDownload;
                 })
                 .flatMap(articles -> {
-                    DbProvider dbProvider = getDbProviderModel();
-                    for (int i = 0; i < articles.size(); i++) {
-                        Article articleToDownload = articles.get(i);
+                    DbProvider dbProvider = getDbProvider();
+                    for (final Article articleToDownload : articles) {
                         try {
+                            Timber.d("Start download article: %s", articleToDownload.title);
                             Article articleDownloaded = getApiClient().getArticleFromApi(articleToDownload.getUrl());
                             if (articleDownloaded != null) {
                                 dbProvider.saveArticleSync(articleDownloaded, false);
+
+                                if (mMyPreferenceManager.isHasSubscription() && mInnerArticlesDepth != 0) {
+                                    getAndSaveInnerArticles(dbProvider, getApiClient(), articleDownloaded, 0, mInnerArticlesDepth);
+                                }
+
                                 Timber.d("downloaded: %s", articleDownloaded.getUrl());
                                 mCurProgress++;
                                 Timber.d("mCurProgress %s, mMaxProgress: %s", mCurProgress, mMaxProgress);
@@ -343,12 +386,41 @@ public abstract class DownloadAllService extends Service {
         mCurProgress = 0;
         if (rangeStart == RANGE_NONE && rangeEnd == RANGE_NONE) {
             mMaxProgress = articles.size();
+            return articles;
         } else {
             mMaxProgress = rangeEnd - rangeStart;
-            articles = articles.subList(rangeStart, rangeEnd);
+            return articles.subList(rangeStart, rangeEnd);
         }
-        return articles;
     };
+
+    public static void getAndSaveInnerArticles(
+            @NotNull final DbProvider dbProvider,
+            @NotNull final ApiClient apiClient,
+            @NotNull final Article articleDownloaded,
+            final int depthLevel,
+            final int maxDepth
+    ) {
+        if (depthLevel >= maxDepth) {
+            return;
+        }
+        Timber.d("getAndSaveInnerArticles: %s/%s", articleDownloaded.title, depthLevel);
+
+        final List<String> innerArticlesUrls = articleDownloaded.getInnerArticlesUrls();
+        for (final String innerUrl : innerArticlesUrls) {
+            Timber.d("save inner article: %s", innerUrl);
+            try {
+                final Article innerArticleDownloaded = apiClient.getArticleFromApi(innerUrl);
+                if (innerArticleDownloaded == null) {
+                    continue;
+                }
+                dbProvider.saveArticleSync(innerArticleDownloaded, false);
+
+                getAndSaveInnerArticles(dbProvider, apiClient, innerArticleDownloaded, depthLevel + 1, maxDepth);
+            } catch (Exception | ScpParseException e) {
+                Timber.e(e, "error while save inner article");
+            }
+        }
+    }
 
     private void showNotificationDownloadList() {
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getChanelId());

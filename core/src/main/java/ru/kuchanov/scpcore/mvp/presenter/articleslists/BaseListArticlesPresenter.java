@@ -8,6 +8,7 @@ import io.realm.RealmResults;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.downloads.DownloadAllService;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.mvp.base.BaseArticlesListMvp;
 import ru.kuchanov.scpcore.mvp.base.BasePresenter;
@@ -22,6 +23,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
         implements BaseArticlesListMvp.Presenter<V> {
 
     protected RealmResults<Article> mData;
+
     protected boolean isLoading;
 
     public BaseListArticlesPresenter(
@@ -45,8 +47,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
 
     @Override
     public void getDataFromDb() {
-        Timber.d("getDataFromDb");
-
+//        Timber.d("getDataFromDb");
         getView().showCenterProgress(true);
         getView().enableSwipeRefresh(false);
 
@@ -62,7 +63,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
                                 getDataFromDb();
                                 return;
                             }
-                            Timber.d("getDataFromDb data.size(): %s", data.size());
+//                            Timber.d("getDataFromDb data.size(): %s", data.size());
                             mData = data;
 //                            getView().showCenterProgress(false);
                             if (mData.isEmpty()) {
@@ -85,7 +86,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
 
     @Override
     public void getDataFromApi(final int offset) {
-        Timber.d("getDataFromApi with offset: %s", offset);
+//        Timber.d("getDataFromApi with offset: %s", offset);
         if (mData != null && mData.isValid() && !mData.isEmpty()) {
             getView().showCenterProgress(false);
             if (offset != 0) {
@@ -115,7 +116,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
                 .flatMap(apiDate -> getSaveToDbObservable(apiDate, offset))
                 .subscribe(
                         data -> {
-                            Timber.d("getDataFromApi loaded data size: %s and offset: %s", data.first, data.second);
+//                            Timber.d("getDataFromApi loaded data size: %s and offset: %s", data.first, data.second);
 
                             isLoading = false;
 
@@ -194,6 +195,21 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .flatMap(apiData -> mDbProviderFactory.getDbProvider().saveArticle(apiData))
+                    .observeOn(Schedulers.io())
+                    .map(downloadedArticle -> {
+                        if (mMyPreferencesManager.isHasSubscription() && mMyPreferencesManager.getInnerArticlesDepth() != 0) {
+                            DownloadAllService.getAndSaveInnerArticles(
+                                    mDbProviderFactory.getDbProvider(),
+                                    mApiClient,
+                                    downloadedArticle,
+                                    0,
+                                    mMyPreferencesManager.getInnerArticlesDepth()
+                            );
+                        }
+
+                        return downloadedArticle;
+                    })
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(getDownloadArticleSubscriber());
         } else {
             mDbProviderFactory.getDbProvider().deleteArticlesText(article.url)

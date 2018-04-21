@@ -86,6 +86,7 @@ import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
+import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.DimensionUtils;
 import rx.Observable;
 import rx.Subscriber;
@@ -538,15 +539,15 @@ public class ApiClient {
     }
 
     @Nullable
-    public Article getArticleFromApi(String url) throws Exception, ScpParseException {
-        Request request = new Request.Builder()
+    public Article getArticleFromApi(final String url) throws Exception, ScpParseException {
+        final Request request = new Request.Builder()
                 .url(url)
                 .build();
 
-        String responseBody;
+        final String responseBody;
         try {
-            Response response = mOkHttpClient.newCall(request).execute();
-            ResponseBody body = response.body();
+            final Response response = mOkHttpClient.newCall(request).execute();
+            final ResponseBody body = response.body();
             if (body != null) {
                 responseBody = body.string();
             } else {
@@ -560,6 +561,7 @@ public class ApiClient {
             final Document doc = Jsoup.parse(responseBody);
             final Element pageContent = getArticlePageContentTag(doc);
             if (pageContent == null) {
+                Timber.wtf("pageContent is NULL for: %s", url);
                 throw new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse));
             }
             final Element p404 = pageContent.getElementById("404-message");
@@ -698,7 +700,7 @@ public class ApiClient {
             }
 
             //search for relative urls to add domain
-            for (Element a : pageContent.getElementsByTag("a")) {
+            for (final Element a : pageContent.getElementsByTag("a")) {
                 //replace all links to not translated articles
                 if (a.className().equals("newpage")) {
                     a.attr("href", Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL
@@ -731,6 +733,19 @@ public class ApiClient {
                 }
             }
 
+            //search for inner articles
+            RealmList<RealmString> innerArticlesUrls = null;
+            final Elements innerATags = pageContent.getElementsByTag("a");
+            if (!innerATags.isEmpty()) {
+                innerArticlesUrls = new RealmList<>();
+                for (final Element a : innerATags) {
+                    String innerUrl = a.attr("href");
+                    if (SetTextViewHTML.LinkType.getLinkType(innerUrl, mConstantValues) == SetTextViewHTML.LinkType.INNER) {
+                        innerArticlesUrls.add(new RealmString(SetTextViewHTML.LinkType.getFormattedUrl(innerUrl, mConstantValues)));
+                    }
+                }
+            }
+
             //type parsing TODO fucking unformatted info!
 
             //this we store as article text
@@ -739,12 +754,11 @@ public class ApiClient {
 
             //articles textParts
             final RealmList<RealmString> textParts = new RealmList<>();
-            final RealmList<RealmString> textPartsTypes = new RealmList<>();
-
             final List<String> rawTextParts = ParseHtmlUtils.getArticlesTextParts(rawText);
             for (final String value : rawTextParts) {
                 textParts.add(new RealmString(value));
             }
+            final RealmList<RealmString> textPartsTypes = new RealmList<>();
             for (@ParseHtmlUtils.TextType final String value : ParseHtmlUtils.getListOfTextTypes(rawTextParts)) {
                 textPartsTypes.add(new RealmString(value));
             }
@@ -768,6 +782,8 @@ public class ApiClient {
             article.textPartsTypes = textPartsTypes;
             //images
             article.imagesUrls = imgsUrls;
+            //inner articles
+            article.innerArticlesUrls = innerArticlesUrls;
             //tags
             article.tags = articleTags;
             //rating

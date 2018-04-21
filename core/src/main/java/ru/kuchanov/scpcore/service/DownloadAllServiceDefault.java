@@ -4,17 +4,12 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import javax.inject.Inject;
-
 import ru.kuchanov.scpcore.BaseApplication;
-import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProvider;
-import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.downloads.DownloadAllService;
 import ru.kuchanov.scpcore.downloads.DownloadEntry;
-import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 
 /**
  * Created by mohax on 01.07.2017.
@@ -23,15 +18,6 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
  */
 public class DownloadAllServiceDefault extends DownloadAllService {
 
-    @Inject
-    MyPreferenceManager mMyPreferenceManager;
-    @Inject
-    ApiClient mApiClient;
-    @Inject
-    DbProviderFactory mDbProviderFactory;
-    @Inject
-    ConstantValues mConstantValues;
-
     @Nullable
     @Override
     public IBinder onBind(final Intent intent) {
@@ -39,8 +25,7 @@ public class DownloadAllServiceDefault extends DownloadAllService {
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
+    protected void callInject() {
         BaseApplication.getAppComponent().inject(this);
     }
 
@@ -67,7 +52,7 @@ public class DownloadAllServiceDefault extends DownloadAllService {
     }
 
     @Override
-    protected DbProvider getDbProviderModel() {
+    protected DbProvider getDbProvider() {
         return mDbProviderFactory.getDbProvider();
     }
 }
