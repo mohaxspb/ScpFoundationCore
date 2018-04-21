@@ -131,13 +131,30 @@
 
                 </LinearLayout>
 
-                <SeekBar
-                    android:id="@+id/downloadsDepthSeekbar"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/defaultMargin"
-                    android:progressBackgroundTint="?windowBackgroundDark"
-                    tools:targetApi="lollipop" />
+                    android:layout_height="wrap_content">
+
+                    <SeekBar
+                        android:id="@+id/downloadsDepthSeekbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/defaultMargin"
+                        android:progressBackgroundTint="?windowBackgroundDark"
+                        tools:targetApi="lollipop" />
+
+                    <TextView
+                        android:id="@+id/activate"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:background="?windowBackgroundHalfTransparent"
+                        android:foreground="?selectableItemBackground"
+                        android:gravity="center"
+                        android:text="@string/activate"
+                        android:textColor="@color/material_green_500" />
+
+                </FrameLayout>
             </LinearLayout>
 
             <TextView

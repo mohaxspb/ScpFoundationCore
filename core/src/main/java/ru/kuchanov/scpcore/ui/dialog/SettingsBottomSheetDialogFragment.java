@@ -113,6 +113,9 @@ public class SettingsBottomSheetDialogFragment
     @BindView(R2.id.downloadsDepthSeekbar)
     SeekBar downloadsDepthSeekbar;
 
+    @BindView(R2.id.activate)
+    TextView activateTextView;
+
     //downloads END
 
     @BindView(R2.id.buy)
@@ -262,11 +265,22 @@ public class SettingsBottomSheetDialogFragment
             }
         });
         downloadInnerDepthValueTextView.setText(String.valueOf(mMyPreferenceManager.getInnerArticlesDepth()));
+        activateTextView.setVisibility(!mMyPreferenceManager.isHasSubscription() ? View.VISIBLE : View.GONE);
         //downloads END
 
         //hide activate subs for good users
-        final boolean noFullSubscription = !mMyPreferenceManager.isHasSubscription();
-        mActivateAutoSync.setVisibility(noFullSubscription ? View.VISIBLE : View.GONE);
+        mActivateAutoSync.setVisibility(!mMyPreferenceManager.isHasSubscription() ? View.VISIBLE : View.GONE);
+    }
+
+    @OnClick(R2.id.activate)
+    void onActivateClicked() {
+        dismiss();
+
+        SubscriptionsActivity.start(getActivity());
+
+        final Bundle bundle = new Bundle();
+        bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.StartScreen.INNER_DOWNLOADS_FROM_SETTINGS);
+        FirebaseAnalytics.getInstance(getActivity()).logEvent(Constants.Firebase.Analitics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
     }
 
     @OnClick(R2.id.buy)
