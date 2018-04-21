@@ -87,6 +87,8 @@ public abstract class DownloadAllService extends Service {
 
     private int mNumOfErrors;
 
+    private int mInnerArticlesDepth;
+
     private CompositeSubscription mCompositeSubscription;
 
     public static boolean isRunning() {
@@ -164,6 +166,9 @@ public abstract class DownloadAllService extends Service {
         rangeStart = intent.getIntExtra(EXTRA_RANGE_START, RANGE_NONE);
         rangeEnd = intent.getIntExtra(EXTRA_RANGE_END, RANGE_NONE);
         Timber.d("rangeStart/rangeEnd: %s/%s", rangeStart, rangeEnd);
+
+        mInnerArticlesDepth = mMyPreferenceManager.getInnerArticlesDepth();
+        Timber.d("mInnerArticlesDepth: %s", mInnerArticlesDepth);
 
         final DownloadEntry type = (DownloadEntry) intent.getSerializableExtra(EXTRA_DOWNLOAD_TYPE);
         download(type);
@@ -297,6 +302,12 @@ public abstract class DownloadAllService extends Service {
                 .map(limitArticles)
                 //check for already downloaded articles
                 .map(articles -> {
+                    Timber.d("limited articles: %s/%s/%s",
+                            articles.size(), articles.get(0).title, articles.get(articles.size() - 1).title
+                    );
+                    if (mMyPreferenceManager.isDownloadForceUpdateEnabled()) {
+                        return articles;
+                    }
                     List<Article> articlesToDownload = new ArrayList<>();
                     DbProvider dbProvider = getDbProvider();
                     for (Article article : articles) {
@@ -314,25 +325,15 @@ public abstract class DownloadAllService extends Service {
                 })
                 .flatMap(articles -> {
                     DbProvider dbProvider = getDbProvider();
-                    for (int i = 0; i < articles.size(); i++) {
-                        Article articleToDownload = articles.get(i);
+                    for (final Article articleToDownload : articles) {
                         try {
+                            Timber.d("Start download article: %s", articleToDownload.title);
                             Article articleDownloaded = getApiClient().getArticleFromApi(articleToDownload.getUrl());
                             if (articleDownloaded != null) {
                                 dbProvider.saveArticleSync(articleDownloaded, false);
 
-                                if (mMyPreferenceManager.isHasSubscription()) {
-                                    //todo use method
-                                    List<String> innerArticlesUrls = articleDownloaded.getInnerArticlesUrls();
-                                    for (String innerUrl : innerArticlesUrls) {
-                                        Timber.d("save inner article: %s", innerUrl);
-                                        try {
-                                            Article innerArticleDownloaded = getApiClient().getArticleFromApi(innerUrl);
-                                            dbProvider.saveArticleSync(innerArticleDownloaded, false);
-                                        } catch (Exception e) {
-                                            Timber.e(e, "error while save inner article");
-                                        }
-                                    }
+                                if (mMyPreferenceManager.isHasSubscription() && mInnerArticlesDepth != 0) {
+                                    getAndSaveInnerArticles(dbProvider, articleDownloaded, 0);
                                 }
 
                                 Timber.d("downloaded: %s", articleDownloaded.getUrl());
@@ -385,15 +386,38 @@ public abstract class DownloadAllService extends Service {
         mCurProgress = 0;
         if (rangeStart == RANGE_NONE && rangeEnd == RANGE_NONE) {
             mMaxProgress = articles.size();
+            return articles;
         } else {
             mMaxProgress = rangeEnd - rangeStart;
-            articles = articles.subList(rangeStart, rangeEnd);
+            return articles.subList(rangeStart, rangeEnd);
         }
-        return articles;
     };
 
-    private void getAndSaveInnerArticle(@NotNull final Article article) {
-        //todo
+    private void getAndSaveInnerArticles(
+            @NotNull final DbProvider dbProvider,
+            @NotNull final Article articleDownloaded,
+            final int depthLevel
+    ) {
+        if (depthLevel >= mInnerArticlesDepth) {
+            return;
+        }
+        Timber.d("getAndSaveInnerArticles: %s/%s", articleDownloaded.title, depthLevel);
+
+        final List<String> innerArticlesUrls = articleDownloaded.getInnerArticlesUrls();
+        for (final String innerUrl : innerArticlesUrls) {
+            Timber.d("save inner article: %s", innerUrl);
+            try {
+                final Article innerArticleDownloaded = getApiClient().getArticleFromApi(innerUrl);
+                if (innerArticleDownloaded == null) {
+                    continue;
+                }
+                dbProvider.saveArticleSync(innerArticleDownloaded, false);
+
+                getAndSaveInnerArticles(dbProvider, innerArticleDownloaded, depthLevel + 1);
+            } catch (Exception | ScpParseException e) {
+                Timber.e(e, "error while save inner article");
+            }
+        }
     }
 
     private void showNotificationDownloadList() {
