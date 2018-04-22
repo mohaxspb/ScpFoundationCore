@@ -48,6 +48,40 @@ public class StorageUtils {
         return null;
     }
 
+    public static void deleteCachedImages(final Context context) {
+        deleteRecursive(new File(context.getFilesDir(), "/image"));
+    }
+
+    public static void deleteRecursive(final File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory()) {
+            for (final File child : fileOrDirectory.listFiles()) {
+                deleteRecursive(child);
+            }
+        }
+
+        fileOrDirectory.delete();
+    }
+
+    public static int cachedImagesFilesCount(final Context context) {
+        return new File(context.getFilesDir(), "/image").listFiles().length;
+    }
+
+    public static long cachedImagesFolderSize(final Context context) {
+        return folderSize(new File(context.getFilesDir(), "/image"));
+    }
+
+    public static long folderSize(final File directory) {
+        long length = 0;
+        for (final File file : directory.listFiles()) {
+            if (file.isFile()) {
+                length += file.length();
+            } else {
+                length += folderSize(file);
+            }
+        }
+        return length;
+    }
+
     public static boolean fileExistsInAssets(final String path) {
         try {
             final List<String> assetsFiles = Arrays.asList(BaseApplication.getAppInstance().getResources().getAssets().list(""));
@@ -79,7 +113,7 @@ public class StorageUtils {
                 root.mkdirs();
             }
             final File myFile = new File(root, fileName);
-            if(!myFile.exists()){
+            if (!myFile.exists()) {
                 myFile.createNewFile();
             }
             final FileWriter writer = new FileWriter(myFile);

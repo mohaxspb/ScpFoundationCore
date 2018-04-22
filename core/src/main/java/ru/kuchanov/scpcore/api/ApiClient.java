@@ -41,16 +41,22 @@ import org.jsoup.nodes.Node;
 import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Pair;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import io.realm.RealmList;
 import okhttp3.Call;
@@ -538,6 +544,9 @@ public class ApiClient {
         return articles;
     }
 
+    /**
+     * loads article sync
+     */
     @Nullable
     public Article getArticleFromApi(final String url) throws Exception, ScpParseException {
         final Request request = new Request.Builder()
@@ -739,7 +748,7 @@ public class ApiClient {
             if (!innerATags.isEmpty()) {
                 innerArticlesUrls = new RealmList<>();
                 for (final Element a : innerATags) {
-                    String innerUrl = a.attr("href");
+                    final String innerUrl = a.attr("href");
                     if (SetTextViewHTML.LinkType.getLinkType(innerUrl, mConstantValues) == SetTextViewHTML.LinkType.INNER) {
                         innerArticlesUrls.add(new RealmString(SetTextViewHTML.LinkType.getFormattedUrl(innerUrl, mConstantValues)));
                     }
@@ -819,35 +828,49 @@ public class ApiClient {
             }
         }))
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .map(article -> {
                     //download all images
-                    if (article.imagesUrls != null) {
-                        for (RealmString realmString : article.imagesUrls) {
-//                            Timber.d("load image by Glide: %s", realmString.val);
-                            Glide.with(BaseApplication.getAppInstance())
-                                    .load(realmString.val)
-                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                    .listener(new RequestListener<String, GlideDrawable>() {
-                                        @Override
-                                        public boolean onException(final Exception e, final String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                                            Timber.e("error while preload image by Glide");
-                                            return false;
-                                        }
-
-                                        @Override
-                                        public boolean onResourceReady(final GlideDrawable resource, final String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-//                                            Timber.d("onResourceReady: %s/%s", resource.getIntrinsicWidth(), resource.getIntrinsicHeight());
-                                            return false;
-                                        }
-                                    })
-                                    .preload();
-                        }
-                    }
+                    downloadImagesOnDisk(article);
 
                     return article;
                 })
                 .onErrorResumeNext(throwable -> Observable.error(new ScpException(throwable, url)));
+    }
+
+    /**
+     * downloads all article images sync
+     */
+    public void downloadImagesOnDisk(final Article article) {
+        if (article.imagesUrls != null) {
+            final Context context = BaseApplication.getAppInstance();
+            for (final RealmString realmString : article.imagesUrls) {
+                if (mPreferencesManager.isImagesCacheEnabled()) {
+                    try {
+                        final Bitmap bitmap = Glide.with(context)
+                                .load(realmString.val)
+                                .asBitmap()
+                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                                .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                                .get();
+
+                        final File f = new File(context.getFilesDir(), "/image");
+                        f.mkdirs();
+                        final File imageFile = new File(f, formatUrlToFileName(realmString.val));
+                        final FileOutputStream ostream = new FileOutputStream(imageFile);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 10, ostream);
+                        ostream.close();
+                    } catch (InterruptedException | IOException | ExecutionException e) {
+                        Timber.e(e);
+                    }
+                } else {
+                    Glide.with(context)
+                            .load(realmString.val)
+                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                            .preload();
+                }
+            }
+        }
     }
 
     public Observable<List<Article>> getMaterialsArticles(final String objectsLink) {
@@ -2023,5 +2046,12 @@ public class ApiClient {
 
     public ConstantValues getConstantValues() {
         return mConstantValues;
+    }
+
+    public static String formatUrlToFileName(final String url) {
+        String imageFileName = url.replaceAll("#", REPLACEMENT_HASH);
+        imageFileName = imageFileName.replaceAll("/", REPLACEMENT_SLASH);
+
+        return imageFileName;
     }
 }

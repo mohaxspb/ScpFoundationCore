@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.ui.holder;
 
+import com.google.android.gms.common.api.Api;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +24,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import java.io.File;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -29,6 +33,7 @@ import butterknife.ButterKnife;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
+import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.model.ArticleTextPartViewModel;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
@@ -45,19 +50,22 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
 
     @Inject
     MyPreferenceManager mMyPreferenceManager;
+
     @Inject
     SetTextViewHTML mSetTextViewHTML;
 
-    private SetTextViewHTML.TextItemsClickListener mTextItemsClickListener;
+    private final SetTextViewHTML.TextItemsClickListener mTextItemsClickListener;
 
     @BindView(R2.id.image)
     ImageView imageView;
+
     @BindView(R2.id.title)
     TextView titleTextView;
+
     @BindView(R2.id.progressCenter)
     ProgressBar progressCenter;
 
-    public ArticleImageHolder(View itemView, SetTextViewHTML.TextItemsClickListener clickListener) {
+    public ArticleImageHolder(final View itemView, final SetTextViewHTML.TextItemsClickListener clickListener) {
         super(itemView);
         BaseApplication.getAppComponent().inject(this);
         ButterKnife.bind(this, itemView);
@@ -65,33 +73,33 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
         mTextItemsClickListener = clickListener;
     }
 
-    public void bind(ArticleTextPartViewModel viewModel) {
-        Context context = itemView.getContext();
+    public void bind(final ArticleTextPartViewModel viewModel) {
+        final Context context = itemView.getContext();
 
-        int defaultMargin = context.getResources().getDimensionPixelSize(R.dimen.defaultMargin);
+        final int defaultMargin = context.getResources().getDimensionPixelSize(R.dimen.defaultMargin);
         if (viewModel.isInSpoiler) {
-            RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) itemView.getLayoutParams();
+            final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) itemView.getLayoutParams();
             params.leftMargin = defaultMargin;
             params.rightMargin = defaultMargin;
             itemView.setBackgroundColor(AttributeGetter.getColor(context, R.attr.windowBackgroundDark));
         } else {
-            RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) itemView.getLayoutParams();
+            final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) itemView.getLayoutParams();
             params.leftMargin = 0;
             params.rightMargin = 0;
             itemView.setBackgroundColor(Color.TRANSPARENT);
         }
 
-        Document document = Jsoup.parse((String) viewModel.data);
-        Element imageTag = document.getElementsByTag("img").first();
-        String imageUrl = imageTag == null ? null : imageTag.attr("src");
+        final Document document = Jsoup.parse((String) viewModel.data);
+        final Element imageTag = document.getElementsByTag("img").first();
+        final String imageUrl = imageTag == null ? null : imageTag.attr("src");
 
         CalligraphyUtils.applyFontToTextView(context, titleTextView, mMyPreferenceManager.getFontPath());
 
-        int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_primary);
-        float articleTextScale = mMyPreferenceManager.getArticleTextScale();
+        final int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_primary);
+        final float articleTextScale = mMyPreferenceManager.getArticleTextScale();
         titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, articleTextScale * textSizePrimary);
 
-        String title;
+        final String title;
         if (!document.getElementsByTag("span").isEmpty()) {
             title = document.getElementsByTag("span").first().html();
 //            Timber.d("title: %s", title);
@@ -120,18 +128,29 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .listener(new RequestListener<String, GifDrawable>() {
                         @Override
-                        public boolean onException(Exception e, String model, Target<GifDrawable> target, boolean isFirstResource) {
+                        public boolean onException(
+                                final Exception e,
+                                final String model,
+                                final Target<GifDrawable> target,
+                                final boolean isFirstResource
+                        ) {
                             Timber.e(e, "error while download image by glide");
                             progressCenter.setVisibility(View.GONE);
                             return false;
                         }
 
                         @Override
-                        public boolean onResourceReady(GifDrawable resource, String model, Target<GifDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        public boolean onResourceReady(
+                                final GifDrawable resource,
+                                final String model,
+                                final Target<GifDrawable> target,
+                                final boolean isFromMemoryCache,
+                                final boolean isFirstResource
+                        ) {
                             int width = resource.getIntrinsicWidth();
                             int height = resource.getIntrinsicHeight();
 
-                            float multiplier = (float) width / height;
+                            final float multiplier = (float) width / height;
 
                             width = imageView.getMeasuredWidth();
 
@@ -150,26 +169,41 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
                     })
                     .into(imageView);
         } else {
+            //search for saved file
+            final File file = new File(context.getFilesDir(), "/image/" + ApiClient.formatUrlToFileName(imageUrl));
+//            Timber.d("file: %s", file.getAbsolutePath());
+//            Timber.d("fileExists: %s", file.exists());
             Glide.with(context)
-                    .load(imageUrl)
+                    .load(file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
                     .error(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
                     .fitCenter()
                     .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
-                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        public boolean onException(
+                                final Exception e,
+                                final String model,
+                                final Target<GlideDrawable> target,
+                                final boolean isFirstResource
+                        ) {
                             Timber.e(e, "error while download image by glide");
                             progressCenter.setVisibility(View.GONE);
                             return false;
                         }
 
                         @Override
-                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        public boolean onResourceReady(
+                                final GlideDrawable resource,
+                                final String model,
+                                final Target<GlideDrawable> target,
+                                final boolean isFromMemoryCache,
+                                final boolean isFirstResource
+                        ) {
                             int width = resource.getIntrinsicWidth();
                             int height = resource.getIntrinsicHeight();
 
-                            float multiplier = (float) width / height;
+                            final float multiplier = (float) width / height;
 
                             width = imageView.getMeasuredWidth();
 
