@@ -4,6 +4,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -43,6 +44,7 @@ import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerCardDesignAdapter;
 import ru.kuchanov.scpcore.util.AttributeGetter;
+import ru.kuchanov.scpcore.util.StorageUtils;
 import timber.log.Timber;
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
@@ -115,8 +117,21 @@ public class SettingsBottomSheetDialogFragment
 
     @BindView(R2.id.activate)
     TextView activateTextView;
-
     //downloads END
+
+    //images cache
+    @BindView(R2.id.imagesCacheEnabledSwitch)
+    SwitchCompat imagesCacheEnabledSwitch;
+
+    @BindView(R2.id.cachedImagesCountValueTextView)
+    TextView cachedImagesCountValueTextView;
+
+    @BindView(R2.id.cachedImagesSizeValueTextView)
+    TextView cachedImagesSizeValueTextView;
+
+    @BindView(R2.id.clearImagesButton)
+    View clearImagesButton;
+    //images cache END
 
     @BindView(R2.id.buy)
     TextView mActivateAutoSync;
@@ -141,14 +156,16 @@ public class SettingsBottomSheetDialogFragment
         final String[] types = {ListItemType.MIN, ListItemType.MIDDLE, ListItemType.MAX};
         @ListItemType final List<String> typesList = Arrays.asList(types);
 
+        final Context context = getActivity();
+
         final ArrayAdapter<String> adapterCard =
-                new SettingsSpinnerCardDesignAdapter(getActivity(), R.layout.design_list_spinner_item, typesList);
+                new SettingsSpinnerCardDesignAdapter(context, R.layout.design_list_spinner_item, typesList);
         adapterCard.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         final Drawable.ConstantState spinnerDrawableConstantState = listItemSpinner.getBackground().getConstantState();
         if (spinnerDrawableConstantState != null) {
             final Drawable spinnerDrawable = spinnerDrawableConstantState.newDrawable();
-            spinnerDrawable.setColorFilter(AttributeGetter.getColor(getActivity(), R.attr.newArticlesTextColor), PorterDuff.Mode.SRC_ATOP);
+            spinnerDrawable.setColorFilter(AttributeGetter.getColor(context, R.attr.newArticlesTextColor), PorterDuff.Mode.SRC_ATOP);
             listItemSpinner.setBackground(spinnerDrawable);
         }
 
@@ -176,13 +193,13 @@ public class SettingsBottomSheetDialogFragment
         @ListItemType final List<String> fontsList = Arrays.asList(getResources().getStringArray(R.array.fonts_names));
 
         final ArrayAdapter<String> adapter =
-                new SettingsSpinnerAdapter(getActivity(), R.layout.design_list_spinner_item_font, fontsList, fontsPathsList);
+                new SettingsSpinnerAdapter(context, R.layout.design_list_spinner_item_font, fontsList, fontsPathsList);
         adapter.setDropDownViewResource(R.layout.design_list_spinner_item_font);
 
         final Drawable.ConstantState fontsSpinnerDrawableConstantState = fontPreferedSpinner.getBackground().getConstantState();
         if (fontsSpinnerDrawableConstantState != null) {
             final Drawable spinnerDrawable = fontsSpinnerDrawableConstantState.newDrawable();
-            spinnerDrawable.setColorFilter(AttributeGetter.getColor(getActivity(), R.attr.newArticlesTextColor), PorterDuff.Mode.SRC_ATOP);
+            spinnerDrawable.setColorFilter(AttributeGetter.getColor(context, R.attr.newArticlesTextColor), PorterDuff.Mode.SRC_ATOP);
             fontPreferedSpinner.setBackground(spinnerDrawable);
         }
 
@@ -268,6 +285,18 @@ public class SettingsBottomSheetDialogFragment
         activateTextView.setVisibility(!mMyPreferenceManager.isHasSubscription() ? View.VISIBLE : View.GONE);
         //downloads END
 
+        //images cache
+        imagesCacheEnabledSwitch.setChecked(mMyPreferenceManager.isImagesCacheEnabled());
+        imagesCacheEnabledSwitch.setOnCheckedChangeListener((compoundButton, checked) -> mMyPreferenceManager.setImagesCacheEnabled(checked));
+
+        final int cachedImagesCount = StorageUtils.cachedImagesFilesCount(context);
+
+        cachedImagesCountValueTextView.setText(String.valueOf(cachedImagesCount));
+
+        cachedImagesSizeValueTextView.setText(StorageUtils.humanReadableByteCount(StorageUtils.cachedImagesFolderSize(context), true));
+        clearImagesButton.setEnabled(cachedImagesCount > 0);
+        //images cache END
+
         //hide activate subs for good users
         mActivateAutoSync.setVisibility(!mMyPreferenceManager.isHasSubscription() ? View.VISIBLE : View.GONE);
     }
@@ -281,6 +310,21 @@ public class SettingsBottomSheetDialogFragment
         final Bundle bundle = new Bundle();
         bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.StartScreen.INNER_DOWNLOADS_FROM_SETTINGS);
         FirebaseAnalytics.getInstance(getActivity()).logEvent(Constants.Firebase.Analitics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
+    }
+
+    @OnClick(R2.id.clearImagesButton)
+    void onClearImagesClicked() {
+        //todo show confirm dialog
+        final Context context = getActivity();
+        StorageUtils.deleteCachedImages(context);
+
+        final int cachedImagesCount = StorageUtils.cachedImagesFilesCount(context);
+
+        cachedImagesCountValueTextView.setText(String.valueOf(cachedImagesCount));
+
+        cachedImagesSizeValueTextView.setText(StorageUtils.humanReadableByteCount(StorageUtils.cachedImagesFolderSize(context), true));
+
+        clearImagesButton.setEnabled(cachedImagesCount > 0);
     }
 
     @OnClick(R2.id.buy)

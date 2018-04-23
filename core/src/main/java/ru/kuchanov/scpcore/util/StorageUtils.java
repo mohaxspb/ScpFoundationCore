@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
@@ -63,7 +64,8 @@ public class StorageUtils {
     }
 
     public static int cachedImagesFilesCount(final Context context) {
-        return new File(context.getFilesDir(), "/image").listFiles().length;
+        final File[] images = new File(context.getFilesDir(), "/image").listFiles();
+        return images != null ? images.length : 0;
     }
 
     public static long cachedImagesFolderSize(final Context context) {
@@ -72,7 +74,11 @@ public class StorageUtils {
 
     public static long folderSize(final File directory) {
         long length = 0;
-        for (final File file : directory.listFiles()) {
+        final File[] files = directory.listFiles();
+        if (files == null) {
+            return length;
+        }
+        for (final File file : files) {
             if (file.isFile()) {
                 length += file.length();
             } else {
@@ -80,6 +86,14 @@ public class StorageUtils {
             }
         }
         return length;
+    }
+
+    public static String humanReadableByteCount(final long bytes, final boolean si) {
+        final int unit = si ? 1000 : 1024;
+        if (bytes < unit) {return bytes + " B";}
+        final int exp = (int) (Math.log(bytes) / Math.log(unit));
+        final String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+        return String.format(Locale.getDefault(), "%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
     public static boolean fileExistsInAssets(final String path) {

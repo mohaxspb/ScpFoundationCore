@@ -365,4 +365,5 @@ Thanks for using our app!]]></string>
     <string name="images_cache_enabled">Local image caching</string>
     <string name="cached_images_count">Cached images count</string>
     <string name="cached_images_size">Cached images size</string>
+    <string name="clear_cached_images">Clear cached images</string>
 </resources>

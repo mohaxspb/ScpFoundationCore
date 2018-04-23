@@ -247,8 +247,8 @@ public class InAppHelper {
                 final Bundle querySkus = new Bundle();
                 querySkus.putStringArrayList("ITEM_ID_LIST", (ArrayList<String>) skus);
                 final Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "subs", querySkus);
-                Timber.d("skuDetails: %s", skuDetails);
-                if (skuDetails.getInt("RESPONSE_CODE") == RESULT_OK) {
+                final int responseCodeCode = skuDetails.getInt("RESPONSE_CODE");
+                if (responseCodeCode == RESULT_OK) {
                     final List<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
                     if (responseList == null) {
                         subscriber.onError(new IllegalStateException("responseList is null while get subs details"));
@@ -265,7 +265,7 @@ public class InAppHelper {
                     subscriber.onNext(allSubscriptions);
                     subscriber.onCompleted();
                 } else {
-                    subscriber.onError(new IllegalStateException("ownedItemsBundle.getInt(\"RESPONSE_CODE\") is not 0"));
+                    subscriber.onError(new IllegalStateException("ownedItemsBundle.getInt(\"RESPONSE_CODE\") is: " + responseCodeCode));
                 }
             } catch (final RemoteException e) {
                 Timber.e(e);
