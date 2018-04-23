@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
@@ -46,6 +47,53 @@ public class StorageUtils {
             );
         }
         return null;
+    }
+
+    public static void deleteCachedImages(final Context context) {
+        deleteRecursive(new File(context.getFilesDir(), "/image"));
+    }
+
+    public static void deleteRecursive(final File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory()) {
+            for (final File child : fileOrDirectory.listFiles()) {
+                deleteRecursive(child);
+            }
+        }
+
+        fileOrDirectory.delete();
+    }
+
+    public static int cachedImagesFilesCount(final Context context) {
+        final File[] images = new File(context.getFilesDir(), "/image").listFiles();
+        return images != null ? images.length : 0;
+    }
+
+    public static long cachedImagesFolderSize(final Context context) {
+        return folderSize(new File(context.getFilesDir(), "/image"));
+    }
+
+    public static long folderSize(final File directory) {
+        long length = 0;
+        final File[] files = directory.listFiles();
+        if (files == null) {
+            return length;
+        }
+        for (final File file : files) {
+            if (file.isFile()) {
+                length += file.length();
+            } else {
+                length += folderSize(file);
+            }
+        }
+        return length;
+    }
+
+    public static String humanReadableByteCount(final long bytes, final boolean si) {
+        final int unit = si ? 1000 : 1024;
+        if (bytes < unit) {return bytes + " B";}
+        final int exp = (int) (Math.log(bytes) / Math.log(unit));
+        final String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+        return String.format(Locale.getDefault(), "%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
     public static boolean fileExistsInAssets(final String path) {
@@ -79,7 +127,7 @@ public class StorageUtils {
                 root.mkdirs();
             }
             final File myFile = new File(root, fileName);
-            if(!myFile.exists()){
+            if (!myFile.exists()) {
                 myFile.createNewFile();
             }
             final FileWriter writer = new FileWriter(myFile);

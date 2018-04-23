@@ -5,6 +5,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.CardView;
@@ -25,6 +26,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +36,7 @@ import javax.inject.Inject;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
+import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.VkImage;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
@@ -61,64 +64,65 @@ public class ImagesPagerAdapter extends PagerAdapter {
 
     @Inject
     SetTextViewHTML mSetTextViewHTML;
+
     @Inject
     ConstantValues mConstantValues;
 
     public ImagesPagerAdapter() {
+        super();
         BaseApplication.getAppComponent().inject(this);
     }
 
-    public void downloadImage(Context context, int position, SimpleTarget<Bitmap> target) {
+    public void downloadImage(final Context context, final int position, final SimpleTarget<Bitmap> target) {
         Toast.makeText(context, R.string.image_loading, Toast.LENGTH_SHORT).show();
-        String url = mData.get(position).allUrls.get(mData.get(position).allUrls.size() - 1).getVal();
+        final String imageUrl = mData.get(position).allUrls.get(mData.get(position).allUrls.size() - 1).getVal();
+
+        final File file = new File(context.getFilesDir(), "/image/" + ApiClient.formatUrlToFileName(imageUrl));
+
         Glide.with(context)
-                .load(url)
+                .load(file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
                 .asBitmap()
                 .into(target);
     }
 
-    public void setData(List<VkImage> urls) {
+    public void setData(final List<VkImage> urls) {
         mData = urls;
         notifyDataSetChanged();
     }
 
+    @NonNull
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
-        Context context = container.getContext();
+    public Object instantiateItem(@NonNull final ViewGroup container, final int position) {
+        final Context context = container.getContext();
         if (mLayoutInflater == null) {
             mLayoutInflater = LayoutInflater.from(context);
         }
 
         //image
-        View itemView;
 
-        ProgressBar progressBar;
-        CardView cardView;
-        TextView description;
-
-        itemView = LayoutInflater.from(container.getContext()).inflate(getLayoutRes(), container, false);
+        final View itemView = LayoutInflater.from(container.getContext()).inflate(getLayoutRes(), container, false);
         if (position == 0) {
             itemView.setAlpha(1f);
         }
-        ImageView imageView = itemView.findViewById(R.id.image);
-        progressBar = itemView.findViewById(R.id.progressCenter);
+        final ImageView imageView = itemView.findViewById(R.id.image);
+        final ProgressBar progressBar = itemView.findViewById(R.id.progressCenter);
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setAlpha(1f);
 
-        cardView = itemView.findViewById(R.id.descriptionContainer);
-        description = itemView.findViewById(R.id.description);
+        final CardView cardView = itemView.findViewById(R.id.descriptionContainer);
+        final TextView description = itemView.findViewById(R.id.description);
 
 //        description.setText(mData.get(position).description);
-        String title = mData.get(position).description;
+        final String title = mData.get(position).description;
         if (!TextUtils.isEmpty(title)) {
             description.setLinksClickable(true);
             description.setMovementMethod(LinkMovementMethod.getInstance());
             mSetTextViewHTML.setText(description, title, new SetTextViewHTML.TextItemsClickListener() {
                 @Override
-                public void onLinkClicked(String link) {
+                public void onLinkClicked(final String link) {
                     Timber.d("onLinkClicked: %s", link);
                     //open predefined main activities link clicked
-                    for (String pressedLink : mConstantValues.getAllLinksArray()) {
+                    for (final String pressedLink : mConstantValues.getAllLinksArray()) {
                         if (link.equals(pressedLink)) {
                             MainActivity.startActivity(context, link);
                             return;
@@ -207,14 +211,17 @@ public class ImagesPagerAdapter extends PagerAdapter {
             cardView.setVisibility(cardView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
         });
 
-        String url = mData.get(position).allUrls.get(mData.get(position).allUrls.size() - 1).getVal();
-        Timber.d("url: %s", url);
+        final String imageUrl = mData.get(position).allUrls.get(mData.get(position).allUrls.size() - 1).getVal();
+        Timber.d("imageUrl: %s", imageUrl);
         //remove delay
         Glide.clear(imageView);
+
+        final File file = new File(context.getFilesDir(), "/image/" + ApiClient.formatUrlToFileName(imageUrl));
+
         Glide.with(context)
-                .load(url)
+                .load(file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
                 .fitCenter()
-                .thumbnail(url.endsWith("gif") ? 1f : .1f)
+                .thumbnail(imageUrl.endsWith("gif") ? 1f : .1f)
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -242,7 +249,7 @@ public class ImagesPagerAdapter extends PagerAdapter {
                         return false;
                     }
                 })
-                .diskCacheStrategy(url.endsWith("gif") ? DiskCacheStrategy.SOURCE : DiskCacheStrategy.RESULT)
+                .diskCacheStrategy(imageUrl.endsWith("gif") ? DiskCacheStrategy.SOURCE : DiskCacheStrategy.RESULT)
                 .into(imageView);
 
         container.addView(itemView);
@@ -285,7 +292,7 @@ public class ImagesPagerAdapter extends PagerAdapter {
      *             <p>
      *             from http://stackoverflow.com/questions/37789091/viewpager-inside-recyclerview-as-row-item
      */
-    private void unbindDrawables(View view) {
+    private void unbindDrawables(final View view) {
         if (view.getBackground() != null) {
             view.getBackground().setCallback(null);
         }
@@ -303,7 +310,7 @@ public class ImagesPagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public boolean isViewFromObject(View view, Object object) {
+    public boolean isViewFromObject(@NonNull final View view, @NonNull final Object object) {
         return view == object;
     }
 

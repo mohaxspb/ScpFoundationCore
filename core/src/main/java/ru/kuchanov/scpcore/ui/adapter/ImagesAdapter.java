@@ -1,6 +1,7 @@
 package ru.kuchanov.scpcore.ui.adapter;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,12 +13,14 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
+import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
+import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.model.VkImage;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 
@@ -32,25 +35,23 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private ImageClickListener mImageClickListener;
 
-    public void setImageClickListener(ImageClickListener imageClickListener) {
+    public void setImageClickListener(final ImageClickListener imageClickListener) {
         mImageClickListener = imageClickListener;
     }
 
-    public void setData(List<VkImage> vkImages) {
+    public void setData(final List<VkImage> vkImages) {
         mVkImages = vkImages;
         notifyDataSetChanged();
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        RecyclerView.ViewHolder viewHolder;
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_small_img, parent, false);
-        viewHolder = new ViewHolderImage(view);
-        return viewHolder;
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
+        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_small_img, parent, false);
+        return new ViewHolderImage(view);
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
         ((ViewHolderImage) holder).bind(mVkImages.get(position));
     }
 
@@ -71,28 +72,41 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         @BindView(R2.id.image)
         ImageView imageView;
 
-        ViewHolderImage(View itemView) {
+        ViewHolderImage(final View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-        void bind(VkImage vkImage) {
-            Context context = itemView.getContext();
-            String imageUrl = vkImage.allUrls.get(vkImage.allUrls.size() - 1).getVal();
+        void bind(final VkImage vkImage) {
+            final Context context = itemView.getContext();
+            final String imageUrl = vkImage.allUrls.get(vkImage.allUrls.size() - 1).getVal();
+
+            final File file = new File(context.getFilesDir(), "/image/" + ApiClient.formatUrlToFileName(imageUrl));
 
             Glide.with(context)
-                    .load(imageUrl)
+                    .load(file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
                     .error(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
                     .crossFade()
                     .centerCrop()
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
-                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        public boolean onException(
+                                final Exception e,
+                                final String model,
+                                final Target<GlideDrawable> target,
+                                final boolean isFirstResource
+                        ) {
                             return false;
                         }
 
                         @Override
-                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        public boolean onResourceReady(
+                                final GlideDrawable resource,
+                                final String model,
+                                final Target<GlideDrawable> target,
+                                final boolean isFromMemoryCache,
+                                final boolean isFirstResource
+                        ) {
                             imageView.setOnClickListener(v -> mImageClickListener.onItemClick(getAdapterPosition(), imageView));
                             return false;
                         }

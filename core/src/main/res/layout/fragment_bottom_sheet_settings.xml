@@ -152,9 +152,92 @@
                         android:foreground="?selectableItemBackground"
                         android:gravity="center"
                         android:text="@string/activate"
-                        android:textColor="@color/material_green_500" />
+                        android:textColor="@color/material_green_500"
+                        android:textStyle="bold" />
 
                 </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/defaultMargin">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/images_cache_enabled" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/imagesCacheEnabledSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/defaultMargin">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/cached_images_count" />
+
+                    <TextView
+                        android:id="@+id/cachedImagesCountValueTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="21sp"
+                        android:textStyle="bold"
+                        tools:text="2" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/cached_images_size" />
+
+                    <TextView
+                        android:id="@+id/cachedImagesSizeValueTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="21sp"
+                        android:textStyle="bold"
+                        tools:text="2" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/clearImagesButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="?selectableItemBackground"
+                    android:gravity="center"
+                    android:padding="@dimen/defaultMargin"
+                    android:text="@string/clear_cached_images"
+                    android:textColor="@color/material_red_500"
+                    android:textStyle="bold" />
+
             </LinearLayout>
 
             <TextView

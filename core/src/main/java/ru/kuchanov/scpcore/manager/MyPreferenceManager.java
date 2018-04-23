@@ -112,6 +112,7 @@ public class MyPreferenceManager {
         String OFFLINE_RANDOM = "OFFLINE_RANDOM";
         String INNER_ARTICLES_DEPTH = "INNER_ARTICLES_DEPTH";
         String DOWNLOAD_FORCE_UPDATE_ENABLED = "DOWNLOAD_FORCE_UPDATE_ENABLED";
+        String IMAGES_CACHE_ENABLED = "IMAGES_CACHE_ENABLED";
     }
 
     private final Gson mGson;
@@ -186,6 +187,14 @@ public class MyPreferenceManager {
 
     public void setDownloadForceUpdateEnabled(final boolean downloadForceUpdateEnabled) {
         mPreferences.edit().putBoolean(Keys.DOWNLOAD_FORCE_UPDATE_ENABLED, downloadForceUpdateEnabled).apply();
+    }
+
+    public boolean isImagesCacheEnabled() {
+        return mPreferences.getBoolean(Keys.IMAGES_CACHE_ENABLED, true);
+    }
+
+    public void setImagesCacheEnabled(final boolean enabled) {
+        mPreferences.edit().putBoolean(Keys.IMAGES_CACHE_ENABLED, enabled).apply();
     }
     //download all settings END
 

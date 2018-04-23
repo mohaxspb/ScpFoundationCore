@@ -331,6 +331,7 @@ public abstract class DownloadAllService extends Service {
                             Article articleDownloaded = getApiClient().getArticleFromApi(articleToDownload.getUrl());
                             if (articleDownloaded != null) {
                                 dbProvider.saveArticleSync(articleDownloaded, false);
+                                getApiClient().downloadImagesOnDisk(articleDownloaded);
 
                                 if (mMyPreferenceManager.isHasSubscription() && mInnerArticlesDepth != 0) {
                                     getAndSaveInnerArticles(dbProvider, getApiClient(), articleDownloaded, 0, mInnerArticlesDepth);
@@ -414,6 +415,7 @@ public abstract class DownloadAllService extends Service {
                     continue;
                 }
                 dbProvider.saveArticleSync(innerArticleDownloaded, false);
+                apiClient.downloadImagesOnDisk(articleDownloaded);
 
                 getAndSaveInnerArticles(dbProvider, apiClient, innerArticleDownloaded, depthLevel + 1, maxDepth);
             } catch (Exception | ScpParseException e) {
