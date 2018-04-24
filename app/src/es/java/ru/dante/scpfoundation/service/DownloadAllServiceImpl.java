@@ -5,14 +5,12 @@ import javax.inject.Inject;
 import ru.dante.scpfoundation.MyApplicationImpl;
 import ru.dante.scpfoundation.R;
 import ru.dante.scpfoundation.di.AppComponentImpl;
-
 import ru.kuchanov.scpcore.ConstantValues;
-
-
-
 import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.db.DbProvider;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
-import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.downloads.DownloadAllService;
+import ru.kuchanov.scpcore.downloads.DownloadEntry;
 import timber.log.Timber;
 
 /**
@@ -20,7 +18,7 @@ import timber.log.Timber;
  * <p>
  * for ScpFoundationRu
  */
-public class DownloadAllServiceImpl extends DownloadAllService<Article> {
+public class DownloadAllServiceImpl extends DownloadAllService {
 
     @Inject
     ApiClient mApiClient;
@@ -30,8 +28,7 @@ public class DownloadAllServiceImpl extends DownloadAllService<Article> {
     ConstantValues mConstantValues;
 
     @Override
-    public void onCreate() {
-        super.onCreate();
+    protected void callInject() {
         ((AppComponentImpl) MyApplicationImpl.getAppComponent()).inject(this);
     }
 
@@ -59,7 +56,7 @@ public class DownloadAllServiceImpl extends DownloadAllService<Article> {
     }
 
     @Override
-    protected DbProvider getDbProviderModel() {
+    protected DbProvider getDbProvider() {
         return mDbProviderFactory.getDbProvider();
     }
 }

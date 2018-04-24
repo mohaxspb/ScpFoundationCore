@@ -3,15 +3,14 @@ package ru.dante.scpfoundation.di.module;
 import android.support.annotation.NonNull;
 
 import dagger.Module;
-import ru.dante.scpfoundation.util.DialogUtilsImpl;
 import ru.dante.scpfoundation.service.DownloadAllServiceImpl;
+import ru.dante.scpfoundation.util.DialogUtilsImpl;
 import ru.dante.scpfoundation.util.MaterialClickListenerImpl;
-
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
-import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.di.module.HelpersModule;
+import ru.kuchanov.scpcore.downloads.DialogUtils;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 
@@ -24,7 +23,7 @@ import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 public class HelpersModuleImpl extends HelpersModule {
 
     @Override
-    protected DialogUtils<Article> getDownloadAllDialogUtils(
+    protected DialogUtils getDownloadAllDialogUtils(
             @NonNull MyPreferenceManager preferenceManager,
             @NonNull DbProviderFactory dbProviderFactory,
             @NonNull ApiClient apiClient,
@@ -40,7 +39,7 @@ public class HelpersModuleImpl extends HelpersModule {
     }
 
     @Override
-    protected MaterialsActivity.MaterialClickListener getMaterialClickListenerImpl(@NonNull ConstantValues constantValues) {
+    protected MaterialsActivity.MaterialClickListener getMaterialClickListenerImpl(@NonNull final ConstantValues constantValues) {
         return new MaterialClickListenerImpl(constantValues);
     }
 }
