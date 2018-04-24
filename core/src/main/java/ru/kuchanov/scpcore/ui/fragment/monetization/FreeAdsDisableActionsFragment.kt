@@ -43,6 +43,7 @@ class FreeAdsDisableActionsFragment :
         delegateManager.addDelegate(LabelDelegate())
         delegateManager.addDelegate(AppToInstallDelegate { presenter.onAppInstallClick(it) })
         delegateManager.addDelegate(VkGroupToJoinDelegate { presenter.onVkGroupClick(it) })
+        delegateManager.addDelegate(VkShareAppDelegate { presenter.onVkShareAppClick() })
 
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter
