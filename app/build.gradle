@@ -70,7 +70,7 @@ android {
             //Disable them to speed up your builds.
             aaptOptions.cruncherEnabled = false
             //only package russian translations, and xxhdpi resources
-            resConfigs ("ru", "xxhdpi")
+            resConfigs("ru", "xxhdpi")
         }
 
         ru {
@@ -83,6 +83,8 @@ android {
 
             applicationIdSuffix ".eng"
             matchingFallbacks = ['debug', 'release']
+
+            resConfigs "en", "pl", "de", "fr", "es", "it"
         }
 
         pl {
@@ -133,8 +135,8 @@ android {
             fillArrays(variant, false)
             fillApiArrays(variant, false)
 
-            def versionCode = project.hasProperty('devBuild') ? 100 :  buildVersionCodeFromVariant(variant)
-            def versionName = project.hasProperty('devBuild') ? 100 :  getVersionValueAsString(variant)
+            def versionCode = project.hasProperty('devBuild') ? 100 : buildVersionCodeFromVariant(variant)
+            def versionName = project.hasProperty('devBuild') ? 100 : getVersionValueAsString(variant)
 
             variant.mergedFlavor.versionCode = versionCode
             variant.mergedFlavor.versionName = versionName
