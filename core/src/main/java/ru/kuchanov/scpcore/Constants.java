@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore;
 
+import org.jetbrains.annotations.NotNull;
+
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.StringRes;
@@ -217,6 +219,7 @@ public interface Constants {
                 String MASS_DOWNLOAD = "MASS_DOWNLOAD";
                 String VK_GROUP_JOINED = "VK_GROUP_JOINED";
                 String APP_INSTALLED = "APP_INSTALLED";
+                String VK_APP_SHARED = "VK_APP_SHARED";
             }
 
             interface EventParam {

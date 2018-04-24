@@ -176,11 +176,14 @@
       {
         "key": "free_vk_share_app_enabled",
         "value": true
-      }
-      slkfdhlskdf;aslf;l,
+      },
       {
-        "key": "free_vk_share_app_enabled",
-        "value": true
+        "key": "free_vk_share_app_reward",
+        "value": 86400000
+      },
+      {
+        "key": "score_action_vk_share_app",
+        "value": 100
       }
     ]
   }

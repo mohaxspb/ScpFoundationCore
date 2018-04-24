@@ -9,6 +9,11 @@ import com.google.gson.Gson
 import com.vk.sdk.VKAccessToken
 import com.vk.sdk.VKScope
 import com.vk.sdk.VKSdk
+import com.vk.sdk.api.VKError
+import com.vk.sdk.api.model.VKApiPhoto
+import com.vk.sdk.api.model.VKPhotoArray
+import com.vk.sdk.dialogs.VKShareDialog
+import com.vk.sdk.dialogs.VKShareDialogBuilder
 import org.joda.time.Duration
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
@@ -171,7 +176,9 @@ class FreeAdsDisableActionsPresenter(
                 items.filterNotTo(availableItems) { mMyPreferenceManager.isVkGroupJoined(it.id) }
                 if (availableItems.isNotEmpty()) {
                     val numOfMillis = config.getLong(FREE_VK_GROUPS_JOIN_REWARD)
+                    Timber.d("numOfMillis: $numOfMillis")
                     val hours = Duration.millis(numOfMillis).toStandardHours().hours
+                    Timber.d("hours: $hours")
                     val score = config.getLong(SCORE_ACTION_VK_GROUP).toInt()
 
                     data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(4)))
@@ -194,7 +201,6 @@ class FreeAdsDisableActionsPresenter(
             }
         }
 
-        //TODO
         if (config.getBoolean(FREE_VK_SHARE_APP_ENABLED)) {
             val numOfMillis = config.getLong(FREE_VK_SHARE_APP_REWARD)
             val hours = Duration.millis(numOfMillis).toStandardHours().hours
@@ -209,18 +215,18 @@ class FreeAdsDisableActionsPresenter(
                     textColor = R.color.freeAdsTextColor))
             data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(4)))
 
-            VkShareAppViewModel(
-                SystemUtils.getPackageInfo().packageName,
-                context.getString(R.string.free_ads_vk_group_title, hours, score),
-                context.getString(R.string.app_name),
-                "https://en.wikipedia.org/wiki/SCP_Foundation#/media/File:SCP_Foundation_(emblem).svg"
-            )
+            data.add(
+                VkShareAppViewModel(
+                    SystemUtils.getPackageInfo().packageName,
+                    context.getString(R.string.free_ads_vk_group_title, hours, score),
+                    context.getString(R.string.app_name),
+                    "https://lh3.googleusercontent.com//nxy_ouZM-1PTsve_PXDI9-CoErm1Q2XRwKML7_967K-eR5TmVlI5RHDUJsc4WhjsLaI=w300-rw"
+                ))
         }
         data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(12)))
     }
 
     override fun onInviteFriendsClick() {
-        Timber.d("onInviteFriendsClick: ${isNeedToOfferFreeTrial()}")
         if (isNeedToOfferFreeTrial()) {
             return
         }
@@ -286,7 +292,8 @@ class FreeAdsDisableActionsPresenter(
                     bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "group_$id")
                     FirebaseAnalytics.getInstance(context).logEvent(
                         Constants.Firebase.Analitics.EventName.VK_GROUP_JOINED,
-                        bundle)
+                        bundle
+                    )
 
                     updateUserScoreForVkGroup(id)
                 } else {
@@ -302,6 +309,41 @@ class FreeAdsDisableActionsPresenter(
     }
 
     override fun onVkShareAppClick() {
+        //todo
+//        val builder = VKShareDialogBuilder()
+//        builder.setText(
+//            "I created this post with VK Android SDK" +
+//                    "\nSee additional information below\n#vksdk");
+//
+//        val photos = VKPhotoArray();
+//        photos.add(VKApiPhoto("photo-47200925_314622346"));
+//        builder.setUploadedPhotos(photos);
+//        builder.setAttachmentLink(
+//            "VK Android SDK information",
+//            "https://vk.com/dev/android_sdk"
+//        );
+//        builder.setShareDialogListener(object : VKShareDialog.VKShareDialogListener() {
+//            override fun onVkShareComplete(postId: Int) {
+//                FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
+//                    Constants.Firebase.Analitics.EventName.VK_APP_SHARED,
+//                    Bundle()
+//                )
+//
+//                updateUserScoreForVkAppSahre()
+//            }
+//
+//            override fun onVkShareCancel() {
+//                // recycle bitmap if need
+//            }
+//
+//            override fun onVkShareError(error: VKError) {
+//                // recycle bitmap if need
+//            }
+//        });
+//        builder.show(fragmentManager, "VK_SHARE_DIALOG");
+    }
+
+    override fun updateUserScoreForVkAppSahre() {
         //todo
     }
 

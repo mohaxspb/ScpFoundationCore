@@ -1,13 +1,21 @@
 package ru.kuchanov.scpcore.ui.fragment.monetization
 
+import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegatesManager
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import com.vk.sdk.VKScope
 import com.vk.sdk.VKSdk
+import com.vk.sdk.api.VKError
+import com.vk.sdk.api.model.VKApiPhoto
+import com.vk.sdk.api.model.VKPhotoArray
+import com.vk.sdk.dialogs.VKShareDialog
+import com.vk.sdk.dialogs.VKShareDialogBuilder
 import kotlinx.android.synthetic.main.fragment_free_ads_disable_actions.*
 import ru.kuchanov.scpcore.BaseApplication
+import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.DividerDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.LabelDelegate
@@ -43,7 +51,40 @@ class FreeAdsDisableActionsFragment :
         delegateManager.addDelegate(LabelDelegate())
         delegateManager.addDelegate(AppToInstallDelegate { presenter.onAppInstallClick(it) })
         delegateManager.addDelegate(VkGroupToJoinDelegate { presenter.onVkGroupClick(it) })
-        delegateManager.addDelegate(VkShareAppDelegate { presenter.onVkShareAppClick() })
+        delegateManager.addDelegate(VkShareAppDelegate {
+            //            presenter.onVkShareAppClick()
+            val builder = VKShareDialogBuilder()
+            builder.setText(
+                "I created this post with VK Android SDK" +
+                        "\nSee additional information below\n#vksdk");
+
+            val photos = VKPhotoArray();
+            photos.add(VKApiPhoto("photo-47200925_314622346"));
+            builder.setUploadedPhotos(photos);
+            builder.setAttachmentLink(
+                "VK Android SDK information",
+                "https://vk.com/dev/android_sdk"
+            );
+            builder.setShareDialogListener(object : VKShareDialog.VKShareDialogListener {
+                override fun onVkShareComplete(postId: Int) {
+                    FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
+                        Constants.Firebase.Analitics.EventName.VK_APP_SHARED,
+                        Bundle()
+                    )
+
+                    presenter.updateUserScoreForVkAppSahre()
+                }
+
+                override fun onVkShareCancel() {
+                    // recycle bitmap if need
+                }
+
+                override fun onVkShareError(error: VKError) {
+                    // recycle bitmap if need
+                }
+            });
+            builder.show(fragmentManager, "VK_SHARE_DIALOG");
+        })
 
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter

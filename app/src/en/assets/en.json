@@ -172,6 +172,18 @@
             {
                 "key": "offer_trial_for_year",
                 "value": false
+            },
+            {
+                "key": "free_vk_share_app_enabled",
+                "value": false
+            },
+            {
+                "key": "free_vk_share_app_reward",
+                "value": 86400000
+            },
+            {
+                "key": "score_action_vk_share_app",
+                "value": 100
             }
         ]
     }

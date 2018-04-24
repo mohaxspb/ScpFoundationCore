@@ -338,7 +338,7 @@ Thanks for using our app!]]></string>
     <string name="free_ads_simple_subtitle">And we will turn off the ad %1$d hour and give you %2$d points</string>
     <string name="free_ads_app_install_label">Download our other apps</string>
     <string name="free_ads_app_install_title">And we will turn off the ad %1$d hour and give you %2$d points</string>
-    <string name="free_ads_vk_group_label">Join our group in VC</string>
+    <string name="free_ads_vk_group_label">Join our group in VK</string>
     <string name="free_ads_vk_group_title">And we will turn off the ad %1$d hour and give you %2$d points</string>
     <string name="free_ads_activity_title">Disabling ads</string>
     <string name="leaderboard_activity_title">Rating agents</string>
