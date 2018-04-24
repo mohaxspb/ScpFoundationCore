@@ -22,7 +22,7 @@ public class StorageModuleImpl extends StorageModule {
     @Override
     protected RealmMigration getRealmMigration() {
         return (realm, oldVersion, newVersion) -> {
-            RealmSchema schema = realm.getSchema();
+            final RealmSchema schema = realm.getSchema();
 
             Timber.d("providesRealmMigration: %s/%s", oldVersion, newVersion);
 
