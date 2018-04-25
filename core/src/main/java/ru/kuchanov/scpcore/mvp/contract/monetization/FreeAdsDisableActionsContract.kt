@@ -19,6 +19,7 @@ interface FreeAdsDisableActionsContract : BaseMvp {
         fun onAuthClick()
         fun onAppInstallClick(id: String)
         fun onVkLoginAttempt()
+        fun showVkShareDialog()
     }
 
     interface Presenter : BaseMvp.Presenter<View> {

@@ -309,42 +309,23 @@ class FreeAdsDisableActionsPresenter(
     }
 
     override fun onVkShareAppClick() {
-        //todo
-//        val builder = VKShareDialogBuilder()
-//        builder.setText(
-//            "I created this post with VK Android SDK" +
-//                    "\nSee additional information below\n#vksdk");
-//
-//        val photos = VKPhotoArray();
-//        photos.add(VKApiPhoto("photo-47200925_314622346"));
-//        builder.setUploadedPhotos(photos);
-//        builder.setAttachmentLink(
-//            "VK Android SDK information",
-//            "https://vk.com/dev/android_sdk"
-//        );
-//        builder.setShareDialogListener(object : VKShareDialog.VKShareDialogListener() {
-//            override fun onVkShareComplete(postId: Int) {
-//                FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
-//                    Constants.Firebase.Analitics.EventName.VK_APP_SHARED,
-//                    Bundle()
-//                )
-//
-//                updateUserScoreForVkAppSahre()
-//            }
-//
-//            override fun onVkShareCancel() {
-//                // recycle bitmap if need
-//            }
-//
-//            override fun onVkShareError(error: VKError) {
-//                // recycle bitmap if need
-//            }
-//        });
-//        builder.show(fragmentManager, "VK_SHARE_DIALOG");
+        if (isNeedToOfferFreeTrial()) {
+            return
+        }
+        if (!VKSdk.isLoggedIn()) {
+            view.onVkLoginAttempt()
+            return
+        } else if (!VKAccessToken.currentToken().hasScope(VKScope.WALL)) {
+            view.showMessage(R.string.need_vk_group_access)
+            return
+        }
+
+        view.showVkShareDialog()
     }
 
     override fun updateUserScoreForVkAppSahre() {
         //todo
+        Timber.d("updateUserScoreForVkAppSahre")
     }
 
     /**

@@ -51,40 +51,7 @@ class FreeAdsDisableActionsFragment :
         delegateManager.addDelegate(LabelDelegate())
         delegateManager.addDelegate(AppToInstallDelegate { presenter.onAppInstallClick(it) })
         delegateManager.addDelegate(VkGroupToJoinDelegate { presenter.onVkGroupClick(it) })
-        delegateManager.addDelegate(VkShareAppDelegate {
-            //            presenter.onVkShareAppClick()
-            val builder = VKShareDialogBuilder()
-            builder.setText(
-                "I created this post with VK Android SDK" +
-                        "\nSee additional information below\n#vksdk");
-
-            val photos = VKPhotoArray();
-            photos.add(VKApiPhoto("photo-47200925_314622346"));
-            builder.setUploadedPhotos(photos);
-            builder.setAttachmentLink(
-                "VK Android SDK information",
-                "https://vk.com/dev/android_sdk"
-            );
-            builder.setShareDialogListener(object : VKShareDialog.VKShareDialogListener {
-                override fun onVkShareComplete(postId: Int) {
-                    FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
-                        Constants.Firebase.Analitics.EventName.VK_APP_SHARED,
-                        Bundle()
-                    )
-
-                    presenter.updateUserScoreForVkAppSahre()
-                }
-
-                override fun onVkShareCancel() {
-                    // recycle bitmap if need
-                }
-
-                override fun onVkShareError(error: VKError) {
-                    // recycle bitmap if need
-                }
-            });
-            builder.show(fragmentManager, "VK_SHARE_DIALOG");
-        })
+        delegateManager.addDelegate(VkShareAppDelegate { presenter.onVkShareAppClick() })
 
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter
@@ -106,7 +73,6 @@ class FreeAdsDisableActionsFragment :
     }
 
     override fun onInviteFriendsClick() {
-        Timber.d("onInviteFriendsClick")
         if (FirebaseAuth.getInstance().currentUser == null) {
             baseActivity?.showOfferLoginPopup { _, _ -> IntentUtils.firebaseInvite(activity) }
         } else {
@@ -133,7 +99,40 @@ class FreeAdsDisableActionsFragment :
         }
     }
 
-    override fun onVkLoginAttempt() = VKSdk.login(baseActivity!!, VKScope.EMAIL, VKScope.GROUPS)
+    override fun showVkShareDialog() {
+        val builder = VKShareDialogBuilder()
+        builder.setText(getString(R.string.share_app_vk_text))
+
+        val photos = VKPhotoArray()
+        photos.add(VKApiPhoto("photo-599638_409407666"))
+        builder.setUploadedPhotos(photos)
+        builder.setAttachmentLink(
+            getString(R.string.app_name),
+            getString(R.string.share_app_vk_link, BaseApplication.getAppInstance().packageName)
+        )
+        builder.setShareDialogListener(object : VKShareDialog.VKShareDialogListener {
+            override fun onVkShareComplete(postId: Int) {
+                FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
+                    Constants.Firebase.Analitics.EventName.VK_APP_SHARED,
+                    Bundle()
+                )
+
+                presenter.updateUserScoreForVkAppSahre()
+            }
+
+            override fun onVkShareCancel() {
+                // recycle bitmap if need
+            }
+
+            override fun onVkShareError(error: VKError) {
+                // recycle bitmap if need
+                Timber.e("error: $error/${error.errorMessage}")
+            }
+        })
+        builder.show(fragmentManager, "VK_SHARE_DIALOG");
+    }
+
+    override fun onVkLoginAttempt() = VKSdk.login(baseActivity!!, VKScope.EMAIL, VKScope.GROUPS, VKScope.WALL)
 
     override fun getToolbarTitle(): Int = R.string.free_ads_activity_title
 
