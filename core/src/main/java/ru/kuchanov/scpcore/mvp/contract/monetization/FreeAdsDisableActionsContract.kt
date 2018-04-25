@@ -33,5 +33,6 @@ interface FreeAdsDisableActionsContract : BaseMvp {
         fun onVkGroupClick(id: String)
         fun onVkShareAppClick()
         fun onDestroy()
+        fun applyAwardFromVkShare()
     }
 }

@@ -279,7 +279,6 @@ class FreeAdsDisableActionsPresenter(
                         NOTIFICATION_ID
                     )
 
-//                        data.remove(data.find { it is VkGroupToJoinViewModel && it.id == id })
                     createData()
                     view.showData(data)
 
@@ -316,6 +315,19 @@ class FreeAdsDisableActionsPresenter(
         }
 
         view.showVkShareDialog()
+    }
+
+    override fun applyAwardFromVkShare() {
+        mMyPreferenceManager.applyAwardVkShareApp()
+
+        val numOfMillis = FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD)
+        val hours = Duration.millis(numOfMillis).toStandardHours().hours
+
+        mMyNotificationManager.showNotificationSimple(
+            BaseApplication.getAppInstance().getString(R.string.ads_reward_gained, hours),
+            BaseApplication.getAppInstance().getString(R.string.thanks_for_supporting_us),
+            NOTIFICATION_ID
+        )
     }
 
     /**

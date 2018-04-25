@@ -119,6 +119,8 @@ class FreeAdsDisableActionsFragment :
                     Bundle()
                 )
 
+                presenter.applyAwardFromVkShare()
+
                 presenter.updateUserScoreForScoreAction(
                     DataSyncActions.ScoreAction.VK_APP_SHARE,
                     object : BasePresenter.AddScoreListener {
