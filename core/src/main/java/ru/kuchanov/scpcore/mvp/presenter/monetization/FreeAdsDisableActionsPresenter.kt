@@ -9,11 +9,6 @@ import com.google.gson.Gson
 import com.vk.sdk.VKAccessToken
 import com.vk.sdk.VKScope
 import com.vk.sdk.VKSdk
-import com.vk.sdk.api.VKError
-import com.vk.sdk.api.model.VKApiPhoto
-import com.vk.sdk.api.model.VKPhotoArray
-import com.vk.sdk.dialogs.VKShareDialog
-import com.vk.sdk.dialogs.VKShareDialogBuilder
 import org.joda.time.Duration
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
@@ -201,7 +196,7 @@ class FreeAdsDisableActionsPresenter(
             }
         }
 
-        if (config.getBoolean(FREE_VK_SHARE_APP_ENABLED)) {
+        if (config.getBoolean(FREE_VK_SHARE_APP_ENABLED) && !mMyPreferenceManager.isVkAppShared) {
             val numOfMillis = config.getLong(FREE_VK_SHARE_APP_REWARD)
             val hours = Duration.millis(numOfMillis).toStandardHours().hours
             val score = config.getLong(SCORE_ACTION_VK_SHARE_APP).toInt()
@@ -321,11 +316,6 @@ class FreeAdsDisableActionsPresenter(
         }
 
         view.showVkShareDialog()
-    }
-
-    override fun updateUserScoreForVkAppSahre() {
-        //todo
-        Timber.d("updateUserScoreForVkAppSahre")
     }
 
     /**

@@ -21,6 +21,8 @@ import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.DividerDeleg
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.LabelDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.*
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
+import ru.kuchanov.scpcore.mvp.base.BasePresenter
+import ru.kuchanov.scpcore.mvp.contract.DataSyncActions
 import ru.kuchanov.scpcore.mvp.contract.monetization.FreeAdsDisableActionsContract
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 import ru.kuchanov.scpcore.util.IntentUtils
@@ -117,16 +119,26 @@ class FreeAdsDisableActionsFragment :
                     Bundle()
                 )
 
-                presenter.updateUserScoreForVkAppSahre()
+                presenter.updateUserScoreForScoreAction(
+                    DataSyncActions.ScoreAction.VK_APP_SHARE,
+                    object : BasePresenter.AddScoreListener {
+                        override fun onSuccess() {
+                            presenter.createData()
+                            showData(presenter.data)
+                        }
+
+                        override fun onError() {}
+
+                    }
+                )
             }
 
             override fun onVkShareCancel() {
-                // recycle bitmap if need
             }
 
             override fun onVkShareError(error: VKError) {
-                // recycle bitmap if need
                 Timber.e("error: $error/${error.errorMessage}")
+                showError(Exception(error.errorMessage))
             }
         })
         builder.show(fragmentManager, "VK_SHARE_DIALOG");

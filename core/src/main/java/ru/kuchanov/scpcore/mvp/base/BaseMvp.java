@@ -5,6 +5,8 @@ import android.support.annotation.StringRes;
 import com.hannesdorfmann.mosby.mvp.MvpPresenter;
 import com.hannesdorfmann.mosby.mvp.MvpView;
 
+import org.jetbrains.annotations.NotNull;
+
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
@@ -52,5 +54,7 @@ public interface BaseMvp {
         User getUser();
 
         void onUserChanged(User user);
+
+        void updateUserScoreForScoreAction(@ScoreAction String action, @NotNull BasePresenter.AddScoreListener addScoreListener);
     }
 }
