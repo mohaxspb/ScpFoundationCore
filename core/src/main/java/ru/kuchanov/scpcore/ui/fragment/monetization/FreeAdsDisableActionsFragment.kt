@@ -106,7 +106,7 @@ class FreeAdsDisableActionsFragment :
         builder.setText(getString(R.string.share_app_vk_text))
 
         val photos = VKPhotoArray()
-        photos.add(VKApiPhoto("photo-599638_409407666"))
+        photos.add(VKApiPhoto(VK_APP_SHARE_IMAGE))
         builder.setUploadedPhotos(photos)
         builder.setAttachmentLink(
             getString(R.string.app_name),
@@ -156,6 +156,8 @@ class FreeAdsDisableActionsFragment :
 
         @JvmStatic
         fun newInstance(): FreeAdsDisableActionsFragment = FreeAdsDisableActionsFragment()
+
+        const val VK_APP_SHARE_IMAGE = "photo-599638_456239255"
     }
 }
 

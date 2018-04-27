@@ -335,4 +335,16 @@ Traduit Lucie.]]></string>
 
     <!---->
     <string name="leaderboard_appodeal_description">Pas de contacts de haut niveau dans le Fonds? Essayez de trouver du matériel compromettant et de monter dans le classement.</string>
+
+    <!---->
+    <string name="downloads_settings">Paramètres de téléchargement</string>
+    <string name="downloads_force_update">Forcer le texte de mise à jour pendant le téléchargement</string>
+    <string name="download_inner_depth">Télécharger Inner Articles profondeur</string>
+    <string name="images_cache_enabled">Mise en cache d\'image locale</string>
+    <string name="cached_images_count">Nombre d\'images mises en cache</string>
+    <string name="cached_images_size">Taille des images mises en cache</string>
+    <string name="clear_cached_images">Effacer les images mises en cache</string>
+    <string name="free_ads_vk_share_label">Share App en VK</string>
+    <string name="share_app_vk_text">Vous aimez les histoires fantastiques et effrayantes? Essayez SCP Foundation App pour Android-milliers d\'histoires hors ligne gratuitement!</string>
+    <string name="need_vk_wall_access">L\'autorisation de poster sur le mur est requise. S\'ll vous plaît, reconnectez-vous.</string>
 </resources>

@@ -332,4 +332,16 @@ Dziękujemy za korzystanie z naszej aplikacji!]]></string>
 
     <!---->
     <string name="leaderboard_appodeal_description">Brak połączeń wysokiego szczebla w Funduszu? Spróbuj znaleźć narażania materiału i przenieść się w rankingu.</string>
+
+    <!---->
+    <string name="downloads_settings">Ustawienia pobierania</string>
+    <string name="downloads_force_update">Wymuś aktualizowanie tekstu podczas pobierania</string>
+    <string name="download_inner_depth">Głębokość artykułu do pobrania</string>
+    <string name="images_cache_enabled">Lokalne buforowanie obrazów</string>
+    <string name="cached_images_count">Liczba buforowanych obrazów</string>
+    <string name="cached_images_size">Rozmiar buforowanych obrazów</string>
+    <string name="clear_cached_images">Wyczyść obrazy w pamięci podręcznej</string>
+    <string name="free_ads_vk_share_label">Udostępnij aplikację w VK</string>
+    <string name="share_app_vk_text">Love fantastyczne i straszne historie? Wypróbuj aplikację SCP Foundation dla Androida-tysiące opowieści offline za darmo!</string>
+    <string name="need_vk_wall_access">Wymagana jest zgoda na post na ścianie. Zaloguj się ponownie.</string>
 </resources>
