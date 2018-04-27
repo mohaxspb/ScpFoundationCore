@@ -170,11 +170,12 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
                     .into(imageView);
         } else {
             //search for saved file
-            final File file = new File(context.getFilesDir(), "/image/" + ApiClient.formatUrlToFileName(imageUrl));
-//            Timber.d("file: %s", file.getAbsolutePath());
-//            Timber.d("fileExists: %s", file.exists());
+            File file = null;
+            if (!TextUtils.isEmpty(imageUrl)) {
+                file = new File(context.getFilesDir(), "/image/" + ApiClient.formatUrlToFileName(imageUrl));
+            }
             Glide.with(context)
-                    .load(file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
+                    .load(file != null && file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
                     .error(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
                     .fitCenter()
                     .crossFade()

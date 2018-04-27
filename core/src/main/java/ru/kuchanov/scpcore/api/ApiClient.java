@@ -33,6 +33,7 @@ import com.vk.sdk.api.model.VKApiUser;
 import com.vk.sdk.api.model.VKAttachments;
 import com.vk.sdk.api.model.VKList;
 
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
@@ -2048,7 +2049,8 @@ public class ApiClient {
         return mConstantValues;
     }
 
-    public static String formatUrlToFileName(final String url) {
+    @NotNull
+    public static String formatUrlToFileName(@NotNull final String url) {
         String imageFileName = url.replaceAll("#", REPLACEMENT_HASH);
         imageFileName = imageFileName.replaceAll("/", REPLACEMENT_SLASH);
 
