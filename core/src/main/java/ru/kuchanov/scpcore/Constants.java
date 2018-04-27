@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore;
 
+import org.jetbrains.annotations.NotNull;
+
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.StringRes;
@@ -24,11 +26,13 @@ public interface Constants {
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({NativeAdsSource.ALL, NativeAdsSource.APPODEAL})
     @interface NativeAdsSource {
+
         int ALL = 0;
         int APPODEAL = 2;
     }
 
     interface Api {
+
         int ZERO_OFFSET = 0;
 
         /**
@@ -51,6 +55,7 @@ public interface Constants {
     }
 
     interface Urls {
+
         String MAIN = "http://scpfoundation.ru/";
 
         String RATE = "http://scpfoundation.ru/top-rated-pages";
@@ -118,6 +123,7 @@ public interface Constants {
         }
 
         interface PushDataKeys {
+
             String INVITE_ID = "inviteId";
             String TITLE = "title";
             String MESSAGE = "message";
@@ -126,6 +132,7 @@ public interface Constants {
         }
 
         interface Refs {
+
             String USERS = "users";
             String ARTICLES = "articles";
             String SCORE = "score";
@@ -138,6 +145,7 @@ public interface Constants {
         }
 
         interface RemoteConfigKeys {
+
             //ads
             String NUM_OF_GALLERY_PHOTOS_BETWEEN_INTERSITIAL = "num_of_gallery_photos_between_intersitial";
             String PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS = "period_between_interstitial_in_millis";
@@ -148,6 +156,7 @@ public interface Constants {
             String FREE_APPS_INSTALL_ENABLED = "free_apps_install_enabled";
             String FREE_REWARDED_VIDEO_ENABLED = "free_rewarded_video_enabled";
             String FREE_VK_GROUPS_ENABLED = "free_vk_groups_enabled";
+            String FREE_VK_SHARE_APP_ENABLED = "free_vk_share_app_enabled";
             String FREE_AUTH_ENABLED = "free_auth_enabled";
             //actions variants
             String APPS_TO_INSTALL_JSON = "apps_to_install_json";
@@ -155,6 +164,7 @@ public interface Constants {
             //disable ads
             String APP_INSTALL_REWARD_IN_MILLIS = "app_install_reward_in_millis";
             String FREE_VK_GROUPS_JOIN_REWARD = "free_vk_groups_join_reward";
+            String FREE_VK_SHARE_APP_REWARD = "free_vk_share_app_reward";
             String REWARDED_VIDEO_COOLDOWN_IN_MILLIS = "rewarded_video_cooldown_in_millis";
             String AUTH_COOLDOWN_IN_MILLIS = "auth_cooldown_in_millis";
             String INVITE_REWARD_IN_MILLIS = "invite_reward_in_millis";
@@ -176,6 +186,7 @@ public interface Constants {
             String SCORE_ACTION_READ = "score_action_read";
             String SCORE_ACTION_INTERSTITIAL_SHOWN = "score_action_interstitial_shown";
             String SCORE_ACTION_VK_GROUP = "score_action_vk_group";
+            String SCORE_ACTION_VK_SHARE_APP = "score_action_vk_share_app";
             String SCORE_ACTION_OUR_APP = "score_action_our_app";
             String SCORE_ACTION_REWARDED_VIDEO = "score_action_rewarded_video";
             String SCORE_ACTION_AUTH = "score_action_auth";
@@ -200,6 +211,7 @@ public interface Constants {
         interface Analitics {
 
             interface EventName {
+
                 String FREE_TRIAL_OFFER_SHOWN = "FREE_TRIAL_OFFER_SHOWN";
                 String INVITE_SENT = "INVITE_SENT";
                 String INVITE_RECEIVED = "INVITE_RECEIVED";
@@ -207,13 +219,16 @@ public interface Constants {
                 String MASS_DOWNLOAD = "MASS_DOWNLOAD";
                 String VK_GROUP_JOINED = "VK_GROUP_JOINED";
                 String APP_INSTALLED = "APP_INSTALLED";
+                String VK_APP_SHARED = "VK_APP_SHARED";
             }
 
             interface EventParam {
+
                 String PLACE = "PLACE";
             }
 
             interface EventValue {
+
                 String ADS_DISABLE = "ADS_DISABLE";
                 String DOWNLOAD_RANGE = "DOWNLOAD_RANGE";
                 String PERIODICAL = "PERIODICAL";
@@ -221,11 +236,13 @@ public interface Constants {
             }
 
             interface EventType {
+
                 String REWARD_GAINED = "REWARD_GAINED";
                 String REWARD_REQUESTED = "REWARD_REQUESTED";
             }
 
             interface StartScreen {
+
                 String SNACK_BAR = "SNACK_BAR";
                 String MENU = "MENU";
                 String DRAWER_HEADER_LOGINED = "DRAWER_HEADER_LOGINED";
@@ -240,12 +257,14 @@ public interface Constants {
             }
 
             interface UserPropertyKey {
+
                 String INVITED = "INVITED";
                 String SUBSCRIBED = "SUBSCRIBED";
             }
         }
 
         interface PushTopics {
+
             String MAIN = "main";
         }
     }

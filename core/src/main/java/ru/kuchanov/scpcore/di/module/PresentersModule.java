@@ -335,7 +335,7 @@ public class PresentersModule {
             MyPreferenceManager myPreferencesManager,
             DbProviderFactory dbProviderFactory,
             ApiClient apiClient,
-            InAppHelper inAppHelper
+            final InAppHelper inAppHelper
     ) {
         return new SubscriptionsPresenter(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }

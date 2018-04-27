@@ -1,18 +1,28 @@
 package ru.kuchanov.scpcore.ui.fragment.monetization
 
+import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegatesManager
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import com.vk.sdk.VKScope
 import com.vk.sdk.VKSdk
+import com.vk.sdk.api.VKError
+import com.vk.sdk.api.model.VKApiPhoto
+import com.vk.sdk.api.model.VKPhotoArray
+import com.vk.sdk.dialogs.VKShareDialog
+import com.vk.sdk.dialogs.VKShareDialogBuilder
 import kotlinx.android.synthetic.main.fragment_free_ads_disable_actions.*
 import ru.kuchanov.scpcore.BaseApplication
+import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.DividerDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.LabelDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.*
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
+import ru.kuchanov.scpcore.mvp.base.BasePresenter
+import ru.kuchanov.scpcore.mvp.contract.DataSyncActions
 import ru.kuchanov.scpcore.mvp.contract.monetization.FreeAdsDisableActionsContract
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 import ru.kuchanov.scpcore.util.IntentUtils
@@ -43,6 +53,7 @@ class FreeAdsDisableActionsFragment :
         delegateManager.addDelegate(LabelDelegate())
         delegateManager.addDelegate(AppToInstallDelegate { presenter.onAppInstallClick(it) })
         delegateManager.addDelegate(VkGroupToJoinDelegate { presenter.onVkGroupClick(it) })
+        delegateManager.addDelegate(VkShareAppDelegate { presenter.onVkShareAppClick() })
 
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter
@@ -64,7 +75,6 @@ class FreeAdsDisableActionsFragment :
     }
 
     override fun onInviteFriendsClick() {
-        Timber.d("onInviteFriendsClick")
         if (FirebaseAuth.getInstance().currentUser == null) {
             baseActivity?.showOfferLoginPopup { _, _ -> IntentUtils.firebaseInvite(activity) }
         } else {
@@ -91,7 +101,52 @@ class FreeAdsDisableActionsFragment :
         }
     }
 
-    override fun onVkLoginAttempt() = VKSdk.login(baseActivity!!, VKScope.EMAIL, VKScope.GROUPS)
+    override fun showVkShareDialog() {
+        val builder = VKShareDialogBuilder()
+        builder.setText(getString(R.string.share_app_vk_text))
+
+        val photos = VKPhotoArray()
+        photos.add(VKApiPhoto(VK_APP_SHARE_IMAGE))
+        builder.setUploadedPhotos(photos)
+        builder.setAttachmentLink(
+            getString(R.string.app_name),
+            getString(R.string.share_app_vk_link, BaseApplication.getAppInstance().packageName)
+        )
+        builder.setShareDialogListener(object : VKShareDialog.VKShareDialogListener {
+            override fun onVkShareComplete(postId: Int) {
+                FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
+                    Constants.Firebase.Analitics.EventName.VK_APP_SHARED,
+                    Bundle()
+                )
+
+                presenter.applyAwardFromVkShare()
+
+                presenter.updateUserScoreForScoreAction(
+                    DataSyncActions.ScoreAction.VK_APP_SHARE,
+                    object : BasePresenter.AddScoreListener {
+                        override fun onSuccess() {
+                            presenter.createData()
+                            showData(presenter.data)
+                        }
+
+                        override fun onError() {}
+
+                    }
+                )
+            }
+
+            override fun onVkShareCancel() {
+            }
+
+            override fun onVkShareError(error: VKError) {
+                Timber.e("error: $error/${error.errorMessage}")
+                showError(Exception(error.errorMessage))
+            }
+        })
+        builder.show(fragmentManager, "VK_SHARE_DIALOG");
+    }
+
+    override fun onVkLoginAttempt() = VKSdk.login(baseActivity!!, VKScope.EMAIL, VKScope.GROUPS, VKScope.WALL)
 
     override fun getToolbarTitle(): Int = R.string.free_ads_activity_title
 
@@ -101,6 +156,8 @@ class FreeAdsDisableActionsFragment :
 
         @JvmStatic
         fun newInstance(): FreeAdsDisableActionsFragment = FreeAdsDisableActionsFragment()
+
+        const val VK_APP_SHARE_IMAGE = "photo-599638_456239255"
     }
 }
 

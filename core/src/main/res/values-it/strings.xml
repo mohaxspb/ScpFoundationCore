@@ -334,4 +334,16 @@ Grazie per aver utilizzato la nostra applicazione!]]></string>
 
     <!---->
     <string name="leaderboard_appodeal_description">Nessun collegamento di alto livello nel fondo? Cercare di trovare materiale compromettente e salire in classifica.</string>
+
+    <!---->
+    <string name="downloads_settings">Impostazioni download</string>
+    <string name="downloads_force_update">Forza aggiornamento testo durante il download</string>
+    <string name="download_inner_depth">Scarica Interior articles Depth</string>
+    <string name="images_cache_enabled">Memorizzazione nella cache delle immagini locali</string>
+    <string name="cached_images_count">Conteggio immagini memorizzate nella cache</string>
+    <string name="cached_images_size">Dimensione immagini memorizzate nella cache</string>
+    <string name="clear_cached_images">Cancella immagini memorizzate nella cache</string>
+    <string name="free_ads_vk_share_label">Condividi app in VK</string>
+    <string name="share_app_vk_text">Amate le storie fantastiche e raccapriccianti? Prova SCP Foundation app per Android-migliaia di storie offline gratis!</string>
+    <string name="need_vk_wall_access">Il permesso di inviare sulla parete è richiesto. Per favore, login di nuovo.</string>
 </resources>

@@ -24,6 +24,7 @@ import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.APP_INSTAL
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.ARTICLE_BANNER_DISABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.AUTH_COOLDOWN_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_SHARE_APP_REWARD;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.INVITE_REWARD_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED;
@@ -113,6 +114,7 @@ public class MyPreferenceManager {
         String INNER_ARTICLES_DEPTH = "INNER_ARTICLES_DEPTH";
         String DOWNLOAD_FORCE_UPDATE_ENABLED = "DOWNLOAD_FORCE_UPDATE_ENABLED";
         String IMAGES_CACHE_ENABLED = "IMAGES_CACHE_ENABLED";
+        String VK_APP_SHARED = "VK_APP_SHARED";
     }
 
     private final Gson mGson;
@@ -195,6 +197,14 @@ public class MyPreferenceManager {
 
     public void setImagesCacheEnabled(final boolean enabled) {
         mPreferences.edit().putBoolean(Keys.IMAGES_CACHE_ENABLED, enabled).apply();
+    }
+
+    public void setVkAppShared() {
+        mPreferences.edit().putBoolean(Keys.VK_APP_SHARED, true).apply();
+    }
+
+    public boolean isVkAppShared() {
+        return mPreferences.getBoolean(Keys.VK_APP_SHARED, false);
     }
     //download all settings END
 
@@ -471,6 +481,15 @@ public class MyPreferenceManager {
 //        //also set time for which we should disable banners
 //        setTimeForWhichBannersDisabled(time);
         final long time = FirebaseRemoteConfig.getInstance().getLong(FREE_VK_GROUPS_JOIN_REWARD);
+        increaseLastTimeAdsShows(time);
+        //also set time for which we should disable banners
+        increaseTimeForWhichBannersDisabled(time);
+
+        setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
+    }
+
+    public void applyAwardVkShareApp() {
+        final long time = FirebaseRemoteConfig.getInstance().getLong(FREE_VK_SHARE_APP_REWARD);
         increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
         increaseTimeForWhichBannersDisabled(time);

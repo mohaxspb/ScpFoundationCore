@@ -1,14 +1,17 @@
 package ru.kuchanov.scpcore.mvp.base;
 
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.util.Pair;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 import com.vk.sdk.VKSdk;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v4.util.Pair;
 
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
@@ -377,16 +380,9 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                 );
     }
 
-    /**
-     * check if user logged in,
-     * calculate final score to add value from modificators,
-     * if user do not have subscription we increment unsynced score
-     * if user has subscription we increment score in firebase
-     * while incrementing we check if user already received score from group
-     * and if so - do not increment it
-     */
+
     @Override
-    public void updateUserScoreForScoreAction(@ScoreAction final String action) {
+    public void updateUserScoreForScoreAction(@ScoreAction final String action, @Nullable final AddScoreListener addScoreListener) {
         Timber.d("updateUserScore: %s", action);
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
@@ -396,7 +392,11 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 
         final int totalScoreToAdd = getTotalScoreToAddFromAction(action, mMyPreferencesManager);
 
-        if (!action.equals(ScoreAction.REWARDED_VIDEO) && !mMyPreferencesManager.isHasSubscription()) {
+        //update score now only if it's for video or vk_app_share or user has subscription
+        final boolean isVideoAction = action.equals(ScoreAction.REWARDED_VIDEO);
+        final boolean isVkAppShareAction = action.equals(ScoreAction.VK_APP_SHARE);
+        final boolean hasFullSubscription = mMyPreferencesManager.isHasSubscription();
+        if (!hasFullSubscription && !(isVideoAction || isVkAppShareAction)) {
             final long curNumOfAttempts = mMyPreferencesManager.getNumOfAttemptsToAutoSync();
             final long maxNumOfAttempts = FirebaseRemoteConfig.getInstance()
                     .getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_SYNC_ATTEMPTS_BEFORE_CALL_TO_ACTION);
@@ -430,8 +430,15 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                             final Context context = BaseApplication.getAppInstance();
                             if (action.equals(ScoreAction.REWARDED_VIDEO)
                                 || action.equals(ScoreAction.VK_GROUP)
-                                || action.equals(ScoreAction.OUR_APP)) {
+                                || action.equals(ScoreAction.OUR_APP)
+                                || action.equals(ScoreAction.VK_APP_SHARE)) {
                                 getView().showMessage(context.getString(R.string.score_increased, context.getResources().getQuantityString(R.plurals.plurals_score, totalScoreToAdd, totalScoreToAdd)));
+                            }
+                            if (action.equals(ScoreAction.VK_APP_SHARE)) {
+                                mMyPreferencesManager.setVkAppShared();
+                            }
+                            if (addScoreListener != null) {
+                                addScoreListener.onSuccess();
                             }
                         },
                         e -> {
@@ -439,8 +446,25 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                             getView().showError(e);
                             //increment unsynced score to sync it later
                             mMyPreferencesManager.addUnsyncedScore(totalScoreToAdd);
+
+                            if (addScoreListener != null) {
+                                addScoreListener.onError();
+                            }
                         }
                 );
+    }
+
+    /**
+     * check if user logged in,
+     * calculate final score to add value from modificators,
+     * if user do not have subscription we increment unsynced score
+     * if user has subscription we increment score in firebase
+     * while incrementing we check if user already received score from group
+     * and if so - do not increment it
+     */
+    @Override
+    public void updateUserScoreForScoreAction(@ScoreAction final String action) {
+        updateUserScoreForScoreAction(action, null);
     }
 
     @Override
@@ -529,6 +553,9 @@ public abstract class BasePresenter<V extends BaseMvp.View>
             case ScoreAction.INVITE:
                 score = remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_INVITE);
                 break;
+            case ScoreAction.VK_APP_SHARE:
+                score = remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_VK_SHARE_APP);
+                break;
             case ScoreAction.NONE:
                 score = remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_NONE);
                 break;
@@ -551,5 +578,12 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 
         //        Timber.d("totalScoreToAdd: %s", totalScoreToAdd);
         return (int) (score * subscriptionModificator * vkGroupAppModificator);
+    }
+
+    public interface AddScoreListener {
+
+        void onSuccess();
+
+        void onError();
     }
 }

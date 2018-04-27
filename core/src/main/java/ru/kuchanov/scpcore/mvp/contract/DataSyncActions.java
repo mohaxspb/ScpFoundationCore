@@ -18,9 +18,11 @@ public interface DataSyncActions {
     @StringDef({
             ScoreAction.FAVORITE, ScoreAction.READ, ScoreAction.INTERSTITIAL_SHOWN,
             ScoreAction.VK_GROUP, ScoreAction.OUR_APP, ScoreAction.REWARDED_VIDEO,
-            ScoreAction.AUTH, ScoreAction.INVITE, ScoreAction.NONE
+            ScoreAction.AUTH, ScoreAction.INVITE, ScoreAction.VK_APP_SHARE,
+            ScoreAction.NONE
     })
     @interface ScoreAction {
+
         String FAVORITE = "FAVORITE";
         String READ = "READ";
         String INTERSTITIAL_SHOWN = "INTERSTITIAL_SHOWN";
@@ -29,6 +31,7 @@ public interface DataSyncActions {
         String REWARDED_VIDEO = "REWARDED_VIDEO";
         String AUTH = "AUTH";
         String INVITE = "INVITE";
+        String VK_APP_SHARE = "VK_APP_SHARE";
         String NONE = "NONE";
     }
 

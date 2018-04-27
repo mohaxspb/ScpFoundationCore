@@ -89,7 +89,6 @@ import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
-import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable;
@@ -332,7 +331,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     public void startLogin(final Constants.Firebase.SocialProvider provider) {
         switch (provider) {
             case VK:
-                VKSdk.login(this, VKScope.EMAIL, VKScope.GROUPS);
+                VKSdk.login(this, VKScope.EMAIL, VKScope.GROUPS, VKScope.WALL);
                 break;
             case GOOGLE:
                 final Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
