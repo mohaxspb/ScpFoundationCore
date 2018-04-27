@@ -1,6 +1,13 @@
 package ru.kuchanov.scpcore.ui.adapter;
 
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
@@ -19,13 +26,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,14 +33,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.VkImage;
-import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import ru.kuchanov.scpcore.ui.activity.BaseActivity;
+import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
 import ru.kuchanov.scpcore.ui.model.TabsViewModel;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
@@ -77,10 +77,13 @@ public class ImagesPagerAdapter extends PagerAdapter {
         Toast.makeText(context, R.string.image_loading, Toast.LENGTH_SHORT).show();
         final String imageUrl = mData.get(position).allUrls.get(mData.get(position).allUrls.size() - 1).getVal();
 
-        final File file = new File(context.getFilesDir(), "/image/" + ApiClient.formatUrlToFileName(imageUrl));
+        File file = null;
+        if (!TextUtils.isEmpty(imageUrl)) {
+            file = new File(context.getFilesDir(), "/image/" + ApiClient.formatUrlToFileName(imageUrl));
+        }
 
         Glide.with(context)
-                .load(file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
+                .load(file != null && file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
                 .asBitmap()
                 .into(target);
     }
@@ -133,62 +136,62 @@ public class ImagesPagerAdapter extends PagerAdapter {
                 }
 
                 @Override
-                public void onSnoskaClicked(String link) {
+                public void onSnoskaClicked(final String link) {
                     ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
                 }
 
                 @Override
-                public void onBibliographyClicked(String link) {
+                public void onBibliographyClicked(final String link) {
                     ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
                 }
 
                 @Override
-                public void onTocClicked(String link) {
+                public void onTocClicked(final String link) {
                     ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
                 }
 
                 @Override
-                public void onImageClicked(String link, @Nullable String description) {
+                public void onImageClicked(final String link, @Nullable final String description) {
                     ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
                 }
 
                 @Override
-                public void onUnsupportedLinkPressed(String link) {
+                public void onUnsupportedLinkPressed(final String link) {
                     ((BaseActivity) context).showMessage(R.string.unsupported_link);
                 }
 
                 @Override
-                public void onMusicClicked(String link) {
+                public void onMusicClicked(final String link) {
                     ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
                 }
 
                 @Override
-                public void onExternalDomenUrlClicked(String link) {
+                public void onExternalDomenUrlClicked(final String link) {
                     IntentUtils.openUrl(link);
                 }
 
                 @Override
-                public void onTagClicked(ArticleTag tag) {
+                public void onTagClicked(final ArticleTag tag) {
                     ((BaseActivity) context).startTagsSearchActivity(Collections.singletonList(tag));
                 }
 
                 @Override
-                public void onNotTranslatedArticleClick(String link) {
+                public void onNotTranslatedArticleClick(final String link) {
                     ((BaseActivity) context).showMessage(R.string.article_not_translated);
                 }
 
                 @Override
-                public void onSpoilerExpand(SpoilerViewModel spoilerViewModel) {
+                public void onSpoilerExpand(final SpoilerViewModel spoilerViewModel) {
                     ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
                 }
 
                 @Override
-                public void onSpoilerCollapse(SpoilerViewModel spoilerViewModel) {
+                public void onSpoilerCollapse(final SpoilerViewModel spoilerViewModel) {
                     ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
                 }
 
                 @Override
-                public void onTabSelected(TabsViewModel tabsViewModel) {
+                public void onTabSelected(final TabsViewModel tabsViewModel) {
                     ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
                 }
 
@@ -216,15 +219,18 @@ public class ImagesPagerAdapter extends PagerAdapter {
         //remove delay
         Glide.clear(imageView);
 
-        final File file = new File(context.getFilesDir(), "/image/" + ApiClient.formatUrlToFileName(imageUrl));
+        File file = null;
+        if (!TextUtils.isEmpty(imageUrl)) {
+            file = new File(context.getFilesDir(), "/image/" + ApiClient.formatUrlToFileName(imageUrl));
+        }
 
         Glide.with(context)
-                .load(file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
+                .load(file != null && file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
                 .fitCenter()
                 .thumbnail(imageUrl.endsWith("gif") ? 1f : .1f)
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
-                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                    public boolean onException(final Exception e, final String model, final Target<GlideDrawable> target, final boolean isFirstResource) {
                         Timber.e(e);
                         progressBar.animate().alpha(0f).setDuration(250).setListener(new AnimatorListenerAdapter() {
                             @Override
@@ -237,7 +243,7 @@ public class ImagesPagerAdapter extends PagerAdapter {
                     }
 
                     @Override
-                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                    public boolean onResourceReady(final GlideDrawable resource, final String model, final Target<GlideDrawable> target, final boolean isFromMemoryCache, boolean isFirstResource) {
                         Timber.d("onResourceReady");
                         progressBar.animate().alpha(0f).setDuration(250).setListener(new AnimatorListenerAdapter() {
                             @Override
@@ -258,7 +264,7 @@ public class ImagesPagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public void destroyItem(ViewGroup collection, int position, Object view) {
+    public void destroyItem(@NonNull final ViewGroup collection, final int position, @NonNull Object view) {
 //        //try to clear glide
 //        //seems to its at least not crashing app and, may be make it faster...
         if (view == null) {
@@ -279,7 +285,7 @@ public class ImagesPagerAdapter extends PagerAdapter {
             unbindDrawables((View) view);
             // Invalidate the object
             view = null;
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
 //            Log.w(TAG, "destroyItem: failed to destroy item and clear it's used resources", e);
         }
     }

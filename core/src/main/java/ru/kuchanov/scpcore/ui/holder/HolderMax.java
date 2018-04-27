@@ -1,13 +1,14 @@
 package ru.kuchanov.scpcore.ui.holder;
 
-import android.content.Context;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
+import com.google.android.flexbox.FlexboxLayout;
 
 import com.bumptech.glide.Glide;
 
-import com.google.android.flexbox.FlexboxLayout;
+import android.content.Context;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.io.File;
 
@@ -21,7 +22,6 @@ import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 import ru.kuchanov.scpcore.ui.view.TagView;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import ru.kuchanov.scpcore.util.DateUtils;
-import timber.log.Timber;
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 /**
@@ -67,10 +67,12 @@ public class HolderMax extends HolderMin {
             Glide.clear(image);
 
             final String imageUrl = article.imagesUrls.first().val;
-            final File file = new File(context.getFilesDir(), "/image/" + ApiClient.formatUrlToFileName(imageUrl));
-            Timber.d("file.exists(): %s\n%s", file.exists(), file.getAbsolutePath());
+            File file = null;
+            if (!TextUtils.isEmpty(imageUrl)) {
+                file = new File(context.getFilesDir(), "/image/" + ApiClient.formatUrlToFileName(imageUrl));
+            }
             Glide.with(context)
-                    .load(file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
+                    .load(file != null && file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
                     .placeholder(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
                     .error(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
                     .animate(android.R.anim.fade_in)
