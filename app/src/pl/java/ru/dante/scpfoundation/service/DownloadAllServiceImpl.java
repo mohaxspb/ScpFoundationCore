@@ -20,16 +20,6 @@ import timber.log.Timber;
  */
 public class DownloadAllServiceImpl extends DownloadAllService {
 
-    @Inject
-    ApiClient mApiClient;
-
-    @Inject
-    DbProviderFactory mDbProviderFactory;
-
-    @Inject
-    ConstantValues mConstantValues;
-
-
     @Override
     protected void callInject() {
         ((AppComponentImpl) MyApplicationImpl.getAppComponent()).inject(this);

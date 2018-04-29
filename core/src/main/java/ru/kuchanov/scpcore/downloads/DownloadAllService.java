@@ -59,9 +59,9 @@ public abstract class DownloadAllService extends Service {
 
     private static final String ACTION_START = "ACTION_START";
 
-    private static final String CHANEL_ID = "DOWNLOADS_CHANEL_ID";
+    public static final String CHANEL_ID = "DOWNLOADS_CHANEL_ID";
 
-    private static final String CHANEL_NAME = "DOWNLOADS_CHANEL_NAME";
+    public static final String CHANEL_NAME = "DOWNLOADS_CHANEL_NAME";
 
     protected static DownloadAllService instance;
 
@@ -107,14 +107,24 @@ public abstract class DownloadAllService extends Service {
         intent.putExtra(EXTRA_DOWNLOAD_TYPE, type);
         intent.putExtra(EXTRA_RANGE_START, rangeStart);
         intent.putExtra(EXTRA_RANGE_END, rangeEnd);
-        ctx.startService(intent);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ctx.startForegroundService(intent);
+        } else {
+            ctx.startService(intent);
+        }
     }
 
     public static void stopDownload(final Context ctx, final Class clazz) {
         Timber.d("stopDownload called");
         final Intent intent = new Intent(ctx, clazz);
         intent.setAction(ACTION_STOP);
-        ctx.startService(intent);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ctx.startForegroundService(intent);
+        } else {
+            ctx.startService(intent);
+        }
     }
 
     @Override
@@ -136,6 +146,14 @@ public abstract class DownloadAllService extends Service {
         instance = this;
 
         callInject();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationUtilsKt.createNotificationChannel(
+                    this,
+                    DownloadAllService.CHANEL_ID + "_" + mConstantValues.getAppLang(),
+                    DownloadAllService.CHANEL_NAME + "_" + mConstantValues.getAppLang()
+            );
+        }
     }
 
     private void stopDownloadAndRemoveNotif() {
@@ -425,47 +443,94 @@ public abstract class DownloadAllService extends Service {
     }
 
     private void showNotificationDownloadList() {
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getChanelId());
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            final Notification.Builder builder = new Notification.Builder(this, getChanelId());
+//
+//            builder.setContentTitle(getString(R.string.download_objects_title))
+//                    .setAutoCancel(false)
+//                    .setContentText(getString(R.string.download_art_list))
+//                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+//                    .setSmallIcon(R.drawable.ic_download_white_24dp);
+//
+//            startForeground(NOTIFICATION_ID, builder.build());
+//        } else {
+            final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getChanelId());
 
-        builder.setContentTitle(getString(R.string.download_objects_title))
-                .setAutoCancel(false)
-                .setContentText(getString(R.string.download_art_list))
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                .setSmallIcon(R.drawable.ic_download_white_24dp);
+            builder.setContentTitle(getString(R.string.download_objects_title))
+                    .setAutoCancel(false)
+                    .setContentText(getString(R.string.download_art_list))
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                    .setSmallIcon(R.drawable.ic_download_white_24dp);
 
-        startForeground(NOTIFICATION_ID, builder.build());
+            startForeground(NOTIFICATION_ID, builder.build());
+//        }
     }
 
     private void showNotificationDownloadProgress(final CharSequence title, final int cur, final int max, final int errorsCount) {
-        final NotificationCompat.Builder builderArticlesList = new NotificationCompat.Builder(this, getChanelId());
-        final String content = getString(R.string.download_progress_content, cur, max, errorsCount);
-        builderArticlesList.setContentTitle(title)
-                .setAutoCancel(false)
-                .setContentText(content)
-                .setProgress(max, cur, false)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                .setSmallIcon(R.drawable.ic_download_white_24dp);
+//        final NotificationCompat.Builder builderArticlesList = new NotificationCompat.Builder(this, getChanelId());
+//        final String content = getString(R.string.download_progress_content, cur, max, errorsCount);
+//        builderArticlesList.setContentTitle(title)
+//                .setAutoCancel(false)
+//                .setContentText(content)
+//                .setProgress(max, cur, false)
+//                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+//                .setSmallIcon(R.drawable.ic_download_white_24dp);
+//
+//        startForeground(NOTIFICATION_ID, builderArticlesList.build());
 
-        startForeground(NOTIFICATION_ID, builderArticlesList.build());
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            final Notification.Builder builderArticlesList = new Notification.Builder(this, getChanelId());
+//            final String content = getString(R.string.download_progress_content, cur, max, errorsCount);
+//            builderArticlesList.setContentTitle(title)
+//                    .setAutoCancel(false)
+//                    .setContentText(content)
+//                    .setProgress(max, cur, false)
+//                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+//                    .setSmallIcon(R.drawable.ic_download_white_24dp);
+//
+//            startForeground(NOTIFICATION_ID, builderArticlesList.build());
+//        } else {
+            final NotificationCompat.Builder builderArticlesList = new NotificationCompat.Builder(this, getChanelId());
+            final String content = getString(R.string.download_progress_content, cur, max, errorsCount);
+            builderArticlesList.setContentTitle(title)
+                    .setAutoCancel(false)
+                    .setContentText(content)
+                    .setProgress(max, cur, false)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                    .setSmallIcon(R.drawable.ic_download_white_24dp);
+
+            startForeground(NOTIFICATION_ID, builderArticlesList.build());
+//        }
     }
 
     private void showNotificationSimple(final CharSequence title, final CharSequence content) {
-        final NotificationCompat.Builder builderArticlesList = new NotificationCompat.Builder(this, getChanelId());
-        builderArticlesList
-                .setContentTitle(title)
-                .setContentText(content)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                .setSmallIcon(R.drawable.ic_bug_report_white_24dp);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            final Notification.Builder builderArticlesList = new Notification.Builder(this, getChanelId());
+//            builderArticlesList
+//                    .setContentTitle(title)
+//                    .setContentText(content)
+//                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+//                    .setSmallIcon(R.drawable.ic_bug_report_white_24dp);
+//
+//            startForeground(NOTIFICATION_ID, builderArticlesList.build());
+//        } else {
+            final NotificationCompat.Builder builderArticlesList = new NotificationCompat.Builder(this, getChanelId());
+            builderArticlesList
+                    .setContentTitle(title)
+                    .setContentText(content)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                    .setSmallIcon(R.drawable.ic_bug_report_white_24dp);
 
-        startForeground(NOTIFICATION_ID, builderArticlesList.build());
+            startForeground(NOTIFICATION_ID, builderArticlesList.build());
+//        }
     }
 
     private String getChanelId() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             return NotificationUtilsKt.createNotificationChannel(
                     this,
-                    CHANEL_ID,
-                    CHANEL_NAME
+                    CHANEL_ID + "_" + mConstantValues.getAppLang(),
+                    CHANEL_NAME + "_" + mConstantValues.getAppLang()
             );
         } else {
             return "";

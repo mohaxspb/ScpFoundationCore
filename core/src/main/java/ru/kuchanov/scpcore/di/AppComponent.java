@@ -3,6 +3,7 @@ package ru.kuchanov.scpcore.di;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.di.module.AppModule;
 import ru.kuchanov.scpcore.di.module.HelpersModule;
 import ru.kuchanov.scpcore.di.module.NetModule;

@@ -14,7 +14,7 @@ fun createNotificationChannel(
     channelId: String,
     channelName: String
 ): String {
-    val chan = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_NONE)
+    val chan = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
     chan.lightColor = Color.BLUE
     chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
     val service = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

@@ -55,7 +55,7 @@ android {
         buildConfigField('int', 'TIMEOUT_SECONDS_READ', '60')
         buildConfigField('int', 'TIMEOUT_SECONDS_WRITE', '60')
 
-        buildConfigField('String', 'SCP_API_URL', '"https://scpfoundation.net/_api/wikidot_tags_search/"')
+        buildConfigField('String', 'SCP_API_URL', '"https://scpdb.org/"')
 
         //play market refuses not hardcoded strings as intent filter
         resValue('string', 'receiver_action_timer', '"ru.dante.scpfoundation.receivers.ReceiverTimer"')
