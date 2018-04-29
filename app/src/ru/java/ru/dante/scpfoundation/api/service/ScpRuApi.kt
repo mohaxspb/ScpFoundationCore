@@ -13,6 +13,6 @@ interface ScpRuApi {
     fun getRandomUrl(): Observable<RandomArticleResponse>
 
     companion object {
-        const val API_URL = "https://scpdb.org/api/"
+        const val API_URL = "https://scpdb.org/"
     }
 }

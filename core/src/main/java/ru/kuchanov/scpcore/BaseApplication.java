@@ -14,12 +14,17 @@ import com.vk.sdk.VKSdk;
 import com.yandex.metrica.YandexMetrica;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
+import javax.inject.Inject;
+
 import io.realm.Realm;
 import ru.kuchanov.scpcore.di.AppComponent;
+import ru.kuchanov.scpcore.downloads.DownloadAllService;
+import ru.kuchanov.scpcore.util.NotificationUtilsKt;
 import ru.kuchanov.scpcore.util.SystemUtils;
 import timber.log.Timber;
 
@@ -31,6 +36,7 @@ import timber.log.Timber;
 public abstract class BaseApplication extends MultiDexApplication {
 
     private static AppComponent sAppComponent;
+
     private static BaseApplication sAppInstance;
 
     public static AppComponent getAppComponent() {
@@ -66,6 +72,7 @@ public abstract class BaseApplication extends MultiDexApplication {
             // You should not init your app in this process.
             return;
         }
+
         refWatcher = LeakCanary.install(this);
 
         FirebaseApp.initializeApp(this);
