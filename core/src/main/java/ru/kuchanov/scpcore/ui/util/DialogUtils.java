@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import android.content.Context;
 import android.support.annotation.StringRes;
+import android.support.v7.widget.LinearLayoutManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +24,7 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
 import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.ui.activity.BaseActivity;
+import ru.kuchanov.scpcore.ui.adapter.AppLangVersionsAdapter;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
@@ -88,13 +90,14 @@ public class DialogUtils {
                         FirebaseRemoteConfig.getInstance().getString(Constants.Firebase.RemoteConfigKeys.APP_LANG_VERSIONS),
                         AppLangVersionsJson.class
                 ).langs;
+        final AppLangVersionsAdapter adapter = new AppLangVersionsAdapter(appLangVersions);
+        adapter.setCallbacks(position -> IntentUtils.tryOpenPlayMarket(context, appLangVersions.get(position).appPackage));
         new MaterialDialog.Builder(context)
                 .title(R.string.menuAppLangVersions)
                 .positiveText(R.string.close)
                 .items(appLangVersions)
+                .adapter(adapter, new LinearLayoutManager(context))
                 .alwaysCallSingleChoiceCallback()
-                .itemsCallback((dialog, itemView, position, text) ->
-                        IntentUtils.tryOpenPlayMarket(context, appLangVersions.get(position).appPackage))
                 .build()
                 .show();
     }
