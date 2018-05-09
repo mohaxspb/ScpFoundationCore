@@ -1,15 +1,16 @@
 package ru.kuchanov.scpcore.ui.holder;
 
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.appodeal.ads.Appodeal;
 import com.appodeal.ads.NativeAd;
 import com.appodeal.ads.NativeMediaView;
 import com.appodeal.ads.native_ad.views.NativeAdViewContentStream;
-import com.google.android.gms.ads.NativeExpressAdView;
+
+import org.jetbrains.annotations.NotNull;
+
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.model.ScpArtAd;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import timber.log.Timber;
@@ -41,13 +43,16 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     @Nullable
     @BindView(R2.id.nativeAdViewContainer)
     View nativeAdViewContainer;
+
     @BindView(R2.id.container)
     ViewGroup container;
+
     @BindView(R2.id.appodealNativeAdViewAppWall)
     NativeAdViewContentStream appodealNativeAdView;
-    //    NativeAdViewAppWall appodealNativeAdView;
+
     @BindView(R2.id.appodealNativeMediaView)
     NativeMediaView appodealNativeMediaView;
+
     private SetTextViewHTML.TextItemsClickListener clickListener;
 
     @OnClick(R2.id.adsSettingsContainer)
@@ -70,7 +75,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public NativeAdsArticleListHolder(View itemView, ArticlesListAdapter.ArticleClickListener clickListener) {
+    public NativeAdsArticleListHolder(final View itemView, final ArticlesListAdapter.ArticleClickListener clickListener) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         BaseApplication.getAppComponent().inject(this);
@@ -78,7 +83,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         mArticleClickListener = clickListener;
     }
 
-    public NativeAdsArticleListHolder(View itemView, SetTextViewHTML.TextItemsClickListener clickListener) {
+    public NativeAdsArticleListHolder(final View itemView, final SetTextViewHTML.TextItemsClickListener clickListener) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         BaseApplication.getAppComponent().inject(this);
@@ -86,27 +91,20 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         this.clickListener = clickListener;
     }
 
-    public void bind(NativeExpressAdView nativeExpressAdView) {
-        if (!(container.getChildAt(0) instanceof NativeExpressAdView)) {
-            if (nativeExpressAdView.getParent() != null) {
-                ((ViewGroup) nativeExpressAdView.getParent()).removeView(nativeExpressAdView);
-            }
-            container.addView(nativeExpressAdView, 0);
-            appodealNativeMediaView.setVisibility(View.GONE);
-            appodealNativeAdView.setVisibility(View.GONE);
-        }
+    public void bind(@NotNull final ScpArtAd scpArtAd) {
+        //todo
     }
 
-    public void bind(int appodealAdIndex) {
+    public void bind(final int appodealAdIndex) {
         Timber.d("appodealAdIndex: %s", appodealAdIndex);
 
-        List<NativeAd> nativeAdsList = Appodeal.getNativeAds(Constants.NUM_OF_NATIVE_ADS_PER_SCREEN);
+        final List<NativeAd> nativeAdsList = Appodeal.getNativeAds(Constants.NUM_OF_NATIVE_ADS_PER_SCREEN);
         Timber.d("nativeAdsList.size(): %s", nativeAdsList.size());
         if (nativeAdsList.size() <= appodealAdIndex) {
             Timber.d("No appodeal ads loaded yet for index: %s", appodealAdIndex);
             return;
         }
-        NativeAd nativeAd = nativeAdsList.get(appodealAdIndex);
+        final NativeAd nativeAd = nativeAdsList.get(appodealAdIndex);
         if (nativeAd.containsVideo()) {
             appodealNativeMediaView.setVisibility(View.VISIBLE);
             appodealNativeAdView.setVisibility(View.GONE);

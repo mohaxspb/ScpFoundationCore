@@ -135,4 +135,7 @@
     <color name="medalGold">#ffc200</color>
     <color name="medalSilver">#bcbbbb</color>
     <color name="medalBronze">#dd6512</color>
+
+    <color name="adLabelBgColor">#fbb607</color>
+    <color name="adStarsColor">#4651cd</color>
 </resources>

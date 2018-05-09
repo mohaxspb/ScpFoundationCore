@@ -20,15 +20,10 @@ public interface Constants {
      * cant find link, but as I remember 3 ads per list is permitted limit
      */
     int NUM_OF_NATIVE_ADS_PER_SCREEN = 3;
-    int NUM_OF_NATIVE_ADS_SOURCES = 2;
     long POST_DELAYED_MILLIS = 500;
 
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({NativeAdsSource.ALL, NativeAdsSource.APPODEAL})
-    @interface NativeAdsSource {
-
-        int ALL = 0;
-        int APPODEAL = 2;
+    enum NativeAdsSource{
+        ALL, APPODEAL, SCP_ART
     }
 
     interface Api {

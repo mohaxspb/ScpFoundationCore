@@ -370,4 +370,10 @@ Thanks for using our app!]]></string>
     <string name="free_ads_vk_share_label">Share app in VK</string>
     <string name="share_app_vk_text">Love fantastic and creepy stories? Try SCP Foundation app for android - thousands stories offline for free!</string>
     <string name="need_vk_wall_access">Permission to post on wall is required. Please, login again.</string>
+
+    <!---->
+    <string name="scp_art_ad_title" translatable="false">Книги SCP Foundation уже в продаже!</string>
+    <string name="ad" translatable="false">Ad</string>
+    <string name="scp_art_ad_description" translatable="false">Спрашивайте в книжных магазинах своего города или закажите доставку в любой уголок страны</string>
+    <string name="scp_art_ad_cta" translatable="false">Подробнее</string>
 </resources>
