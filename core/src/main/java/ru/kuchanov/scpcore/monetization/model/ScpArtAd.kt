@@ -1,6 +1,10 @@
 package ru.kuchanov.scpcore.monetization.model
 
-data class ScpArtAd(
-    val id: Int,
-    val imageUrl: String
-)
+data class ScpArtAdsJson(val ads: List<ScpArtAd>) {
+
+    data class ScpArtAd(
+        val id: Int,
+        val imageUrl: String
+    )
+}
+

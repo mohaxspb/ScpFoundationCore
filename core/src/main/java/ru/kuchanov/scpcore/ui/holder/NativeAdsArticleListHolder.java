@@ -23,7 +23,7 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.monetization.model.ScpArtAd;
+import ru.kuchanov.scpcore.monetization.model.ScpArtAdsJson;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import timber.log.Timber;
@@ -52,6 +52,10 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
 
     @BindView(R2.id.appodealNativeMediaView)
     NativeMediaView appodealNativeMediaView;
+
+
+    @BindView(R2.id.scpArtAdView)
+    View scpArtAdView;
 
     private SetTextViewHTML.TextItemsClickListener clickListener;
 
@@ -91,8 +95,9 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         this.clickListener = clickListener;
     }
 
-    public void bind(@NotNull final ScpArtAd scpArtAd) {
+    public void bind(@NotNull final ScpArtAdsJson.ScpArtAd scpArtAd) {
         //todo
+
     }
 
     public void bind(final int appodealAdIndex) {

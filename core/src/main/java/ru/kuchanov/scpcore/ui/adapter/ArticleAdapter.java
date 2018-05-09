@@ -26,6 +26,7 @@ import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.ScpArtAd;
+import ru.kuchanov.scpcore.monetization.model.ScpArtAdsJson;
 import ru.kuchanov.scpcore.ui.holder.ArticleImageHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleSpoilerHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTableHolder;
@@ -418,13 +419,11 @@ public class ArticleAdapter
                 ((ArticleTabsHolder) holder).bind((TabsViewModel) mViewModels.get(position).data);
                 break;
             case TYPE_NATIVE_APPODEAL: {
-                final NativeAdsArticleListHolder nativeAdsAppodealHolder = (NativeAdsArticleListHolder) holder;
-                nativeAdsAppodealHolder.bind((Integer) mViewModels.get(position).data);
+                ((NativeAdsArticleListHolder) holder).bind((Integer) mViewModels.get(position).data);
             }
             break;
             case TYPE_NATIVE_SCP_ART:
-                final NativeAdsArticleListHolder nativeAdsAppodealHolder = (NativeAdsArticleListHolder) holder;
-                nativeAdsAppodealHolder.bind((ScpArtAd) mViewModels.get(position).data);
+                ((NativeAdsArticleListHolder) holder).bind((ScpArtAdsJson.ScpArtAd) mViewModels.get(position).data);
                 break;
             default:
                 throw new IllegalArgumentException("unexpected item type: " + getItemViewType(position));
