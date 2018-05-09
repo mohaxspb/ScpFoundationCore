@@ -4,7 +4,7 @@ data class ScpArtAdsJson(val ads: List<ScpArtAd>) {
 
     data class ScpArtAd(
         val id: Int,
-        val imageUrl: String
+        val imgUrl: String
     )
 }
 
