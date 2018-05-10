@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -22,6 +23,7 @@ import ru.dante.scpfoundation.api.service.ScpRuApi;
 import ru.dante.scpfoundation.di.AppComponentImpl;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
@@ -57,10 +59,32 @@ public class ApiClientImpl extends ApiClient {
 
     @Override
     public Observable<String> getRandomUrl() {
-        return bindWithUtils(
-                scpRuApi.getRandomUrl()
-                        .map(RandomArticleResponse::getName)
-                        .map(url -> mConstantValues.getBaseApiUrl() + "/" + url)
+        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
+                    final Request request = new Request.Builder()
+                            .url("https://scpdb.org/api/wikidot_random_page")
+                            .build();
+
+                    final String responseBody;
+                    try {
+                        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                                .followRedirects(false)
+                                .build();
+                        final Response response = okHttpClient.newCall(request).execute();
+                        final AtomicReference<ResponseBody> body = new AtomicReference<>(response.body());
+                        if (body.get() != null) {
+                            responseBody = body.get().string();
+                            Timber.d("responseBody: %s", responseBody);
+                            //todo parse json and return url
+                            //{"name":"scp-2320"}
+                        } else {
+                            subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(ru.kuchanov.scpcore.R.string.error_parse)));
+                            return;
+                        }
+                    } catch (final IOException e) {
+                        subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(ru.kuchanov.scpcore.R.string.error_connection)));
+                        return;
+                    }
+                })
         );
     }
 
