@@ -347,4 +347,6 @@
     <string name="free_ads_vk_share_label">Share app em VK</string>
     <string name="share_app_vk_text">Amor histórias fantásticas e assustadoras? Tente SCP Foundation app para Android-milhares de histórias offline gratuitamente!</string>
     <string name="need_vk_wall_access">Permissão para postar na parede é necessário. Por favor, faça login de novo.</string>
+    <string name="app_lang_dialog_google_description">Aqui estão outras versões do nosso aplicativo, você pode escolher e baixar a versão do idioma necessário, clicando no link no Google Play Market.</string>
+    <string name="drawer_item_read">Leia artigos</string>
 </resources>

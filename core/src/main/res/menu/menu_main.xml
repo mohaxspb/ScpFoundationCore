@@ -54,7 +54,7 @@
 
     <item
         android:id="@+id/appLangVersions"
-        android:icon="@drawable/ic_shop_black_24dp"
+        android:icon="@drawable/ic_menu_ads"
         android:title="@string/menuAppLangVersions"
         app:showAsAction="never"
         />
