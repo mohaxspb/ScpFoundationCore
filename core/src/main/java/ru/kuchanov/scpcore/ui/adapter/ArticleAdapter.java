@@ -1,6 +1,7 @@
 package ru.kuchanov.scpcore.ui.adapter;
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.gson.Gson;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
@@ -24,6 +26,7 @@ import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.model.ScpArtAdsJson;
 import ru.kuchanov.scpcore.ui.holder.ArticleImageHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleSpoilerHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTableHolder;
@@ -39,7 +42,7 @@ import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_INTERVAL;
-import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_SOURCE;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_SOURCE_V2;
 
 /**
  * Created by Dante on 17.01.2016.
@@ -65,7 +68,9 @@ public class ArticleAdapter
 
     private static final int TYPE_TABS = 6;
 
-    private static final int TYPE_NATIVE_APPODEAL = 8;
+    private static final int TYPE_NATIVE_APPODEAL = 7;
+
+    private static final int TYPE_NATIVE_SCP_ART = 8;
 
     @Inject
     MyPreferenceManager mMyPreferenceManager;
@@ -77,6 +82,9 @@ public class ArticleAdapter
     private List<TabsViewModel> mTabsViewModelList = new ArrayList<>();
 
     private List<SpoilerViewModel> mExpandedSpoilers = new ArrayList<>();
+
+    @Inject
+    Gson mGson;
 
     public ArticleAdapter() {
         super();
@@ -288,27 +296,38 @@ public class ArticleAdapter
         final List<ArticleTextPartViewModel> adsModelsList = new ArrayList<>();
 
         final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-        @Constants.NativeAdsSource final int nativeAdsSource = (int) config.getLong(NATIVE_ADS_LISTS_SOURCE);
-        //test
-//        nativeAdsSource = Constants.NativeAdsSource.APPODEAL;
+        final Constants.NativeAdsSource nativeAdsSource =
+                Constants.NativeAdsSource.values()[(int) config.getLong(NATIVE_ADS_LISTS_SOURCE_V2)];
+
+        final List<ScpArtAdsJson.ScpArtAd> scpArtAdsJson = mGson.fromJson(config.getString(Constants.Firebase.RemoteConfigKeys.ADS_SCP_ART), ScpArtAdsJson.class).getAds();
+
         int appodealIndex = 0;
         for (int i = 0; i < Constants.NUM_OF_NATIVE_ADS_PER_SCREEN; i++) {
             switch (nativeAdsSource) {
-                case Constants.NativeAdsSource.ALL: {
+                case ALL: {
                     //show ads from list of sources via random
-                    switch (new Random().nextInt(Constants.NUM_OF_NATIVE_ADS_SOURCES) + 1) {
-                        case Constants.NativeAdsSource.APPODEAL:
+                    final List<Constants.NativeAdsSource> nativeAdsSources = new ArrayList<>(Arrays.asList(Constants.NativeAdsSource.values()));
+                    nativeAdsSources.remove(Constants.NativeAdsSource.ALL);
+                    final Constants.NativeAdsSource randomNativeAdsSource = nativeAdsSources.get(new Random().nextInt(nativeAdsSources.size()));
+                    switch (randomNativeAdsSource) {
+                        case APPODEAL:
                             adsModelsList.add(new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL, appodealIndex, false));
                             appodealIndex++;
+                            break;
+                        case SCP_ART:
+                            adsModelsList.add(new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_SCP_ART, scpArtAdsJson.get(new Random().nextInt(scpArtAdsJson.size())), false));
                             break;
                         default:
                             throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
                     }
                     break;
                 }
-                case Constants.NativeAdsSource.APPODEAL:
+                case APPODEAL:
                     adsModelsList.add(new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL, appodealIndex, false));
                     appodealIndex++;
+                    break;
+                case SCP_ART:
+                    adsModelsList.add(new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_SCP_ART, scpArtAdsJson.get(new Random().nextInt(scpArtAdsJson.size())), false));
                     break;
                 default:
                     throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
@@ -336,6 +355,8 @@ public class ArticleAdapter
                 return TYPE_TAGS;
             case ParseHtmlUtils.TextType.TABS:
                 return TYPE_TABS;
+            case ParseHtmlUtils.TextType.NATIVE_ADS_SCP_ART:
+                return TYPE_NATIVE_SCP_ART;
             case ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL:
                 return TYPE_NATIVE_APPODEAL;
             default:
@@ -368,6 +389,7 @@ public class ArticleAdapter
             case TYPE_TABS:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_tabs, parent, false);
                 return new ArticleTabsHolder(view, this);
+            case TYPE_NATIVE_SCP_ART:
             case TYPE_NATIVE_APPODEAL:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_native_container, parent, false);
                 return new NativeAdsArticleListHolder(view, mTextItemsClickListener);
@@ -400,9 +422,12 @@ public class ArticleAdapter
             case TYPE_TABS:
                 ((ArticleTabsHolder) holder).bind((TabsViewModel) mViewModels.get(position).data);
                 break;
-            case TYPE_NATIVE_APPODEAL:
-                final NativeAdsArticleListHolder nativeAdsAppodealHolder = (NativeAdsArticleListHolder) holder;
-                nativeAdsAppodealHolder.bind((Integer) mViewModels.get(position).data);
+            case TYPE_NATIVE_APPODEAL: {
+                ((NativeAdsArticleListHolder) holder).bind((Integer) mViewModels.get(position).data);
+            }
+            break;
+            case TYPE_NATIVE_SCP_ART:
+                ((NativeAdsArticleListHolder) holder).bind((ScpArtAdsJson.ScpArtAd) mViewModels.get(position).data);
                 break;
             default:
                 throw new IllegalArgumentException("unexpected item type: " + getItemViewType(position));

@@ -1,13 +1,7 @@
 package ru.kuchanov.scpcore;
 
-import org.jetbrains.annotations.NotNull;
-
 import android.support.annotation.DrawableRes;
-import android.support.annotation.IntDef;
 import android.support.annotation.StringRes;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
 /**
  * Created by mohax on 03.01.2017.
@@ -20,15 +14,10 @@ public interface Constants {
      * cant find link, but as I remember 3 ads per list is permitted limit
      */
     int NUM_OF_NATIVE_ADS_PER_SCREEN = 3;
-    int NUM_OF_NATIVE_ADS_SOURCES = 2;
     long POST_DELAYED_MILLIS = 500;
 
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({NativeAdsSource.ALL, NativeAdsSource.APPODEAL})
-    @interface NativeAdsSource {
-
-        int ALL = 0;
-        int APPODEAL = 2;
+    enum NativeAdsSource {
+        ALL, APPODEAL, SCP_ART
     }
 
     interface Api {
@@ -86,6 +75,7 @@ public interface Constants {
 
         String[] ALL_LINKS_ARRAY = {MAIN, RATE, NEW_ARTICLES, EXPERIMENTS, INCEDENTS, INTERVIEWS, OTHERS, STORIES, LEAKS, OBJECTS_1, OBJECTS_2, OBJECTS_3, OBJECTS_RU, NEWS};
         String BASE_API_URL = "http://scpfoundation.ru";
+        String SCP_ART_AD_UTM = "http://artscp.com/promo?utm_source=%1$s&utm_medium=referral&utm_campaign=app-ads&utm_term=%2$d";
     }
 
     interface Firebase {
@@ -173,6 +163,9 @@ public interface Constants {
             String NATIVE_IN_ARTICLE_ENABLED = "native_in_article_enabled";
             String NATIVE_ADS_LISTS_INTERVAL = "native_ads_lists_interval";
             String NATIVE_ADS_LISTS_SOURCE = "native_ads_lists_source";
+            String NATIVE_ADS_LISTS_SOURCE_V2 = "native_ads_lists_source_v2";
+            String ADS_SCP_ART = "ads_scp_art";
+            String ADS_SCP_ART_ENABLED = "ads_scp_art_enabled";
             //banners
             String GALLERY_BANNER_DISABLED = "gallery_banner_disabled";
             String MAIN_BANNER_DISABLED = "main_banner_disabled";
@@ -220,6 +213,7 @@ public interface Constants {
                 String VK_GROUP_JOINED = "VK_GROUP_JOINED";
                 String APP_INSTALLED = "APP_INSTALLED";
                 String VK_APP_SHARED = "VK_APP_SHARED";
+                String SCP_ART_CLICKED = "SCP_ART_CLICKED";
             }
 
             interface EventParam {

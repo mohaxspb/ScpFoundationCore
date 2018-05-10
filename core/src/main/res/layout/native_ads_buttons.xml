@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="80dp"
     android:baselineAligned="false"
-    android:orientation="horizontal"
-    >
+    android:orientation="horizontal">
 
     <FrameLayout
         android:id="@+id/adsSettingsContainer"
@@ -13,8 +11,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="?selectableItemBackground"
-        android:padding="@dimen/defaultMargin"
-        >
+        android:padding="@dimen/defaultMargin">
 
         <TextView
             android:id="@+id/adsSettings"
@@ -24,8 +21,7 @@
             android:drawablePadding="@dimen/defaultMarginSmall"
             android:drawableStart="?iconAdsSettings24dp"
             android:gravity="center"
-            android:text="@string/settings_ads_title"
-            />
+            android:text="@string/settings_ads_title" />
     </FrameLayout>
 
     <FrameLayout
@@ -34,8 +30,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="?selectableItemBackground"
-        android:padding="@dimen/defaultMargin"
-        >
+        android:padding="@dimen/defaultMargin">
 
         <TextView
             android:id="@+id/rewardedVideo"
@@ -45,8 +40,7 @@
             android:drawablePadding="@dimen/defaultMarginSmall"
             android:drawableStart="?iconVideo24dp"
             android:gravity="center"
-            android:text="@string/remove_ads"
-            />
+            android:text="@string/remove_ads" />
     </FrameLayout>
 
 </LinearLayout>

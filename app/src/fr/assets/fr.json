@@ -184,6 +184,18 @@
             {
                 "key": "score_action_vk_share_app",
                 "value": 100
+            },
+            {
+                "key": "ads_scp_art",
+                "value": "{   \"ads\": [     {       \"id\": \"1\",       \"imgUrl\": \"https:\/\/sun9-7.userapi.com\/c840624\/v840624412\/7fa95\/2665G5s1zkk.jpg\"     },     {       \"id\": \"2\",       \"imgUrl\": \"https:\/\/sun9-1.userapi.com\/c840624\/v840624412\/7fa9f\/c4na9MdYI44.jpg\"     },     {       \"id\": \"3\",       \"imgUrl\": \"https:\/\/sun9-1.userapi.com\/c840624\/v840624412\/7faa9\/Rzodx3GnUlA.jpg\"     },     {       \"id\": \"4\",       \"imgUrl\": \"https:\/\/sun9-8.userapi.com\/c840624\/v840624412\/7fab3\/ZOMRJNLo4Es.jpg\"     },     {       \"id\": \"5\",       \"imgUrl\": \"https:\/\/sun9-7.userapi.com\/c840624\/v840624412\/7fabd\/H20kc7VP758.jpg\"     },     {       \"id\": \"6\",       \"imgUrl\": \"https:\/\/sun9-1.userapi.com\/c840624\/v840624412\/7fac7\/avuBb5958L0.jpg\"     },     {       \"id\": \"7\",       \"imgUrl\": \"https:\/\/sun9-1.userapi.com\/c840624\/v840624412\/7fad1\/9mSQkgVCyys.jpg\"     },     {       \"id\": \"8\",       \"imgUrl\": \"https:\/\/sun9-8.userapi.com\/c840624\/v840624412\/7fadb\/mjbQwUzMOpA.jpg\"     }   ] }"
+            },
+            {
+                "key": "ads_scp_art_enabled",
+                "value": false
+            },
+            {
+                "key": "native_ads_lists_source_v2",
+                "value": 1
             }
         ]
     }

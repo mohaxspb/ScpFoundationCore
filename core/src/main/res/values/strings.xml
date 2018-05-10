@@ -11,6 +11,10 @@
     <string name="google_services_not_connected" translatable="false">Google services not connected</string>
     <string name="error_unexpected" translatable="false">Unexpected error</string>
     <string name="share_app_vk_link" translatable="false">https://play.google.com/store/apps/details?id=%s</string>
+    <string name="scp_art_ad_title" translatable="false">Книги SCP Foundation уже в продаже!</string>
+    <string name="ad" translatable="false">Ad</string>
+    <string name="scp_art_ad_description" translatable="false">Спрашивайте в книжных магазинах своего города или закажите доставку в любой уголок страны</string>
+    <string name="scp_art_ad_cta" translatable="false">Подробнее</string>
     <!--drawer items-->
     <string name="drawer_item_1">About the SCP Foundation</string>
     <string name="drawer_item_2">Site News Hub</string>
@@ -370,4 +374,5 @@ Thanks for using our app!]]></string>
     <string name="free_ads_vk_share_label">Share app in VK</string>
     <string name="share_app_vk_text">Love fantastic and creepy stories? Try SCP Foundation app for android - thousands stories offline for free!</string>
     <string name="need_vk_wall_access">Permission to post on wall is required. Please, login again.</string>
+    <!---->
 </resources>
