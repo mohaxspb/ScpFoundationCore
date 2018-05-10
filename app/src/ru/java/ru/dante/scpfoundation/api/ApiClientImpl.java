@@ -1,6 +1,7 @@
 package ru.dante.scpfoundation.api;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -17,11 +18,10 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
-import ru.dante.scpfoundation.api.model.response.RandomArticleResponse;
 import ru.dante.scpfoundation.api.service.ScpRuApi;
 import ru.dante.scpfoundation.di.AppComponentImpl;
-import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
@@ -57,10 +57,31 @@ public class ApiClientImpl extends ApiClient {
 
     @Override
     public Observable<String> getRandomUrl() {
-        return bindWithUtils(
-                scpRuApi.getRandomUrl()
-                        .map(RandomArticleResponse::getName)
-                        .map(url -> mConstantValues.getBaseApiUrl() + "/" + url)
+        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
+                    final Request request = new Request.Builder()
+                            .url("https://scpdb.org/api/wikidot_random_page")
+                            .build();
+
+                    final String responseBody;
+                    try {
+                        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                                .followRedirects(false)
+                                .build();
+                        final Response response = okHttpClient.newCall(request).execute();
+                        final AtomicReference<ResponseBody> body = new AtomicReference<>(response.body());
+                        if (body.get() != null) {
+                            responseBody = body.get().string();
+                            //{"name":"scp-2320"}
+                            final String scp = new JsonParser().parse(responseBody).getAsJsonObject().get("name").getAsString();
+                            subscriber.onNext(mConstantValues.getBaseApiUrl() + "/" + scp);
+                            subscriber.onCompleted();
+                        } else {
+                            subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(ru.kuchanov.scpcore.R.string.error_parse)));
+                        }
+                    } catch (final IOException e) {
+                        subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(ru.kuchanov.scpcore.R.string.error_connection)));
+                    }
+                })
         );
     }
 
