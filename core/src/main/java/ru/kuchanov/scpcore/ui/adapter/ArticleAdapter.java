@@ -42,7 +42,7 @@ import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_INTERVAL;
-import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_SOURCE;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_SOURCE_V2;
 
 /**
  * Created by Dante on 17.01.2016.
@@ -296,7 +296,8 @@ public class ArticleAdapter
         final List<ArticleTextPartViewModel> adsModelsList = new ArrayList<>();
 
         final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-        final Constants.NativeAdsSource nativeAdsSource = Constants.NativeAdsSource.values()[(int) config.getLong(NATIVE_ADS_LISTS_SOURCE)];
+        final Constants.NativeAdsSource nativeAdsSource =
+                Constants.NativeAdsSource.values()[(int) config.getLong(NATIVE_ADS_LISTS_SOURCE_V2)];
 
         final List<ScpArtAdsJson.ScpArtAd> scpArtAdsJson = mGson.fromJson(config.getString(Constants.Firebase.RemoteConfigKeys.ADS_SCP_ART), ScpArtAdsJson.class).getAds();
 

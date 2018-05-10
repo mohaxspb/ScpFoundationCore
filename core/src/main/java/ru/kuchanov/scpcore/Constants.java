@@ -16,7 +16,7 @@ public interface Constants {
     int NUM_OF_NATIVE_ADS_PER_SCREEN = 3;
     long POST_DELAYED_MILLIS = 500;
 
-    enum NativeAdsSource{
+    enum NativeAdsSource {
         ALL, APPODEAL, SCP_ART
     }
 
@@ -163,6 +163,7 @@ public interface Constants {
             String NATIVE_IN_ARTICLE_ENABLED = "native_in_article_enabled";
             String NATIVE_ADS_LISTS_INTERVAL = "native_ads_lists_interval";
             String NATIVE_ADS_LISTS_SOURCE = "native_ads_lists_source";
+            String NATIVE_ADS_LISTS_SOURCE_V2 = "native_ads_lists_source_v2";
             String ADS_SCP_ART = "ads_scp_art";
             String ADS_SCP_ART_ENABLED = "ads_scp_art_enabled";
             //banners

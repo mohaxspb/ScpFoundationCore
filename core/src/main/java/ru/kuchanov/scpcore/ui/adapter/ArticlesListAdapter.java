@@ -38,7 +38,7 @@ import ru.kuchanov.scpcore.ui.model.ArticlesListModel;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_INTERVAL;
-import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_SOURCE;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_SOURCE_V2;
 
 /**
  * Created by Dante on 17.01.2016.
@@ -284,14 +284,14 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private List<ArticlesListModel> createAdsModelsList() {
         Timber.d("createAdsModelsList");
-        final List<ArticlesListModel> adsModelsList = new ArrayList<>();
-
         final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-        final Constants.NativeAdsSource nativeAdsSource = Constants.NativeAdsSource.values()[(int) config.getLong(NATIVE_ADS_LISTS_SOURCE)];
+        final Constants.NativeAdsSource nativeAdsSource =
+                Constants.NativeAdsSource.values()[(int) config.getLong(NATIVE_ADS_LISTS_SOURCE_V2)];
         Timber.d("nativeAdsSource: %s", nativeAdsSource);
         final List<ScpArtAdsJson.ScpArtAd> scpArtAdsJson = mGson.fromJson(config.getString(Constants.Firebase.RemoteConfigKeys.ADS_SCP_ART), ScpArtAdsJson.class).getAds();
 
         int appodealIndex = 0;
+        final List<ArticlesListModel> adsModelsList = new ArrayList<>();
         for (int i = 0; i < Constants.NUM_OF_NATIVE_ADS_PER_SCREEN; i++) {
             switch (nativeAdsSource) {
                 case ALL: {

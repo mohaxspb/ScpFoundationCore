@@ -139,7 +139,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         progressCenter.setVisibility(View.VISIBLE);
         Glide.with(mainImageView.getContext())
                 .load(scpArtAd.getImgUrl())
-                .error(R.drawable.ic_scp_art_ad_img)
+                .error(R.drawable.art_scp_default_ads)
                 .fitCenter()
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
