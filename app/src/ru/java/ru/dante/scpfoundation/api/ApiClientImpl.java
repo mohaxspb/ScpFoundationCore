@@ -1,6 +1,7 @@
 package ru.dante.scpfoundation.api;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -12,18 +13,15 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
-import ru.dante.scpfoundation.api.model.response.RandomArticleResponse;
 import ru.dante.scpfoundation.api.service.ScpRuApi;
 import ru.dante.scpfoundation.di.AppComponentImpl;
-import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
-import ru.kuchanov.scpcore.Constants;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
@@ -73,16 +71,15 @@ public class ApiClientImpl extends ApiClient {
                         final AtomicReference<ResponseBody> body = new AtomicReference<>(response.body());
                         if (body.get() != null) {
                             responseBody = body.get().string();
-                            Timber.d("responseBody: %s", responseBody);
-                            //todo parse json and return url
                             //{"name":"scp-2320"}
+                            final String scp = new JsonParser().parse(responseBody).getAsJsonObject().get("name").getAsString();
+                            subscriber.onNext(mConstantValues.getBaseApiUrl() + "/" + scp);
+                            subscriber.onCompleted();
                         } else {
                             subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(ru.kuchanov.scpcore.R.string.error_parse)));
-                            return;
                         }
                     } catch (final IOException e) {
                         subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(ru.kuchanov.scpcore.R.string.error_connection)));
-                        return;
                     }
                 })
         );
