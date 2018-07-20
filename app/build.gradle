@@ -188,7 +188,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     //dagger2
-    String daggerVersion = '2.13'
+    String daggerVersion = '2.16'
     api "com.google.dagger:dagger:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
