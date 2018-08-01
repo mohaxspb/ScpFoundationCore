@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.List;
 import java.util.Locale;
@@ -69,6 +70,21 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
 
     @BindView(R2.id.scpArtAdView)
     View scpArtAdView;
+
+    @BindView(R2.id.ratingBar)
+    View ratingBar;
+
+    @BindView(R2.id.titleTextView)
+    TextView titleTextView;
+
+    @BindView(R2.id.logoImageView)
+    ImageView logoImageView;
+
+    @BindView(R2.id.subtitleTextView)
+    TextView subtitleTextView;
+
+    @BindView(R2.id.ctaTextView)
+    TextView ctaTextView;
 
     @BindView(R2.id.mainImageView)
     ImageView mainImageView;
@@ -136,6 +152,12 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
             IntentUtils.openUrl(url);
         });
 
+        ratingBar.setVisibility(View.VISIBLE);
+        logoImageView.setImageResource(R.drawable.ic_scp_art_ad_img);
+        titleTextView.setText(R.string.scp_art_ad_title);
+        subtitleTextView.setText(R.string.scp_art_ad_description);
+        ctaTextView.setText(R.string.scp_art_ad_cta);
+
         progressCenter.setVisibility(View.VISIBLE);
         Glide.with(mainImageView.getContext())
                 .load(scpArtAd.getImgUrl())
@@ -186,7 +208,11 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
             IntentUtils.openUrl(url);
         });
 
-        //todo set texts and icon
+        ratingBar.setVisibility(View.GONE);
+        logoImageView.setImageResource(R.drawable.ic_scp_quiz_logo);
+        titleTextView.setText(R.string.scp_quiz_banner_title);
+        subtitleTextView.setText(R.string.scp_quiz_banner_subtitle);
+        ctaTextView.setText(R.string.scp_quiz_banner_cta);
 
         progressCenter.setVisibility(View.VISIBLE);
         Glide.with(mainImageView.getContext())

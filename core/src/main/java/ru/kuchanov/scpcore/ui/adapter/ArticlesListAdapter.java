@@ -293,6 +293,9 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     final List<Constants.NativeAdsSource> nativeAdsSources =
                             new ArrayList<>(Arrays.asList(Constants.NativeAdsSource.values()));
                     nativeAdsSources.remove(Constants.NativeAdsSource.ALL);
+                    if (!config.getBoolean(Constants.Firebase.RemoteConfigKeys.ADS_SCP_ART_ENABLED)) {
+                        nativeAdsSources.remove(Constants.NativeAdsSource.SCP_ART);
+                    }
                     final Constants.NativeAdsSource randomNativeAdsSource =
                             nativeAdsSources.get(new Random().nextInt(nativeAdsSources.size()));
                     switch (randomNativeAdsSource) {
@@ -314,8 +317,8 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         case SCP_QUIZ:
                             adsModelsList.add(
                                     isArticle
-                                    ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_SCP_QUIZ, null, false)
-                                    : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_SCP_QUIZ, null)
+                                    ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_SCP_QUIZ, new Random().nextInt(), false)
+                                    : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_SCP_QUIZ, new Random().nextInt())
                             );
                             break;
                         default:
@@ -341,8 +344,8 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 case SCP_QUIZ:
                     adsModelsList.add(
                             isArticle
-                            ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_SCP_QUIZ, null, false)
-                            : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_SCP_QUIZ, null)
+                            ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_SCP_QUIZ, new Random().nextInt(), false)
+                            : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_SCP_QUIZ, new Random().nextInt())
                     );
                     break;
                 default:
@@ -397,6 +400,7 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
                 break;
             case ArticleListNodeType.NATIVE_ADS_SCP_ART:
+            case ArticleListNodeType.NATIVE_ADS_SCP_QUIZ:
             case ArticleListNodeType.NATIVE_ADS_APPODEAL:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_native_container, parent, false);
                 viewHolder = new NativeAdsArticleListHolder(view, mArticleClickListener);
