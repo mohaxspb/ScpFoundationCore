@@ -10,10 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -22,6 +20,7 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ParseHtmlUtils;
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.RealmString;
@@ -42,7 +41,7 @@ import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_INTERVAL;
-import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_SOURCE_V2;
+import static ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter.createAdsModelsList;
 
 /**
  * Created by Dante on 17.01.2016.
@@ -72,12 +71,14 @@ public class ArticleAdapter
 
     private static final int TYPE_NATIVE_SCP_ART = 8;
 
+    private static final int TYPE_NATIVE_SCP_QUIZ = 9;
+
     @Inject
     MyPreferenceManager mMyPreferenceManager;
 
-    private final List<ArticleTextPartViewModel> mAdsModelsList = new ArrayList<>();
+    private final List<MyListItem> mAdsModelsList = new ArrayList<>();
 
-    private final List<ArticleTextPartViewModel> mViewModels = new ArrayList<>();
+    private final List<MyListItem> mViewModels = new ArrayList<>();
 
     private List<TabsViewModel> mTabsViewModelList = new ArrayList<>();
 
@@ -106,7 +107,6 @@ public class ArticleAdapter
             final List<SpoilerViewModel> expandedSpoilers,
             final List<TabsViewModel> tabsViewModels
     ) {
-//        Timber.d("setData: %s", article);
         mTabsViewModelList = tabsViewModels;
         mExpandedSpoilers = expandedSpoilers;
 
@@ -246,39 +246,29 @@ public class ArticleAdapter
         //log
         @ParseHtmlUtils.TextType final List<String> types = new ArrayList<>();
         final List<Boolean> isInSpoilerList = new ArrayList<>();
-        for (final ArticleTextPartViewModel model : mViewModels) {
-            types.add(model.type);
-            isInSpoilerList.add(model.isInSpoiler);
+        for (final MyListItem model : mViewModels) {
+            types.add(((ArticleTextPartViewModel) model).type);
+            isInSpoilerList.add(((ArticleTextPartViewModel) model).isInSpoiler);
         }
-        Timber.d("types: %s", types);
-        Timber.d("isInSpoilerList: %s", isInSpoilerList);
-        Timber.d("mViewModels.size: %s", mViewModels.size());
 
         notifyDataSetChanged();
     }
 
     private void addAds() {
         //do not add native ads items if user has subscription or banners temporary disabled
-        //or banners rnabled or native disabled
+        //or banners enabled or native disabled
         final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-//        if (mMyPreferenceManager.isHasAnySubscription()
-//                || !mMyPreferenceManager.isTimeToShowBannerAds()
-//                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.ARTICLE_BANNER_DISABLED)
-//                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_IN_ARTICLE_ENABLED)) {
-//            return;
-//        }
         if (mMyPreferenceManager.isHasAnySubscription()
             || !mMyPreferenceManager.isTimeToShowBannerAds()
             || mMyPreferenceManager.isBannerInArticleEnabled()) {
             return;
         }
         if (mAdsModelsList.isEmpty()) {
-            mAdsModelsList.addAll(createAdsModelsList());
+            mAdsModelsList.addAll(createAdsModelsList(true));
         }
 
         // Loop through the items array and place a new Native Express ad in every ith position in
         // the items List.
-//        int appodealIndex = 0;
         final int interval = (int) (config.getLong(NATIVE_ADS_LISTS_INTERVAL) - 1);
         for (int i = 0; i <= mViewModels.size(); i += interval) {
             //do not add as first row
@@ -292,54 +282,9 @@ public class ArticleAdapter
         }
     }
 
-    private List<ArticleTextPartViewModel> createAdsModelsList() {
-        final List<ArticleTextPartViewModel> adsModelsList = new ArrayList<>();
-
-        final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-        final Constants.NativeAdsSource nativeAdsSource =
-                Constants.NativeAdsSource.values()[(int) config.getLong(NATIVE_ADS_LISTS_SOURCE_V2)];
-
-        final List<ScpArtAdsJson.ScpArtAd> scpArtAdsJson = mGson.fromJson(config.getString(Constants.Firebase.RemoteConfigKeys.ADS_SCP_ART), ScpArtAdsJson.class).getAds();
-
-        int appodealIndex = 0;
-        for (int i = 0; i < Constants.NUM_OF_NATIVE_ADS_PER_SCREEN; i++) {
-            switch (nativeAdsSource) {
-                case ALL: {
-                    //show ads from list of sources via random
-                    final List<Constants.NativeAdsSource> nativeAdsSources = new ArrayList<>(Arrays.asList(Constants.NativeAdsSource.values()));
-                    nativeAdsSources.remove(Constants.NativeAdsSource.ALL);
-                    final Constants.NativeAdsSource randomNativeAdsSource = nativeAdsSources.get(new Random().nextInt(nativeAdsSources.size()));
-                    switch (randomNativeAdsSource) {
-                        case APPODEAL:
-                            adsModelsList.add(new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL, appodealIndex, false));
-                            appodealIndex++;
-                            break;
-                        case SCP_ART:
-                            adsModelsList.add(new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_SCP_ART, scpArtAdsJson.get(new Random().nextInt(scpArtAdsJson.size())), false));
-                            break;
-                        default:
-                            throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
-                    }
-                    break;
-                }
-                case APPODEAL:
-                    adsModelsList.add(new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL, appodealIndex, false));
-                    appodealIndex++;
-                    break;
-                case SCP_ART:
-                    adsModelsList.add(new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_SCP_ART, scpArtAdsJson.get(new Random().nextInt(scpArtAdsJson.size())), false));
-                    break;
-                default:
-                    throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
-            }
-        }
-
-        return adsModelsList;
-    }
-
     @Override
     public int getItemViewType(final int position) {
-        @ParseHtmlUtils.TextType final String type = mViewModels.get(position).type;
+        @ParseHtmlUtils.TextType final String type = ((ArticleTextPartViewModel) mViewModels.get(position)).type;
         switch (type) {
             case ParseHtmlUtils.TextType.TITLE:
                 return TYPE_TITLE;
@@ -359,6 +304,8 @@ public class ArticleAdapter
                 return TYPE_NATIVE_SCP_ART;
             case ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL:
                 return TYPE_NATIVE_APPODEAL;
+            case ParseHtmlUtils.TextType.NATIVE_ADS_SCP_QUIZ:
+                return TYPE_NATIVE_SCP_QUIZ;
             default:
                 throw new IllegalArgumentException("unexpected type: " + type);
         }
@@ -391,6 +338,7 @@ public class ArticleAdapter
                 return new ArticleTabsHolder(view, this);
             case TYPE_NATIVE_SCP_ART:
             case TYPE_NATIVE_APPODEAL:
+            case TYPE_NATIVE_SCP_QUIZ:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_native_container, parent, false);
                 return new NativeAdsArticleListHolder(view, mTextItemsClickListener);
             default:
@@ -400,34 +348,38 @@ public class ArticleAdapter
 
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
+        final ArticleTextPartViewModel textPartViewModel = (ArticleTextPartViewModel) mViewModels.get(position);
         switch (getItemViewType(position)) {
             case TYPE_TITLE:
-                ((ArticleTitleHolder) holder).bind(mViewModels.get(position));
+                ((ArticleTitleHolder) holder).bind(textPartViewModel);
                 break;
             case TYPE_TEXT:
-                ((ArticleTextHolder) holder).bind(mViewModels.get(position));
+                ((ArticleTextHolder) holder).bind(textPartViewModel);
                 break;
             case TYPE_IMAGE:
-                ((ArticleImageHolder) holder).bind(mViewModels.get(position));
+                ((ArticleImageHolder) holder).bind(textPartViewModel);
                 break;
             case TYPE_SPOILER:
-                ((ArticleSpoilerHolder) holder).bind((SpoilerViewModel) mViewModels.get(position).data);
+                ((ArticleSpoilerHolder) holder).bind((SpoilerViewModel) textPartViewModel.data);
                 break;
             case TYPE_TABLE:
-                ((ArticleTableHolder) holder).bind(mViewModels.get(position));
+                ((ArticleTableHolder) holder).bind(textPartViewModel);
                 break;
             case TYPE_TAGS:
-                ((ArticleTagsHolder) holder).bind((RealmList<ArticleTag>) mViewModels.get(position).data);
+                ((ArticleTagsHolder) holder).bind((RealmList<ArticleTag>) textPartViewModel.data);
                 break;
             case TYPE_TABS:
-                ((ArticleTabsHolder) holder).bind((TabsViewModel) mViewModels.get(position).data);
+                ((ArticleTabsHolder) holder).bind((TabsViewModel) textPartViewModel.data);
                 break;
             case TYPE_NATIVE_APPODEAL: {
-                ((NativeAdsArticleListHolder) holder).bind((Integer) mViewModels.get(position).data);
+                ((NativeAdsArticleListHolder) holder).bind((Integer) textPartViewModel.data);
             }
             break;
             case TYPE_NATIVE_SCP_ART:
-                ((NativeAdsArticleListHolder) holder).bind((ScpArtAdsJson.ScpArtAd) mViewModels.get(position).data);
+                ((NativeAdsArticleListHolder) holder).bind((ScpArtAdsJson.ScpArtAd) textPartViewModel.data);
+                break;
+            case TYPE_NATIVE_SCP_QUIZ:
+                ((NativeAdsArticleListHolder) holder).bind();
                 break;
             default:
                 throw new IllegalArgumentException("unexpected item type: " + getItemViewType(position));
@@ -441,7 +393,7 @@ public class ArticleAdapter
 
     @Override
     public long getItemId(final int position) {
-        return mViewModels.get(position).data.hashCode();
+        return ((ArticleTextPartViewModel) mViewModels.get(position)).data.hashCode();
     }
 
     @Override
@@ -451,7 +403,7 @@ public class ArticleAdapter
             return;
         }
 
-        final SpoilerViewModel spoilerViewModel = ((SpoilerViewModel) mViewModels.get(position).data);
+        final SpoilerViewModel spoilerViewModel = ((SpoilerViewModel) ((ArticleTextPartViewModel) mViewModels.get(position)).data);
 //        Timber.d("mSpoilerTextPartsTypes size: %s", spoilerViewModel.mSpoilerTextPartsTypes.size());
 //        Timber.d("mSpoilerTextPartsTypes: %s", spoilerViewModel.mSpoilerTextPartsTypes);
 //        Timber.d("mSpoilerTextParts size: %s", spoilerViewModel.mSpoilerTextParts.size());
@@ -504,17 +456,17 @@ public class ArticleAdapter
             return;
         }
 
-        final SpoilerViewModel spoilerViewModel = ((SpoilerViewModel) mViewModels.get(position).data);
+        final SpoilerViewModel spoilerViewModel = ((SpoilerViewModel) ((ArticleTextPartViewModel) mViewModels.get(position)).data);
         final Collection<ArticleTextPartViewModel> viewModels = new ArrayList<>();
         for (int order = 0; order < spoilerViewModel.mSpoilerTextPartsTypes.size(); order++) {
             @ParseHtmlUtils.TextType final String type = spoilerViewModel.mSpoilerTextPartsTypes.get(order);
 
             if (type.equals(ParseHtmlUtils.TextType.TABS)) {
-                final Iterable<ArticleTextPartViewModel> subList = new ArrayList<>(mViewModels.subList(position, mViewModels.size()));
+                final Iterable<MyListItem> subList = new ArrayList<>(mViewModels.subList(position, mViewModels.size()));
                 TabsViewModel tabsViewModel = null;
-                for (final ArticleTextPartViewModel partViewModel : subList) {
-                    if (partViewModel.type.equals(ParseHtmlUtils.TextType.TABS)) {
-                        tabsViewModel = (TabsViewModel) partViewModel.data;
+                for (final MyListItem partViewModel : subList) {
+                    if (((ArticleTextPartViewModel) partViewModel).type.equals(ParseHtmlUtils.TextType.TABS)) {
+                        tabsViewModel = (TabsViewModel) ((ArticleTextPartViewModel) partViewModel).data;
                     }
                 }
                 if (tabsViewModel == null) {
@@ -557,7 +509,7 @@ public class ArticleAdapter
             return;
         }
 
-        final TabsViewModel tabsViewModel = ((TabsViewModel) mViewModels.get(positionInList).data);
+        final TabsViewModel tabsViewModel = ((TabsViewModel) ((ArticleTextPartViewModel) mViewModels.get(positionInList)).data);
         tabsViewModel.setCurrentTab(positionInTabs);
 
         for (final TabsViewModel.TabData tabData : tabsViewModel.getTabDataList()) {

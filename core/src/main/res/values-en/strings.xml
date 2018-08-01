@@ -347,4 +347,7 @@ Thanks for using our app!]]></string>
     <string name="share_app_vk_text">Love fantastic and creepy stories? Try SCP Foundation app for android - thousands stories offline for free!</string>
     <string name="need_vk_wall_access">Permission to post on wall is required. Please, login again.</string>
     <string name="app_lang_dialog_google_description">Here are other versions of our application, you can choose and download the necessary language version by clicking on the link in Google Play market.</string>
+    <string name="scp_quiz_banner_cta">Install</string>
+    <string name="scp_quiz_banner_title">Scp Exam. Check yourself!</string>
+    <string name="scp_quiz_banner_subtitle">It\'s time to pass the test and test your knowledge of the Foundation, are you ready?</string>
 </resources>

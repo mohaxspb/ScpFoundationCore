@@ -21,8 +21,6 @@ import timber.log.Timber;
 
 /**
  * Created by y.kuchanov on 21.12.16.
- * <p>
- * for TappAwards
  */
 public class SiteSearchArticlesPresenter
         extends BaseListArticlesPresenter<SiteSearchArticlesMvp.View>
@@ -32,12 +30,16 @@ public class SiteSearchArticlesPresenter
 
     private List<Article> mSearchData;
 
-    public SiteSearchArticlesPresenter(MyPreferenceManager myPreferencesManager, DbProviderFactory dbProviderFactory, ApiClient apiClient) {
+    public SiteSearchArticlesPresenter(
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient
+    ) {
         super(myPreferencesManager, dbProviderFactory, apiClient);
     }
 
     @Override
-    public void setQuery(String query) {
+    public void setQuery(final String query) {
         mQuery = query;
     }
 
@@ -55,7 +57,7 @@ public class SiteSearchArticlesPresenter
     }
 
     @Override
-    protected Observable<List<Article>> getApiObservable(int offset) {
+    protected Observable<List<Article>> getApiObservable(final int offset) {
         Timber.d("getApiObservable with query: %s", mQuery);
         return mApiClient.getSearchArticles(offset, mQuery)
                 .doOnSubscribe(() -> {
@@ -68,7 +70,7 @@ public class SiteSearchArticlesPresenter
     }
 
     @Override
-    protected Observable<Pair<Integer, Integer>> getSaveToDbObservable(List<Article> data, int offset) {
+    protected Observable<Pair<Integer, Integer>> getSaveToDbObservable(final List<Article> data, final int offset) {
         //we do not save search results to db
         //but we need pass data to view...
         //so try to do it here
@@ -93,7 +95,7 @@ public class SiteSearchArticlesPresenter
             }
 
             @Override
-            public void onError(Throwable e) {
+            public void onError(final Throwable e) {
                 Timber.e(e);
                 if (e instanceof ScpNoArticleForIdError) {
                     //we o not have this article in DB, so download it
@@ -103,8 +105,8 @@ public class SiteSearchArticlesPresenter
             }
 
             @Override
-            public void onNext(Article result) {
-                Article article = new Article();
+            public void onNext(final Article result) {
+                final Article article = new Article();
                 article.url = result.url;
                 if (mSearchData.contains(article)) {
                     mSearchData.get(mSearchData.indexOf(article)).isInFavorite = result.isInFavorite;
@@ -133,8 +135,8 @@ public class SiteSearchArticlesPresenter
             }
 
             @Override
-            public void onNext(Article stringBooleanPair) {
-                Article article = new Article();
+            public void onNext(final Article stringBooleanPair) {
+                final Article article = new Article();
                 article.url = stringBooleanPair.url;
                 if (mSearchData.contains(article)) {
                     mSearchData.get(mSearchData.indexOf(article)).isInReaden = stringBooleanPair.isInReaden;
@@ -153,7 +155,7 @@ public class SiteSearchArticlesPresenter
             }
 
             @Override
-            public void onError(Throwable e) {
+            public void onError(final Throwable e) {
                 Timber.e(e);
                 if (e instanceof ScpNoArticleForIdError) {
                     //we o not have this article in DB, so download it
@@ -163,8 +165,8 @@ public class SiteSearchArticlesPresenter
             }
 
             @Override
-            public void onNext(String url) {
-                Article article = new Article();
+            public void onNext(final String url) {
+                final Article article = new Article();
                 article.url = url;
                 if (mSearchData.contains(article)) {
                     mSearchData.get(mSearchData.indexOf(article)).text = null;
@@ -193,9 +195,9 @@ public class SiteSearchArticlesPresenter
             }
 
             @Override
-            public void onNext(Article article) {
+            public void onNext(final Article article) {
                 if (mSearchData.contains(article)) {
-                    int indexOfArticle = mSearchData.indexOf(article);
+                    final int indexOfArticle = mSearchData.indexOf(article);
                     article.preview = mSearchData.get(indexOfArticle).preview;
                     mSearchData.set(mSearchData.indexOf(article), article);
                     getView().updateData(mSearchData);
