@@ -171,6 +171,57 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
                 .into(mainImageView);
     }
 
+    public void bind() {
+        appodealNativeMediaView.setVisibility(View.GONE);
+        appodealNativeAdView.setVisibility(View.GONE);
+
+        scpArtAdView.setVisibility(View.VISIBLE);
+
+        scpArtAdView.setOnClickListener(v -> {
+            FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
+                    Constants.Firebase.Analitics.EventName.VK_APP_SHARED,
+                    new Bundle()
+            );
+            final String url = Constants.Urls.SCP_QUIZ_MARKET_URL;
+            IntentUtils.openUrl(url);
+        });
+
+        //todo set texts and icon
+
+        progressCenter.setVisibility(View.VISIBLE);
+        Glide.with(mainImageView.getContext())
+                .load(R.drawable.ic_scp_quiz_banner)
+                .fitCenter()
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .listener(new RequestListener<Integer, GlideDrawable>() {
+                    @Override
+                    public boolean onException(
+                            final Exception e,
+                            final Integer model,
+                            final Target<GlideDrawable> target,
+                            final boolean isFirstResource
+                    ) {
+                        Timber.e(e, "ERROR while load image for scp quiz");
+                        progressCenter.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(
+                            final GlideDrawable resource,
+                            final Integer model,
+                            final Target<GlideDrawable> target,
+                            final boolean isFromMemoryCache,
+                            final boolean isFirstResource
+                    ) {
+                        progressCenter.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .into(mainImageView);
+    }
+
     public void bind(final int appodealAdIndex) {
         Timber.d("appodealAdIndex: %s", appodealAdIndex);
 

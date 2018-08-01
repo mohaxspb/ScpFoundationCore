@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.kuchanov.scpcore.api.ParseHtmlUtils;
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem;
 
 /**
  * Created by mohax on 11.08.2017.
  * <p>
  * for ScpCore
  */
-public class ArticleTextPartViewModel {
+public class ArticleTextPartViewModel implements MyListItem {
 
     @ParseHtmlUtils.TextType
     public final String type;
@@ -58,10 +59,10 @@ public class ArticleTextPartViewModel {
         }
     }
 
-    public static List<String> convertToStringList(final Iterable<ArticleTextPartViewModel> data) {
+    public static List<String> convertToStringList(final Iterable<MyListItem> data) {
         final List<String> strings = new ArrayList<>();
 
-        for (final ArticleTextPartViewModel viewModel : data) {
+        for (final MyListItem viewModel : data) {
             strings.add(viewModel.toString());
         }
 

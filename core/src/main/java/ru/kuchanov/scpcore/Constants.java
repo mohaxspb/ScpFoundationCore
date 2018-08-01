@@ -17,7 +17,7 @@ public interface Constants {
     long POST_DELAYED_MILLIS = 500;
 
     enum NativeAdsSource {
-        ALL, APPODEAL, SCP_ART
+        ALL, APPODEAL, SCP_ART, SCP_QUIZ
     }
 
     interface Api {
@@ -76,6 +76,7 @@ public interface Constants {
         String[] ALL_LINKS_ARRAY = {MAIN, RATE, NEW_ARTICLES, EXPERIMENTS, INCEDENTS, INTERVIEWS, OTHERS, STORIES, LEAKS, OBJECTS_1, OBJECTS_2, OBJECTS_3, OBJECTS_RU, NEWS};
         String BASE_API_URL = "http://scpfoundation.ru";
         String SCP_ART_AD_UTM = "http://artscp.com/promo?utm_source=%1$s&utm_medium=referral&utm_campaign=app-ads&utm_term=%2$d";
+        String SCP_QUIZ_MARKET_URL = "https://play.google.com/store/apps/details?id=ru.kuchanov.scpquiz";
     }
 
     interface Firebase {
