@@ -8,7 +8,6 @@ import io.realm.RealmObject;
 /**
  * Created by y.kuchanov on 28.12.16.
  * <p>
- * for TappAwards
  * We need this wrapper, because Realm unable to store Strings in arrays/lists
  */
 public class RealmString extends RealmObject{

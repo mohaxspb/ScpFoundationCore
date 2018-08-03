@@ -76,7 +76,7 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
     /**
      * override it to enable menu for fragemnt
      *
-     * @return if fragemnt has options menu
+     * @return if fragment has options menu
      */
     protected boolean isHasOptionsMenu() {
         return false;

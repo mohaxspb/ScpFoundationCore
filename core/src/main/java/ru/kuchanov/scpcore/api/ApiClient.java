@@ -773,6 +773,8 @@ public class ApiClient {
                 textPartsTypes.add(new RealmString(value));
             }
 
+            final String commentsUrl = mConstantValues.getBaseApiUrl() + doc.getElementById("discuss-button").attr("href");
+
             //finally fill article info
             final Article article = new Article();
 
@@ -800,6 +802,9 @@ public class ApiClient {
             if (rating != 0) {
                 article.rating = rating;
             }
+
+            Timber.d("commentsUrl: %s", commentsUrl);
+            article.commentsUrl = commentsUrl;
 
             return article;
         } catch (final Exception e) {

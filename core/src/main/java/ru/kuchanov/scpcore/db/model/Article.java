@@ -77,6 +77,8 @@ public class Article extends RealmObject implements Serializable {
 
     public static final String FIELD_INNER_ARTICLES_URLS = "innerArticlesUrls";
 
+    public static final String FIELD_COMMENTS_URL = "commentsUrl";
+
     public static final int SYNCED_OK = 1;
 
     public static final int SYNCED_NEED = -1;
@@ -214,6 +216,8 @@ public class Article extends RealmObject implements Serializable {
      * we use and show it only in site search
      */
     public String preview;
+
+    public String commentsUrl;
 
     public List<String> getInnerArticlesUrls() {
         return RealmString.toStringList(innerArticlesUrls);
