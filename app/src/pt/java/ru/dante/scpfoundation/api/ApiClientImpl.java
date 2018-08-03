@@ -227,7 +227,10 @@ public class ApiClientImpl extends ApiClient {
 
         //now we will remove all html code before tag h2,with id toc1
         String allHtml = pageContent.html();
-        final int indexOfh2WithIdToc1 = allHtml.indexOf("<h1 id=\"toc2\">");
+        int indexOfh2WithIdToc1 = allHtml.indexOf("<h1 id=\"toc2\">");
+        if (indexOfh2WithIdToc1 == -1) {
+            indexOfh2WithIdToc1 = allHtml.indexOf("<h1 id=\"toc3\">");
+        }
         int indexOfhr = allHtml.indexOf("<hr>");
         //for other objects filials there is no HR tag at the end...
 
