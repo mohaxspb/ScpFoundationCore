@@ -174,11 +174,11 @@ public class ConstantValuesImpl implements ConstantValues {
     }
 
     public interface Urls {
-        String BASE_API_URL = "http://scp-pt.wikidot.com";
+        String BASE_API_URL = "http://scp-pt-br.wikidot.com";
 
         String MAIN = BASE_API_URL + "/";
 
-        String ABOUT_SCP = BASE_API_URL + "/sobre";
+        String ABOUT_SCP = BASE_API_URL + "/about-the-scp-foundation";
         //not used
         String NEWS = BASE_API_URL + "/news";
         //not used
@@ -187,18 +187,15 @@ public class ConstantValuesImpl implements ConstantValues {
         String NEW_ARTICLES = BASE_API_URL + "/ostatnio-stworzone";
 
         String OBJECTS_1 = BASE_API_URL + "/scp-series";
-        String OBJECTS_2 = BASE_API_URL + "/scp-series2";
-        //not used
-        String OBJECTS_3 = BASE_API_URL + "/lista-eng-3";
-        //not used
-        String OBJECTS_4 = BASE_API_URL + "/lista-eng-4";
+        String OBJECTS_2 = BASE_API_URL + "/scp-series-2";
+        String OBJECTS_3 = BASE_API_URL + "/scp-series-3";
+        String OBJECTS_4 = BASE_API_URL + "/scp-series-4";
 
-        //not used
-        String OBJECTS_PL = BASE_API_URL + "/lista-pl";
+        String OBJECTS_PL = BASE_API_URL + "/series-1-pt";
 
         String SEARCH = "SEARCH";
 
-        String JOKES = BASE_API_URL + "/piadas";
+        String JOKES = BASE_API_URL + "/joke-scps";
 
         //not used
         String ARCHIVE = BASE_API_URL + "/archived-scps";

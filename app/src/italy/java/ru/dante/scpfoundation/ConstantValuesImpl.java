@@ -176,7 +176,7 @@ public class ConstantValuesImpl implements ConstantValues {
 
         String MAIN = BASE_API_URL + "/";
 
-        String ABOUT_SCP = BASE_API_URL + "/la-fondazione-scp";
+        String ABOUT_SCP = BASE_API_URL + "/about-the-scp-foundation";
         String NEWS = BASE_API_URL + "/news";
         String RATE = BASE_API_URL + "/pagine-piu-votate";
         //it's not really new ones, it is recently changes. We can't get really new, as they use JS here
