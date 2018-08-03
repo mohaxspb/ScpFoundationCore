@@ -634,6 +634,8 @@ public class DbProvider {
             articleInDb.tags = article.tags;
 //            }
 
+            articleInDb.commentsUrl = article.commentsUrl;
+
             //update it in DB such way, as we add unmanaged items
             realm.insertOrUpdate(articleInDb);
         } else {
