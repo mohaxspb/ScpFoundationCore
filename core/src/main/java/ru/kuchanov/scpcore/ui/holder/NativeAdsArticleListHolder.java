@@ -153,10 +153,17 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         });
 
         ratingBar.setVisibility(View.VISIBLE);
-        logoImageView.setImageResource(R.drawable.ic_scp_art_ad_img);
-        titleTextView.setText(R.string.scp_art_ad_title);
-        subtitleTextView.setText(R.string.scp_art_ad_description);
-        ctaTextView.setText(R.string.scp_art_ad_cta);
+        Glide.with(logoImageView.getContext())
+                .load(scpArtAd.getLogoUrl())
+                .error(R.drawable.ic_scp_art_ad_img)
+                .fitCenter()
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(logoImageView);
+
+        titleTextView.setText(scpArtAd.getTitle());
+        subtitleTextView.setText(scpArtAd.getSubTitle());
+        ctaTextView.setText(scpArtAd.getCtaButtonText());
 
         progressCenter.setVisibility(View.VISIBLE);
         Glide.with(mainImageView.getContext())

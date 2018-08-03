@@ -282,7 +282,9 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         final Constants.NativeAdsSource nativeAdsSource =
                 Constants.NativeAdsSource.values()[(int) config.getLong(NATIVE_ADS_LISTS_SOURCE_V2)];
-        final List<ScpArtAdsJson.ScpArtAd> scpArtAdsJson = new GsonBuilder().create().fromJson(config.getString(Constants.Firebase.RemoteConfigKeys.ADS_SCP_ART), ScpArtAdsJson.class).getAds();
+        final List<ScpArtAdsJson.ScpArtAd> scpArtAdsJson = new GsonBuilder()
+                .create()
+                .fromJson(config.getString(Constants.Firebase.RemoteConfigKeys.ADS_SCP_ART_V2), ScpArtAdsJson.class).getAds();
 
         int appodealIndex = 0;
         final List<MyListItem> adsModelsList = new ArrayList<>();
