@@ -166,6 +166,7 @@ public interface Constants {
             String NATIVE_ADS_LISTS_SOURCE = "native_ads_lists_source";
             String NATIVE_ADS_LISTS_SOURCE_V2 = "native_ads_lists_source_v2";
             String ADS_SCP_ART = "ads_scp_art";
+            String ADS_SCP_ART_V2 = "ads_scp_art_v2";
             String ADS_SCP_ART_ENABLED = "ads_scp_art_enabled";
             //banners
             String GALLERY_BANNER_DISABLED = "gallery_banner_disabled";

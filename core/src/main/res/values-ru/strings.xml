@@ -346,7 +346,7 @@ E-mail: <a href="mailto:neva.spb.rx@gmail.com">По всем вопросам</a
     <string name="free_ads_vk_share_label">Поделиться приложением в VK</string>
     <string name="share_app_vk_text">Любите фантастические и жуткие истории? Попробуйте приложение SCP Foundation для Android - тысячи историй оффлайн бесплатно!</string>
     <string name="need_vk_wall_access">Требуется разрешение на публикацию на стене. Пожалуйста, войдите снова.</string>
-    <string name="app_lang_dialog_google_description">Здесь находятся другие версиия нашего приложения, вы можете выбрать и скачать необходимую языковую версию, перейдя по ссылке в google play market.</string>
+    <string name="app_lang_dialog_google_description">Здесь находятся другие версии нашего приложения, вы можете выбрать и скачать необходимую языковую версию, перейдя по ссылке в google play market.</string>
     <!---->
     <string name="scp_quiz_banner_cta">Установить</string>
     <string name="scp_quiz_banner_title">Scp Exam. Проверь себя!</string>
