@@ -195,7 +195,7 @@ public class ConstantValuesImpl implements ConstantValues {
 
         String SEARCH = "SEARCH";
 
-        String JOKES = BASE_API_URL + "/piadas";
+        String JOKES = BASE_API_URL + "/joke-scps";
 
         //not used
         String ARCHIVE = BASE_API_URL + "/archived-scps";
