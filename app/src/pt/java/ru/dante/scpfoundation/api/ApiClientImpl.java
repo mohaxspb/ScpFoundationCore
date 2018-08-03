@@ -73,9 +73,8 @@ public class ApiClientImpl extends ApiClient {
                     final Document doc = Jsoup.parse(html);
 
                     final Element aTag = doc.getElementById("page-content")
-                            .getElementsByTag("h1").first()
-                            .getElementsByTag("a").first();
-                    final String randomURL = mConstantValues.getBaseApiUrl() + aTag.attr("href");
+                            .getElementsByTag("iframe").first();
+                    final String randomURL = aTag.attr("src").replace("http://snippets.wdfiles.com/local--code/code:iframe-redirect#", "");
                     Timber.d("randomURL = %s", randomURL);
                     subscriber.onNext(randomURL);
                     subscriber.onCompleted();
