@@ -196,6 +196,10 @@
             {
                 "key": "native_ads_lists_source_v2",
                 "value": 1
+            },
+            {
+                "key": "ads_scp_art_v2",
+                "value": "{ \"ads\": [ { \"id\": 0, \"imgUrl\": \"https://i.imgur.com/ogoIvbn.jpg\", \"logoUrl\": \"https://i.imgur.com/9euyUkm.png\", \"title\": \"Идет набор сотрудников класса D\", \"subTitle\": \"Предложение ограниченно. Прием заявок будет проводиться 11-12 августа на стенде SCP Foundation\", \"ctaButtonText\": \"Участвовать\" } ] }"
             }
         ]
     }
