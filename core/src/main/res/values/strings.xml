@@ -378,4 +378,8 @@ Thanks for using our app!]]></string>
     <string name="need_vk_wall_access">Permission to post on wall is required. Please login again.</string>
     <!---->
     <string name="app_lang_dialog_google_description">Here are other versions of our application in different languages. You can download the necessary language version by clicking the respective link.</string>
+    <string name="scp_quiz_banner_cta">Install</string>
+    <string name="scp_quiz_banner_title">Scp Exam. Check yourself!</string>
+    <string name="scp_quiz_banner_subtitle">It\'s time to pass the test and test your knowledge of the Foundation, are you ready?</string>
+    <string name="no_comments_url_found">No comments url found. Try to update article to get it.</string>
 </resources>
