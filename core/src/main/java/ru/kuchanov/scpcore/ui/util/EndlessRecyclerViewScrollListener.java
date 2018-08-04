@@ -6,8 +6,6 @@ import android.support.v7.widget.RecyclerView;
 /**
  * Created by y.kuchanov on 22.12.16.
  * <p>
- * for TappAwards
- * <p>
  * copied from https://gist.github.com/nesquena/d09dc68ff07e845cc622
  */
 public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener {

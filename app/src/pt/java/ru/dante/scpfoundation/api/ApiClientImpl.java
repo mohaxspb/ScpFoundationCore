@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
@@ -72,9 +73,8 @@ public class ApiClientImpl extends ApiClient {
                     final Document doc = Jsoup.parse(html);
 
                     final Element aTag = doc.getElementById("page-content")
-                            .getElementsByTag("h1").first()
-                            .getElementsByTag("a").first();
-                    final String randomURL = mConstantValues.getBaseApiUrl() + aTag.attr("href");
+                            .getElementsByTag("iframe").first();
+                    final String randomURL = aTag.attr("src").replace("http://snippets.wdfiles.com/local--code/code:iframe-redirect#", "");
                     Timber.d("randomURL = %s", randomURL);
                     subscriber.onNext(randomURL);
                     subscriber.onCompleted();
@@ -198,33 +198,87 @@ public class ApiClientImpl extends ApiClient {
     }
 
     @Override
-    protected List<Article> parseForObjectArticles(final Document doc) throws ScpParseException {
-        final Element pageContent = doc.getElementById("page-content");
+    protected List<Article> parseForObjectArticles(Document doc) throws ScpParseException {
+        Element pageContent = doc.getElementById("page-content");
         if (pageContent == null) {
-            throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
+            throw new ScpParseException(BaseApplication.getAppInstance().getString(ru.kuchanov.scpcore.R.string.error_parse));
         }
-        final Elements listPagesBox = pageContent.getElementsByTag("h1");
-        listPagesBox.remove();
-        final Element table = pageContent.getElementsByClass("content-toc").first();
+
+        final List<Article> articles = new ArrayList<>();
+        //parse
+        pageContent = doc.getElementsByClass("content-panel standalone series").first();
+
+        final Element listPagesBox = pageContent.getElementsByClass("list-pages-box").first();
+        if (listPagesBox != null) {
+            listPagesBox.remove();
+        }
+        final Element collapsibleBlock = pageContent.getElementsByClass("collapsible-block").first();
+        if (collapsibleBlock != null) {
+            collapsibleBlock.remove();
+        }
+        final Element table = pageContent.getElementsByTag("table").first();
         if (table != null) {
             table.remove();
         }
-        final Elements allUls = pageContent.getElementsByClass("content-panel").first().getElementsByTag("ul");
+        final Element h2 = doc.getElementById("toc0");
+        if (h2 != null) {
+            h2.remove();
+        }
 
-        final List<Article> articles = new ArrayList<>();
+        //now we will remove all html code before tag h2,with id toc1
+        String allHtml = pageContent.html();
+        int indexOfh2WithIdToc1 = allHtml.indexOf("<h1 id=\"toc2\">");
+        if (indexOfh2WithIdToc1 == -1) {
+            indexOfh2WithIdToc1 = allHtml.indexOf("<h1 id=\"toc3\">");
+        }
+        int indexOfhr = allHtml.indexOf("<hr>");
+        //for other objects filials there is no HR tag at the end...
 
-        for (final Element ul : allUls) {
-            final Elements allLi = ul.children();
-            for (final Element li : allLi) {
-                //do not add empty articles
-                if (li.getElementsByTag("a").first().hasClass("newpage")) {
-                    continue;
-                }
-                final Article article = new Article();
-                article.url = mConstantValues.getBaseApiUrl() + li.getElementsByTag("a").first().attr("href");
-                article.title = li.text();
-                articles.add(article);
-            }
+        if (indexOfhr < indexOfh2WithIdToc1) {
+            indexOfhr = allHtml.indexOf("<p style=\"text-align: center;\">= = = =</p>");
+        }
+        if (indexOfhr < indexOfh2WithIdToc1) {
+            indexOfhr = allHtml.length();
+        }
+        allHtml = allHtml.substring(indexOfh2WithIdToc1, indexOfhr);
+
+        doc = Jsoup.parse(allHtml);
+
+        final Elements h2withIdToc1 = doc.getElementsByTag("h1");
+        if (h2withIdToc1 != null) {
+            h2withIdToc1.remove();
+        }
+
+        final Elements pTags = doc.getElementsByTag("p");
+        if (pTags != null) {
+            pTags.remove();
+        }
+
+        final Elements allh2Tags = doc.getElementsByTag("h2");
+        for (final Element h2Tag : allh2Tags) {
+            final Element brTag = new Element(Tag.valueOf("br"), "");
+            h2Tag.replaceWith(brTag);
+        }
+
+        final String allArticles = doc.getElementsByTag("body").first().html();
+        final String[] arrayOfArticles = allArticles.split("<br>");
+        for (final String arrayItem : arrayOfArticles) {
+            Timber.d("arrayItem: %s", arrayItem);
+            doc = Jsoup.parse(arrayItem);
+            //type of object
+            final String imageURL = doc.getElementsByTag("img").first().attr("src");
+            @Article.ObjectType final String type = Article.ObjectType.NONE;
+
+            Timber.d("url: %s", doc.getElementsByTag("a").first().attr("href"));
+            final String url = mConstantValues.getBaseApiUrl() + doc.getElementsByTag("a").first().attr("href");
+            final String title = doc.text();
+
+            final Article article = new Article();
+
+            article.url = url;
+            article.title = title;
+            article.type = type;
+            articles.add(article);
         }
 
         return articles;

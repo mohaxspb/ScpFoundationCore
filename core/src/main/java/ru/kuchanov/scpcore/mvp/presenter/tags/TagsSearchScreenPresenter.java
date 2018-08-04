@@ -8,8 +8,6 @@ import ru.kuchanov.scpcore.mvp.contract.tags.TagsScreenMvp;
 
 /**
  * Created by y.kuchanov on 21.12.16.
- * <p>
- * for TappAwards
  */
 public class TagsSearchScreenPresenter
         extends BaseDrawerPresenter<TagsScreenMvp.View>

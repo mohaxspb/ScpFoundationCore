@@ -1,5 +1,6 @@
 package ru.kuchanov.scpcore.ui.model;
 
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 
 /**
@@ -7,14 +8,15 @@ import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
  * <p>
  * for ScpCore
  */
-public class ArticlesListModel {
+public class ArticlesListModel implements MyListItem {
 
     @ArticlesListAdapter.ArticleListNodeType
     public int type;
 
     public Object data;
 
-    public ArticlesListModel(@ArticlesListAdapter.ArticleListNodeType int type, Object data) {
+    public ArticlesListModel(@ArticlesListAdapter.ArticleListNodeType final int type, final Object data) {
+        super();
         this.type = type;
         this.data = data;
     }
@@ -22,8 +24,8 @@ public class ArticlesListModel {
     @Override
     public String toString() {
         return "ArticlesListModel{" +
-                "type=" + type +
-                ", data=" + data +
-                '}';
+               "type=" + type +
+               ", data=" + data +
+               '}';
     }
 }

@@ -13,7 +13,6 @@ import ru.kuchanov.scpcore.mvp.presenter.articleslists.BaseObjectsArticlesPresen
 /**
  * Created by y.kuchanov on 21.12.16.
  * <p>
- * for TappAwards
  */
 public class ObjectsFrArticlesPresenter
         extends BaseObjectsArticlesPresenter<ObjectsFrArticles.View>

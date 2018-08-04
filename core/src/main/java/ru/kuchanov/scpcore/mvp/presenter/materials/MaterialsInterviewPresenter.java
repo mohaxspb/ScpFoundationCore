@@ -15,8 +15,6 @@ import rx.Observable;
 
 /**
  * Created by y.kuchanov on 21.12.16.
- * <p>
- * for TappAwards
  */
 public class MaterialsInterviewPresenter
         extends BaseObjectsArticlesPresenter<MaterialsInterviewsMvp.View>
