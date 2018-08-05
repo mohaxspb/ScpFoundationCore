@@ -266,7 +266,7 @@ public class ApiClientImpl extends ApiClient {
             Timber.d("arrayItem: %s", arrayItem);
             doc = Jsoup.parse(arrayItem);
             //type of object
-            final String imageURL = doc.getElementsByTag("img").first().attr("src");
+//            final String imageURL = doc.getElementsByTag("img").first().attr("src");
             @Article.ObjectType final String type = Article.ObjectType.NONE;
 
             Timber.d("url: %s", doc.getElementsByTag("a").first().attr("href"));
