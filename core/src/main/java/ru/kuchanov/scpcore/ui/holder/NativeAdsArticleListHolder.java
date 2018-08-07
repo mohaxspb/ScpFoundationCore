@@ -265,15 +265,19 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
             return;
         }
         scpArtAdView.setVisibility(View.GONE);
+        appodealNativeAdView.setVisibility(View.VISIBLE);
         final NativeAd nativeAd = nativeAdsList.get(appodealAdIndex);
         if (nativeAd.containsVideo()) {
             appodealNativeMediaView.setVisibility(View.VISIBLE);
-            appodealNativeAdView.setVisibility(View.GONE);
-            nativeAd.setNativeMediaView(appodealNativeMediaView);
+//            appodealNativeAdView.setVisibility(View.VISIBLE);
+//            nativeAd.setNativeMediaView(appodealNativeMediaView);
+            appodealNativeAdView.setNativeMediaView(appodealNativeMediaView);
+
         } else {
             appodealNativeMediaView.setVisibility(View.GONE);
-            appodealNativeAdView.setVisibility(View.VISIBLE);
-            appodealNativeAdView.setNativeAd(nativeAd);
+//            appodealNativeAdView.setVisibility(View.VISIBLE);
+//            appodealNativeAdView.setNativeAd(nativeAd);
         }
+        appodealNativeAdView.setNativeAd(nativeAd);
     }
 }

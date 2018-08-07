@@ -35,7 +35,6 @@ import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
-import com.yandex.metrica.YandexMetrica;
 
 import org.joda.time.Duration;
 import org.joda.time.Period;
@@ -389,7 +388,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 //            Appodeal.setLogLevel(Log.LogLevel.debug);
         }
         Appodeal.disableNetwork(this, "vungle");
-//        Appodeal.disableNetwork(this, "facebook");
+        Appodeal.disableNetwork(this, "facebook");
         Appodeal.initialize(
                 this,
                 getString(R.string.appodeal_app_key),
@@ -404,10 +403,27 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
         Appodeal.muteVideosIfCallsMuted(true);
         Appodeal.setRewardedVideoCallbacks(new MyRewardedVideoCallbacks() {
+//            @Override
+//            public void onRewardedVideoFinished(final double i, final String s) {
+//                super.onRewardedVideoFinished(i, s);
+////                mMyPreferenceManager.applyAwardFromAds();
+//                final long numOfMillis = FirebaseRemoteConfig.getInstance()
+//                        .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
+//                final long hours = Duration.millis(numOfMillis).toStandardHours().getHours();
+//                showMessage(getString(R.string.ads_reward_gained, hours));
+//
+//                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventType.REWARD_GAINED, null);
+//
+//                @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.REWARDED_VIDEO;
+//                mPresenter.updateUserScoreForScoreAction(action);
+//
+//                mRoot.postDelayed(() -> mMyPreferenceManager.applyAwardFromAds(), Constants.POST_DELAYED_MILLIS);
+//            }
+
             @Override
-            public void onRewardedVideoFinished(int i, String s) {
-                super.onRewardedVideoFinished(i, s);
-//                mMyPreferenceManager.applyAwardFromAds();
+            public void onRewardedVideoClosed(final boolean b) {
+                super.onRewardedVideoClosed(b);
+
                 final long numOfMillis = FirebaseRemoteConfig.getInstance()
                         .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
                 final long hours = Duration.millis(numOfMillis).toStandardHours().getHours();
@@ -936,9 +952,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     public void onResume() {
         super.onResume();
-        if (!BuildConfig.FLAVOR.equals("dev")) {
-            YandexMetrica.onResumeActivity(this);
-        }
 
         if (!isAdsLoaded() && mMyPreferenceManager.isTimeToLoadAds()) {
             requestNewInterstitial();
@@ -961,9 +974,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void onPause() {
-        if (!BuildConfig.FLAVOR.equals("dev")) {
-            YandexMetrica.onPauseActivity(this);
-        }
         super.onPause();
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
