@@ -393,7 +393,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         Appodeal.initialize(
                 this,
                 getString(R.string.appodeal_app_key),
-                Appodeal.REWARDED_VIDEO | Appodeal.INTERSTITIAL | Appodeal.NATIVE
+                Appodeal.REWARDED_VIDEO | Appodeal.INTERSTITIAL | Appodeal.NATIVE,
+                true
         );
 
         //user settings
@@ -1131,7 +1132,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         try {
             final Map<String, Object> defaults = new HashMap<>();
             final RemoteConfigJsonModel remoteConfigJsonModel = new Gson().fromJson(
-                    StorageUtils.readFromAssets(this, mConstantValues.getAppLang()+".json"),
+                    StorageUtils.readFromAssets(this, mConstantValues.getAppLang() + ".json"),
                     RemoteConfigJsonModel.class
             );
             for (final Entry entry : remoteConfigJsonModel.getDefaultsMap().getEntry()) {

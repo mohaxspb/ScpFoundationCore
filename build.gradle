@@ -8,6 +8,10 @@ buildscript {
         mavenCentral()
         maven { url "https://jitpack.io" }
         maven { url 'https://maven.fabric.io/public'}
+
+        flatDir {
+            dirs 'libs'
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.0'
@@ -28,6 +32,11 @@ allprojects {
 
         /** The repository required for AdColony 3.0 and above */
         maven { url "https://adcolony.bintray.com/AdColony" }
+
+        flatDir {
+            dirs 'libs'
+            dirs project(':core').file('libs')
+        }
     }
 }
 
