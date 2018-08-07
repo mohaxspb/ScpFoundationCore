@@ -153,8 +153,7 @@ public class ArticleFragment
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         if (item.getItemId() == R.id.menuItemCommentsBrowser) {
-            Timber.d("presenter.getData().commentsUrl: %s", presenter.getData().commentsUrl);
-            if (TextUtils.isEmpty(presenter.getData().commentsUrl)) {
+            if (presenter.getData() == null || TextUtils.isEmpty(presenter.getData().commentsUrl)) {
                 showMessageLong(R.string.no_comments_url_found);
             } else {
                 IntentUtils.openUrl(presenter.getData().commentsUrl);
