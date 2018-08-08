@@ -15,6 +15,7 @@ import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
 import com.yandex.metrica.YandexMetrica;
+import com.yandex.metrica.YandexMetricaConfig;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -22,6 +23,7 @@ import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
+import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
 import ru.kuchanov.scpcore.di.AppComponent;
 import ru.kuchanov.scpcore.util.SystemUtils;
@@ -76,7 +78,11 @@ public abstract class BaseApplication extends MultiDexApplication {
 
         FirebaseApp.initializeApp(this);
 
-        YandexMetrica.activate(getApplicationContext(), getString(R.string.yandex_metrica_api_key));
+        //yandex metrica
+        YandexMetrica.activate(
+                getApplicationContext(),
+                YandexMetricaConfig.newConfigBuilder(getString(R.string.yandex_metrica_api_key)).build()
+        );
         YandexMetrica.enableActivityAutoTracking(this);
 
         sAppInstance = this;
@@ -123,6 +129,9 @@ public abstract class BaseApplication extends MultiDexApplication {
         //subscribe to main push topic
         FirebaseMessaging.getInstance().subscribeToTopic(Constants.Firebase.PushTopics.MAIN);
 
+        //need to initialize it manually
+        //https://stackoverflow.com/a/50782095/3212712
+        Fabric.with(this, new Crashlytics());
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         final String userIdForCrashlytics = user == null ? "unloginedUser" : user.getUid();
         Crashlytics.setUserIdentifier(userIdForCrashlytics);

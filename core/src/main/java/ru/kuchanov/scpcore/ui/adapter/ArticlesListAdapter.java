@@ -39,6 +39,7 @@ import ru.kuchanov.scpcore.ui.holder.HolderMin;
 import ru.kuchanov.scpcore.ui.holder.NativeAdsArticleListHolder;
 import ru.kuchanov.scpcore.ui.model.ArticleTextPartViewModel;
 import ru.kuchanov.scpcore.ui.model.ArticlesListModel;
+import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_INTERVAL;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_SOURCE_V2;
@@ -278,10 +279,12 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    public static List<MyListItem> createAdsModelsList(boolean isArticle) {
+    public static List<MyListItem> createAdsModelsList(final boolean isArticle) {
+        Timber.d("createAdsModelsList");
         final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         final Constants.NativeAdsSource nativeAdsSource =
                 Constants.NativeAdsSource.values()[(int) config.getLong(NATIVE_ADS_LISTS_SOURCE_V2)];
+        Timber.d("nativeAdsSource: %s", nativeAdsSource);
         final List<ScpArtAdsJson.ScpArtAd> scpArtAdsJson = new GsonBuilder()
                 .create()
                 .fromJson(config.getString(Constants.Firebase.RemoteConfigKeys.ADS_SCP_ART_V2), ScpArtAdsJson.class).getAds();
@@ -300,6 +303,8 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     }
                     final Constants.NativeAdsSource randomNativeAdsSource =
                             nativeAdsSources.get(new Random().nextInt(nativeAdsSources.size()));
+                    Timber.d("nativeAdsSources: %s", nativeAdsSources);
+                    Timber.d("randomNativeAdsSource: %s", randomNativeAdsSource);
                     switch (randomNativeAdsSource) {
                         case APPODEAL:
                             adsModelsList.add(

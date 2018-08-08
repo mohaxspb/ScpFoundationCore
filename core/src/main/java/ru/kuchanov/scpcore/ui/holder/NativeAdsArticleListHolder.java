@@ -4,8 +4,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import com.appodeal.ads.Appodeal;
 import com.appodeal.ads.NativeAd;
-import com.appodeal.ads.NativeMediaView;
-import com.appodeal.ads.native_ad.views.NativeAdViewContentStream;
+import com.appodeal.ads.native_ad.views.NativeAdViewAppWall;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -63,10 +62,10 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     View nativeAdViewContainer;
 
     @BindView(R2.id.appodealNativeAdViewAppWall)
-    NativeAdViewContentStream appodealNativeAdView;
+    NativeAdViewAppWall appodealNativeAdView;
 
-    @BindView(R2.id.appodealNativeMediaView)
-    NativeMediaView appodealNativeMediaView;
+//    @BindView(R2.id.appodealNativeMediaView)
+//    NativeMediaView appodealNativeMediaView;
 
     @BindView(R2.id.scpArtAdView)
     View scpArtAdView;
@@ -132,7 +131,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
 
     public void bind(@NotNull final ScpArtAdsJson.ScpArtAd scpArtAd) {
         Timber.d("scpArtAd: %s", scpArtAd);
-        appodealNativeMediaView.setVisibility(View.GONE);
+//        appodealNativeMediaView.setVisibility(View.GONE);
         appodealNativeAdView.setVisibility(View.GONE);
 
         scpArtAdView.setVisibility(View.VISIBLE);
@@ -201,7 +200,8 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind() {
-        appodealNativeMediaView.setVisibility(View.GONE);
+        Timber.d("scpQuizAds showing");
+//        appodealNativeMediaView.setVisibility(View.GONE);
         appodealNativeAdView.setVisibility(View.GONE);
 
         scpArtAdView.setVisibility(View.VISIBLE);
@@ -265,15 +265,19 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
             return;
         }
         scpArtAdView.setVisibility(View.GONE);
+        appodealNativeAdView.setVisibility(View.VISIBLE);
         final NativeAd nativeAd = nativeAdsList.get(appodealAdIndex);
-        if (nativeAd.containsVideo()) {
-            appodealNativeMediaView.setVisibility(View.VISIBLE);
-            appodealNativeAdView.setVisibility(View.GONE);
-            nativeAd.setNativeMediaView(appodealNativeMediaView);
-        } else {
-            appodealNativeMediaView.setVisibility(View.GONE);
-            appodealNativeAdView.setVisibility(View.VISIBLE);
-            appodealNativeAdView.setNativeAd(nativeAd);
-        }
+//        if (nativeAd.containsVideo()) {
+//            appodealNativeMediaView.setVisibility(View.VISIBLE);
+////            appodealNativeAdView.setVisibility(View.VISIBLE);
+////            nativeAd.setNativeMediaView(appodealNativeMediaView);
+//            appodealNativeAdView.setNativeMediaView(appodealNativeMediaView);
+//
+//        } else {
+//            appodealNativeMediaView.setVisibility(View.GONE);
+////            appodealNativeAdView.setVisibility(View.VISIBLE);
+////            appodealNativeAdView.setNativeAd(nativeAd);
+//        }
+        appodealNativeAdView.setNativeAd(nativeAd);
     }
 }

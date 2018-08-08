@@ -1,6 +1,6 @@
 buildscript {
 
-    ext.kotlin_version = '1.2.41'
+    ext.kotlin_version = '1.2.60'
 
     repositories {
         jcenter()
@@ -8,10 +8,14 @@ buildscript {
         mavenCentral()
         maven { url "https://jitpack.io" }
         maven { url 'https://maven.fabric.io/public'}
+
+        flatDir {
+            dirs 'libs'
+        }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0'
-        classpath 'com.google.gms:google-services:3.1.2'
+        classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath 'com.google.gms:google-services:4.0.1'
         classpath "io.realm:realm-gradle-plugin:3.7.2"
         classpath 'com.jakewharton:butterknife-gradle-plugin:8.5.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -28,6 +32,11 @@ allprojects {
 
         /** The repository required for AdColony 3.0 and above */
         maven { url "https://adcolony.bintray.com/AdColony" }
+
+        flatDir {
+            dirs 'libs'
+            dirs project(':core').file('libs')
+        }
     }
 }
 

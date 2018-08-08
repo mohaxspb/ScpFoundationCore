@@ -2,8 +2,6 @@ package ru.kuchanov.scpcore.monetization.util;
 
 import com.appodeal.ads.RewardedVideoCallbacks;
 
-import timber.log.Timber;
-
 /**
  * Created by mohax on 12.03.2017.
  * <p>
@@ -12,8 +10,8 @@ import timber.log.Timber;
 public class MyRewardedVideoCallbacks implements RewardedVideoCallbacks {
 
     @Override
-    public void onRewardedVideoLoaded() {
-//        Timber.d("onRewardedVideoLoaded");
+    public void onRewardedVideoLoaded(final boolean var1) {
+//        Timber.d("onRewardedVideoLoaded: %s", var1);
     }
 
     @Override
@@ -27,7 +25,7 @@ public class MyRewardedVideoCallbacks implements RewardedVideoCallbacks {
     }
 
     @Override
-    public void onRewardedVideoFinished(final int i, final String s) {
+    public void onRewardedVideoFinished(final double i, final String s) {
 //        Timber.d("onRewardedVideoFinished: %s, %s", i, s);
     }
 
