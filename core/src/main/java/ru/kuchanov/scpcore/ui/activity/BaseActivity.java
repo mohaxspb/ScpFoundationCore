@@ -380,7 +380,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
         //appodeal
         Appodeal.setAutoCacheNativeIcons(true);
-        Appodeal.setAutoCacheNativeMedia(false);
+        Appodeal.setAutoCacheNativeMedia(true);
         Appodeal.setNativeAdType(Native.NativeAdType.Auto);
         Appodeal.disableLocationPermissionCheck();
         if (BuildConfig.FLAVOR.equals("dev")) {
