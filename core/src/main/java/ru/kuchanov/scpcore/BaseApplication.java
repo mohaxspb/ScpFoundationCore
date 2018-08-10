@@ -1,30 +1,31 @@
 package ru.kuchanov.scpcore;
 
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
+import com.crashlytics.android.Crashlytics;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
 import com.yandex.metrica.YandexMetrica;
+import com.yandex.metrica.YandexMetricaConfig;
 
 import android.content.Context;
-import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
-import javax.inject.Inject;
-
+import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
 import ru.kuchanov.scpcore.di.AppComponent;
-import ru.kuchanov.scpcore.downloads.DownloadAllService;
-import ru.kuchanov.scpcore.util.NotificationUtilsKt;
 import ru.kuchanov.scpcore.util.SystemUtils;
 import timber.log.Timber;
 
@@ -77,7 +78,11 @@ public abstract class BaseApplication extends MultiDexApplication {
 
         FirebaseApp.initializeApp(this);
 
-        YandexMetrica.activate(getApplicationContext(), getString(R.string.yandex_metrica_api_key));
+        //yandex metrica
+        YandexMetrica.activate(
+                getApplicationContext(),
+                YandexMetricaConfig.newConfigBuilder(getString(R.string.yandex_metrica_api_key)).build()
+        );
         YandexMetrica.enableActivityAutoTracking(this);
 
         sAppInstance = this;
@@ -87,18 +92,17 @@ public abstract class BaseApplication extends MultiDexApplication {
         if (BuildConfig.TIMBER_ENABLE) {
             Timber.plant(new Timber.DebugTree() {
                 @Override
-                protected void log(int priority, String tag, String message, Throwable t) {
-                    message = formatLogs(message);
-                    super.log(priority, tag, message, t);
+                protected void log(final int priority, final String tag, @NonNull final String message, final Throwable t) {
+                    super.log(priority, tag, formatLogs(message), t);
                 }
 
-                private String formatLogs(String message) {
+                private String formatLogs(final String message) {
                     if (!message.startsWith("{")) {
                         return message;
                     }
                     try {
                         return new GsonBuilder().setPrettyPrinting().create().toJson(new JsonParser().parse(message));
-                    } catch (JsonSyntaxException m) {
+                    } catch (final JsonSyntaxException m) {
                         return message;
                     }
                 }
@@ -124,6 +128,13 @@ public abstract class BaseApplication extends MultiDexApplication {
 
         //subscribe to main push topic
         FirebaseMessaging.getInstance().subscribeToTopic(Constants.Firebase.PushTopics.MAIN);
+
+        //need to initialize it manually
+        //https://stackoverflow.com/a/50782095/3212712
+        Fabric.with(this, new Crashlytics());
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final String userIdForCrashlytics = user == null ? "unloginedUser" : user.getUid();
+        Crashlytics.setUserIdentifier(userIdForCrashlytics);
     }
 
     @Override
