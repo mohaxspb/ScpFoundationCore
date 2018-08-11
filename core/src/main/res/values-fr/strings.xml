@@ -281,7 +281,7 @@ Trello: <a href="https://trello.com/b/K96g075n/scp">Une planche avec une liste d
 <br/><br/>
 E-mail: <a href="mailto:neva.spb.rx@gmail.com">Pour toute question</a>
 <br/><br/>
-Merci d'utiliser notre application!
+Merci d\'utiliser notre application!
 <br/><br/>
 Traduit Lucie.]]></string>
     <string name="drawer_item_read">Lisez les articles</string>
@@ -292,7 +292,7 @@ Traduit Lucie.]]></string>
     <string name="subs_description">Désactivation des annonces, synchronisation automatique des nuages, téléchargement illimité d\'articles et de polices atmosphériques</string>
     <string name="subs_level_5_gain">Obtenez le niveau 5</string>
     <string name="subs_no_ads_title">Protocole “Silence”</string>
-    <string name="subs_no_ads_description">Lancement de l\'agent de blocage meme toute manifestation de l\'agent publicitaire dans l'application.</string>
+    <string name="subs_no_ads_description">Lancement de l\'agent de blocage meme toute manifestation de l\'agent publicitaire dans l\'application.</string>
     <string name="subs_1_month_title">Laborantin</string>
     <string name="subs_3_month_title">Attaché de recherche</string>
     <string name="subs_6_month_title">Chercheur</string>
