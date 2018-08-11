@@ -77,7 +77,7 @@ class LeaderboardFragment :
         } else if (animator is SimpleItemAnimator) {
             animator.supportsChangeAnimations = false
         }
-        recyclerView.itemAnimator.changeDuration = 0
+        recyclerView.itemAnimator?.changeDuration = 0
 
         swipeRefresh.setColorSchemeResources(R.color.zbs_color_red)
         swipeRefresh.setOnRefreshListener { mPresenter.updateLeaderboardFromApi() }
@@ -145,9 +145,8 @@ class LeaderboardFragment :
                 val view = inflater.inflate(R.layout.view_social_login, providersContainer, false)
                 providersContainer.addView(view)
                 val holder = SocialLoginHolder(
-                    view,
-                    { baseActivity?.startLogin(loginModel.socialProvider) }
-                )
+                    view
+                ) { baseActivity?.startLogin(loginModel.socialProvider) }
                 holder.bind(loginModel)
 
                 val endView = Space(activity!!)

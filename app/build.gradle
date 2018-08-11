@@ -14,13 +14,13 @@ apply from: '../marketSkusCreator.gradle'
 apply from: '../apiKeysCreator.gradle'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    compileSdkVersion 28
+    buildToolsVersion '28.0.2'
 
     defaultConfig {
         applicationId "ru.dante.scpfoundation"
         minSdkVersion 17
-        targetSdkVersion 27
+        targetSdkVersion 28
 
         // Enabling multidex support.
         multiDexEnabled true
