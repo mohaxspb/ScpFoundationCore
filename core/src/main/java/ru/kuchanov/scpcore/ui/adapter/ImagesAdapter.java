@@ -22,7 +22,7 @@ import butterknife.ButterKnife;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.api.ApiClient;
-import ru.kuchanov.scpcore.db.model.VkImage;
+import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 
 /**
@@ -32,7 +32,7 @@ import ru.kuchanov.scpcore.util.AttributeGetter;
  */
 public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<VkImage> mVkImages;
+    private List<GalleryImage> mVkImages;
 
     private ImageClickListener mImageClickListener;
 
@@ -40,7 +40,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         mImageClickListener = imageClickListener;
     }
 
-    public void setData(final List<VkImage> vkImages) {
+    public void setData(final List<GalleryImage> vkImages) {
         mVkImages = vkImages;
         notifyDataSetChanged();
     }
@@ -61,16 +61,18 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public int getItemCount() {
         if (mVkImages != null) {
             return mVkImages.size();
-        }  else {
+        } else {
             return -1;
         }
     }
 
     public interface ImageClickListener {
+
         void onItemClick(int position, View v);
     }
 
     class ViewHolderImage extends RecyclerView.ViewHolder {
+
         @BindView(R2.id.image)
         ImageView imageView;
 
@@ -79,9 +81,9 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             ButterKnife.bind(this, itemView);
         }
 
-        void bind(final VkImage vkImage) {
+        void bind(final GalleryImage galleryImage) {
             final Context context = itemView.getContext();
-            final String imageUrl = vkImage.allUrls.get(vkImage.allUrls.size() - 1).getVal();
+            final String imageUrl = GalleryImage.getApiImageAddress(galleryImage);
 
             File file = null;
             if (!TextUtils.isEmpty(imageUrl)) {
@@ -89,7 +91,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
 
             Glide.with(context)
-                    .load(file!=null && file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
+                    .load(file != null && file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
                     .error(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
                     .crossFade()
                     .centerCrop()

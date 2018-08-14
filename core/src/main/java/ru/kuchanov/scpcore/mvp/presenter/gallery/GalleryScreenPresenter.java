@@ -4,22 +4,24 @@ import java.util.List;
 
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
-import ru.kuchanov.scpcore.db.model.VkImage;
+import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.mvp.presenter.BaseDrawerPresenter;
 import ru.kuchanov.scpcore.mvp.contract.GalleryScreenMvp;
+import ru.kuchanov.scpcore.mvp.presenter.BaseDrawerPresenter;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class GalleryScreenPresenter
         extends BaseDrawerPresenter<GalleryScreenMvp.View>
         implements GalleryScreenMvp.Presenter {
 
-    private List<VkImage> mData;
+    private List<GalleryImage> mData;
 
     public GalleryScreenPresenter(
-            MyPreferenceManager myPreferencesManager,
-            DbProviderFactory dbProviderFactory,
-            ApiClient apiClient
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient
     ) {
         super(myPreferencesManager, dbProviderFactory, apiClient);
     }
@@ -27,6 +29,8 @@ public class GalleryScreenPresenter
     @Override
     public void updateData() {
         mApiClient.getGallery()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(vkImages -> mDbProviderFactory.getDbProvider().saveImages(vkImages))
                 .subscribe(
                         vkImages -> Timber.d("updateData onNext: %s", vkImages),
@@ -61,12 +65,12 @@ public class GalleryScreenPresenter
     }
 
     @Override
-    public void setData(List<VkImage> data) {
+    public void setData(final List<GalleryImage> data) {
         mData = data;
     }
 
     @Override
-    public List<VkImage> getData() {
+    public List<GalleryImage> getData() {
         return mData;
     }
 }

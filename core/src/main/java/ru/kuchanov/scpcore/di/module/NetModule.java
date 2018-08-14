@@ -32,9 +32,11 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import ru.kuchanov.scpcore.ConstantValues;
+import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.BuildConfig;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.ConstantValuesDefault;
+import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
@@ -147,7 +149,7 @@ public class NetModule {
             final CallAdapter.Factory callAdapterFactory
     ) {
         return new Retrofit.Builder()
-                .baseUrl(BuildConfig.TOOLS_API_URL)
+                .baseUrl(BaseApplication.getAppInstance().getString(R.string.tools_api_url))
                 .client(okHttpClient)
                 .addConverterFactory(converterFactory)
                 .addCallAdapterFactory(callAdapterFactory)

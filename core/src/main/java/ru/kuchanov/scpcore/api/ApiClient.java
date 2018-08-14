@@ -17,8 +17,6 @@ import com.google.gson.Gson;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.facebook.Profile;
 import com.vk.sdk.VKAccessToken;
@@ -28,9 +26,7 @@ import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
-import com.vk.sdk.api.model.VKApiPhoto;
 import com.vk.sdk.api.model.VKApiUser;
-import com.vk.sdk.api.model.VKAttachments;
 import com.vk.sdk.api.model.VKList;
 
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +47,6 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -79,7 +74,6 @@ import ru.kuchanov.scpcore.api.model.firebase.ArticleInFirebase;
 import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser;
 import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
-import ru.kuchanov.scpcore.api.model.response.VkGalleryResponse;
 import ru.kuchanov.scpcore.api.model.response.VkGroupJoinResponse;
 import ru.kuchanov.scpcore.api.service.ScpServer;
 import ru.kuchanov.scpcore.api.service.VpsServer;
@@ -88,7 +82,7 @@ import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.db.model.SocialProviderModel;
 import ru.kuchanov.scpcore.db.model.User;
-import ru.kuchanov.scpcore.db.model.VkImage;
+import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
@@ -1206,88 +1200,8 @@ public class ApiClient {
         return type;
     }
 
-    public Observable<List<VkImage>> getGallery() {
-        Timber.d("getGallery");
-        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
-                    final VKParameters parameters = VKParameters.from(
-                            VKApiConst.OWNER_ID, Constants.Api.GALLERY_VK_GROUP_ID,
-                            VKApiConst.ALBUM_ID, Constants.Api.GALLERY_VK_ALBUM_ID,
-                            VKApiConst.VERSION, BuildConfig.VK_API_VERSION
-                    );
-
-                    final VKRequest vkRequest = new VKRequest("photos.get", parameters);
-                    vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
-                        @Override
-                        public void onComplete(final VKResponse response) {
-                            Timber.d("onComplete");
-//                            Timber.d("onComplete: %s", response.responseString);
-                            final VkGalleryResponse attachments = mGson
-                                    .fromJson(response.responseString, VkGalleryResponse.class);
-//                            Timber.d("attachments: %s", attachments);
-                            final List<VkImage> images = convertAttachmentsToImage(attachments.response.items);
-                            subscriber.onNext(images);
-                            subscriber.onCompleted();
-                        }
-
-                        @Override
-                        public void onError(final VKError error) {
-                            Timber.d("onError: %s", error);
-                            subscriber.onError(new Throwable(error.toString()));
-                        }
-                    });
-                })
-        );
-    }
-
-    private List<VkImage> convertAttachmentsToImage(final List<VKApiPhoto> attachments) {
-        final List<VkImage> images = new ArrayList<>();
-        for (final VKAttachments.VKApiAttachment attachment : attachments) {
-            if (attachment.getId() == 456239049) {
-                continue;
-            }
-            final VKApiPhoto vkApiPhoto = (VKApiPhoto) attachment;
-
-            final VkImage image = new VkImage();
-            image.id = vkApiPhoto.id;
-            image.ownerId = vkApiPhoto.owner_id;
-            image.date = vkApiPhoto.date;
-            //size
-            image.width = vkApiPhoto.width;
-            image.height = vkApiPhoto.height;
-            //urls
-            image.photo75 = vkApiPhoto.photo_75;
-            image.photo130 = vkApiPhoto.photo_130;
-            image.photo604 = vkApiPhoto.photo_604;
-            image.photo807 = vkApiPhoto.photo_807;
-            image.photo1280 = vkApiPhoto.photo_1280;
-            image.photo2560 = vkApiPhoto.photo_2560;
-
-            image.allUrls = new RealmList<>();
-
-            if (image.photo75 != null) {
-                image.allUrls.add(new RealmString(image.photo75));
-            }
-            if (image.photo130 != null) {
-                image.allUrls.add(new RealmString(image.photo130));
-            }
-            if (image.photo604 != null) {
-                image.allUrls.add(new RealmString(image.photo604));
-            }
-            if (image.photo807 != null) {
-                image.allUrls.add(new RealmString(image.photo807));
-            }
-            if (image.photo1280 != null) {
-                image.allUrls.add(new RealmString(image.photo1280));
-            }
-            if (image.photo2560 != null) {
-                image.allUrls.add(new RealmString(image.photo2560));
-            }
-
-            image.description = vkApiPhoto.text;
-
-            images.add(image);
-        }
-        return images;
+    public Observable<List<GalleryImage>> getGallery() {
+        return mVpsServer.getGallery();
     }
 
     private Observable<VKApiUser> getUserDataFromVk() {
@@ -1335,7 +1249,7 @@ public class ApiClient {
         switch (provider) {
             case VK:
                 authToFirebaseObservable = Observable.<String>unsafeCreate(subscriber -> {
-                    String url = BuildConfig.TOOLS_API_URL + "scp-ru-1/MyServlet";
+                    String url = BaseApplication.getAppInstance().getString(R.string.tools_api_url) + "scp-ru-1/MyServlet";
                     String params = "?provider=vk&token=" +
                                     id +
                                     "&email=" + VKAccessToken.currentToken().email +

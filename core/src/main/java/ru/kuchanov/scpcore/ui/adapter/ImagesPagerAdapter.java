@@ -38,7 +38,7 @@ import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
-import ru.kuchanov.scpcore.db.model.VkImage;
+import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
@@ -56,9 +56,9 @@ public class ImagesPagerAdapter extends PagerAdapter {
 
     private LayoutInflater mLayoutInflater;
 
-    private List<VkImage> mData = new ArrayList<>();
+    private List<GalleryImage> mData = new ArrayList<>();
 
-    public List<VkImage> getData() {
+    public List<GalleryImage> getData() {
         return mData;
     }
 
@@ -75,7 +75,7 @@ public class ImagesPagerAdapter extends PagerAdapter {
 
     public void downloadImage(final Context context, final int position, final SimpleTarget<Bitmap> target) {
         Toast.makeText(context, R.string.image_loading, Toast.LENGTH_SHORT).show();
-        final String imageUrl = mData.get(position).allUrls.get(mData.get(position).allUrls.size() - 1).getVal();
+        final String imageUrl = GalleryImage.getApiImageAddress(mData.get(position)); ;
 
         File file = null;
         if (!TextUtils.isEmpty(imageUrl)) {
@@ -88,7 +88,7 @@ public class ImagesPagerAdapter extends PagerAdapter {
                 .into(target);
     }
 
-    public void setData(final List<VkImage> urls) {
+    public void setData(final List<GalleryImage> urls) {
         mData = urls;
         notifyDataSetChanged();
     }
@@ -115,8 +115,9 @@ public class ImagesPagerAdapter extends PagerAdapter {
         final CardView cardView = itemView.findViewById(R.id.descriptionContainer);
         final TextView description = itemView.findViewById(R.id.description);
 
-//        description.setText(mData.get(position).description);
-        final String title = mData.get(position).description;
+        final GalleryImage galleryImage = mData.get(position);
+
+        final String title = galleryImage.getGalleryImageTranslations().get(0).getTranslation();
         if (!TextUtils.isEmpty(title)) {
             description.setLinksClickable(true);
             description.setMovementMethod(LinkMovementMethod.getInstance());
@@ -208,13 +209,13 @@ public class ImagesPagerAdapter extends PagerAdapter {
         }
 
         imageView.setOnClickListener(v -> {
-            if (TextUtils.isEmpty(mData.get(position).description)) {
+            if (TextUtils.isEmpty(galleryImage.getGalleryImageTranslations().get(0).getTranslation())) {
                 return;
             }
             cardView.setVisibility(cardView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
         });
 
-        final String imageUrl = mData.get(position).allUrls.get(mData.get(position).allUrls.size() - 1).getVal();
+        final String imageUrl = GalleryImage.getApiImageAddress(galleryImage);
         Timber.d("imageUrl: %s", imageUrl);
         //remove delay
         Glide.clear(imageView);
