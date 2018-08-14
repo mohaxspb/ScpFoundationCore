@@ -32,9 +32,11 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import ru.kuchanov.scpcore.ConstantValues;
+import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.BuildConfig;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.ConstantValuesDefault;
+import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
@@ -147,7 +149,23 @@ public class NetModule {
             final CallAdapter.Factory callAdapterFactory
     ) {
         return new Retrofit.Builder()
-                .baseUrl(BuildConfig.TOOLS_API_URL)
+                .baseUrl(BaseApplication.getAppInstance().getString(R.string.tools_api_url))
+                .client(okHttpClient)
+                .addConverterFactory(converterFactory)
+                .addCallAdapterFactory(callAdapterFactory)
+                .build();
+    }
+
+    @Provides
+    @Named("scpReaderApi")
+    @Singleton
+    Retrofit providesScpReaderApiRetrofit(
+            final OkHttpClient okHttpClient,
+            final Converter.Factory converterFactory,
+            final CallAdapter.Factory callAdapterFactory
+    ) {
+        return new Retrofit.Builder()
+                .baseUrl(BaseApplication.getAppInstance().getString(R.string.scp_reader_api_url))
                 .client(okHttpClient)
                 .addConverterFactory(converterFactory)
                 .addCallAdapterFactory(callAdapterFactory)
@@ -176,22 +194,40 @@ public class NetModule {
             final OkHttpClient okHttpClient,
             @Named("vps") final Retrofit vpsRetrofit,
             @Named("scp") final Retrofit scpRetrofit,
+            @Named("scpReaderApi") final Retrofit scpReaderRetrofit,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
     ) {
-        return getApiClient(okHttpClient, vpsRetrofit, scpRetrofit, preferencesManager, gson, constantValues);
+        return getApiClient(
+                okHttpClient,
+                vpsRetrofit,
+                scpRetrofit,
+                scpReaderRetrofit,
+                preferencesManager,
+                gson,
+                constantValues
+        );
     }
 
     protected ApiClient getApiClient(
             final OkHttpClient okHttpClient,
             @Named("vps") final Retrofit vpsRetrofit,
             @Named("scp") final Retrofit scpRetrofit,
+            @Named("scpReaderApi") final Retrofit scpReaderRetrofit,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
     ) {
-        return new ApiClient(okHttpClient, vpsRetrofit, scpRetrofit, preferencesManager, gson, constantValues);
+        return new ApiClient(
+                okHttpClient,
+                vpsRetrofit,
+                scpRetrofit,
+                scpReaderRetrofit,
+                preferencesManager,
+                gson,
+                constantValues
+        );
     }
 
     @Provides

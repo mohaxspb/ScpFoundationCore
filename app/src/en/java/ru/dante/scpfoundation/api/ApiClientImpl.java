@@ -39,11 +39,12 @@ public class ApiClientImpl extends ApiClient {
             OkHttpClient okHttpClient,
             Retrofit vpsRetrofit,
             Retrofit scpRetrofit,
+            final Retrofit scpReaderRetrofit,
             MyPreferenceManager preferencesManager,
             Gson gson,
             ConstantValues constantValues
     ) {
-        super(okHttpClient, vpsRetrofit, scpRetrofit, preferencesManager, gson, constantValues);
+        super(okHttpClient, vpsRetrofit, scpRetrofit, scpReaderRetrofit, preferencesManager, gson, constantValues);
     }
 
     public Observable<String> getRandomUrl() {

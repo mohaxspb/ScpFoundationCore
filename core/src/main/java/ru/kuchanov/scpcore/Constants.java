@@ -36,8 +36,9 @@ public interface Constants {
         int NUM_OF_ARTICLES_ON_RATED_PAGE = 20;
         int NUM_OF_ARTICLES_ON_SEARCH_PAGE = 10;
         //gallery
-        int GALLERY_VK_GROUP_ID = -98801766;
-        int GALLERY_VK_ALBUM_ID = 219430203;
+//        int GALLERY_VK_GROUP_ID = -98801766;
+//        int GALLERY_VK_ALBUM_ID = 219430203;
+        String GALLERY_FILES_PATH = "gallery/files/";
 
         String NOT_TRANSLATED_ARTICLE_UTIL_URL = "not_translated_yet_article_which_we_cant_show";
         String NOT_TRANSLATED_ARTICLE_URL_DELIMITER = "___";

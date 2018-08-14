@@ -31,7 +31,7 @@ import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.LeaderboardUser;
 import ru.kuchanov.scpcore.db.model.User;
-import ru.kuchanov.scpcore.db.model.VkImage;
+import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -844,11 +844,11 @@ public class DbProvider {
         return deleteUserData();
     }
 
-    public Observable<Void> saveImages(final List<VkImage> vkImages) {
+    public Observable<Void> saveImages(final List<GalleryImage> vkImages) {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //clear
-                    realm.delete(VkImage.class);
+                    realm.delete(GalleryImage.class);
                     realm.insertOrUpdate(vkImages);
                 },
                 () -> {
@@ -863,8 +863,8 @@ public class DbProvider {
         ));
     }
 
-    public Observable<List<VkImage>> getGalleryImages() {
-        return mRealm.where(VkImage.class)
+    public Observable<List<GalleryImage>> getGalleryImages() {
+        return mRealm.where(GalleryImage.class)
                 .findAllAsync()
                 .asObservable()
                 .filter(RealmResults::isLoaded)

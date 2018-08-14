@@ -25,7 +25,9 @@
 
     <application
         android:allowBackup="true"
-        android:supportsRtl="true">
+        android:usesCleartextTraffic="true"
+        android:supportsRtl="true"
+        tools:targetApi="m">
 
         <!--ads by appodeal-->
         <activity
