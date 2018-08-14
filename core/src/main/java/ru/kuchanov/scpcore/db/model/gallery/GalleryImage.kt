@@ -47,7 +47,7 @@ open class GalleryImage(
                 return galleryImage.imageUrl
             } else {
                 //todo use constant for another address
-                return BaseApplication.getAppInstance().getString(R.string.tools_api_url) + Constants.Api.GALLERY_FILES_PATH + galleryImage.id
+                return BaseApplication.getAppInstance().getString(R.string.scp_reader_api_url) + Constants.Api.GALLERY_FILES_PATH + galleryImage.id
             }
         }
     }
