@@ -4,7 +4,6 @@ import android.support.annotation.StringDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -15,7 +14,6 @@ import retrofit2.http.Query;
 import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse;
 import ru.kuchanov.scpcore.api.model.response.OnInviteReceivedResponse;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
-import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import rx.Observable;
 
 /**
@@ -72,7 +70,4 @@ public interface VpsServer {
             @Query("sku") String sku,
             @Query("purchaseToken") String purchaseToken
     );
-
-    @GET("gallery/all")
-    Observable<List<GalleryImage>> getGallery();
 }

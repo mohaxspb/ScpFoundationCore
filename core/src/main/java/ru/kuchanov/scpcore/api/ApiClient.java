@@ -75,6 +75,7 @@ import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser;
 import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
 import ru.kuchanov.scpcore.api.model.response.VkGroupJoinResponse;
+import ru.kuchanov.scpcore.api.service.ScpReaderServer;
 import ru.kuchanov.scpcore.api.service.ScpServer;
 import ru.kuchanov.scpcore.api.service.VpsServer;
 import ru.kuchanov.scpcore.db.model.Article;
@@ -115,6 +116,8 @@ public class ApiClient {
 
     private final VpsServer mVpsServer;
 
+    private final ScpReaderServer mScpReaderServer;
+
     private final ScpServer mScpServer;
 
     protected ConstantValues mConstantValues;
@@ -123,6 +126,7 @@ public class ApiClient {
             final OkHttpClient okHttpClient,
             final Retrofit vpsRetrofit,
             final Retrofit scpRetrofit,
+            final Retrofit scpReaderRetrofit,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
@@ -133,6 +137,7 @@ public class ApiClient {
         mGson = gson;
         mVpsServer = vpsRetrofit.create(VpsServer.class);
         mScpServer = scpRetrofit.create(ScpServer.class);
+        mScpReaderServer = scpReaderRetrofit.create(ScpReaderServer.class);
         mConstantValues = constantValues;
     }
 
@@ -1201,7 +1206,7 @@ public class ApiClient {
     }
 
     public Observable<List<GalleryImage>> getGallery() {
-        return mVpsServer.getGallery();
+        return mScpReaderServer.getGallery();
     }
 
     private Observable<VKApiUser> getUserDataFromVk() {

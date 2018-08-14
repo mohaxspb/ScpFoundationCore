@@ -32,6 +32,7 @@ public class NetModuleImpl extends NetModule {
             final OkHttpClient okHttpClient,
             @Named("vps") final Retrofit vpsRetrofit,
             @Named("scp") final Retrofit scpRetrofit,
+            @Named("scpReaderApi") final Retrofit scpReaderRetrofit,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
@@ -40,6 +41,7 @@ public class NetModuleImpl extends NetModule {
                 okHttpClient,
                 vpsRetrofit,
                 scpRetrofit,
+                scpReaderRetrofit,
                 preferencesManager,
                 gson,
                 constantValues
