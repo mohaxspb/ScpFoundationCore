@@ -181,10 +181,8 @@ public class ConstantValuesImpl implements ConstantValues {
         String ABOUT_SCP = BASE_API_URL + "/about-the-scp-foundation";
         //not used
         String NEWS = BASE_API_URL + "/news";
-        //not used
-        String RATE = BASE_API_URL + "/najwyzej-ocenione";
-        //not used
-        String NEW_ARTICLES = BASE_API_URL + "/ostatnio-stworzone";
+        String RATE = BASE_API_URL + "/top-rated-pages";
+        String NEW_ARTICLES = BASE_API_URL + "/most-recently-created";
 
         String OBJECTS_1 = BASE_API_URL + "/scp-series";
         String OBJECTS_2 = BASE_API_URL + "/scp-series-2";
