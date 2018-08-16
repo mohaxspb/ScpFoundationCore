@@ -33,7 +33,7 @@
             android:id="@+id/mostRatedArticles"
             android:checked="true"
             android:icon="@drawable/ic_drawer_rated"
-            android:visible="false"
+            android:visible="true"
             android:title="@string/drawer_item_3"
             />
         <item

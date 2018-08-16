@@ -161,14 +161,13 @@ public class ApiClientImpl extends ApiClient {
         return articles;
     }
 
-    //fixme
     @Override
     protected List<Article> parseForRatedArticles(final Document doc) throws ScpParseException {
         final Element pageContent = doc.getElementById("page-content");
         if (pageContent == null) {
             throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
         }
-        final Element listPagesBox = pageContent.getElementsByClass("list-pages-box").first();
+        final Element listPagesBox = pageContent.getElementsByClass("panel-body").last();
         if (listPagesBox == null) {
             throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
         }
@@ -181,12 +180,9 @@ public class ApiClientImpl extends ApiClient {
             final String title = aTag.text();
 
             final Element pTag = element.getElementsByTag("p").first();
-            String ratingString = pTag.text().substring(pTag.text().indexOf("Ocena: ") + "Ocena: ".length());
-            Timber.d("ratingString: %s", ratingString);
-            ratingString = ratingString.substring(0, ratingString.indexOf(", Komentarze"));
-            Timber.d("ratingString: %s", ratingString);
+            String ratingString = pTag.text().substring(pTag.text().indexOf("avaliação ") + "avaliação ".length());
+            ratingString = ratingString.substring(0, ratingString.indexOf("."));
             final int rating = Integer.parseInt(ratingString);
-            //TODO parse date
 
             final Article article = new Article();
             article.url = url;
@@ -205,7 +201,6 @@ public class ApiClientImpl extends ApiClient {
             throw new ScpParseException(BaseApplication.getAppInstance().getString(ru.kuchanov.scpcore.R.string.error_parse));
         }
 
-        final List<Article> articles = new ArrayList<>();
         //parse
         pageContent = doc.getElementsByClass("content-panel standalone series").first();
 
@@ -263,8 +258,8 @@ public class ApiClientImpl extends ApiClient {
 
         final String allArticles = doc.getElementsByTag("body").first().html();
         final String[] arrayOfArticles = allArticles.split("<br>");
+        final List<Article> articles = new ArrayList<>();
         for (final String arrayItem : arrayOfArticles) {
-            Timber.d("arrayItem: %s", arrayItem);
             doc = Jsoup.parse(arrayItem);
             //type of object
 //            final String imageURL = doc.getElementsByTag("img").first().attr("src");
