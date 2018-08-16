@@ -274,7 +274,9 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             } else if (i / interval > Constants.NUM_OF_NATIVE_ADS_PER_SCREEN) {
                 break;
             }
-
+            if (mArticlesAndAds.isEmpty() || i < 0) {
+                break;
+            }
             mArticlesAndAds.add(i, mAdsModelsList.get((i / interval) - 1));
         }
     }

@@ -650,6 +650,30 @@ public class ApiClient {
             for (final Element element : script) {
                 element.remove();
             }
+            //remove audio link from DE version
+            final Elements audio = pageContent.getElementsByClass("audio-img-block");
+            if (audio != null) {
+                audio.remove();
+            }
+            final Elements audioContent = pageContent.getElementsByClass("audio-block");
+            if (audioContent != null) {
+                audioContent.remove();
+            }
+            final Elements creditRate = pageContent.getElementsByClass("creditRate");
+            if (creditRate != null) {
+                creditRate.remove();
+            }
+
+            final Element uCreditView = pageContent.getElementById("u-credit-view");
+            if (uCreditView != null) {
+                uCreditView.remove();
+            }
+            final Element uCreditOtherwise = pageContent.getElementById("u-credit-otherwise");
+            if (uCreditOtherwise != null) {
+                uCreditOtherwise.remove();
+            }
+            //remove audio link from DE version END
+
             //replace all spans with strike-through with <s>
             final Elements spansWithStrike = pageContent.select("span[style=text-decoration: line-through;]");
             for (final Element element : spansWithStrike) {
