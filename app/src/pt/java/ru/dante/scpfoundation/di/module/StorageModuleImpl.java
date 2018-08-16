@@ -3,6 +3,7 @@ package ru.dante.scpfoundation.di.module;
 import java.util.Locale;
 
 import dagger.Module;
+import io.realm.FieldAttribute;
 import io.realm.RealmMigration;
 import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
