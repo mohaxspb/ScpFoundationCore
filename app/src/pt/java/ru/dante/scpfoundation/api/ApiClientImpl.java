@@ -89,7 +89,6 @@ public class ApiClientImpl extends ApiClient {
         }));
     }
 
-    //fixme
     @Override
     public Observable<Integer> getRecentArticlesPageCountObservable() {
         return bindWithUtils(Observable.<Integer>unsafeCreate(subscriber -> {
@@ -128,7 +127,6 @@ public class ApiClientImpl extends ApiClient {
         }));
     }
 
-    //fixme
     @Override
     protected List<Article> parseForRecentArticles(final Document doc) throws ScpParseException {
         final Element contentTypeDescription = doc.getElementsByClass("content-type-description").first();
