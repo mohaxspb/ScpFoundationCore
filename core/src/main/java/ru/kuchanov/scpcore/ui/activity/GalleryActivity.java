@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -77,7 +78,7 @@ public class GalleryActivity
     public static void startForImage(final Context context, final String imageUrl, @Nullable final String imageDescription) {
         final Intent intent = new Intent(context, GalleryActivity.class);
         intent.putExtra(EXTRA_IMAGE_URL, imageUrl);
-        intent.putExtra(EXTRA_IMAGE_DESCRIPTION, imageDescription);
+        intent.putExtra(EXTRA_IMAGE_DESCRIPTION, TextUtils.isEmpty(imageDescription) ? "" : imageDescription);
         context.startActivity(intent);
     }
 
@@ -206,6 +207,10 @@ public class GalleryActivity
             link = mConstantValues.getObjects2();
         } else if (id == R.id.objects_III) {
             link = mConstantValues.getObjects3();
+        } else if (id == R.id.objects_IV) {
+            link = mConstantValues.getObjects4();
+        } else if (id == R.id.objects_V) {
+            link = mConstantValues.getObjects5();
         } else if (id == R.id.files) {
             startMaterialsActivity();
         } else if (id == R.id.favorite) {
@@ -225,8 +230,6 @@ public class GalleryActivity
             link = mConstantValues.getObjectsRu();
         } else if (id == R.id.news) {
             link = mConstantValues.getNews();
-        } else if (id == R.id.objects_IV) {
-            link = mConstantValues.getObjects4();
         } else if (id == R.id.stories) {
             link = mConstantValues.getStories();
         } else {

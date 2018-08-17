@@ -444,7 +444,7 @@ public class ApiClient {
                     .url(sObjectsLink)
                     .build();
 
-            String responseBody = null;
+            final String responseBody;
             try {
                 final Response response = mOkHttpClient.newCall(request).execute();
                 final ResponseBody body = response.body();
@@ -478,7 +478,6 @@ public class ApiClient {
             throw new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse));
         }
 
-        final List<Article> articles = new ArrayList<>();
         //parse
         final Element listPagesBox = pageContent.getElementsByClass("list-pages-box").first();
         if (listPagesBox != null) {
@@ -524,6 +523,7 @@ public class ApiClient {
 
         final String allArticles = doc.getElementsByTag("body").first().html();
         final String[] arrayOfArticles = allArticles.split("<br>");
+        final List<Article> articles = new ArrayList<>();
         for (final String arrayItem : arrayOfArticles) {
             doc = Jsoup.parse(arrayItem);
             //type of object

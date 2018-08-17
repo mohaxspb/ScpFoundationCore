@@ -22,18 +22,18 @@ import ru.kuchanov.scpcore.ui.util.DialogUtilsDefault;
 public class DialogUtilsImpl extends DialogUtilsDefault {
 
     public DialogUtilsImpl(
-            MyPreferenceManager preferenceManager,
-            DbProviderFactory dbProviderFactory,
-            ApiClient apiClient,
-            ConstantValues constantValues,
-            Class clazz
+            final MyPreferenceManager preferenceManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient,
+            final ConstantValues constantValues,
+            final Class clazz
     ) {
         super(preferenceManager, dbProviderFactory, apiClient, constantValues, clazz);
     }
 
     @Override
-    public List<DownloadEntry> getDownloadTypesEntries(Context context) {
-        List<DownloadEntry> downloadEntries = new ArrayList<>();
+    public List<DownloadEntry> getDownloadTypesEntries(final Context context) {
+        final List<DownloadEntry> downloadEntries = new ArrayList<>();
 
         downloadEntries.add(new DownloadEntry(R.string.type_1, context.getString(R.string.type_1), mConstantValues.getObjects1(), Article.FIELD_IS_IN_OBJECTS_1));
         downloadEntries.add(new DownloadEntry(R.string.type_2, context.getString(R.string.type_2), mConstantValues.getObjects2(), Article.FIELD_IS_IN_OBJECTS_2));

@@ -39,6 +39,7 @@ public class DialogUtilsImpl extends DialogUtilsDefault {
         downloadEntries.add(new DownloadEntry(R.string.type_2, context.getString(R.string.type_2), mConstantValues.getObjects2(), Article.FIELD_IS_IN_OBJECTS_2));
         downloadEntries.add(new DownloadEntry(R.string.type_3, context.getString(R.string.type_3), mConstantValues.getObjects3(), Article.FIELD_IS_IN_OBJECTS_3));
         downloadEntries.add(new DownloadEntry(R.string.type_4, context.getString(R.string.type_4), mConstantValues.getObjects4(), Article.FIELD_IS_IN_OBJECTS_4));
+        downloadEntries.add(new DownloadEntry(R.string.type_5, context.getString(R.string.type_5), mConstantValues.getObjects5(), Article.FIELD_IS_IN_OBJECTS_5));
         downloadEntries.add(new DownloadEntry(R.string.type_ru, context.getString(R.string.type_ru), mConstantValues.getObjectsRu(), Article.FIELD_IS_IN_OBJECTS_RU));
 
         downloadEntries.add(new DownloadEntry(R.string.type_all, context.getString(R.string.type_all), mConstantValues.getNewArticles(), Article.FIELD_IS_IN_RECENT));

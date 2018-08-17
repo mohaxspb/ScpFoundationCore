@@ -41,6 +41,7 @@ import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects1ArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects2ArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects3ArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects4ArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects5ArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.ObjectsRuArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.OfflineArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.RatedArticlesFragment;
@@ -128,6 +129,8 @@ public interface AppComponent {
     void inject(MaterialsJokesFragment fragment);
 
     void inject(Objects4ArticlesFragment fragment);
+
+    void inject(Objects5ArticlesFragment fragment);
 
     void inject(TagsSearchFragment fragment);
 

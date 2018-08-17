@@ -349,4 +349,6 @@
     <string name="need_vk_wall_access">Permissão para postar na parede é necessário. Por favor, faça login de novo.</string>
     <string name="app_lang_dialog_google_description">Aqui estão outras versões do nosso aplicativo, você pode escolher e baixar a versão do idioma necessário, clicando no link no Google Play Market.</string>
     <string name="drawer_item_read">Leia artigos</string>
+    <!---->
+    <string name="drawer_item_objects5">Série V</string>
 </resources>

@@ -99,6 +99,10 @@ public class MaterialsActivity
             link = mConstantValues.getObjects2();
         } else if (id == R.id.objects_III) {
             link = mConstantValues.getObjects3();
+        } else if (id == R.id.objects_IV) {
+            link = mConstantValues.getObjects4();
+        } else if (id == R.id.objects_V) {
+            link = mConstantValues.getObjects5();
         } else if (id == R.id.files) {
             getSupportFragmentManager().popBackStackImmediate(MaterialsAllFragment.TAG, 0);
             return false;
@@ -119,8 +123,6 @@ public class MaterialsActivity
             link = mConstantValues.getObjectsRu();
         } else if (id == R.id.news) {
             link = mConstantValues.getNews();
-        } else if (id == R.id.objects_IV) {
-            link = mConstantValues.getObjects4();
         } else if (id == R.id.stories) {
             link = Constants.Urls.STORIES;
         } else {

@@ -21,6 +21,8 @@ public interface ConstantValues {
 
     String getObjects4();
 
+    String getObjects5();
+
     String getObjectsRu();
 
     String getExperiments();

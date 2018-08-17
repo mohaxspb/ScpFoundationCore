@@ -31,6 +31,7 @@ import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects1ArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects2ArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects3ArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects4ArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects5ArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.ObjectsRuArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.OfflineArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.RatedArticlesFragment;
@@ -308,6 +309,10 @@ public class MainActivity
             mCurrentSelectedDrawerItemId = id;
             showFragment(Objects4ArticlesFragment.newInstance(), Objects4ArticlesFragment.TAG);
             return true;
+        } else if (id == R.id.objects_V) {
+            mCurrentSelectedDrawerItemId = id;
+            showFragment(Objects5ArticlesFragment.newInstance(), Objects5ArticlesFragment.TAG);
+            return true;
         } else if (id == R.id.stories) {
             mCurrentSelectedDrawerItemId = id;
             showFragment(ArticleFragment.newInstance(mConstantValues.getStories()),
@@ -367,6 +372,10 @@ public class MainActivity
             title = getString(R.string.drawer_item_7);
         } else if (id == R.id.objects_III) {
             title = getString(R.string.drawer_item_8);
+        } else if (id == R.id.objects_IV) {
+            title = getString(R.string.drawer_item_objects4);
+        } else if (id == R.id.objects_V) {
+            title = getString(R.string.drawer_item_objects5);
         } else if (id == R.id.favorite) {
             title = getString(R.string.drawer_item_12);
         } else if (id == R.id.offline) {
@@ -377,8 +386,6 @@ public class MainActivity
             title = getString(R.string.drawer_item_9);
         } else if (id == R.id.news) {
             title = getString(R.string.drawer_item_2);
-        } else if (id == R.id.objects_IV) {
-            title = getString(R.string.drawer_item_objects4);
         } else if (id == R.id.stories) {
             title = getString(R.string.drawer_item_11);
         } else if (id == R.id.read) {

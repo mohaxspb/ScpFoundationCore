@@ -43,6 +43,11 @@ public class ConstantValuesDefault implements ConstantValues {
     }
 
     @Override
+    public String getObjects5() {
+        return Constants.Urls.OBJECTS_5;
+    }
+
+    @Override
     public String getObjectsRu() {
         return Constants.Urls.OBJECTS_RU;
     }

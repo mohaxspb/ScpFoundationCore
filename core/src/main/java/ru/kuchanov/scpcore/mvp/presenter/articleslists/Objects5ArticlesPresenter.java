@@ -7,14 +7,13 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.mvp.contract.articleslists.Objects4Articles;
-import ru.kuchanov.scpcore.mvp.presenter.articleslists.BaseObjectsArticlesPresenter;
+import ru.kuchanov.scpcore.mvp.contract.articleslists.Objects5Articles;
 
-public class Objects4ArticlesPresenter
-        extends BaseObjectsArticlesPresenter<Objects4Articles.View>
-        implements Objects4Articles.Presenter {
+public class Objects5ArticlesPresenter
+        extends BaseObjectsArticlesPresenter<Objects5Articles.View>
+        implements Objects5Articles.Presenter {
 
-    public Objects4ArticlesPresenter(
+    public Objects5ArticlesPresenter(
             final MyPreferenceManager myPreferencesManager,
             final DbProviderFactory dbProviderFactory,
             final ApiClient apiClient,
@@ -25,11 +24,11 @@ public class Objects4ArticlesPresenter
 
     @Override
     protected String getObjectsInDbFieldName() {
-        return Article.FIELD_IS_IN_OBJECTS_4;
+        return Article.FIELD_IS_IN_OBJECTS_5;
     }
 
     @Override
     protected String getObjectsLink() {
-        return mConstantValues.getObjects4();
+        return mConstantValues.getObjects5();
     }
 }

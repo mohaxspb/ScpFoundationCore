@@ -218,6 +218,14 @@ public class ApiClientImpl extends ApiClient {
         if (h2 != null) {
             h2.remove();
         }
+        final Elements aWithNameAttr2 = doc.getElementsByTag("a");
+        if (aWithNameAttr2 != null) {
+            for (final Element element : aWithNameAttr2) {
+                if (element.hasAttr("name")) {
+                    element.remove();
+                }
+            }
+        }
 
         //now we will remove all html code before tag h2,with id toc1
         String allHtml = pageContent.html();
@@ -258,13 +266,17 @@ public class ApiClientImpl extends ApiClient {
         final String[] arrayOfArticles = allArticles.split("<br>");
         final List<Article> articles = new ArrayList<>();
         for (final String arrayItem : arrayOfArticles) {
+            Timber.d("arrayItem: %s", arrayItem);
             doc = Jsoup.parse(arrayItem);
             //type of object
 //            final String imageURL = doc.getElementsByTag("img").first().attr("src");
             @Article.ObjectType final String type = Article.ObjectType.NONE;
 
             Timber.d("url: %s", doc.getElementsByTag("a").first().attr("href"));
-            final String url = mConstantValues.getBaseApiUrl() + doc.getElementsByTag("a").first().attr("href");
+            String url = doc.getElementsByTag("a").first().attr("href");
+            if(!url.startsWith(mConstantValues.getBaseApiUrl())){
+                url = mConstantValues.getBaseApiUrl() + url;
+            }
             final String title = doc.text();
 
             final Article article = new Article();
