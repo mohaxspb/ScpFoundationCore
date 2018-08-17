@@ -275,6 +275,7 @@ public abstract class DownloadAllService extends Service {
                    || type.resId == R.string.type_2
                    || type.resId == R.string.type_3
                    || type.resId == R.string.type_4
+                   || type.resId == R.string.type_5
                    || type.resId == R.string.type_ru
                    || type.resId == R.string.type_fr
                    || type.resId == R.string.type_jp

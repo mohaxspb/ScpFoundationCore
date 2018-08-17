@@ -248,6 +248,9 @@ public class DbProvider {
                             case Article.FIELD_IS_IN_OBJECTS_4:
                                 article.isInObjects4 = Article.ORDER_NONE;
                                 break;
+                            case Article.FIELD_IS_IN_OBJECTS_5:
+                                article.isInObjects5 = Article.ORDER_NONE;
+                                break;
                             case Article.FIELD_IS_IN_OBJECTS_RU:
                                 article.isInObjectsRu = Article.ORDER_NONE;
                                 break;
@@ -287,7 +290,7 @@ public class DbProvider {
                                 article.isInJokes = Article.ORDER_NONE;
                                 break;
                             default:
-                                Timber.e("unexpected inDbField id");
+                                Timber.e("unexpected inDbField id: %s", inDbField);
                                 break;
                         }
                     }
@@ -310,6 +313,9 @@ public class DbProvider {
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_4:
                                     articleInDb.isInObjects4 = i;
+                                    break;
+                                case Article.FIELD_IS_IN_OBJECTS_5:
+                                    articleInDb.isInObjects5 = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_RU:
                                     articleInDb.isInObjectsRu = i;
@@ -350,7 +356,7 @@ public class DbProvider {
                                     articleInDb.isInJokes = i;
                                     break;
                                 default:
-                                    Timber.e("unexpected inDbField id");
+                                    Timber.e("unexpected inDbField id: %s", inDbField);
                                     break;
                             }
                             articleInDb.title = article.title;
@@ -369,6 +375,9 @@ public class DbProvider {
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_4:
                                     article.isInObjects4 = i;
+                                    break;
+                                case Article.FIELD_IS_IN_OBJECTS_5:
+                                    article.isInObjects5 = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_RU:
                                     article.isInObjectsRu = i;
@@ -409,7 +418,7 @@ public class DbProvider {
                                     article.isInJokes = i;
                                     break;
                                 default:
-                                    Timber.e("unexpected inDbField id");
+                                    Timber.e("unexpected inDbField id: %s", inDbField);
                                     break;
                             }
                             realm.insertOrUpdate(article);
