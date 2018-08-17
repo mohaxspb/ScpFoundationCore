@@ -11,7 +11,7 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import ru.dante.scpfoundation.ConstantValuesImpl;
 import ru.dante.scpfoundation.api.ApiClientImpl;
-import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.di.module.NetModule;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
@@ -29,11 +29,12 @@ public class NetModuleImpl extends NetModule {
             @NonNull OkHttpClient okHttpClient,
             @Named("vps") @NonNull Retrofit vpsRetrofit,
             @Named("scp") @NonNull Retrofit scpRetrofit,
+            @Named("scpReaderApi") final Retrofit scpReaderRetrofit,
             @NonNull MyPreferenceManager preferencesManager,
             @NonNull Gson gson,
             @NonNull ConstantValues constantValues
-            ) {
-        return new ApiClientImpl(okHttpClient, vpsRetrofit, scpRetrofit, preferencesManager, gson, constantValues);
+    ) {
+        return new ApiClientImpl(okHttpClient, vpsRetrofit, scpRetrofit, scpReaderRetrofit, preferencesManager, gson, constantValues);
     }
 
     @Override

@@ -17,14 +17,13 @@ import ru.kuchanov.scpcore.util.SystemUtils;
 public class AdMobHelper {
 
     //TODO remove context from args, use application instance
-    public static AdRequest buildAdRequest(Context context) {
-        AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+    public static AdRequest buildAdRequest(final Context context) {
+        final AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
 
         if (BuildConfig.FLAVOR.equals("dev")) {
             @SuppressLint("HardwareIds")
-            String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-            String deviceId;
-            deviceId = SystemUtils.MD5(androidId);
+            final String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+            String deviceId = SystemUtils.MD5(androidId);
             if (deviceId != null) {
                 deviceId = deviceId.toUpperCase();
                 adRequestBuilder.addTestDevice(deviceId);

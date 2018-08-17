@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import ru.kuchanov.scp.downloads.ScpParseException;
+import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
@@ -76,7 +76,7 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
     /**
      * override it to enable menu for fragemnt
      *
-     * @return if fragemnt has options menu
+     * @return if fragment has options menu
      */
     protected boolean isHasOptionsMenu() {
         return false;
@@ -99,8 +99,11 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
 
     @Nullable
     @Override
-    public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable final Bundle savedInstanceState) {
-        Timber.d("onCreateView");
+    public View onCreateView(
+            @NonNull final LayoutInflater inflater,
+            @Nullable final ViewGroup container,
+            @Nullable final Bundle savedInstanceState
+    ) {
         return inflater.inflate(getLayoutResId(), container, false);
     }
 

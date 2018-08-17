@@ -36,10 +36,6 @@ ext {
 
             variant.resValue('string', 'ad_unit_id_main_screen_banner', properties.get("adsBannerIdMainScreen"))
 
-            variant.resValue('string', 'ad_unit_id_native_articles_lists', properties.get("adsBannerIdNativeArticlesLists"))
-
-            variant.resValue('string', 'ad_unit_id_native_articles_lists_medium', properties.get("adsBannerIdNativeArticlesListsMedium"))
-
             variant.resValue('string', 'appodeal_app_key', properties.get("appodealAppKey"))
             //ads END
 
@@ -54,6 +50,8 @@ ext {
 
             variant.resValue('string', 'tools_api_url', properties.get("vpsApiAddress"))
             variant.buildConfigField('String', 'TOOLS_API_URL', '"' + properties.get("vpsApiAddress") + '"')
+
+            variant.resValue('string', 'scp_reader_api_url', properties.get("scpReaderApiAddress"))
 
             variant.resValue('string', 'web_application_id', properties.get("webApplicationId"))
 

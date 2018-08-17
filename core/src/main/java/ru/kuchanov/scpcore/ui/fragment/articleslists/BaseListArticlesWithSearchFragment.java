@@ -67,7 +67,7 @@ public abstract class BaseListArticlesWithSearchFragment<V extends BaseArticlesL
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             mSearchQuery = savedInstanceState.getString(EXTRA_SEARCH_QUERY);
@@ -76,30 +76,30 @@ public abstract class BaseListArticlesWithSearchFragment<V extends BaseArticlesL
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(EXTRA_SEARCH_QUERY, mSearchQuery);
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
         if (!isAdded()) {
             return;
         }
 
-        SearchView searchView = new SearchView(getActivity());
+        final SearchView searchView = new SearchView(getActivity());
         searchView.setQueryHint(Html.fromHtml("<font color = #ffffff>" + getResources().getString(R.string.search_hint) + "</font>"));
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
+            public boolean onQueryTextSubmit(final String query) {
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
+            public boolean onQueryTextChange(final String newText) {
                 mSearchQuery = newText;
                 getAdapter().sortArticles(newText);
                 getAdapter().notifyDataSetChanged();
@@ -108,7 +108,7 @@ public abstract class BaseListArticlesWithSearchFragment<V extends BaseArticlesL
         });
 
         changeSearchViewTextColor(searchView);
-        MenuItem search = menu.findItem(R.id.menuItemSearch);
+        final MenuItem search = menu.findItem(R.id.menuItemSearch);
         search.setActionView(searchView);
 
         menuItem = search;
@@ -130,7 +130,7 @@ public abstract class BaseListArticlesWithSearchFragment<V extends BaseArticlesL
         mSearchFAB.setOnClickListener(v -> ((SearchView) menuItem.getActionView()).onActionViewExpanded());
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(final RecyclerView recyclerView, final int dx, final int dy) {
                 //fix crash by NPE
                 if (mSearchFAB == null) {
                     return;
@@ -141,7 +141,7 @@ public abstract class BaseListArticlesWithSearchFragment<V extends BaseArticlesL
             }
 
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            public void onScrollStateChanged(final RecyclerView recyclerView, final int newState) {
                 //fix crash by NPE
                 if (mSearchFAB == null) {
                     return;
@@ -157,12 +157,12 @@ public abstract class BaseListArticlesWithSearchFragment<V extends BaseArticlesL
     /**
      * Грязный хак исправления цвета текста
      */
-    private void changeSearchViewTextColor(View view) {
+    private void changeSearchViewTextColor(final View view) {
         if (view != null) {
             if (view instanceof TextView) {
                 ((TextView) view).setTextColor(Color.WHITE);
             } else if (view instanceof ViewGroup) {
-                ViewGroup viewGroup = (ViewGroup) view;
+                final ViewGroup viewGroup = (ViewGroup) view;
                 for (int i = 0; i < viewGroup.getChildCount(); i++) {
                     changeSearchViewTextColor(viewGroup.getChildAt(i));
                 }

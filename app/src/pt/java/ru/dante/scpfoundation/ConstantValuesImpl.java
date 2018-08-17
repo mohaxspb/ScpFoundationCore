@@ -1,6 +1,6 @@
 package ru.dante.scpfoundation;
 
-import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.ConstantValues;
 
 /**
  * Created by mohax on 15.07.2017.
@@ -42,6 +42,11 @@ public class ConstantValuesImpl implements ConstantValues {
     @Override
     public String getObjects4() {
         return Urls.OBJECTS_4;
+    }
+
+    @Override
+    public String getObjects5() {
+        return Urls.OBJECTS_5;
     }
 
     @Override
@@ -174,31 +179,27 @@ public class ConstantValuesImpl implements ConstantValues {
     }
 
     public interface Urls {
-        String BASE_API_URL = "http://scp-pt.wikidot.com";
+        String BASE_API_URL = "http://scp-pt-br.wikidot.com";
 
         String MAIN = BASE_API_URL + "/";
 
-        String ABOUT_SCP = BASE_API_URL + "/sobre";
+        String ABOUT_SCP = BASE_API_URL + "/about-the-scp-foundation";
         //not used
         String NEWS = BASE_API_URL + "/news";
-        //not used
-        String RATE = BASE_API_URL + "/najwyzej-ocenione";
-        //not used
-        String NEW_ARTICLES = BASE_API_URL + "/ostatnio-stworzone";
+        String RATE = BASE_API_URL + "/top-rated-pages";
+        String NEW_ARTICLES = BASE_API_URL + "/most-recently-created";
 
         String OBJECTS_1 = BASE_API_URL + "/scp-series";
-        String OBJECTS_2 = BASE_API_URL + "/scp-series2";
-        //not used
-        String OBJECTS_3 = BASE_API_URL + "/lista-eng-3";
-        //not used
-        String OBJECTS_4 = BASE_API_URL + "/lista-eng-4";
+        String OBJECTS_2 = BASE_API_URL + "/scp-series-2";
+        String OBJECTS_3 = BASE_API_URL + "/scp-series-3";
+        String OBJECTS_4 = BASE_API_URL + "/scp-series-4";
+        String OBJECTS_5 = BASE_API_URL + "/scp-series-5";
 
-        //not used
-        String OBJECTS_PL = BASE_API_URL + "/lista-pl";
+        String OBJECTS_PL = BASE_API_URL + "/series-1-pt";
 
         String SEARCH = "SEARCH";
 
-        String JOKES = BASE_API_URL + "/piadas";
+        String JOKES = BASE_API_URL + "/joke-scps";
 
         //not used
         String ARCHIVE = BASE_API_URL + "/archived-scps";

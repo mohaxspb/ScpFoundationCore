@@ -10,6 +10,7 @@ import org.jsoup.select.Elements;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import ru.kuchanov.scpcore.ui.model.TabsViewModel;
@@ -21,45 +22,55 @@ import ru.kuchanov.scpcore.ui.model.TabsViewModel;
  */
 public class ParseHtmlUtils {
 
-    public static final String TAG_IMG = "img";
-    public static final String TAG_SPAN = "span";
-    public static final String TAG_DIV = "div";
-    public static final String TAG_P = "p";
-    public static final String TAG_BODY = "body";
-    public static final String TAG_TABLE = "table";
-    public static final String TAG_LI = "li";
+    private static final String TAG_IMG = "img";
 
-    public static final String ID_PAGE_CONTENT = "page-content";
+    private static final String TAG_SPAN = "span";
 
-    public static final String CLASS_TABS = "yui-navset";
-    public static final String CLASS_SPOILER = "collapsible-block";
+    private static final String TAG_DIV = "div";
 
-    public static void parseImgsTags(Element pageContent) {
+    private static final String TAG_P = "p";
+
+    private static final String TAG_BODY = "body";
+
+    private static final String TAG_TABLE = "table";
+
+    private static final String TAG_LI = "li";
+
+    private static final String ID_PAGE_CONTENT = "page-content";
+
+    private static final String CLASS_TABS = "yui-navset";
+
+    private static final String CLASS_SPOILER = "collapsible-block";
+
+    /**
+     * formats HTML img tags to common format
+     */
+    public static void parseImgsTags(final Element pageContent) {
         parseRimgLimgCimgImages("rimg", pageContent);
         parseRimgLimgCimgImages("limg", pageContent);
         parseRimgLimgCimgImages("cimg", pageContent);
     }
 
-    private static void parseRimgLimgCimgImages(String className, Element pageContent) {
+    private static void parseRimgLimgCimgImages(final String className, final Element pageContent) {
         //parse multiple imgs in "rimg" tag
-        Elements rimgs = pageContent.getElementsByClass(className);
+        final Elements rimgs = pageContent.getElementsByClass(className);
 //            Timber.d("rimg: %s", rimg);
         if (rimgs != null) {
-            for (Element rimg : rimgs) {
-                Elements imgs = rimg.getElementsByTag(TAG_IMG);
-                Elements descriptions = rimg.getElementsByTag(TAG_SPAN);
-                List<Element> rimgsToAdd = new ArrayList<>();
+            for (final Element rimg : rimgs) {
+                final Elements imgs = rimg.getElementsByTag(TAG_IMG);
+                final Elements descriptions = rimg.getElementsByTag(TAG_SPAN);
                 if (imgs != null && imgs.size() > 1 && descriptions.size() == imgs.size()) {
+                    final Collection<Element> rimgsToAdd = new ArrayList<>();
                     for (int i = 0; i < imgs.size(); i++) {
-                        Element img = imgs.get(i);
-                        Element description = descriptions.get(i);
-                        Element newRimg = new Element(TAG_DIV);
+                        final Element img = imgs.get(i);
+                        final Element description = descriptions.get(i);
+                        final Element newRimg = new Element(TAG_DIV);
                         newRimg.addClass(className);
                         newRimg.appendChild(img).appendChild(description);
                         rimgsToAdd.add(newRimg);
                     }
                     Element rimgLast = rimg;
-                    for (Element newRimg : rimgsToAdd) {
+                    for (final Element newRimg : rimgsToAdd) {
                         rimgLast.after(newRimg);
                         rimgLast = newRimg;
                     }
@@ -72,10 +83,15 @@ public class ParseHtmlUtils {
 
     //todo remake to intDef to be able to use as viewType in adapter
     @Retention(RetentionPolicy.SOURCE)
-    @StringDef({TextType.TEXT, TextType.SPOILER, TextType.IMAGE,
+    @StringDef({
+            TextType.TEXT, TextType.SPOILER, TextType.IMAGE,
             TextType.TABLE, TextType.TITLE, TextType.TAGS,
-            TextType.TABS, TextType.NATIVE_ADS_AD_MOB, TextType.NATIVE_ADS_APPODEAL})
+            TextType.TABS,
+            TextType.NATIVE_ADS_APPODEAL, TextType.NATIVE_ADS_SCP_ART, TextType.NATIVE_ADS_SCP_QUIZ
+
+    })
     public @interface TextType {
+
         String TEXT = "TEXT";
         String SPOILER = "SPOILER";
         String IMAGE = "IMAGE";
@@ -83,32 +99,32 @@ public class ParseHtmlUtils {
         String TITLE = "TITLE";
         String TAGS = "TAGS";
         String TABS = "TABS";
-        String NATIVE_ADS_AD_MOB = "NATIVE_ADS_AD_MOB";
         String NATIVE_ADS_APPODEAL = "NATIVE_ADS_APPODEAL";
+        String NATIVE_ADS_SCP_ART = "NATIVE_ADS_SCP_ART";
+        String NATIVE_ADS_SCP_QUIZ = "NATIVE_ADS_SCP_QUIZ";
     }
 
-    public static List<String> getArticlesTextParts(String html) {
-        List<String> articlesTextParts = new ArrayList<>();
-        Document document = Jsoup.parse(html);
+    public static List<String> getArticlesTextParts(final String html) {
+        final Document document = Jsoup.parse(html);
 //        Timber.d(document.outerHtml());
         Element contentPage = document.getElementById(ID_PAGE_CONTENT);
         if (contentPage == null) {
             contentPage = document.body();
         }
-        for (Element element : contentPage.children()) {
+        final List<String> articlesTextParts = new ArrayList<>();
+        for (final Element element : contentPage.children()) {
             articlesTextParts.add(element.outerHtml());
         }
         return articlesTextParts;
     }
 
     @TextType
-    public static List<String> getListOfTextTypes(List<String> articlesTextParts) {
-        @TextType
-        List<String> listOfTextTypes = new ArrayList<>();
-        for (String textPart : articlesTextParts) {
+    public static List<String> getListOfTextTypes(final Iterable<String> articlesTextParts) {
+        @TextType final List<String> listOfTextTypes = new ArrayList<>();
+        for (final String textPart : articlesTextParts) {
 //            Timber.d("getListOfTextTypes: %s", textPart);
-            Element element = Jsoup.parse(textPart);
-            Element ourElement = element.getElementsByTag(TAG_BODY).first().children().first();
+            final Element element = Jsoup.parse(textPart);
+            final Element ourElement = element.getElementsByTag(TAG_BODY).first().children().first();
             if (ourElement == null) {
                 listOfTextTypes.add(TextType.TEXT);
                 continue;
@@ -130,9 +146,9 @@ public class ParseHtmlUtils {
                 continue;
             }
             if (ourElement.className().equals("rimg")
-                    || ourElement.className().equals("limg")
-                    || ourElement.className().equals("cimg")
-                    || ourElement.classNames().contains("scp-image-block")) {
+                || ourElement.className().equals("limg")
+                || ourElement.className().equals("cimg")
+                || ourElement.classNames().contains("scp-image-block")) {
                 listOfTextTypes.add(TextType.IMAGE);
                 continue;
             }
@@ -142,51 +158,51 @@ public class ParseHtmlUtils {
         return listOfTextTypes;
     }
 
-    public static List<String> parseSpoilerParts(String html) {
+    public static List<String> parseSpoilerParts(final String html) {
 //        Timber.d("parseSpoilerParts: %s", html);
-        List<String> spoilerParts = new ArrayList<>();
-        Document document = Jsoup.parse(html);
-        Element element = document.getElementsByClass("collapsible-block-folded").first();
-        Element elementA = element.getElementsByTag("a").first();
+        final List<String> spoilerParts = new ArrayList<>();
+        final Document document = Jsoup.parse(html);
+        final Element element = document.getElementsByClass("collapsible-block-folded").first();
+        final Element elementA = element.getElementsByTag("a").first();
 //        spoilerParts.add(elementA.text().replaceAll("&nbsp;", " "));
         spoilerParts.add(elementA.text().replaceAll("\\p{Z}", " "));
 //        Timber.d("spoilerParts: %s", spoilerParts.get(0));
 
-        Element elementUnfolded = document.getElementsByClass("collapsible-block-unfolded").first();
+        final Element elementUnfolded = document.getElementsByClass("collapsible-block-unfolded").first();
 
-        Element elementExpanded = elementUnfolded.getElementsByClass("collapsible-block-link").first();
+        final Element elementExpanded = elementUnfolded.getElementsByClass("collapsible-block-link").first();
         //replacing non-breaking-spaces
 //        spoilerParts.add(elementExpanded.text().replaceAll("&nbsp;", " "));
         spoilerParts.add(elementExpanded.text().replaceAll("\\p{Z}", " "));
 //        Timber.d("spoilerParts: %s", spoilerParts.get(1));
 
-        Element elementContent = elementUnfolded.getElementsByClass("collapsible-block-content").first();
+        final Element elementContent = elementUnfolded.getElementsByClass("collapsible-block-content").first();
         spoilerParts.add(elementContent.html());
         return spoilerParts;
     }
 
-    public static TabsViewModel parseTabs(String html) {
+    public static TabsViewModel parseTabs(final String html) {
 //        Element yuiNavset = document.getElementsByAttributeValueStarting("class", "yui-navset").first();
-        Document document = Jsoup.parse(html);
-        Element yuiNavset = document.getElementsByClass(CLASS_TABS).first();
+        final Document document = Jsoup.parse(html);
+        final Element yuiNavset = document.getElementsByClass(CLASS_TABS).first();
         if (yuiNavset != null) {
-            Element titles = yuiNavset.getElementsByClass("yui-nav").first();
-            Elements liElements = titles.getElementsByTag(TAG_LI);
-            Element yuiContent = yuiNavset.getElementsByClass("yui-content").first();
+            final Element titles = yuiNavset.getElementsByClass("yui-nav").first();
+            final Elements liElements = titles.getElementsByTag(TAG_LI);
+            final Element yuiContent = yuiNavset.getElementsByClass("yui-content").first();
 
-            List<String> tabsTitles = new ArrayList<>();
-            for (Element element : liElements) {
+            final List<String> tabsTitles = new ArrayList<>();
+            for (final Element element : liElements) {
                 tabsTitles.add(element.text());
             }
 
             //TODO add supporting inner articles ??? wtf where it can be found on site?
-            List<TabsViewModel.TabData> tabDataList = new ArrayList<>();
-            for (Element tab : yuiContent.children()) {
+            final List<TabsViewModel.TabData> tabDataList = new ArrayList<>();
+            for (final Element tab : yuiContent.children()) {
                 tab.attr("id", ID_PAGE_CONTENT);
-                String tabText = tab.outerHtml();
+                final String tabText = tab.outerHtml();
 
-                List<String> tabsTextParts = getArticlesTextParts(tabText);
-                List<String> tabsTextPartTypes = getListOfTextTypes(tabsTextParts);
+                final List<String> tabsTextParts = getArticlesTextParts(tabText);
+                final List<String> tabsTextPartTypes = getListOfTextTypes(tabsTextParts);
                 tabDataList.add(new TabsViewModel.TabData(tabsTextPartTypes, tabsTextParts));
             }
 

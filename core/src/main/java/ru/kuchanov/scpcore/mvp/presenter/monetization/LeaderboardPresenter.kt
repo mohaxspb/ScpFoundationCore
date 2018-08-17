@@ -115,7 +115,7 @@ class LeaderboardPresenter(
                                 ))
                         }
 
-
+                        //levelUp inapp
                         viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
                         viewModels.add(
                             LabelViewModel(
@@ -130,6 +130,25 @@ class LeaderboardPresenter(
                                 levelUpInApp.price,
                                 levelUpInApp.productId,
                                 R.drawable.ic_leaderbord_levelup_icon,
+                                R.color.freeAdsBackgroundColor))
+                        //appodeal rewarded video
+                        val score: Int = FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_REWARDED_VIDEO).toInt()
+                        viewModels.add(
+                            LabelViewModel(
+                                0,
+                                textString = BaseApplication.getAppInstance().getString(
+                                    R.string.leaderboard_inapp_label_undefined,
+                                    score
+                                ),
+                                textColor = R.color.material_green_500,
+                                bgColor = R.color.freeAdsBackgroundColor))
+                        viewModels.add(
+                            InAppViewModel(
+                                R.string.leaderboard_inapp_title,
+                                R.string.leaderboard_appodeal_description,
+                                "FREE",
+                                APPODEAL_ID,
+                                R.drawable.ic_inspect,
                                 R.color.freeAdsBackgroundColor))
 
                         viewModels.addAll(users.subList(3, users.size).mapIndexed { index, firebaseObjectUser ->
@@ -234,7 +253,24 @@ class LeaderboardPresenter(
         if (user == null) {
             return null
         }
-        val userInFirebase = users.find { leaderboardUser -> leaderboardUser.uid == user.uid } ?: return null
+        var userInFirebase = users.find { leaderboardUser -> leaderboardUser.uid == user.uid }
+
+        if (userInFirebase == null) {
+            val level = levelJson.getLevelForScore(user.score) ?: return null
+            userInFirebase = LeaderboardUser(
+                user.uid,
+                user.fullName,
+                user.avatar,
+                user.score,
+                LeaderboardUser.READ_ARTICLES_COUNT_NONE,
+                levelNum = level.id,
+                scoreToNextLevel = levelJson.scoreToNextLevel(user.score, level),
+                curLevelScore = user.score - level.score
+            )
+        }
+
+        //set score from realm
+        userInFirebase.score = user.score
         val level = levelJson.levels[userInFirebase.levelNum]
         return LeaderboardUserViewModel(
             users.indexOf(userInFirebase),
@@ -248,9 +284,10 @@ class LeaderboardPresenter(
     }
 
     override fun onUserChanged(user: User?) {
-//        Timber.d("onUserChanged: $user")
         super.onUserChanged(user)
         myUser = user
+        Timber.d("onUserChanged: $user")
+        Timber.d("onUserChanged: $myUser")
         if (myUser == null) {
             view.showUser(null)
         } else {
@@ -262,7 +299,7 @@ class LeaderboardPresenter(
         //show warning if user not logged in
         if (!ignoreUserCheck && user == null) {
             view.showOfferLoginForLevelUpPopup()
-            return;
+            return
         }
 
         val type = if (id in InAppHelper.getNewInAppsSkus()) {
@@ -276,5 +313,13 @@ class LeaderboardPresenter(
             Timber.e(e)
             view.showError(e)
         }
+    }
+
+    override fun onRewardedVideoClick() {
+        view.onRewardedVideoClick()
+    }
+
+    companion object {
+        const val APPODEAL_ID = "appodeal"
     }
 }

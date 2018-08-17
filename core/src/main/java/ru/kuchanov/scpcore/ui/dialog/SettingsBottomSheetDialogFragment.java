@@ -4,6 +4,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -42,6 +44,7 @@ import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerCardDesignAdapter;
 import ru.kuchanov.scpcore.util.AttributeGetter;
+import ru.kuchanov.scpcore.util.StorageUtils;
 import timber.log.Timber;
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
@@ -54,18 +57,18 @@ public class SettingsBottomSheetDialogFragment
         extends BaseBottomSheetDialogFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    @StringDef({
-            ListItemType.MIN,
-            ListItemType.MIDDLE,
-            ListItemType.MAX
-    })
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface ListItemType {
-
-        String MIN = "MIN";
-        String MIDDLE = "MIDDLE";
-        String MAX = "MAX";
+    public static BottomSheetDialogFragment newInstance() {
+        return new SettingsBottomSheetDialogFragment();
     }
+
+    @Inject
+    MyPreferenceManager mMyPreferenceManager;
+
+    @Inject
+    MyNotificationManager mMyNotificationManager;
+
+    @Inject
+    InAppHelper mInAppHelper;
 
     //design
     @BindView(R2.id.listItemStyle)
@@ -102,21 +105,36 @@ public class SettingsBottomSheetDialogFragment
     @BindView(R2.id.offlineRandomTextView)
     TextView offlineRandomTextView;
 
+    //downloads
+    @BindView(R2.id.downloadsForceUpdateSwitch)
+    SwitchCompat downloadsForceUpdateSwitch;
+
+    @BindView(R2.id.downloadInnerDepthValueTextView)
+    TextView downloadInnerDepthValueTextView;
+
+    @BindView(R2.id.downloadsDepthSeekbar)
+    SeekBar downloadsDepthSeekbar;
+
+    @BindView(R2.id.activate)
+    TextView activateTextView;
+    //downloads END
+
+    //images cache
+    @BindView(R2.id.imagesCacheEnabledSwitch)
+    SwitchCompat imagesCacheEnabledSwitch;
+
+    @BindView(R2.id.cachedImagesCountValueTextView)
+    TextView cachedImagesCountValueTextView;
+
+    @BindView(R2.id.cachedImagesSizeValueTextView)
+    TextView cachedImagesSizeValueTextView;
+
+    @BindView(R2.id.clearImagesButton)
+    View clearImagesButton;
+    //images cache END
+
     @BindView(R2.id.buy)
     TextView mActivateAutoSync;
-
-    @Inject
-    MyPreferenceManager mMyPreferenceManager;
-
-    @Inject
-    MyNotificationManager mMyNotificationManager;
-
-    @Inject
-    InAppHelper mInAppHelper;
-
-    public static BottomSheetDialogFragment newInstance() {
-        return new SettingsBottomSheetDialogFragment();
-    }
 
     @Override
     protected int getLayoutResId() {
@@ -138,14 +156,16 @@ public class SettingsBottomSheetDialogFragment
         final String[] types = {ListItemType.MIN, ListItemType.MIDDLE, ListItemType.MAX};
         @ListItemType final List<String> typesList = Arrays.asList(types);
 
+        final Context context = getActivity();
+
         final ArrayAdapter<String> adapterCard =
-                new SettingsSpinnerCardDesignAdapter(getActivity(), R.layout.design_list_spinner_item, typesList);
+                new SettingsSpinnerCardDesignAdapter(context, R.layout.design_list_spinner_item, typesList);
         adapterCard.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         final Drawable.ConstantState spinnerDrawableConstantState = listItemSpinner.getBackground().getConstantState();
         if (spinnerDrawableConstantState != null) {
             final Drawable spinnerDrawable = spinnerDrawableConstantState.newDrawable();
-            spinnerDrawable.setColorFilter(AttributeGetter.getColor(getActivity(), R.attr.newArticlesTextColor), PorterDuff.Mode.SRC_ATOP);
+            spinnerDrawable.setColorFilter(AttributeGetter.getColor(context, R.attr.newArticlesTextColor), PorterDuff.Mode.SRC_ATOP);
             listItemSpinner.setBackground(spinnerDrawable);
         }
 
@@ -173,13 +193,13 @@ public class SettingsBottomSheetDialogFragment
         @ListItemType final List<String> fontsList = Arrays.asList(getResources().getStringArray(R.array.fonts_names));
 
         final ArrayAdapter<String> adapter =
-                new SettingsSpinnerAdapter(getActivity(), R.layout.design_list_spinner_item_font, fontsList, fontsPathsList);
+                new SettingsSpinnerAdapter(context, R.layout.design_list_spinner_item_font, fontsList, fontsPathsList);
         adapter.setDropDownViewResource(R.layout.design_list_spinner_item_font);
 
         final Drawable.ConstantState fontsSpinnerDrawableConstantState = fontPreferedSpinner.getBackground().getConstantState();
         if (fontsSpinnerDrawableConstantState != null) {
             final Drawable spinnerDrawable = fontsSpinnerDrawableConstantState.newDrawable();
-            spinnerDrawable.setColorFilter(AttributeGetter.getColor(getActivity(), R.attr.newArticlesTextColor), PorterDuff.Mode.SRC_ATOP);
+            spinnerDrawable.setColorFilter(AttributeGetter.getColor(context, R.attr.newArticlesTextColor), PorterDuff.Mode.SRC_ATOP);
             fontPreferedSpinner.setBackground(spinnerDrawable);
         }
 
@@ -240,9 +260,71 @@ public class SettingsBottomSheetDialogFragment
         offlineRandomTextView.setText(randomLabel);
         randomOfflineIsOnSwitch.setOnCheckedChangeListener((compoundButton, checked) -> mMyPreferenceManager.setOfflineRandomEnabled(checked));
 
+        //downloads
+        downloadsForceUpdateSwitch.setChecked(mMyPreferenceManager.isDownloadForceUpdateEnabled());
+        downloadsForceUpdateSwitch.setOnCheckedChangeListener((compoundButton, checked) -> mMyPreferenceManager.setDownloadForceUpdateEnabled(checked));
+
+        downloadsDepthSeekbar.setMax(MyPreferenceManager.MAX_DOWNLOADS_DEPTH);
+        downloadsDepthSeekbar.setProgress(mMyPreferenceManager.getInnerArticlesDepth());
+        downloadsDepthSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onStopTrackingTouch(final SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStartTrackingTouch(final SeekBar seekBar) {
+            }
+
+            @Override
+            public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
+                downloadInnerDepthValueTextView.setText(String.valueOf(progress));
+                mMyPreferenceManager.setInnerArticlesDepth(progress);
+            }
+        });
+        downloadInnerDepthValueTextView.setText(String.valueOf(mMyPreferenceManager.getInnerArticlesDepth()));
+        activateTextView.setVisibility(!mMyPreferenceManager.isHasSubscription() ? View.VISIBLE : View.GONE);
+        //downloads END
+
+        //images cache
+        imagesCacheEnabledSwitch.setChecked(mMyPreferenceManager.isImagesCacheEnabled());
+        imagesCacheEnabledSwitch.setOnCheckedChangeListener((compoundButton, checked) -> mMyPreferenceManager.setImagesCacheEnabled(checked));
+
+        final int cachedImagesCount = StorageUtils.cachedImagesFilesCount(context);
+
+        cachedImagesCountValueTextView.setText(String.valueOf(cachedImagesCount));
+
+        cachedImagesSizeValueTextView.setText(StorageUtils.humanReadableByteCount(StorageUtils.cachedImagesFolderSize(context), true));
+        clearImagesButton.setEnabled(cachedImagesCount > 0);
+        //images cache END
+
         //hide activate subs for good users
-        final boolean noFullSubscription = !mMyPreferenceManager.isHasSubscription();
-        mActivateAutoSync.setVisibility(noFullSubscription ? View.VISIBLE : View.GONE);
+        mActivateAutoSync.setVisibility(!mMyPreferenceManager.isHasSubscription() ? View.VISIBLE : View.GONE);
+    }
+
+    @OnClick(R2.id.activate)
+    void onActivateClicked() {
+        dismiss();
+
+        SubscriptionsActivity.start(getActivity());
+
+        final Bundle bundle = new Bundle();
+        bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.StartScreen.INNER_DOWNLOADS_FROM_SETTINGS);
+        FirebaseAnalytics.getInstance(getActivity()).logEvent(Constants.Firebase.Analitics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
+    }
+
+    @OnClick(R2.id.clearImagesButton)
+    void onClearImagesClicked() {
+        //todo show confirm dialog
+        final Context context = getActivity();
+        StorageUtils.deleteCachedImages(context);
+
+        final int cachedImagesCount = StorageUtils.cachedImagesFilesCount(context);
+
+        cachedImagesCountValueTextView.setText(String.valueOf(cachedImagesCount));
+
+        cachedImagesSizeValueTextView.setText(StorageUtils.humanReadableByteCount(StorageUtils.cachedImagesFolderSize(context), true));
+
+        clearImagesButton.setEnabled(cachedImagesCount > 0);
     }
 
     @OnClick(R2.id.buy)
@@ -309,5 +391,18 @@ public class SettingsBottomSheetDialogFragment
                 //do nothing
                 break;
         }
+    }
+
+    @StringDef({
+            ListItemType.MIN,
+            ListItemType.MIDDLE,
+            ListItemType.MAX
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ListItemType {
+
+        String MIN = "MIN";
+        String MIDDLE = "MIDDLE";
+        String MAX = "MAX";
     }
 }

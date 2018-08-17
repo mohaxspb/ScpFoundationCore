@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
@@ -20,13 +21,13 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import ru.dante.scpfoundation.MyApplicationImpl;
 import ru.dante.scpfoundation.R;
-import ru.kuchanov.scp.downloads.ConstantValues;
-import ru.kuchanov.scp.downloads.ScpParseException;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.BuildConfig;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
+import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
 import timber.log.Timber;
@@ -42,11 +43,12 @@ public class ApiClientImpl extends ApiClient {
             final OkHttpClient okHttpClient,
             final Retrofit vpsRetrofit,
             final Retrofit scpRetrofit,
+            final Retrofit scpReaderRetrofit,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
     ) {
-        super(okHttpClient, vpsRetrofit, scpRetrofit, preferencesManager, gson, constantValues);
+        super(okHttpClient, vpsRetrofit, scpRetrofit, scpReaderRetrofit, preferencesManager, gson, constantValues);
     }
 
     @Override
@@ -72,9 +74,8 @@ public class ApiClientImpl extends ApiClient {
                     final Document doc = Jsoup.parse(html);
 
                     final Element aTag = doc.getElementById("page-content")
-                            .getElementsByTag("h1").first()
-                            .getElementsByTag("a").first();
-                    final String randomURL = mConstantValues.getBaseApiUrl() + aTag.attr("href");
+                            .getElementsByTag("iframe").first();
+                    final String randomURL = aTag.attr("src").replace("http://snippets.wdfiles.com/local--code/code:iframe-redirect#", "");
                     Timber.d("randomURL = %s", randomURL);
                     subscriber.onNext(randomURL);
                     subscriber.onCompleted();
@@ -88,7 +89,6 @@ public class ApiClientImpl extends ApiClient {
         }));
     }
 
-    //fixme
     @Override
     public Observable<Integer> getRecentArticlesPageCountObservable() {
         return bindWithUtils(Observable.<Integer>unsafeCreate(subscriber -> {
@@ -127,7 +127,6 @@ public class ApiClientImpl extends ApiClient {
         }));
     }
 
-    //fixme
     @Override
     protected List<Article> parseForRecentArticles(final Document doc) throws ScpParseException {
         final Element contentTypeDescription = doc.getElementsByClass("content-type-description").first();
@@ -160,14 +159,13 @@ public class ApiClientImpl extends ApiClient {
         return articles;
     }
 
-    //fixme
     @Override
     protected List<Article> parseForRatedArticles(final Document doc) throws ScpParseException {
         final Element pageContent = doc.getElementById("page-content");
         if (pageContent == null) {
             throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
         }
-        final Element listPagesBox = pageContent.getElementsByClass("list-pages-box").first();
+        final Element listPagesBox = pageContent.getElementsByClass("panel-body").last();
         if (listPagesBox == null) {
             throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
         }
@@ -180,12 +178,9 @@ public class ApiClientImpl extends ApiClient {
             final String title = aTag.text();
 
             final Element pTag = element.getElementsByTag("p").first();
-            String ratingString = pTag.text().substring(pTag.text().indexOf("Ocena: ") + "Ocena: ".length());
-            Timber.d("ratingString: %s", ratingString);
-            ratingString = ratingString.substring(0, ratingString.indexOf(", Komentarze"));
-            Timber.d("ratingString: %s", ratingString);
+            String ratingString = pTag.text().substring(pTag.text().indexOf("avaliação ") + "avaliação ".length());
+            ratingString = ratingString.substring(0, ratingString.indexOf("."));
             final int rating = Integer.parseInt(ratingString);
-            //TODO parse date
 
             final Article article = new Article();
             article.url = url;
@@ -198,33 +193,98 @@ public class ApiClientImpl extends ApiClient {
     }
 
     @Override
-    protected List<Article> parseForObjectArticles(final Document doc) throws ScpParseException {
-        final Element pageContent = doc.getElementById("page-content");
+    protected List<Article> parseForObjectArticles(Document doc) throws ScpParseException {
+        Element pageContent = doc.getElementById("page-content");
         if (pageContent == null) {
-            throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
+            throw new ScpParseException(BaseApplication.getAppInstance().getString(ru.kuchanov.scpcore.R.string.error_parse));
         }
-        final Elements listPagesBox = pageContent.getElementsByTag("h1");
-        listPagesBox.remove();
-        final Element table = pageContent.getElementsByClass("content-toc").first();
+
+        //parse
+        pageContent = doc.getElementsByClass("content-panel standalone series").first();
+
+        final Element listPagesBox = pageContent.getElementsByClass("list-pages-box").first();
+        if (listPagesBox != null) {
+            listPagesBox.remove();
+        }
+        final Element collapsibleBlock = pageContent.getElementsByClass("collapsible-block").first();
+        if (collapsibleBlock != null) {
+            collapsibleBlock.remove();
+        }
+        final Element table = pageContent.getElementsByTag("table").first();
         if (table != null) {
             table.remove();
         }
-        final Elements allUls = pageContent.getElementsByClass("content-panel").first().getElementsByTag("ul");
-
-        final List<Article> articles = new ArrayList<>();
-
-        for (final Element ul : allUls) {
-            final Elements allLi = ul.children();
-            for (final Element li : allLi) {
-                //do not add empty articles
-                if (li.getElementsByTag("a").first().hasClass("newpage")) {
-                    continue;
+        final Element h2 = doc.getElementById("toc0");
+        if (h2 != null) {
+            h2.remove();
+        }
+        final Elements aWithNameAttr2 = doc.getElementsByTag("a");
+        if (aWithNameAttr2 != null) {
+            for (final Element element : aWithNameAttr2) {
+                if (element.hasAttr("name")) {
+                    element.remove();
                 }
-                final Article article = new Article();
-                article.url = mConstantValues.getBaseApiUrl() + li.getElementsByTag("a").first().attr("href");
-                article.title = li.text();
-                articles.add(article);
             }
+        }
+
+        //now we will remove all html code before tag h2,with id toc1
+        String allHtml = pageContent.html();
+        int indexOfh2WithIdToc1 = allHtml.indexOf("<h1 id=\"toc2\">");
+        if (indexOfh2WithIdToc1 == -1) {
+            indexOfh2WithIdToc1 = allHtml.indexOf("<h1 id=\"toc3\">");
+        }
+        int indexOfhr = allHtml.indexOf("<hr>");
+        //for other objects filials there is no HR tag at the end...
+
+        if (indexOfhr < indexOfh2WithIdToc1) {
+            indexOfhr = allHtml.indexOf("<p style=\"text-align: center;\">= = = =</p>");
+        }
+        if (indexOfhr < indexOfh2WithIdToc1) {
+            indexOfhr = allHtml.length();
+        }
+        allHtml = allHtml.substring(indexOfh2WithIdToc1, indexOfhr);
+
+        doc = Jsoup.parse(allHtml);
+
+        final Elements h2withIdToc1 = doc.getElementsByTag("h1");
+        if (h2withIdToc1 != null) {
+            h2withIdToc1.remove();
+        }
+
+        final Elements pTags = doc.getElementsByTag("p");
+        if (pTags != null) {
+            pTags.remove();
+        }
+
+        final Elements allh2Tags = doc.getElementsByTag("h2");
+        for (final Element h2Tag : allh2Tags) {
+            final Element brTag = new Element(Tag.valueOf("br"), "");
+            h2Tag.replaceWith(brTag);
+        }
+
+        final String allArticles = doc.getElementsByTag("body").first().html();
+        final String[] arrayOfArticles = allArticles.split("<br>");
+        final List<Article> articles = new ArrayList<>();
+        for (final String arrayItem : arrayOfArticles) {
+            Timber.d("arrayItem: %s", arrayItem);
+            doc = Jsoup.parse(arrayItem);
+            //type of object
+//            final String imageURL = doc.getElementsByTag("img").first().attr("src");
+            @Article.ObjectType final String type = Article.ObjectType.NONE;
+
+            Timber.d("url: %s", doc.getElementsByTag("a").first().attr("href"));
+            String url = doc.getElementsByTag("a").first().attr("href");
+            if(!url.startsWith(mConstantValues.getBaseApiUrl())){
+                url = mConstantValues.getBaseApiUrl() + url;
+            }
+            final String title = doc.text();
+
+            final Article article = new Article();
+
+            article.url = url;
+            article.title = title;
+            article.type = type;
+            articles.add(article);
         }
 
         return articles;

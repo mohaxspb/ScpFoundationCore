@@ -1,16 +1,21 @@
 package ru.kuchanov.scpcore.ui.holder;
 
+import com.google.android.flexbox.FlexboxLayout;
+
+import com.bumptech.glide.Glide;
+
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.google.android.flexbox.FlexboxLayout;
+import java.io.File;
 
 import butterknife.BindView;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
+import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
@@ -28,26 +33,30 @@ public class HolderMax extends HolderMin {
 
     @BindView(R2.id.typeIcon)
     ImageView typeIcon;
+
     @BindView(R2.id.image)
     ImageView image;
+
     @BindView(R2.id.rating)
     TextView rating;
+
     @BindView(R2.id.date)
     TextView date;
 
     @BindView(R2.id.tags)
     FlexboxLayout mTagsContainer;
+
     @BindView(R2.id.tagsExpander)
     TextView mTagsExpander;
 
-    public HolderMax(View itemView, ArticlesListAdapter.ArticleClickListener clickListener) {
+    public HolderMax(final View itemView, final ArticlesListAdapter.ArticleClickListener clickListener) {
         super(itemView, clickListener);
     }
 
     @Override
-    public void bind(Article article) {
+    public void bind(final Article article) {
         super.bind(article);
-        Context context = itemView.getContext();
+        final Context context = itemView.getContext();
 
         CalligraphyUtils.applyFontToTextView(context, rating, mMyPreferenceManager.getFontPath());
         CalligraphyUtils.applyFontToTextView(context, date, mMyPreferenceManager.getFontPath());
@@ -56,8 +65,14 @@ public class HolderMax extends HolderMin {
         //set image
         if (article.imagesUrls != null && !article.imagesUrls.isEmpty()) {
             Glide.clear(image);
+
+            final String imageUrl = article.imagesUrls.first().val;
+            File file = null;
+            if (!TextUtils.isEmpty(imageUrl)) {
+                file = new File(context.getFilesDir(), "/image/" + ApiClient.formatUrlToFileName(imageUrl));
+            }
             Glide.with(context)
-                    .load(article.imagesUrls.first().val)
+                    .load(file != null && file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
                     .placeholder(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
                     .error(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
                     .animate(android.R.anim.fade_in)
@@ -81,7 +96,7 @@ public class HolderMax extends HolderMin {
     }
 
     @Override
-    protected void setTypesIcons(Article article) {
+    protected void setTypesIcons(final Article article) {
         switch (article.type) {
             default:
             case Article.ObjectType.NONE:
@@ -105,11 +120,11 @@ public class HolderMax extends HolderMin {
         }
     }
 
-    private void showTags(Article article) {
+    private void showTags(final Article article) {
 //            Timber.d("article.tags: %s", Arrays.toString(article.tags.toArray()));
-        Context context = itemView.getContext();
+        final Context context = itemView.getContext();
 //            Timber.d("mTagsContainer.getChildCount(): %s", mTagsContainer.getChildCount());
-        int childCount = mTagsContainer.getChildCount();
+        final int childCount = mTagsContainer.getChildCount();
         for (int i = childCount - 1; i > 0; i--) {
             mTagsContainer.removeViewAt(i);
         }
@@ -134,8 +149,8 @@ public class HolderMax extends HolderMin {
                 }
             });
 
-            for (ArticleTag tag : article.tags) {
-                TagView tagView = new TagView(context);
+            for (final ArticleTag tag : article.tags) {
+                final TagView tagView = new TagView(context);
                 tagView.setTag(tag);
                 tagView.setTagTextSize(11);
                 tagView.setActionImage(TagView.Action.NONE);

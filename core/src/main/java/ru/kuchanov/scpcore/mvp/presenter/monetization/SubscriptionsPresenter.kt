@@ -23,16 +23,6 @@ import timber.log.Timber
 import java.util.regex.Pattern
 
 
-fun getMonthFromSkuId(sku: String): Int {
-    val p = Pattern.compile("\\d+")
-    val m = p.matcher(sku)
-    if (m.find()) {
-        return m.group().toInt()
-    }
-
-    throw IllegalArgumentException("cant find month in sku")
-}
-
 /**
  * Created by mohax on 13.01.2018.
  *
@@ -70,7 +60,7 @@ class SubscriptionsPresenter(
         }
 
         Single.zip(
-            inAppHelper.getValidatedOwnedSubsObservable(service).toSingle(),
+            inAppHelper.validateSubsObservable(service).toSingle(),
             inAppHelper.getSubsListToBuyObservable(service, skuList).toSingle(),
             inAppHelper.getInAppsListToBuyObservable(service).toSingle(),
             { t1: List<Item>, t2: List<Subscription>, t3: List<Subscription> -> Triple(t1, t2, t3) }
@@ -138,5 +128,15 @@ class SubscriptionsPresenter(
         const val ID_FREE_ADS_DISABLE = "ID_FREE_ADS_DISABLE"
         const val ID_CURRENT_SUBS = "ID_CURRENT_SUBS"
         const val ID_CURRENT_SUBS_EMPTY = "ID_CURRENT_SUBS_EMPTY"
+
+        fun getMonthFromSkuId(sku: String): Int {
+            val p = Pattern.compile("\\d+")
+            val m = p.matcher(sku)
+            if (m.find()) {
+                return m.group().toInt()
+            }
+
+            throw IllegalArgumentException("cant find month in sku")
+        }
     }
 }

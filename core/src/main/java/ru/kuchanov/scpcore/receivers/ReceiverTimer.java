@@ -17,7 +17,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
@@ -36,7 +36,7 @@ public class ReceiverTimer extends BroadcastReceiver {
 
     public static final int NOTIF_ID = 963;
 
-    public static final long[] VIBRATION_PATTERN = new long[]{500, 500, 500, 500, 500};
+    public static final long[] VIBRATION_PATTERN = {500, 500, 500, 500, 500};
     private static final int LED_DURATION = 3000;
 
     @Inject
@@ -49,7 +49,7 @@ public class ReceiverTimer extends BroadcastReceiver {
     ConstantValues mConstantValues;
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, final Intent intent) {
         Timber.d("onReceive with action: %s", intent.getAction());
         if (context.getString(R.string.receiver_action_timer).equals(intent.getAction())) {
             callInjection();
@@ -61,7 +61,7 @@ public class ReceiverTimer extends BroadcastReceiver {
         BaseApplication.getAppComponent().inject(this);
     }
 
-    protected void download(Context context) {
+    protected void download(final Context context) {
         mApiClient.getRecentArticlesForPage(1)
                 .flatMap(articles -> {
                     DbProvider dbProvider = mDbProviderFactory.getDbProvider();
@@ -86,13 +86,13 @@ public class ReceiverTimer extends BroadcastReceiver {
                         error -> Timber.e(error, "error while getRecentArts"));
     }
 
-    public void sendNotification(Context ctx, List<Article> dataFromWeb) {
+    public void sendNotification(final Context ctx, final List<Article> dataFromWeb) {
         if (dataFromWeb.isEmpty()) {
             Timber.d("no new articles");
             return;
         }
         // Use NotificationCompat.Builder to set up our notification.
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx, "new articles");
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx, "new articles");
 
         //icon appears in device notification bar and right hand corner of notification
         builder.setSmallIcon(R.drawable.ic_logo_notification);
@@ -101,10 +101,10 @@ public class ReceiverTimer extends BroadcastReceiver {
         builder.setTicker(dataFromWeb.get(0).title);
 
         // This intent is fired when notification is clicked
-        Intent intent = new Intent(ctx, MainActivity.class);
+        final Intent intent = new Intent(ctx, MainActivity.class);
         intent.putExtra(MainActivity.EXTRA_LINK, mConstantValues.getNewArticles());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        final PendingIntent pendingIntent = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         // Set the intent that will fire when the user taps the notification.
         builder.setContentIntent(pendingIntent);
@@ -124,9 +124,9 @@ public class ReceiverTimer extends BroadcastReceiver {
 
         builder.setAutoCancel(true);
 
-        NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+        final NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
         if (dataFromWeb.size() == mConstantValues.getNumOfArticlesOnRecentPage()) {
-            String[] events = new String[dataFromWeb.size()];
+            final String[] events = new String[dataFromWeb.size()];
             inboxStyle.setBigContentTitle(ctx.getString(R.string.notif_new_arts_title, dataFromWeb.size(), "+"));
             // Moves events into the expanded layout
             for (int i = 0; i < events.length; i++) {
@@ -137,7 +137,7 @@ public class ReceiverTimer extends BroadcastReceiver {
         } else {
             //to test
             //newQuont = "10";
-            String[] events = new String[dataFromWeb.size()];
+            final String[] events = new String[dataFromWeb.size()];
             // Sets a title for the Inbox in expanded layout
             inboxStyle.setBigContentTitle(ctx.getString(R.string.notif_new_arts_title, dataFromWeb.size(), ""));
             // Moves events into the expanded layout
@@ -162,13 +162,14 @@ public class ReceiverTimer extends BroadcastReceiver {
         }
         //Sound//LED
         if (mMyPreferencesManager.isNotificationSoundEnabled()) {
-            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            final Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             builder.setSound(alarmSound);
         }
 
-        NotificationManager notificationManager = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+        final NotificationManager notificationManager = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Will display the notification in the notification bar
+        assert notificationManager != null;
         notificationManager.notify(NOTIF_ID, builder.build());
     }
 }

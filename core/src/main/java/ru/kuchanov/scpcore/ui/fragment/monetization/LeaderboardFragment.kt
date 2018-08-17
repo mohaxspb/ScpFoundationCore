@@ -2,7 +2,7 @@ package ru.kuchanov.scpcore.ui.fragment.monetization
 
 import android.graphics.Bitmap
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
-import android.support.v4.widget.Space
+import android.widget.Space
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SimpleItemAnimator
@@ -28,8 +28,10 @@ import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.leaderboard.
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.subscriptions.InAppDelegate
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LeaderboardUserViewModel
+import ru.kuchanov.scpcore.db.model.LeaderboardUser
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
+import ru.kuchanov.scpcore.mvp.presenter.monetization.LeaderboardPresenter
 import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 import ru.kuchanov.scpcore.ui.holder.SocialLoginHolder
@@ -75,7 +77,7 @@ class LeaderboardFragment :
         } else if (animator is SimpleItemAnimator) {
             animator.supportsChangeAnimations = false
         }
-        recyclerView.itemAnimator.changeDuration = 0
+        recyclerView.itemAnimator?.changeDuration = 0
 
         swipeRefresh.setColorSchemeResources(R.color.zbs_color_red)
         swipeRefresh.setOnRefreshListener { mPresenter.updateLeaderboardFromApi() }
@@ -84,7 +86,12 @@ class LeaderboardFragment :
         delegateManager.addDelegate(DividerDelegate())
         delegateManager.addDelegate(LabelDelegate())
         delegateManager.addDelegate(LeaderboardDelegate())
-        delegateManager.addDelegate(InAppDelegate { presenter.onSubscriptionClick(it, this) })
+        delegateManager.addDelegate(InAppDelegate {
+            when (it) {
+                LeaderboardPresenter.APPODEAL_ID -> presenter.onRewardedVideoClick()
+                else -> presenter.onSubscriptionClick(it, this)
+            }
+        })
 
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter
@@ -138,9 +145,8 @@ class LeaderboardFragment :
                 val view = inflater.inflate(R.layout.view_social_login, providersContainer, false)
                 providersContainer.addView(view)
                 val holder = SocialLoginHolder(
-                    view,
-                    { baseActivity?.startLogin(loginModel.socialProvider) }
-                )
+                    view
+                ) { baseActivity?.startLogin(loginModel.socialProvider) }
                 holder.bind(loginModel)
 
                 val endView = Space(activity!!)
@@ -155,7 +161,11 @@ class LeaderboardFragment :
         val user = myUser.user
         Timber.d("user: $user")
         with(userDataView) {
-            chartPlaceTextView.text = (myUser.position + 1).toString()
+            chartPlaceTextView.text = if (myUser.position == LeaderboardUserViewModel.POSITION_NONE) {
+                "N/A"
+            } else {
+                (myUser.position + 1).toString()
+            }
 
             Glide.with(context)
                     .load(user.avatar)
@@ -171,7 +181,12 @@ class LeaderboardFragment :
                     })
 
             nameTextView.text = user.fullName
-            readArticlesCountTextView.text = context.getString(R.string.leaderboard_articles_read, user.numOfReadArticles)
+            readArticlesCountTextView.text = if (user.numOfReadArticles == LeaderboardUser.READ_ARTICLES_COUNT_NONE) {
+                "N/A"
+            } else {
+                context.getString(R.string.leaderboard_articles_read, user.numOfReadArticles)
+            }
+
             userScoreTextView.text = user.score.toString()
 
             val levelViewModel = myUser.levelViewModel

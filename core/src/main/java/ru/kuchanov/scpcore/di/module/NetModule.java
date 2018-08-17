@@ -32,9 +32,11 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.BuildConfig;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.ConstantValuesDefault;
+import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
@@ -54,7 +56,8 @@ public class NetModule {
     Interceptor providesLoggingInterceptor() {
         return new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(
                 BuildConfig.FLAVOR.equals("dev")
-                ? HttpLoggingInterceptor.Level.BODY
+                ?
+                HttpLoggingInterceptor.Level.BODY
                 :
                 HttpLoggingInterceptor.Level.NONE
         );
@@ -83,17 +86,17 @@ public class NetModule {
 
     @Provides
     @Singleton
-    Converter.Factory providesConverterFactory(TypeAdapterFactory typeAdapterFactory) {
+    Converter.Factory providesConverterFactory(final TypeAdapterFactory typeAdapterFactory) {
         return GsonConverterFactory.create(
                 new GsonBuilder()
                         .setExclusionStrategies(new ExclusionStrategy() {
                             @Override
-                            public boolean shouldSkipField(FieldAttributes f) {
+                            public boolean shouldSkipField(final FieldAttributes f) {
                                 return f.getDeclaringClass().equals(RealmObject.class);
                             }
 
                             @Override
-                            public boolean shouldSkipClass(Class<?> clazz) {
+                            public boolean shouldSkipClass(final Class<?> clazz) {
                                 return false;
                             }
                         })
@@ -101,14 +104,14 @@ public class NetModule {
                         }.getType(), new TypeAdapter<RealmList<RealmString>>() {
 
                             @Override
-                            public void write(JsonWriter out, RealmList<RealmString> value) throws IOException {
+                            public void write(final JsonWriter out, final RealmList<RealmString> value) throws IOException {
                                 // Ignore
                             }
 
                             @Override
-                            public RealmList<RealmString> read(JsonReader in) throws IOException {
-                                RealmList<RealmString> list = new RealmList<>();
+                            public RealmList<RealmString> read(final JsonReader in) throws IOException {
                                 in.beginArray();
+                                final RealmList<RealmString> list = new RealmList<>();
                                 while (in.hasNext()) {
                                     list.add(new RealmString(in.nextString()));
                                 }
@@ -124,8 +127,10 @@ public class NetModule {
 
     @Provides
     @Singleton
-    OkHttpClient providesOkHttpClient(@Named("headers") Interceptor headersInterceptor,
-                                      @Named("logging") Interceptor loggingInterceptor) {
+    OkHttpClient providesOkHttpClient(
+            @Named("headers") final Interceptor headersInterceptor,
+            @Named("logging") final Interceptor loggingInterceptor
+    ) {
         return new OkHttpClient.Builder()
                 .addInterceptor(headersInterceptor)
                 .addInterceptor(loggingInterceptor)
@@ -139,12 +144,28 @@ public class NetModule {
     @Named("vps")
     @Singleton
     Retrofit providesVpsRetrofit(
-            OkHttpClient okHttpClient,
-            Converter.Factory converterFactory,
-            CallAdapter.Factory callAdapterFactory
+            final OkHttpClient okHttpClient,
+            final Converter.Factory converterFactory,
+            final CallAdapter.Factory callAdapterFactory
     ) {
         return new Retrofit.Builder()
-                .baseUrl(BuildConfig.TOOLS_API_URL)
+                .baseUrl(BaseApplication.getAppInstance().getString(R.string.tools_api_url))
+                .client(okHttpClient)
+                .addConverterFactory(converterFactory)
+                .addCallAdapterFactory(callAdapterFactory)
+                .build();
+    }
+
+    @Provides
+    @Named("scpReaderApi")
+    @Singleton
+    Retrofit providesScpReaderApiRetrofit(
+            final OkHttpClient okHttpClient,
+            final Converter.Factory converterFactory,
+            final CallAdapter.Factory callAdapterFactory
+    ) {
+        return new Retrofit.Builder()
+                .baseUrl(BaseApplication.getAppInstance().getString(R.string.scp_reader_api_url))
                 .client(okHttpClient)
                 .addConverterFactory(converterFactory)
                 .addCallAdapterFactory(callAdapterFactory)
@@ -155,9 +176,9 @@ public class NetModule {
     @Named("scp")
     @Singleton
     Retrofit providesScpRetrofit(
-            OkHttpClient okHttpClient,
-            Converter.Factory converterFactory,
-            CallAdapter.Factory callAdapterFactory
+            final OkHttpClient okHttpClient,
+            final Converter.Factory converterFactory,
+            final CallAdapter.Factory callAdapterFactory
     ) {
         return new Retrofit.Builder()
                 .baseUrl(BuildConfig.SCP_API_URL)
@@ -170,25 +191,43 @@ public class NetModule {
     @Provides
     @Singleton
     ApiClient providerApiClient(
-            OkHttpClient okHttpClient,
-            @Named("vps") Retrofit vpsRetrofit,
-            @Named("scp") Retrofit scpRetrofit,
-            MyPreferenceManager preferencesManager,
-            Gson gson,
-            ConstantValues constantValues
+            final OkHttpClient okHttpClient,
+            @Named("vps") final Retrofit vpsRetrofit,
+            @Named("scp") final Retrofit scpRetrofit,
+            @Named("scpReaderApi") final Retrofit scpReaderRetrofit,
+            final MyPreferenceManager preferencesManager,
+            final Gson gson,
+            final ConstantValues constantValues
     ) {
-        return getApiClient(okHttpClient, vpsRetrofit, scpRetrofit, preferencesManager, gson, constantValues);
+        return getApiClient(
+                okHttpClient,
+                vpsRetrofit,
+                scpRetrofit,
+                scpReaderRetrofit,
+                preferencesManager,
+                gson,
+                constantValues
+        );
     }
 
     protected ApiClient getApiClient(
-            OkHttpClient okHttpClient,
-            @Named("vps") Retrofit vpsRetrofit,
-            @Named("scp") Retrofit scpRetrofit,
-            MyPreferenceManager preferencesManager,
-            Gson gson,
-            ConstantValues constantValues
+            final OkHttpClient okHttpClient,
+            @Named("vps") final Retrofit vpsRetrofit,
+            @Named("scp") final Retrofit scpRetrofit,
+            @Named("scpReaderApi") final Retrofit scpReaderRetrofit,
+            final MyPreferenceManager preferencesManager,
+            final Gson gson,
+            final ConstantValues constantValues
     ) {
-        return new ApiClient(okHttpClient, vpsRetrofit, scpRetrofit, preferencesManager, gson, constantValues);
+        return new ApiClient(
+                okHttpClient,
+                vpsRetrofit,
+                scpRetrofit,
+                scpReaderRetrofit,
+                preferencesManager,
+                gson,
+                constantValues
+        );
     }
 
     @Provides
@@ -196,21 +235,21 @@ public class NetModule {
     TypeAdapterFactory providesTypeAdapterFactory() {
         return new TypeAdapterFactory() {
             @Override
-            public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
+            public <T> TypeAdapter<T> create(final Gson gson, final TypeToken<T> type) {
                 final TypeAdapter<T> delegate = gson.getDelegateAdapter(this, type);
                 final TypeAdapter<JsonElement> elementAdapter = gson.getAdapter(JsonElement.class);
 
                 return new TypeAdapter<T>() {
                     @Override
-                    public void write(JsonWriter out, T value) throws IOException {
+                    public void write(final JsonWriter out, final T value) throws IOException {
                         delegate.write(out, value);
                     }
 
                     @Override
-                    public T read(JsonReader in) throws IOException {
+                    public T read(final JsonReader in) throws IOException {
                         JsonElement jsonElement = elementAdapter.read(in);
                         if (jsonElement.isJsonObject()) {
-                            JsonObject jsonObject = jsonElement.getAsJsonObject();
+                            final JsonObject jsonObject = jsonElement.getAsJsonObject();
                             if (jsonObject.has("result") && jsonObject.get("result").isJsonObject()) {
                                 jsonElement = jsonObject.get("result");
                             }

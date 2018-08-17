@@ -18,6 +18,7 @@ import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
+import com.google.gson.Gson;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.vending.billing.IInAppBillingService;
@@ -34,8 +35,8 @@ import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
-import com.yandex.metrica.YandexMetrica;
 
+import org.joda.time.Duration;
 import org.joda.time.Period;
 
 import android.annotation.SuppressLint;
@@ -69,22 +70,24 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.BuildConfig;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
-import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable;
@@ -107,6 +110,9 @@ import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.SocialLoginHolder;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
 import ru.kuchanov.scpcore.util.AttributeGetter;
+import ru.kuchanov.scpcore.util.Entry;
+import ru.kuchanov.scpcore.util.RemoteConfigJsonModel;
+import ru.kuchanov.scpcore.util.StorageUtils;
 import ru.kuchanov.scpcore.util.SystemUtils;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -177,7 +183,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     protected DialogUtils mDialogUtils;
 
     @Inject
-    protected ru.kuchanov.scp.downloads.DialogUtils<Article> mDownloadAllChooser;
+    protected ru.kuchanov.scpcore.downloads.DialogUtils mDownloadAllChooser;
 
     @Inject
     protected InAppHelper mInAppHelper;
@@ -324,7 +330,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     public void startLogin(final Constants.Firebase.SocialProvider provider) {
         switch (provider) {
             case VK:
-                VKSdk.login(this, VKScope.EMAIL, VKScope.GROUPS);
+                VKSdk.login(this, VKScope.EMAIL, VKScope.GROUPS, VKScope.WALL);
                 break;
             case GOOGLE:
                 final Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
@@ -374,7 +380,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
         //appodeal
         Appodeal.setAutoCacheNativeIcons(true);
-        Appodeal.setAutoCacheNativeMedia(false);
+        Appodeal.setAutoCacheNativeMedia(true);
         Appodeal.setNativeAdType(Native.NativeAdType.Auto);
         Appodeal.disableLocationPermissionCheck();
         if (BuildConfig.FLAVOR.equals("dev")) {
@@ -382,11 +388,12 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 //            Appodeal.setLogLevel(Log.LogLevel.debug);
         }
         Appodeal.disableNetwork(this, "vungle");
-//        Appodeal.disableNetwork(this, "facebook");
+        Appodeal.disableNetwork(this, "facebook");
         Appodeal.initialize(
                 this,
                 getString(R.string.appodeal_app_key),
-                Appodeal.REWARDED_VIDEO | Appodeal.INTERSTITIAL | Appodeal.NATIVE
+                Appodeal.REWARDED_VIDEO | Appodeal.INTERSTITIAL | Appodeal.NATIVE,
+                true
         );
 
         //user settings
@@ -396,13 +403,30 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
         Appodeal.muteVideosIfCallsMuted(true);
         Appodeal.setRewardedVideoCallbacks(new MyRewardedVideoCallbacks() {
+//            @Override
+//            public void onRewardedVideoFinished(final double i, final String s) {
+//                super.onRewardedVideoFinished(i, s);
+////                mMyPreferenceManager.applyAwardFromAds();
+//                final long numOfMillis = FirebaseRemoteConfig.getInstance()
+//                        .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
+//                final long hours = Duration.millis(numOfMillis).toStandardHours().getHours();
+//                showMessage(getString(R.string.ads_reward_gained, hours));
+//
+//                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventType.REWARD_GAINED, null);
+//
+//                @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.REWARDED_VIDEO;
+//                mPresenter.updateUserScoreForScoreAction(action);
+//
+//                mRoot.postDelayed(() -> mMyPreferenceManager.applyAwardFromAds(), Constants.POST_DELAYED_MILLIS);
+//            }
+
             @Override
-            public void onRewardedVideoFinished(int i, String s) {
-                super.onRewardedVideoFinished(i, s);
-//                mMyPreferenceManager.applyAwardFromAds();
+            public void onRewardedVideoClosed(final boolean b) {
+                super.onRewardedVideoClosed(b);
+
                 final long numOfMillis = FirebaseRemoteConfig.getInstance()
                         .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
-                final long hours = numOfMillis / 1000 / 60 / 60;
+                final long hours = Duration.millis(numOfMillis).toStandardHours().getHours();
                 showMessage(getString(R.string.ads_reward_gained, hours));
 
                 FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventType.REWARD_GAINED, null);
@@ -410,7 +434,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.REWARDED_VIDEO;
                 mPresenter.updateUserScoreForScoreAction(action);
 
-                mRoot.postDelayed(() -> mMyPreferenceManager.applyAwardFromAds(), 500);
+                mRoot.postDelayed(() -> mMyPreferenceManager.applyAwardFromAds(), Constants.POST_DELAYED_MILLIS);
             }
         });
         Appodeal.setInterstitialCallbacks(new MyAppodealInterstitialCallbacks() {
@@ -674,40 +698,21 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     public void updateOwnedMarketItems() {
         Timber.d("updateOwnedMarketItems");
         mInAppHelper
-                .getValidatedOwnedSubsObservable(mService)
+                .validateSubsObservable(mService)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         validatedItems -> {
-                            Timber.d("market validatedItems: %s", validatedItems);
-
-                            mMyPreferenceManager.setLastTimeSubscriptionsValidated(System.currentTimeMillis());
-
                             @InAppHelper.SubscriptionType final int type = InAppHelper.getSubscriptionTypeFromItemsList(validatedItems);
-                            Timber.d("subscription type: %s", type);
                             switch (type) {
                                 case InAppHelper.SubscriptionType.NONE:
-                                    mMyPreferenceManager.setHasNoAdsSubscription(false);
-                                    mMyPreferenceManager.setHasSubscription(false);
                                     break;
-                                case InAppHelper.SubscriptionType.NO_ADS: {
-                                    mMyPreferenceManager.setHasNoAdsSubscription(true);
-                                    mMyPreferenceManager.setHasSubscription(false);
+                                case InAppHelper.SubscriptionType.NO_ADS:
+                                case InAppHelper.SubscriptionType.FULL_VERSION: {
                                     //remove banner
                                     if (mAdView != null) {
                                         mAdView.setEnabled(false);
                                         mAdView.setVisibility(View.GONE);
-                                    }
-                                    break;
-                                }
-                                case InAppHelper.SubscriptionType.FULL_VERSION: {
-                                    mMyPreferenceManager.setHasSubscription(true);
-                                    mMyPreferenceManager.setHasNoAdsSubscription(true);
-                                    //remove banner
-                                    final AdView banner = findViewById(R.id.banner);
-                                    if (banner != null) {
-                                        banner.setEnabled(false);
-                                        banner.setVisibility(View.GONE);
                                     }
                                     break;
                                 }
@@ -947,9 +952,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     public void onResume() {
         super.onResume();
-        if (!BuildConfig.FLAVOR.equals("dev")) {
-            YandexMetrica.onResumeActivity(this);
-        }
 
         if (!isAdsLoaded() && mMyPreferenceManager.isTimeToLoadAds()) {
             requestNewInterstitial();
@@ -972,9 +974,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void onPause() {
-        if (!BuildConfig.FLAVOR.equals("dev")) {
-            YandexMetrica.onPauseActivity(this);
-        }
         super.onPause();
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
@@ -1055,8 +1054,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             @Override
             public void onError(final VKError error) {
                 // Произошла ошибка авторизации (например, пользователь запретил авторизацию)
-                Timber.e(error.errorMessage);
-                Toast.makeText(BaseActivity.this, error.errorMessage, Toast.LENGTH_SHORT).show();
+                final String errorMessage = error == null ? getString(R.string.error_unexpected) : error.errorMessage;
+                Timber.e("error/errMsg: %s/%s", error, errorMessage);
+                Toast.makeText(BaseActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
             }
         };
         if (VKSdk.onActivityResult(requestCode, resultCode, data, vkCallback)) {
@@ -1064,6 +1064,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             super.onActivityResult(requestCode, resultCode, data);
         } else if (requestCode == RC_SIGN_IN) {
             final GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result == null) {
+                Timber.wtf("GoogleSignInResult is NULL!!!");
+                Toast.makeText(this, R.string.error_unexpected, Toast.LENGTH_LONG).show();
+                return;
+            }
             if (result.isSuccess()) {
                 Timber.d("Auth successful: %s", result);
                 // Signed in successfully, show authenticated UI.
@@ -1112,8 +1117,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     private void initAndUpdateRemoteConfig() {
-        //remote config
-        final FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        Timber.d("initAndUpdateRemoteConfig");
+        final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
 
         // Create Remote Config Setting to enable developer mode.
         // Fetching configs from the server is normally limited to 5 requests per hour.
@@ -1122,7 +1127,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         final FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
                 .setDeveloperModeEnabled(BuildConfig.FLAVOR.equals("dev"))
                 .build();
-        mFirebaseRemoteConfig.setConfigSettings(configSettings);
+        remoteConfig.setConfigSettings(configSettings);
 
         // Set default Remote Config values. In general you should have in app defaults for all
         // values that you may configure using Remote Config later on. The idea is that you
@@ -1131,25 +1136,41 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         // server, the updated value will be used. You can set defaults via an xml file like done
         // here or you can set defaults inline by using one of the other setDefaults methods.S
         // [START set_default_values]
-        mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults);
+        //this is not working for some reason
+//        remoteConfig.setDefaults(R.xml.remote_config_defaults);
+        //this woks
+        try {
+            final Map<String, Object> defaults = new HashMap<>();
+            final RemoteConfigJsonModel remoteConfigJsonModel = new Gson().fromJson(
+                    StorageUtils.readFromAssets(this, mConstantValues.getAppLang() + ".json"),
+                    RemoteConfigJsonModel.class
+            );
+            for (final Entry entry : remoteConfigJsonModel.getDefaultsMap().getEntry()) {
+                defaults.put(entry.getKey(), entry.getValue());
+            }
+            remoteConfig.setDefaults(defaults);
+        } catch (final IOException e) {
+            Timber.e(e);
+        }
 
         // cacheExpirationSeconds is set to cacheExpiration here, indicating that any previously
         // fetched and cached config would be considered expired because it would have been fetched
         // more than cacheExpiration seconds ago. Thus the next fetch would go to the server unless
         // throttling is in progress. The default expiration duration is 43200 (12 hours).
-        long cacheExpiration = 20000; //default 43200
-        if (mFirebaseRemoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
-            cacheExpiration = 60 * 5;//for 5 min
+        long cacheExpiration = Constants.Firebase.RemoteConfigKeys.CACHE_EXPIRATION_SECONDS; //default 43200
+        if (remoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
+            cacheExpiration = Period.minutes(5).toStandardSeconds().getSeconds();//for 5 min
+
         }
         //comment this if you want to use local data
-        mFirebaseRemoteConfig.fetch(cacheExpiration).addOnCompleteListener(task -> {
+        remoteConfig.fetch(cacheExpiration).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Timber.d("Fetch Succeeded");
                 // Once the config is successfully fetched it must be activated before newly fetched
                 // values are returned.
-                mFirebaseRemoteConfig.activateFetched();
+                remoteConfig.activateFetched();
             } else {
-                Timber.d("Fetch Failed");
+                Timber.e("Fetch Failed");
             }
         });
     }
@@ -1160,8 +1181,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     public void startArticleActivity(final List<String> urls, final int position) {
-        Timber.d("startActivity: urls.size() %s, position: %s", urls.size(), position);
-
         final Intent intent = new Intent(this, getArticleActivityClass());
         intent.putExtra(EXTRA_ARTICLES_URLS_LIST, new ArrayList<>(urls));
         intent.putExtra(EXTRA_POSITION, position);
@@ -1187,13 +1206,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     public void startArticleActivity(final String url) {
-        Timber.d("startActivity: %s", url);
         startArticleActivity(Collections.singletonList(url), 0);
     }
 
     public void startMaterialsActivity() {
-        Timber.d("startActivity");
-
         final Intent intent = new Intent(BaseActivity.this, getMaterialsActivityClass());
 
         if (isTimeToShowAds()) {
@@ -1218,8 +1234,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     public void startGalleryActivity() {
-        Timber.d("startActivity");
-
         final Intent intent = new Intent(this, getGalleryActivityClass());
 
         if (isTimeToShowAds()) {
@@ -1243,8 +1257,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     public void startTagsSearchActivity(final List<ArticleTag> tagList) {
-        Timber.d("startActivity");
-
         final Intent intent = new Intent(BaseActivity.this, getTagsSearchActivityClass());
         intent.putExtra(EXTRA_TAGS, new ArrayList<>(ArticleTag.getStringsFromTags(tagList)));
 
@@ -1269,8 +1281,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     public void startTagsSearchActivity() {
-        Timber.d("startActivity");
-
         final Intent intent = new Intent(this, getTagsSearchActivityClass());
 
         if (isTimeToShowAds()) {

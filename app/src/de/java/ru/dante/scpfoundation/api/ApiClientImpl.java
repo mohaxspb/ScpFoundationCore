@@ -20,13 +20,13 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import ru.dante.scpfoundation.MyApplicationImpl;
 import ru.dante.scpfoundation.R;
-import ru.kuchanov.scp.downloads.ConstantValues;
-import ru.kuchanov.scp.downloads.ScpParseException;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.BuildConfig;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
+import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
 import timber.log.Timber;
@@ -39,20 +39,21 @@ import timber.log.Timber;
 public class ApiClientImpl extends ApiClient {
 
     public ApiClientImpl(
-            OkHttpClient okHttpClient,
-            Retrofit vpsRetrofit,
-            Retrofit scpRetrofit,
-            MyPreferenceManager preferencesManager,
-            Gson gson,
-            ConstantValues constantValues
+            final OkHttpClient okHttpClient,
+            final Retrofit vpsRetrofit,
+            final Retrofit scpRetrofit,
+            final Retrofit scpReaderRetrofit,
+            final MyPreferenceManager preferencesManager,
+            final Gson gson,
+            final ConstantValues constantValues
     ) {
-        super(okHttpClient, vpsRetrofit, scpRetrofit, preferencesManager, gson, constantValues);
+        super(okHttpClient, vpsRetrofit, scpRetrofit, scpReaderRetrofit, preferencesManager, gson, constantValues);
     }
 
     public Observable<String> getRandomUrl() {
         Timber.d("getRandomUrl");
         return bindWithUtils(Observable.unsafeCreate(subscriber -> {
-            Request.Builder request = new Request.Builder();
+            final Request.Builder request = new Request.Builder();
             request.url(mConstantValues.getRandomPageUrl());
             request.get();
 

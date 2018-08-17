@@ -75,13 +75,13 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
     protected abstract int getDefaultNavItemId();
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_CUR_DRAWER_ITEM_ID, mCurrentSelectedDrawerItemId);
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mCurrentSelectedDrawerItemId = getDefaultNavItemId();
@@ -93,11 +93,11 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
             actionBar.setDisplayHomeAsUpEnabled(true);
 
             mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.app_name, R.string.app_name) {
-                public void onDrawerClosed(View view) {
+                public void onDrawerClosed(final View view) {
                     supportInvalidateOptionsMenu();
                 }
 
-                public void onDrawerOpened(View drawerView) {
+                public void onDrawerOpened(final View drawerView) {
                 }
             };
             mDrawerToggle.setDrawerIndicatorEnabled(isDrawerIndicatorEnabled());
@@ -129,13 +129,13 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
     protected abstract boolean isDrawerIndicatorEnabled();
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
+    protected void onPostCreate(final Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(final Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
@@ -150,7 +150,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         Timber.d("onOptionsItemSelected with id: %s", item);
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -166,21 +166,21 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
     }
 
     @Override
-    public void onReceiveRandomUrl(String url) {
+    public void onReceiveRandomUrl(final String url) {
         startArticleActivity(url);
     }
 
     @Override
-    public void updateUser(User user) {
+    public void updateUser(final User user) {
         Timber.d("updateUser: %s", user);
         if (user != null) {
             for (int i = 0; i < mNavigationView.getHeaderCount(); i++) {
                 mNavigationView.removeHeaderView(mNavigationView.getHeaderView(i));
             }
-            View headerLogined = LayoutInflater.from(this).inflate(R.layout.drawer_header_logined, mNavigationView, false);
+            final View headerLogined = LayoutInflater.from(this).inflate(R.layout.drawer_header_logined, mNavigationView, false);
             mNavigationView.addHeaderView(headerLogined);
 
-            HeaderViewHolderLogined headerViewHolder = new HeaderViewHolderLogined(headerLogined);
+            final HeaderViewHolderLogined headerViewHolder = new HeaderViewHolderLogined(headerLogined);
 
             headerViewHolder.logout.setOnClickListener(view -> new MaterialDialog.Builder(BaseDrawerActivity.this)
                     .title(R.string.warning)
@@ -201,7 +201,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
             headerViewHolder.inapp.setOnClickListener(view -> {
                 SubscriptionsActivity.start(this);
 
-                Bundle bundle = new Bundle();
+                final Bundle bundle = new Bundle();
                 bundle.putString(EventParam.PLACE, StartScreen.DRAWER_HEADER_LOGINED);
                 FirebaseAnalytics.getInstance(BaseDrawerActivity.this).logEvent(EventName.SUBSCRIPTIONS_SHOWN, bundle);
             });
@@ -213,16 +213,19 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                     .centerCrop()
                     .into(new BitmapImageViewTarget(headerViewHolder.avatar) {
                         @Override
-                        protected void setResource(Bitmap resource) {
-                            RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+                        protected void setResource(final Bitmap resource) {
+                            final RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
                             circularBitmapDrawable.setCircular(true);
                             headerViewHolder.avatar.setImageDrawable(circularBitmapDrawable);
                         }
                     });
 
             //score and level
-            LevelsJson levelsJson = LevelsJson.Companion.getLevelsJson();
-            LevelsJson.Level level = levelsJson.getLevelForScore(user.score);
+            final LevelsJson levelsJson = LevelsJson.Companion.getLevelsJson();
+//            Timber.d("levelsJson: %s", levelsJson);
+
+            final LevelsJson.Level level = levelsJson.getLevelForScore(user.score);
+//            Timber.d("level: %s", level);
             if (level.getId() == LevelsJson.MAX_LEVEL_ID) {
                 headerViewHolder.circleProgress.setMaxValue(level.getScore());
                 headerViewHolder.circleProgress.setValue(level.getScore());
@@ -232,13 +235,13 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
 
                 headerViewHolder.avatar.setOnClickListener(view -> showLeaderboard());
             } else {
-                String levelTitle = level.getTitle();
+                final String levelTitle = level.getTitle();
 
-                LevelsJson.Level nextLevel = levelsJson.getLevels().get(level.getId() + 1);
-                int nextLevelScore = nextLevel.getScore();
+                final LevelsJson.Level nextLevel = levelsJson.getLevels().get(level.getId() + 1);
+                final int nextLevelScore = nextLevel.getScore();
 
-                int max = nextLevelScore - level.getScore();
-                int value = user.score - level.getScore();
+                final int max = nextLevelScore - level.getScore();
+                final int value = user.score - level.getScore();
 
                 headerViewHolder.circleProgress.setMaxValue(max);
                 headerViewHolder.circleProgress.setValue(value);
@@ -255,7 +258,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                     //do not show it after level up gain, where we add 10000 score
                     && mPresenter.getUser().score < 10000
                     && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
-                Bundle bundle = new Bundle();
+                final Bundle bundle = new Bundle();
                 bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
                         Constants.Firebase.Analitics.EventValue.SCORE_1000_REACHED);
                 FirebaseAnalytics.getInstance(this)
@@ -268,10 +271,10 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
             for (int i = 0; i < mNavigationView.getHeaderCount(); i++) {
                 mNavigationView.removeHeaderView(mNavigationView.getHeaderView(i));
             }
-            View headerUnlogined = LayoutInflater.from(this).inflate(R.layout.drawer_header_unlogined, mNavigationView, false);
+            final View headerUnlogined = LayoutInflater.from(this).inflate(R.layout.drawer_header_unlogined, mNavigationView, false);
             mNavigationView.addHeaderView(headerUnlogined);
 
-            HeaderViewHolderUnlogined headerViewHolder = new HeaderViewHolderUnlogined(headerUnlogined);
+            final HeaderViewHolderUnlogined headerViewHolder = new HeaderViewHolderUnlogined(headerUnlogined);
 
             headerViewHolder.mLogin.setOnClickListener(view -> showLoginProvidersPopup());
 
@@ -331,7 +334,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         Timber.d("onActivityResult requestCode/resultCode: %s/%s", requestCode, resultCode);
         if (requestCode == REQUEST_CODE_INAPP) {
             if (resultCode == Activity.RESULT_OK) {
@@ -341,16 +344,16 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                     return;
                 }
 //            int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
-                String purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA");
+                final String purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA");
 //            String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
                 Timber.d("purchaseData %s", purchaseData);
-                PurchaseData item = mGson.fromJson(purchaseData, PurchaseData.class);
+                final PurchaseData item = mGson.fromJson(purchaseData, PurchaseData.class);
                 Timber.d("You have bought the %s", item.productId);
 
-                Bundle bundle = new Bundle();
-                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, item.productId);
-                bundle.putFloat(FirebaseAnalytics.Param.VALUE, .5f);
-                FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.ECOMMERCE_PURCHASE, bundle);
+//                final Bundle bundle = new Bundle();
+//                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, item.productId);
+//                bundle.putFloat(FirebaseAnalytics.Param.VALUE, .5f);
+//                FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.ECOMMERCE_PURCHASE, bundle);
 
                 if (item.productId.equals(getString(R.string.inapp_skus).split(",")[0])) {
                     //levelUp 5

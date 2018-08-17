@@ -2,7 +2,7 @@ package ru.kuchanov.scpcore.mvp.presenter.articleslists;
 
 import android.support.annotation.NonNull;
 
-import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
@@ -15,10 +15,10 @@ public class Objects4ArticlesPresenter
         implements Objects4Articles.Presenter {
 
     public Objects4ArticlesPresenter(
-            MyPreferenceManager myPreferencesManager,
-            DbProviderFactory dbProviderFactory,
-            ApiClient apiClient,
-            @NonNull ConstantValues constantValues
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient,
+            @NonNull final ConstantValues constantValues
     ) {
         super(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
     }

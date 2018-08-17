@@ -1,8 +1,7 @@
 package ru.dante.scpfoundation;
 
-import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
-import rx.exceptions.OnErrorNotImplementedException;
 
 /**
  * Created by mohax on 15.07.2017.
@@ -44,6 +43,11 @@ public class ConstantValuesImpl implements ConstantValues {
     @Override
     public String getObjects4() {
         return Constants.Urls.OBJECTS_4;
+    }
+
+    @Override
+    public String getObjects5() {
+        return Constants.Urls.OBJECTS_5;
     }
 
     @Override

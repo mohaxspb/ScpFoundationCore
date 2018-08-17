@@ -281,7 +281,7 @@ Trello: <a href="https://trello.com/b/K96g075n/scp">Une planche avec une liste d
 <br/><br/>
 E-mail: <a href="mailto:neva.spb.rx@gmail.com">Pour toute question</a>
 <br/><br/>
-Merci d'utiliser notre application!
+Merci d\'utiliser notre application!
 <br/><br/>
 Traduit Lucie.]]></string>
     <string name="drawer_item_read">Lisez les articles</string>
@@ -292,7 +292,7 @@ Traduit Lucie.]]></string>
     <string name="subs_description">Désactivation des annonces, synchronisation automatique des nuages, téléchargement illimité d\'articles et de polices atmosphériques</string>
     <string name="subs_level_5_gain">Obtenez le niveau 5</string>
     <string name="subs_no_ads_title">Protocole “Silence”</string>
-    <string name="subs_no_ads_description">Lancement de l\'agent de blocage meme toute manifestation de l\'agent publicitaire dans l'application.</string>
+    <string name="subs_no_ads_description">Lancement de l\'agent de blocage meme toute manifestation de l\'agent publicitaire dans l\'application.</string>
     <string name="subs_1_month_title">Laborantin</string>
     <string name="subs_3_month_title">Attaché de recherche</string>
     <string name="subs_6_month_title">Chercheur</string>
@@ -325,10 +325,30 @@ Traduit Lucie.]]></string>
     <string name="leaderboard_inapp_description">Utilisez l\'astuce et vos connexions dans le Fonds pour contourner les collègues et augmenter dans le classement de la</string>
     <string name="leaderboard_place">%d Place</string>
     <string name="leaderboard_inapp_label">Hausse du classement (+10000 points)</string>
+    <string name="leaderboard_inapp_label_undefined">Hausse du classement (+%d points)</string>
     <string name="leaderboard_articles_read">%d Articles lus</string>
     <string name="score_num">%d points</string>
     <string name="level_num">%d Niveau</string>
     <string name="drawer_item_leaderboard">Agents de cotation</string>
     <string name="ads_will_be_shown_soon">La publicité sera bientôt affichée! Voulez-vous le désactiver à l\'avance?</string>
     <string name="need_login_for_level_up_content">Pour participer à la notation des agents, vous devez autoriser.</string>
+
+    <!---->
+    <string name="leaderboard_appodeal_description">Pas de contacts de haut niveau dans le Fonds? Essayez de trouver du matériel compromettant et de monter dans le classement.</string>
+
+    <!---->
+    <string name="downloads_settings">Paramètres de téléchargement</string>
+    <string name="downloads_force_update">Forcer le texte de mise à jour pendant le téléchargement</string>
+    <string name="download_inner_depth">Télécharger Inner Articles profondeur</string>
+    <string name="images_cache_enabled">Mise en cache d\'image locale</string>
+    <string name="cached_images_count">Nombre d\'images mises en cache</string>
+    <string name="cached_images_size">Taille des images mises en cache</string>
+    <string name="clear_cached_images">Effacer les images mises en cache</string>
+    <string name="free_ads_vk_share_label">Share App en VK</string>
+    <string name="share_app_vk_text">Vous aimez les histoires fantastiques et effrayantes? Essayez SCP Foundation App pour Android-milliers d\'histoires hors ligne gratuitement!</string>
+    <string name="need_vk_wall_access">L\'autorisation de poster sur le mur est requise. S\'ll vous plaît, reconnectez-vous.</string>
+    <string name="app_lang_dialog_google_description">Voici d\'autres versions de notre application, vous pouvez choisir et télécharger la version linguistique nécessaire en cliquant sur le lien dans Google Play Market.</string>
+
+    <!---->
+    <string name="drawer_item_objects5">Série SCP V</string>
 </resources>

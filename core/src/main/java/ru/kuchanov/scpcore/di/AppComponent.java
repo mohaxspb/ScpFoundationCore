@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.di.module.AppModule;
 import ru.kuchanov.scpcore.di.module.HelpersModule;
 import ru.kuchanov.scpcore.di.module.NetModule;
@@ -42,6 +43,7 @@ import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects1ArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects2ArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects3ArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects4ArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.articleslists.Objects5ArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.ObjectsRuArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.OfflineArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.RatedArticlesFragment;
@@ -129,6 +131,8 @@ public interface AppComponent {
     void inject(MaterialsJokesFragment fragment);
 
     void inject(Objects4ArticlesFragment fragment);
+
+    void inject(Objects5ArticlesFragment fragment);
 
     void inject(TagsSearchFragment fragment);
 

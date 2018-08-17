@@ -322,6 +322,7 @@ Vielen Dank für die Nutzung unserer App!]]></string>
     <string name="leaderboard_inapp_description">Verwenden Sie den Trick und ihre Verbindungen in den Fonds, um rund um die Kollegen und steigen in der Rangliste</string>
     <string name="leaderboard_place">%d Ort</string>
     <string name="leaderboard_inapp_label">Anstieg des Ratings (+ 10000 Punkte)</string>
+    <string name="leaderboard_inapp_label_undefined">Anstieg des Ratings (+ %d Punkte)</string>
     <string name="leaderboard_articles_read">%d Seiten lesen</string>
     <string name="score_num">%d Punkte</string>
     <string name="level_num">%d Ebene</string>
@@ -329,4 +330,24 @@ Vielen Dank für die Nutzung unserer App!]]></string>
     <string name="ads_will_be_shown_soon">Werbung wird bald gezeigt! Möchten Sie es im Voraus deaktivieren?</string>
     <string name="need_login_for_level_up_content">Um an der Bewertung von Agents teilzunehmen, müssen Sie autorisieren.</string>
 
+    <!---->
+    <string name="leaderboard_appodeal_description">Keine High-Level-Verbindungen in den Fonds? Versuchen Sie, Kompromisse Material und bewegen sich in der Rangliste.</string>
+
+    <!---->
+    <string name="downloads_settings">Download-Einstellungen</string>
+    <string name="downloads_force_update">Aktualisierungs Text beim Herunterladen erzwingen</string>
+    <string name="download_inner_depth">Herunterladbare Artikel Tiefe</string>
+    <string name="images_cache_enabled">Lokales Bild-Caching</string>
+    <string name="cached_images_count">Anzahl zwischengespeicherter Bilder</string>
+    <string name="cached_images_size">Größe zwischengespeicherter Bilder</string>
+    <string name="clear_cached_images">Löschen zwischengespeicherter Bilder</string>
+    <string name="free_ads_vk_share_label">App in VK freigeben</string>
+    <string name="share_app_vk_text">Love Fantastic und gruselige Geschichten? Versuchen Sie SCP Foundation App für Android-Tausende Geschichten Offline kostenlos!</string>
+    <string name="need_vk_wall_access">Die Berechtigung zum Posten an der Wand ist erforderlich. Bitte loggen Sie sich erneut ein.</string>
+
+    <!---->
+    <string name="app_lang_dialog_google_description">Hier sind andere Versionen unserer Anwendung, können Sie wählen, und laden Sie die notwendige Sprachversion, indem Sie auf den Link in Google Play Markt.</string>
+
+    <!---->
+    <string name="drawer_item_objects5">Serie V</string>
 </resources>

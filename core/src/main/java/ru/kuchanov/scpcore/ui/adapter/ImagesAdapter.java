@@ -1,24 +1,28 @@
 package ru.kuchanov.scpcore.ui.adapter;
 
-import android.content.Context;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+
+import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
-import ru.kuchanov.scpcore.db.model.VkImage;
+import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 
 /**
@@ -28,29 +32,28 @@ import ru.kuchanov.scpcore.util.AttributeGetter;
  */
 public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<VkImage> mVkImages;
+    private List<GalleryImage> mVkImages;
 
     private ImageClickListener mImageClickListener;
 
-    public void setImageClickListener(ImageClickListener imageClickListener) {
+    public void setImageClickListener(final ImageClickListener imageClickListener) {
         mImageClickListener = imageClickListener;
     }
 
-    public void setData(List<VkImage> vkImages) {
+    public void setData(final List<GalleryImage> vkImages) {
         mVkImages = vkImages;
         notifyDataSetChanged();
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        RecyclerView.ViewHolder viewHolder;
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_small_img, parent, false);
-        viewHolder = new ViewHolderImage(view);
-        return viewHolder;
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
+        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_small_img, parent, false);
+        return new ViewHolderImage(view);
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
         ((ViewHolderImage) holder).bind(mVkImages.get(position));
     }
 
@@ -58,41 +61,59 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public int getItemCount() {
         if (mVkImages != null) {
             return mVkImages.size();
-        }  else {
+        } else {
             return -1;
         }
     }
 
     public interface ImageClickListener {
+
         void onItemClick(int position, View v);
     }
 
     class ViewHolderImage extends RecyclerView.ViewHolder {
+
         @BindView(R2.id.image)
         ImageView imageView;
 
-        ViewHolderImage(View itemView) {
+        ViewHolderImage(final View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-        void bind(VkImage vkImage) {
-            Context context = itemView.getContext();
-            String imageUrl = vkImage.allUrls.get(vkImage.allUrls.size() - 1).getVal();
+        void bind(final GalleryImage galleryImage) {
+            final Context context = itemView.getContext();
+            final String imageUrl = GalleryImage.getApiImageAddress(galleryImage);
+
+            File file = null;
+            if (!TextUtils.isEmpty(imageUrl)) {
+                file = new File(context.getFilesDir(), "/image/" + ApiClient.formatUrlToFileName(imageUrl));
+            }
 
             Glide.with(context)
-                    .load(imageUrl)
+                    .load(file != null && file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
                     .error(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
                     .crossFade()
                     .centerCrop()
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
-                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        public boolean onException(
+                                final Exception e,
+                                final String model,
+                                final Target<GlideDrawable> target,
+                                final boolean isFirstResource
+                        ) {
                             return false;
                         }
 
                         @Override
-                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        public boolean onResourceReady(
+                                final GlideDrawable resource,
+                                final String model,
+                                final Target<GlideDrawable> target,
+                                final boolean isFromMemoryCache,
+                                final boolean isFirstResource
+                        ) {
                             imageView.setOnClickListener(v -> mImageClickListener.onItemClick(getAdapterPosition(), imageView));
                             return false;
                         }

@@ -3,7 +3,7 @@ package ru.dante.scpfoundation.mvp.presenter;
 import android.support.annotation.NonNull;
 
 import ru.dante.scpfoundation.mvp.contract.ObjectsEsArticles;
-import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;

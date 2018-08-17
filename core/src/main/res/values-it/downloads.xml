@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="download_art_list">Caricamento dell\'elenco degli articoli</string>
+    <string name="download_all_title">Cosa scaricare?</string>
+    <!--<string name="download">Scaricare</string>-->
+    <string name="stop_download">Smetti di caricare</string>
+    <string name="download_objects_title">Caricamento di oggetti</string>
+    <string name="error_notification_title">Errore.</string>
+    <string name="error_notification_objects_list_download_content">Impossibile scaricare l\'elenco degli oggetti</string>
+    <string name="download_complete_title">Download completo</string>
+    <string name="download_complete_title_content">%1$d su %2$d caricati. Errori: %3$d</string>
+    <string name="download_progress_content">Caricati %1$d/%2$d. Errori: %3$d</string>
+    <string name="error_notification_recent_list_download_content">Impossibile caricare l\'elenco di articoli</string>
+    <string name="notification_recent_list_title">Caricamento dell\'elenco degli articoli</string>
+    <string name="download_recent_title">Scaricare articoli</string>
+    <string name="downlad_art_list_range">Quanto download?</string>
+    <string name="increase_limit">Aumenta/Rimuovi limite</string>
+    <string name="user_limit">Il tuo limite: %s</string>
+    <string name="selected">Selezionato: %d</string>
+    <string name="no_limit">Nessun limite!</string>
+    <string name="download_all_with_limit">Scaricherà gli ultimi %d articoli dall\'elenco degli articoli modificati di recente (la lista dei \"nuovi articoli\")</string>
+    <!--<string name="limit_description">Il limite limita il numero massimo di articoli che possono essere memorizzati su un dispositivo da leggere in modalità offline. Non c\'è limite a te ora! E se compri un abbonamento, non lo farai) Se non si dispone di un abbonamento, un giorno il limite sarà limitato a %1$d articoli per agenti non autorizzati e %2$d + (numero di punti/%3$d) er autorizzato.</string>-->
+    <string name="limit_description_disabled_free_downloads">Il limite limita il numero massimo di articoli che possono essere memorizzati su un dispositivo da leggere in modalità offline. МLimite minimo dell\'articolo - %1$d. Il limite può essere completamente rimosso o sollevato, registrando e guadagnando punti. Per ogni %2$d punti, è possibile mantenere un articolo più!</string>
+
+    <!--download dialog-->
+    <string name="download_all">Scarica tutto</string>
+    <!--<string name="info">Informazioni</string>-->
+
+    <string name="type_1">SCP Serie I</string>
+    <string name="type_2">SCP Serie II</string>
+    <string name="type_3">SCP Serie III</string>
+    <string name="type_4">SCP Serie IV</string>
+    <string name="type_5">SCP Serie V</string>
+    <string name="type_ru">SCP Serie RU</string>
+
+    <string name="type_fr">Объекты FR</string>
+    <string name="type_jp">Объекты JP</string>
+    <string name="type_es">Объекты ES</string>
+    <string name="type_pl">Объекты PL</string>
+    <string name="type_de">Объекты DE</string>
+
+    <string name="type_all">Tutti</string>
+
+    <string name="type_experiments">Protocolli di esperimenti.</string>
+    <string name="type_incidents">Rapporti di incidenti</string>
+    <string name="type_interviews">Interviste con testimoni oculari</string>
+    <string name="type_archive">SCP Archiviati</string>
+    <string name="type_jokes">SCP Scherzo</string>
+    <string name="type_other">Altri materiali</string>
+
+    <string name="error_notification_download_failed">Si è verificato un errore: %s</string>
+</resources>

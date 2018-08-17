@@ -1,5 +1,11 @@
 package ru.kuchanov.scpcore.ui.activity;
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,15 +14,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +29,8 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
-import ru.kuchanov.scpcore.db.model.VkImage;
+import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
+import ru.kuchanov.scpcore.db.model.gallery.GalleryImageTranslation;
 import ru.kuchanov.scpcore.monetization.util.MyAdListener;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.mvp.contract.GalleryScreenMvp;
@@ -45,29 +48,37 @@ public class GalleryActivity
         implements GalleryScreenMvp.View {
 
     private static final String EXTRA_IMAGE_URL = "EXTRA_IMAGE_URL";
+
     private static final String EXTRA_IMAGE_DESCRIPTION = "EXTRA_IMAGE_DESCRIPTION";
 
     @BindView(R2.id.viewPager)
     ViewPager mViewPager;
+
     @BindView(R2.id.recyclerView)
     RecyclerView mRecyclerView;
+
     @BindView(R2.id.bottomSheet)
     View mBottomSheet;
+
     @BindView(R2.id.progressCenter)
     View mProgressContainer;
+
     @BindView(R2.id.placeHolder)
     View mPlaceHolder;
+
     @BindView(R2.id.refresh)
     Button mRefresh;
 
     private ImagesPagerAdapter mPagerAdapter;
+
     private ImagesAdapter mRecyclerAdapter;
+
     private int mCurPosition;
 
     public static void startForImage(final Context context, final String imageUrl, @Nullable final String imageDescription) {
         final Intent intent = new Intent(context, GalleryActivity.class);
         intent.putExtra(EXTRA_IMAGE_URL, imageUrl);
-        intent.putExtra(EXTRA_IMAGE_DESCRIPTION, imageDescription);
+        intent.putExtra(EXTRA_IMAGE_DESCRIPTION, TextUtils.isEmpty(imageDescription) ? "" : imageDescription);
         context.startActivity(intent);
     }
 
@@ -83,7 +94,8 @@ public class GalleryActivity
     }
 
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate(@Nullable final Bundle savedInstanceState) {
+        Timber.d("onCreate");
         super.onCreate(savedInstanceState);
 
         if (getIntent().hasExtra(EXTRA_SHOW_DISABLE_ADS)) {
@@ -137,9 +149,9 @@ public class GalleryActivity
 
         //set data to presenter if we want show only one image
         if (getIntent().hasExtra(EXTRA_IMAGE_URL)) {
-            mPresenter.setData(Collections.singletonList(new VkImage(
+            mPresenter.setData(Collections.singletonList(new GalleryImage(
                     getIntent().getStringExtra(EXTRA_IMAGE_URL),
-                    getIntent().getStringExtra(EXTRA_IMAGE_DESCRIPTION)
+                    new GalleryImageTranslation(getIntent().getStringExtra(EXTRA_IMAGE_DESCRIPTION))
             )));
             mBottomSheet.setVisibility(View.GONE);
         }
@@ -195,6 +207,10 @@ public class GalleryActivity
             link = mConstantValues.getObjects2();
         } else if (id == R.id.objects_III) {
             link = mConstantValues.getObjects3();
+        } else if (id == R.id.objects_IV) {
+            link = mConstantValues.getObjects4();
+        } else if (id == R.id.objects_V) {
+            link = mConstantValues.getObjects5();
         } else if (id == R.id.files) {
             startMaterialsActivity();
         } else if (id == R.id.favorite) {
@@ -214,8 +230,6 @@ public class GalleryActivity
             link = mConstantValues.getObjectsRu();
         } else if (id == R.id.news) {
             link = mConstantValues.getNews();
-        } else if (id == R.id.objects_IV) {
-            link = mConstantValues.getObjects4();
         } else if (id == R.id.stories) {
             link = mConstantValues.getStories();
         } else {
@@ -239,10 +253,11 @@ public class GalleryActivity
                     new SimpleTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) {
                         @Override
                         public void onResourceReady(final Bitmap resource, final GlideAnimation glideAnimation) {
-                            final String desc = mPagerAdapter.getData().get(mViewPager.getCurrentItem()).description;
+                            final String desc = mPagerAdapter.getData().get(mViewPager.getCurrentItem()).getGalleryImageTranslations().get(0).getTranslation();
                             IntentUtils.shareBitmapWithText(GalleryActivity.this, desc, resource);
                         }
-                    });
+                    }
+            );
             return true;
         } else if (i == R.id.save_image) {
             if (mPagerAdapter.getData().isEmpty()) {
@@ -258,7 +273,8 @@ public class GalleryActivity
                                 Toast.makeText(GalleryActivity.this, R.string.image_saving_error, Toast.LENGTH_SHORT).show();
                             }
                         }
-                    });
+                    }
+            );
             return true;
         } else {
             return super.onOptionsItemSelected(item);
@@ -266,7 +282,7 @@ public class GalleryActivity
     }
 
     @Override
-    public void showData(final List<VkImage> data) {
+    public void showData(final List<GalleryImage> data) {
         mPagerAdapter.setData(data);
         mRecyclerAdapter.setData(data);
 

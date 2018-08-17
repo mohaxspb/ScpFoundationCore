@@ -1,5 +1,9 @@
 package ru.kuchanov.scpcore.monetization.util;
 
+import com.google.gson.GsonBuilder;
+
+import com.android.vending.billing.IInAppBillingService;
+
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -11,10 +15,6 @@ import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
-import com.android.vending.billing.IInAppBillingService;
-
-import com.google.gson.GsonBuilder;
-
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -24,14 +24,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import ru.kuchanov.scp.downloads.ApiClientModel;
-import ru.kuchanov.scp.downloads.DbProviderFactoryModel;
-import ru.kuchanov.scp.downloads.MyPreferenceManagerModel;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
-import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.db.DbProviderFactory;
+import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Item;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
 import rx.Observable;
@@ -75,19 +73,19 @@ public class InAppHelper {
         int FULL_VERSION = 1;
     }
 
-    private final ApiClientModel<Article> mApiClient;
+    private final ApiClient mApiClient;
 
-    private final MyPreferenceManagerModel mMyPreferenceManager;
+    private final MyPreferenceManager mMyPreferenceManager;
 
-    private final DbProviderFactoryModel mDbProviderFactory;
+    private final DbProviderFactory mDbProviderFactory;
 
     public InAppHelper(
-            final MyPreferenceManagerModel preferenceManager,
-            final DbProviderFactoryModel dbProviderFactory,
-            final ApiClientModel<Article> apiClient
+            final MyPreferenceManager preferenceManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient
     ) {
         super();
-        mMyPreferenceManager = preferenceManager;
+        mMyPreferenceManager = (MyPreferenceManager) preferenceManager;
         mDbProviderFactory = dbProviderFactory;
         mApiClient = apiClient;
     }
@@ -134,7 +132,7 @@ public class InAppHelper {
         return skus;
     }
 
-    public Observable<List<Item>> getValidatedOwnedSubsObservable(final IInAppBillingService mInAppBillingService) {
+    private Observable<List<Item>> getValidatedOwnedSubsObservable(final IInAppBillingService mInAppBillingService) {
         return Observable.<List<Item>>unsafeCreate(subscriber -> {
             try {
                 Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "subs", null);
@@ -249,8 +247,8 @@ public class InAppHelper {
                 final Bundle querySkus = new Bundle();
                 querySkus.putStringArrayList("ITEM_ID_LIST", (ArrayList<String>) skus);
                 final Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "subs", querySkus);
-                Timber.d("skuDetails: %s", skuDetails);
-                if (skuDetails.getInt("RESPONSE_CODE") == RESULT_OK) {
+                final int responseCodeCode = skuDetails.getInt("RESPONSE_CODE");
+                if (responseCodeCode == RESULT_OK) {
                     final List<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
                     if (responseList == null) {
                         subscriber.onError(new IllegalStateException("responseList is null while get subs details"));
@@ -267,7 +265,7 @@ public class InAppHelper {
                     subscriber.onNext(allSubscriptions);
                     subscriber.onCompleted();
                 } else {
-                    subscriber.onError(new IllegalStateException("ownedItemsBundle.getInt(\"RESPONSE_CODE\") is not 0"));
+                    subscriber.onError(new IllegalStateException("ownedItemsBundle.getInt(\"RESPONSE_CODE\") is: " + responseCodeCode));
                 }
             } catch (final RemoteException e) {
                 Timber.e(e);
@@ -341,6 +339,38 @@ public class InAppHelper {
                         default:
                             return Observable.error(new IllegalArgumentException("Unexpected validation status: " + status));
                     }
+                });
+    }
+
+    public Observable<List<Item>> validateSubsObservable(final IInAppBillingService service) {
+        return getValidatedOwnedSubsObservable(service)
+                .flatMap(validatedItems -> {
+                    Timber.d("market validatedItems: %s", validatedItems);
+
+                    mMyPreferenceManager.setLastTimeSubscriptionsValidated(System.currentTimeMillis());
+
+                    @InAppHelper.SubscriptionType final int type = InAppHelper.getSubscriptionTypeFromItemsList(validatedItems);
+                    Timber.d("subscription type: %s", type);
+                    switch (type) {
+                        case InAppHelper.SubscriptionType.NONE:
+                            mMyPreferenceManager.setHasNoAdsSubscription(false);
+                            mMyPreferenceManager.setHasSubscription(false);
+                            break;
+                        case InAppHelper.SubscriptionType.NO_ADS: {
+                            mMyPreferenceManager.setHasNoAdsSubscription(true);
+                            mMyPreferenceManager.setHasSubscription(false);
+                            break;
+                        }
+                        case InAppHelper.SubscriptionType.FULL_VERSION: {
+                            mMyPreferenceManager.setHasSubscription(true);
+                            mMyPreferenceManager.setHasNoAdsSubscription(true);
+                            break;
+                        }
+                        default:
+                            throw new IllegalArgumentException("unexpected type: " + type);
+                    }
+
+                    return Observable.just(validatedItems);
                 });
     }
 

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="download_art_list">Pobieranie listy artykułów</string>
+    <string name="download_all_title">Co do pobrania?</string>
+    <!--<string name="download">Pobierz</string>-->
+    <string name="stop_download">Zatrzymaj ładowanie</string>
+    <string name="download_objects_title">Ładowanie obiektów</string>
+    <string name="error_notification_title">Błąd</string>
+    <string name="error_notification_objects_list_download_content">Nie można pobrać listy obiektów</string>
+    <string name="download_complete_title">Pobieranie zakończone</string>
+    <string name="download_complete_title_content">Załadowane %1$d z %2$d. błędy: %3$d</string>
+    <string name="download_progress_content">Załadowane %1$d/%2$d. błędy: %3$d</string>
+    <string name="error_notification_recent_list_download_content">Nie można załadować listy artykułów</string>
+    <string name="notification_recent_list_title">Pobieranie listy artykułów</string>
+    <string name="download_recent_title">Pobierz artykuły</string>
+    <string name="downlad_art_list_range">Jak dużo pobierz</string>
+    <string name="increase_limit">Wzrost/Usunąć limit</string>
+    <string name="user_limit">Twój limit :%s</string>
+    <string name="selected">Wybrany: %d</string>
+    <string name="no_limit">Bez ograniczeń!</string>
+    <string name="download_all_with_limit">Pobierz najnowsze %d Artykuły z listy niedawno zmodyfikowany artykułów (Listy \"Nowe artykuły\")</string>
+    <!--<string name="limit_description">Limitu ogranicza maksymalną liczbę artykułów, Które mogą być przechowywane na urządzeniu do odczytu w trybie offline. Tam jest teraz bez limitu do Ciebie! I jeśli ma subskrypcji, nie będzie limitu) Jeśli nie masz subskrypcji, Raz na jakiś czas będzie ograniczony limit %1$d аrtykuły dla nieautoryzowanych agentów i %2$d + (liczba punktów/%3$d) znajdz autoryzowanych.</string>-->
+    <string name="limit_description_disabled_free_downloads">Dopuszczalne limity Maksymalna liczba artykułów, Które mogą być przechowywane na urządzeniu do czytania w trybie offline. Artykuł minimalny limit - %1$d. Limit może być całkowicie usunięte poprzez zakup subskrypcji lub podnieść, rejestrowanie i zarabiać okulary. Dla każdego %2$d punkty Można przechowywać jeden artykuł o więcej!</string>
+
+    <!--download dialog-->
+    <string name="download_all">Pobierz wszystkie</string>
+    <!--<string name="info">Informacje</string>-->
+
+    <string name="type_1">Lista EN I</string>
+    <string name="type_2">Lista EN II</string>
+    <string name="type_3">Lista EN III</string>
+    <string name="type_4">Lista EN IV</string>
+    <string name="type_5">Lista EN V</string>
+    <string name="type_ru">Lista RU</string>
+
+    <string name="type_fr">Объекты FR</string>
+    <string name="type_jp">Объекты JP</string>
+    <string name="type_es">Объекты ES</string>
+    <string name="type_pl">Объекты PL</string>
+    <string name="type_de">Объекты DE</string>
+
+    <string name="type_all">Wszystkie</string>
+
+    <string name="type_experiments">Protokoły eksperymentów</string>
+    <string name="type_incidents">Raporty incydentalne</string>
+    <string name="type_interviews">Wywiady z naocznych świadków</string>
+    <string name="type_archive">Obiekty zarchiwizowane</string>
+    <string name="type_jokes">Joke SCP</string>
+    <string name="type_other">Inne materiały</string>
+
+    <string name="error_notification_download_failed">Wystąpił błąd: %s</string>
+</resources>

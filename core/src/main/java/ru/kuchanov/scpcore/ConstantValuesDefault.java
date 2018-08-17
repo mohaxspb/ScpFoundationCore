@@ -1,7 +1,5 @@
 package ru.kuchanov.scpcore;
 
-import ru.kuchanov.scp.downloads.ConstantValues;
-
 /**
  * Created by mohax on 15.07.2017.
  * <p>
@@ -42,6 +40,11 @@ public class ConstantValuesDefault implements ConstantValues {
     @Override
     public String getObjects4() {
         return Constants.Urls.OBJECTS_4;
+    }
+
+    @Override
+    public String getObjects5() {
+        return Constants.Urls.OBJECTS_5;
     }
 
     @Override

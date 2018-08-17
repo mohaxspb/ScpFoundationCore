@@ -15,22 +15,22 @@ import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
  */
 public class HolderMedium extends HolderMax {
 
-    public HolderMedium(View itemView, ArticlesListAdapter.ArticleClickListener clickListener) {
+    public HolderMedium(final View itemView, final ArticlesListAdapter.ArticleClickListener clickListener) {
         super(itemView, clickListener);
     }
 
     @Override
-    public void bind(Article article) {
+    public void bind(final Article article) {
         super.bind(article);
 
-        Context context = itemView.getContext();
-        float uiTextScale = mMyPreferenceManager.getUiTextScale();
-        int textSizeLarge = context.getResources().getDimensionPixelSize(R.dimen.text_size_large);
+        final Context context = itemView.getContext();
+        final float uiTextScale = mMyPreferenceManager.getUiTextScale();
+        final int textSizeLarge = context.getResources().getDimensionPixelSize(R.dimen.text_size_large);
         title.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiTextScale * textSizeLarge);
     }
 
     @Override
-    protected void setTypesIcons(Article article) {
+    protected void setTypesIcons(final Article article) {
         switch (article.type) {
             default:
             case Article.ObjectType.NONE:

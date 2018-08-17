@@ -29,6 +29,7 @@ public interface VpsServer {
             InviteAction.SENT,
     })
     @interface InviteAction {
+
         String RECEIVED = "inviteReceived";
         String SENT = "inviteSent";
     }

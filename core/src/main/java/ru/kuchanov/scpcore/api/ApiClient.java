@@ -1,17 +1,5 @@
 package ru.kuchanov.scpcore.api;
 
-import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.text.TextUtils;
-import android.util.Pair;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-import com.facebook.Profile;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,6 +14,11 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.Target;
+import com.facebook.Profile;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
@@ -33,11 +26,10 @@ import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
-import com.vk.sdk.api.model.VKApiPhoto;
 import com.vk.sdk.api.model.VKApiUser;
-import com.vk.sdk.api.model.VKAttachments;
 import com.vk.sdk.api.model.VKList;
 
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
@@ -46,10 +38,21 @@ import org.jsoup.nodes.Node;
 import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.util.Pair;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import io.realm.RealmList;
 import okhttp3.Call;
@@ -59,11 +62,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
-import ru.kuchanov.scp.downloads.ApiClientModel;
-import ru.kuchanov.scp.downloads.ConstantValues;
-import ru.kuchanov.scp.downloads.ScpParseException;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.BuildConfig;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.error.ScpException;
@@ -73,8 +74,8 @@ import ru.kuchanov.scpcore.api.model.firebase.ArticleInFirebase;
 import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser;
 import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
-import ru.kuchanov.scpcore.api.model.response.VkGalleryResponse;
 import ru.kuchanov.scpcore.api.model.response.VkGroupJoinResponse;
+import ru.kuchanov.scpcore.api.service.ScpReaderServer;
 import ru.kuchanov.scpcore.api.service.ScpServer;
 import ru.kuchanov.scpcore.api.service.VpsServer;
 import ru.kuchanov.scpcore.db.model.Article;
@@ -82,12 +83,15 @@ import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.db.model.SocialProviderModel;
 import ru.kuchanov.scpcore.db.model.User;
-import ru.kuchanov.scpcore.db.model.VkImage;
+import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
+import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
+import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.DimensionUtils;
 import rx.Observable;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -97,28 +101,35 @@ import timber.log.Timber;
  * <p>
  * for scp_ru
  */
-public class ApiClient implements ApiClientModel<Article> {
+public class ApiClient {
 
     private static final String REPLACEMENT_HASH = "____";
+
     private static final String REPLACEMENT_SLASH = "_REPLACEMENT_SLASH_";
 
     @SuppressWarnings("unused")
     protected MyPreferenceManager mPreferencesManager;
+
     protected OkHttpClient mOkHttpClient;
+
     protected Gson mGson;
 
     private final VpsServer mVpsServer;
+
+    private final ScpReaderServer mScpReaderServer;
+
     private final ScpServer mScpServer;
 
     protected ConstantValues mConstantValues;
 
     public ApiClient(
-            OkHttpClient okHttpClient,
-            Retrofit vpsRetrofit,
-            Retrofit scpRetrofit,
-            MyPreferenceManager preferencesManager,
-            Gson gson,
-            ConstantValues constantValues
+            final OkHttpClient okHttpClient,
+            final Retrofit vpsRetrofit,
+            final Retrofit scpRetrofit,
+            final Retrofit scpReaderRetrofit,
+            final MyPreferenceManager preferencesManager,
+            final Gson gson,
+            final ConstantValues constantValues
     ) {
         super();
         mPreferencesManager = preferencesManager;
@@ -126,10 +137,11 @@ public class ApiClient implements ApiClientModel<Article> {
         mGson = gson;
         mVpsServer = vpsRetrofit.create(VpsServer.class);
         mScpServer = scpRetrofit.create(ScpServer.class);
+        mScpReaderServer = scpReaderRetrofit.create(ScpReaderServer.class);
         mConstantValues = constantValues;
     }
 
-    protected <T> Observable<T> bindWithUtils(Observable<T> observable) {
+    protected <T> Observable<T> bindWithUtils(final Observable<T> observable) {
         return observable
 //                .doOnError(throwable -> {
 //                    try {
@@ -144,7 +156,7 @@ public class ApiClient implements ApiClientModel<Article> {
 
     public Observable<String> getRandomUrl() {
         return bindWithUtils(Observable.unsafeCreate(subscriber -> {
-            Request.Builder request = new Request.Builder();
+            final Request.Builder request = new Request.Builder();
             request.url(mConstantValues.getRandomPageUrl());
             request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
             request.addHeader("Accept-Encoding", "gzip, deflate, br");
@@ -153,91 +165,90 @@ public class ApiClient implements ApiClientModel<Article> {
             request.get();
 
             try {
-                Response response = mOkHttpClient.newCall(request.build()).execute();
+                final Response response = mOkHttpClient.newCall(request.build()).execute();
 
-                Request requestResult = response.request();
+                final Request requestResult = response.request();
                 Timber.d("requestResult:" + requestResult);
                 Timber.d("requestResult.url().url():" + requestResult.url().url());
 
-                String randomURL = requestResult.url().url().toString();
+                final String randomURL = requestResult.url().url().toString();
                 Timber.d("randomUrl = " + randomURL);
 
                 subscriber.onNext(randomURL);
                 subscriber.onCompleted();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 Timber.e(e);
                 subscriber.onError(e);
             }
         }));
     }
 
-    @Override
     public Observable<Integer> getRecentArticlesPageCountObservable() {
-        return bindWithUtils(Observable.<Integer>unsafeCreate(subscriber -> {
-            Request request = new Request.Builder()
+        return bindWithUtils(Observable.<Integer>unsafeCreate((Subscriber<? super Integer> subscriber) -> {
+            final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();
 
             String responseBody = null;
             try {
-                Response response = mOkHttpClient.newCall(request).execute();
-                ResponseBody body = response.body();
+                final Response response = mOkHttpClient.newCall(request).execute();
+                final ResponseBody body = response.body();
                 if (body != null) {
                     responseBody = body.string();
                 } else {
                     subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection)));
                 return;
             }
             try {
-                Document doc = Jsoup.parse(responseBody);
+                final Document doc = Jsoup.parse(responseBody);
 
                 //get num of pages
-                Element spanWithNumber = doc.getElementsByClass("pager-no").first();
-                String text = spanWithNumber.text();
-                Integer numOfPages = Integer.valueOf(text.substring(text.lastIndexOf(" ") + 1));
+                final Element spanWithNumber = doc.getElementsByClass("pager-no").first();
+                final String text = spanWithNumber.text();
+                final Integer numOfPages = Integer.valueOf(text.substring(text.lastIndexOf(" ") + 1));
 
                 subscriber.onNext(numOfPages);
                 subscriber.onCompleted();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
         }));
     }
 
-    public Observable<List<Article>> getRecentArticlesForOffset(int offset) {
-        int page = offset / mConstantValues.getNumOfArticlesOnRecentPage() + 1/*as pages are not zero based*/;
+    public Observable<List<Article>> getRecentArticlesForOffset(final int offset) {
+        final int page = offset / mConstantValues.getNumOfArticlesOnRecentPage() + 1/*as pages are not zero based*/;
         return getRecentArticlesForPage(page);
     }
 
-    public Observable<List<Article>> getRecentArticlesForPage(int page) {
+    public Observable<List<Article>> getRecentArticlesForPage(final int page) {
         return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
-            Request request = new Request.Builder()
+            final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/" + page)
                     .build();
 
-            String responseBody;
+            final String responseBody;
             try {
-                Response response = mOkHttpClient.newCall(request).execute();
-                ResponseBody body = response.body();
+                final Response response = mOkHttpClient.newCall(request).execute();
+                final ResponseBody body = response.body();
                 if (body != null) {
                     responseBody = body.string();
                 } else {
                     subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection)));
                 return;
             }
             try {
-                Document doc = Jsoup.parse(responseBody);
+                final Document doc = Jsoup.parse(responseBody);
 
-                List<Article> articles = parseForRecentArticles(doc);
+                final List<Article> articles = parseForRecentArticles(doc);
 
                 subscriber.onNext(articles);
                 subscriber.onCompleted();
@@ -248,40 +259,40 @@ public class ApiClient implements ApiClientModel<Article> {
         }));
     }
 
-    protected List<Article> parseForRecentArticles(Document doc) throws ScpParseException {
-        Element pageContent = doc.getElementsByClass("wiki-content-table").first();
+    protected List<Article> parseForRecentArticles(final Document doc) throws ScpParseException {
+        final Element pageContent = doc.getElementsByClass("wiki-content-table").first();
         if (pageContent == null) {
             throw new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse));
         }
 
-        List<Article> articles = new ArrayList<>();
-        Elements listOfElements = pageContent.getElementsByTag("tr");
+        final List<Article> articles = new ArrayList<>();
+        final Elements listOfElements = pageContent.getElementsByTag("tr");
         for (int i = 1/*start from 1 as first row is tables geader*/; i < listOfElements.size(); i++) {
-            Element tableRow = listOfElements.get(i);
-            Elements listOfTd = tableRow.getElementsByTag("td");
+            final Element tableRow = listOfElements.get(i);
+            final Elements listOfTd = tableRow.getElementsByTag("td");
             //title and url
-            Element firstTd = listOfTd.first();
-            Element tagA = firstTd.getElementsByTag("a").first();
-            String title = tagA.text();
-            String url = mConstantValues.getBaseApiUrl() + tagA.attr("href");
+            final Element firstTd = listOfTd.first();
+            final Element tagA = firstTd.getElementsByTag("a").first();
+            final String title = tagA.text();
+            final String url = mConstantValues.getBaseApiUrl() + tagA.attr("href");
             //rating
-            Element ratingNode = listOfTd.get(1);
-            int rating = Integer.parseInt(ratingNode.text());
+            final Element ratingNode = listOfTd.get(1);
+            final int rating = Integer.parseInt(ratingNode.text());
             //author
-            Element spanWithAuthor = listOfTd.get(2)
+            final Element spanWithAuthor = listOfTd.get(2)
                     .getElementsByAttributeValueContaining("class", "printuser").first();
-            String authorName = spanWithAuthor.text();
-            Element authorUrlNode = spanWithAuthor.getElementsByTag("a").first();
-            String authorUrl = authorUrlNode != null ? authorUrlNode.attr("href") : null;
+            final String authorName = spanWithAuthor.text();
+            final Element authorUrlNode = spanWithAuthor.getElementsByTag("a").first();
+            final String authorUrl = authorUrlNode != null ? authorUrlNode.attr("href") : null;
 
             //createdDate
-            Element createdDateNode = listOfTd.get(3);
-            String createdDate = createdDateNode.text().trim();
+            final Element createdDateNode = listOfTd.get(3);
+            final String createdDate = createdDateNode.text().trim();
             //updatedDate
-            Element updatedDateNode = listOfTd.get(4);
-            String updatedDate = updatedDateNode.text().trim();
+            final Element updatedDateNode = listOfTd.get(4);
+            final String updatedDate = updatedDateNode.text().trim();
 
-            Article article = new Article();
+            final Article article = new Article();
             article.title = title;
             article.url = url.trim();
             article.rating = rating;
@@ -295,32 +306,32 @@ public class ApiClient implements ApiClientModel<Article> {
         return articles;
     }
 
-    public Observable<List<Article>> getRatedArticles(int offset) {
+    public Observable<List<Article>> getRatedArticles(final int offset) {
         return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
-            int page = offset / mConstantValues.getNumOfArticlesOnRatedPage() + 1/*as pages are not zero based*/;
+            final int page = offset / mConstantValues.getNumOfArticlesOnRatedPage() + 1/*as pages are not zero based*/;
 
-            Request request = new Request.Builder()
+            final Request request = new Request.Builder()
                     .url(mConstantValues.getMostRated() + "/p/" + page)
                     .build();
 
-            String responseBody;
+            final String responseBody;
             try {
-                Response response = mOkHttpClient.newCall(request).execute();
-                ResponseBody body = response.body();
+                final Response response = mOkHttpClient.newCall(request).execute();
+                final ResponseBody body = response.body();
                 if (body != null) {
                     responseBody = body.string();
                 } else {
                     subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection)));
                 return;
             }
             try {
-                Document doc = Jsoup.parse(responseBody);
+                final Document doc = Jsoup.parse(responseBody);
 
-                List<Article> articles = parseForRatedArticles(doc);
+                final List<Article> articles = parseForRatedArticles(doc);
 
                 subscriber.onNext(articles);
                 subscriber.onCompleted();
@@ -331,31 +342,31 @@ public class ApiClient implements ApiClientModel<Article> {
         }));
     }
 
-    protected List<Article> parseForRatedArticles(Document doc) throws ScpParseException {
-        Element pageContent = doc.getElementById("page-content");
+    protected List<Article> parseForRatedArticles(final Document doc) throws ScpParseException {
+        final Element pageContent = doc.getElementById("page-content");
         if (pageContent == null) {
             throw new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse));
         }
-        Element listPagesBox = pageContent.getElementsByClass("list-pages-box").first();
+        final Element listPagesBox = pageContent.getElementsByClass("list-pages-box").first();
         if (listPagesBox == null) {
             throw new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse));
         }
 
-        List<Article> articles = new ArrayList<>();
-        List<Element> listOfElements = listPagesBox.getElementsByClass("list-pages-item");
-        for (Element element : listOfElements) {
+        final List<Article> articles = new ArrayList<>();
+        final List<Element> listOfElements = listPagesBox.getElementsByClass("list-pages-item");
+        for (final Element element : listOfElements) {
 //                    Timber.d("element: %s", element);
-            Element tagP = element.getElementsByTag("p").first();
-            Element tagA = tagP.getElementsByTag("a").first();
-            String title = tagP.text().substring(0, tagP.text().indexOf(", рейтинг"));
-            String url = mConstantValues.getBaseApiUrl() + tagA.attr("href");
+            final Element tagP = element.getElementsByTag("p").first();
+            final Element tagA = tagP.getElementsByTag("a").first();
+            final String title = tagP.text().substring(0, tagP.text().indexOf(", рейтинг"));
+            final String url = mConstantValues.getBaseApiUrl() + tagA.attr("href");
             //remove a tag to leave only text with rating
             tagA.remove();
             tagP.text(tagP.text().replace(", рейтинг ", ""));
             tagP.text(tagP.text().substring(0, tagP.text().length() - 1));
-            int rating = Integer.parseInt(tagP.text());
+            final int rating = Integer.parseInt(tagP.text());
 
-            Article article = new Article();
+            final Article article = new Article();
             article.title = title;
             article.url = url;
             article.rating = rating;
@@ -365,52 +376,51 @@ public class ApiClient implements ApiClientModel<Article> {
         return articles;
     }
 
-    public Observable<List<Article>> getSearchArticles(int offset, String searchQuery) {
+    public Observable<List<Article>> getSearchArticles(final int offset, final String searchQuery) {
         return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
-            int page = offset / mConstantValues.getNumOfArticlesOnSearchPage() + 1/*as pages are not zero based*/;
+            final int page = offset / mConstantValues.getNumOfArticlesOnSearchPage() + 1/*as pages are not zero based*/;
 
-            Request request = new Request.Builder()
+            final Request request = new Request.Builder()
                     .url(mConstantValues.getBaseApiUrl() + String.format(Locale.ENGLISH, mConstantValues.getSearchSiteUrl(), searchQuery, page))
                     .build();
 
-            String responseBody;
+            final String responseBody;
             try {
-                Response response = mOkHttpClient.newCall(request).execute();
-                ResponseBody body = response.body();
+                final Response response = mOkHttpClient.newCall(request).execute();
+                final ResponseBody body = response.body();
                 if (body != null) {
                     responseBody = body.string();
                 } else {
                     subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection)));
                 return;
             }
             try {
-                Document doc = Jsoup.parse(responseBody);
-                Element pageContent = doc.getElementById("page-content");
+                final Document doc = Jsoup.parse(responseBody);
+                final Element pageContent = doc.getElementById("page-content");
                 if (pageContent == null) {
                     subscriber.onError(new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
                 }
 
-                List<Article> articles = new ArrayList<>();
-
-                Element searchResults = pageContent.getElementsByClass("search-results").first();
-                Elements items = searchResults.children();
-                if (items.size() == 0) {
+                final Element searchResults = pageContent.getElementsByClass("search-results").first();
+                final Elements items = searchResults.children();
+                if (items.isEmpty()) {
                     subscriber.onError(new ScpNoSearchResultsException(
                             BaseApplication.getAppInstance().getString(R.string.error_no_search_results)));
                 } else {
-                    for (Element item : items) {
-                        Element titleA = item.getElementsByClass("title").first().getElementsByTag("a").first();
-                        String title = titleA.html();
-                        String url = titleA.attr("href");
-                        Element previewDiv = item.getElementsByClass("preview").first();
-                        String preview = previewDiv.html();
+                    final List<Article> articles = new ArrayList<>();
+                    for (final Element item : items) {
+                        final Element titleA = item.getElementsByClass("title").first().getElementsByTag("a").first();
+                        final String title = titleA.html();
+                        final String url = titleA.attr("href");
+                        final Element previewDiv = item.getElementsByClass("preview").first();
+                        final String preview = previewDiv.html();
 
-                        Article article = new Article();
+                        final Article article = new Article();
 
                         article.title = title;
                         article.url = url;
@@ -421,37 +431,37 @@ public class ApiClient implements ApiClientModel<Article> {
                     subscriber.onNext(articles);
                     subscriber.onCompleted();
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
         }));
     }
 
-    public Observable<List<Article>> getObjectsArticles(String sObjectsLink) {
+    public Observable<List<Article>> getObjectsArticles(final String sObjectsLink) {
         return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
-            Request request = new Request.Builder()
+            final Request request = new Request.Builder()
                     .url(sObjectsLink)
                     .build();
 
-            String responseBody = null;
+            final String responseBody;
             try {
-                Response response = mOkHttpClient.newCall(request).execute();
-                ResponseBody body = response.body();
+                final Response response = mOkHttpClient.newCall(request).execute();
+                final ResponseBody body = response.body();
                 if (body != null) {
                     responseBody = body.string();
                 } else {
                     subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection)));
                 return;
             }
             try {
-                Document doc = Jsoup.parse(responseBody);
+                final Document doc = Jsoup.parse(responseBody);
 
-                List<Article> articles = parseForObjectArticles(doc);
+                final List<Article> articles = parseForObjectArticles(doc);
 
                 subscriber.onNext(articles);
                 subscriber.onCompleted();
@@ -463,33 +473,32 @@ public class ApiClient implements ApiClientModel<Article> {
     }
 
     protected List<Article> parseForObjectArticles(Document doc) throws ScpParseException {
-        Element pageContent = doc.getElementById("page-content");
+        final Element pageContent = doc.getElementById("page-content");
         if (pageContent == null) {
             throw new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse));
         }
 
-        List<Article> articles = new ArrayList<>();
         //parse
-        Element listPagesBox = pageContent.getElementsByClass("list-pages-box").first();
+        final Element listPagesBox = pageContent.getElementsByClass("list-pages-box").first();
         if (listPagesBox != null) {
             listPagesBox.remove();
         }
-        Element collapsibleBlock = pageContent.getElementsByClass("collapsible-block").first();
+        final Element collapsibleBlock = pageContent.getElementsByClass("collapsible-block").first();
         if (collapsibleBlock != null) {
             collapsibleBlock.remove();
         }
-        Element table = pageContent.getElementsByTag("table").first();
+        final Element table = pageContent.getElementsByTag("table").first();
         if (table != null) {
             table.remove();
         }
-        Element h2 = doc.getElementById("toc0");
+        final Element h2 = doc.getElementById("toc0");
         if (h2 != null) {
             h2.remove();
         }
 
         //now we will remove all html code before tag h2,with id toc1
         String allHtml = pageContent.html();
-        int indexOfh2WithIdToc1 = allHtml.indexOf("<h2 id=\"toc1\">");
+        final int indexOfh2WithIdToc1 = allHtml.indexOf("<h2 id=\"toc1\">");
         int indexOfhr = allHtml.indexOf("<hr>");
         //for other objects filials there is no HR tag at the end...
 
@@ -503,28 +512,28 @@ public class ApiClient implements ApiClientModel<Article> {
 
         doc = Jsoup.parse(allHtml);
 
-        Element h2withIdToc1 = doc.getElementById("toc1");
+        final Element h2withIdToc1 = doc.getElementById("toc1");
         h2withIdToc1.remove();
 
-        Elements allh2Tags = doc.getElementsByTag("h2");
-        for (Element h2Tag : allh2Tags) {
-            Element brTag = new Element(Tag.valueOf("br"), "");
+        final Elements allh2Tags = doc.getElementsByTag("h2");
+        for (final Element h2Tag : allh2Tags) {
+            final Element brTag = new Element(Tag.valueOf("br"), "");
             h2Tag.replaceWith(brTag);
         }
 
-        String allArticles = doc.getElementsByTag("body").first().html();
-        String[] arrayOfArticles = allArticles.split("<br>");
-        for (String arrayItem : arrayOfArticles) {
+        final String allArticles = doc.getElementsByTag("body").first().html();
+        final String[] arrayOfArticles = allArticles.split("<br>");
+        final List<Article> articles = new ArrayList<>();
+        for (final String arrayItem : arrayOfArticles) {
             doc = Jsoup.parse(arrayItem);
             //type of object
-            String imageURL = doc.getElementsByTag("img").first().attr("src");
-            @Article.ObjectType
-            String type = getObjectTypeByImageUrl(imageURL);
+            final String imageURL = doc.getElementsByTag("img").first().attr("src");
+            @Article.ObjectType final String type = getObjectTypeByImageUrl(imageURL);
 
-            String url = mConstantValues.getBaseApiUrl() + doc.getElementsByTag("a").first().attr("href");
-            String title = doc.text();
+            final String url = mConstantValues.getBaseApiUrl() + doc.getElementsByTag("a").first().attr("href");
+            final String title = doc.text();
 
-            Article article = new Article();
+            final Article article = new Article();
 
             article.url = url;
             article.title = title;
@@ -535,34 +544,38 @@ public class ApiClient implements ApiClientModel<Article> {
         return articles;
     }
 
+    /**
+     * loads article sync
+     */
     @Nullable
-    public Article getArticleFromApi(String url) throws Exception, ScpParseException {
-        Request request = new Request.Builder()
+    public Article getArticleFromApi(final String url) throws Exception, ScpParseException {
+        final Request request = new Request.Builder()
                 .url(url)
                 .build();
 
-        String responseBody;
+        final String responseBody;
         try {
-            Response response = mOkHttpClient.newCall(request).execute();
-            ResponseBody body = response.body();
+            final Response response = mOkHttpClient.newCall(request).execute();
+            final ResponseBody body = response.body();
             if (body != null) {
                 responseBody = body.string();
             } else {
                 throw new IOException(BaseApplication.getAppInstance().getString(R.string.error_parse));
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection));
         }
 
         try {
-            Document doc = Jsoup.parse(responseBody);
-            Element pageContent = getArticlePageContentTag(doc);
+            final Document doc = Jsoup.parse(responseBody);
+            final Element pageContent = getArticlePageContentTag(doc);
             if (pageContent == null) {
+                Timber.wtf("pageContent is NULL for: %s", url);
                 throw new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse));
             }
-            Element p404 = pageContent.getElementById("404-message");
+            final Element p404 = pageContent.getElementById("404-message");
             if (p404 != null) {
-                Article article = new Article();
+                final Article article = new Article();
                 article.url = url;
                 article.text = p404.outerHtml();
                 article.title = "404";
@@ -570,98 +583,122 @@ public class ApiClient implements ApiClientModel<Article> {
                 return article;
             }
             //замена ссылок в сносках
-            Elements footnoterefs = pageContent.getElementsByClass("footnoteref");
-            for (Element snoska : footnoterefs) {
-                Element aTag = snoska.getElementsByTag("a").first();
-                StringBuilder digits = new StringBuilder();
-                for (char c : aTag.id().toCharArray()) {
+            final Elements footnoterefs = pageContent.getElementsByClass("footnoteref");
+            for (final Element snoska : footnoterefs) {
+                final Element aTag = snoska.getElementsByTag("a").first();
+                final StringBuilder digits = new StringBuilder();
+                for (final char c : aTag.id().toCharArray()) {
                     if (TextUtils.isDigitsOnly(String.valueOf(c))) {
                         digits.append(String.valueOf(c));
                     }
                 }
                 aTag.attr("href", "scp://" + digits.toString());
             }
-            Elements footnoterefsFooter = pageContent.getElementsByClass("footnote-footer");
-            for (Element snoska : footnoterefsFooter) {
-                Element aTag = snoska.getElementsByTag("a").first();
+            final Elements footnoterefsFooter = pageContent.getElementsByClass("footnote-footer");
+            for (final Element snoska : footnoterefsFooter) {
+                final Element aTag = snoska.getElementsByTag("a").first();
                 snoska.prependText(aTag.text());
                 aTag.remove();
 //                    aTag.replaceWith(new Element(Tag.valueOf("pizda"), aTag.text()));
             }
 
             //замена ссылок в библиографии
-            Elements bibliographi = pageContent.getElementsByClass("bibcite");
-            for (Element snoska : bibliographi) {
-                Element aTag = snoska.getElementsByTag("a").first();
-                String onclickAttr = aTag.attr("onclick");
+            final Elements bibliographi = pageContent.getElementsByClass("bibcite");
+            for (final Element snoska : bibliographi) {
+                final Element aTag = snoska.getElementsByTag("a").first();
+                final String onclickAttr = aTag.attr("onclick");
 
-                String id = onclickAttr.substring(onclickAttr.indexOf("bibitem-"), onclickAttr.lastIndexOf("'"));
+                final String id = onclickAttr.substring(onclickAttr.indexOf("bibitem-"), onclickAttr.lastIndexOf("'"));
                 aTag.attr("href", id);
             }
             //remove rating bar
             int rating = 0;
-            Element rateDiv = pageContent.getElementsByClass("page-rate-widget-box").first();
+            final Element rateDiv = pageContent.getElementsByClass("page-rate-widget-box").first();
             if (rateDiv != null) {
-                Element spanWithRating = rateDiv.getElementsByClass("rate-points").first();
+                final Element spanWithRating = rateDiv.getElementsByClass("rate-points").first();
                 if (spanWithRating != null) {
-                    Element ratingSpan = spanWithRating.getElementsByClass("number").first();
+                    final Element ratingSpan = spanWithRating.getElementsByClass("number").first();
 //                    Timber.d("ratingSpan: %s", ratingSpan);
                     if (ratingSpan != null) {
                         try {
                             rating = Integer.parseInt(ratingSpan.text().substring(1, ratingSpan.text().length()));
 //                            Timber.d("rating: %s", rating);
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             Timber.e(e);
                         }
                     }
                 }
 
-                Element span1 = rateDiv.getElementsByClass("rateup").first();
+                final Element span1 = rateDiv.getElementsByClass("rateup").first();
                 span1.remove();
-                Element span2 = rateDiv.getElementsByClass("ratedown").first();
+                final Element span2 = rateDiv.getElementsByClass("ratedown").first();
                 span2.remove();
-                Element span3 = rateDiv.getElementsByClass("cancel").first();
+                final Element span3 = rateDiv.getElementsByClass("cancel").first();
                 span3.remove();
 
-                Elements heritageDiv = rateDiv.parent().getElementsByClass("heritage-emblem");
+                final Elements heritageDiv = rateDiv.parent().getElementsByClass("heritage-emblem");
                 if (heritageDiv != null && !heritageDiv.isEmpty()) {
                     heritageDiv.first().remove();
                 }
             }
             //remove something more
-            Element svernut = pageContent.getElementById("toc-action-bar");
+            final Element svernut = pageContent.getElementById("toc-action-bar");
             if (svernut != null) {
                 svernut.remove();
             }
-            Elements script = pageContent.getElementsByTag("script");
-            for (Element element : script) {
+            final Elements script = pageContent.getElementsByTag("script");
+            for (final Element element : script) {
                 element.remove();
             }
+            //remove audio link from DE version
+            final Elements audio = pageContent.getElementsByClass("audio-img-block");
+            if (audio != null) {
+                audio.remove();
+            }
+            final Elements audioContent = pageContent.getElementsByClass("audio-block");
+            if (audioContent != null) {
+                audioContent.remove();
+            }
+            final Elements creditRate = pageContent.getElementsByClass("creditRate");
+            if (creditRate != null) {
+                creditRate.remove();
+            }
+
+            final Element uCreditView = pageContent.getElementById("u-credit-view");
+            if (uCreditView != null) {
+                uCreditView.remove();
+            }
+            final Element uCreditOtherwise = pageContent.getElementById("u-credit-otherwise");
+            if (uCreditOtherwise != null) {
+                uCreditOtherwise.remove();
+            }
+            //remove audio link from DE version END
+
             //replace all spans with strike-through with <s>
-            Elements spansWithStrike = pageContent.select("span[style=text-decoration: line-through;]");
-            for (Element element : spansWithStrike) {
+            final Elements spansWithStrike = pageContent.select("span[style=text-decoration: line-through;]");
+            for (final Element element : spansWithStrike) {
 //                    Timber.d("element: %s", element);
                 element.tagName("s");
-                for (Attribute attribute : element.attributes()) {
+                for (final Attribute attribute : element.attributes()) {
                     element.removeAttr(attribute.getKey());
                 }
 //                    Timber.d("element refactored: %s", element);
             }
             //get title
-            Element titleEl = doc.getElementById("page-title");
+            final Element titleEl = doc.getElementById("page-title");
             String title = "";
             if (titleEl != null) {
                 title = titleEl.text();
             }
-            Element upperDivWithLink = doc.getElementById("breadcrumbs");
+            final Element upperDivWithLink = doc.getElementById("breadcrumbs");
             if (upperDivWithLink != null) {
                 pageContent.prependChild(upperDivWithLink);
             }
             ParseHtmlUtils.parseImgsTags(pageContent);
 
             //put all text which is not in any tag in div tag
-            for (Element element : pageContent.children()) {
-                Node nextSibling = element.nextSibling();
+            for (final Element element : pageContent.children()) {
+                final Node nextSibling = element.nextSibling();
 //                    Timber.d("child: ___%s___", nextSibling);
 //                    Timber.d("nextSibling.nodeName(): %s", nextSibling.nodeName());
                 if (nextSibling != null && !nextSibling.toString().equals(" ") && nextSibling.nodeName().equals("#text")) {
@@ -670,7 +707,7 @@ public class ApiClient implements ApiClientModel<Article> {
 
                 //also fix scp-3000, where image and spoiler are in div tag, fucking shit! Web monkeys, ARGH!!!
                 if (!element.children().isEmpty() && element.children().size() == 2
-                        && element.child(0).tagName().equals("img") && element.child(1).className().equals("collapsible-block")) {
+                    && element.child(0).tagName().equals("img") && element.child(1).className().equals("collapsible-block")) {
                     element.before(element.childNode(0));
                     element.after(element.childNode(1));
                     element.remove();
@@ -678,30 +715,30 @@ public class ApiClient implements ApiClientModel<Article> {
             }
 
             //replace styles with underline and strike
-            Elements spans = pageContent.getElementsByTag("span");
-            for (Element element : spans) {
+            final Elements spans = pageContent.getElementsByTag("span");
+            for (final Element element : spans) {
                 //<span style="text-decoration: underline;">PLEASE</span>
                 if (element.hasAttr("style") && element.attr("style").equals("text-decoration: underline;")) {
 //                    Timber.d("fix underline span: %s", element.outerHtml());
-                    Element uTag = new Element(Tag.valueOf("u"), "").text(element.text());
+                    final Element uTag = new Element(Tag.valueOf("u"), "").text(element.text());
                     element.replaceWith(uTag);
 //                    Timber.d("fixED underline span: %s", uTag.outerHtml());
                 }
                 //<span style="text-decoration: line-through;">условия содержания.</span>
                 if (element.hasAttr("style") && element.attr("style").equals("text-decoration: line-through;")) {
 //                    Timber.d("fix strike span");
-                    Element sTag = new Element(Tag.valueOf("s"), "");
+                    final Element sTag = new Element(Tag.valueOf("s"), "");
                     element.replaceWith(sTag);
                 }
             }
 
             //search for relative urls to add domain
-            for (Element a : pageContent.getElementsByTag("a")) {
+            for (final Element a : pageContent.getElementsByTag("a")) {
                 //replace all links to not translated articles
                 if (a.className().equals("newpage")) {
                     a.attr("href", Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL
-                            + Constants.Api.NOT_TRANSLATED_ARTICLE_URL_DELIMITER
-                            + a.attr("href")
+                                   + Constants.Api.NOT_TRANSLATED_ARTICLE_URL_DELIMITER
+                                   + a.attr("href")
                     );
                 } else if (a.attr("href").startsWith("/")) {
                     a.attr("href", mConstantValues.getBaseApiUrl() + a.attr("href"));
@@ -709,11 +746,11 @@ public class ApiClient implements ApiClientModel<Article> {
             }
 
             //extract tags
-            RealmList<ArticleTag> articleTags = new RealmList<>();
-            Element tagsContainer = doc.getElementsByClass("page-tags").first();
+            final RealmList<ArticleTag> articleTags = new RealmList<>();
+            final Element tagsContainer = doc.getElementsByClass("page-tags").first();
 //                Timber.d("tagsContainer: %s", tagsContainer);
             if (tagsContainer != null) {
-                for (Element a : tagsContainer./*getElementsByTag("span").first().*/getElementsByTag("a")) {
+                for (final Element a : tagsContainer./*getElementsByTag("span").first().*/getElementsByTag("a")) {
                     articleTags.add(new ArticleTag(a.text()));
 //                        Timber.d("tag: %s", articleTags.get(articleTags.size() - 1));
                 }
@@ -721,34 +758,48 @@ public class ApiClient implements ApiClientModel<Article> {
 
             //search for images and add it to separate field to be able to show it in arts lists
             RealmList<RealmString> imgsUrls = null;
-            Elements imgsOfArticle = pageContent.getElementsByTag("img");
+            final Elements imgsOfArticle = pageContent.getElementsByTag("img");
             if (!imgsOfArticle.isEmpty()) {
                 imgsUrls = new RealmList<>();
-                for (Element img : imgsOfArticle) {
+                for (final Element img : imgsOfArticle) {
                     imgsUrls.add(new RealmString(img.attr("src")));
+                }
+            }
+
+            //search for inner articles
+            RealmList<RealmString> innerArticlesUrls = null;
+            final Elements innerATags = pageContent.getElementsByTag("a");
+            if (!innerATags.isEmpty()) {
+                innerArticlesUrls = new RealmList<>();
+                for (final Element a : innerATags) {
+                    final String innerUrl = a.attr("href");
+                    if (SetTextViewHTML.LinkType.getLinkType(innerUrl, mConstantValues) == SetTextViewHTML.LinkType.INNER) {
+                        innerArticlesUrls.add(new RealmString(SetTextViewHTML.LinkType.getFormattedUrl(innerUrl, mConstantValues)));
+                    }
                 }
             }
 
             //type parsing TODO fucking unformatted info!
 
             //this we store as article text
-            String rawText = pageContent.toString();
+            final String rawText = pageContent.toString();
 //            Timber.d("rawText: %s", rawText);
 
             //articles textParts
-            RealmList<RealmString> textParts = new RealmList<>();
-            RealmList<RealmString> textPartsTypes = new RealmList<>();
-
-            List<String> rawTextParts = ParseHtmlUtils.getArticlesTextParts(rawText);
-            for (String value : rawTextParts) {
+            final RealmList<RealmString> textParts = new RealmList<>();
+            final List<String> rawTextParts = ParseHtmlUtils.getArticlesTextParts(rawText);
+            for (final String value : rawTextParts) {
                 textParts.add(new RealmString(value));
             }
-            for (@ParseHtmlUtils.TextType String value : ParseHtmlUtils.getListOfTextTypes(rawTextParts)) {
+            final RealmList<RealmString> textPartsTypes = new RealmList<>();
+            for (@ParseHtmlUtils.TextType final String value : ParseHtmlUtils.getListOfTextTypes(rawTextParts)) {
                 textPartsTypes.add(new RealmString(value));
             }
 
+            final String commentsUrl = mConstantValues.getBaseApiUrl() + doc.getElementById("discuss-button").attr("href");
+
             //finally fill article info
-            Article article = new Article();
+            final Article article = new Article();
 
             article.url = url;
             article.text = rawText;
@@ -766,6 +817,8 @@ public class ApiClient implements ApiClientModel<Article> {
             article.textPartsTypes = textPartsTypes;
             //images
             article.imagesUrls = imgsUrls;
+            //inner articles
+            article.innerArticlesUrls = innerArticlesUrls;
             //tags
             article.tags = articleTags;
             //rating
@@ -773,8 +826,11 @@ public class ApiClient implements ApiClientModel<Article> {
                 article.rating = rating;
             }
 
+            Timber.d("commentsUrl: %s", commentsUrl);
+            article.commentsUrl = commentsUrl;
+
             return article;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Timber.e(e);
             throw e;
         }
@@ -785,11 +841,11 @@ public class ApiClient implements ApiClientModel<Article> {
      *
      * @return Element with article content
      */
-    protected Element getArticlePageContentTag(Document doc) {
+    protected Element getArticlePageContentTag(final Document doc) {
         return doc.getElementById("page-content");
     }
 
-    public Observable<Article> getArticle(String url) {
+    public Observable<Article> getArticle(final String url) {
         Timber.d("start download article: %s", url);
         return bindWithUtils(Observable.<Article>unsafeCreate(subscriber -> {
             try {
@@ -801,77 +857,91 @@ public class ApiClient implements ApiClientModel<Article> {
             }
         }))
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .map(article -> {
                     //download all images
-                    if (article.imagesUrls != null) {
-                        for (RealmString realmString : article.imagesUrls) {
-//                            Timber.d("load image by Glide: %s", realmString.val);
-                            Glide.with(BaseApplication.getAppInstance())
-                                    .load(realmString.val)
-                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                    .listener(new RequestListener<String, GlideDrawable>() {
-                                        @Override
-                                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                                            Timber.e("error while preload image by Glide");
-                                            return false;
-                                        }
-
-                                        @Override
-                                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-//                                            Timber.d("onResourceReady: %s/%s", resource.getIntrinsicWidth(), resource.getIntrinsicHeight());
-                                            return false;
-                                        }
-                                    })
-                                    .preload();
-                        }
-                    }
+                    downloadImagesOnDisk(article);
 
                     return article;
                 })
                 .onErrorResumeNext(throwable -> Observable.error(new ScpException(throwable, url)));
     }
 
-    public Observable<List<Article>> getMaterialsArticles(String objectsLink) {
+    /**
+     * downloads all article images sync
+     */
+    public void downloadImagesOnDisk(final Article article) {
+        if (article.imagesUrls != null) {
+            final Context context = BaseApplication.getAppInstance();
+            for (final RealmString realmString : article.imagesUrls) {
+                if (mPreferencesManager.isImagesCacheEnabled()) {
+                    try {
+                        final Bitmap bitmap = Glide.with(context)
+                                .load(realmString.val)
+                                .asBitmap()
+                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                                .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                                .get();
+
+                        final File f = new File(context.getFilesDir(), "/image");
+                        f.mkdirs();
+                        final File imageFile = new File(f, formatUrlToFileName(realmString.val));
+                        final FileOutputStream ostream = new FileOutputStream(imageFile);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 10, ostream);
+                        ostream.close();
+                    } catch (InterruptedException | IOException | ExecutionException e) {
+                        Timber.e(e);
+                    }
+                } else {
+                    Glide.with(context)
+                            .load(realmString.val)
+                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                            .preload();
+                }
+            }
+        }
+    }
+
+    public Observable<List<Article>> getMaterialsArticles(final String objectsLink) {
         return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
-            Request request = new Request.Builder()
+            final Request request = new Request.Builder()
                     .url(objectsLink)
                     .build();
 
-            String responseBody;
+            final String responseBody;
             try {
-                Response response = mOkHttpClient.newCall(request).execute();
-                ResponseBody body = response.body();
+                final Response response = mOkHttpClient.newCall(request).execute();
+                final ResponseBody body = response.body();
                 if (body != null) {
                     responseBody = body.string();
                 } else {
                     subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection)));
                 return;
             }
             try {
-                Document doc = Jsoup.parse(responseBody);
-                Element pageContent = doc.getElementById("page-content");
+                final Document doc = Jsoup.parse(responseBody);
+                final Element pageContent = doc.getElementById("page-content");
                 if (pageContent == null) {
                     subscriber.onError(new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
                 }
 
-                List<Article> articles = new ArrayList<>();
+                final List<Article> articles = new ArrayList<>();
                 //parse
-                List<Element> listOfElements = pageContent.getElementsByTag("ul");
+                final List<Element> listOfElements = pageContent.getElementsByTag("ul");
                 for (int i = 0; i < listOfElements.size(); i++) {
-                    ArrayList<Element> listOfLi = listOfElements.get(i).getElementsByTag("li");
+                    final List<Element> listOfLi = listOfElements.get(i).getElementsByTag("li");
                     for (int u = 0; u < listOfLi.size(); u++) {
                         String url = listOfLi.get(u).getElementsByTag("a").first().attr("href");
                         if (!url.startsWith("http")) {
                             url = mConstantValues.getBaseApiUrl() + url;
                         }
-                        String text = listOfLi.get(u).text();
-                        Article article = new Article();
+                        final String text = listOfLi.get(u).text();
+                        final Article article = new Article();
                         article.title = text;
                         article.url = url;
                         articles.add(article);
@@ -880,7 +950,7 @@ public class ApiClient implements ApiClientModel<Article> {
                 //parse end
                 subscriber.onNext(articles);
                 subscriber.onCompleted();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
@@ -889,27 +959,27 @@ public class ApiClient implements ApiClientModel<Article> {
 
     public Observable<List<Article>> getMaterialsArchiveArticles() {
         return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
-            Request request = new Request.Builder()
+            final Request request = new Request.Builder()
                     .url(mConstantValues.getArchive())
                     .build();
 
-            String responseBody;
+            final String responseBody;
             try {
-                Response response = mOkHttpClient.newCall(request).execute();
-                ResponseBody body = response.body();
+                final Response response = mOkHttpClient.newCall(request).execute();
+                final ResponseBody body = response.body();
                 if (body != null) {
                     responseBody = body.string();
                 } else {
                     subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection)));
                 return;
             }
             try {
                 Document doc = Jsoup.parse(responseBody);
-                Element pageContent = doc.getElementById("page-content");
+                final Element pageContent = doc.getElementById("page-content");
                 if (pageContent == null) {
                     subscriber.onError(new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
@@ -917,39 +987,38 @@ public class ApiClient implements ApiClientModel<Article> {
 
                 //now we will remove all html code before tag h2,with id toc1
                 String allHtml = pageContent.html();
-                int indexOfh2WithIdToc1 = allHtml.indexOf("<h2 id=\"toc1\">");
-                int indexOfh2WithIdToc5 = allHtml.indexOf("<h2 id=\"toc5\">");
+                final int indexOfh2WithIdToc1 = allHtml.indexOf("<h2 id=\"toc1\">");
+                final int indexOfh2WithIdToc5 = allHtml.indexOf("<h2 id=\"toc5\">");
                 allHtml = allHtml.substring(indexOfh2WithIdToc1, indexOfh2WithIdToc5);
 
                 doc = Jsoup.parse(allHtml);
 
-                Element h2withIdToc1 = doc.getElementById("toc1");
+                final Element h2withIdToc1 = doc.getElementById("toc1");
                 h2withIdToc1.remove();
 
-                Elements allh2Tags = doc.getElementsByTag("h2");
-                for (Element h2Tag : allh2Tags) {
-                    Element brTag = new Element(Tag.valueOf("br"), "");
+                final Elements allh2Tags = doc.getElementsByTag("h2");
+                for (final Element h2Tag : allh2Tags) {
+                    final Element brTag = new Element(Tag.valueOf("br"), "");
                     h2Tag.replaceWith(brTag);
                 }
-                Elements allP = doc.getElementsByTag("p");
+                final Elements allP = doc.getElementsByTag("p");
                 allP.remove();
-                Elements allUl = doc.getElementsByTag("ul");
+                final Elements allUl = doc.getElementsByTag("ul");
                 allUl.remove();
 
-                List<Article> articles = new ArrayList<>();
+                final List<Article> articles = new ArrayList<>();
 
-                String allArticles = doc.getElementsByTag("body").first().html();
-                String[] arrayOfArticles = allArticles.split("<br>");
-                for (String arrayItem : arrayOfArticles) {
+                final String allArticles = doc.getElementsByTag("body").first().html();
+                final String[] arrayOfArticles = allArticles.split("<br>");
+                for (final String arrayItem : arrayOfArticles) {
                     doc = Jsoup.parse(arrayItem);
-                    String imageURL = doc.getElementsByTag("img").first().attr("src");
-                    String url = mConstantValues.getBaseApiUrl() + doc.getElementsByTag("a").first().attr("href");
-                    String title = doc.text();
+                    final String imageURL = doc.getElementsByTag("img").first().attr("src");
+                    final String url = mConstantValues.getBaseApiUrl() + doc.getElementsByTag("a").first().attr("href");
+                    final String title = doc.text();
 
-                    @Article.ObjectType
-                    String type = getObjectTypeByImageUrl(imageURL);
+                    @Article.ObjectType final String type = getObjectTypeByImageUrl(imageURL);
 
-                    Article article = new Article();
+                    final Article article = new Article();
                     article.url = url;
                     article.type = type;
                     article.title = title;
@@ -958,7 +1027,7 @@ public class ApiClient implements ApiClientModel<Article> {
                 //parse end
                 subscriber.onNext(articles);
                 subscriber.onCompleted();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
@@ -967,27 +1036,27 @@ public class ApiClient implements ApiClientModel<Article> {
 
     public Observable<List<Article>> getMaterialsJokesArticles() {
         return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
-            Request request = new Request.Builder()
+            final Request request = new Request.Builder()
                     .url(mConstantValues.getJokes())
                     .build();
 
-            String responseBody;
+            final String responseBody;
             try {
-                Response response = mOkHttpClient.newCall(request).execute();
-                ResponseBody body = response.body();
+                final Response response = mOkHttpClient.newCall(request).execute();
+                final ResponseBody body = response.body();
                 if (body != null) {
                     responseBody = body.string();
                 } else {
                     subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection)));
                 return;
             }
             try {
                 Document doc = Jsoup.parse(responseBody);
-                Element pageContent = doc.getElementById("page-content");
+                final Element pageContent = doc.getElementById("page-content");
                 if (pageContent == null) {
                     subscriber.onError(new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
@@ -995,39 +1064,38 @@ public class ApiClient implements ApiClientModel<Article> {
 
                 //now we will remove all html code before tag h2,with id toc1
                 String allHtml = pageContent.html();
-                int indexOfh2WithIdToc1 = allHtml.indexOf("<h2 id=\"toc1\">");
+                final int indexOfh2WithIdToc1 = allHtml.indexOf("<h2 id=\"toc1\">");
                 allHtml = allHtml.substring(indexOfh2WithIdToc1);
 
                 doc = Jsoup.parse(allHtml);
 
-                Element h2withIdToc1 = doc.getElementById("toc1");
+                final Element h2withIdToc1 = doc.getElementById("toc1");
                 h2withIdToc1.remove();
 
-                Elements allh2Tags = doc.getElementsByTag("h2");
-                for (Element h2Tag : allh2Tags) {
-                    Element brTag = new Element(Tag.valueOf("br"), "");
+                final Elements allh2Tags = doc.getElementsByTag("h2");
+                for (final Element h2Tag : allh2Tags) {
+                    final Element brTag = new Element(Tag.valueOf("br"), "");
                     h2Tag.replaceWith(brTag);
                 }
 
-                List<Article> articles = new ArrayList<>();
+                final List<Article> articles = new ArrayList<>();
 
-                String allArticles = doc.getElementsByTag("body").first().html();
-                String[] arrayOfArticles = allArticles.split("<br>");
-                for (String arrayItem : arrayOfArticles) {
+                final String allArticles = doc.getElementsByTag("body").first().html();
+                final String[] arrayOfArticles = allArticles.split("<br>");
+                for (final String arrayItem : arrayOfArticles) {
 //                    Timber.d("arrayItem: %s", arrayItem);
                     doc = Jsoup.parse(arrayItem);
                     String imageURL = null;
-                    Elements img = doc.getElementsByTag("img");
+                    final Elements img = doc.getElementsByTag("img");
                     if (img != null && !img.isEmpty()) {
                         imageURL = img.first().attr("src");
                     }
-                    String url = mConstantValues.getBaseApiUrl() + doc.getElementsByTag("a").first().attr("href");
-                    String title = doc.text();
+                    final String url = mConstantValues.getBaseApiUrl() + doc.getElementsByTag("a").first().attr("href");
+                    final String title = doc.text();
 
-                    @Article.ObjectType
-                    String type = imageURL != null ? getObjectTypeByImageUrl(imageURL) : Article.ObjectType.NONE;
+                    @Article.ObjectType final String type = imageURL != null ? getObjectTypeByImageUrl(imageURL) : Article.ObjectType.NONE;
 
-                    Article article = new Article();
+                    final Article article = new Article();
                     article.url = url;
                     article.type = type;
                     article.title = title;
@@ -1036,28 +1104,28 @@ public class ApiClient implements ApiClientModel<Article> {
                 //parse end
                 subscriber.onNext(articles);
                 subscriber.onCompleted();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
         }));
     }
 
-    public Observable<Boolean> joinVkGroup(String groupId) {
+    public Observable<Boolean> joinVkGroup(final String groupId) {
         Timber.d("joinVkGroup with groupId: %s", groupId);
         return bindWithUtils(Observable.<Boolean>unsafeCreate(subscriber -> {
-                    VKParameters parameters = VKParameters.from(
+                    final VKParameters parameters = VKParameters.from(
                             VKApiConst.GROUP_ID, groupId,
                             VKApiConst.ACCESS_TOKEN, VKAccessToken.currentToken(),
                             VKApiConst.VERSION, BuildConfig.VK_API_VERSION
                     );
 
-                    VKRequest vkRequest = VKApi.groups().join(parameters);
+                    final VKRequest vkRequest = VKApi.groups().join(parameters);
                     vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
                         @Override
-                        public void onComplete(VKResponse response) {
+                        public void onComplete(final VKResponse response) {
                             Timber.d("onComplete: %s", response.responseString);
-                            VkGroupJoinResponse vkGroupJoinResponse = mGson
+                            final VkGroupJoinResponse vkGroupJoinResponse = mGson
                                     .fromJson(response.responseString, VkGroupJoinResponse.class);
                             Timber.d("vkGroupJoinResponse: %s", vkGroupJoinResponse);
                             subscriber.onNext(vkGroupJoinResponse.response == 1);
@@ -1065,7 +1133,7 @@ public class ApiClient implements ApiClientModel<Article> {
                         }
 
                         @Override
-                        public void onError(VKError error) {
+                        public void onError(final VKError error) {
                             Timber.d("onError: %s", error);
                             subscriber.onError(new Throwable(error.toString()));
                         }
@@ -1075,9 +1143,8 @@ public class ApiClient implements ApiClientModel<Article> {
     }
 
     @Article.ObjectType
-    private String getObjectTypeByImageUrl(String imageURL) {
-        @Article.ObjectType
-        String type;
+    private String getObjectTypeByImageUrl(final String imageURL) {
+        @Article.ObjectType final String type;
 
         switch (imageURL) {
             case "http://scp-ru.wdfiles.com/local--files/scp-list-4/na.png":
@@ -1162,96 +1229,16 @@ public class ApiClient implements ApiClientModel<Article> {
         return type;
     }
 
-    public Observable<List<VkImage>> getGallery() {
-        Timber.d("getGallery");
-        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
-                    VKParameters parameters = VKParameters.from(
-                            VKApiConst.OWNER_ID, Constants.Api.GALLERY_VK_GROUP_ID,
-                            VKApiConst.ALBUM_ID, Constants.Api.GALLERY_VK_ALBUM_ID,
-                            VKApiConst.VERSION, BuildConfig.VK_API_VERSION
-                    );
-
-                    VKRequest vkRequest = new VKRequest("photos.get", parameters);
-                    vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
-                        @Override
-                        public void onComplete(VKResponse response) {
-                            Timber.d("onComplete");
-//                            Timber.d("onComplete: %s", response.responseString);
-                            VkGalleryResponse attachments = mGson
-                                    .fromJson(response.responseString, VkGalleryResponse.class);
-//                            Timber.d("attachments: %s", attachments);
-                            List<VkImage> images = convertAttachmentsToImage(attachments.response.items);
-                            subscriber.onNext(images);
-                            subscriber.onCompleted();
-                        }
-
-                        @Override
-                        public void onError(VKError error) {
-                            Timber.d("onError: %s", error);
-                            subscriber.onError(new Throwable(error.toString()));
-                        }
-                    });
-                })
-        );
-    }
-
-    private List<VkImage> convertAttachmentsToImage(List<VKApiPhoto> attachments) {
-        List<VkImage> images = new ArrayList<>();
-        for (VKAttachments.VKApiAttachment attachment : attachments) {
-            if (attachment.getId() == 456239049) {
-                continue;
-            }
-            VKApiPhoto vkApiPhoto = (VKApiPhoto) attachment;
-
-            VkImage image = new VkImage();
-            image.id = vkApiPhoto.id;
-            image.ownerId = vkApiPhoto.owner_id;
-            image.date = vkApiPhoto.date;
-            //size
-            image.width = vkApiPhoto.width;
-            image.height = vkApiPhoto.height;
-            //urls
-            image.photo75 = vkApiPhoto.photo_75;
-            image.photo130 = vkApiPhoto.photo_130;
-            image.photo604 = vkApiPhoto.photo_604;
-            image.photo807 = vkApiPhoto.photo_807;
-            image.photo1280 = vkApiPhoto.photo_1280;
-            image.photo2560 = vkApiPhoto.photo_2560;
-
-            image.allUrls = new RealmList<>();
-
-            if (image.photo75 != null) {
-                image.allUrls.add(new RealmString(image.photo75));
-            }
-            if (image.photo130 != null) {
-                image.allUrls.add(new RealmString(image.photo130));
-            }
-            if (image.photo604 != null) {
-                image.allUrls.add(new RealmString(image.photo604));
-            }
-            if (image.photo807 != null) {
-                image.allUrls.add(new RealmString(image.photo807));
-            }
-            if (image.photo1280 != null) {
-                image.allUrls.add(new RealmString(image.photo1280));
-            }
-            if (image.photo2560 != null) {
-                image.allUrls.add(new RealmString(image.photo2560));
-            }
-
-            image.description = vkApiPhoto.text;
-
-            images.add(image);
-        }
-        return images;
+    public Observable<List<GalleryImage>> getGallery() {
+        return mScpReaderServer.getGallery();
     }
 
     private Observable<VKApiUser> getUserDataFromVk() {
         return Observable.unsafeCreate(subscriber -> VKApi.users().get(VKParameters.from(VKApiConst.FIELDS, "photo_200")).executeWithListener(new VKRequest.VKRequestListener() {
             @Override
-            public void onComplete(VKResponse response) {
+            public void onComplete(final VKResponse response) {
                 //noinspection unchecked
-                VKApiUser vkApiUser = ((VKList<VKApiUser>) response.parsedModel).get(0);
+                final VKApiUser vkApiUser = ((VKList<VKApiUser>) response.parsedModel).get(0);
                 Timber.d("User name %s %s", vkApiUser.first_name, vkApiUser.last_name);
 
                 subscriber.onNext(vkApiUser);
@@ -1259,13 +1246,13 @@ public class ApiClient implements ApiClientModel<Article> {
             }
 
             @Override
-            public void onError(VKError error) {
+            public void onError(final VKError error) {
                 subscriber.onError(error.httpError);
             }
         }));
     }
 
-    private Observable<FirebaseUser> authWithCustomToken(String token) {
+    private Observable<FirebaseUser> authWithCustomToken(final String token) {
         return Observable.unsafeCreate(subscriber ->
                 FirebaseAuth.getInstance().signInWithCustomToken(token).addOnCompleteListener(task -> {
                     Timber.d("signInWithCustomToken:onComplete: %s", task.isSuccessful());
@@ -1284,31 +1271,31 @@ public class ApiClient implements ApiClientModel<Article> {
 
     //todo use it via retrofit and update server to return JSON with request result
     public Observable<FirebaseUser> getAuthInFirebaseWithSocialProviderObservable(
-            Constants.Firebase.SocialProvider provider,
-            String id
+            final Constants.Firebase.SocialProvider provider,
+            final String id
     ) {
-        Observable<FirebaseUser> authToFirebaseObservable;
+        final Observable<FirebaseUser> authToFirebaseObservable;
         switch (provider) {
             case VK:
                 authToFirebaseObservable = Observable.<String>unsafeCreate(subscriber -> {
-                    String url = BuildConfig.TOOLS_API_URL + "scp-ru-1/MyServlet";
+                    String url = BaseApplication.getAppInstance().getString(R.string.tools_api_url) + "scp-ru-1/MyServlet";
                     String params = "?provider=vk&token=" +
-                            id +
-                            "&email=" + VKAccessToken.currentToken().email +
-                            "&id=" + VKAccessToken.currentToken().userId;
+                                    id +
+                                    "&email=" + VKAccessToken.currentToken().email +
+                                    "&id=" + VKAccessToken.currentToken().userId;
                     Request request = new Request.Builder()
                             .url(url + params)
                             .build();
                     mOkHttpClient.newCall(request).enqueue(new Callback() {
                         @Override
-                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
                             subscriber.onError(e);
                         }
 
                         @Override
-                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                            String responseBody;
-                            ResponseBody body = response.body();
+                        public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
+                            final String responseBody;
+                            final ResponseBody body = response.body();
                             if (body != null) {
                                 responseBody = body.string();
                             } else {
@@ -1321,20 +1308,20 @@ public class ApiClient implements ApiClientModel<Article> {
                     });
                 })
                         .flatMap(response -> TextUtils.isEmpty(response) ?
-                                Observable.error(new IllegalArgumentException("empty token")) :
-                                Observable.just(response))
+                                             Observable.error(new IllegalArgumentException("empty token")) :
+                                             Observable.just(response))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .flatMap(this::authWithCustomToken);
                 break;
             case GOOGLE:
                 authToFirebaseObservable = Observable.unsafeCreate(subscriber -> {
-                    AuthCredential credential = GoogleAuthProvider.getCredential(id, null);
+                    final AuthCredential credential = GoogleAuthProvider.getCredential(id, null);
                     FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Timber.d("signInWithCredential:success");
-                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                             subscriber.onNext(user);
                             subscriber.onCompleted();
                         } else {
@@ -1347,13 +1334,13 @@ public class ApiClient implements ApiClientModel<Article> {
                 break;
             case FACEBOOK:
                 authToFirebaseObservable = Observable.unsafeCreate(subscriber -> {
-                    AuthCredential credential = FacebookAuthProvider.getCredential(id);
+                    final AuthCredential credential = FacebookAuthProvider.getCredential(id);
                     FirebaseAuth.getInstance().signInWithCredential(credential)
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
                                     // Sign in success, update UI with the signed-in user's information
                                     Timber.d("signInWithCredential:success");
-                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                     subscriber.onNext(user);
                                     subscriber.onCompleted();
                                 } else {
@@ -1372,22 +1359,22 @@ public class ApiClient implements ApiClientModel<Article> {
 
     public Observable<FirebaseObjectUser> getUserObjectFromFirebaseObservable() {
         return Observable.unsafeCreate(subscriber -> {
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser != null) {
-                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
                 firebaseDatabase.getReference()
                         .child(Constants.Firebase.Refs.USERS)
                         .child(firebaseUser.getUid())
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                FirebaseObjectUser userFromFireBase = dataSnapshot.getValue(FirebaseObjectUser.class);
+                            public void onDataChange(final DataSnapshot dataSnapshot) {
+                                final FirebaseObjectUser userFromFireBase = dataSnapshot.getValue(FirebaseObjectUser.class);
                                 subscriber.onNext(userFromFireBase);
                                 subscriber.onCompleted();
                             }
 
                             @Override
-                            public void onCancelled(DatabaseError databaseError) {
+                            public void onCancelled(final DatabaseError databaseError) {
                                 Timber.e(databaseError.toException(), "onCancelled");
                                 subscriber.onError(databaseError.toException());
                             }
@@ -1401,7 +1388,7 @@ public class ApiClient implements ApiClientModel<Article> {
 
     public Observable<Void> updateFirebaseUsersEmailObservable() {
         return Observable.unsafeCreate(subscriber -> {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user != null) {
                 if (VKAccessToken.currentToken() != null) {
                     user.updateEmail(VKAccessToken.currentToken().email).addOnCompleteListener(task -> {
@@ -1415,7 +1402,7 @@ public class ApiClient implements ApiClientModel<Article> {
                         }
                     });
                 } else {
-                    Timber.d("not logined in vk, so cant get email and update firebase user with it");
+                    Timber.d("not logged in in vk, so cant get email and update firebase user with it");
                     subscriber.onError(new IllegalArgumentException("vk token is null, so can't get email to update firebase user"));
                 }
             } else {
@@ -1425,12 +1412,12 @@ public class ApiClient implements ApiClientModel<Article> {
         });
     }
 
-    public Observable<Void> updateFirebaseUsersNameAndAvatarObservable(String name, String avatar) {
+    public Observable<Void> updateFirebaseUsersNameAndAvatarObservable(final String name, final String avatar) {
         return Observable.unsafeCreate(subscriber -> {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
             if (user != null) {
-                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                final UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                         .setDisplayName(name)
                         .setPhotoUri(Uri.parse(avatar))
                         .build();
@@ -1453,12 +1440,12 @@ public class ApiClient implements ApiClientModel<Article> {
     }
 
     public Observable<Pair<String, String>> nameAndAvatarFromProviderObservable(Constants.Firebase.SocialProvider provider) {
-        Observable<Pair<String, String>> nameAvatarObservable;
+        final Observable<Pair<String, String>> nameAvatarObservable;
         switch (provider) {
             case VK:
                 nameAvatarObservable = getUserDataFromVk().flatMap(vkApiUser -> {
-                    String displayName = vkApiUser.first_name + " " + vkApiUser.last_name;
-                    String avatarUrl = vkApiUser.photo_200;
+                    final String displayName = vkApiUser.first_name + " " + vkApiUser.last_name;
+                    final String avatarUrl = vkApiUser.photo_200;
                     return Observable.just(new Pair<>(displayName, avatarUrl));
                 });
                 break;
@@ -1474,9 +1461,9 @@ public class ApiClient implements ApiClientModel<Article> {
 
     private Observable<Pair<String, String>> getUserDataFromFacebook() {
         return Observable.unsafeCreate(subscriber -> {
-            Profile profile = Profile.getCurrentProfile();
+            final Profile profile = Profile.getCurrentProfile();
             if (profile != null) {
-                int size = DimensionUtils.dpToPx(56);
+                final int size = DimensionUtils.dpToPx(56);
                 subscriber.onNext(new Pair<>(profile.getName(), profile.getProfilePictureUri(size, size).toString()));
                 subscriber.onCompleted();
             } else {
@@ -1487,7 +1474,7 @@ public class ApiClient implements ApiClientModel<Article> {
 
     public Observable<Void> updateFirebaseUsersSocialProvidersObservable(List<SocialProviderModel> socialProviderModels) {
         return Observable.unsafeCreate(subscriber -> {
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser != null) {
                 FirebaseDatabase.getInstance()
                         .getReference(Constants.Firebase.Refs.USERS)
@@ -1513,9 +1500,9 @@ public class ApiClient implements ApiClientModel<Article> {
     /**
      * @param user local DB {@link User} object to write to firebase DB
      */
-    public Observable<FirebaseObjectUser> writeUserToFirebaseObservable(FirebaseObjectUser user) {
+    public Observable<FirebaseObjectUser> writeUserToFirebaseObservable(final FirebaseObjectUser user) {
         return Observable.unsafeCreate(subscriber -> {
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser != null) {
                 FirebaseDatabase.getInstance()
                         .getReference(Constants.Firebase.Refs.USERS)
@@ -1540,9 +1527,9 @@ public class ApiClient implements ApiClientModel<Article> {
      * @param scoreToAdd score to add to user
      * @return Observable, that emits user total score
      */
-    public Observable<Integer> incrementScoreInFirebaseObservable(int scoreToAdd) {
+    public Observable<Integer> incrementScoreInFirebaseObservable(final int scoreToAdd) {
         return Observable.unsafeCreate(subscriber -> {
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser != null) {
                 //add, not rewrite
                 FirebaseDatabase.getInstance()
@@ -1551,7 +1538,7 @@ public class ApiClient implements ApiClientModel<Article> {
                         .child(Constants.Firebase.Refs.SCORE)
                         .runTransaction(new Transaction.Handler() {
                             @Override
-                            public Transaction.Result doTransaction(MutableData mutableData) {
+                            public Transaction.Result doTransaction(final MutableData mutableData) {
                                 Integer p = mutableData.getValue(Integer.class);
                                 if (p == null) {
                                     return Transaction.success(mutableData);
@@ -1565,7 +1552,11 @@ public class ApiClient implements ApiClientModel<Article> {
                             }
 
                             @Override
-                            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                            public void onComplete(
+                                    final DatabaseError databaseError,
+                                    final boolean b,
+                                    final DataSnapshot dataSnapshot
+                            ) {
                                 if (databaseError == null) {
                                     Timber.d("onComplete: %s", dataSnapshot.getValue());
                                     subscriber.onNext(dataSnapshot.getValue(Integer.class));
@@ -1584,7 +1575,7 @@ public class ApiClient implements ApiClientModel<Article> {
 
     public Observable<Boolean> setUserRewardedForAuthInFirebaseObservable() {
         return Observable.unsafeCreate(subscriber -> {
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser != null) {
                 //add, not rewrite
                 FirebaseDatabase.getInstance()
@@ -1607,9 +1598,9 @@ public class ApiClient implements ApiClientModel<Article> {
         });
     }
 
-    public Observable<Article> writeArticleToFirebase(Article article) {
+    public Observable<Article> writeArticleToFirebase(final Article article) {
         return Observable.unsafeCreate(subscriber -> {
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser == null) {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
                 return;
@@ -1622,13 +1613,13 @@ public class ApiClient implements ApiClientModel<Article> {
             url = url.replaceAll("/", REPLACEMENT_SLASH);
             Timber.d("id: %s", url);
 
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference reference = database.getReference()
+            final FirebaseDatabase database = FirebaseDatabase.getInstance();
+            final DatabaseReference reference = database.getReference()
                     .child(Constants.Firebase.Refs.USERS)
                     .child(firebaseUser.getUid())
                     .child(Constants.Firebase.Refs.ARTICLES)
                     .child(url);
-            ArticleInFirebase articleInFirebase = new ArticleInFirebase(
+            final ArticleInFirebase articleInFirebase = new ArticleInFirebase(
                     article.isInFavorite != Article.ORDER_NONE,
                     article.isInReaden,
                     article.title,
@@ -1647,9 +1638,9 @@ public class ApiClient implements ApiClientModel<Article> {
         });
     }
 
-    public Observable<ArticleInFirebase> getArticleFromFirebase(Article article) {
+    public Observable<ArticleInFirebase> getArticleFromFirebase(final Article article) {
         return Observable.unsafeCreate(subscriber -> {
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser == null) {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
                 return;
@@ -1661,21 +1652,21 @@ public class ApiClient implements ApiClientModel<Article> {
             url = url.replaceAll("/", REPLACEMENT_SLASH);
             Timber.d("id: %s", url);
 
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference reference = database.getReference()
+            final FirebaseDatabase database = FirebaseDatabase.getInstance();
+            final DatabaseReference reference = database.getReference()
                     .child(Constants.Firebase.Refs.USERS)
                     .child(firebaseUser.getUid())
                     .child(Constants.Firebase.Refs.ARTICLES)
                     .child(url);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(final DataSnapshot dataSnapshot) {
                     subscriber.onNext(dataSnapshot.getValue(ArticleInFirebase.class));
                     subscriber.onCompleted();
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(final DatabaseError databaseError) {
                     subscriber.onError(databaseError.toException());
                 }
             });
@@ -1684,25 +1675,25 @@ public class ApiClient implements ApiClientModel<Article> {
 
     public Observable<Integer> getUserScoreFromFirebase() {
         return Observable.unsafeCreate(subscriber -> {
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser == null) {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
                 return;
             }
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference reference = database.getReference()
+            final FirebaseDatabase database = FirebaseDatabase.getInstance();
+            final DatabaseReference reference = database.getReference()
                     .child(Constants.Firebase.Refs.USERS)
                     .child(firebaseUser.getUid())
                     .child(Constants.Firebase.Refs.SCORE);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(final DataSnapshot dataSnapshot) {
                     subscriber.onNext(dataSnapshot.getValue(Integer.class));
                     subscriber.onCompleted();
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(final DatabaseError databaseError) {
                     subscriber.onError(databaseError.toException());
                 }
             });
@@ -1724,7 +1715,7 @@ public class ApiClient implements ApiClientModel<Article> {
                     .child(Constants.Firebase.Refs.SIGN_IN_REWARD_GAINED);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(final DataSnapshot dataSnapshot) {
                     final Boolean data = dataSnapshot.getValue(Boolean.class);
                     Timber.d("dataSnapshot.getValue(): %s", data);
                     subscriber.onNext(data != null && data);
@@ -1739,46 +1730,46 @@ public class ApiClient implements ApiClientModel<Article> {
         });
     }
 
-    public Observable<Boolean> isUserJoinedVkGroup(String id) {
+    public Observable<Boolean> isUserJoinedVkGroup(final String id) {
         Timber.d("isUserJoinedVkGroup id: %s", id);
         return Observable.unsafeCreate(subscriber -> {
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser == null) {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
                 return;
             }
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference reference = database.getReference()
+            final FirebaseDatabase database = FirebaseDatabase.getInstance();
+            final DatabaseReference reference = database.getReference()
                     .child(Constants.Firebase.Refs.USERS)
                     .child(firebaseUser.getUid())
                     .child(Constants.Firebase.Refs.VK_GROUPS)
                     .child(id);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    VkGroupToJoin data = dataSnapshot.getValue(VkGroupToJoin.class);
+                public void onDataChange(final DataSnapshot dataSnapshot) {
+                    final VkGroupToJoin data = dataSnapshot.getValue(VkGroupToJoin.class);
                     Timber.d("dataSnapshot.getValue(): %s", data);
                     subscriber.onNext(data != null);
                     subscriber.onCompleted();
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(final DatabaseError databaseError) {
                     subscriber.onError(databaseError.toException());
                 }
             });
         });
     }
 
-    public Observable<Void> addJoinedVkGroup(String id) {
+    public Observable<Void> addJoinedVkGroup(final String id) {
         return Observable.unsafeCreate(subscriber -> {
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser == null) {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
                 return;
             }
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference reference = database.getReference()
+            final FirebaseDatabase database = FirebaseDatabase.getInstance();
+            final DatabaseReference reference = database.getReference()
                     .child(Constants.Firebase.Refs.USERS)
                     .child(firebaseUser.getUid())
                     .child(Constants.Firebase.Refs.VK_GROUPS)
@@ -1794,50 +1785,50 @@ public class ApiClient implements ApiClientModel<Article> {
         });
     }
 
-    public Observable<Boolean> isUserInstallApp(String packageNameWithDots) {
+    public Observable<Boolean> isUserInstallApp(final String packageNameWithDots) {
         //as firebase can't have dots in ref path we must replace it...
         final String id = packageNameWithDots.replaceAll("\\.", "____");
         Timber.d("id: %s", id);
         return Observable.unsafeCreate(subscriber -> {
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser == null) {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
                 return;
             }
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference reference = database.getReference()
+            final FirebaseDatabase database = FirebaseDatabase.getInstance();
+            final DatabaseReference reference = database.getReference()
                     .child(Constants.Firebase.Refs.USERS)
                     .child(firebaseUser.getUid())
                     .child(Constants.Firebase.Refs.APPS)
                     .child(id);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    PlayMarketApplication data = dataSnapshot.getValue(PlayMarketApplication.class);
+                public void onDataChange(final DataSnapshot dataSnapshot) {
+                    final PlayMarketApplication data = dataSnapshot.getValue(PlayMarketApplication.class);
                     Timber.d("dataSnapshot.getValue(): %s", data);
                     subscriber.onNext(data != null);
                     subscriber.onCompleted();
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(final DatabaseError databaseError) {
                     subscriber.onError(databaseError.toException());
                 }
             });
         });
     }
 
-    public Observable<Void> addInstalledApp(String packageNameWithDots) {
+    public Observable<Void> addInstalledApp(final String packageNameWithDots) {
         //as firebase can't have dots in ref path we must replace it...
         final String id = packageNameWithDots.replaceAll("\\.", "____");
         return Observable.unsafeCreate(subscriber -> {
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser == null) {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
                 return;
             }
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference reference = database.getReference()
+            final FirebaseDatabase database = FirebaseDatabase.getInstance();
+            final DatabaseReference reference = database.getReference()
                     .child(Constants.Firebase.Refs.USERS)
                     .child(firebaseUser.getUid())
                     .child(Constants.Firebase.Refs.APPS)
@@ -1853,45 +1844,45 @@ public class ApiClient implements ApiClientModel<Article> {
         });
     }
 
-    public Observable<Boolean> isUserGainedSkoreFromInapp(String sku) {
+    public Observable<Boolean> isUserGainedSkoreFromInapp(final String sku) {
         return Observable.unsafeCreate(subscriber -> {
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser == null) {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
                 return;
             }
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference reference = database.getReference()
+            final FirebaseDatabase database = FirebaseDatabase.getInstance();
+            final DatabaseReference reference = database.getReference()
                     .child(Constants.Firebase.Refs.USERS)
                     .child(firebaseUser.getUid())
                     .child(Constants.Firebase.Refs.INAPP)
                     .child(sku);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    PlayMarketApplication data = dataSnapshot.getValue(PlayMarketApplication.class);
+                public void onDataChange(final DataSnapshot dataSnapshot) {
+                    final PlayMarketApplication data = dataSnapshot.getValue(PlayMarketApplication.class);
                     Timber.d("dataSnapshot.getValue(): %s", data);
                     subscriber.onNext(data != null);
                     subscriber.onCompleted();
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(final DatabaseError databaseError) {
                     subscriber.onError(databaseError.toException());
                 }
             });
         });
     }
 
-    public Observable<Void> addRewardedInapp(String sku) {
+    public Observable<Void> addRewardedInapp(final String sku) {
         return Observable.unsafeCreate(subscriber -> {
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser == null) {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
                 return;
             }
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference reference = database.getReference()
+            final FirebaseDatabase database = FirebaseDatabase.getInstance();
+            final DatabaseReference reference = database.getReference()
                     .child(Constants.Firebase.Refs.USERS)
                     .child(firebaseUser.getUid())
                     .child(Constants.Firebase.Refs.INAPP)
@@ -1963,24 +1954,24 @@ public class ApiClient implements ApiClientModel<Article> {
     }
 
     public Observable<PurchaseValidateResponse> validatePurchase(
-            boolean isSubscription,
-            String packageName,
-            String sku,
-            String purchaseToken
+            final boolean isSubscription,
+            final String packageName,
+            final String sku,
+            final String purchaseToken
     ) {
         return bindWithUtils(mVpsServer.validatePurchase(isSubscription, packageName, sku, purchaseToken));
     }
 
     public PurchaseValidateResponse validatePurchaseSync(
-            boolean isSubscription,
-            String packageName,
-            String sku,
-            String purchaseToken
+            final boolean isSubscription,
+            final String packageName,
+            final String sku,
+            final String purchaseToken
     ) throws IOException {
         return mVpsServer.validatePurchaseSync(isSubscription, packageName, sku, purchaseToken).execute().body();
     }
 
-    public Observable<Boolean> inviteReceived(String inviteId, boolean newOne) {
+    public Observable<Boolean> inviteReceived(final String inviteId, final boolean newOne) {
         return mVpsServer.onInviteReceived(
                 VpsServer.InviteAction.RECEIVED,
                 inviteId,
@@ -1989,7 +1980,7 @@ public class ApiClient implements ApiClientModel<Article> {
         ).map(onInviteReceivedResponse -> onInviteReceivedResponse.status);
     }
 
-    public Observable<Boolean> inviteSent(String inviteId, String fcmToken) {
+    public Observable<Boolean> inviteSent(final String inviteId, final String fcmToken) {
         return mVpsServer.onInviteSent(
                 VpsServer.InviteAction.SENT,
                 inviteId,
@@ -2004,5 +1995,13 @@ public class ApiClient implements ApiClientModel<Article> {
 
     public ConstantValues getConstantValues() {
         return mConstantValues;
+    }
+
+    @NotNull
+    public static String formatUrlToFileName(@NotNull final String url) {
+        String imageFileName = url.replaceAll("#", REPLACEMENT_HASH);
+        imageFileName = imageFileName.replaceAll("/", REPLACEMENT_SLASH);
+
+        return imageFileName;
     }
 }

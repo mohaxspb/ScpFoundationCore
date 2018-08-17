@@ -2,7 +2,7 @@ package ru.kuchanov.scpcore.mvp.presenter.materials;
 
 import java.util.List;
 
-import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
@@ -13,8 +13,6 @@ import rx.Observable;
 
 /**
  * Created by y.kuchanov on 21.12.16.
- * <p>
- * for TappAwards
  */
 public class MaterialsArchivePresenter
         extends BaseObjectsArticlesPresenter<MaterialsArchiveMvp.View>

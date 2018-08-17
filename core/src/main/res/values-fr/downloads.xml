@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="download_art_list">Télécharger la liste des articles</string>
+    <string name="download_all_title">Que télécharger?</string>
+    <!--<string name="download">Télécharger</string>-->
+    <string name="stop_download">Arrêter le chargement</string>
+    <string name="download_objects_title">Les installations de objet</string>
+    <string name="error_notification_title">Erreur</string>
+    <string name="error_notification_objects_list_download_content">Impossible de télécharger la liste des objets</string>
+    <string name="download_complete_title">Télécharger complète</string>
+    <string name="download_complete_title_content">Télécharger %1$d de %2$d. Erreurs: %3$d</string>
+    <string name="download_progress_content">Télécharger %1$d/%2$d. Erreurs: %3$d</string>
+    <string name="error_notification_recent_list_download_content">Impossible de charger la liste des articles</string>
+    <string name="notification_recent_list_title">Télécharger la liste des articles</string>
+    <string name="download_recent_title">Télécharger les articles</string>
+    <string name="downlad_art_list_range">Comment télécharger?</string>
+    <string name="increase_limit">Agrandir/Supprimer la limite</string>
+    <string name="user_limit">Votre limite est: %s</string>
+    <string name="selected">Est sélectionné: %d</string>
+    <string name="no_limit">Aucune restriction!</string>
+    <string name="download_all_with_limit">Ils téléchargent les dernières entrées %d de la liste des dernières entrées modifiées (liste des \«nouvel article\»)</string>
+    <!--<string name="limit_description">Limite limite le nombre maximal d\'articles qui peuvent être stockés sur un dispositif de lecture en mode offline. Maintenant, pour vous il n\'y a pas de limite! Et si vous achetez un abonnement - que et ne sera pas) Si l\'abonnement ne sont pas, puis une fois la limite est limitée à %1$d éléments à des agents non autorisés et %2$d + (nombre de points/%3$d) pour autorisé.</string>-->
+    <string name="limit_description_disabled_free_downloads">Limite limite le nombre maximal d\'articles qui peuvent être stockés sur un dispositif de lecture en mode hors ligne. La limite minimale des articles - %1$d. La limite peut être complètement éliminée par l\'achat d\'un abonnement ou relèverai, connectez-vous et gagner des points. Pour chaque tranche de %2$d des points d vous serez en mesure de stocker un article plus!</string>
+
+    <!--download dialog-->
+    <string name="download_all">Télécharger tous</string>
+    <!--<string name="info">Information</string>-->
+
+    <string name="type_1">Série SCP I</string>
+    <string name="type_2">Série SCP II</string>
+    <string name="type_3">Série SCP III</string>
+    <string name="type_4">Série SCP IV</string>
+    <string name="type_5">Série SCP V</string>
+    <string name="type_ru">Série SCP-FR</string>
+
+    <string name="type_fr">Объекты FR</string>
+    <string name="type_jp">Объекты JP</string>
+    <string name="type_es">Объекты ES</string>
+    <string name="type_pl">Объекты PL</string>
+    <string name="type_de">Объекты DE</string>
+
+    <string name="type_all">Tous</string>
+
+    <string name="type_experiments">Protocole expérimental</string>
+    <string name="type_incidents">Rapport d\'incident</string>
+    <string name="type_interviews">Les entrevues avec les témoins</string>
+    <string name="type_archive">Archivé SCP</string>
+    <string name="type_jokes">Humoristique SCP</string>
+    <string name="type_other">Autres matériaux</string>
+
+    <string name="error_notification_download_failed">Une erreur est survenue: %s</string>
+</resources>

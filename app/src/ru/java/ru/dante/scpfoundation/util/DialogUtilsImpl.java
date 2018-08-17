@@ -5,13 +5,13 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.kuchanov.scp.downloads.ApiClientModel;
-import ru.kuchanov.scp.downloads.ConstantValues;
-import ru.kuchanov.scp.downloads.DbProviderFactoryModel;
-import ru.kuchanov.scp.downloads.DownloadEntry;
-import ru.kuchanov.scp.downloads.MyPreferenceManagerModel;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.R;
+import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.downloads.DownloadEntry;
+import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.util.DialogUtilsDefault;
 
 /**
@@ -22,9 +22,9 @@ import ru.kuchanov.scpcore.ui.util.DialogUtilsDefault;
 public class DialogUtilsImpl extends DialogUtilsDefault {
 
     public DialogUtilsImpl(
-            MyPreferenceManagerModel preferenceManager,
-            DbProviderFactoryModel dbProviderFactory,
-            ApiClientModel<Article> apiClient,
+            MyPreferenceManager preferenceManager,
+            DbProviderFactory dbProviderFactory,
+            ApiClient apiClient,
             ConstantValues constantValues,
             Class clazz
     ) {

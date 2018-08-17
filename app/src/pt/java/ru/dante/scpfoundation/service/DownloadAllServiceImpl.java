@@ -5,14 +5,12 @@ import javax.inject.Inject;
 import ru.dante.scpfoundation.MyApplicationImpl;
 import ru.dante.scpfoundation.R;
 import ru.dante.scpfoundation.di.AppComponentImpl;
-import ru.kuchanov.scp.downloads.ApiClientModel;
-import ru.kuchanov.scp.downloads.ConstantValues;
-import ru.kuchanov.scp.downloads.DbProviderModel;
-import ru.kuchanov.scp.downloads.DownloadAllService;
-import ru.kuchanov.scp.downloads.DownloadEntry;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.db.DbProvider;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
-import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.downloads.DownloadAllService;
+import ru.kuchanov.scpcore.downloads.DownloadEntry;
 import timber.log.Timber;
 
 /**
@@ -20,18 +18,10 @@ import timber.log.Timber;
  * <p>
  * for ScpFoundationRu
  */
-public class DownloadAllServiceImpl extends DownloadAllService<Article> {
-
-    @Inject
-    ApiClient mApiClient;
-    @Inject
-    DbProviderFactory mDbProviderFactory;
-    @Inject
-    ConstantValues mConstantValues;
+public class DownloadAllServiceImpl extends DownloadAllService {
 
     @Override
-    public void onCreate() {
-        super.onCreate();
+    protected void callInject() {
         ((AppComponentImpl) MyApplicationImpl.getAppComponent()).inject(this);
     }
 
@@ -54,12 +44,12 @@ public class DownloadAllServiceImpl extends DownloadAllService<Article> {
     }
 
     @Override
-    public ApiClientModel<Article> getApiClient() {
+    public ApiClient getApiClient() {
         return mApiClient;
     }
 
     @Override
-    protected DbProviderModel<Article> getDbProviderModel() {
+    protected DbProvider getDbProvider() {
         return mDbProviderFactory.getDbProvider();
     }
 }

@@ -1,18 +1,17 @@
 package ru.kuchanov.scpcore.db;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
+import com.facebook.login.LoginManager;
+import com.vk.sdk.VKSdk;
+
+import org.jetbrains.annotations.NotNull;
+
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Pair;
-
-import com.facebook.login.LoginManager;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-
-import com.vk.sdk.VKSdk;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,8 +23,7 @@ import java.util.Random;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
-import ru.kuchanov.scp.downloads.ConstantValues;
-import ru.kuchanov.scp.downloads.DbProviderModel;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.api.model.firebase.ArticleInFirebase;
 import ru.kuchanov.scpcore.db.error.ScpNoArticleForIdError;
@@ -33,13 +31,13 @@ import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.LeaderboardUser;
 import ru.kuchanov.scpcore.db.model.User;
-import ru.kuchanov.scpcore.db.model.VkImage;
+import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import timber.log.Timber;
 
-public class DbProvider implements DbProviderModel<Article> {
+public class DbProvider {
 
     private final Realm mRealm;
 
@@ -54,13 +52,11 @@ public class DbProvider implements DbProviderModel<Article> {
         mConstantValues = constantValues;
     }
 
-    @Override
     public void close() {
         Timber.d("close");
         mRealm.close();
     }
 
-    @Override
     public int getScore() {
         final User user = getUserSync();
         return user == null ? 0 : user.score;
@@ -231,7 +227,6 @@ public class DbProvider implements DbProviderModel<Article> {
         ));
     }
 
-    @Override
     public Observable<Pair<Integer, Integer>> saveObjectsArticlesList(final List<Article> data, final String inDbField) {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
@@ -252,6 +247,9 @@ public class DbProvider implements DbProviderModel<Article> {
                                 break;
                             case Article.FIELD_IS_IN_OBJECTS_4:
                                 article.isInObjects4 = Article.ORDER_NONE;
+                                break;
+                            case Article.FIELD_IS_IN_OBJECTS_5:
+                                article.isInObjects5 = Article.ORDER_NONE;
                                 break;
                             case Article.FIELD_IS_IN_OBJECTS_RU:
                                 article.isInObjectsRu = Article.ORDER_NONE;
@@ -292,7 +290,7 @@ public class DbProvider implements DbProviderModel<Article> {
                                 article.isInJokes = Article.ORDER_NONE;
                                 break;
                             default:
-                                Timber.e("unexpected inDbField id");
+                                Timber.e("unexpected inDbField id: %s", inDbField);
                                 break;
                         }
                     }
@@ -315,6 +313,9 @@ public class DbProvider implements DbProviderModel<Article> {
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_4:
                                     articleInDb.isInObjects4 = i;
+                                    break;
+                                case Article.FIELD_IS_IN_OBJECTS_5:
+                                    articleInDb.isInObjects5 = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_RU:
                                     articleInDb.isInObjectsRu = i;
@@ -355,7 +356,7 @@ public class DbProvider implements DbProviderModel<Article> {
                                     articleInDb.isInJokes = i;
                                     break;
                                 default:
-                                    Timber.e("unexpected inDbField id");
+                                    Timber.e("unexpected inDbField id: %s", inDbField);
                                     break;
                             }
                             articleInDb.title = article.title;
@@ -374,6 +375,9 @@ public class DbProvider implements DbProviderModel<Article> {
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_4:
                                     article.isInObjects4 = i;
+                                    break;
+                                case Article.FIELD_IS_IN_OBJECTS_5:
+                                    article.isInObjects5 = i;
                                     break;
                                 case Article.FIELD_IS_IN_OBJECTS_RU:
                                     article.isInObjectsRu = i;
@@ -414,7 +418,7 @@ public class DbProvider implements DbProviderModel<Article> {
                                     article.isInJokes = i;
                                     break;
                                 default:
-                                    Timber.e("unexpected inDbField id");
+                                    Timber.e("unexpected inDbField id: %s", inDbField);
                                     break;
                             }
                             realm.insertOrUpdate(article);
@@ -459,7 +463,6 @@ public class DbProvider implements DbProviderModel<Article> {
                 .doOnNext(article -> close());
     }
 
-    @Override
     public Article getUnmanagedArticleSync(final String url) {
         final Article articleFromDb = mRealm.where(Article.class).equalTo(Article.FIELD_URL, url).findFirst();
         return articleFromDb == null ? null : mRealm.copyFromRealm(articleFromDb);
@@ -520,7 +523,6 @@ public class DbProvider implements DbProviderModel<Article> {
         return Observable.just(article);
     }
 
-    @Override
     public void saveArticleSync(final Article article, final boolean closeRealm) {
         mRealm.executeTransaction(realm -> saveArticleToRealm(article, realm));
         if (closeRealm) {
@@ -612,7 +614,7 @@ public class DbProvider implements DbProviderModel<Article> {
 
         final long timeStamp = System.currentTimeMillis();
         final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault());
-        Timber.d("insert/update: %s/%s", article.title, sdf.format(timeStamp));
+//        Timber.d("insert/update: %s/%s", article.title, sdf.format(timeStamp));
 
         //check if we have app in db and update
         Article articleInDb = realm.where(Article.class)
@@ -640,6 +642,8 @@ public class DbProvider implements DbProviderModel<Article> {
             articleInDb.tags.clear();
             articleInDb.tags = article.tags;
 //            }
+
+            articleInDb.commentsUrl = article.commentsUrl;
 
             //update it in DB such way, as we add unmanaged items
             realm.insertOrUpdate(articleInDb);
@@ -849,11 +853,11 @@ public class DbProvider implements DbProviderModel<Article> {
         return deleteUserData();
     }
 
-    public Observable<Void> saveImages(final List<VkImage> vkImages) {
+    public Observable<Void> saveImages(final List<GalleryImage> vkImages) {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //clear
-                    realm.delete(VkImage.class);
+                    realm.delete(GalleryImage.class);
                     realm.insertOrUpdate(vkImages);
                 },
                 () -> {
@@ -868,8 +872,8 @@ public class DbProvider implements DbProviderModel<Article> {
         ));
     }
 
-    public Observable<List<VkImage>> getGalleryImages() {
-        return mRealm.where(VkImage.class)
+    public Observable<List<GalleryImage>> getGalleryImages() {
+        return mRealm.where(GalleryImage.class)
                 .findAllAsync()
                 .asObservable()
                 .filter(RealmResults::isLoaded)

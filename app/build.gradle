@@ -3,6 +3,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'io.fabric'
 //here is script to generate version code from version name
 //which is set in gradle.properties as value of version var
 //which must be in format major, minor, patch, where patch goes from 0 to 99
@@ -12,13 +14,13 @@ apply from: '../marketSkusCreator.gradle'
 apply from: '../apiKeysCreator.gradle'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    compileSdkVersion 28
+    buildToolsVersion '28.0.2'
 
     defaultConfig {
         applicationId "ru.dante.scpfoundation"
         minSdkVersion 17
-        targetSdkVersion 26
+        targetSdkVersion 28
 
         // Enabling multidex support.
         multiDexEnabled true
@@ -68,7 +70,7 @@ android {
             //Disable them to speed up your builds.
             aaptOptions.cruncherEnabled = false
             //only package russian translations, and xxhdpi resources
-            resConfigs ("ru", "xxhdpi")
+            resConfigs("ru", "xxhdpi")
         }
 
         ru {
@@ -81,6 +83,8 @@ android {
 
             applicationIdSuffix ".eng"
             matchingFallbacks = ['debug', 'release']
+
+            resConfigs "en", "pl", "de", "fr", "es", "it"
         }
 
         pl {
@@ -131,8 +135,8 @@ android {
             fillArrays(variant, false)
             fillApiArrays(variant, false)
 
-            def versionCode = project.hasProperty('devBuild') ? 100 :  buildVersionCodeFromVariant(variant)
-            def versionName = project.hasProperty('devBuild') ? 100 :  getVersionValueAsString(variant)
+            def versionCode = project.hasProperty('devBuild') ? 100 : buildVersionCodeFromVariant(variant)
+            def versionName = project.hasProperty('devBuild') ? 100 : getVersionValueAsString(variant)
 
             variant.mergedFlavor.versionCode = versionCode
             variant.mergedFlavor.versionName = versionName
@@ -184,7 +188,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     //dagger2
-    String daggerVersion = '2.13'
+    String daggerVersion = '2.16'
     api "com.google.dagger:dagger:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 

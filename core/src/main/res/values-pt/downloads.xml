@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="download_art_list">Baixe uma lista de artigos</string>
+    <string name="download_all_title">O que fazer o Baixar?</string>
+    <!--<string name="download">Baixar</string>-->
+    <string name="stop_download">Parar de carregar</string>
+    <string name="download_objects_title">Carregando objetos</string>
+    <string name="error_notification_title">Erro</string>
+    <string name="error_notification_objects_list_download_content">Falha ao baixar lista de objetos</string>
+    <string name="download_complete_title">Baixar completo</string>
+    <string name="download_complete_title_content">Baixado %1$d de %2$d. Erros: %3$d</string>
+    <string name="download_progress_content">Baixado %1$d/%2$d. Erros: %3$d</string>
+    <string name="error_notification_recent_list_download_content">Falha ao carregar a lista de artigos</string>
+    <string name="notification_recent_list_title">Baixe uma lista de artigos</string>
+    <string name="download_recent_title">Baixar artigos</string>
+    <string name="downlad_art_list_range">Quanto custa para fazer o download?</string>
+    <string name="increase_limit">Aumentar/remover limite</string>
+    <string name="user_limit">Seu limite: %s</string>
+    <string name="selected">Selecionado: %d</string>
+    <string name="no_limit">Sem limites!</string>
+    <string name="download_all_with_limit">Os últimos %d artigos da lista dos últimos artigos modificados serão baixados (lista \"novos artigos\")</string>
+    <!--<string name="limit_description">Limite limita o número máximo de artigos que podem ser salvos no dispositivo para leitura no modo offline. Agora não há limite para você! E se você tiver comprado uma assinatura-e não será) se você não tiver uma assinatura, então uma vez que o limite será limitado a %1$d artigos para agentes não autorizados e %2$d + (número de pontos/%3$d) para autorizado.</string>-->
+    <string name="limit_description_disabled_free_downloads">Limite limita o número máximo de artigos que podem ser salvos no dispositivo para leitura no modo offline. O limite mínimo de artigos é %1$d. O limite pode ser completamente removido através da compra de uma assinatura ou aumentá-lo, registrados e ganhando pontos. Para cadaе %2$dpontos você será capaz de armazenar mais um artigo!</string>
+
+    <!--download dialog-->
+    <string name="download_all">Baixar tudo</string>
+    <!--<string name="info">Informações</string>-->
+
+    <string name="type_1">Série I</string>
+    <string name="type_2">Série II</string>
+    <string name="type_3">Série III</string>
+    <string name="type_4">Série IV</string>
+    <string name="type_5">Série V</string>
+    <string name="type_ru">Série RU</string>
+
+    <string name="type_fr">Série FR</string>
+    <string name="type_jp">Série JP</string>
+    <string name="type_es">Série ES</string>
+    <string name="type_pl">Série PL</string>
+    <string name="type_de">Série DE</string>
+
+    <string name="type_all">Todos</string>
+
+    <string name="type_experiments">Protocolos de experimentos</string>
+    <string name="type_incidents">Relatórios de incidentes</string>
+    <string name="type_interviews">Entrevistas com testemunhas oculares</string>
+    <string name="type_archive">SCPs arquivados</string>
+    <string name="type_jokes">Piadas-SCPs</string>
+    <string name="type_other">Outros materiais</string>
+
+    <string name="error_notification_download_failed">Ocorreu um erro: %s</string>
+</resources>

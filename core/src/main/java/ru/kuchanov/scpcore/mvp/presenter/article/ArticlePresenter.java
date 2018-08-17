@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.downloads.DownloadAllService;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.mvp.base.BasePresenter;
 import ru.kuchanov.scpcore.mvp.contract.article.ArticleMvp;
@@ -13,11 +14,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-/**
- * Created by y.kuchanov on 21.12.16.
- * <p>
- * for TappAwards
- */
 public class ArticlePresenter
         extends BasePresenter<ArticleMvp.View>
         implements ArticleMvp.Presenter {
@@ -26,21 +22,22 @@ public class ArticlePresenter
      * used as Article obj id
      */
     private String mArticleUrl;
+
     private Article mData;
 
     private boolean alreadyRefreshedFromApi;
 
     public ArticlePresenter(
-            MyPreferenceManager myPreferencesManager,
-            DbProviderFactory dbProviderFactory,
-            ApiClient apiClient
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient
     ) {
         super(myPreferencesManager, dbProviderFactory, apiClient);
         Timber.d("ArticlePresenter constructor");
     }
 
     @Override
-    public void attachView(@NonNull ArticleMvp.View view) {
+    public void attachView(@NonNull final ArticleMvp.View view) {
         Timber.d("attachView");
         super.attachView(view);
     }
@@ -52,12 +49,12 @@ public class ArticlePresenter
     }
 
     @Override
-    protected boolean getUserInConstructor(){
+    protected boolean getUserInConstructor() {
         return false;
     }
 
     @Override
-    public void setArticleId(String url) {
+    public void setArticleId(final String url) {
         Timber.d("setArticleId: %s", url);
         mArticleUrl = url;
     }
@@ -112,6 +109,20 @@ public class ArticlePresenter
         }
         mApiClient.getArticle(mArticleUrl)
                 .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .map(downloadedArticle -> {
+                    if (mMyPreferencesManager.isHasSubscription() && mMyPreferencesManager.getInnerArticlesDepth() != 0) {
+                        DownloadAllService.getAndSaveInnerArticles(
+                                mDbProviderFactory.getDbProvider(),
+                                mApiClient,
+                                downloadedArticle,
+                                0,
+                                mMyPreferencesManager.getInnerArticlesDepth()
+                        );
+                    }
+
+                    return downloadedArticle;
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(apiData -> mDbProviderFactory.getDbProvider().saveArticle(apiData))
                 .subscribe(
@@ -139,7 +150,7 @@ public class ArticlePresenter
     }
 
     @Override
-    public void setArticleIsReaden(String url) {
+    public void setArticleIsReaden(final String url) {
         Timber.d("setArticleIsReaden url: %s", url);
 //        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
 //            getView().showNeedLoginPopup();

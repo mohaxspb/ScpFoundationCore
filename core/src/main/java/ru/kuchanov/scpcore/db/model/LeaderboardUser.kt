@@ -5,7 +5,9 @@ import io.realm.annotations.Index
 import io.realm.annotations.PrimaryKey
 
 open class LeaderboardUser(
-    @PrimaryKey @Index var uid: String = "",
+    @PrimaryKey
+    @Index
+    var uid: String = "",
     var fullName: String? = "",
     var avatar: String? = "",
     var score: Int = 0,
@@ -14,7 +16,6 @@ open class LeaderboardUser(
     var scoreToNextLevel: Int = 0,
     var curLevelScore: Int = 0
 ) : RealmObject() {
-
 
     companion object {
         @JvmField
@@ -33,6 +34,8 @@ open class LeaderboardUser(
         val FIELD_SCORE_TO_NEXT_LEVEL = "scoreToNextLevel"
         @JvmField
         val FIELD_CUR_LEVEL_SCORE = "curLevelScore"
+        @JvmField
+        val READ_ARTICLES_COUNT_NONE = -1
     }
 
     override fun toString(): String {

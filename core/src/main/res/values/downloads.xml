@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="download_art_list">Loading the list of articles.</string>
+    <string name="download_all_title">What to download?</string>
+    <!--<string name="download">Download</string>-->
+    <string name="stop_download">Stop loading</string>
+    <string name="download_objects_title">Loading objects</string>
+    <string name="error_notification_title">Error</string>
+    <string name="error_notification_objects_list_download_content">The list of objects could not be downloaded.</string>
+    <string name="download_complete_title">Download completed</string>
+    <string name="download_complete_title_content">Downloaded %1$d from %2$d. Errors: %3$d</string>
+    <string name="download_progress_content">Downloaded %1$d/%2$d. Errors: %3$d</string>
+    <string name="error_notification_recent_list_download_content">Failed to load the list of articles</string>
+    <string name="notification_recent_list_title">Download list of articles</string>
+    <string name="download_recent_title">Download articles</string>
+    <string name="downlad_art_list_range">How much download?</string>
+    <string name="increase_limit">Increase/remove limit</string>
+    <string name="user_limit">Your limit: %s</string>
+    <string name="selected">Selected: %d</string>
+    <string name="no_limit">No Limits!</string>
+    <string name="download_all_with_limit">Will download the latest %d articles from a list of recently changed articles (the list of \"new articles\")</string>
+    <!--<string name="limit_description">Limit limits the maximum number of articles, that can be stored on the device to be read in offline mode. There\'s no limit to you right now! And if you have a subscription, you will not. If you don\'t have a subscription, then one day the limit will be limited %1$d articles for unauthorized agents and %2$d + (number of points/%3$d) for authorized.</string>-->
+    <string name="limit_description_disabled_free_downloads">Limit limits the maximum number of articles, that can be stored on the device to be read in offline mode. Minimum articles limit- %1$d. The limit can be removed completely by the purchased subscription or increased authorized and earning points. For every %2$d points you can store one article more!!</string>
+
+    <!--download dialog-->
+    <string name="download_all">Download all</string>
+    <!--<string name="info">Information</string>-->
+
+    <string name="type_1">Series I</string>
+    <string name="type_2">Series II</string>
+    <string name="type_3">Series III</string>
+    <string name="type_4">Series IV</string>
+    <string name="type_5">Series V</string>
+    <string name="type_ru">Series RU</string>
+
+    <string name="type_fr">Series FR</string>
+    <string name="type_jp">Series JP</string>
+    <string name="type_es">Series ES</string>
+    <string name="type_pl">Series PL</string>
+    <string name="type_de">Series DE</string>
+
+    <string name="type_all">All</string>
+
+    <string name="type_experiments">Experiments logs</string>
+    <string name="type_incidents">Incidents logs</string>
+    <string name="type_interviews">Interviews</string>
+    <string name="type_archive">Archive SCPs</string>
+    <string name="type_jokes">Joke SCPs</string>
+    <string name="type_other">Other materials</string>
+
+    <string name="error_notification_download_failed">Error occurred: %s</string>
+</resources>

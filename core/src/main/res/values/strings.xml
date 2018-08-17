@@ -8,7 +8,14 @@
     <string name="image_title" translatable="false">scp_image</string>
     <string name="image_description" translatable="false">Image from gallery of SCP Foundation app</string>
     <string name="max_level" translatable="false">Max level</string>
-    <string name="google_services_not_connected" translatable="false">Google services not connected</string>
+    <string name="google_services_not_connected" translatable="false">Google Services is not connected</string>
+    <string name="error_unexpected" translatable="false">Unexpected error</string>
+    <string name="share_app_vk_link" translatable="false">https://play.google.com/store/apps/details?id=%s</string>
+    <string name="scp_art_ad_title" translatable="false">Книги SCP Foundation уже в продаже!</string>
+    <string name="ad" translatable="false">Ad</string>
+    <string name="scp_art_ad_description" translatable="false">Спрашивайте в книжных магазинах своего города или закажите доставку в любой уголок страны</string>
+    <string name="scp_art_ad_cta" translatable="false">Подробнее</string>
+    <string name="login" translatable="false">Login</string>
     <!--drawer items-->
     <string name="drawer_item_1">About the SCP Foundation</string>
     <string name="drawer_item_2">Site News Hub</string>
@@ -20,7 +27,7 @@
     <string name="drawer_item_8">Series III </string>
     <string name="drawer_item_10">Other files</string>
     <string name="drawer_item_12">Favorites</string>
-    <string name="drawer_item_13">Articles Offline</string>
+    <string name="drawer_item_13">Offline articles</string>
     <string name="drawer_item_14">Gallery</string>
     <string name="drawer_item_15">Search</string>
     <string name="drawer_item_objects4">Series IV</string>
@@ -37,146 +44,148 @@
     <string name="unsupported_link">This link is not supported</string>
     <string name="share">Share</string>
     <string name="open_with">Open in browser</string>
+    <string name="open_comments_with">Open comments in browser</string>
     <string name="add_to_favorites">Add to favorites</string>
-    <string name="share_link_text">%1$s\n\nSent with application \"SCP Foundation\"\nhttps://play.google.com/store/apps/details?id=%2$s</string>
+    <string name="share_link_text">%1$s\n\nSent from application \"SCP Foundation\"\nhttps://play.google.com/store/apps/details?id=%2$s</string>
     <string name="share_choser_text">Share through…</string>
     <string name="browser_choser_text">Open with…</string>
     <string name="favorites_add">Add to favorites</string>
     <string name="favorites_remove">Remove from favorites</string>
     <string name="text_size_article">Text size articles</string>
     <string name="text_size_lists">Text size lists</string>
-    <string name="text_size_dialog_title">Text Size settings</string>
+    <string name="text_size_dialog_title">Text size settings</string>
     <string name="close">Close</string>
     <string name="delete">Delete</string>
     <string name="search">Search</string>
 
-    <!--drawer items -->
-    <!--TODO maybe use ut instead of upper ones?..-->
+    <!--drawer items-->
+    <!--TODO maybe use ut instead of upper ones?-->
     <string name="about_org">About the SCP Foundation</string>
     <string name="news">News</string>
 
     <!--utils-->
-    <string name="search_hint">Enter the request</string>
-    <string name="error_no_search_results">Nothing was found on your request</string>
+    <string name="search_hint">Enter request</string>
+    <string name="error_no_search_results">Nothing was found for your request</string>
     <string name="start_download">The article is not in the database. Starting the download.</string>
 
     <string name="download">Download</string>
 
-    <string name="settings_notif_on">Notifications of new articles</string>
+    <string name="settings_notif_on">Notifications for new articles</string>
     <string name="settings_notif_led_on">LED indicator</string>
     <string name="settings_notif_vibrate_on">Vibration</string>
     <string name="settings_notif_sound_on">Notification sound</string>
     <string name="settings_notification">Notification preferences</string>
-    <string name="dialog_title_subscriptions">Disabling ads, automatic cloud Sync and atmospheric fonts.</string>
-    <string name="dialog_title_subscriptions_disabled_free_downloads">Disabling ads, automatic cloud sync, unlimited download articles and atmospheric fonts.</string>
+    <string name="dialog_title_subscriptions">Disabling ads, automatic cloud sync, and atmospheric fonts.</string>
+    <string name="dialog_title_subscriptions_disabled_free_downloads">Disabling ads, automatic cloud sync, unlimited downloading of offine articles, and atmospheric fonts.</string>
     <string name="current_subscription">Your current subscription:</string>
     <string name="no_subscriptions">Empty</string>
     <string name="refresh">Refresh</string>
-    <string name="i_accept">I agree</string>
+    <string name="i_accept">I accept</string>
     <string name="error_read_licence">The license file could not be opened.</string>
     <string name="new_version_features">New version</string>
     <string name="hurray">Hooray!</string>
     <string name="in_progress">In progress</string>
     <string name="settings_design">Settings design</string>
     <string name="settings_design_list_new">New design in the lists</string>
-    <string name="dialog_random_page_title">Connects to Foundation</string>
-    <string name="dialog_random_page_message">Checking the 	clearance level</string>
+    <string name="dialog_random_page_title">Connect to Foundation</string>
+    <string name="dialog_random_page_message">Checking the clearance level</string>
     <string name="remove_ads">Disable ads?</string>
     <string name="yes_bliad">Yes!</string>
     <string name="app_info">About the application</string>
     <string name="remove_ads_for_free">Disable ads and earn points for free!</string>
-    <string name="remove_ads_for_free_disabled_free_downloads">Disable ads, increase the limit articles and earn points for free!</string>
-    <string name="ads_reward_gained">Hooray! No ads for %d hours!</string>
+    <string name="remove_ads_for_free_disabled_free_downloads">Disable ads, increase the offline aricle limit, and earn points for free!</string>
+    <string name="ads_reward_gained">No more ads for %d hours!</string>
     <string name="wait">Wait…</string>
-    <string name="ads_reward_error_loading">Failed to load. Try again…</string>
+    <string name="ads_reward_error_loading">Failed to load. Try again.</string>
     <string name="ads_reward_description_title">Instruction</string>
-    <string name="ads_reward_description_content">We\'ll show you the video and, after watching, temporarily disable ads. You can disable it as many times as you want!</string>
+    <string name="ads_reward_description_content">We\'ll show you the video and temporarily disable ads. You can do this as many times as you like!</string>
     <string name="ads_reward_ok">All clear!</string>
-    <string name="settings_design_list_type">Design articles in the list.</string>
+    <string name="settings_design_list_type">Design articles in the list</string>
     <string name="rating">Rating %d</string>
     <string name="yes_sir">Yes sir!</string>
-    <string name="reward_not_loaded_yet">Still doesn\'t load. Try again</string>
+    <string name="reward_not_loaded_yet">Couldn\'t load. Try again.</string>
     <string name="settings_design_font">Font</string>
-    <string name="login_advantages">Attention! Authorization is not required, but it needed for a cloud sync of the favorite articles, and read status. It also allows you to participate in the agent ranking. You can get further instructions from the head of the content area.</string>
-    <string name="login_advantages_title">Why authorization?</string>
+    <string name="login_advantages">Attention! Authorization is not required, but is needed for cloud syncing of your favorite articles and articles you have read. It also allows you to participate in the agent ranking. You can get further instructions from the head of the content area.</string>
+    <string name="login_advantages_title">Why do we prefer authorization?</string>
     <string name="login_greetings">Welcome, Agent %s</string>
-    <string name="error_login_no_email">You cannot log-in without e-mail.</string>
+    <string name="error_login_no_email">You cannot login without e-mail.</string>
     <string name="materials">Other files</string>
-    <string name="only_premium">Only for subscribing.</string>
-    <string name="activate">Activate.</string>
+    <string name="only_premium">Only for subscribing</string>
+    <string name="activate">Activate</string>
     <string name="info">Information</string>
-    <string name="subs_info">Optional feature includes disabling ads, all fonts without restriction, multiply all points you get by 3, and cloud synch of favorites and readings. And most importantly-subscribing, you\'re very motivating developers to quickly add features and fix bugs!</string>
-    <string name="subs_info_disabled_free_downloads">Optional feature includes disabling ads, unlimited download of articles to offline,all fonts without restriction, multiply all points you get by 3, and cloud synch of favorites and readings. And most importantly-subscribing, you\'re very motivating developers to quickly add features and fix bugs!</string>
+    <string name="subs_info">Optional features include disabling ads, using all fonts without restriction, multiplication of all points received by 3, and cloud syncing of favorites and readings. Most importantly, you\'re motivating developers to improve the app!</string>
+    <string name="subs_info_disabled_free_downloads">Optional features include disabling ads, using all fonts without restriction, multiplication of all points received by 3, and cloud syncing of favorites and readings. Most importantly, you\'re motivating developers to improve the app!</string>
 
     <string-array name="fag_items">
         <item>Authorization</item>
         <item>Cloud Sync</item>
-        <item>Rating system</item>
+        <item>Rating System</item>
     </string-array>
 
     <string-array name="fag_items_content">
         <item>1. You can login in the left menu, moving above the button \"Login\".\n
-        2. The entrance through the network requires an e-mail specified in the network because it is used as an ID in the server\'s database..\n
-        3. Authorization is needed for keep read and favorites articles into the cloud and participate in ranking agents.\n</item>
+        2. The entrance through the network requires an e-mail specified in the network because it is used as an ID in the server\'s database.\n
+        3. Authorization is needed to sync read and favorited articles into the cloud and participate in the agent ranking.\n</item>
         <item>1. Works only for authorized agents.\n
-        2. Need Internet connection.\n
+        2. Requires an internet connection.\n
         3. Works automatically for agents with a subscription.\n
-        4. For economical agents needed manual sync. see \"Settings\".\n
+        4. Economical agents need to manually sync. see \"Settings\".\n
         5. The status of the article is saved to the cloud and is read and added to the favorites.\n
-        6. If you clean up application any unsynchronized data will be lost.\n</item>
+        6. If you delete the application data, any unsynchronized data will be lost.\n</item>
         <item>1. Works only for authorized agents.\n
-        2. Need Internet connection.\n
+        2. Requires an internet connection.\n
         3. Works automatically for agents with a subscription.\n
-        4. For economical agents needed manual sync. see \"Settings\"\n
-        5. Points are awarded for: adding articles to your Favorites, reading articles, installing app, view ads, purchase in an application. Further the list will be expanded.\n
-        6. All points apply modifiers - if you have subscription all received points will be increased\n
+        4. Economical agents need to manually sync. see \"Settings\"\n
+        5. Points are awarded for adding articles to your favorites, reading articles, installing apps, viewing ads, and making any purchase in the application. The list may be expanded.\n
+        6. All points apply modifiers - if you have a subscription, all received points will be increased.\n
         7. As you receive your points, your clearance level will grow.\n
-        8. Progress until the next level is shown by the green line around the Avatar.\n
-        9. Number points to the next level are shown when you click on the Avatar.\n
-        10. The Agent rating table is shown when you click on the avatar. t is updated every few minutes. Usually 5 minutes.</item>
+        8. Current points you have until you reach the next level is shown by the green line around the avatar.\n
+        9. Number points to the next level are shown when you click on the avatar.\n
+        10. The Agent rating table is shown when you click on the avatar. It is updated every few minutes.</item>
     </string-array>
 
     <string name="free">Free</string>
     <string name="dialog_free_ads_disable_title">Remove Ads</string>
-    <string name="start_market_error">Failed to start Play Market</string>
-    <string name="thanks_for_supporting_us">Developers are grateful for your support!</string>
-    <string name="invitation_message">Learn about SCP!</string>
-    <string name="invitation_cta">Join to us!</string>
-    <string name="invitation_title">SCP Foundation Secret Materials!</string>
-    <string name="invite_friends">Invite friends to the app to disable ads for %1$d hours and get %2$d points!!</string>
-    <string name="watch_video_to_disable_ads">Watch video to disable ads for %1$d hours and get %2$d points!</string>
-    <string name="app_install_ads_disable_title">Install our other apps to disable Ads %1$d hours and get %2$d points!</string>
-    <string name="vk_group_join_ads_disable_title">Join the VK group to disable %1$d hours and get %2$d points!</string>
-    <string name="need_vk_group_access">Permission to access groups is required. Log again.</string>
+    <string name="start_market_error">Failed to launch the Google Play Store</string>
+    <string name="thanks_for_supporting_us">The developers are very grateful for your support!</string>
+    <string name="invitation_message">Learn about SCPs</string>
+    <string name="invitation_cta">Join us</string>
+    <string name="invitation_title">SCP Foundation secret materials</string>
+    <string name="invite_friends">Invite friends to the app to disable ads for %1$d hours and get %2$d points!</string>
+    <string name="watch_video_to_disable_ads">Watch a video ad to disable ads for %1$d hours and get %2$d points!</string>
+    <string name="app_install_ads_disable_title">Install our other apps to disable ads for %1$d hours and get %2$d points!</string>
+    <string name="vk_group_join_ads_disable_title">Join the VK group to disable ads for %1$d hours and get %2$d points!</string>
+    <string name="need_vk_group_access">Permission to access groups is required. Log in again.</string>
     <string name="gallery">Gallery</string>
     <string name="error_login_firebase_connection">Login error. Please try again. %s</string>
     <string name="on_user_logined">Welcome, agent %s</string>
-    <string name="login_in_progress_custom_token">Requesting a password on the Server</string>
+    <string name="login_in_progress_custom_token">Requesting a password on the server</string>
     <string name="error_while_sync">The article could not be saved to the cloud.</string>
     <string name="sync_fav_success">The article is synchronized.</string>
-    <string name="app_cracked">A hack attempt has been registered. Quarantine mode activated.</string>
+    <string name="app_cracked">A hacking attempt has been detected. Protocol ██████ activated.</string>
     <string name="auto_sync_disabled">Automatic cloud sync is disabled.</string>
     <string name="turn_on">Turn ON</string>
-    <string name="enable_auto_sync">Activate automatic sync.</string>
-    <string name="sync">Synchronize.</string>
+    <string name="enable_auto_sync">Activate automatic sync</string>
+    <string name="sync">Synchronize</string>
     <string name="subscribe">Subscribe</string>
     <string name="error_while_all_data_sync">The data could not be saved to the cloud. Error: %s</string>
-    <string name="all_data_sync_success">All data is saved to cloud! Saved %1$d articles, added %2$d points.</string>
+    <string name="all_data_sync_success">Data is now saved to the cloud. Saved %1$d articles and added %2$d points.</string>
     <string name="sync_need_auth">Authorization is required.</string>
     <string name="authorize">Log in</string>
     <string name="settings_data_sync">Save articles to the cloud.</string>
-    <string name="all_data_already_synced">The data is already in sync,the data is already in sync,max level!</string>
+    <string name="all_data_already_synced">Data is already synced</string>
     <string name="image_loading">Image loading…</string>
     <string name="image_saved">Image saved</string>
     <string name="image_saving_error">An error occurred while saving the image.</string>
     <!--Shortcuts android 7.1-->
     <string name="new_short">New</string>
     <string name="random_short">Random</string>
-    <string name="dialog_level_up_title">Gets the 5 level</string>
-    <string name="dialog_level_up_content">Attention, Staff! Clearance level l it\'s just a decorative inscription. It won\'t allow you to see remote data or access some hidden materials. You\'ll get only 3 things: 10000 points, the \"5 Clearance Level\" label and moral satisfaction from supporting developers, who work to improve the application)</string>
+    <string name="dialog_level_up_title">Gets Level 5</string>
+    <string name="dialog_level_up_content">Attention, staff! Clearance Level l is just a decorative inscription. It won\'t allow you to see remote data or access some hidden materials. You\'ll just get 3 things: 10,000 points, the \"5 Clearance 
+        \" label, and the moral satisfaction from supporting developers, who work to improve the application (and will be thankful for your donation).</string>
     <string name="dialog_level_up_ok_text">OK!</string>
     <string name="cracked_level_title">Class D</string>
-    <string name="cracked_avatar_message">Hack attempt recorded, Protocol ██████ activated.</string>
+    <string name="cracked_avatar_message">A hacking attempt has been detected. Protocol ██████ activated.</string>
     <string name="leaderboard_dialog_title">Agent ranking</string>
     <string name="refreshed">Updated at %s</string>
     <string name="progress_leaderboard">Contacting the HR Department of the Foundation…</string>
@@ -184,26 +193,26 @@
     <!--<string name="i_read_and_accept">I\'ve read and understood</string>-->
     <!--<string name="relogin">Log in</string>-->
     <string name="warning">Attention!</string>
-    <!--<string name="dialog_logout_content">When you logout the account, all articles you have selected will be reset! Make sure you synchronized. You can perform the synchronization in Settings.</string>-->
-    <string name="dialog_logout_content">Are you sure want to logout? Rating system is disabled for unauthorized agents and you won\'t be able to use benefits of your already gained score or receive additional ones</string>
+    <!--<string name="dialog_logout_content">When you logout, all articles you have selected will be reset! Make sure you are synchronized. You can perform the synchronization in the app settings.</string>-->
+    <string name="dialog_logout_content">Are you sure you want to logout? Rating system is disabled for unauthorized agents and you won\'t be able to use the benefits of your already gained score (or receive additional score)</string>
     <string name="logout">Logout</string>
-    <string name="error_getting_path_to_image">The image could not be saved.Please try again.</string>
+    <string name="error_getting_path_to_image">Image could not be saved. Please try again.</string>
     <string name="faq">FAQ</string>
     <string name="need_login">Authorization is required</string>
-    <string name="need_login_content">Attention agents! You must be authorized to add and check a favorite article. This allows you to synchronize your data across the cloud on all your devices, also allows you to receive points and participate in the agent ranking!</string>
+    <string name="need_login_content">Attention agents! You must be authorized to add and check favorite articles. This allows you to synchronize your data across the cloud on all your devices, and also allows you to receive points and participate in the agent ranking!</string>
     <string name="error_inapp">There was an error reading the data.</string>
     <string name="sort">Sorting</string>
-    <string name="dialog_sort_title">Sort and filter.</string>
+    <string name="dialog_sort_title">Sort and filter</string>
     <string name="dialog_social_login_title">Authorization</string>
-    <string name="error_login_firebase_user_collision">Error-Another user has already registered with this email</string>
+    <string name="error_login_firebase_user_collision">Error - Another user is already registered with this email</string>
     <string name="tags_search">Tag Search</string>
     <string name="tags_choosen">Selected tags</string>
     <string name="tags_all">All tags</string>
     <string name="tags_search_results">Results</string>
     <string name="tags">Tags:</string>
 
-    <string name="profile_score_info">You have %1$d points. You need %2$d to achieve next level</string>
-    <string name="profile_score_info_max_level">You have %1$d points. You have maximum access level!</string>
+    <string name="profile_score_info">You have %1$d points. You need %2$d to get to the next level</string>
+    <string name="profile_score_info_max_level">You have %1$d points, and have the maximum level</string>
 
     <plurals name="plurals_score">
         <item quantity="zero">%1$d points</item>
@@ -226,7 +235,7 @@
     <string name="filter_keter">Keter</string>
     <string name="filter_thaumiel">Thaumiel</string>
 
-    <string name="notif_new_arts_title">New articles:  %1$d%2$s</string>
+    <string name="notif_new_arts_title">New articles: %1$d%2$s</string>
     <string name="enter">Log in</string>
     <string name="feedback_title">Review SCP Database</string>
 
@@ -243,7 +252,7 @@
     <!--end of just ignore it, we use it only in ru version-->
 
     <string name="error_connection">Connection error</string>
-    <string name="error_parse">Error while HTML parsing</string>
+    <string name="error_parse">Error while attempting HTML parsing</string>
 
     <string name="social_provider_vk_title">VK</string>
 
@@ -256,39 +265,39 @@
 
     <!--ver 1.0.6+-->
     <string name="score_increased">Added %s</string>
-    <string name="random_article_warning">New random article generates by server every some minutes.</string>
+    <string name="random_article_warning">A new random article is generated by the server every few minutes.</string>
     <string name="article_not_translated">This article is not translated yet.</string>
-    <string name="offer_app_lang_version_content">Your device language - <b>%1$s</b>, an we have same app, where articles translated to <b>%2$s</b>. Want to install it?\n\nList of apps with different translates is always available in top right menu in any screen.</string>
-    <string name="open_play_market">Open Play Market</string>
+    <string name="offer_app_lang_version_content">Your device language - <b>%1$s</b>, is a supported language, where articles are translated to <b>%2$s</b>. Would you like to install it?\n\The list of apps with different translations is always available in the top right menu in any screen.</string>
+    <string name="open_play_market">Open Google Play Store</string>
     <string name="menuAppLangVersions">Branches of the Fund</string>
     <!---->
     <string name="subscription_no_ads_title">Disable ads</string>
     <string name="subscription_full_version_title">Full version</string>
     <string name="attention">Attention!</string>
     <!---->
-    <string name="sign_in_to_disable_ads">Sign in to disable ads for %1$d hours and get %2$d points, that will increase your offline articles limit!</string>
+    <string name="sign_in_to_disable_ads">Sign in to disable ads for %1$d hours and get %2$d points (this will increase your offline articles limit)</string>
     <string name="dialog_offer_login_to_gain_score_title">Want to authorize?</string>
-    <string name="dialog_offer_login_to_gain_score_content">Do you want to authorize first? After authorizing you\'ll get not only ads disabling, but also score increasing, which allows you to load more articles to read them offline!</string>
+    <string name="dialog_offer_login_to_gain_score_content">Do you want to authorize first? After authorizing you\'ll not only get ad disabling, but also score increasing, which allows you to load more articles to read them offline!</string>
     <string name="dialog_offer_subscription_title">Thanks for supporting us!</string>
-    <string name="dialog_offer_subscription_content">Want to buy subscription to disable all ads and receive unlimited offline capabilities, authomated cloud sync and all fonts?</string>
+    <string name="dialog_offer_subscription_content">Would you like to purchase a subscription to disable all ads and receive unlimited offline capabilities, automated cloud sync, and all fonts?</string>
     <!---->
-    <string name="dialog_offer_free_trial_subscription_title">Want to try full version for free?</string>
-    <string name="dialog_offer_free_trial_subscription_content">We want to offer you a free %1$d days trial of full version. You\'ll receive unlimited downloads, no ads, auto cloud sync and all fonts for %2$d days for FREE!</string>
+    <string name="dialog_offer_free_trial_subscription_title">Want to try the full version for free?</string>
+    <string name="dialog_offer_free_trial_subscription_content">We would like to offer you a free %1$d days trial of the full version. You\'ll receive unlimited downloads, no ads, auto cloud sync, and all fonts for %2$d days for free!</string>
 
     <string name="version"><b>Version: %s</b></string>
     <string name="snoska">Footnote %s</string>
     <string name="bibliography">Bibliography</string>
 
     <!---->
-    <string name="your_invite_received">Your invite accepted!</string>
-    <string name="invite_received_reward_message">Ads disabled for %1$d hours, %2$d score added!</string>
-    <string name="ads_disabled_for_some_hours">Ads disabled for %d hours!</string>
+    <string name="your_invite_received">Your invite was accepted!</string>
+    <string name="invite_received_reward_message">Blocking the manifestation of ads for %1$d hours, and %2$d score added!</string>
+    <string name="ads_disabled_for_some_hours">Blocking the manifestation of ads for %d hours!</string>
     <string name="drawer_item_invite_friends">Invite friends!</string>
 
     <!---->
-    <string name="settings_ads_banner_in_lists">Banner in articles lists</string>
-    <string name="settings_ads_title">Ads settings</string>
-    <string name="settings_ads_native_in_lists">Native ads in articles lists</string>
+    <string name="settings_ads_banner_in_lists">Banner in articles list</string>
+    <string name="settings_ads_title">Ad settings</string>
+    <string name="settings_ads_native_in_lists">Native ads in articles list</string>
     <string name="settings_ads_native_in_article">Native ads in article</string>
     <string name="settings_ads_banner_in_article">Banner in article</string>
     <string name="disable_all_ads">Disable all ads</string>
@@ -296,60 +305,83 @@
     <string name="remove_ads_for_free_for_hours"><![CDATA[For some hours for<br/><b><font color=#4CAF50>FREE</font></b>]]></string>
 
     <!---->
-    <string name="contacts_info"><![CDATA[We remind you that you can monitor the progress of the project at <b>GitHub</b> and in <b>Trello</b>. You can contact us through <b>email</b>. Here are the links:
+    <string name="contacts_info"><![CDATA[We want to remind you that you can monitor the progress of the project at <b>GitHub</b> and in <b>Trello</b>. You can contact us through <b>email</b>. Here are the links:
 <br/><br/>
-GitHub: <a href="https://github.com/mohaxspb/ScpFoundationCore.git">Repository ScpFoundationCore</a>
+GitHub: <a href="https://github.com/mohaxspb/ScpFoundationCore">Repository ScpFoundationCore</a>
 <br/><br/>
 Trello: <a href="https://trello.com/b/K96g075n/scp">A taskboard with a list of tasks to implement</a>
 <br/><br/>
 E-mail: <a href="mailto:neva.spb.rx@gmail.com">For any questions</a>
 <br/><br/>
 Thanks for using our app!]]></string>
-    <string name="subs_main_text">Here you can get special permission from the foundation and help the developers. Our application has <![CDATA[<a href="https://github.com/mohaxspb/ScpFoundationCore">open source code</a>]]> and <![CDATA[<a href="https://www.youtube.com/watch?v=5RuwbKvLDs0">cool cloud synchronization</a>]]>. If you like our app, you can support developers. All funding resources are going to maintain the project. Also you have the opportunity to support us just by looking at the advertisement. We will be glad to any donation. Thank you!</string>
-    <string name="subs_free_actions_title">Disable Ads for FREE!</string>
+    <string name="subs_main_text">Here you can get special permission from the foundation and help the developers. Our application has <![CDATA[<a href="https://github.com/mohaxspb/ScpFoundationCore">open source code</a>]]> and <![CDATA[<a href="https://www.youtube.com/watch?v=5RuwbKvLDs0">cool cloud synchronization</a>]]>. If you like our app, you can support developers. Funding resources are used to maintain the project. Also you have the opportunity to support us just by looking at advertisements. We will gladly accept any donation. Thank you!</string>
+    <string name="subs_free_actions_title">Disable ads for free!</string>
     <string name="subs_free_actions_card_title">Support us</string>
-    <string name="subs_free_actions_card_description">Remove ads, increase offline articles limit and earn point for FREE!</string>
+    <string name="subs_free_actions_card_description">Remove ads, increase the limit of offline articles, and earn points for free!</string>
     <string name="subs_no_ads_title">Protocol “Silence”</string>
-    <string name="subs_no_ads_description">Launch of the meme agent blocking any manifestation of the advertising agent in the application</string>
-    <string name="subs_description">Disabling ads, automatic cloud Sync, unlimited download of articles and atmospheric fonts</string>
+    <string name="subs_no_ads_description">Launches the meme agent that prevents any manifestation of the advertising agents in the application.</string>
+    <string name="subs_description">Disabling ads, automatic cloud sync, and unlimited downloading of articles and atmospheric fonts.</string>
     <string name="subs_level_5_gain">Get the 5th level</string>
     <string name="subs_1_month_title">Laboratory Assistant</string>
-    <string name="subs_3_month_title">Junior Research scientist</string>
+    <string name="subs_3_month_title">Junior Research Scientist</string>
     <string name="subs_6_month_title">Research Assistant</string>
-    <string name="subs_12_month_title">Senior research scientist</string>
-    <string name="subs_full_description">Disabling ads, automatic cloud Sync, unlimited download of articles and atmospheric fonts.</string>
+    <string name="subs_12_month_title">Senior Research Scientist</string>
+    <string name="subs_full_description">Disabling ads, automatic cloud sync, and unlimited downloading of articles and atmospheric fonts.</string>
     <string name="subs_no_ads_label">Month without advertising</string>
-    <string name="subs_1_month_label">Extended Monthly version</string>
+    <string name="subs_1_month_label">Extended monthly version</string>
     <string name="subs_3_month_label">Extended version for 3 months</string>
     <string name="subs_6_month_label">Half year extended version</string>
     <string name="subs_12_month_label">Extended version for the year</string>
     <string name="subs_cur_label">Your current status</string>
     <string name="subs_level_5_label">Get the 5th level</string>
     <string name="subs_cur_empty_title">██████ - Not assigned</string>
-    <string name="subs_level_5_title">5-th level of tolerance</string>
+    <string name="subs_level_5_title">5th level of tolerance</string>
     <string name="subs_percent">-%s%%</string>
     <string name="subs_leaderboard_activity_title">Leaderboard</string>
     <string name="subs_activity_title">Developer Support</string>
-    <string name="subs_level_5_description">10000 points, rating increase and limit of offline articles on 200 articles</string>
+    <string name="subs_level_5_description">10,000 points, rating increase and offline limit of 200 articles</string>
     <string name="free_ads_invite_title">Invite your friends to the app</string>
     <string name="free_ads_rewarded_video_title">Watch the video</string>
     <string name="free_ads_auth_title">Log in</string>
     <string name="free_ads_simple_subtitle">And we will turn off the ad %1$d hour and give you %2$d points</string>
     <string name="free_ads_app_install_label">Download our other apps</string>
     <string name="free_ads_app_install_title">And we will turn off the ad %1$d hour and give you %2$d points</string>
-    <string name="free_ads_vk_group_label">Join our group in VC</string>
+    <string name="free_ads_vk_group_label">Join our group in VK</string>
     <string name="free_ads_vk_group_title">And we will turn off the ad %1$d hour and give you %2$d points</string>
     <string name="free_ads_activity_title">Disabling ads</string>
     <string name="leaderboard_activity_title">Rating agents</string>
     <string name="leaderboard_inapp_title">Get up in the ranking.</string>
-    <string name="leaderboard_inapp_description">Use the trick and your connections in the fund to get around the colleagues and rise in the ranking</string>
+    <string name="leaderboard_inapp_description">Use the trick and your connections in the Fund to pass colleagues and rise in the rankings.</string>
     <string name="leaderboard_place">%d place</string>
-    <string name="leaderboard_inapp_label">Climb in the rankings (+ 10000 points)</string>
+    <string name="leaderboard_inapp_label">Climb in the rankings (+ 10,000 points)</string>
+    <string name="leaderboard_inapp_label_undefined">Climb in the rankings (+ %d points)</string>
     <string name="leaderboard_articles_read">%d pages read</string>
     <string name="score_num">%d points</string>
     <string name="level_num">%d level</string>
     <string name="drawer_item_leaderboard">Rating agents</string>
-    <string name="ads_will_be_shown_soon">Advertising will be shown soon! Want to disable it in advance?</string>
-    <string name="login">Login</string>
-    <string name="need_login_for_level_up_content">To participate in the rating of agents, you need to authorize.</string>
+    <string name="ads_will_be_shown_soon">Advertising will start to be shown soon! Want to disable it in advance?</string>
+    <string name="need_login_for_level_up_content">To participate in the rating of agents, you need to be authorized.</string>
+
+    <!---->
+    <string name="leaderboard_appodeal_description">No high-level connections in the Fund? Try to find compromising material and rise in the rankings.</string>
+
+    <!---->
+    <string name="downloads_settings">Download settings</string>
+    <string name="downloads_force_update">Force update text while downloading</string>
+    <string name="download_inner_depth">Download inner articles depth</string>
+    <string name="images_cache_enabled">Local image caching</string>
+    <string name="cached_images_count">Cached images count</string>
+    <string name="cached_images_size">Cached images size</string>
+    <string name="clear_cached_images">Clear cached images</string>
+    <string name="free_ads_vk_share_label">Share the app in VK</string>
+    <string name="share_app_vk_text">Love fantastic and creepy stories? Try the SCP Foundation app - there are thousands of articles to enjoy!</string>
+    <string name="need_vk_wall_access">Permission to post on wall is required. Please login again.</string>
+    <!---->
+    <string name="app_lang_dialog_google_description">Here are other versions of our application in different languages. You can download the necessary language version by clicking the respective link.</string>
+    <string name="scp_quiz_banner_cta">Install</string>
+    <string name="scp_quiz_banner_title">Scp Exam. Check yourself!</string>
+    <string name="scp_quiz_banner_subtitle">It\'s time to pass the test and test your knowledge of the Foundation, are you ready?</string>
+    <string name="no_comments_url_found">No comments url found. Try to update article to get it.</string>
+    <!---->
+    <string name="drawer_item_objects5">Series V</string>
 </resources>

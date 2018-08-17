@@ -1,20 +1,22 @@
 package ru.kuchanov.scpcore.ui.adapter;
 
-import android.annotation.SuppressLint;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.ads.NativeExpressAdView;
-import com.google.android.gms.ads.VideoOptions;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -24,21 +26,23 @@ import javax.inject.Inject;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
+import ru.kuchanov.scpcore.api.ParseHtmlUtils;
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.monetization.util.AdMobHelper;
-import ru.kuchanov.scpcore.monetization.util.MyAdmobNativeAdListener;
+import ru.kuchanov.scpcore.monetization.model.ScpArtAdsJson;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.HolderMax;
 import ru.kuchanov.scpcore.ui.holder.HolderMedium;
 import ru.kuchanov.scpcore.ui.holder.HolderMin;
 import ru.kuchanov.scpcore.ui.holder.NativeAdsArticleListHolder;
+import ru.kuchanov.scpcore.ui.model.ArticleTextPartViewModel;
 import ru.kuchanov.scpcore.ui.model.ArticlesListModel;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_INTERVAL;
-import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_SOURCE;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_SOURCE_V2;
 
 /**
  * Created by Dante on 17.01.2016.
@@ -69,7 +73,7 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         @StringRes
         private final int title;
 
-        SortType(int title) {
+        SortType(final int title) {
             this.title = title;
         }
 
@@ -84,30 +88,44 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({ArticleListNodeType.ARTICLE, ArticleListNodeType.NATIVE_ADS_AD_MOB, ArticleListNodeType.NATIVE_ADS_APPODEAL})
+    @IntDef({
+            ArticleListNodeType.ARTICLE,
+            ArticleListNodeType.NATIVE_ADS_APPODEAL,
+            ArticleListNodeType.NATIVE_ADS_SCP_ART,
+            ArticleListNodeType.NATIVE_ADS_SCP_QUIZ
+    })
     public @interface ArticleListNodeType {
+
         int ARTICLE = 0;
-        int NATIVE_ADS_AD_MOB = 1;
+        int NATIVE_ADS_SCP_ART = 1;
         int NATIVE_ADS_APPODEAL = 2;
+        int NATIVE_ADS_SCP_QUIZ = 3;
     }
 
     @Inject
     MyPreferenceManager mMyPreferenceManager;
 
+    @Inject
+    Gson mGson;
+
     protected List<Article> mData;
 
     protected List<Article> mSortedWithFilterData = new ArrayList<>();
 
-    private List<ArticlesListModel> mAdsModelsList = new ArrayList<>();
-    private List<ArticlesListModel> mArticlesAndAds = new ArrayList<>();
+    private final List<MyListItem> mAdsModelsList = new ArrayList<>();
+
+    private final List<MyListItem> mArticlesAndAds = new ArrayList<>();
 
     protected SortType mSortType = SortType.NONE;
 
     private ArticleClickListener mArticleClickListener;
+
     private boolean shouldShowPopupOnFavoriteClick;
+
     private boolean shouldShowPreview;
 
     public ArticlesListAdapter() {
+        super();
         BaseApplication.getAppComponent().inject(this);
     }
 
@@ -115,7 +133,7 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return mSortedWithFilterData;
     }
 
-    public void setData(List<Article> data) {
+    public void setData(final List<Article> data) {
         mData = data;
         sortByType(mSortType);
 
@@ -123,15 +141,10 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         createDataWithAdsAndArticles();
 
         notifyDataSetChanged();
-
-//        Timber.d("mAdsModelsList: %s", mAdsModelsList);
-//        for (ArticlesListModel model : mAdsModelsList) {
-//            Timber.d("type: %s/%s", model.type, model.data);
-//        }
     }
 
-    public void sortByType(SortType sortType) {
-        Timber.d("sortByType: %s", sortType);
+    public void sortByType(final SortType sortType) {
+//        Timber.d("sortByType: %s", sortType);
         mSortType = sortType;
         if (mData == null) {
             return;
@@ -154,18 +167,18 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 //                mSortedWithFilterData.addAll(sortedByDateUpdatedArts);
 //                break;
             case RATING:
-                List<Article> sortedByRatingArts = new ArrayList<>(mData);
+                final List<Article> sortedByRatingArts = new ArrayList<>(mData);
                 Collections.sort(sortedByRatingArts, Article.COMPARATOR_DATE_RATING);
                 mSortedWithFilterData.addAll(sortedByRatingArts);
                 break;
             case TITLE:
-                List<Article> sortedByTitleArts = new ArrayList<>(mData);
+                final List<Article> sortedByTitleArts = new ArrayList<>(mData);
                 Collections.sort(sortedByTitleArts, Article.COMPARATOR_TITLE);
                 mSortedWithFilterData.addAll(sortedByTitleArts);
                 break;
             case NOT_READ:
-                List<Article> sortedByReadStateArts = new ArrayList<>();
-                for (Article article : mData) {
+                final Collection<Article> sortedByReadStateArts = new ArrayList<>();
+                for (final Article article : mData) {
                     if (!article.isInReaden) {
                         sortedByReadStateArts.add(article);
                     }
@@ -173,8 +186,8 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 mSortedWithFilterData.addAll(sortedByReadStateArts);
                 break;
             case READ:
-                List<Article> sortedByNonReadStateArts = new ArrayList<>();
-                for (Article article : mData) {
+                final Collection<Article> sortedByNonReadStateArts = new ArrayList<>();
+                for (final Article article : mData) {
                     if (article.isInReaden) {
                         sortedByNonReadStateArts.add(article);
                     }
@@ -182,8 +195,8 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 mSortedWithFilterData.addAll(sortedByNonReadStateArts);
                 break;
             case NEUTRAL_OR_NOT_ADDED:
-                List<Article> neutralOrNotAdded = new ArrayList<>();
-                for (Article article : mData) {
+                final Collection<Article> neutralOrNotAdded = new ArrayList<>();
+                for (final Article article : mData) {
                     if (article.type.equals(Article.ObjectType.NEUTRAL_OR_NOT_ADDED)) {
                         neutralOrNotAdded.add(article);
                     }
@@ -191,8 +204,8 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 mSortedWithFilterData.addAll(neutralOrNotAdded);
                 break;
             case EUCLID:
-                List<Article> euclid = new ArrayList<>();
-                for (Article article : mData) {
+                final Collection<Article> euclid = new ArrayList<>();
+                for (final Article article : mData) {
                     if (article.type.equals(Article.ObjectType.EUCLID)) {
                         euclid.add(article);
                     }
@@ -200,8 +213,8 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 mSortedWithFilterData.addAll(euclid);
                 break;
             case KETER:
-                List<Article> keter = new ArrayList<>();
-                for (Article article : mData) {
+                final Collection<Article> keter = new ArrayList<>();
+                for (final Article article : mData) {
                     if (article.type.equals(Article.ObjectType.KETER)) {
                         keter.add(article);
                     }
@@ -209,8 +222,8 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 mSortedWithFilterData.addAll(keter);
                 break;
             case SAFE:
-                List<Article> safe = new ArrayList<>();
-                for (Article article : mData) {
+                final Collection<Article> safe = new ArrayList<>();
+                for (final Article article : mData) {
                     if (article.type.equals(Article.ObjectType.SAFE)) {
                         safe.add(article);
                     }
@@ -218,8 +231,8 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 mSortedWithFilterData.addAll(safe);
                 break;
             case THAUMIEL:
-                List<Article> thaumiel = new ArrayList<>();
-                for (Article article : mData) {
+                final Collection<Article> thaumiel = new ArrayList<>();
+                for (final Article article : mData) {
                     if (article.type.equals(Article.ObjectType.THAUMIEL)) {
                         thaumiel.add(article);
                     }
@@ -234,34 +247,26 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         createDataWithAdsAndArticles();
     }
 
-    @SuppressLint("InflateParams")
     protected void createDataWithAdsAndArticles() {
         mArticlesAndAds.clear();
-        for (Article article : getDisplayedData()) {
+        for (final Article article : getDisplayedData()) {
             mArticlesAndAds.add(new ArticlesListModel(ArticleListNodeType.ARTICLE, article));
         }
         //do not add native ads items if user has subscription or banners temporary disabled
-        //or banners rnabled or native disabled
-        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-// /        if (mMyPreferenceManager.isHasAnySubscription()
-//                || !mMyPreferenceManager.isTimeToShowBannerAds()
-//                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED)
-//                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED)) {
-//            return;
-//        }
+        //or banners enabled or native disabled
         if (mMyPreferenceManager.isHasAnySubscription()
-                || !mMyPreferenceManager.isTimeToShowBannerAds()
-                || mMyPreferenceManager.isBannerInArticlesListsEnabled()) {
+            || !mMyPreferenceManager.isTimeToShowBannerAds()
+            || mMyPreferenceManager.isBannerInArticlesListsEnabled()) {
             return;
         }
         if (mAdsModelsList.isEmpty()) {
-            mAdsModelsList.addAll(createAdsModelsList());
+            mAdsModelsList.addAll(createAdsModelsList(false));
         }
 
         // Loop through the items array and place a new Native Express ad in every ith position in
         // the items List.
-//        int appodealIndex = 0;
-        int interval = (int) (config.getLong(NATIVE_ADS_LISTS_INTERVAL) - 1);
+        final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        final int interval = (int) (config.getLong(NATIVE_ADS_LISTS_INTERVAL) - 1);
         for (int i = 0; i <= getDisplayedData().size(); i += interval) {
             //do not add as first row
             if (i == 0) {
@@ -269,66 +274,88 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             } else if (i / interval > Constants.NUM_OF_NATIVE_ADS_PER_SCREEN) {
                 break;
             }
-
+            if (mArticlesAndAds.isEmpty() || i < 0) {
+                break;
+            }
             mArticlesAndAds.add(i, mAdsModelsList.get((i / interval) - 1));
         }
     }
 
-    private List<ArticlesListModel> createAdsModelsList() {
-        List<ArticlesListModel> adsModelsList = new ArrayList<>();
+    public static List<MyListItem> createAdsModelsList(final boolean isArticle) {
+        Timber.d("createAdsModelsList");
+        final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        final Constants.NativeAdsSource nativeAdsSource =
+                Constants.NativeAdsSource.values()[(int) config.getLong(NATIVE_ADS_LISTS_SOURCE_V2)];
+        Timber.d("nativeAdsSource: %s", nativeAdsSource);
+        final List<ScpArtAdsJson.ScpArtAd> scpArtAdsJson = new GsonBuilder()
+                .create()
+                .fromJson(config.getString(Constants.Firebase.RemoteConfigKeys.ADS_SCP_ART_V2), ScpArtAdsJson.class).getAds();
 
-        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-        @Constants.NativeAdsSource
-        int nativeAdsSource = (int) config.getLong(NATIVE_ADS_LISTS_SOURCE);
-        //test
-//        nativeAdsSource = Constants.NativeAdsSource.APPODEAL;
         int appodealIndex = 0;
+        final List<MyListItem> adsModelsList = new ArrayList<>();
         for (int i = 0; i < Constants.NUM_OF_NATIVE_ADS_PER_SCREEN; i++) {
             switch (nativeAdsSource) {
-                case Constants.NativeAdsSource.ALL: {
+                case ALL: {
                     //show ads from list of sources via random
-                    switch (new Random().nextInt(Constants.NUM_OF_NATIVE_ADS_SOURCES) + 1) {
-                        case Constants.NativeAdsSource.AD_MOB:
-                            @SuppressLint("InflateParams")
-                            NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
-                                    .inflate(R.layout.native_ads_admob_medium, null, false);
-                            nativeAdView.setVideoOptions(new VideoOptions.Builder()
-                                    .setStartMuted(true)
-                                    .build());
-                            nativeAdView.setAdListener(new MyAdmobNativeAdListener() {
-                                @Override
-                                public void onAdFailedToLoad(int i) {
-                                    super.onAdFailedToLoad(i);
-                                    nativeAdView.setVisibility(View.GONE);
-                                }
-                            });
-                            nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
-                            adsModelsList.add(new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView));
-                            break;
-                        case Constants.NativeAdsSource.APPODEAL:
-                            adsModelsList.add(new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex));
+                    final List<Constants.NativeAdsSource> nativeAdsSources =
+                            new ArrayList<>(Arrays.asList(Constants.NativeAdsSource.values()));
+                    nativeAdsSources.remove(Constants.NativeAdsSource.ALL);
+                    if (!config.getBoolean(Constants.Firebase.RemoteConfigKeys.ADS_SCP_ART_ENABLED)) {
+                        nativeAdsSources.remove(Constants.NativeAdsSource.SCP_ART);
+                    }
+                    final Constants.NativeAdsSource randomNativeAdsSource =
+                            nativeAdsSources.get(new Random().nextInt(nativeAdsSources.size()));
+                    Timber.d("nativeAdsSources: %s", nativeAdsSources);
+                    Timber.d("randomNativeAdsSource: %s", randomNativeAdsSource);
+                    switch (randomNativeAdsSource) {
+                        case APPODEAL:
+                            adsModelsList.add(
+                                    isArticle
+                                    ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL, appodealIndex, false)
+                                    : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex)
+                            );
                             appodealIndex++;
+                            break;
+                        case SCP_ART:
+                            adsModelsList.add(
+                                    isArticle
+                                    ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_SCP_ART, scpArtAdsJson.get(new Random().nextInt(scpArtAdsJson.size())), false)
+                                    : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_SCP_ART, scpArtAdsJson.get(new Random().nextInt(scpArtAdsJson.size())))
+                            );
+                            break;
+                        case SCP_QUIZ:
+                            adsModelsList.add(
+                                    isArticle
+                                    ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_SCP_QUIZ, new Random().nextInt(), false)
+                                    : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_SCP_QUIZ, new Random().nextInt())
+                            );
                             break;
                         default:
                             throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
                     }
                     break;
                 }
-                case Constants.NativeAdsSource.AD_MOB: {
-                    @SuppressLint("InflateParams")
-                    NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
-                            .inflate(R.layout.native_ads_admob_medium, null, false);
-                    nativeAdView.setAdListener(new MyAdmobNativeAdListener());
-                    nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
-                    nativeAdView.setVideoOptions(new VideoOptions.Builder()
-                            .setStartMuted(true)
-                            .build());
-                    adsModelsList.add(new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_AD_MOB, nativeAdView));
-                    break;
-                }
-                case Constants.NativeAdsSource.APPODEAL:
-                    adsModelsList.add(new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex));
+                case APPODEAL:
+                    adsModelsList.add(
+                            isArticle
+                            ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL, appodealIndex, false)
+                            : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex)
+                    );
                     appodealIndex++;
+                    break;
+                case SCP_ART:
+                    adsModelsList.add(
+                            isArticle
+                            ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_SCP_ART, scpArtAdsJson.get(new Random().nextInt(scpArtAdsJson.size())), false)
+                            : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_SCP_ART, scpArtAdsJson.get(new Random().nextInt(scpArtAdsJson.size())))
+                    );
+                    break;
+                case SCP_QUIZ:
+                    adsModelsList.add(
+                            isArticle
+                            ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_SCP_QUIZ, new Random().nextInt(), false)
+                            : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_SCP_QUIZ, new Random().nextInt())
+                    );
                     break;
                 default:
                     throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
@@ -339,28 +366,31 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     @Override
-    public long getItemId(int position) {
+    public long getItemId(final int position) {
         //create correct ID, as we now have ads in list
-        return mArticlesAndAds.get(position).data.hashCode();
+        return ((ArticlesListModel) mArticlesAndAds.get(position)).data.hashCode();
     }
 
     @ArticleListNodeType
     @Override
-    public int getItemViewType(int position) {
+    public int getItemViewType(final int position) {
         //we must create viewType for article and native ads
-        return mArticlesAndAds.get(position).type;
+        return ((ArticlesListModel) mArticlesAndAds.get(position)).type;
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, @ArticleListNodeType int viewType) {
-        RecyclerView.ViewHolder viewHolder;
-        View view;
+    public RecyclerView.ViewHolder onCreateViewHolder(
+            @NonNull final ViewGroup parent,
+            @ArticleListNodeType final int viewType
+    ) {
+        final RecyclerView.ViewHolder viewHolder;
+        final View view;
 
         //switch by viewType for create native ads viewHolder
         switch (viewType) {
             case ArticleListNodeType.ARTICLE:
-                @SettingsBottomSheetDialogFragment.ListItemType
-                String listDesignType = mMyPreferenceManager.getListDesignType();
+                @SettingsBottomSheetDialogFragment.ListItemType final String listDesignType = mMyPreferenceManager.getListDesignType();
                 switch (listDesignType) {
                     case SettingsBottomSheetDialogFragment.ListItemType.MIN:
                         view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_min, parent, false);
@@ -378,8 +408,9 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         throw new IllegalArgumentException("unexpected ListDesignType: " + listDesignType);
                 }
                 break;
+            case ArticleListNodeType.NATIVE_ADS_SCP_ART:
+            case ArticleListNodeType.NATIVE_ADS_SCP_QUIZ:
             case ArticleListNodeType.NATIVE_ADS_APPODEAL:
-            case ArticleListNodeType.NATIVE_ADS_AD_MOB:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_native_container, parent, false);
                 viewHolder = new NativeAdsArticleListHolder(view, mArticleClickListener);
                 break;
@@ -391,23 +422,24 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        @ArticleListNodeType
-        int viewType = getItemViewType(position);
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
+        @ArticleListNodeType final int viewType = getItemViewType(position);
+        final ArticlesListModel articlesListModel = (ArticlesListModel) mArticlesAndAds.get(position);
         switch (viewType) {
             case ArticleListNodeType.ARTICLE:
-                HolderMin holderArticle = (HolderMin) holder;
-                holderArticle.bind((Article) mArticlesAndAds.get(position).data);
+                final HolderMin holderArticle = (HolderMin) holder;
+                holderArticle.bind((Article) articlesListModel.data);
                 holderArticle.setShouldShowPreview(shouldShowPreview);
                 holderArticle.setShouldShowPopupOnFavoriteClick(shouldShowPopupOnFavoriteClick);
                 break;
-            case ArticleListNodeType.NATIVE_ADS_AD_MOB:
-                NativeAdsArticleListHolder nativeAdsHolder = (NativeAdsArticleListHolder) holder;
-                nativeAdsHolder.bind((NativeExpressAdView) mArticlesAndAds.get(position).data);
+            case ArticleListNodeType.NATIVE_ADS_SCP_ART:
+                ((NativeAdsArticleListHolder) holder).bind((ScpArtAdsJson.ScpArtAd) articlesListModel.data);
                 break;
             case ArticleListNodeType.NATIVE_ADS_APPODEAL:
-                NativeAdsArticleListHolder nativeAdsAppodealHolder = (NativeAdsArticleListHolder) holder;
-                nativeAdsAppodealHolder.bind((Integer) mArticlesAndAds.get(position).data);
+                ((NativeAdsArticleListHolder) holder).bind((Integer) articlesListModel.data);
+                break;
+            case ArticleListNodeType.NATIVE_ADS_SCP_QUIZ:
+                ((NativeAdsArticleListHolder) holder).bind();
                 break;
             default:
                 throw new IllegalArgumentException("unexpected viewType: " + viewType);
@@ -419,15 +451,15 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return mArticlesAndAds.size();
     }
 
-    public void setArticleClickListener(ArticleClickListener articleClickListener) {
+    public void setArticleClickListener(final ArticleClickListener articleClickListener) {
         mArticleClickListener = articleClickListener;
     }
 
-    public void setShouldShowPopupOnFavoriteClick(boolean show) {
+    public void setShouldShowPopupOnFavoriteClick(final boolean show) {
         shouldShowPopupOnFavoriteClick = show;
     }
 
-    public void setShouldShowPreview(boolean show) {
+    public void setShouldShowPreview(final boolean show) {
         shouldShowPreview = show;
     }
 

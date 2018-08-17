@@ -12,7 +12,6 @@ import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
 
-import ru.kuchanov.scp.downloads.MyPreferenceManagerModel;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
@@ -25,6 +24,7 @@ import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.APP_INSTAL
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.ARTICLE_BANNER_DISABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.AUTH_COOLDOWN_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_SHARE_APP_REWARD;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.INVITE_REWARD_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED;
@@ -37,7 +37,7 @@ import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.REWARDED_V
  * <p>
  * for scp_ru
  */
-public class MyPreferenceManager implements MyPreferenceManagerModel {
+public class MyPreferenceManager {
 
     /**
      * check if user joined app vk group each 1 day
@@ -65,6 +65,8 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     private static final long FREE_TRIAL_OFFERED_PERIOD = Period.days(7).toStandardDuration().getMillis();
 
     private static final int NUM_OF_DISABLE_ADS_REWARDS_COUNT_BEFORE_OFFER_SHOWING = 3;
+
+    public static final int MAX_DOWNLOADS_DEPTH = 5;
 
     public interface Keys {
 
@@ -109,6 +111,10 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         String OFFER_ALREADY_SHOWN = "OFFER_ALREADY_SHOWN";
         String LEADERBOARD_UPDATE_TIME = "LEADERBOARD_UPDATE_TIME";
         String OFFLINE_RANDOM = "OFFLINE_RANDOM";
+        String INNER_ARTICLES_DEPTH = "INNER_ARTICLES_DEPTH";
+        String DOWNLOAD_FORCE_UPDATE_ENABLED = "DOWNLOAD_FORCE_UPDATE_ENABLED";
+        String IMAGES_CACHE_ENABLED = "IMAGES_CACHE_ENABLED";
+        String VK_APP_SHARED = "VK_APP_SHARED";
     }
 
     private final Gson mGson;
@@ -125,7 +131,6 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         mPreferences.edit().putBoolean(Keys.NIGHT_MODE, isInNightMode).apply();
     }
 
-    @Override
     public boolean isNightMode() {
         return mPreferences.getBoolean(Keys.NIGHT_MODE, false);
     }
@@ -169,14 +174,44 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         return mPreferences.getString(Keys.DESIGN_FONT_PATH, "fonts/Roboto-Regular.ttf");
     }
 
+    //download all settings
+    public int getInnerArticlesDepth() {
+        return mPreferences.getInt(Keys.INNER_ARTICLES_DEPTH, 0);
+    }
+
+    public void setInnerArticlesDepth(final int innerArticlesDepth) {
+        mPreferences.edit().putInt(Keys.INNER_ARTICLES_DEPTH, innerArticlesDepth).apply();
+    }
+
+    public boolean isDownloadForceUpdateEnabled() {
+        return mPreferences.getBoolean(Keys.DOWNLOAD_FORCE_UPDATE_ENABLED, false);
+    }
+
+    public void setDownloadForceUpdateEnabled(final boolean downloadForceUpdateEnabled) {
+        mPreferences.edit().putBoolean(Keys.DOWNLOAD_FORCE_UPDATE_ENABLED, downloadForceUpdateEnabled).apply();
+    }
+
+    public boolean isImagesCacheEnabled() {
+        return mPreferences.getBoolean(Keys.IMAGES_CACHE_ENABLED, true);
+    }
+
+    public void setImagesCacheEnabled(final boolean enabled) {
+        mPreferences.edit().putBoolean(Keys.IMAGES_CACHE_ENABLED, enabled).apply();
+    }
+
+    public void setVkAppShared() {
+        mPreferences.edit().putBoolean(Keys.VK_APP_SHARED, true).apply();
+    }
+
+    public boolean isVkAppShared() {
+        return mPreferences.getBoolean(Keys.VK_APP_SHARED, false);
+    }
+    //download all settings END
+
     //new arts notifications
     int getNotificationPeriodInMinutes() {
         return mPreferences.getInt(Keys.NOTIFICATION_PERIOD, 60);
     }
-
-//    public void setNotificationPeriodInMinutes(int minutes) {
-//        mPreferences.edit().putInt(Keys.NOTIFICATION_PERIOD, minutes).apply();
-//    }
 
     public boolean isNotificationEnabled() {
         return mPreferences.getBoolean(Keys.NOTIFICATION_IS_ON, true);
@@ -453,6 +488,15 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
     }
 
+    public void applyAwardVkShareApp() {
+        final long time = FirebaseRemoteConfig.getInstance().getLong(FREE_VK_SHARE_APP_REWARD);
+        increaseLastTimeAdsShows(time);
+        //also set time for which we should disable banners
+        increaseTimeForWhichBannersDisabled(time);
+
+        setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
+    }
+
     public void applyAwardSignIn() {
 //        long time = System.currentTimeMillis()
 //                + FirebaseRemoteConfig.getInstance().getLong(AUTH_COOLDOWN_IN_MILLIS);
@@ -482,11 +526,8 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
         mPreferences.edit().putBoolean(Keys.HAS_SUBSCRIPTION, hasSubscription).apply();
     }
 
-    @Override
     public boolean isHasSubscription() {
         return mPreferences.getBoolean(Keys.HAS_SUBSCRIPTION, false);
-////       FIX ME test
-//        return true;
     }
 
     /**
@@ -549,17 +590,14 @@ public class MyPreferenceManager implements MyPreferenceManagerModel {
     }
     //subscriptions end
 
-    @Override
     public boolean isDownloadAllEnabledForFree() {
         return FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_ALL_ENABLED_FOR_FREE);
     }
 
-    @Override
     public int getScorePerArt() {
         return (int) FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_SCORE_PER_ARTICLE);
     }
 
-    @Override
     public int getFreeOfflineLimit() {
         return (int) FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_FREE_ARTICLES_LIMIT);
     }

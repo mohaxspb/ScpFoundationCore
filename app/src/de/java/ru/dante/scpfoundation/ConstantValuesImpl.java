@@ -1,6 +1,6 @@
 package ru.dante.scpfoundation;
 
-import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.ConstantValues;
 
 /**
  * Created by mohax on 15.07.2017.
@@ -42,6 +42,11 @@ public class ConstantValuesImpl implements ConstantValues {
     @Override
     public String getObjects4() {
         return Urls.OBJECTS_4;
+    }
+
+    @Override
+    public String getObjects5() {
+        return Urls.OBJECTS_5;
     }
 
     @Override
@@ -186,6 +191,7 @@ public class ConstantValuesImpl implements ConstantValues {
         String OBJECTS_2 = BASE_API_URL + "/scp-series-2";
         String OBJECTS_3 = BASE_API_URL + "/scp-series-3";
         String OBJECTS_4 = BASE_API_URL + "/scp-series-4";
+        String OBJECTS_5 = BASE_API_URL + "/scp-series-5";
 
         String OBJECTS_PL = BASE_API_URL + "/scp-de";
 

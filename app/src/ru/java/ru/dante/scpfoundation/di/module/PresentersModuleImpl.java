@@ -14,7 +14,7 @@ import ru.dante.scpfoundation.mvp.presenter.ObjectsEsArticlesPresenter;
 import ru.dante.scpfoundation.mvp.presenter.ObjectsFrArticlesPresenter;
 import ru.dante.scpfoundation.mvp.presenter.ObjectsJpArticlesPresenter;
 import ru.dante.scpfoundation.mvp.presenter.ObjectsPlArticlesPresenter;
-import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.di.module.PresentersModule;

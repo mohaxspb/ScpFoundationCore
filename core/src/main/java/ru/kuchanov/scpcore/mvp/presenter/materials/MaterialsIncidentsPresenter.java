@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
-import ru.kuchanov.scp.downloads.ConstantValues;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
@@ -15,8 +15,6 @@ import rx.Observable;
 
 /**
  * Created by y.kuchanov on 21.12.16.
- * <p>
- * for TappAwards
  */
 public class MaterialsIncidentsPresenter
         extends BaseObjectsArticlesPresenter<MaterialsIncidentsMvp.View>

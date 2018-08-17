@@ -1,11 +1,7 @@
 package ru.kuchanov.scpcore;
 
 import android.support.annotation.DrawableRes;
-import android.support.annotation.IntDef;
 import android.support.annotation.StringRes;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
 /**
  * Created by mohax on 03.01.2017.
@@ -18,21 +14,16 @@ public interface Constants {
      * cant find link, but as I remember 3 ads per list is permitted limit
      */
     int NUM_OF_NATIVE_ADS_PER_SCREEN = 3;
-    int NUM_OF_NATIVE_ADS_SOURCES = 2;
+    long POST_DELAYED_MILLIS = 500;
 
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({NativeAdsSource.ALL, NativeAdsSource.AD_MOB, NativeAdsSource.APPODEAL})
-    @interface NativeAdsSource {
-        int ALL = 0;
-        int AD_MOB = 1;
-        int APPODEAL = 2;
+    enum NativeAdsSource {
+        ALL, APPODEAL, SCP_ART, SCP_QUIZ
     }
 
     interface Api {
+
         int ZERO_OFFSET = 0;
 
-        String MOST_RECENT_URL = "/most-recently-created/p/";
-        String MOST_RATED_URL = "/top-rated-pages/p/";
         /**
          * first arg is searchQuery with SPACEs replaced by "%20"
          * second - num of page
@@ -45,14 +36,16 @@ public interface Constants {
         int NUM_OF_ARTICLES_ON_RATED_PAGE = 20;
         int NUM_OF_ARTICLES_ON_SEARCH_PAGE = 10;
         //gallery
-        int GALLERY_VK_GROUP_ID = -98801766;
-        int GALLERY_VK_ALBUM_ID = 219430203;
+//        int GALLERY_VK_GROUP_ID = -98801766;
+//        int GALLERY_VK_ALBUM_ID = 219430203;
+        String GALLERY_FILES_PATH = "gallery/files/";
 
         String NOT_TRANSLATED_ARTICLE_UTIL_URL = "not_translated_yet_article_which_we_cant_show";
         String NOT_TRANSLATED_ARTICLE_URL_DELIMITER = "___";
     }
 
     interface Urls {
+
         String MAIN = "http://scpfoundation.ru/";
 
         String RATE = "http://scpfoundation.ru/top-rated-pages";
@@ -61,6 +54,8 @@ public interface Constants {
         String OBJECTS_2 = "http://scpfoundation.ru/scp-list-2";
         String OBJECTS_3 = "http://scpfoundation.ru/scp-list-3";
         String OBJECTS_4 = "http://scpfoundation.ru/scp-list-4";
+        //fixme insert correct url.
+        String OBJECTS_5 = "http://scpfoundation.ru/scp-list-5";
         String OBJECTS_RU = "http://scpfoundation.ru/scp-list-ru";
 
         //materials
@@ -83,6 +78,8 @@ public interface Constants {
 
         String[] ALL_LINKS_ARRAY = {MAIN, RATE, NEW_ARTICLES, EXPERIMENTS, INCEDENTS, INTERVIEWS, OTHERS, STORIES, LEAKS, OBJECTS_1, OBJECTS_2, OBJECTS_3, OBJECTS_RU, NEWS};
         String BASE_API_URL = "http://scpfoundation.ru";
+        String SCP_ART_AD_UTM = "http://artscp.com/promo?utm_source=%1$s&utm_medium=referral&utm_campaign=app-ads&utm_term=%2$d";
+        String SCP_QUIZ_MARKET_URL = "https://play.google.com/store/apps/details?id=ru.kuchanov.scpquiz";
     }
 
     interface Firebase {
@@ -104,7 +101,7 @@ public interface Constants {
             @DrawableRes
             private final int icon;
 
-            SocialProvider(int title, int icon) {
+            SocialProvider(final int title, final int icon) {
                 this.title = title;
                 this.icon = icon;
             }
@@ -120,6 +117,7 @@ public interface Constants {
         }
 
         interface PushDataKeys {
+
             String INVITE_ID = "inviteId";
             String TITLE = "title";
             String MESSAGE = "message";
@@ -128,6 +126,7 @@ public interface Constants {
         }
 
         interface Refs {
+
             String USERS = "users";
             String ARTICLES = "articles";
             String SCORE = "score";
@@ -140,6 +139,7 @@ public interface Constants {
         }
 
         interface RemoteConfigKeys {
+
             //ads
             String NUM_OF_GALLERY_PHOTOS_BETWEEN_INTERSITIAL = "num_of_gallery_photos_between_intersitial";
             String PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS = "period_between_interstitial_in_millis";
@@ -150,6 +150,7 @@ public interface Constants {
             String FREE_APPS_INSTALL_ENABLED = "free_apps_install_enabled";
             String FREE_REWARDED_VIDEO_ENABLED = "free_rewarded_video_enabled";
             String FREE_VK_GROUPS_ENABLED = "free_vk_groups_enabled";
+            String FREE_VK_SHARE_APP_ENABLED = "free_vk_share_app_enabled";
             String FREE_AUTH_ENABLED = "free_auth_enabled";
             //actions variants
             String APPS_TO_INSTALL_JSON = "apps_to_install_json";
@@ -157,6 +158,7 @@ public interface Constants {
             //disable ads
             String APP_INSTALL_REWARD_IN_MILLIS = "app_install_reward_in_millis";
             String FREE_VK_GROUPS_JOIN_REWARD = "free_vk_groups_join_reward";
+            String FREE_VK_SHARE_APP_REWARD = "free_vk_share_app_reward";
             String REWARDED_VIDEO_COOLDOWN_IN_MILLIS = "rewarded_video_cooldown_in_millis";
             String AUTH_COOLDOWN_IN_MILLIS = "auth_cooldown_in_millis";
             String INVITE_REWARD_IN_MILLIS = "invite_reward_in_millis";
@@ -165,6 +167,10 @@ public interface Constants {
             String NATIVE_IN_ARTICLE_ENABLED = "native_in_article_enabled";
             String NATIVE_ADS_LISTS_INTERVAL = "native_ads_lists_interval";
             String NATIVE_ADS_LISTS_SOURCE = "native_ads_lists_source";
+            String NATIVE_ADS_LISTS_SOURCE_V2 = "native_ads_lists_source_v2";
+            String ADS_SCP_ART = "ads_scp_art";
+            String ADS_SCP_ART_V2 = "ads_scp_art_v2";
+            String ADS_SCP_ART_ENABLED = "ads_scp_art_enabled";
             //banners
             String GALLERY_BANNER_DISABLED = "gallery_banner_disabled";
             String MAIN_BANNER_DISABLED = "main_banner_disabled";
@@ -178,6 +184,7 @@ public interface Constants {
             String SCORE_ACTION_READ = "score_action_read";
             String SCORE_ACTION_INTERSTITIAL_SHOWN = "score_action_interstitial_shown";
             String SCORE_ACTION_VK_GROUP = "score_action_vk_group";
+            String SCORE_ACTION_VK_SHARE_APP = "score_action_vk_share_app";
             String SCORE_ACTION_OUR_APP = "score_action_our_app";
             String SCORE_ACTION_REWARDED_VIDEO = "score_action_rewarded_video";
             String SCORE_ACTION_AUTH = "score_action_auth";
@@ -194,6 +201,7 @@ public interface Constants {
             String APP_LANG_VERSIONS = "app_lang_versions";
             String OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO = "offer_subs_instead_of_rewarded_video";
             String OFFER_TRIAL_FOR_YEAR = "offer_trial_for_year";
+            long CACHE_EXPIRATION_SECONDS = 20000;
         }
 
         int REQUEST_INVITE = 1024;
@@ -201,6 +209,7 @@ public interface Constants {
         interface Analitics {
 
             interface EventName {
+
                 String FREE_TRIAL_OFFER_SHOWN = "FREE_TRIAL_OFFER_SHOWN";
                 String INVITE_SENT = "INVITE_SENT";
                 String INVITE_RECEIVED = "INVITE_RECEIVED";
@@ -208,13 +217,17 @@ public interface Constants {
                 String MASS_DOWNLOAD = "MASS_DOWNLOAD";
                 String VK_GROUP_JOINED = "VK_GROUP_JOINED";
                 String APP_INSTALLED = "APP_INSTALLED";
+                String VK_APP_SHARED = "VK_APP_SHARED";
+                String SCP_ART_CLICKED = "SCP_ART_CLICKED";
             }
 
             interface EventParam {
+
                 String PLACE = "PLACE";
             }
 
             interface EventValue {
+
                 String ADS_DISABLE = "ADS_DISABLE";
                 String DOWNLOAD_RANGE = "DOWNLOAD_RANGE";
                 String PERIODICAL = "PERIODICAL";
@@ -222,11 +235,13 @@ public interface Constants {
             }
 
             interface EventType {
+
                 String REWARD_GAINED = "REWARD_GAINED";
                 String REWARD_REQUESTED = "REWARD_REQUESTED";
             }
 
             interface StartScreen {
+
                 String SNACK_BAR = "SNACK_BAR";
                 String MENU = "MENU";
                 String DRAWER_HEADER_LOGINED = "DRAWER_HEADER_LOGINED";
@@ -237,15 +252,18 @@ public interface Constants {
                 String AFTER_LEVEL_UP = "AFTER_LEVEL_UP";
                 String ADS_WILL_SHOWN_SOON = "ADS_WILL_SHOWN_SOON";
                 String REMOVE_ADS_SETTINGS = "REMOVE_ADS_SETTINGS";
+                String INNER_DOWNLOADS_FROM_SETTINGS = "INNER_DOWNLOADS_FROM_SETTINGS";
             }
 
             interface UserPropertyKey {
+
                 String INVITED = "INVITED";
                 String SUBSCRIBED = "SUBSCRIBED";
             }
         }
 
         interface PushTopics {
+
             String MAIN = "main";
         }
     }

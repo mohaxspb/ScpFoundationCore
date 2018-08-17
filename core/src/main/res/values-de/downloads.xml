@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="download_art_list">Laden der Liste der Artikel</string>
+    <string name="download_all_title">Was zum downloaden?</string>
+    <!--<string name="download">Downloaden</string>-->
+    <string name="stop_download">Hör auf zu laden</string>
+    <string name="download_objects_title">Laden von Objekten</string>
+    <string name="error_notification_title">Fehler</string>
+    <string name="error_notification_objects_list_download_content">Die Liste der Objekte konnte nicht gedownloadet werden</string>
+    <string name="download_complete_title">Download komplett</string>
+    <string name="download_complete_title_content">Geladen %1$d von %2$d. Fehler: %3$d</string>
+    <string name="download_progress_content">Geladen %1$d/%2$d. Fehler: %3$d</string>
+    <string name="error_notification_recent_list_download_content">Die Liste der Artikel konnte nicht geladen werden</string>
+    <string name="notification_recent_list_title">Laden der Liste der Artikel</string>
+    <string name="download_recent_title">Artikel herunterladen</string>
+    <string name="downlad_art_list_range">Wie viel Download?</string>
+    <string name="increase_limit">Limit erhöhen/entfernen</string>
+    <string name="user_limit">Dein Limit: %s</string>
+    <string name="selected">Ausgewählt: %d</string>
+    <string name="no_limit">Keine Grenzen!</string>
+    <string name="download_all_with_limit">Die letzten %d Artikel werden aus der Liste der zuletzt geänderten Artikel heruntergeladen (Liste \"Neue Artikel\")</string>
+    <!--<string name="limit_description">ЛLimit schränkt die maximale Anzahl von Artikeln ein, Das auf dem Gerät gespeichert werden kann, um im Offline Modus zu lesen. Es gibt kein Limit für Sie im Augenblick! Wenn Sie ein Abonnement erworben haben - Es wird nicht passieren) ЕWenn Sie kein Abonnement haben, wird die Begrenzung eines Tages begrenzt %1$d Artikel für unbefugte Agenten und %2$d + (Anzahl der Punkte/%3$d) für autorisierte.</string>-->
+    <string name="limit_description_disabled_free_downloads">Limit schränkt die maximale Anzahl von Artikeln ein, das auf dem Gerät gespeichert werden kann, um im Offline Modus zu lesen. МMinimum die Begrenzung von Artikeln - %1$d. Die Begrenzung kann vollständig entfernt oder durch das gekaufte Abonnement angehoben werden, autorisierte und sammeln Punkte. Für alle %2$d Punkte können Sie einen Artikel mehr halten!</string>
+
+    <!--download dialog-->
+    <string name="download_all">Laden Sie alles herunter</string>
+    <!--<string name="info">Informationen</string>-->
+
+    <string name="type_1">Serie I</string>
+    <string name="type_2">Serie II</string>
+    <string name="type_3">Serie III</string>
+    <string name="type_4">Serie IV</string>
+    <string name="type_5">Serie V</string>
+    <string name="type_ru">Serie RU</string>
+
+    <string name="type_fr">Объекты FR</string>
+    <string name="type_jp">Объекты JP</string>
+    <string name="type_es">Объекты ES</string>
+    <string name="type_pl">Объекты PL</string>
+    <string name="type_de">Объекты DE</string>
+
+    <string name="type_all">Alle</string>
+
+    <string name="type_experiments">Protokolle von Experimenten</string>
+    <string name="type_incidents">Berichte über Vorfälle</string>
+    <string name="type_interviews">Interviews mit Augenzeugen</string>
+    <string name="type_archive">Archivierte SCPs</string>
+    <string name="type_jokes">Witz-SCPs</string>
+    <string name="type_other">Andere Materialien</string>
+
+    <string name="error_notification_download_failed">Ein Fehler ist aufgetreten: %s</string>
+</resources>

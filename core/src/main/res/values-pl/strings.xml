@@ -15,7 +15,7 @@
     <string name="drawer_item_13">Lista Offline</string>
     <string name="drawer_item_14">Galeria</string>
     <string name="drawer_item_15">Szukaj</string>
-    <string name="drawer_item_objects4">Lista IV</string>
+    <string name="drawer_item_objects4">Lista EN IV</string>
     <!--настройки-->
     <string name="enter">Wchodzić</string>
     <string name="settings">Ustawienia</string>
@@ -322,10 +322,29 @@ Dziękujemy za korzystanie z naszej aplikacji!]]></string>
     <string name="leaderboard_inapp_description">Użyj trick i połączeń w Funduszu, aby ominąć kolegów i wzrost w rankingu</string>
     <string name="leaderboard_place">%d miejsce</string>
     <string name="leaderboard_inapp_label">Wzrost w rankingu (+ 10000 punktów)</string>
+    <string name="leaderboard_inapp_label_undefined">Wzrost w rankingu (+ %d punktów)</string>
     <string name="leaderboard_articles_read">%d Artykuły Przeczytaj</string>
     <string name="score_num">%d Punktów</string>
     <string name="level_num">%d poziom</string>
     <string name="drawer_item_leaderboard">Agenci ratingowi</string>
     <string name="ads_will_be_shown_soon">Reklama pojawi się wkrótce! Chcesz go wyłączyć z wyprzedzeniem?</string>
     <string name="need_login_for_level_up_content">Aby wziąć udział w ocenie agentów, musisz autoryzować.</string>
+
+    <!---->
+    <string name="leaderboard_appodeal_description">Brak połączeń wysokiego szczebla w Funduszu? Spróbuj znaleźć narażania materiału i przenieść się w rankingu.</string>
+
+    <!---->
+    <string name="downloads_settings">Ustawienia pobierania</string>
+    <string name="downloads_force_update">Wymuś aktualizowanie tekstu podczas pobierania</string>
+    <string name="download_inner_depth">Głębokość artykułu do pobrania</string>
+    <string name="images_cache_enabled">Lokalne buforowanie obrazów</string>
+    <string name="cached_images_count">Liczba buforowanych obrazów</string>
+    <string name="cached_images_size">Rozmiar buforowanych obrazów</string>
+    <string name="clear_cached_images">Wyczyść obrazy w pamięci podręcznej</string>
+    <string name="free_ads_vk_share_label">Udostępnij aplikację w VK</string>
+    <string name="share_app_vk_text">Love fantastyczne i straszne historie? Wypróbuj aplikację SCP Foundation dla Androida-tysiące opowieści offline za darmo!</string>
+    <string name="need_vk_wall_access">Wymagana jest zgoda na post na ścianie. Zaloguj się ponownie.</string>
+    <string name="app_lang_dialog_google_description">Oto inne wersje naszej aplikacji, można wybrać i pobrać odpowiednią wersję językową, klikając na link na rynku Google Play.</string>
+    <!---->
+    <string name="drawer_item_objects5">Lista EN V</string>
 </resources>

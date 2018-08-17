@@ -23,7 +23,8 @@ import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard
  */
 class LeaderboardDelegate : AbsListItemAdapterDelegate<LeaderboardUserViewModel, MyListItem, LeaderboardDelegate.ViewHolder>() {
 
-    override fun isForViewType(item: MyListItem, items: MutableList<MyListItem>, position: Int) = item is LeaderboardUserViewModel
+    override fun isForViewType(item: MyListItem, items: MutableList<MyListItem>, position: Int) =
+            item is LeaderboardUserViewModel
 
     override fun onCreateViewHolder(parent: ViewGroup) =
             ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.list_item_leaderboard_user, parent, false))

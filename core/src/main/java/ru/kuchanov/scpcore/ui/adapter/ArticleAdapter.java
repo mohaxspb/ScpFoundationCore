@@ -1,18 +1,17 @@
 package ru.kuchanov.scpcore.ui.adapter;
 
-import android.annotation.SuppressLint;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.gson.Gson;
+
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.ads.NativeExpressAdView;
-import com.google.android.gms.ads.VideoOptions;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -21,12 +20,12 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ParseHtmlUtils;
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.monetization.util.AdMobHelper;
-import ru.kuchanov.scpcore.monetization.util.MyAdmobNativeAdListener;
+import ru.kuchanov.scpcore.monetization.model.ScpArtAdsJson;
 import ru.kuchanov.scpcore.ui.holder.ArticleImageHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleSpoilerHolder;
 import ru.kuchanov.scpcore.ui.holder.ArticleTableHolder;
@@ -42,7 +41,7 @@ import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_INTERVAL;
-import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_SOURCE;
+import static ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter.createAdsModelsList;
 
 /**
  * Created by Dante on 17.01.2016.
@@ -55,26 +54,41 @@ public class ArticleAdapter
 
     //TODO realize via enum
     private static final int TYPE_TEXT = 0;
+
     private static final int TYPE_SPOILER = 1;
+
     private static final int TYPE_IMAGE = 2;
+
     private static final int TYPE_TITLE = 3;
+
     private static final int TYPE_TABLE = 4;
+
     private static final int TYPE_TAGS = 5;
+
     private static final int TYPE_TABS = 6;
-    private static final int TYPE_NATIVE_ADMOB = 7;
-    private static final int TYPE_NATIVE_APPODEAL = 8;
+
+    private static final int TYPE_NATIVE_APPODEAL = 7;
+
+    private static final int TYPE_NATIVE_SCP_ART = 8;
+
+    private static final int TYPE_NATIVE_SCP_QUIZ = 9;
 
     @Inject
     MyPreferenceManager mMyPreferenceManager;
 
-    private List<ArticleTextPartViewModel> mAdsModelsList = new ArrayList<>();
-    private List<ArticleTextPartViewModel> mViewModels = new ArrayList<>();
+    private final List<MyListItem> mAdsModelsList = new ArrayList<>();
+
+    private final List<MyListItem> mViewModels = new ArrayList<>();
 
     private List<TabsViewModel> mTabsViewModelList = new ArrayList<>();
 
     private List<SpoilerViewModel> mExpandedSpoilers = new ArrayList<>();
 
+    @Inject
+    Gson mGson;
+
     public ArticleAdapter() {
+        super();
         BaseApplication.getAppComponent().inject(this);
     }
 
@@ -84,23 +98,22 @@ public class ArticleAdapter
 
     private SetTextViewHTML.TextItemsClickListener mTextItemsClickListener;
 
-    public void setTextItemsClickListener(SetTextViewHTML.TextItemsClickListener textItemsClickListener) {
+    public void setTextItemsClickListener(final SetTextViewHTML.TextItemsClickListener textItemsClickListener) {
         mTextItemsClickListener = textItemsClickListener;
     }
 
-    public void setData(Article article, List<SpoilerViewModel> expandedSpoilers, List<TabsViewModel> tabsViewModels) {
-//        Timber.d("setData: %s", article);
+    public void setData(
+            final Article article,
+            final List<SpoilerViewModel> expandedSpoilers,
+            final List<TabsViewModel> tabsViewModels
+    ) {
         mTabsViewModelList = tabsViewModels;
         mExpandedSpoilers = expandedSpoilers;
 
         mViewModels.clear();
 
-        List<String> articlesTextParts = new ArrayList<>();
-        @ParseHtmlUtils.TextType
-        List<String> articlesTextPartsTypes = new ArrayList<>();
-
-        articlesTextParts.addAll(RealmString.toStringList(article.textParts));
-        articlesTextPartsTypes.addAll(RealmString.toStringList(article.textPartsTypes));
+        final List<String> articlesTextParts = new ArrayList<>(RealmString.toStringList(article.textParts));
+        final @ParseHtmlUtils.TextType List<String> articlesTextPartsTypes = new ArrayList<>(RealmString.toStringList(article.textPartsTypes));
 
         articlesTextParts.add(0, article.title);
         articlesTextPartsTypes.add(0, ParseHtmlUtils.TextType.TITLE);
@@ -109,13 +122,12 @@ public class ArticleAdapter
         articlesTextPartsTypes.add(ParseHtmlUtils.TextType.TAGS);
 
         for (int order = 0; order < articlesTextParts.size(); order++) {
-            @ParseHtmlUtils.TextType
-            String type = articlesTextPartsTypes.get(order);
+            @ParseHtmlUtils.TextType final String type = articlesTextPartsTypes.get(order);
             switch (type) {
                 case ParseHtmlUtils.TextType.SPOILER: {
-                    List<String> spoilerParts = ParseHtmlUtils.parseSpoilerParts(articlesTextParts.get(order));
+                    final List<String> spoilerParts = ParseHtmlUtils.parseSpoilerParts(articlesTextParts.get(order));
 
-                    SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
+                    final SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
                     spoilerViewModel.titles = new ArrayList<>(spoilerParts.subList(0, 2));
                     spoilerViewModel.mSpoilerTextParts = ParseHtmlUtils.getArticlesTextParts(spoilerParts.get(2));
                     spoilerViewModel.mSpoilerTextPartsTypes = ParseHtmlUtils.getListOfTextTypes(spoilerViewModel.mSpoilerTextParts);
@@ -124,44 +136,42 @@ public class ArticleAdapter
                     mViewModels.add(new ArticleTextPartViewModel(type, spoilerViewModel, false));
                     //add textParts for expanded spoilers
                     if (spoilerViewModel.isExpanded) {
-                        List<ArticleTextPartViewModel> viewModels = new ArrayList<>();
                         Timber.d("expanded spoiler title: %s", spoilerViewModel.titles.get(0));
+                        final Collection<ArticleTextPartViewModel> viewModels = new ArrayList<>();
                         for (int i = 0; i < spoilerViewModel.mSpoilerTextPartsTypes.size(); i++) {
-                            @ParseHtmlUtils.TextType
-                            String typeInSpoiler = spoilerViewModel.mSpoilerTextPartsTypes.get(i);
+                            @ParseHtmlUtils.TextType final String typeInSpoiler = spoilerViewModel.mSpoilerTextPartsTypes.get(i);
 
                             Timber.d("expanded spoiler type: %s", typeInSpoiler);
 
                             //handle tabs
                             if (typeInSpoiler.equals(ParseHtmlUtils.TextType.TABS)) {
-                                TabsViewModel tabsViewModel = ParseHtmlUtils.parseTabs(spoilerViewModel.mSpoilerTextParts.get(i));
+                                final TabsViewModel tabsViewModel = ParseHtmlUtils.parseTabs(spoilerViewModel.mSpoilerTextParts.get(i));
 
                                 tabsViewModel.isInSpoiler = true;
 
                                 //get and set state (index of opened tab)
                                 if (mTabsViewModelList.contains(tabsViewModel)) {
-                                    TabsViewModel savedOne = mTabsViewModelList.get(mTabsViewModelList.indexOf(tabsViewModel));
+                                    final TabsViewModel savedOne = mTabsViewModelList.get(mTabsViewModelList.indexOf(tabsViewModel));
                                     Timber.d("savedOne selected tab: %s", savedOne.getCurrentTab());
                                     tabsViewModel.setCurrentTab(savedOne.getCurrentTab());
                                 } else {
                                     Timber.d("mTabsViewModelList.size: %s", mTabsViewModelList.size());
-                                    for (TabsViewModel tabsViewModel1 : mTabsViewModelList) {
+                                    for (final TabsViewModel tabsViewModel1 : mTabsViewModelList) {
                                         Timber.d("selected tab: %s", tabsViewModel1.getCurrentTab());
                                     }
                                 }
 
                                 //add textParts for expanded spoilers
-                                List<ArticleTextPartViewModel> viewModelsTabs = new ArrayList<>();
+                                final Collection<ArticleTextPartViewModel> viewModelsTabs = new ArrayList<>();
                                 for (int u = 0; u < tabsViewModel.getTabDataList().get(tabsViewModel.getCurrentTab()).getTextParts().size(); u++) {
-                                    TabsViewModel.TabData tabData = tabsViewModel.getTabDataList().get(tabsViewModel.getCurrentTab());
-                                    @ParseHtmlUtils.TextType
-                                    String typeInTab = tabData.getTextPartsTypes().get(u);
+                                    final TabsViewModel.TabData tabData = tabsViewModel.getTabDataList().get(tabsViewModel.getCurrentTab());
+                                    @ParseHtmlUtils.TextType final String typeInTab = tabData.getTextPartsTypes().get(u);
                                     viewModelsTabs.add(new ArticleTextPartViewModel(typeInTab, tabData.getTextParts().get(u), true));
                                 }
                                 viewModels.add(new ArticleTextPartViewModel(typeInSpoiler, tabsViewModel, true));
                                 viewModels.addAll(viewModelsTabs);
                             } else {
-                                String dataInSpoiler = spoilerViewModel.mSpoilerTextParts.get(i);
+                                final String dataInSpoiler = spoilerViewModel.mSpoilerTextParts.get(i);
                                 viewModels.add(new ArticleTextPartViewModel(typeInSpoiler, dataInSpoiler, true));
                             }
                         }
@@ -171,27 +181,26 @@ public class ArticleAdapter
                 }
                 case ParseHtmlUtils.TextType.TABS: {
                     //create and set ViewModel (as for spoiler)
-                    TabsViewModel tabsViewModel = ParseHtmlUtils.parseTabs(articlesTextParts.get(order));
+                    final TabsViewModel tabsViewModel = ParseHtmlUtils.parseTabs(articlesTextParts.get(order));
 
                     //get and set state (index of opened tab)
                     if (mTabsViewModelList.contains(tabsViewModel)) {
-                        TabsViewModel savedOne = mTabsViewModelList.get(mTabsViewModelList.indexOf(tabsViewModel));
+                        final TabsViewModel savedOne = mTabsViewModelList.get(mTabsViewModelList.indexOf(tabsViewModel));
                         tabsViewModel.setCurrentTab(savedOne.getCurrentTab());
                     }
 
                     //add textParts for expanded spoilers
-                    List<ArticleTextPartViewModel> viewModels = new ArrayList<>();
+                    final Collection<ArticleTextPartViewModel> viewModels = new ArrayList<>();
                     for (int i = 0; i < tabsViewModel.getTabDataList().get(tabsViewModel.getCurrentTab()).getTextParts().size(); i++) {
-                        TabsViewModel.TabData tabData = tabsViewModel.getTabDataList().get(tabsViewModel.getCurrentTab());
-                        @ParseHtmlUtils.TextType
-                        String typeInTab = tabData.getTextPartsTypes().get(i);
+                        final TabsViewModel.TabData tabData = tabsViewModel.getTabDataList().get(tabsViewModel.getCurrentTab());
+                        @ParseHtmlUtils.TextType final String typeInTab = tabData.getTextPartsTypes().get(i);
                         //spoiler support
                         Object dataInTab = tabData.getTextParts().get(i);
-                        boolean isSpoiler = typeInTab.equals(ParseHtmlUtils.TextType.SPOILER);
+                        final boolean isSpoiler = typeInTab.equals(ParseHtmlUtils.TextType.SPOILER);
                         if (isSpoiler) {
-                            List<String> spoilerData = ParseHtmlUtils.parseSpoilerParts((String) dataInTab);
+                            final List<String> spoilerData = ParseHtmlUtils.parseSpoilerParts((String) dataInTab);
 
-                            SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
+                            final SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
                             spoilerViewModel.titles = new ArrayList<>(spoilerData.subList(0, 2));
                             spoilerViewModel.mSpoilerTextParts = ParseHtmlUtils.getArticlesTextParts(spoilerData.get(2));
                             spoilerViewModel.mSpoilerTextPartsTypes = ParseHtmlUtils.getListOfTextTypes(spoilerViewModel.mSpoilerTextParts);
@@ -202,15 +211,14 @@ public class ArticleAdapter
 
                             //add textParts for expanded spoilers
                             if (spoilerViewModel.isExpanded) {
-                                List<ArticleTextPartViewModel> viewModelsInSpoiler = new ArrayList<>();
                                 Timber.d("expanded spoiler title: %s", spoilerViewModel.titles.get(0));
+                                final List<ArticleTextPartViewModel> viewModelsInSpoiler = new ArrayList<>();
                                 for (int u = 0; u < spoilerViewModel.mSpoilerTextPartsTypes.size(); u++) {
-                                    @ParseHtmlUtils.TextType
-                                    String typeInSpoiler = spoilerViewModel.mSpoilerTextPartsTypes.get(u);
+                                    @ParseHtmlUtils.TextType final String typeInSpoiler = spoilerViewModel.mSpoilerTextPartsTypes.get(u);
 
                                     Timber.d("expanded spoiler type: %s", typeInSpoiler);
 
-                                    String dataInSpoiler = spoilerViewModel.mSpoilerTextParts.get(u);
+                                    final String dataInSpoiler = spoilerViewModel.mSpoilerTextParts.get(u);
                                     viewModelsInSpoiler.add(new ArticleTextPartViewModel(typeInSpoiler, dataInSpoiler, true));
 
                                 }
@@ -235,45 +243,33 @@ public class ArticleAdapter
 
         addAds();
 
-
         //log
-        @ParseHtmlUtils.TextType
-        List<String> types = new ArrayList<>();
-        List<Boolean> isInSpoilerList = new ArrayList<>();
-        for (ArticleTextPartViewModel model : mViewModels) {
-            types.add(model.type);
-            isInSpoilerList.add(model.isInSpoiler);
+        @ParseHtmlUtils.TextType final List<String> types = new ArrayList<>();
+        final List<Boolean> isInSpoilerList = new ArrayList<>();
+        for (final MyListItem model : mViewModels) {
+            types.add(((ArticleTextPartViewModel) model).type);
+            isInSpoilerList.add(((ArticleTextPartViewModel) model).isInSpoiler);
         }
-        Timber.d("types: %s", types);
-        Timber.d("isInSpoilerList: %s", isInSpoilerList);
-        Timber.d("mViewModels.size: %s", mViewModels.size());
 
         notifyDataSetChanged();
     }
 
     private void addAds() {
         //do not add native ads items if user has subscription or banners temporary disabled
-        //or banners rnabled or native disabled
-        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-//        if (mMyPreferenceManager.isHasAnySubscription()
-//                || !mMyPreferenceManager.isTimeToShowBannerAds()
-//                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.ARTICLE_BANNER_DISABLED)
-//                || !config.getBoolean(Constants.Firebase.RemoteConfigKeys.NATIVE_IN_ARTICLE_ENABLED)) {
-//            return;
-//        }
+        //or banners enabled or native disabled
+        final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         if (mMyPreferenceManager.isHasAnySubscription()
-                || !mMyPreferenceManager.isTimeToShowBannerAds()
-                || mMyPreferenceManager.isBannerInArticleEnabled()) {
+            || !mMyPreferenceManager.isTimeToShowBannerAds()
+            || mMyPreferenceManager.isBannerInArticleEnabled()) {
             return;
         }
         if (mAdsModelsList.isEmpty()) {
-            mAdsModelsList.addAll(createAdsModelsList());
+            mAdsModelsList.addAll(createAdsModelsList(true));
         }
 
         // Loop through the items array and place a new Native Express ad in every ith position in
         // the items List.
-//        int appodealIndex = 0;
-        int interval = (int) (config.getLong(NATIVE_ADS_LISTS_INTERVAL) - 1);
+        final int interval = (int) (config.getLong(NATIVE_ADS_LISTS_INTERVAL) - 1);
         for (int i = 0; i <= mViewModels.size(); i += interval) {
             //do not add as first row
             if (i == 0) {
@@ -286,74 +282,9 @@ public class ArticleAdapter
         }
     }
 
-    private List<ArticleTextPartViewModel> createAdsModelsList() {
-        List<ArticleTextPartViewModel> adsModelsList = new ArrayList<>();
-
-        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-        @Constants.NativeAdsSource
-        int nativeAdsSource = (int) config.getLong(NATIVE_ADS_LISTS_SOURCE);
-        //test
-//        nativeAdsSource = Constants.NativeAdsSource.APPODEAL;
-        int appodealIndex = 0;
-        for (int i = 0; i < Constants.NUM_OF_NATIVE_ADS_PER_SCREEN; i++) {
-            switch (nativeAdsSource) {
-                case Constants.NativeAdsSource.ALL: {
-                    //show ads from list of sources via random
-                    switch (new Random().nextInt(Constants.NUM_OF_NATIVE_ADS_SOURCES) + 1) {
-                        case Constants.NativeAdsSource.AD_MOB:
-                            @SuppressLint("InflateParams")
-                            NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
-                                    .inflate(R.layout.native_ads_admob_medium, null, false);
-                            nativeAdView.setVideoOptions(new VideoOptions.Builder()
-                                    .setStartMuted(true)
-                                    .build());
-                            nativeAdView.setAdListener(new MyAdmobNativeAdListener() {
-                                @Override
-                                public void onAdFailedToLoad(int i) {
-                                    super.onAdFailedToLoad(i);
-                                    nativeAdView.setVisibility(View.GONE);
-                                }
-                            });
-                            nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
-                            adsModelsList.add(new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_AD_MOB, nativeAdView, false));
-                            break;
-                        case Constants.NativeAdsSource.APPODEAL:
-                            adsModelsList.add(new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL, appodealIndex, false));
-                            appodealIndex++;
-                            break;
-                        default:
-                            throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
-                    }
-                    break;
-                }
-                case Constants.NativeAdsSource.AD_MOB: {
-                    @SuppressLint("InflateParams")
-                    NativeExpressAdView nativeAdView = (NativeExpressAdView) LayoutInflater.from(BaseApplication.getAppInstance())
-                            .inflate(R.layout.native_ads_admob_medium, null, false);
-                    nativeAdView.setAdListener(new MyAdmobNativeAdListener());
-                    nativeAdView.loadAd(AdMobHelper.buildAdRequest(BaseApplication.getAppInstance()));
-                    nativeAdView.setVideoOptions(new VideoOptions.Builder()
-                            .setStartMuted(true)
-                            .build());
-                    adsModelsList.add(new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_AD_MOB, nativeAdView, false));
-                    break;
-                }
-                case Constants.NativeAdsSource.APPODEAL:
-                    adsModelsList.add(new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL, appodealIndex, false));
-                    appodealIndex++;
-                    break;
-                default:
-                    throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
-            }
-        }
-
-        return adsModelsList;
-    }
-
     @Override
-    public int getItemViewType(int position) {
-        @ParseHtmlUtils.TextType
-        String type = mViewModels.get(position).type;
+    public int getItemViewType(final int position) {
+        @ParseHtmlUtils.TextType final String type = ((ArticleTextPartViewModel) mViewModels.get(position)).type;
         switch (type) {
             case ParseHtmlUtils.TextType.TITLE:
                 return TYPE_TITLE;
@@ -369,18 +300,20 @@ public class ArticleAdapter
                 return TYPE_TAGS;
             case ParseHtmlUtils.TextType.TABS:
                 return TYPE_TABS;
-            case ParseHtmlUtils.TextType.NATIVE_ADS_AD_MOB:
-                return TYPE_NATIVE_ADMOB;
+            case ParseHtmlUtils.TextType.NATIVE_ADS_SCP_ART:
+                return TYPE_NATIVE_SCP_ART;
             case ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL:
                 return TYPE_NATIVE_APPODEAL;
+            case ParseHtmlUtils.TextType.NATIVE_ADS_SCP_QUIZ:
+                return TYPE_NATIVE_SCP_QUIZ;
             default:
                 throw new IllegalArgumentException("unexpected type: " + type);
         }
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view;
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
+        final View view;
         switch (viewType) {
             case TYPE_TITLE:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_title, parent, false);
@@ -403,8 +336,9 @@ public class ArticleAdapter
             case TYPE_TABS:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_tabs, parent, false);
                 return new ArticleTabsHolder(view, this);
+            case TYPE_NATIVE_SCP_ART:
             case TYPE_NATIVE_APPODEAL:
-            case TYPE_NATIVE_ADMOB:
+            case TYPE_NATIVE_SCP_QUIZ:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_native_container, parent, false);
                 return new NativeAdsArticleListHolder(view, mTextItemsClickListener);
             default:
@@ -413,36 +347,39 @@ public class ArticleAdapter
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
+        final ArticleTextPartViewModel textPartViewModel = (ArticleTextPartViewModel) mViewModels.get(position);
         switch (getItemViewType(position)) {
             case TYPE_TITLE:
-                ((ArticleTitleHolder) holder).bind(mViewModels.get(position));
+                ((ArticleTitleHolder) holder).bind(textPartViewModel);
                 break;
             case TYPE_TEXT:
-                ((ArticleTextHolder) holder).bind(mViewModels.get(position));
+                ((ArticleTextHolder) holder).bind(textPartViewModel);
                 break;
             case TYPE_IMAGE:
-                ((ArticleImageHolder) holder).bind(mViewModels.get(position));
+                ((ArticleImageHolder) holder).bind(textPartViewModel);
                 break;
             case TYPE_SPOILER:
-                ((ArticleSpoilerHolder) holder).bind((SpoilerViewModel) mViewModels.get(position).data);
+                ((ArticleSpoilerHolder) holder).bind((SpoilerViewModel) textPartViewModel.data);
                 break;
             case TYPE_TABLE:
-                ((ArticleTableHolder) holder).bind(mViewModels.get(position));
+                ((ArticleTableHolder) holder).bind(textPartViewModel);
                 break;
             case TYPE_TAGS:
-                ((ArticleTagsHolder) holder).bind((RealmList<ArticleTag>) mViewModels.get(position).data);
+                ((ArticleTagsHolder) holder).bind((RealmList<ArticleTag>) textPartViewModel.data);
                 break;
             case TYPE_TABS:
-                ((ArticleTabsHolder) holder).bind((TabsViewModel) mViewModels.get(position).data);
+                ((ArticleTabsHolder) holder).bind((TabsViewModel) textPartViewModel.data);
                 break;
-            case TYPE_NATIVE_APPODEAL:
-                NativeAdsArticleListHolder nativeAdsAppodealHolder = (NativeAdsArticleListHolder) holder;
-                nativeAdsAppodealHolder.bind((Integer) mViewModels.get(position).data);
+            case TYPE_NATIVE_APPODEAL: {
+                ((NativeAdsArticleListHolder) holder).bind((Integer) textPartViewModel.data);
+            }
+            break;
+            case TYPE_NATIVE_SCP_ART:
+                ((NativeAdsArticleListHolder) holder).bind((ScpArtAdsJson.ScpArtAd) textPartViewModel.data);
                 break;
-            case TYPE_NATIVE_ADMOB:
-                NativeAdsArticleListHolder nativeAdsHolder = (NativeAdsArticleListHolder) holder;
-                nativeAdsHolder.bind((NativeExpressAdView) mViewModels.get(position).data);
+            case TYPE_NATIVE_SCP_QUIZ:
+                ((NativeAdsArticleListHolder) holder).bind();
                 break;
             default:
                 throw new IllegalArgumentException("unexpected item type: " + getItemViewType(position));
@@ -455,51 +392,49 @@ public class ArticleAdapter
     }
 
     @Override
-    public long getItemId(int position) {
-        return mViewModels.get(position).data.hashCode();
+    public long getItemId(final int position) {
+        return ((ArticleTextPartViewModel) mViewModels.get(position)).data.hashCode();
     }
 
     @Override
-    public void onSpoilerExpand(int position) {
+    public void onSpoilerExpand(final int position) {
         Timber.d("onSpoilerExpand: %s", position);
         if (position == RecyclerView.NO_POSITION) {
             return;
         }
 
-        SpoilerViewModel spoilerViewModel = ((SpoilerViewModel) mViewModels.get(position).data);
+        final SpoilerViewModel spoilerViewModel = ((SpoilerViewModel) ((ArticleTextPartViewModel) mViewModels.get(position)).data);
 //        Timber.d("mSpoilerTextPartsTypes size: %s", spoilerViewModel.mSpoilerTextPartsTypes.size());
 //        Timber.d("mSpoilerTextPartsTypes: %s", spoilerViewModel.mSpoilerTextPartsTypes);
 //        Timber.d("mSpoilerTextParts size: %s", spoilerViewModel.mSpoilerTextParts.size());
 //        Timber.d("mSpoilerTextParts: %s", spoilerViewModel.mSpoilerTextParts);
-        List<ArticleTextPartViewModel> viewModels = new ArrayList<>();
+        final Collection<ArticleTextPartViewModel> viewModels = new ArrayList<>();
         for (int order = 0; order < spoilerViewModel.mSpoilerTextPartsTypes.size(); order++) {
-            @ParseHtmlUtils.TextType
-            String type = spoilerViewModel.mSpoilerTextPartsTypes.get(order);
+            @ParseHtmlUtils.TextType final String type = spoilerViewModel.mSpoilerTextPartsTypes.get(order);
             if (type.equals(ParseHtmlUtils.TextType.TABS)) {
-                TabsViewModel tabsViewModel = ParseHtmlUtils.parseTabs(spoilerViewModel.mSpoilerTextParts.get(order));
+                final TabsViewModel tabsViewModel = ParseHtmlUtils.parseTabs(spoilerViewModel.mSpoilerTextParts.get(order));
 
                 tabsViewModel.isInSpoiler = true;
 
                 //get and set state (index of opened tab)
                 if (mTabsViewModelList.contains(tabsViewModel)) {
-                    TabsViewModel savedOne = mTabsViewModelList.get(mTabsViewModelList.indexOf(tabsViewModel));
+                    final TabsViewModel savedOne = mTabsViewModelList.get(mTabsViewModelList.indexOf(tabsViewModel));
                     Timber.d("savedOne selected tab: %s", savedOne.getCurrentTab());
                     tabsViewModel.setCurrentTab(savedOne.getCurrentTab());
                 } else {
                     Timber.d("mTabsViewModelList.size: %s", mTabsViewModelList.size());
-                    for (TabsViewModel tabsViewModel1 : mTabsViewModelList) {
+                    for (final TabsViewModel tabsViewModel1 : mTabsViewModelList) {
                         Timber.d("selected tab: %s", tabsViewModel1.getCurrentTab());
                     }
                 }
 
                 viewModels.add(new ArticleTextPartViewModel(type, tabsViewModel, true));
                 //add textParts for expanded spoilers
-                List<ArticleTextPartViewModel> viewModelsTabs = new ArrayList<>();
+                final Collection<ArticleTextPartViewModel> viewModelsTabs = new ArrayList<>();
                 for (int i = 0; i < tabsViewModel.getTabDataList().get(tabsViewModel.getCurrentTab()).getTextParts().size(); i++) {
-                    TabsViewModel.TabData tabData = tabsViewModel.getTabDataList().get(tabsViewModel.getCurrentTab());
-                    @ParseHtmlUtils.TextType
-                    String typeInSpoiler = tabData.getTextPartsTypes().get(i);
-                    String dataInSpoiler = tabData.getTextParts().get(i);
+                    final TabsViewModel.TabData tabData = tabsViewModel.getTabDataList().get(tabsViewModel.getCurrentTab());
+                    @ParseHtmlUtils.TextType final String typeInSpoiler = tabData.getTextPartsTypes().get(i);
+                    final String dataInSpoiler = tabData.getTextParts().get(i);
                     viewModelsTabs.add(new ArticleTextPartViewModel(typeInSpoiler, dataInSpoiler, true));
                 }
                 viewModels.addAll(viewModelsTabs);
@@ -515,24 +450,23 @@ public class ArticleAdapter
     }
 
     @Override
-    public void onSpoilerCollapse(int position) {
+    public void onSpoilerCollapse(final int position) {
         Timber.d("onSpoilerCollapse: %s", position);
         if (position == RecyclerView.NO_POSITION) {
             return;
         }
 
-        SpoilerViewModel spoilerViewModel = ((SpoilerViewModel) mViewModels.get(position).data);
-        List<ArticleTextPartViewModel> viewModels = new ArrayList<>();
+        final SpoilerViewModel spoilerViewModel = ((SpoilerViewModel) ((ArticleTextPartViewModel) mViewModels.get(position)).data);
+        final Collection<ArticleTextPartViewModel> viewModels = new ArrayList<>();
         for (int order = 0; order < spoilerViewModel.mSpoilerTextPartsTypes.size(); order++) {
-            @ParseHtmlUtils.TextType
-            String type = spoilerViewModel.mSpoilerTextPartsTypes.get(order);
+            @ParseHtmlUtils.TextType final String type = spoilerViewModel.mSpoilerTextPartsTypes.get(order);
 
             if (type.equals(ParseHtmlUtils.TextType.TABS)) {
-                List<ArticleTextPartViewModel> subList = new ArrayList<>(mViewModels.subList(position, mViewModels.size()));
+                final Iterable<MyListItem> subList = new ArrayList<>(mViewModels.subList(position, mViewModels.size()));
                 TabsViewModel tabsViewModel = null;
-                for (ArticleTextPartViewModel partViewModel : subList) {
-                    if (partViewModel.type.equals(ParseHtmlUtils.TextType.TABS)) {
-                        tabsViewModel = (TabsViewModel) partViewModel.data;
+                for (final MyListItem partViewModel : subList) {
+                    if (((ArticleTextPartViewModel) partViewModel).type.equals(ParseHtmlUtils.TextType.TABS)) {
+                        tabsViewModel = (TabsViewModel) ((ArticleTextPartViewModel) partViewModel).data;
                     }
                 }
                 if (tabsViewModel == null) {
@@ -541,12 +475,11 @@ public class ArticleAdapter
 
                 viewModels.add(new ArticleTextPartViewModel(type, tabsViewModel, false));
 
-                for (TabsViewModel.TabData tabData : tabsViewModel.getTabDataList()) {
-                    List<ArticleTextPartViewModel> viewModelsTabs = new ArrayList<>();
+                for (final TabsViewModel.TabData tabData : tabsViewModel.getTabDataList()) {
+                    final Collection<ArticleTextPartViewModel> viewModelsTabs = new ArrayList<>();
                     for (int i = 0; i < tabData.getTextParts().size(); i++) {
-                        @ParseHtmlUtils.TextType
-                        String typeInSpoiler = tabData.getTextPartsTypes().get(i);
-                        String dataInSpoiler = tabData.getTextParts().get(i);
+                        @ParseHtmlUtils.TextType final String typeInSpoiler = tabData.getTextPartsTypes().get(i);
+                        final String dataInSpoiler = tabData.getTextParts().get(i);
                         viewModelsTabs.add(new ArticleTextPartViewModel(typeInSpoiler, dataInSpoiler, true));
                     }
                     if (mViewModels.containsAll(viewModelsTabs)) {
@@ -554,7 +487,7 @@ public class ArticleAdapter
                     }
                 }
             } else {
-                String data = spoilerViewModel.mSpoilerTextParts.get(order);
+                final String data = spoilerViewModel.mSpoilerTextParts.get(order);
                 viewModels.add(new ArticleTextPartViewModel(type, data, true));
             }
         }
@@ -569,27 +502,26 @@ public class ArticleAdapter
     }
 
     @Override
-    public void onTabSelected(int positionInList, int positionInTabs) {
+    public void onTabSelected(final int positionInList, final int positionInTabs) {
         Timber.d("onTabSelected: %s/%s", positionInList, positionInTabs);
 
         if (positionInList == RecyclerView.NO_POSITION) {
             return;
         }
 
-        TabsViewModel tabsViewModel = ((TabsViewModel) mViewModels.get(positionInList).data);
+        final TabsViewModel tabsViewModel = ((TabsViewModel) ((ArticleTextPartViewModel) mViewModels.get(positionInList)).data);
         tabsViewModel.setCurrentTab(positionInTabs);
 
-        for (TabsViewModel.TabData tabData : tabsViewModel.getTabDataList()) {
-            List<ArticleTextPartViewModel> viewModelsTabs = new ArrayList<>();
+        for (final TabsViewModel.TabData tabData : tabsViewModel.getTabDataList()) {
+            final Collection<ArticleTextPartViewModel> viewModelsTabs = new ArrayList<>();
             for (int i = 0; i < tabData.getTextParts().size(); i++) {
-                @ParseHtmlUtils.TextType
-                String typeInTab = tabData.getTextPartsTypes().get(i);
+                @ParseHtmlUtils.TextType final String typeInTab = tabData.getTextPartsTypes().get(i);
                 Object dataInTab = tabData.getTextParts().get(i);
-                boolean isSpoiler = typeInTab.equals(ParseHtmlUtils.TextType.SPOILER);
+                final boolean isSpoiler = typeInTab.equals(ParseHtmlUtils.TextType.SPOILER);
                 if (isSpoiler) {
-                    List<String> spoilerData = ParseHtmlUtils.parseSpoilerParts((String) dataInTab);
+                    final List<String> spoilerData = ParseHtmlUtils.parseSpoilerParts((String) dataInTab);
 
-                    SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
+                    final SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
                     spoilerViewModel.titles = new ArrayList<>(spoilerData.subList(0, 2));
                     spoilerViewModel.mSpoilerTextParts = ParseHtmlUtils.getArticlesTextParts(spoilerData.get(2));
                     spoilerViewModel.mSpoilerTextPartsTypes = ParseHtmlUtils.getListOfTextTypes(spoilerViewModel.mSpoilerTextParts);
@@ -600,15 +532,14 @@ public class ArticleAdapter
 
                     //add textParts for expanded spoilers
                     if (spoilerViewModel.isExpanded) {
-                        List<ArticleTextPartViewModel> viewModelsInSpoiler = new ArrayList<>();
                         Timber.d("expanded spoiler title: %s", spoilerViewModel.titles.get(0));
+                        final List<ArticleTextPartViewModel> viewModelsInSpoiler = new ArrayList<>();
                         for (int u = 0; u < spoilerViewModel.mSpoilerTextPartsTypes.size(); u++) {
-                            @ParseHtmlUtils.TextType
-                            String typeInSpoiler = spoilerViewModel.mSpoilerTextPartsTypes.get(u);
+                            @ParseHtmlUtils.TextType final String typeInSpoiler = spoilerViewModel.mSpoilerTextPartsTypes.get(u);
 
                             Timber.d("expanded spoiler type: %s", typeInSpoiler);
 
-                            String dataInSpoiler = spoilerViewModel.mSpoilerTextParts.get(u);
+                            final String dataInSpoiler = spoilerViewModel.mSpoilerTextParts.get(u);
                             viewModelsInSpoiler.add(new ArticleTextPartViewModel(typeInSpoiler, dataInSpoiler, true));
 
                         }
@@ -628,19 +559,17 @@ public class ArticleAdapter
         }
 
         //add new viewModels
-        List<ArticleTextPartViewModel> viewModels = new ArrayList<>();
-        List<ArticleTextPartViewModel> viewModelsTabs = new ArrayList<>();
+        final Collection<ArticleTextPartViewModel> viewModelsTabs = new ArrayList<>();
         for (int i = 0; i < tabsViewModel.getTabDataList().get(positionInTabs).getTextParts().size(); i++) {
-            TabsViewModel.TabData tabData = tabsViewModel.getTabDataList().get(positionInTabs);
-            @ParseHtmlUtils.TextType
-            String typeInTab = tabData.getTextPartsTypes().get(i);
+            final TabsViewModel.TabData tabData = tabsViewModel.getTabDataList().get(positionInTabs);
+            @ParseHtmlUtils.TextType final String typeInTab = tabData.getTextPartsTypes().get(i);
 
             Object dataInTab = tabData.getTextParts().get(i);
-            boolean isSpoiler = typeInTab.equals(ParseHtmlUtils.TextType.SPOILER);
+            final boolean isSpoiler = typeInTab.equals(ParseHtmlUtils.TextType.SPOILER);
             if (isSpoiler) {
-                List<String> spoilerData = ParseHtmlUtils.parseSpoilerParts((String) dataInTab);
+                final List<String> spoilerData = ParseHtmlUtils.parseSpoilerParts((String) dataInTab);
 
-                SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
+                final SpoilerViewModel spoilerViewModel = new SpoilerViewModel();
                 spoilerViewModel.titles = new ArrayList<>(spoilerData.subList(0, 2));
                 spoilerViewModel.mSpoilerTextParts = ParseHtmlUtils.getArticlesTextParts(spoilerData.get(2));
                 spoilerViewModel.mSpoilerTextPartsTypes = ParseHtmlUtils.getListOfTextTypes(spoilerViewModel.mSpoilerTextParts);
@@ -651,15 +580,14 @@ public class ArticleAdapter
 
                 //add textParts for expanded spoilers
                 if (spoilerViewModel.isExpanded) {
-                    List<ArticleTextPartViewModel> viewModelsInSpoiler = new ArrayList<>();
+                    final List<ArticleTextPartViewModel> viewModelsInSpoiler = new ArrayList<>();
                     Timber.d("expanded spoiler title: %s", spoilerViewModel.titles.get(0));
                     for (int u = 0; u < spoilerViewModel.mSpoilerTextPartsTypes.size(); u++) {
-                        @ParseHtmlUtils.TextType
-                        String typeInSpoiler = spoilerViewModel.mSpoilerTextPartsTypes.get(u);
+                        @ParseHtmlUtils.TextType final String typeInSpoiler = spoilerViewModel.mSpoilerTextPartsTypes.get(u);
 
                         Timber.d("expanded spoiler type: %s", typeInSpoiler);
 
-                        String dataInSpoiler = spoilerViewModel.mSpoilerTextParts.get(u);
+                        final String dataInSpoiler = spoilerViewModel.mSpoilerTextParts.get(u);
                         viewModelsInSpoiler.add(new ArticleTextPartViewModel(typeInSpoiler, dataInSpoiler, true));
 
                     }
@@ -669,7 +597,7 @@ public class ArticleAdapter
                 viewModelsTabs.add(new ArticleTextPartViewModel(typeInTab, dataInTab, false));
             }
         }
-        viewModels.addAll(viewModelsTabs);
+        final Collection<ArticleTextPartViewModel> viewModels = new ArrayList<>(viewModelsTabs);
 
         mViewModels.addAll(positionInList + 1, viewModels);
 

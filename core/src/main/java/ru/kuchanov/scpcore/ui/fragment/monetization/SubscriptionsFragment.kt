@@ -2,6 +2,7 @@ package ru.kuchanov.scpcore.ui.fragment.monetization
 
 import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.support.annotation.DrawableRes
 import android.support.annotation.StringRes
 import android.support.v7.widget.LinearLayoutManager
@@ -33,6 +34,7 @@ import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptio
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.InAppViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.LabelWithPercentViewModel
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
+import ru.kuchanov.scpcore.manager.MyPreferenceManager.*
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
 import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.PurchaseData
@@ -40,10 +42,10 @@ import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InAppHelper
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract
+import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_CURRENT_SUBS
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_CURRENT_SUBS_EMPTY
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_FREE_ADS_DISABLE
-import ru.kuchanov.scpcore.mvp.presenter.monetization.getMonthFromSkuId
 import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP
 import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity
@@ -57,7 +59,7 @@ import javax.inject.Inject
 
 class SubscriptionsFragment :
         BaseFragment<SubscriptionsContract.View, SubscriptionsContract.Presenter>(),
-        SubscriptionsContract.View {
+        SubscriptionsContract.View, SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Inject
     lateinit var mGson: Gson
@@ -97,7 +99,15 @@ class SubscriptionsFragment :
                     getIInAppBillingService())
             }
         })
-        delegateManager.addDelegate(CurSubsDelegate { getPresenter().onCurrentSubscriptionClick(it) })
+        delegateManager.addDelegate(CurSubsDelegate(
+            {
+                getPresenter().onCurrentSubscriptionClick(it)
+            },
+            {
+                baseActivity?.updateOwnedMarketItems()
+                baseActivity?.getIInAppBillingService()?.apply { this@SubscriptionsFragment.getPresenter().getMarketData(this) }
+            }
+        ))
         delegateManager.addDelegate(CurSubsEmptyDelegate(
             {
                 baseActivity?.apply {
@@ -115,7 +125,12 @@ class SubscriptionsFragment :
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter
 
-        refresh.setOnClickListener { baseActivity?.getIInAppBillingService()?.apply { getPresenter().getMarketData(this) } }
+        refresh.setOnClickListener {
+            baseActivity?.getIInAppBillingService()?.apply {
+                getPresenter().getMarketData(
+                    this)
+            }
+        }
 
         if (presenter.owned == null) {
             baseActivity?.getIInAppBillingService()?.apply { getPresenter().getMarketData(this) }
@@ -189,7 +204,7 @@ class SubscriptionsFragment :
                 val description: Int = R.string.subs_full_description
                 @DrawableRes
                 val icon: Int
-                when (getMonthFromSkuId(item.sku)) {
+                when (SubscriptionsPresenter.getMonthFromSkuId(item.sku)) {
                     1 -> {
                         title = R.string.subs_1_month_title
                         icon = R.drawable.ic_scp_icon_laborant
@@ -229,9 +244,9 @@ class SubscriptionsFragment :
 
         val subsFullOneMonth = toBuy
                 .filter { it.productId !in InAppHelper.getNewNoAdsSubsSkus() }
-                .first { getMonthFromSkuId(it.productId) == 1 }
+                .first { SubscriptionsPresenter.getMonthFromSkuId(it.productId) == 1 }
 
-        toBuy.forEach {
+        toBuy.sortedWith(Comparator { t1, t2 -> t1.price_amount_micros.compareTo(t2.price_amount_micros) }).forEach {
             if (noAdsSubsEnabled && (it.productId in InAppHelper.getNewNoAdsSubsSkus())) {
                 items.add(
                     LabelViewModel(
@@ -258,7 +273,7 @@ class SubscriptionsFragment :
                 @DrawableRes
                 val icon: Int
 
-                val month = getMonthFromSkuId(it.productId)
+                val month = SubscriptionsPresenter.getMonthFromSkuId(it.productId)
                 when (month) {
                     1 -> {
                         label = R.string.subs_1_month_label
@@ -314,7 +329,7 @@ class SubscriptionsFragment :
             .showScreen(SubscriptionsScreenContract.Screen.LEADERBOARD)
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Timber.d("called in fragment")
+        Timber.d("onActivityResult called in fragment")
         if (requestCode == REQUEST_CODE_SUBSCRIPTION) {
             if (data == null) {
                 if (isAdded) {
@@ -333,12 +348,15 @@ class SubscriptionsFragment :
                     Timber.d("You have bought the %s", sku)
 
                     //validate subs list
-                    baseActivity?.updateOwnedMarketItems()
+                    if (baseActivity != null) {
+                        baseActivity!!.updateOwnedMarketItems()
+                    } else {
+                        Timber.wtf("baseActivity is null!!!")
+                    }
                 } catch (e: JSONException) {
                     Timber.e(e, "Failed to parse purchase data.")
                     showError(e)
                 }
-
             } else {
                 if (isAdded) {
                     showMessageLong("Error: response code is not \"0\". Please try again")
@@ -389,6 +407,17 @@ class SubscriptionsFragment :
     override fun getToolbarTitle() = R.string.subs_activity_title
 
     override fun getToolbarTextColor() = android.R.color.white
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        when (key) {
+            Keys.HAS_NO_ADS_SUBSCRIPTION, Keys.HAS_SUBSCRIPTION -> {
+                baseActivity?.getIInAppBillingService()?.apply { this@SubscriptionsFragment.getPresenter().getMarketData(this) }
+            }
+            else -> {
+                //do nothing
+            }
+        }//do nothing
+    }
 
     companion object {
 

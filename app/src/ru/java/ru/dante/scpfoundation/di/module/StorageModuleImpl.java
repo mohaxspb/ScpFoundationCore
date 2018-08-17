@@ -10,8 +10,11 @@ import io.realm.RealmSchema;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.LeaderboardUser;
+import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.db.model.SocialProviderModel;
 import ru.kuchanov.scpcore.db.model.User;
+import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
+import ru.kuchanov.scpcore.db.model.gallery.GalleryImageTranslation;
 import ru.kuchanov.scpcore.di.module.StorageModule;
 import timber.log.Timber;
 
@@ -26,11 +29,11 @@ public class StorageModuleImpl extends StorageModule {
     @Override
     protected RealmMigration getRealmMigration() {
         return (realm, oldVersion, newVersion) -> {
-            RealmSchema schema = realm.getSchema();
+            final RealmSchema schema = realm.getSchema();
 
             Timber.d("providesRealmMigration: %s/%s", oldVersion, newVersion);
 
-            for (RealmObjectSchema realmObjectSchema : schema.getAll()) {
+            for (final RealmObjectSchema realmObjectSchema : schema.getAll()) {
                 Timber.d("realmObjectSchema: %s", realmObjectSchema.getClassName());
                 Timber.d("realmObjectSchema: %s", realmObjectSchema.getFieldNames());
             }
@@ -80,7 +83,7 @@ public class StorageModuleImpl extends StorageModule {
             }
 
             if (oldVersion == 3) {
-                RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
+                final RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
                 if (articleSchema != null) {
                     articleSchema
                             .removeField("tabsTitles")
@@ -91,7 +94,7 @@ public class StorageModuleImpl extends StorageModule {
             }
 
             if (oldVersion == 4) {
-                RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
+                final RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
                 if (articleSchema != null) {
                     articleSchema
                             .addField(Article.FIELD_IS_IN_OBJECTS_FR, long.class)
@@ -104,8 +107,8 @@ public class StorageModuleImpl extends StorageModule {
             }
 
             if (oldVersion == 5) {
-                final RealmObjectSchema articleSchema = schema.create(LeaderboardUser.class.getSimpleName());
-                articleSchema
+                final RealmObjectSchema leaderboardUserSchema = schema.create(LeaderboardUser.class.getSimpleName());
+                leaderboardUserSchema
                         .addField(
                                 LeaderboardUser.FIELD_UID,
                                 String.class,
@@ -130,6 +133,78 @@ public class StorageModuleImpl extends StorageModule {
                         .addField(LeaderboardUser.FIELD_CUR_LEVEL_SCORE, Integer.class)
                         .setRequired(LeaderboardUser.FIELD_CUR_LEVEL_SCORE, true);
 
+                oldVersion++;
+            }
+
+            if (oldVersion == 6) {
+                final RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
+                articleSchema
+                        .addRealmListField(Article.FIELD_INNER_ARTICLES_URLS, schema.get(RealmString.class.getSimpleName()));
+
+                oldVersion++;
+            }
+
+            if (oldVersion == 7) {
+                final RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
+                articleSchema
+                        .addField(Article.FIELD_COMMENTS_URL, String.class);
+
+                oldVersion++;
+            }
+
+            if (oldVersion == 8) {
+                schema.remove("VkImage");
+
+                schema.create(GalleryImageTranslation.class.getSimpleName())
+                        .addField(
+                                GalleryImageTranslation.FIELD_ID,
+                                int.class,
+                                FieldAttribute.PRIMARY_KEY,
+                                FieldAttribute.REQUIRED
+                        )
+                        .addField(GalleryImageTranslation.FIELD_LANG_CODE, String.class)
+                        .setRequired(GalleryImageTranslation.FIELD_LANG_CODE, true)
+                        .addField(GalleryImageTranslation.FIELD_TRANSLATION, String.class)
+                        .setRequired(GalleryImageTranslation.FIELD_TRANSLATION, true)
+                        .addField(GalleryImageTranslation.FIELD_AUTHOR_ID, int.class)
+                        .addField(GalleryImageTranslation.FIELD_APPROVED, boolean.class)
+                        .addField(GalleryImageTranslation.FIELD_APPROVER_ID, Integer.class)
+                        .addField(GalleryImageTranslation.FIELD_CREATED, String.class)
+                        .setRequired(GalleryImageTranslation.FIELD_CREATED, true)
+                        .addField(GalleryImageTranslation.FIELD_UPDATED, String.class)
+                        .setRequired(GalleryImageTranslation.FIELD_UPDATED, true);
+
+                schema.create(GalleryImage.class.getSimpleName())
+                        .addField(
+                                GalleryImage.FIELD_ID,
+                                int.class,
+                                FieldAttribute.PRIMARY_KEY,
+                                FieldAttribute.REQUIRED
+                        )
+                        .addField(GalleryImage.FIELD_VK_ID, int.class)
+                        .addField(GalleryImage.FIELD_IMAGE_URL, String.class)
+                        .setRequired(GalleryImage.FIELD_IMAGE_URL, true)
+                        .addField(GalleryImage.FIELD_AUTHOR_ID, int.class)
+                        .addField(GalleryImage.FIELD_APPROVED, boolean.class)
+                        .addField(GalleryImage.FIELD_APPROVER_ID, Integer.class)
+                        .addField(GalleryImage.FIELD_CREATED, String.class)
+                        .setRequired(GalleryImage.FIELD_CREATED, true)
+                        .addField(GalleryImage.FIELD_UPDATED, String.class)
+                        .setRequired(GalleryImage.FIELD_UPDATED, true)
+                        .addRealmListField(
+                                GalleryImage.FIELD_GALLERY_IMAGE_TRANSLATIONS,
+                                schema.get(GalleryImageTranslation.class.getSimpleName())
+                        );
+
+                oldVersion++;
+            }
+
+            if (oldVersion == 9) {
+                RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
+                if (articleSchema != null) {
+                    articleSchema
+                            .addField(Article.FIELD_IS_IN_OBJECTS_5, long.class);
+                }
                 oldVersion++;
             }
 

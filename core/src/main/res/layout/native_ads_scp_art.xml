@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/scpArtAdView"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/defaultMarginSmall"
+        android:paddingEnd="@dimen/defaultMarginSmall"
+        android:paddingStart="@dimen/defaultMarginSmall">
+
+        <ImageView
+            android:id="@+id/logoImageView"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="@dimen/defaultMargin"
+            android:padding="@dimen/defaultMarginSmall"
+            android:src="@drawable/ic_scp_art_ad_img"
+            tools:ignore="ContentDescription" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/titleTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/scp_art_ad_title"
+                android:textSize="16sp" />
+
+            <io.techery.properratingbar.ProperRatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:prb_defaultRating="5"
+                app:prb_symbolicTick="★"
+                app:prb_symbolicTickSelectedColor="@color/adStarsColor"
+                app:prb_totalTicks="5" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/adLabelBgColor"
+            android:padding="3dp"
+            android:text="@string/ad"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/mainImageView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="@dimen/defaultMarginSmall"
+            android:src="@drawable/art_scp_default_ads"
+            tools:ignore="ContentDescription" />
+
+        <ProgressBar
+            android:id="@+id/progressCenter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateTint="?newArticlesTextColor"
+            android:indeterminateTintMode="src_in"
+            android:visibility="gone"
+            tools:targetApi="lollipop" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingEnd="@dimen/defaultMarginSmall"
+        tools:ignore="RtlSymmetry">
+
+        <TextView
+            android:id="@+id/subtitleTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingBottom="@dimen/defaultMarginSmall"
+            android:paddingStart="@dimen/defaultMarginSmall"
+            android:paddingTop="@dimen/defaultMarginSmall"
+            android:text="@string/scp_art_ad_description"
+            android:textSize="12sp"
+            tools:ignore="RtlSymmetry" />
+
+        <TextView
+            android:id="@+id/ctaTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/ad_cta"
+            android:padding="@dimen/defaultMarginSmall"
+            android:text="@string/scp_art_ad_cta" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="download_art_list">Загрузка списка статей</string>
+    <string name="download_all_title">Что скачать?</string>
+    <!--<string name="download">Скачать</string>-->
+    <string name="stop_download">Остановить загрузку</string>
+    <string name="download_objects_title">Загрузка объектов</string>
+    <string name="error_notification_title">Ошибка</string>
+    <string name="error_notification_objects_list_download_content">Не удалось скачать список объектов</string>
+    <string name="download_complete_title">Загрузка завершена</string>
+    <string name="download_complete_title_content">Загружено %1$d из %2$d. Ошибок: %3$d</string>
+    <string name="download_progress_content">Загружено %1$d/%2$d. Ошибок: %3$d</string>
+    <string name="error_notification_recent_list_download_content">Не удалось загрузить список статей</string>
+    <string name="notification_recent_list_title">Загрузка списка статей</string>
+    <string name="download_recent_title">Загрузка статей</string>
+    <string name="downlad_art_list_range">Сколько скачать?</string>
+    <string name="increase_limit">Увеличить/убрать лимит</string>
+    <string name="user_limit">Ваш лимит: %s</string>
+    <string name="selected">Выбрано: %d</string>
+    <string name="no_limit">Без ограничений!</string>
+    <string name="download_all_with_limit">Будут скачаны последние %d статей из списка последних изменённых статей (список \"Новые статьи\")</string>
+    <!--<string name="limit_description">Лимит ограничивает максимальное количество статей, которые могут быть сохранены на устройстве для чтения в offline режиме. Сейчас для вас никакого ограничения нет! А если у вас приобретена подписка - то и не будет) Если подписки у вас нет, то однажды лимит будет ограничен %1$d статьями для неавторизованных агентов и %2$d + (кол-во очков/%3$d) для авторизованных.</string>-->
+    <string name="limit_description_disabled_free_downloads">Лимит ограничивает максимальное количество статей, которые могут быть сохранены на устройстве для чтения в offline режиме. Минимальный лимит статей - %1$d. Лимит можно полностью убрать купив подписку или повышать его, авторизовавшись и зарабатывая очки. За каждые %2$d очков вы сможете хранить на одну статью больше!</string>
+
+    <!--download dialog-->
+    <string name="download_all">Скачать всё</string>
+    <!--<string name="info">Информация</string>-->
+
+    <string name="type_1">Объекты I</string>
+    <string name="type_2">Объекты II</string>
+    <string name="type_3">Объекты III</string>
+    <string name="type_4">Объекты IV</string>
+    <string name="type_5">Объекты V</string>
+    <string name="type_ru">Объекты RU</string>
+
+    <string name="type_fr">Объекты FR</string>
+    <string name="type_jp">Объекты JP</string>
+    <string name="type_es">Объекты ES</string>
+    <string name="type_pl">Объекты PL</string>
+    <string name="type_de">Объекты DE</string>
+
+    <string name="type_all">Все</string>
+
+    <string name="type_experiments">Протоколы экспериментов</string>
+    <string name="type_incidents">Отчёты об инцидентах</string>
+    <string name="type_interviews">Интервью с очевидцами</string>
+    <string name="type_archive">Архивные SCP</string>
+    <string name="type_jokes">Шуточные SCP</string>
+    <string name="type_other">Прочие материалы</string>
+
+    <string name="error_notification_download_failed">Произошла ошибка: %s</string>
+</resources>

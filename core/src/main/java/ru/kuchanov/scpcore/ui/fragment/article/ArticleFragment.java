@@ -1,5 +1,13 @@
 package ru.kuchanov.scpcore.ui.fragment.article;
 
+import com.google.firebase.auth.FirebaseAuth;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -11,15 +19,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.firebase.auth.FirebaseAuth;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -32,8 +36,8 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import butterknife.BindView;
-import ru.kuchanov.scp.downloads.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.Article;
@@ -43,8 +47,8 @@ import ru.kuchanov.scpcore.mvp.contract.article.ArticleMvp;
 import ru.kuchanov.scpcore.ui.activity.GalleryActivity;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import ru.kuchanov.scpcore.ui.adapter.ArticleAdapter;
-import ru.kuchanov.scpcore.ui.fragment.BaseFragment;
 import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
+import ru.kuchanov.scpcore.ui.fragment.BaseFragment;
 import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
 import ru.kuchanov.scpcore.ui.model.TabsViewModel;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
@@ -62,38 +66,46 @@ import timber.log.Timber;
 public class ArticleFragment
         extends BaseFragment<ArticleMvp.View, ArticleMvp.Presenter>
         implements ArticleMvp.View,
-        SetTextViewHTML.TextItemsClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
+                   SetTextViewHTML.TextItemsClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String TAG = ArticleFragment.class.getSimpleName();
 
     public static final String EXTRA_URL = "EXTRA_URL";
 
     private static final String KEY_EXPANDED_SPOILERS = "KEY_EXPANDED_SPOILERS";
+
     private static final String KEY_TABS = "KEY_TABS";
+
+    public static final int ITEM_VIEW_CACHE_SIZE = 20;
 
     @BindView(R2.id.progressCenter)
     ProgressBar mProgressBarCenter;
+
     @BindView(R2.id.swipeRefresh)
     SwipeRefreshLayout mSwipeRefreshLayout;
+
     @BindView(R2.id.recyclerView)
     RecyclerView mRecyclerView;
 
     @Inject
     DialogUtils mDialogUtils;
+
     @Inject
     ConstantValues mConstantValues;
 
     private String url;
 
     private ArticleAdapter mAdapter;
+
     private Article mArticle;
 
     private List<SpoilerViewModel> mExpandedSpoilers = new ArrayList<>();
+
     private List<TabsViewModel> mTabsViewModels = new ArrayList<>();
 
-    public static ArticleFragment newInstance(String url) {
-        ArticleFragment fragment = new ArticleFragment();
-        Bundle args = new Bundle();
+    public static ArticleFragment newInstance(final String url) {
+        final ArticleFragment fragment = new ArticleFragment();
+        final Bundle args = new Bundle();
         args.putString(EXTRA_URL, url);
         fragment.setArguments(args);
         return fragment;
@@ -106,7 +118,7 @@ public class ArticleFragment
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_TABS, (ArrayList<TabsViewModel>) mTabsViewModels);
         outState.putSerializable(KEY_EXPANDED_SPOILERS, (ArrayList<SpoilerViewModel>) mExpandedSpoilers);
@@ -118,7 +130,7 @@ public class ArticleFragment
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
 //        Timber.d("onCreate");
         super.onCreate(savedInstanceState);
         url = getArguments().getString(EXTRA_URL);
@@ -129,12 +141,36 @@ public class ArticleFragment
     }
 
     @Override
+    protected boolean isHasOptionsMenu() {
+        return true;
+    }
+
+    @Override
+    protected int getMenuResId() {
+        return R.menu.menu_article_single;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        if (item.getItemId() == R.id.menuItemCommentsBrowser) {
+            if (presenter.getData() == null || TextUtils.isEmpty(presenter.getData().commentsUrl)) {
+                showMessageLong(R.string.no_comments_url_found);
+            } else {
+                IntentUtils.openUrl(presenter.getData().commentsUrl);
+            }
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected int getLayoutResId() {
         return R.layout.fragment_article;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(final View view, @Nullable final Bundle savedInstanceState) {
         //fix no presenter attach
         mPresenter.attachView(this);
 
@@ -152,7 +188,7 @@ public class ArticleFragment
         //we need this as it's the only way to be able to scroll
         //articles, which have a lot of tables, which are shown in webView
         mRecyclerView.setDrawingCacheEnabled(true);
-        mRecyclerView.setItemViewCacheSize(20);
+        mRecyclerView.setItemViewCacheSize(ITEM_VIEW_CACHE_SIZE);
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -168,7 +204,7 @@ public class ArticleFragment
     }
 
     @Override
-    public void enableSwipeRefresh(boolean enable) {
+    public void enableSwipeRefresh(final boolean enable) {
         if (!isAdded() || mSwipeRefreshLayout == null) {
             return;
         }
@@ -176,7 +212,7 @@ public class ArticleFragment
     }
 
     @Override
-    public void showSwipeProgress(boolean show) {
+    public void showSwipeProgress(final boolean show) {
         if (!isAdded()) {
             return;
         }
@@ -187,7 +223,7 @@ public class ArticleFragment
     }
 
     @Override
-    public void showCenterProgress(boolean show) {
+    public void showCenterProgress(final boolean show) {
         if (!isAdded() || mProgressBarCenter == null) {
             return;
         }
@@ -195,7 +231,7 @@ public class ArticleFragment
     }
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
+    public void setUserVisibleHint(final boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
 //        Timber.d("setUserVisibleHint url: %s, isVisibleToUser: %b", url, isVisibleToUser);
         if (isVisibleToUser && mArticle != null) {
@@ -204,7 +240,7 @@ public class ArticleFragment
     }
 
     @Override
-    public void showData(Article article) {
+    public void showData(final Article article) {
         Timber.d("showData: %s", article);
         mArticle = article;
         if (!isAdded()) {
@@ -248,10 +284,10 @@ public class ArticleFragment
     }
 
     @Override
-    public void onLinkClicked(String link) {
+    public void onLinkClicked(final String link) {
         Timber.d("onLinkClicked: %s", link);
         //open predefined main activities link clicked
-        for (String pressedLink : mConstantValues.getAllLinksArray()) {
+        for (final String pressedLink : mConstantValues.getAllLinksArray()) {
             if (link.equals(pressedLink)) {
                 MainActivity.startActivity(getActivity(), link);
                 return;
@@ -262,14 +298,14 @@ public class ArticleFragment
     }
 
     @Override
-    public void onSnoskaClicked(String link) {
-        List<String> articlesTextParts = mAdapter.getArticlesTextParts();
+    public void onSnoskaClicked(final String link) {
+        final List<String> articlesTextParts = mAdapter.getArticlesTextParts();
         if (TextUtils.isDigitsOnly(link)) {
-            String linkToFind = "footnote-" + link;
+            final String linkToFind = "footnote-" + link;
             for (int i = articlesTextParts.size() - 1; i >= 0; i--) {
-                Document document = Jsoup.parse(articlesTextParts.get(i));
-                Elements divTag = document.getElementsByAttributeValue("id", linkToFind);
-                if (divTag.size() != 0) {
+                final Document document = Jsoup.parse(articlesTextParts.get(i));
+                final Elements divTag = document.getElementsByAttributeValue("id", linkToFind);
+                if (!divTag.isEmpty()) {
                     String textThatWeTryToFindSoManyTime = divTag.html();
                     textThatWeTryToFindSoManyTime = textThatWeTryToFindSoManyTime.substring(3, textThatWeTryToFindSoManyTime.length());
                     Timber.d("textThatWeTryToFindSoManyTime: %s", textThatWeTryToFindSoManyTime);
@@ -284,12 +320,12 @@ public class ArticleFragment
     }
 
     @Override
-    public void onBibliographyClicked(String link) {
-        List<String> articlesTextParts = mAdapter.getArticlesTextParts();
+    public void onBibliographyClicked(final String link) {
+        final List<String> articlesTextParts = mAdapter.getArticlesTextParts();
         for (int i = articlesTextParts.size() - 1; i >= 0; i--) {
-            Document document = Jsoup.parse(articlesTextParts.get(i));
-            Elements divTag = document.getElementsByAttributeValue("id", link);
-            if (divTag.size() != 0) {
+            final Document document = Jsoup.parse(articlesTextParts.get(i));
+            final Elements divTag = document.getElementsByAttributeValue("id", link);
+            if (!divTag.isEmpty()) {
                 String textThatWeTryToFindSoManyTime = divTag.text();
                 textThatWeTryToFindSoManyTime = textThatWeTryToFindSoManyTime.substring(3, textThatWeTryToFindSoManyTime.length());
                 new MaterialDialog.Builder(getActivity())
@@ -302,14 +338,14 @@ public class ArticleFragment
     }
 
     @Override
-    public void onTocClicked(String link) {
+    public void onTocClicked(final String link) {
         if (!isAdded()) {
             return;
         }
 //        Timber.d("onTocClicked: %s", link);
-        List<String> articlesTextParts = mAdapter.getArticlesTextParts();
+        final List<String> articlesTextParts = mAdapter.getArticlesTextParts();
         String digits = "";
-        for (char c : link.toCharArray()) {
+        for (final char c : link.toCharArray()) {
             if (TextUtils.isDigitsOnly(String.valueOf(c))) {
                 digits += String.valueOf(c);
             }
@@ -323,13 +359,13 @@ public class ArticleFragment
         }
         Timber.d("check for a with name");
         //if reach here, so it's one of awful toc with bad style
-        String srtToCheck = "name=\"" + link + "\"";
-        String srtToCheck1 = "name=\"" + link.replace("#", "") + "\"";
+        final String srtToCheck = "name=\"" + link + "\"";
+        final String srtToCheck1 = "name=\"" + link.replace("#", "") + "\"";
 //        Timber.d("srtToCheck: %s", srtToCheck);
 //        Timber.d("srtToCheck1: %s", srtToCheck1);
         for (int i = 0; i < articlesTextParts.size(); i++) {
             if (articlesTextParts.get(i).contains(srtToCheck) ||
-                    articlesTextParts.get(i).contains(srtToCheck1)) {
+                articlesTextParts.get(i).contains(srtToCheck1)) {
 //                Timber.d("found part: %s", articlesTextParts.get(i));
                 mRecyclerView.scrollToPosition(i);
                 return;
@@ -338,7 +374,7 @@ public class ArticleFragment
     }
 
     @Override
-    public void onImageClicked(String link, @Nullable String description) {
+    public void onImageClicked(final String link, @Nullable final String description) {
         if (!isAdded()) {
             return;
         }
@@ -346,7 +382,7 @@ public class ArticleFragment
     }
 
     @Override
-    public void onUnsupportedLinkPressed(String link) {
+    public void onUnsupportedLinkPressed(final String link) {
         if (!isAdded()) {
             return;
         }
@@ -354,12 +390,12 @@ public class ArticleFragment
     }
 
     @Override
-    public void onMusicClicked(String link) {
+    public void onMusicClicked(final String link) {
         if (!isAdded()) {
             return;
         }
         try {
-            MediaPlayer mp = new MediaPlayer();
+            final MediaPlayer mp = new MediaPlayer();
             mp.setDataSource(link);
             mp.prepareAsync();
             mp.setOnPreparedListener(mediaPlayer -> mp.start());
@@ -371,7 +407,7 @@ public class ArticleFragment
     }
 
     @Override
-    public void onExternalDomenUrlClicked(String link) {
+    public void onExternalDomenUrlClicked(final String link) {
         if (!isAdded()) {
             return;
         }
@@ -379,7 +415,7 @@ public class ArticleFragment
     }
 
     @Override
-    public void onTagClicked(ArticleTag tag) {
+    public void onTagClicked(final ArticleTag tag) {
         if (!isAdded()) {
             return;
         }
@@ -387,7 +423,7 @@ public class ArticleFragment
     }
 
     @Override
-    public void onNotTranslatedArticleClick(String link) {
+    public void onNotTranslatedArticleClick(final String link) {
         if (!isAdded()) {
             return;
         }
@@ -395,7 +431,7 @@ public class ArticleFragment
     }
 
     @Override
-    public void onSpoilerExpand(SpoilerViewModel spoilerViewModel) {
+    public void onSpoilerExpand(final SpoilerViewModel spoilerViewModel) {
         if (!isAdded()) {
             return;
         }
@@ -403,7 +439,7 @@ public class ArticleFragment
     }
 
     @Override
-    public void onSpoilerCollapse(SpoilerViewModel spoilerViewModel) {
+    public void onSpoilerCollapse(final SpoilerViewModel spoilerViewModel) {
         if (!isAdded()) {
             return;
         }
@@ -411,7 +447,7 @@ public class ArticleFragment
     }
 
     @Override
-    public void onTabSelected(TabsViewModel tabsViewModel) {
+    public void onTabSelected(final TabsViewModel tabsViewModel) {
         if (!isAdded()) {
             return;
         }
@@ -427,7 +463,7 @@ public class ArticleFragment
         if (!isAdded()) {
             return;
         }
-        BottomSheetDialogFragment subsDF = AdsSettingsBottomSheetDialogFragment.newInstance();
+        final BottomSheetDialogFragment subsDF = AdsSettingsBottomSheetDialogFragment.newInstance();
         subsDF.show(getActivity().getSupportFragmentManager(), subsDF.getTag());
     }
 
@@ -440,7 +476,7 @@ public class ArticleFragment
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+    public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
         //ignore facebook spam
         if (key.startsWith("com.facebook")) {
             return;
@@ -457,7 +493,7 @@ public class ArticleFragment
                 showData(mPresenter.getData());
                 break;
             case MyPreferenceManager.Keys.TIME_FOR_WHICH_BANNERS_DISABLED:
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd EEE HH:mm:ss", Locale.getDefault());
+                final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd EEE HH:mm:ss", Locale.getDefault());
                 Timber.d("Nex time is: %s", simpleDateFormat.format(new Date(sharedPreferences.getLong(key, 0))));
                 showData(mPresenter.getData());
                 break;

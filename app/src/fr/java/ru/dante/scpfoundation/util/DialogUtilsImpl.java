@@ -5,14 +5,13 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.kuchanov.scp.downloads.ApiClientModel;
-import ru.kuchanov.scp.downloads.ConstantValues;
-import ru.kuchanov.scp.downloads.DbProviderFactoryModel;
-import ru.kuchanov.scp.downloads.DownloadEntry;
-import ru.kuchanov.scp.downloads.MyPreferenceManagerModel;
-import ru.kuchanov.scpcore.Constants;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.R;
+import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.downloads.DownloadEntry;
+import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.util.DialogUtilsDefault;
 
 /**
@@ -23,18 +22,18 @@ import ru.kuchanov.scpcore.ui.util.DialogUtilsDefault;
 public class DialogUtilsImpl extends DialogUtilsDefault {
 
     public DialogUtilsImpl(
-            MyPreferenceManagerModel preferenceManager,
-            DbProviderFactoryModel dbProviderFactory,
-            ApiClientModel<Article> apiClient,
-            ConstantValues constantValues,
-            Class clazz
+            final MyPreferenceManager preferenceManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient,
+            final ConstantValues constantValues,
+            final Class clazz
     ) {
         super(preferenceManager, dbProviderFactory, apiClient, constantValues, clazz);
     }
 
     @Override
-    public List<DownloadEntry> getDownloadTypesEntries(Context context) {
-        List<DownloadEntry> downloadEntries = new ArrayList<>();
+    public List<DownloadEntry> getDownloadTypesEntries(final Context context) {
+        final List<DownloadEntry> downloadEntries = new ArrayList<>();
 
         downloadEntries.add(new DownloadEntry(R.string.type_1, context.getString(R.string.type_1), mConstantValues.getObjects1(), Article.FIELD_IS_IN_OBJECTS_1));
         downloadEntries.add(new DownloadEntry(R.string.type_2, context.getString(R.string.type_2), mConstantValues.getObjects2(), Article.FIELD_IS_IN_OBJECTS_2));

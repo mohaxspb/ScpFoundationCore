@@ -33,20 +33,20 @@ public class ArticleActivity
     private List<String> mUrls;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (getIntent().hasExtra(EXTRA_ARTICLES_URLS_LIST)) {
             mUrls = getIntent().getStringArrayListExtra(EXTRA_ARTICLES_URLS_LIST);
             mCurPosition = getIntent().getIntExtra(EXTRA_POSITION, 0);
         }
-        ArticlesPagerAdapter adapter = new ArticlesPagerAdapter(getSupportFragmentManager());
+        final ArticlesPagerAdapter adapter = new ArticlesPagerAdapter(getSupportFragmentManager());
         adapter.setData(mUrls);
         mViewPager.setAdapter(adapter);
 
         mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
-            public void onPageSelected(int position) {
+            public void onPageSelected(final int position) {
                 mCurPosition = position;
                 if (isTimeToShowAds()) {
                     if (isAdsLoaded()) {
@@ -64,8 +64,7 @@ public class ArticleActivity
             showSnackBarWithAction(Constants.Firebase.CallToActionReason.REMOVE_ADS);
             getIntent().removeExtra(EXTRA_SHOW_DISABLE_ADS);
 
-            @DataSyncActions.ScoreAction
-            String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
+            @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
             mPresenter.updateUserScoreForScoreAction(action);
         }
     }
@@ -91,7 +90,7 @@ public class ArticleActivity
     }
 
     @Override
-    public boolean onNavigationItemClicked(int id) {
+    public boolean onNavigationItemClicked(final int id) {
         Timber.d("onNavigationItemClicked with id: %s", id);
         String link = null;
 
@@ -113,6 +112,10 @@ public class ArticleActivity
             link = mConstantValues.getObjects2();
         } else if (id == R.id.objects_III) {
             link = mConstantValues.getObjects3();
+        } else if (id == R.id.objects_IV) {
+            link = mConstantValues.getObjects4();
+        } else if (id == R.id.objects_V) {
+            link = mConstantValues.getObjects5();
         } else if (id == R.id.files) {
             startMaterialsActivity();
         } else if (id == R.id.favorite) {
@@ -131,8 +134,6 @@ public class ArticleActivity
             link = mConstantValues.getObjectsRu();
         } else if (id == R.id.news) {
             link = mConstantValues.getNews();
-        } else if (id == R.id.objects_IV) {
-            link = mConstantValues.getObjects4();
         } else if (id == R.id.stories) {
             link = Constants.Urls.STORIES;
         } else {
@@ -145,9 +146,9 @@ public class ArticleActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         Timber.d("onOptionsItemSelected with id: %s", item);
-        int i = item.getItemId();
+        final int i = item.getItemId();
         if (i == R.id.menuItemShare) {
             IntentUtils.shareUrl(mUrls.get(mCurPosition));
             return true;
@@ -158,7 +159,7 @@ public class ArticleActivity
             mPresenter.toggleFavorite(mUrls.get(mCurPosition));
             return true;
         } else if (i == R.id.text_size) {
-            BottomSheetDialogFragment fragmentDialogTextAppearance = TextSizeDialogFragment.newInstance(TextSizeDialogFragment.TextSizeType.ARTICLE);
+            final BottomSheetDialogFragment fragmentDialogTextAppearance = TextSizeDialogFragment.newInstance(TextSizeDialogFragment.TextSizeType.ARTICLE);
             fragmentDialogTextAppearance.show(getSupportFragmentManager(), TextSizeDialogFragment.TAG);
             return true;
         } else {
@@ -167,17 +168,17 @@ public class ArticleActivity
     }
 
     @Override
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         if (mToolbar != null) {
             mToolbar.setTitle(title);
         }
     }
 
     @Override
-    public void setFavoriteState(boolean isInFavorite) {
+    public void setFavoriteState(final boolean isInFavorite) {
 //        Timber.d("setFavoriteState: %s", isInFavorite);
         if (mToolbar != null && mToolbar.getMenu() != null) {
-            MenuItem item = mToolbar.getMenu().findItem(R.id.menuItemFavorite);
+            final MenuItem item = mToolbar.getMenu().findItem(R.id.menuItemFavorite);
             if (item != null) {
                 item.setIcon(isInFavorite ? R.drawable.ic_favorite_white_24dp : R.drawable.ic_favorite_border_white_24dp);
                 item.setTitle(isInFavorite ? R.string.favorites_remove : R.string.favorites_add);
