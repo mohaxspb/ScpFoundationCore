@@ -347,4 +347,7 @@ Grazie per aver utilizzato la nostra applicazione!]]></string>
     <string name="share_app_vk_text">Amate le storie fantastiche e raccapriccianti? Prova SCP Foundation app per Android-migliaia di storie offline gratis!</string>
     <string name="need_vk_wall_access">Il permesso di inviare sulla parete è richiesto. Per favore, login di nuovo.</string>
     <string name="app_lang_dialog_google_description">Qui ci sono altre versioni della nostra applicazione, è possibile scegliere e scaricare la versione di lingua necessaria cliccando sul link in Google Play Market.</string>
+
+    <!---->
+    <string name="drawer_item_objects5">SCP Serie V</string>
 </resources>

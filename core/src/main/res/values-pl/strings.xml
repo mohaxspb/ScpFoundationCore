@@ -15,7 +15,7 @@
     <string name="drawer_item_13">Lista Offline</string>
     <string name="drawer_item_14">Galeria</string>
     <string name="drawer_item_15">Szukaj</string>
-    <string name="drawer_item_objects4">Lista IV</string>
+    <string name="drawer_item_objects4">Lista EN IV</string>
     <!--настройки-->
     <string name="enter">Wchodzić</string>
     <string name="settings">Ustawienia</string>
@@ -345,4 +345,6 @@ Dziękujemy za korzystanie z naszej aplikacji!]]></string>
     <string name="share_app_vk_text">Love fantastyczne i straszne historie? Wypróbuj aplikację SCP Foundation dla Androida-tysiące opowieści offline za darmo!</string>
     <string name="need_vk_wall_access">Wymagana jest zgoda na post na ścianie. Zaloguj się ponownie.</string>
     <string name="app_lang_dialog_google_description">Oto inne wersje naszej aplikacji, można wybrać i pobrać odpowiednią wersję językową, klikając na link na rynku Google Play.</string>
+    <!---->
+    <string name="drawer_item_objects5">Lista EN V</string>
 </resources>

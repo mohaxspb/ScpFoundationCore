@@ -347,4 +347,7 @@ Vielen Dank für die Nutzung unserer App!]]></string>
 
     <!---->
     <string name="app_lang_dialog_google_description">Hier sind andere Versionen unserer Anwendung, können Sie wählen, und laden Sie die notwendige Sprachversion, indem Sie auf den Link in Google Play Markt.</string>
+
+    <!---->
+    <string name="drawer_item_objects5">Serie V</string>
 </resources>

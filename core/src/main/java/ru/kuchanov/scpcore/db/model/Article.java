@@ -38,6 +38,8 @@ public class Article extends RealmObject implements Serializable {
 
     public static final String FIELD_IS_IN_OBJECTS_4 = "isInObjects4";
 
+    public static final String FIELD_IS_IN_OBJECTS_5 = "isInObjects5";
+
     public static final String FIELD_IS_IN_OBJECTS_RU = "isInObjectsRu";
 
     public static final String FIELD_IS_IN_OBJECTS_FR = "isInObjectsFr";
@@ -128,6 +130,8 @@ public class Article extends RealmObject implements Serializable {
     public long isInObjects3 = ORDER_NONE;
 
     public long isInObjects4 = ORDER_NONE;
+
+    public long isInObjects5 = ORDER_NONE;
 
     public long isInObjectsRu = ORDER_NONE;
 

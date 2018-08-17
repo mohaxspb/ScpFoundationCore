@@ -348,4 +348,7 @@ Traduit Lucie.]]></string>
     <string name="share_app_vk_text">Vous aimez les histoires fantastiques et effrayantes? Essayez SCP Foundation App pour Android-milliers d\'histoires hors ligne gratuitement!</string>
     <string name="need_vk_wall_access">L\'autorisation de poster sur le mur est requise. S\'ll vous plaît, reconnectez-vous.</string>
     <string name="app_lang_dialog_google_description">Voici d\'autres versions de notre application, vous pouvez choisir et télécharger la version linguistique nécessaire en cliquant sur le lien dans Google Play Market.</string>
+
+    <!---->
+    <string name="drawer_item_objects5">Série SCP V</string>
 </resources>
