@@ -76,6 +76,7 @@
         <item
             android:id="@+id/objects_V"
             android:checked="true"
+            android:visible="false"
             android:icon="@drawable/ic_drawer_object_4"
             android:title="@string/drawer_item_objects5"
             />
