@@ -138,9 +138,9 @@ public abstract class BaseApplication extends MultiDexApplication {
     }
 
     @Override
-    protected void attachBaseContext(final Context base) {
-        MultiDex.install(this);
+    protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
     protected abstract AppComponent buildAppComponentImpl();

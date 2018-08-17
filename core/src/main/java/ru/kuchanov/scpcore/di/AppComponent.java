@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.di;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -142,7 +144,7 @@ public interface AppComponent {
 
     void inject(FreeAdsDisableActionsFragment fragment);
 
-    void inject(LeaderboardFragment leaderboardFragment);
+    void inject(@NotNull LeaderboardFragment leaderboardFragment);
 
     void inject(TextSizeDialogFragment dialogFragment);
 
