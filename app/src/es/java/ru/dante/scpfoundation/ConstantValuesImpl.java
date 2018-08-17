@@ -45,6 +45,11 @@ public class ConstantValuesImpl implements ConstantValues {
     }
 
     @Override
+    public String getObjects5() {
+        return Urls.OBJECTS_5;
+    }
+
+    @Override
     public String getObjectsRu() {
         return Urls.OBJECTS_FR;
     }
@@ -185,6 +190,7 @@ public class ConstantValuesImpl implements ConstantValues {
         String OBJECTS_2 = BASE_API_URL + "/serie-scp-2";
         String OBJECTS_3 = BASE_API_URL + "/serie-scp-3";
         String OBJECTS_4 = BASE_API_URL + "/serie-scp-4";
+        String OBJECTS_5 = BASE_API_URL + "/serie-scp-5";
 
         String OBJECTS_FR = BASE_API_URL + "/serie-scp-es";
 

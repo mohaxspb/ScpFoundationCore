@@ -45,6 +45,11 @@ public class ConstantValuesImpl implements ConstantValues {
     }
 
     @Override
+    public String getObjects5() {
+        return Urls.OBJECTS_5;
+    }
+
+    @Override
     public String getObjectsRu() {
         return Urls.OBJECTS_PL;
     }
@@ -186,6 +191,7 @@ public class ConstantValuesImpl implements ConstantValues {
         String OBJECTS_2 = BASE_API_URL + "/lista-eng-2";
         String OBJECTS_3 = BASE_API_URL + "/lista-eng-3";
         String OBJECTS_4 = BASE_API_URL + "/lista-eng-4";
+        String OBJECTS_5 = BASE_API_URL + "/lista-eng-5";
 
         String OBJECTS_PL = BASE_API_URL + "/lista-pl";
 
