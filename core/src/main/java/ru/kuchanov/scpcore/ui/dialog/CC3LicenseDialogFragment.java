@@ -42,7 +42,6 @@ public class CC3LicenseDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
-
         //icons from https://github.com/hjnilsson/country-flags/tree/master/svg
 
         final MaterialDialog.Builder dialogTextSizeBuilder = new MaterialDialog.Builder(getActivity());

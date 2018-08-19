@@ -166,31 +166,34 @@ public class ApiClientImpl extends ApiClient {
 
     //todo
     @Override
-    protected List<Article> parseForRatedArticles(final Document doc) throws ScpParseException {
+    protected List<Article> parseForRatedArticles(Document doc) throws ScpParseException {
         final Element pageContent = doc.getElementById("page-content");
         if (pageContent == null) {
             throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
         }
-        final Element listPagesBox = pageContent.getElementsByClass("panel-body").last();
+        final Element listPagesBox = pageContent.getElementsByClass("list-pages-box").first();
         if (listPagesBox == null) {
             throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
         }
 
-        final Elements articlesDivs = listPagesBox.getElementsByClass("list-pages-item");
+        final String allArticles = listPagesBox.getElementsByTag("p").first().html();
+        final String[] arrayOfArticles = allArticles.split("<br>");
         final List<Article> articles = new ArrayList<>();
-        for (final Element element : articlesDivs) {
-            final Element aTag = element.getElementsByTag("a").first();
+        for (final String arrayItem : arrayOfArticles) {
+            doc = Jsoup.parse(arrayItem);
+            final Element aTag = doc.getElementsByTag("a").first();
             final String url = mConstantValues.getBaseApiUrl() + aTag.attr("href");
             final String title = aTag.text();
 
-            final Element pTag = element.getElementsByTag("p").first();
-            String ratingString = pTag.text().substring(pTag.text().indexOf("avaliação ") + "avaliação ".length());
-            ratingString = ratingString.substring(0, ratingString.indexOf("."));
-            final int rating = Integer.parseInt(ratingString);
+            Timber.d("arrayItem: %s",arrayItem);
+            String rating = arrayItem.substring(arrayItem.indexOf("评分: ") + "评分: ".length());
+            Timber.d("rating: %s",rating);
+            rating = rating.substring(0, rating.indexOf(","));
+            Timber.d("rating: %s",rating);
 
             final Article article = new Article();
             article.url = url;
-            article.rating = rating;
+            article.rating = Integer.parseInt(rating);
             article.title = title;
             articles.add(article);
         }
@@ -198,8 +201,6 @@ public class ApiClientImpl extends ApiClient {
         return articles;
     }
 
-
-    //todo
     @Override
     protected List<Article> parseForObjectArticles(final Document doc) throws ScpParseException {
         final Element pageContent = doc.getElementById("page-content");
