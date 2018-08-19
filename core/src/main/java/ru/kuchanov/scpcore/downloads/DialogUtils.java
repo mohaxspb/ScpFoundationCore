@@ -152,10 +152,9 @@ public abstract class DialogUtils {
         countObservable
                 .flatMap(numOfArts -> {
                     int limit = mPreferenceManager.getFreeOfflineLimit();
-                    int numOfScorePerArt = mPreferenceManager.getScorePerArt();
 
                     DbProvider dbProvider = mDbProviderFactory.getDbProvider();
-                    limit += mDbProviderFactory.getDbProvider().getScore() / numOfScorePerArt;
+                    limit += mDbProviderFactory.getDbProvider().getScore() / mPreferenceManager.getScorePerArt();
                     dbProvider.close();
                     return Observable.just(new Pair<>(numOfArts, limit));
                 })

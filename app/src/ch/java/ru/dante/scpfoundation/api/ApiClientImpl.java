@@ -50,7 +50,6 @@ public class ApiClientImpl extends ApiClient {
         super(okHttpClient, vpsRetrofit, scpRetrofit, scpReaderRetrofit, preferencesManager, gson, constantValues);
     }
 
-    //todo
     @Override
     public Observable<String> getRandomUrl() {
         return bindWithUtils(Observable.unsafeCreate(subscriber -> {
@@ -90,7 +89,6 @@ public class ApiClientImpl extends ApiClient {
     }
 
 
-    //todo
     @Override
     public Observable<Integer> getRecentArticlesPageCountObservable() {
         return bindWithUtils(Observable.<Integer>unsafeCreate(subscriber -> {
@@ -130,7 +128,6 @@ public class ApiClientImpl extends ApiClient {
     }
 
 
-    //todo
     @Override
     protected List<Article> parseForRecentArticles(final Document doc) throws ScpParseException {
         final Element contentTypeDescription = doc.getElementsByClass("content-type-description").first();
@@ -164,7 +161,6 @@ public class ApiClientImpl extends ApiClient {
     }
 
 
-    //todo
     @Override
     protected List<Article> parseForRatedArticles(Document doc) throws ScpParseException {
         final Element pageContent = doc.getElementById("page-content");
@@ -185,11 +181,9 @@ public class ApiClientImpl extends ApiClient {
             final String url = mConstantValues.getBaseApiUrl() + aTag.attr("href");
             final String title = aTag.text();
 
-            Timber.d("arrayItem: %s",arrayItem);
             String rating = arrayItem.substring(arrayItem.indexOf("评分: ") + "评分: ".length());
-            Timber.d("rating: %s",rating);
-            rating = rating.substring(0, rating.indexOf(","));
-            Timber.d("rating: %s",rating);
+            //WARNING!!! IT IS NOT `,` and ` `! Its special symbol for both!!!
+            rating = rating.substring(0, rating.indexOf("，"));
 
             final Article article = new Article();
             article.url = url;
@@ -282,7 +276,6 @@ public class ApiClientImpl extends ApiClient {
     }
 
 
-    //todo
     @Override
     public Observable<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {
         final List<String> tagsTitles = ArticleTag.getStringsFromTags(tags);
