@@ -62,11 +62,15 @@ class LeaderboardPresenter(
     private var updated = false
 
     override fun loadData() {
+        Timber.d("getMarketData")
         if (inAppService == null) {
-//            view.showMessage(R.string.google_services_not_connected)
+            view.showMessage(R.string.google_services_not_connected)
+            view.showProgressCenter(false)
+            view.enableSwipeRefresh(false)
+            view.showSwipeRefreshProgress(false)
+            view.showRefreshButton(true)
             return
         }
-        Timber.d("getMarketData")
         view.showProgressCenter(true)
         view.showRefreshButton(false)
         updateTime = mMyPreferencesManager.leaderBoardUpdatedTime
@@ -80,9 +84,8 @@ class LeaderboardPresenter(
         Observable.zip(
             inAppHelper.getInAppsListToBuyObservable(inAppService),
             Observable.just(mDbProviderFactory.dbProvider.leaderboardUsersUnmanaged),
-            Observable.just(mDbProviderFactory.dbProvider.userUnmanaged),
-            { inApps: List<Subscription>, users: List<LeaderboardUser>, user: User? -> Triple(inApps, users, user) }
-        )
+            Observable.just(mDbProviderFactory.dbProvider.userUnmanaged)
+        ) { inApps: List<Subscription>, users: List<LeaderboardUser>, user: User? -> Triple(inApps, users, user) }
                 .map {
                     val levelJson = LevelsJson.levelsJson
                     val viewModels = mutableListOf<MyListItem>()
@@ -122,13 +125,13 @@ class LeaderboardPresenter(
                                 R.string.leaderboard_inapp_label,
                                 textColor = R.color.material_green_500,
                                 bgColor = R.color.freeAdsBackgroundColor))
-                        val levelUpInApp = it.first.first()
+                        val levelUpInApp = it.first.firstOrNull()
                         viewModels.add(
                             InAppViewModel(
                                 R.string.leaderboard_inapp_title,
                                 R.string.leaderboard_inapp_description,
-                                levelUpInApp.price,
-                                levelUpInApp.productId,
+                                levelUpInApp?.price ?: "N/A",
+                                levelUpInApp?.productId ?: "N/A",
                                 R.drawable.ic_leaderbord_levelup_icon,
                                 R.color.freeAdsBackgroundColor))
                         //appodeal rewarded video
