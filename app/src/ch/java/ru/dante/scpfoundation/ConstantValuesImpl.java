@@ -56,7 +56,7 @@ public class ConstantValuesImpl implements ConstantValues {
 
     @Override
     public String getExperiments() {
-        return null;
+        return Urls.SCP_EX;
     }
 
     @Override
@@ -86,7 +86,7 @@ public class ConstantValuesImpl implements ConstantValues {
 
     @Override
     public String getLeaks() {
-        return null;
+        return Urls.LEAKS;
     }
 
     @Override
@@ -179,7 +179,7 @@ public class ConstantValuesImpl implements ConstantValues {
     }
 
     public interface Urls {
-        String BASE_API_URL = "http://scp-wiki-cn.wikidot.com/";
+        String BASE_API_URL = "http://scp-wiki-cn.wikidot.com";
 
         String MAIN = BASE_API_URL + "/";
 
@@ -200,15 +200,14 @@ public class ConstantValuesImpl implements ConstantValues {
         String SEARCH = "SEARCH";
 
         String JOKES = BASE_API_URL + "/joke-scps";
+        String SCP_EX = BASE_API_URL + "/scp-ex";
+        String EVENTS = BASE_API_URL + "/log-of-extranormal-events";
+        String LEAKS = "/log-of-extranormal-events-cn";
 
         //not used
         String ARCHIVE = BASE_API_URL + "/archived-scps";
         //not used
-        String SCP_EX = BASE_API_URL + "/scp-ex";
-        //not used
         String LOCATIONS = BASE_API_URL + "/niewyjasnione";
-        //not used
-        String EVENTS = BASE_API_URL + "/log-of-extranormal-events";
         //not used
         String ANOMALS = BASE_API_URL + "/anomalne";
         //not used

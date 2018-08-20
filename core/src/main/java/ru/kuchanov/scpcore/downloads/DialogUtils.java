@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.downloads;
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import ru.kuchanov.scpcore.ConstantValues;
+import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProvider;
@@ -151,10 +154,10 @@ public abstract class DialogUtils {
 
         countObservable
                 .flatMap(numOfArts -> {
-                    int limit = mPreferenceManager.getFreeOfflineLimit();
+                    int limit = (int) FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_FREE_ARTICLES_LIMIT);
 
                     DbProvider dbProvider = mDbProviderFactory.getDbProvider();
-                    limit += mDbProviderFactory.getDbProvider().getScore() / mPreferenceManager.getScorePerArt();
+                    limit += mDbProviderFactory.getDbProvider().getScore() / FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_SCORE_PER_ARTICLE);
                     dbProvider.close();
                     return Observable.just(new Pair<>(numOfArts, limit));
                 })
