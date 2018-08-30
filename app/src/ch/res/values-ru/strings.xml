@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="drawer_item_9">Série CH</string>
+    <string name="type_ru">SCP-CN系列 </string>
+
+    <string-array name="materials_titles">
+        <item>搞笑SCP</item>
+        <item>已解明SCP</item>
+        <item>中国分部异常项目</item>
+        <item>中国分部超常事件记录</item>
+    </string-array>
+</resources>

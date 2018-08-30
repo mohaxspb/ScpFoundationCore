@@ -1159,7 +1159,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         // throttling is in progress. The default expiration duration is 43200 (12 hours).
         long cacheExpiration = Constants.Firebase.RemoteConfigKeys.CACHE_EXPIRATION_SECONDS; //default 43200
         if (remoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
-            cacheExpiration = Period.minutes(5).toStandardSeconds().getSeconds();//for 5 min
+            cacheExpiration = Period.minutes(1).toStandardSeconds().getSeconds();
 
         }
         //comment this if you want to use local data
