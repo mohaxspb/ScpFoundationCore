@@ -21,7 +21,6 @@ import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.ui.view.TagView;
-import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 /**
  * Created by mohax on 11.06.2017.
@@ -54,7 +53,8 @@ public class ArticleTagsHolder extends RecyclerView.ViewHolder {
         float articleTextScale = mMyPreferenceManager.getArticleTextScale();
         title.setTextSize(TypedValue.COMPLEX_UNIT_PX, articleTextScale * textSizePrimary);
 
-        CalligraphyUtils.applyFontToTextView(context, title, mMyPreferenceManager.getFontPath());
+        //todo new font apply
+//        CalligraphyUtils.applyFontToTextView(context, title, mMyPreferenceManager.getFontPath());
 
         mTagsContainer.removeAllViews();
         if (data != null) {

@@ -1,7 +1,6 @@
 package ru.kuchanov.scpcore.ui.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,7 +19,6 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.util.DimensionUtils;
-import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 /**
  * Created by mohax on 02.04.2017.
@@ -63,7 +61,8 @@ public class SettingsSpinnerAdapter extends ArrayAdapter<String> {
         textView.setText(data.get(position));
         int padding = DimensionUtils.getDefaultMargin();
         textView.setPadding(padding, padding, padding, padding);
-        CalligraphyUtils.applyFontToTextView(context, textView, fontPath);
+        //todo new font apply
+//        CalligraphyUtils.applyFontToTextView(context, textView, fontPath);
 
         boolean isNightMode = mMyPreferenceManager.isNightMode();
         int backgroundColorSelected = ContextCompat.getColor(context, isNightMode
@@ -95,7 +94,8 @@ public class SettingsSpinnerAdapter extends ArrayAdapter<String> {
         textView.setText(data.get(position));
         int padding = DimensionUtils.getDefaultMarginSmall();
         textView.setPadding(padding, padding, padding, padding);
-        CalligraphyUtils.applyFontToTextView(parent.getContext(), textView, fontPath);
+        //todo new font apply
+//        CalligraphyUtils.applyFontToTextView(parent.getContext(), textView, fontPath);
 
         return v;
     }

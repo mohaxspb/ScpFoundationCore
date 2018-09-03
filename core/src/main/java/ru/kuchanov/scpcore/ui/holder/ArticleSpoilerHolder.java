@@ -17,7 +17,6 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.AttributeGetter;
-import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 /**
  * Created by mohax on 11.06.2017.
@@ -53,7 +52,8 @@ public class ArticleSpoilerHolder extends RecyclerView.ViewHolder {
         float articleTextScale = mMyPreferenceManager.getArticleTextScale();
         title.setTextSize(TypedValue.COMPLEX_UNIT_PX, articleTextScale * textSizePrimary);
 
-        CalligraphyUtils.applyFontToTextView(context, title, mMyPreferenceManager.getFontPath());
+        //todo new font apply
+//        CalligraphyUtils.applyFontToTextView(context, title, mMyPreferenceManager.getFontPath());
 
 //        title.setText(mSpoilerViewModel.titles.get(0));
 

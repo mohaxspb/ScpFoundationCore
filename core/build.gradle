@@ -168,8 +168,6 @@ dependencies {
     //facebook
     api 'com.facebook.android:facebook-core:4.35.0'
     api 'com.facebook.android:facebook-login:4.35.0'
-    //fonts
-    api 'uk.co.chrisjenx:calligraphy:2.3.0'
     //firebase
     api 'com.google.firebase:firebase-core:16.0.1'
     api 'com.google.firebase:firebase-config:15.0.0'

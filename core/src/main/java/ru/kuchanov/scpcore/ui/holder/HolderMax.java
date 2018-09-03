@@ -22,7 +22,6 @@ import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 import ru.kuchanov.scpcore.ui.view.TagView;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import ru.kuchanov.scpcore.util.DateUtils;
-import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 /**
  * Created by mohax on 11.06.2017.
@@ -58,8 +57,9 @@ public class HolderMax extends HolderMin {
         super.bind(article);
         final Context context = itemView.getContext();
 
-        CalligraphyUtils.applyFontToTextView(context, rating, mMyPreferenceManager.getFontPath());
-        CalligraphyUtils.applyFontToTextView(context, date, mMyPreferenceManager.getFontPath());
+        //todo new font apply
+//        CalligraphyUtils.applyFontToTextView(context, rating, mMyPreferenceManager.getFontPath());
+//        CalligraphyUtils.applyFontToTextView(context, date, mMyPreferenceManager.getFontPath());
 
         //TODO show them in ViewPager
         //set image

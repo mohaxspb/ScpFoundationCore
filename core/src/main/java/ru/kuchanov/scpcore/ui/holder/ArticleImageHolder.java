@@ -39,7 +39,6 @@ import ru.kuchanov.scpcore.ui.model.ArticleTextPartViewModel;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import timber.log.Timber;
-import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 /**
  * Created by mohax on 11.06.2017.
@@ -93,7 +92,8 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
         final Element imageTag = document.getElementsByTag("img").first();
         final String imageUrl = imageTag == null ? null : imageTag.attr("src");
 
-        CalligraphyUtils.applyFontToTextView(context, titleTextView, mMyPreferenceManager.getFontPath());
+        //todo new font apply
+//        CalligraphyUtils.applyFontToTextView(context, titleTextView, mMyPreferenceManager.getFontPath());
 
         final int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_primary);
         final float articleTextScale = mMyPreferenceManager.getArticleTextScale();

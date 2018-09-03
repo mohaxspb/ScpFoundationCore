@@ -21,7 +21,6 @@ import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 import ru.kuchanov.scpcore.util.AttributeGetter;
-import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 /**
  * Created by mohax on 11.06.2017.
@@ -66,8 +65,9 @@ public class HolderMin extends RecyclerView.ViewHolder {
         float uiTextScale = mMyPreferenceManager.getUiTextScale();
         int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_primary);
 
-        CalligraphyUtils.applyFontToTextView(context, title, mMyPreferenceManager.getFontPath());
-        CalligraphyUtils.applyFontToTextView(context, preview, mMyPreferenceManager.getFontPath());
+        //todo new font apply
+//        CalligraphyUtils.applyFontToTextView(context, title, mMyPreferenceManager.getFontPath());
+//        CalligraphyUtils.applyFontToTextView(context, preview, mMyPreferenceManager.getFontPath());
 
         itemView.setOnClickListener(v -> mArticleClickListener.onArticleClick(article));
 

@@ -19,7 +19,6 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.model.ArticleTextPartViewModel;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.AttributeGetter;
-import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 /**
  * Created by mohax on 11.06.2017.
@@ -61,7 +60,8 @@ public class ArticleTextHolder extends RecyclerView.ViewHolder {
         int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_primary);
         float articleTextScale = mMyPreferenceManager.getArticleTextScale();
 
-        CalligraphyUtils.applyFontToTextView(context, textView, mMyPreferenceManager.getFontPath());
+        //todo new font apply
+//        CalligraphyUtils.applyFontToTextView(context, textView, mMyPreferenceManager.getFontPath());
 
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, articleTextScale * textSizePrimary);
         textView.setLinksClickable(true);
