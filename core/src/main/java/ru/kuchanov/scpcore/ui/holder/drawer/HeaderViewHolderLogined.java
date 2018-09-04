@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.ui.holder;
+package ru.kuchanov.scpcore.ui.holder.drawer;
 
 import android.view.View;
 import android.widget.ImageView;

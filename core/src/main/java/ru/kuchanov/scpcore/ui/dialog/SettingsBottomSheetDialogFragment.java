@@ -77,6 +77,9 @@ public class SettingsBottomSheetDialogFragment
     @BindView(R2.id.listItemSpinner)
     Spinner listItemSpinner;
 
+    @BindView(R2.id.textIsSelectableSwitch)
+    SwitchCompat textIsSelectableSwitch;
+
     @BindView(R2.id.fontPreferedTitle)
     TextView fontPreferedTitle;
 
@@ -188,6 +191,10 @@ public class SettingsBottomSheetDialogFragment
                 }
             });
         });
+
+        textIsSelectableSwitch.setChecked(mMyPreferenceManager.isTextSelectable());
+        textIsSelectableSwitch.setOnCheckedChangeListener((compoundButton, checked) -> mMyPreferenceManager.setTextIsSelectable(checked));
+
         //font
         fontPrefered.setOnClickListener(view -> fontPreferedSpinner.performClick());
 

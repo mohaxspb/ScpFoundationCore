@@ -4,10 +4,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
-
 import ru.kuchanov.scpcore.R;
-import ru.kuchanov.scpcore.ui.holder.SocialLoginHolder;
+import ru.kuchanov.scpcore.ui.holder.login.SocialLoginHolder;
 
 
 /**

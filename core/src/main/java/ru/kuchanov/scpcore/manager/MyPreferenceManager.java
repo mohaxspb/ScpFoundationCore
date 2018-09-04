@@ -74,6 +74,7 @@ public class MyPreferenceManager {
         String TEXT_SCALE_UI = "TEXT_SCALE_UI";
         String TEXT_SCALE_ARTICLE = "TEXT_SCALE_ARTICLE";
         String DESIGN_LIST_TYPE = "DESIGN_LIST_TYPE";
+        String IS_TEXT_SELECTABLE = "IS_TEXT_SELECTABLE";
 
         String NOTIFICATION_IS_ON = "NOTIFICATION_IS_ON";
         String NOTIFICATION_PERIOD = "NOTIFICATION_PERIOD";
@@ -150,6 +151,14 @@ public class MyPreferenceManager {
 
     public void setArticleTextScale(final float textScale) {
         mPreferences.edit().putFloat(Keys.TEXT_SCALE_ARTICLE, textScale).apply();
+    }
+
+    public void setTextIsSelectable(final boolean isTextSelectable) {
+        mPreferences.edit().putBoolean(Keys.IS_TEXT_SELECTABLE, isTextSelectable).apply();
+    }
+
+    public boolean isTextSelectable() {
+        return mPreferences.getBoolean(Keys.IS_TEXT_SELECTABLE, true);
     }
 
     //design settings

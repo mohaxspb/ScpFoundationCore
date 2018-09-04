@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.ui.holder;
+package ru.kuchanov.scpcore.ui.holder.articlelist;
 
 import com.google.android.flexbox.FlexboxLayout;
 

@@ -4,8 +4,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
-
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.monetization.model.AppInstallHeader;
 import ru.kuchanov.scpcore.monetization.model.AppInviteModel;
@@ -14,13 +12,13 @@ import ru.kuchanov.scpcore.monetization.model.DisableAdsForAuth;
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
 import ru.kuchanov.scpcore.monetization.model.RewardedVideo;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
-import ru.kuchanov.scpcore.ui.holder.AppInstallHeaderHolder;
-import ru.kuchanov.scpcore.ui.holder.AppInviteHolder;
+import ru.kuchanov.scpcore.ui.holder.adsfreeactions.AppInstallHeaderHolder;
+import ru.kuchanov.scpcore.ui.holder.adsfreeactions.AppInviteHolder;
 import ru.kuchanov.scpcore.ui.holder.BaseHolder;
-import ru.kuchanov.scpcore.ui.holder.OurApplicationHolder;
-import ru.kuchanov.scpcore.ui.holder.RewardedVideoHolder;
-import ru.kuchanov.scpcore.ui.holder.SignInHolder;
-import ru.kuchanov.scpcore.ui.holder.VkGroupToJoinHolder;
+import ru.kuchanov.scpcore.ui.holder.adsfreeactions.OurApplicationHolder;
+import ru.kuchanov.scpcore.ui.holder.adsfreeactions.RewardedVideoHolder;
+import ru.kuchanov.scpcore.ui.holder.adsfreeactions.SignInHolder;
+import ru.kuchanov.scpcore.ui.holder.adsfreeactions.VkGroupToJoinHolder;
 
 public class FreeAdsDisableAdapter extends BaseRecyclerAdapter<
         BaseModel,

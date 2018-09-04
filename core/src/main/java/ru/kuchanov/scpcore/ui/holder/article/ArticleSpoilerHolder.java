@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.ui.holder;
+package ru.kuchanov.scpcore.ui.holder.article;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -33,7 +33,7 @@ public class ArticleSpoilerHolder extends RecyclerView.ViewHolder {
     SetTextViewHTML mSetTextViewHTML;
 
     @BindView(R2.id.title)
-    TextView title;
+    TextView titleTextView;
 
     private final SpoilerClickListener mSpoilerClickListener;
 
@@ -49,28 +49,29 @@ public class ArticleSpoilerHolder extends RecyclerView.ViewHolder {
         final Context context = itemView.getContext();
         final int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_primary);
         final float articleTextScale = mMyPreferenceManager.getArticleTextScale();
-        title.setTextSize(TypedValue.COMPLEX_UNIT_PX, articleTextScale * textSizePrimary);
+        titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, articleTextScale * textSizePrimary);
 
-        title.setTypeface(FontUtils.getTypeFaceFromName(mMyPreferenceManager.getFontPath()));
+        titleTextView.setTypeface(FontUtils.getTypeFaceFromName(mMyPreferenceManager.getFontPath()));
+        titleTextView.setTextIsSelectable(mMyPreferenceManager.isTextSelectable());
 
         if (mSpoilerViewModel.isExpanded) {
-            title.setCompoundDrawablesWithIntrinsicBounds(AttributeGetter.getDrawableId(context, R.attr.iconArrowUp), 0, 0, 0);
-            title.setText(mSpoilerViewModel.titles.get(1));
+            titleTextView.setCompoundDrawablesWithIntrinsicBounds(AttributeGetter.getDrawableId(context, R.attr.iconArrowUp), 0, 0, 0);
+            titleTextView.setText(mSpoilerViewModel.titles.get(1));
         } else {
-            title.setCompoundDrawablesWithIntrinsicBounds(AttributeGetter.getDrawableId(context, R.attr.iconArrowDown), 0, 0, 0);
-            title.setText(mSpoilerViewModel.titles.get(0));
+            titleTextView.setCompoundDrawablesWithIntrinsicBounds(AttributeGetter.getDrawableId(context, R.attr.iconArrowDown), 0, 0, 0);
+            titleTextView.setText(mSpoilerViewModel.titles.get(0));
         }
 
-        title.setOnClickListener(v -> {
+        titleTextView.setOnClickListener(v -> {
             mSpoilerViewModel.isExpanded = !mSpoilerViewModel.isExpanded;
             if (mSpoilerViewModel.isExpanded) {
-                title.setCompoundDrawablesWithIntrinsicBounds(AttributeGetter.getDrawableId(context, R.attr.iconArrowUp), 0, 0, 0);
+                titleTextView.setCompoundDrawablesWithIntrinsicBounds(AttributeGetter.getDrawableId(context, R.attr.iconArrowUp), 0, 0, 0);
                 mSpoilerClickListener.onSpoilerExpand(getAdapterPosition());
-                title.setText(mSpoilerViewModel.titles.get(1));
+                titleTextView.setText(mSpoilerViewModel.titles.get(1));
             } else {
-                title.setCompoundDrawablesWithIntrinsicBounds(AttributeGetter.getDrawableId(context, R.attr.iconArrowDown), 0, 0, 0);
+                titleTextView.setCompoundDrawablesWithIntrinsicBounds(AttributeGetter.getDrawableId(context, R.attr.iconArrowDown), 0, 0, 0);
                 mSpoilerClickListener.onSpoilerCollapse(getAdapterPosition());
-                title.setText(mSpoilerViewModel.titles.get(0));
+                titleTextView.setText(mSpoilerViewModel.titles.get(0));
             }
         });
     }
