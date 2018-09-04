@@ -40,7 +40,10 @@ public class IntentUtils {
         intent.putExtra(Intent.EXTRA_TEXT, fullMessage);
         intent.setType("text/plain");
         BaseApplication.getAppInstance().startActivity(
-                Intent.createChooser(intent, BaseApplication.getAppInstance().getResources().getText(R.string.share_choser_text))
+                Intent.createChooser(
+                        intent,
+                        BaseApplication.getAppInstance().getResources().getText(R.string.share_choser_text)
+                )
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         );
     }
@@ -49,7 +52,10 @@ public class IntentUtils {
         final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         BaseApplication.getAppInstance().startActivity(
-                Intent.createChooser(intent, BaseApplication.getAppInstance().getResources().getText(R.string.browser_choser_text))
+                Intent.createChooser(
+                        intent,
+                        BaseApplication.getAppInstance().getResources().getText(R.string.browser_choser_text)
+                )
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         );
     }
@@ -66,13 +72,17 @@ public class IntentUtils {
                 text,
                 BaseApplication.getAppInstance().getPackageName()
         );
-        final Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, fullMessage);
-        shareIntent.setType("image/png");
+        final Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(Intent.EXTRA_STREAM, bmpUri);
+        intent.putExtra(Intent.EXTRA_TEXT, fullMessage);
+        intent.setType("image/png");
 
-        activity.startActivity(shareIntent);
+        if (checkIntent(activity, intent)) {
+            activity.startActivity(intent);
+        } else {
+            Toast.makeText(activity, activity.getString(R.string.error_no_activity_to_handle_intent), Toast.LENGTH_SHORT).show();
+        }
     }
 
     public static void firebaseInvite(final FragmentActivity activity) {
@@ -89,19 +99,23 @@ public class IntentUtils {
                 .setCallToActionText(cta)
                 .setDeepLink(Uri.parse(activity.getString(R.string.firebase_deep_link)))
                 .build();
-        activity.startActivityForResult(intent, Constants.Firebase.REQUEST_INVITE);
+        if (checkIntent(activity, intent)) {
+            activity.startActivityForResult(intent, Constants.Firebase.REQUEST_INVITE);
+        } else {
+            Toast.makeText(activity, activity.getString(R.string.error_no_activity_to_handle_intent), Toast.LENGTH_SHORT).show();
+        }
     }
 
     public static void tryOpenPlayMarket(final Context context, final String appId) {
-        final Intent marketIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.market_url, appId)));
-        marketIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        checkAndStart(context, marketIntent, R.string.start_market_error);
+        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.market_url, appId)));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        checkAndStart(context, intent, R.string.start_market_error);
     }
 
     private static boolean checkIntent(final Context context, final Intent intent) {
         final PackageManager packageManager = context.getPackageManager();
         final List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
-        return activities != null && activities.size() > 0;
+        return activities != null && !activities.isEmpty();
     }
 
     private static void checkAndStart(final Context context, final Intent intent, @StringRes final int errorRes) {
