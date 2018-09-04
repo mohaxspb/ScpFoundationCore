@@ -107,6 +107,8 @@ public class ApiClient {
 
     private static final String REPLACEMENT_SLASH = "_REPLACEMENT_SLASH_";
 
+    private static final String SITE_TAGS_PATH = "system:page-tags/tag/";
+
     @SuppressWarnings("unused")
     protected MyPreferenceManager mPreferencesManager;
 
@@ -689,6 +691,10 @@ public class ApiClient {
             String title = "";
             if (titleEl != null) {
                 title = titleEl.text();
+            } else if (url.contains(SITE_TAGS_PATH)) {
+                final String decodedUrl = java.net.URLDecoder.decode(url, "UTF-8");
+                final String tagName = decodedUrl.substring(url.lastIndexOf(SITE_TAGS_PATH) + SITE_TAGS_PATH.length());
+                title = "TAG: " + tagName;
             }
             final Element upperDivWithLink = doc.getElementById("breadcrumbs");
             if (upperDivWithLink != null) {
@@ -796,7 +802,11 @@ public class ApiClient {
                 textPartsTypes.add(new RealmString(value));
             }
 
-            final String commentsUrl = mConstantValues.getBaseApiUrl() + doc.getElementById("discuss-button").attr("href");
+            String commentsUrl = null;
+            final Element commentsButtonTag = doc.getElementById("discuss-button");
+            if (commentsButtonTag != null) {
+                commentsUrl = mConstantValues.getBaseApiUrl() + commentsButtonTag.attr("href");
+            }
 
             //finally fill article info
             final Article article = new Article();
