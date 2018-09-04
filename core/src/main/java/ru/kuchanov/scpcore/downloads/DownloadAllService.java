@@ -315,8 +315,8 @@ public abstract class DownloadAllService extends Service {
         mCompositeSubscription.add(subscription);
     }
 
-    private Observable<List<Article>> downloadAndSaveArticles(final List<Article> articlesToDwonload) {
-        return Observable.just(articlesToDwonload)
+    private Observable<List<Article>> downloadAndSaveArticles(final List<Article> articlesToDownload) {
+        return Observable.just(articlesToDownload)
                 //decrease amount by limit
                 .map(limitArticles)
                 //check for already downloaded articles
@@ -327,12 +327,12 @@ public abstract class DownloadAllService extends Service {
                     if (mMyPreferenceManager.isDownloadForceUpdateEnabled()) {
                         return articles;
                     }
-                    List<Article> articlesToDownload = new ArrayList<>();
+                    List<Article> articlesToDownloadFiltered = new ArrayList<>();
                     DbProvider dbProvider = getDbProvider();
                     for (Article article : articles) {
                         Article articleInDb = dbProvider.getUnmanagedArticleSync(article.getUrl());
                         if (articleInDb == null || articleInDb.getText() == null) {
-                            articlesToDownload.add(article);
+                            articlesToDownloadFiltered.add(article);
                         } else {
                             mCurProgress++;
                             Timber.d("already downloaded: %s", article.getUrl());
@@ -340,7 +340,7 @@ public abstract class DownloadAllService extends Service {
                         }
                     }
                     dbProvider.close();
-                    return articlesToDownload;
+                    return articlesToDownloadFiltered;
                 })
                 .flatMap(articles -> {
                     DbProvider dbProvider = getDbProvider();
@@ -455,15 +455,15 @@ public abstract class DownloadAllService extends Service {
 //
 //            startForeground(NOTIFICATION_ID, builder.build());
 //        } else {
-            final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getChanelId());
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getChanelId());
 
-            builder.setContentTitle(getString(R.string.download_objects_title))
-                    .setAutoCancel(false)
-                    .setContentText(getString(R.string.download_art_list))
-                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                    .setSmallIcon(R.drawable.ic_download_white_24dp);
+        builder.setContentTitle(getString(R.string.download_objects_title))
+                .setAutoCancel(false)
+                .setContentText(getString(R.string.download_art_list))
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                .setSmallIcon(R.drawable.ic_download_white_24dp);
 
-            startForeground(NOTIFICATION_ID, builder.build());
+        startForeground(NOTIFICATION_ID, builder.build());
 //        }
     }
 
@@ -491,16 +491,16 @@ public abstract class DownloadAllService extends Service {
 //
 //            startForeground(NOTIFICATION_ID, builderArticlesList.build());
 //        } else {
-            final NotificationCompat.Builder builderArticlesList = new NotificationCompat.Builder(this, getChanelId());
-            final String content = getString(R.string.download_progress_content, cur, max, errorsCount);
-            builderArticlesList.setContentTitle(title)
-                    .setAutoCancel(false)
-                    .setContentText(content)
-                    .setProgress(max, cur, false)
-                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                    .setSmallIcon(R.drawable.ic_download_white_24dp);
+        final NotificationCompat.Builder builderArticlesList = new NotificationCompat.Builder(this, getChanelId());
+        final String content = getString(R.string.download_progress_content, cur, max, errorsCount);
+        builderArticlesList.setContentTitle(title)
+                .setAutoCancel(false)
+                .setContentText(content)
+                .setProgress(max, cur, false)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                .setSmallIcon(R.drawable.ic_download_white_24dp);
 
-            startForeground(NOTIFICATION_ID, builderArticlesList.build());
+        startForeground(NOTIFICATION_ID, builderArticlesList.build());
 //        }
     }
 
@@ -515,14 +515,14 @@ public abstract class DownloadAllService extends Service {
 //
 //            startForeground(NOTIFICATION_ID, builderArticlesList.build());
 //        } else {
-            final NotificationCompat.Builder builderArticlesList = new NotificationCompat.Builder(this, getChanelId());
-            builderArticlesList
-                    .setContentTitle(title)
-                    .setContentText(content)
-                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                    .setSmallIcon(R.drawable.ic_bug_report_white_24dp);
+        final NotificationCompat.Builder builderArticlesList = new NotificationCompat.Builder(this, getChanelId());
+        builderArticlesList
+                .setContentTitle(title)
+                .setContentText(content)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                .setSmallIcon(R.drawable.ic_bug_report_white_24dp);
 
-            startForeground(NOTIFICATION_ID, builderArticlesList.build());
+        startForeground(NOTIFICATION_ID, builderArticlesList.build());
 //        }
     }
 

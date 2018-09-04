@@ -109,6 +109,9 @@ public class SettingsBottomSheetDialogFragment
     @BindView(R2.id.downloadsForceUpdateSwitch)
     SwitchCompat downloadsForceUpdateSwitch;
 
+    @BindView(R2.id.downloadsNewArticlesSwitch)
+    SwitchCompat downloadsNewArticlesSwitch;
+
     @BindView(R2.id.downloadInnerDepthValueTextView)
     TextView downloadInnerDepthValueTextView;
 
@@ -261,6 +264,10 @@ public class SettingsBottomSheetDialogFragment
         //downloads
         downloadsForceUpdateSwitch.setChecked(mMyPreferenceManager.isDownloadForceUpdateEnabled());
         downloadsForceUpdateSwitch.setOnCheckedChangeListener((compoundButton, checked) -> mMyPreferenceManager.setDownloadForceUpdateEnabled(checked));
+
+        //download new articles
+        downloadsNewArticlesSwitch.setChecked(mMyPreferenceManager.isSaveNewArticlesEnabled());
+        downloadsNewArticlesSwitch.setOnCheckedChangeListener((compoundButton, checked) -> mMyPreferenceManager.setSaveNewArticlesEnabled(checked));
 
         downloadsDepthSeekbar.setMax(MyPreferenceManager.MAX_DOWNLOADS_DEPTH);
         downloadsDepthSeekbar.setProgress(mMyPreferenceManager.getInnerArticlesDepth());
