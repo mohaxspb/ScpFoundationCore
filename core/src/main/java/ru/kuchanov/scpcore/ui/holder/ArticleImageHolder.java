@@ -1,6 +1,15 @@
 package ru.kuchanov.scpcore.ui.holder;
 
-import com.google.android.gms.common.api.Api;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -12,17 +21,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.load.resource.gif.GifDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 import java.io.File;
 
@@ -36,6 +34,7 @@ import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.model.ArticleTextPartViewModel;
+import ru.kuchanov.scpcore.ui.util.FontUtils;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import timber.log.Timber;
@@ -92,8 +91,7 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
         final Element imageTag = document.getElementsByTag("img").first();
         final String imageUrl = imageTag == null ? null : imageTag.attr("src");
 
-        //todo new font apply
-//        CalligraphyUtils.applyFontToTextView(context, titleTextView, mMyPreferenceManager.getFontPath());
+        titleTextView.setTypeface(FontUtils.getTypeFaceFromName(mMyPreferenceManager.getFontPath()));
 
         final int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_primary);
         final float articleTextScale = mMyPreferenceManager.getArticleTextScale();
