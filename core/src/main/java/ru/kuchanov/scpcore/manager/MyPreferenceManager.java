@@ -171,8 +171,7 @@ public class MyPreferenceManager {
     }
 
     public String getFontPath() {
-        //todo think what we should do here
-        return mPreferences.getString(Keys.DESIGN_FONT_PATH, "fonts/roboto_regular.ttf");
+        return mPreferences.getString(Keys.DESIGN_FONT_PATH, "roboto_regular");
     }
 
     //download all settings

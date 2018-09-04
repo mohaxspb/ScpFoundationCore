@@ -1,32 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="fonts">
-        <item>fonts/Roboto-Regular.ttf</item>
-        <item>fonts/DS-Moster.ttf</item>
-        <item>fonts/letteratrentadue.ttf</item>
-        <item>fonts/DS-VTCorona-Cyr.ttf</item>
-        <item>fonts/Freeride.ttf</item>
-        <item>fonts/TrixieCyr-Plain.ttf</item>
-        <item>fonts/TrixieCyr-Cameo_1.ttf</item>
-        <item>fonts/aalbionictitulcm.ttf</item>
-        <item>fonts/acooperblackcm.ttf</item>
-        <item>fonts/bankgothic_russ_medium.ttf</item>
-        <item>fonts/chinacyr.ttf</item>
-    </string-array>
-
-    <string-array name="fonts_names">
-        <item>Roboto-Regular</item>
-        <item>DS-Moster</item>
+    <string_array name="fonts">
+        <item>roboto_regular</item>
+        <item>ds_moster</item>
         <item>letteratrentadue</item>
-        <item>DS-VTCorona-Cyr</item>
-        <item>Freeride</item>
-        <item>TrixieCyr-Plain</item>
-        <item>TrixieCyr-Cameo_1</item>
+        <item>ds_vtcorona_cyr</item>
+        <item>freeride</item>
+        <item>trixiecyr_plain</item>
+        <item>trixiecyr_cameo_1</item>
         <item>aalbionictitulcm</item>
         <item>acooperblackcm</item>
         <item>bankgothic_russ_medium</item>
         <item>chinacyr</item>
-    </string-array>
+    </string_array>
+
+    <string_array name="fonts_names">
+        <item>roboto_regular</item>
+        <item>ds_moster</item>
+        <item>letteratrentadue</item>
+        <item>ds_vtcorona_cyr</item>
+        <item>freeride</item>
+        <item>trixiecyr_plain</item>
+        <item>trixiecyr_cameo_1</item>
+        <item>aalbionictitulcm</item>
+        <item>acooperblackcm</item>
+        <item>bankgothic_russ_medium</item>
+        <item>chinacyr</item>
+    </string_array>
+
 
 </resources>

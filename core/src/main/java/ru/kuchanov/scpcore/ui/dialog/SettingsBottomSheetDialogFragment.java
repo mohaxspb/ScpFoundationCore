@@ -43,6 +43,7 @@ import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerCardDesignAdapter;
+import ru.kuchanov.scpcore.ui.util.FontUtils;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import ru.kuchanov.scpcore.util.StorageUtils;
 import timber.log.Timber;
@@ -384,8 +385,7 @@ public class SettingsBottomSheetDialogFragment
         }
         switch (key) {
             case MyPreferenceManager.Keys.DESIGN_FONT_PATH:
-                //todo new font apply
-//                CalligraphyUtils.applyFontToTextView(getActivity(), fontPreferedTitle, mMyPreferenceManager.getFontPath());
+                fontPreferedTitle.setTypeface(FontUtils.getTypeFaceFromName(mMyPreferenceManager.getFontPath()));
                 break;
             default:
                 //do nothing

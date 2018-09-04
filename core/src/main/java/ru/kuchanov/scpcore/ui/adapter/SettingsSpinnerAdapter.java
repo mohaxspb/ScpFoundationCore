@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.ui.util.FontUtils;
 import ru.kuchanov.scpcore.util.DimensionUtils;
 
 /**
@@ -27,16 +28,16 @@ import ru.kuchanov.scpcore.util.DimensionUtils;
  */
 public class SettingsSpinnerAdapter extends ArrayAdapter<String> {
 
-    private List<String> data;
-    private List<String> fontsPathsList;
+    private final List<String> data;
+    private final List<String> fontsPathsList;
     @Inject
     MyPreferenceManager mMyPreferenceManager;
 
     public SettingsSpinnerAdapter(
-            @NonNull Context context,
-            @LayoutRes int resource,
-            @NonNull List<String> objects,
-            List<String> fontsPathsList
+            @NonNull final Context context,
+            @LayoutRes final int resource,
+            @NonNull final List<String> objects,
+            final List<String> fontsPathsList
     ) {
         super(context, resource, objects);
         this.data = objects;
@@ -46,33 +47,33 @@ public class SettingsSpinnerAdapter extends ArrayAdapter<String> {
     }
 
     @Override
-    public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    public View getDropDownView(final int position, @Nullable final View convertView, @NonNull final ViewGroup parent) {
         View v = convertView;
 
-        Context context = parent.getContext();
+        final Context context = parent.getContext();
 
         if (v == null) {
-            LayoutInflater inflater = LayoutInflater.from(context);
+            final LayoutInflater inflater = LayoutInflater.from(context);
             v = inflater.inflate(R.layout.design_list_spinner_item_font, parent, false);
         }
 
-        String fontPath = fontsPathsList.get(position);
-        TextView textView = (TextView) v;
+        final String fontPath = fontsPathsList.get(position);
+        final TextView textView = (TextView) v;
         textView.setText(data.get(position));
-        int padding = DimensionUtils.getDefaultMargin();
+        final int padding = DimensionUtils.getDefaultMargin();
         textView.setPadding(padding, padding, padding, padding);
-        //todo new font apply
-//        CalligraphyUtils.applyFontToTextView(context, textView, fontPath);
 
-        boolean isNightMode = mMyPreferenceManager.isNightMode();
-        int backgroundColorSelected = ContextCompat.getColor(context, isNightMode
+        textView.setTypeface(FontUtils.getTypeFaceFromName(fontPath));
+
+        final boolean isNightMode = mMyPreferenceManager.isNightMode();
+        final int backgroundColorSelected = ContextCompat.getColor(context, isNightMode
                 ? R.color.settings_spinner_selected_dark
                 : R.color.settings_spinner_selected_light);
-        int backgroundColorUnselected = ContextCompat.getColor(context, isNightMode
+        final int backgroundColorUnselected = ContextCompat.getColor(context, isNightMode
                 ? R.color.settings_spinner_unselected_dark
                 : R.color.settings_spinner_unselected_light);
 
-        boolean isSelected = position == fontsPathsList.indexOf(mMyPreferenceManager.getFontPath());
+        final boolean isSelected = position == fontsPathsList.indexOf(mMyPreferenceManager.getFontPath());
 
         v.setBackgroundColor(isSelected ? backgroundColorSelected : backgroundColorUnselected);
 
@@ -81,21 +82,22 @@ public class SettingsSpinnerAdapter extends ArrayAdapter<String> {
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    public View getView(final int position, @Nullable final View convertView, @NonNull final ViewGroup parent) {
         View v = convertView;
+        final Context context = parent.getContext();
 
         if (v == null) {
-            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            final LayoutInflater inflater = LayoutInflater.from(context);
             v = inflater.inflate(R.layout.design_list_spinner_item_font, parent, false);
         }
 
-        String fontPath = fontsPathsList.get(position);
-        TextView textView = (TextView) v;
+        final String fontPath = fontsPathsList.get(position);
+        final TextView textView = (TextView) v;
         textView.setText(data.get(position));
-        int padding = DimensionUtils.getDefaultMarginSmall();
+        final int padding = DimensionUtils.getDefaultMarginSmall();
         textView.setPadding(padding, padding, padding, padding);
-        //todo new font apply
-//        CalligraphyUtils.applyFontToTextView(parent.getContext(), textView, fontPath);
+
+        textView.setTypeface(FontUtils.getTypeFaceFromName(fontPath));
 
         return v;
     }

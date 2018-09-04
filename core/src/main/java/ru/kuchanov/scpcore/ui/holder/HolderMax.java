@@ -19,6 +19,7 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
+import ru.kuchanov.scpcore.ui.util.FontUtils;
 import ru.kuchanov.scpcore.ui.view.TagView;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import ru.kuchanov.scpcore.util.DateUtils;
@@ -57,9 +58,8 @@ public class HolderMax extends HolderMin {
         super.bind(article);
         final Context context = itemView.getContext();
 
-        //todo new font apply
-//        CalligraphyUtils.applyFontToTextView(context, rating, mMyPreferenceManager.getFontPath());
-//        CalligraphyUtils.applyFontToTextView(context, date, mMyPreferenceManager.getFontPath());
+        rating.setTypeface(FontUtils.getTypeFaceFromName(mMyPreferenceManager.getFontPath()));
+        date.setTypeface(FontUtils.getTypeFaceFromName(mMyPreferenceManager.getFontPath()));
 
         //TODO show them in ViewPager
         //set image

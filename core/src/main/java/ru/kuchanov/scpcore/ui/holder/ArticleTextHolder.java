@@ -17,6 +17,7 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.model.ArticleTextPartViewModel;
+import ru.kuchanov.scpcore.ui.util.FontUtils;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 
@@ -32,12 +33,12 @@ public class ArticleTextHolder extends RecyclerView.ViewHolder {
     @Inject
     SetTextViewHTML mSetTextViewHTML;
 
-    private SetTextViewHTML.TextItemsClickListener mTextItemsClickListener;
+    private final SetTextViewHTML.TextItemsClickListener mTextItemsClickListener;
 
     @BindView(R2.id.text)
     TextView textView;
 
-    public ArticleTextHolder(View itemView, SetTextViewHTML.TextItemsClickListener clickListener) {
+    public ArticleTextHolder(final View itemView, final SetTextViewHTML.TextItemsClickListener clickListener) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         BaseApplication.getAppComponent().inject(this);
@@ -45,11 +46,11 @@ public class ArticleTextHolder extends RecyclerView.ViewHolder {
         mTextItemsClickListener = clickListener;
     }
 
-    public void bind(ArticleTextPartViewModel viewModel) {
-        Context context = itemView.getContext();
+    public void bind(final ArticleTextPartViewModel viewModel) {
+        final Context context = itemView.getContext();
 
         if (viewModel.isInSpoiler) {
-            int defaultMargin = context.getResources().getDimensionPixelSize(R.dimen.defaultMargin);
+            final int defaultMargin = context.getResources().getDimensionPixelSize(R.dimen.defaultMargin);
             ((RecyclerView.LayoutParams) itemView.getLayoutParams()).setMargins(defaultMargin, 0, defaultMargin, 0);
             itemView.setBackgroundColor(AttributeGetter.getColor(context, R.attr.windowBackgroundDark));
         } else {
@@ -57,11 +58,10 @@ public class ArticleTextHolder extends RecyclerView.ViewHolder {
             itemView.setBackgroundColor(Color.TRANSPARENT);
         }
 
-        int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_primary);
-        float articleTextScale = mMyPreferenceManager.getArticleTextScale();
+        final int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_primary);
+        final float articleTextScale = mMyPreferenceManager.getArticleTextScale();
 
-        //todo new font apply
-//        CalligraphyUtils.applyFontToTextView(context, textView, mMyPreferenceManager.getFontPath());
+        textView.setTypeface(FontUtils.getTypeFaceFromName(mMyPreferenceManager.getFontPath()));
 
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, articleTextScale * textSizePrimary);
         textView.setLinksClickable(true);
