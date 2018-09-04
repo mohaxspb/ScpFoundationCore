@@ -1,6 +1,8 @@
 package ru.kuchanov.scpcore.receivers;
 
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -17,14 +19,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProvider;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import rx.Observable;
@@ -32,19 +35,25 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
+import static ru.kuchanov.scpcore.downloads.DownloadAllService.getAndSaveInnerArticles;
+
 public class ReceiverTimer extends BroadcastReceiver {
 
     public static final int NOTIF_ID = 963;
 
     public static final long[] VIBRATION_PATTERN = {500, 500, 500, 500, 500};
+
     private static final int LED_DURATION = 3000;
 
     @Inject
     MyPreferenceManager mMyPreferencesManager;
+
     @Inject
     DbProviderFactory mDbProviderFactory;
+
     @Inject
     ApiClient mApiClient;
+
     @Inject
     ConstantValues mConstantValues;
 
@@ -63,10 +72,10 @@ public class ReceiverTimer extends BroadcastReceiver {
 
     protected void download(final Context context) {
         mApiClient.getRecentArticlesForPage(1)
-                .flatMap(articles -> {
+                .map(downloadedArticles -> {
                     DbProvider dbProvider = mDbProviderFactory.getDbProvider();
                     List<Article> newArticles = new ArrayList<>();
-                    for (Article apiArticle : articles) {
+                    for (Article apiArticle : downloadedArticles) {
                         Article inDbArticle = dbProvider.getArticleSync(apiArticle.url);
                         if (inDbArticle == null) {
                             //so its new one, increase counter
@@ -74,16 +83,70 @@ public class ReceiverTimer extends BroadcastReceiver {
                         }
                     }
                     dbProvider.close();
-                    return Observable.just(newArticles);
+                    return newArticles;
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(newArticles -> mDbProviderFactory.getDbProvider()
                         .saveRecentArticlesList(newArticles, Constants.Api.ZERO_OFFSET)
-                        .flatMap(savedArts -> Observable.just(newArticles)))
+                        .flatMap(newArticlesAddedToDb -> {
+                            if (mMyPreferencesManager.isSaveNewArticlesEnabled()) {
+                                return Observable.just(newArticles)
+                                        .map(articles -> {
+                                            int limit = (int) FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_FREE_ARTICLES_LIMIT);
+
+                                            DbProvider dbProvider = mDbProviderFactory.getDbProvider();
+                                            limit += mDbProviderFactory.getDbProvider().getScore() / FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_SCORE_PER_ARTICLE);
+                                            dbProvider.close();
+
+                                            if (limit > articles.size()) {
+                                                limit = articles.size();
+                                            }
+
+                                            return articles.subList(0, limit);
+                                        })
+                                        .observeOn(Schedulers.io())
+                                        .flatMap(articles -> {
+                                            final DbProvider dbProvider = mDbProviderFactory.getDbProvider();
+                                            int innerArticlesDepth = mMyPreferencesManager.getInnerArticlesDepth();
+                                            for (final Article articleToDownload : articles) {
+                                                try {
+                                                    Timber.d("Start download article: %s", articleToDownload.title);
+                                                    Article articleDownloaded = mApiClient.getArticleFromApi(articleToDownload.getUrl());
+                                                    if (articleDownloaded != null) {
+                                                        dbProvider.saveArticleSync(articleDownloaded, false);
+                                                        mApiClient.downloadImagesOnDisk(articleDownloaded);
+
+                                                        if (mMyPreferencesManager.isHasSubscription() && innerArticlesDepth != 0) {
+                                                            getAndSaveInnerArticles(
+                                                                    dbProvider,
+                                                                    mApiClient,
+                                                                    articleDownloaded,
+                                                                    0,
+                                                                    innerArticlesDepth
+                                                            );
+                                                        }
+
+                                                        Timber.d("downloaded: %s", articleDownloaded.getUrl());
+                                                    } else {
+                                                        Timber.e("fail to load article: %s", articleToDownload.getUrl());
+                                                    }
+                                                } catch (Exception | ScpParseException e) {
+                                                    Timber.e(e);
+                                                }
+                                            }
+                                            dbProvider.close();
+                                            return Observable.just(articles);
+                                        });
+                            } else {
+                                return Observable.just(newArticles);
+                            }
+                        }))
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         result -> sendNotification(context, result),
-                        error -> Timber.e(error, "error while getRecentArts"));
+                        error -> Timber.e(error, "error while getRecentArts")
+                );
     }
 
     public void sendNotification(final Context ctx, final List<Article> dataFromWeb) {

@@ -351,4 +351,5 @@ Grazie per aver utilizzato la nostra applicazione!]]></string>
     <!---->
     <string name="drawer_item_objects5">SCP Serie V</string>
     <string name="error_no_activity_to_handle_intent">No application to handle this Intent found.</string>
+    <string name="download_new_articles">Save new articles automatically</string>
 </resources>

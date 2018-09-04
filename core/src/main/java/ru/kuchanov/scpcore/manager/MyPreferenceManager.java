@@ -115,6 +115,7 @@ public class MyPreferenceManager {
         String DOWNLOAD_FORCE_UPDATE_ENABLED = "DOWNLOAD_FORCE_UPDATE_ENABLED";
         String IMAGES_CACHE_ENABLED = "IMAGES_CACHE_ENABLED";
         String VK_APP_SHARED = "VK_APP_SHARED";
+        String SAVE_NEW_ARTICLES_ENABLED = "SAVE_NEW_ARTICLES_ENABLED";
     }
 
     private final Gson mGson;
@@ -181,6 +182,14 @@ public class MyPreferenceManager {
 
     public void setInnerArticlesDepth(final int innerArticlesDepth) {
         mPreferences.edit().putInt(Keys.INNER_ARTICLES_DEPTH, innerArticlesDepth).apply();
+    }
+
+    public boolean isSaveNewArticlesEnabled() {
+        return mPreferences.getBoolean(Keys.SAVE_NEW_ARTICLES_ENABLED, false);
+    }
+
+    public void setSaveNewArticlesEnabled(final boolean saveNewArticlesEnabled) {
+        mPreferences.edit().putBoolean(Keys.SAVE_NEW_ARTICLES_ENABLED, saveNewArticlesEnabled).apply();
     }
 
     public boolean isDownloadForceUpdateEnabled() {

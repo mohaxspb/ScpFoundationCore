@@ -621,7 +621,7 @@ public class ApiClient {
                 if (spanWithRating != null) {
                     final Element ratingSpan = spanWithRating.getElementsByClass("number").first();
 //                    Timber.d("ratingSpan: %s", ratingSpan);
-                    if (ratingSpan != null) {
+                    if (ratingSpan != null && !TextUtils.isEmpty(ratingSpan.text())) {
                         try {
                             rating = Integer.parseInt(ratingSpan.text().substring(1, ratingSpan.text().length()));
 //                            Timber.d("rating: %s", rating);
