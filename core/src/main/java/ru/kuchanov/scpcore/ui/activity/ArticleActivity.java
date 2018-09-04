@@ -1,6 +1,7 @@
 package ru.kuchanov.scpcore.ui.activity;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.view.ViewPager;
 import android.view.MenuItem;
@@ -33,7 +34,7 @@ public class ArticleActivity
     private List<String> mUrls;
 
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (getIntent().hasExtra(EXTRA_ARTICLES_URLS_LIST)) {

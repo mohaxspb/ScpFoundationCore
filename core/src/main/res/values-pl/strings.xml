@@ -350,4 +350,5 @@ Dziękujemy za korzystanie z naszej aplikacji!]]></string>
     <string name="error_no_activity_to_handle_intent">No application to handle this Intent found.</string>
     <string name="download_new_articles">Save new articles automatically</string>
     <string name="text_is_selectable">Selectable text</string>
+    <string name="cant_find_next_article">Cannot find next article</string>
 </resources>

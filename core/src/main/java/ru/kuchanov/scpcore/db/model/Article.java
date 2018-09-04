@@ -2,7 +2,9 @@ package ru.kuchanov.scpcore.db.model;
 
 import org.jetbrains.annotations.NotNull;
 
+import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
+import android.text.TextUtils;
 
 import java.io.Serializable;
 import java.lang.annotation.Retention;
@@ -258,6 +260,22 @@ public class Article extends RealmObject implements Serializable {
     @Override
     public String toString() {
         return url;
+    }
+
+    @Nullable
+    public String nextArticleUrl() {
+        if (TextUtils.isEmpty(url)) {
+            return null;
+        }
+        final String scpNumberUrlPath = "/scp-";
+        final String scpNumberString = url.substring(url.lastIndexOf(scpNumberUrlPath) + scpNumberUrlPath.length());
+        try {
+            int scpNumber = Integer.parseInt(scpNumberString);
+            scpNumber++;
+            return url.replace(scpNumberUrlPath + scpNumberString, scpNumberUrlPath + scpNumber);
+        } catch (final Exception e) {
+            return null;
+        }
     }
 
     //check dates and create proper comparator
