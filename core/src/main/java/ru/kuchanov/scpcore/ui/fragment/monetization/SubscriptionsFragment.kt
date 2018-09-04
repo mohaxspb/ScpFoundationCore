@@ -34,8 +34,8 @@ import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptio
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.InAppViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.LabelWithPercentViewModel
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
-import ru.kuchanov.scpcore.manager.MyPreferenceManager.*
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
+import ru.kuchanov.scpcore.manager.MyPreferenceManager.Keys
 import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.PurchaseData
 import ru.kuchanov.scpcore.monetization.model.Subscription
@@ -81,7 +81,7 @@ class SubscriptionsFragment :
                 return@subscribe
             }
             if (connected!! && !getPresenter().isDataLoaded && isAdded && activity is BaseActivity<*, *>) {
-                (activity as? BaseActivity<*, *>)?.apply { presenter.getMarketData(this.getIInAppBillingService()) }
+                (activity as? BaseActivity<*, *>)?.getIInAppBillingService()?.let { presenter.getMarketData(it) }
             }
         }
 
@@ -91,12 +91,12 @@ class SubscriptionsFragment :
         delegateManager.addDelegate(TextDelegate())
         delegateManager.addDelegate(LabelDelegate())
         delegateManager.addDelegate(LabelWithPercentDelegate())
-        delegateManager.addDelegate(InAppDelegate {
-            baseActivity?.apply {
+        delegateManager.addDelegate(InAppDelegate { id ->
+            baseActivity?.getIInAppBillingService()?.let {
                 this@SubscriptionsFragment.getPresenter().onSubscriptionClick(
-                    it,
+                    id,
                     this@SubscriptionsFragment,
-                    getIInAppBillingService())
+                    it)
             }
         })
         delegateManager.addDelegate(CurSubsDelegate(
@@ -109,12 +109,12 @@ class SubscriptionsFragment :
             }
         ))
         delegateManager.addDelegate(CurSubsEmptyDelegate(
-            {
-                baseActivity?.apply {
+            { _ ->
+                baseActivity?.getIInAppBillingService()?.let {
                     this@SubscriptionsFragment.getPresenter().onSubscriptionClick(
                         InAppHelper.getNewInAppsSkus().first(),
                         this@SubscriptionsFragment,
-                        getIInAppBillingService())
+                        it)
                 }
             },
             {
@@ -421,8 +421,7 @@ class SubscriptionsFragment :
 
     companion object {
 
-        @JvmField
-        val REQUEST_CODE_SUBSCRIPTION = 1001
+        const val REQUEST_CODE_SUBSCRIPTION = 1001
 
         @JvmStatic
         fun newInstance(): SubscriptionsFragment = SubscriptionsFragment()
