@@ -9,8 +9,9 @@ object FontUtils {
     @JvmStatic
     fun getTypeFaceFromName(fontName: String): Typeface? {
         val context = BaseApplication.getAppInstance()
+        val fontNameCleared = fontName.replace("font/", "").replace(".ttf", "")
         val fontId = context.resources.getIdentifier(
-            fontName.replace("font/", "").replace(".ttf", ""),
+            fontNameCleared,
             "font",
             context.packageName
         )

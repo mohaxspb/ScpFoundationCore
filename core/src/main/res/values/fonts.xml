@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string_array name="fonts">
+    <string-array name="fonts">
         <item>roboto_regular</item>
         <item>ds_moster</item>
         <item>letteratrentadue</item>
-        <item>ds_vtcorona_cyr</item>
+        <item>ds_vt_corona_cyr</item>
         <item>freeride</item>
-        <item>trixiecyr_plain</item>
-        <item>trixiecyr_cameo_1</item>
+        <item>trixie_cyr_plain</item>
+        <item>trixie_cyr_cameo_1</item>
         <item>aalbionictitulcm</item>
         <item>acooperblackcm</item>
         <item>bankgothic_russ_medium</item>
         <item>chinacyr</item>
-    </string_array>
+    </string-array>
 
-    <string_array name="fonts_names">
+    <string-array name="fonts_names">
         <item>roboto_regular</item>
         <item>ds_moster</item>
         <item>letteratrentadue</item>
-        <item>ds_vtcorona_cyr</item>
+        <item>ds_vt_corona_cyr</item>
         <item>freeride</item>
-        <item>trixiecyr_plain</item>
-        <item>trixiecyr_cameo_1</item>
+        <item>trixie_cyr_plain</item>
+        <item>trixie_cyr_cameo_1</item>
         <item>aalbionictitulcm</item>
         <item>acooperblackcm</item>
         <item>bankgothic_russ_medium</item>
         <item>chinacyr</item>
-    </string_array>
+    </string-array>
 
 
 </resources>
