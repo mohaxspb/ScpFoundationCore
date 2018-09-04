@@ -43,10 +43,10 @@ import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerCardDesignAdapter;
+import ru.kuchanov.scpcore.ui.util.FontUtils;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import ru.kuchanov.scpcore.util.StorageUtils;
 import timber.log.Timber;
-import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 /**
  * Created by mohax on 14.01.2017.
@@ -186,7 +186,8 @@ public class SettingsBottomSheetDialogFragment
             });
         });
         //font
-        CalligraphyUtils.applyFontToTextView(getActivity(), fontPreferedTitle, mMyPreferenceManager.getFontPath());
+        //todo new font apply
+//        CalligraphyUtils.applyFontToTextView(getActivity(), fontPreferedTitle, mMyPreferenceManager.getFontPath());
         fontPrefered.setOnClickListener(view -> fontPreferedSpinner.performClick());
 
         final List<String> fontsPathsList = Arrays.asList(getResources().getStringArray(R.array.fonts));
@@ -214,7 +215,6 @@ public class SettingsBottomSheetDialogFragment
                 public void onItemSelected(final AdapterView<?> adapterView, final View view, final int position, final long id) {
                     //close all except 2 for unsubscribed
                     if (position > 1 && !mMyPreferenceManager.isHasSubscription()) {
-
                         fontPreferedSpinner.setSelection(fontsPathsList.indexOf(mMyPreferenceManager.getFontPath()));
                         showSnackBarWithAction(Constants.Firebase.CallToActionReason.ENABLE_FONTS);
                     } else {
@@ -385,7 +385,7 @@ public class SettingsBottomSheetDialogFragment
         }
         switch (key) {
             case MyPreferenceManager.Keys.DESIGN_FONT_PATH:
-                CalligraphyUtils.applyFontToTextView(getActivity(), fontPreferedTitle, mMyPreferenceManager.getFontPath());
+                fontPreferedTitle.setTypeface(FontUtils.getTypeFaceFromName(mMyPreferenceManager.getFontPath()));
                 break;
             default:
                 //do nothing

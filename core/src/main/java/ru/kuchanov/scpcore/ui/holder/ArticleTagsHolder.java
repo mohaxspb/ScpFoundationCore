@@ -1,12 +1,12 @@
 package ru.kuchanov.scpcore.ui.holder;
 
+import com.google.android.flexbox.FlexboxLayout;
+
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
-
-import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.List;
 
@@ -19,9 +19,9 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.ui.util.FontUtils;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.ui.view.TagView;
-import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 /**
  * Created by mohax on 11.06.2017.
@@ -33,14 +33,15 @@ public class ArticleTagsHolder extends RecyclerView.ViewHolder {
     @Inject
     MyPreferenceManager mMyPreferenceManager;
 
-    private SetTextViewHTML.TextItemsClickListener mTextItemsClickListener;
+    private final SetTextViewHTML.TextItemsClickListener mTextItemsClickListener;
 
     @BindView(R2.id.tags)
     TextView title;
+
     @BindView(R2.id.tagsContainer)
     FlexboxLayout mTagsContainer;
 
-    public ArticleTagsHolder(View itemView, SetTextViewHTML.TextItemsClickListener clickListener) {
+    public ArticleTagsHolder(final View itemView, final SetTextViewHTML.TextItemsClickListener clickListener) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         BaseApplication.getAppComponent().inject(this);
@@ -48,18 +49,18 @@ public class ArticleTagsHolder extends RecyclerView.ViewHolder {
         mTextItemsClickListener = clickListener;
     }
 
-    public void bind(List<ArticleTag> data) {
-        Context context = itemView.getContext();
-        int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_large);
-        float articleTextScale = mMyPreferenceManager.getArticleTextScale();
+    public void bind(final List<ArticleTag> data) {
+        final Context context = itemView.getContext();
+        final int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_large);
+        final float articleTextScale = mMyPreferenceManager.getArticleTextScale();
         title.setTextSize(TypedValue.COMPLEX_UNIT_PX, articleTextScale * textSizePrimary);
 
-        CalligraphyUtils.applyFontToTextView(context, title, mMyPreferenceManager.getFontPath());
+        title.setTypeface(FontUtils.getTypeFaceFromName(mMyPreferenceManager.getFontPath()));
 
         mTagsContainer.removeAllViews();
         if (data != null) {
-            for (ArticleTag tag : data) {
-                TagView tagView = new TagView(context);
+            for (final ArticleTag tag : data) {
+                final TagView tagView = new TagView(context);
                 tagView.setTag(tag);
                 tagView.setActionImage(TagView.Action.NONE);
 

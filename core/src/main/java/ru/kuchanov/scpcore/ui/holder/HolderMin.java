@@ -20,8 +20,8 @@ import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
+import ru.kuchanov.scpcore.ui.util.FontUtils;
 import ru.kuchanov.scpcore.util.AttributeGetter;
-import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 /**
  * Created by mohax on 11.06.2017.
@@ -39,19 +39,23 @@ public class HolderMin extends RecyclerView.ViewHolder {
 
     @BindView(R2.id.favorite)
     ImageView favorite;
+
     @BindView(R2.id.read)
     ImageView read;
+
     @BindView(R2.id.offline)
     ImageView offline;
+
     @BindView(R2.id.title)
     TextView title;
+
     @BindView(R2.id.preview)
     TextView preview;
 
     @BindView(R2.id.typeIcon)
     ImageView typeIcon;
 
-    public HolderMin(View itemView, ArticlesListAdapter.ArticleClickListener clickListener) {
+    public HolderMin(final View itemView, final ArticlesListAdapter.ArticleClickListener clickListener) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         BaseApplication.getAppComponent().inject(this);
@@ -59,15 +63,15 @@ public class HolderMin extends RecyclerView.ViewHolder {
         mArticleClickListener = clickListener;
     }
 
-    public void bind(Article article) {
+    public void bind(final Article article) {
         mData = article;
-        Context context = itemView.getContext();
+        final Context context = itemView.getContext();
 
-        float uiTextScale = mMyPreferenceManager.getUiTextScale();
-        int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_primary);
+        final float uiTextScale = mMyPreferenceManager.getUiTextScale();
+        final int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_primary);
 
-        CalligraphyUtils.applyFontToTextView(context, title, mMyPreferenceManager.getFontPath());
-        CalligraphyUtils.applyFontToTextView(context, preview, mMyPreferenceManager.getFontPath());
+        title.setTypeface(FontUtils.getTypeFaceFromName(mMyPreferenceManager.getFontPath()));
+        preview.setTypeface(FontUtils.getTypeFaceFromName(mMyPreferenceManager.getFontPath()));
 
         itemView.setOnClickListener(v -> mArticleClickListener.onArticleClick(article));
 
@@ -76,8 +80,8 @@ public class HolderMin extends RecyclerView.ViewHolder {
             title.setText(Html.fromHtml(article.title));
         }
         //(отмечание прочитанного)
-        int readIconId;
-        int readColorId;
+        final int readIconId;
+        final int readColorId;
         if (article.isInReaden) {
             readColorId = AttributeGetter.getColor(context, R.attr.readTextColor);
             readIconId = AttributeGetter.getDrawableId(context, R.attr.readIconUnselected);
@@ -89,7 +93,7 @@ public class HolderMin extends RecyclerView.ViewHolder {
         read.setImageResource(readIconId);
         read.setOnClickListener(v -> mArticleClickListener.toggleReadenState(article));
         //(отмтка избранных статей)
-        int favsIconId;
+        final int favsIconId;
         if (article.isInFavorite != Article.ORDER_NONE) {
             favsIconId = AttributeGetter.getDrawableId(context, R.attr.favoriteIcon);
         } else {
@@ -98,7 +102,7 @@ public class HolderMin extends RecyclerView.ViewHolder {
         favorite.setImageResource(favsIconId);
 
         //Кнопки Offline
-        int offlineIconId;
+        final int offlineIconId;
         if (article.text != null) {
             offlineIconId = AttributeGetter.getDrawableId(context, R.attr.iconOfflineRemove);
         } else {
@@ -110,7 +114,7 @@ public class HolderMin extends RecyclerView.ViewHolder {
         offline.setOnClickListener(v -> {
             if (mArticleClickListener != null) {
                 if (article.text != null) {
-                    PopupMenu popup = new PopupMenu(context, offline);
+                    final PopupMenu popup = new PopupMenu(context, offline);
                     popup.getMenu().add(0, 0, 0, R.string.delete);
                     popup.setOnMenuItemClickListener(item -> {
                         mArticleClickListener.onOfflineClick(article);
@@ -130,7 +134,7 @@ public class HolderMin extends RecyclerView.ViewHolder {
         }
     }
 
-    protected void setTypesIcons(Article article) {
+    protected void setTypesIcons(final Article article) {
         switch (article.type) {
             case Article.ObjectType.NONE:
                 typeIcon.setImageResource(R.drawable.ic_none_small);
@@ -155,10 +159,10 @@ public class HolderMin extends RecyclerView.ViewHolder {
         }
     }
 
-    public void setShouldShowPreview(boolean shouldShowPreview) {
-        Context context = itemView.getContext();
-        float uiTextScale = mMyPreferenceManager.getUiTextScale();
-        int textSizeTertiary = context.getResources().getDimensionPixelSize(R.dimen.text_size_tertiary);
+    public void setShouldShowPreview(final boolean shouldShowPreview) {
+        final Context context = itemView.getContext();
+        final float uiTextScale = mMyPreferenceManager.getUiTextScale();
+        final int textSizeTertiary = context.getResources().getDimensionPixelSize(R.dimen.text_size_tertiary);
         //show preview only on siteSearch fragment
         if (shouldShowPreview) {
             preview.setVisibility(View.VISIBLE);
@@ -169,11 +173,11 @@ public class HolderMin extends RecyclerView.ViewHolder {
         }
     }
 
-    public void setShouldShowPopupOnFavoriteClick(boolean shouldShowPopupOnFavoriteClick) {
-        Context context = itemView.getContext();
+    public void setShouldShowPopupOnFavoriteClick(final boolean shouldShowPopupOnFavoriteClick) {
+        final Context context = itemView.getContext();
         favorite.setOnClickListener(v -> {
             if (shouldShowPopupOnFavoriteClick && mData.isInFavorite != Article.ORDER_NONE) {
-                PopupMenu popup = new PopupMenu(context, favorite);
+                final PopupMenu popup = new PopupMenu(context, favorite);
                 popup.getMenu().add(0, 0, 0, R.string.delete);
                 popup.setOnMenuItemClickListener(item -> {
                     mArticleClickListener.toggleFavoriteState(mData);

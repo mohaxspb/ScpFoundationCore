@@ -117,7 +117,6 @@ import ru.kuchanov.scpcore.util.SystemUtils;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventName;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventParam;
@@ -1005,14 +1004,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             default:
                 break;
         }
-    }
-
-    /**
-     * we need this for calligraphy
-     */
-    @Override
-    protected void attachBaseContext(final Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     @Override
