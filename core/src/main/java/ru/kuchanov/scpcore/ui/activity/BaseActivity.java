@@ -641,6 +641,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         }
     }
 
+    @Nullable
     public IInAppBillingService getIInAppBillingService() {
         return mService;
     }

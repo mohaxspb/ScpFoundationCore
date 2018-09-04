@@ -351,4 +351,5 @@ Traduit Lucie.]]></string>
 
     <!---->
     <string name="drawer_item_objects5">Série SCP V</string>
+    <string name="error_no_activity_to_handle_intent">No application to handle this Intent found.</string>
 </resources>

@@ -119,7 +119,11 @@ public class GalleryActivity
             @Override
             public void onPageSelected(final int position) {
                 mCurPosition = position;
-                if (position != 0 && position % FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_GALLERY_PHOTOS_BETWEEN_INTERSITIAL) == 0) {
+                long numOfPagesBetweenAds = FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_GALLERY_PHOTOS_BETWEEN_INTERSITIAL);
+                if (numOfPagesBetweenAds == 0) {
+                    numOfPagesBetweenAds = 20L;
+                }
+                if (position != 0 && position % numOfPagesBetweenAds == 0) {
                     final boolean hasSubscription = mMyPreferenceManager.isHasSubscription() || mMyPreferenceManager.isHasNoAdsSubscription();
                     if (!hasSubscription) {
                         if (isAdsLoaded()) {
