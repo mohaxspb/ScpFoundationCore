@@ -19,7 +19,7 @@ public abstract class BaseHolder<D extends BaseModel, A extends BaseAdapterClick
     @Nullable
     protected A mAdapterClickListener;
 
-    public BaseHolder(final View itemView, final A adapterClickListener) {
+    public BaseHolder(final View itemView, @Nullable final A adapterClickListener) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         mAdapterClickListener = adapterClickListener;
@@ -39,10 +39,11 @@ public abstract class BaseHolder<D extends BaseModel, A extends BaseAdapterClick
         mAdapterClickListener = adapterClickListener;
     }
 
-    public void setAdapterClickListener(final A adapterClickListener) {
+    public void setAdapterClickListener(@Nullable final A adapterClickListener) {
         mAdapterClickListener = adapterClickListener;
     }
 
+    @Nullable
     public A getAdapterClickListener() {
         return mAdapterClickListener;
     }

@@ -9,8 +9,7 @@ import java.util.List;
 
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser;
-import ru.kuchanov.scpcore.ui.holder.LeaderboardHolder;
-import timber.log.Timber;
+import ru.kuchanov.scpcore.ui.holder.leaderboard.LeaderboardHolder;
 
 public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<LeaderboardHolder> {
 

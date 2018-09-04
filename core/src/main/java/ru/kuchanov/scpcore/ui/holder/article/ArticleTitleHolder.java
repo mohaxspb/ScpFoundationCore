@@ -1,9 +1,8 @@
-package ru.kuchanov.scpcore.ui.holder;
+package ru.kuchanov.scpcore.ui.holder.article;
 
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
@@ -17,8 +16,6 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.model.ArticleTextPartViewModel;
-import ru.kuchanov.scpcore.ui.util.FontUtils;
-import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 
 /**
@@ -26,24 +23,18 @@ import ru.kuchanov.scpcore.util.AttributeGetter;
  * <p>
  * for ScpFoundationRu
  */
-public class ArticleTextHolder extends RecyclerView.ViewHolder {
+public class ArticleTitleHolder extends RecyclerView.ViewHolder {
 
     @Inject
     MyPreferenceManager mMyPreferenceManager;
-    @Inject
-    SetTextViewHTML mSetTextViewHTML;
-
-    private final SetTextViewHTML.TextItemsClickListener mTextItemsClickListener;
 
     @BindView(R2.id.text)
     TextView textView;
 
-    public ArticleTextHolder(final View itemView, final SetTextViewHTML.TextItemsClickListener clickListener) {
+    public ArticleTitleHolder(final View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         BaseApplication.getAppComponent().inject(this);
-
-        mTextItemsClickListener = clickListener;
     }
 
     public void bind(final ArticleTextPartViewModel viewModel) {
@@ -58,16 +49,11 @@ public class ArticleTextHolder extends RecyclerView.ViewHolder {
             itemView.setBackgroundColor(Color.TRANSPARENT);
         }
 
-        final int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_primary);
         final float articleTextScale = mMyPreferenceManager.getArticleTextScale();
 
-        textView.setTypeface(FontUtils.getTypeFaceFromName(mMyPreferenceManager.getFontPath()));
-
+        final int textSizePrimary = context.getResources().getDimensionPixelSize(R.dimen.text_size_large);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, articleTextScale * textSizePrimary);
-        textView.setLinksClickable(true);
-        textView.setMovementMethod(LinkMovementMethod.getInstance());
-        //TODO add settings for it
-//            textView.setTextIsSelectable(true);
-        mSetTextViewHTML.setText(textView, (String) viewModel.data, mTextItemsClickListener);
+        textView.setTextIsSelectable(mMyPreferenceManager.isTextSelectable());
+        textView.setText((String) viewModel.data);
     }
 }

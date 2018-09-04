@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.ui.holder;
+package ru.kuchanov.scpcore.ui.holder.leaderboard;
 
 import android.content.Context;
 import android.graphics.Bitmap;

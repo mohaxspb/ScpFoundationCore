@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.ui.holder;
+package ru.kuchanov.scpcore.ui.holder.article;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -17,8 +17,8 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
@@ -34,17 +34,18 @@ import ru.kuchanov.scpcore.util.AttributeGetter;
  */
 public class ArticleTableHolder extends RecyclerView.ViewHolder {
 
-    private SetTextViewHTML.TextItemsClickListener mTextItemsClickListener;
+    private final SetTextViewHTML.TextItemsClickListener mTextItemsClickListener;
 
     @BindView(R2.id.webView)
     WebView webView;
 
     @Inject
     ConstantValues mConstantValues;
+
     @Inject
     MyPreferenceManager mMyPreferenceManager;
 
-    public ArticleTableHolder(View itemView, SetTextViewHTML.TextItemsClickListener clickListener) {
+    public ArticleTableHolder(final View itemView, final SetTextViewHTML.TextItemsClickListener clickListener) {
         super(itemView);
 
         BaseApplication.getAppComponent().inject(this);
@@ -55,11 +56,11 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    public void bind(ArticleTextPartViewModel viewModel) {
-        Context context = itemView.getContext();
+    public void bind(final ArticleTextPartViewModel viewModel) {
+        final Context context = itemView.getContext();
 
         if (viewModel.isInSpoiler) {
-            int defaultMargin = context.getResources().getDimensionPixelSize(R.dimen.defaultMargin);
+            final int defaultMargin = context.getResources().getDimensionPixelSize(R.dimen.defaultMargin);
             ((RecyclerView.LayoutParams) itemView.getLayoutParams()).setMargins(defaultMargin, 0, defaultMargin, 0);
             itemView.setBackgroundColor(AttributeGetter.getColor(context, R.attr.windowBackgroundDark));
         } else {
@@ -67,26 +68,26 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
             itemView.setBackgroundColor(Color.TRANSPARENT);
         }
 
-        String backgroundColor = String.format("#%06X", (0xFFFFFF & AttributeGetter.getColor(context, android.R.attr.windowBackground)));
-        String textColor = String.format("#%06X", (0xFFFFFF & AttributeGetter.getColor(context, android.R.attr.textColor)));
+        final String backgroundColor = String.format("#%06X", (0xFFFFFF & AttributeGetter.getColor(context, android.R.attr.windowBackground)));
+        final String textColor = String.format("#%06X", (0xFFFFFF & AttributeGetter.getColor(context, android.R.attr.textColor)));
 
         String fullHtml = "<!DOCTYPE html>\n" +
-                "<html>\n" +
-                "    <head>\n" +
-                "        <meta charset=\"utf-8\">\n" +
-                "        <meta name=\"viewport\" content=\"width=device-width, user-scalable=yes\" />" +
-                "        <style>" +
-                "table.wiki-content-table{border-collapse:collapse;border-spacing:0;margin:.5em auto}" +
-                "table.wiki-content-table td{border:1px solid " + textColor + ";color: " + textColor + ";padding:.3em .7em;background-color:" + backgroundColor + "}" +
-                "table.wiki-content-table th{border:1px solid " + textColor + ";color: " + textColor + ";padding:.3em .7em;background-color:" + backgroundColor + "}" +
-                "</style>\n" +
-                "    </head>\n" +
-                "    <body>";
+                          "<html>\n" +
+                          "    <head>\n" +
+                          "        <meta charset=\"utf-8\">\n" +
+                          "        <meta name=\"viewport\" content=\"width=device-width, user-scalable=yes\" />" +
+                          "        <style>" +
+                          "table.wiki-content-table{border-collapse:collapse;border-spacing:0;margin:.5em auto}" +
+                          "table.wiki-content-table td{border:1px solid " + textColor + ";color: " + textColor + ";padding:.3em .7em;background-color:" + backgroundColor + "}" +
+                          "table.wiki-content-table th{border:1px solid " + textColor + ";color: " + textColor + ";padding:.3em .7em;background-color:" + backgroundColor + "}" +
+                          "</style>\n" +
+                          "    </head>\n" +
+                          "    <body>";
         fullHtml += (String) viewModel.data;
         fullHtml += "</body>\n" +
-                "</html>";
+                    "</html>";
 
-        WebSettings settings = webView.getSettings();
+        final WebSettings settings = webView.getSettings();
         settings.setMinimumFontSize(18);
         settings.setLoadWithOverviewMode(true);
         settings.setUseWideViewPort(true);
@@ -97,11 +98,11 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
-            public void onPageFinished(WebView view, String url) {
+            public void onPageFinished(final WebView view, final String url) {
                 super.onPageFinished(view, url);
 //                Timber.d("onPageFinished: %s", url);
 
-                int indexOfHashTag = url.lastIndexOf("#");
+                final int indexOfHashTag = url.lastIndexOf("#");
                 if (indexOfHashTag != -1) {
                     String link = url.substring(indexOfHashTag);
 //                    Timber.d("link: %s", link);
@@ -114,17 +115,16 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
 
             @SuppressWarnings("deprecation")
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String link) {
+            public boolean shouldOverrideUrlLoading(final WebView view, final String link) {
 //                Timber.d("Link clicked: %s", link);
-
                 return checkUrl(link);
             }
 
             @TargetApi(Build.VERSION_CODES.N)
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            public boolean shouldOverrideUrlLoading(final WebView view, final WebResourceRequest request) {
 //                Timber.d("Link clicked: %s", request.getUrl().toString());
-                String link = request.getUrl().toString();
+                final String link = request.getUrl().toString();
 
                 return checkUrl(link);
             }
@@ -180,7 +180,7 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
 
                 if (link.startsWith(Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL)) {
                     if (mTextItemsClickListener != null) {
-                        String url = link.split(Constants.Api.NOT_TRANSLATED_ARTICLE_URL_DELIMITER)[1];
+                        final String url = link.split(Constants.Api.NOT_TRANSLATED_ARTICLE_URL_DELIMITER)[1];
                         mTextItemsClickListener.onNotTranslatedArticleClick(url);
                     }
                     return true;

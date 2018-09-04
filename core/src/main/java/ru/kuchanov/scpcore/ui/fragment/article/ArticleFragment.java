@@ -19,8 +19,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -484,9 +482,8 @@ public class ArticleFragment
         Timber.d("onSharedPreferenceChanged: key: %s", key);
         switch (key) {
             case MyPreferenceManager.Keys.TEXT_SCALE_ARTICLE:
-                mAdapter.notifyDataSetChanged();
-                break;
             case MyPreferenceManager.Keys.DESIGN_FONT_PATH:
+            case MyPreferenceManager.Keys.IS_TEXT_SELECTABLE:
                 mAdapter.notifyDataSetChanged();
                 break;
             case MyPreferenceManager.Keys.ADS_BANNER_IN_ARTICLE:

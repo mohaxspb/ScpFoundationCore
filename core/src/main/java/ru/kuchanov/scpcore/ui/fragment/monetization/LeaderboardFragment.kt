@@ -34,7 +34,7 @@ import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
 import ru.kuchanov.scpcore.mvp.presenter.monetization.LeaderboardPresenter
 import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment
-import ru.kuchanov.scpcore.ui.holder.SocialLoginHolder
+import ru.kuchanov.scpcore.ui.holder.login.SocialLoginHolder
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*

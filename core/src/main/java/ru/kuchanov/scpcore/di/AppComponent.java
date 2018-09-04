@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.di.module.AppModule;
 import ru.kuchanov.scpcore.di.module.HelpersModule;
 import ru.kuchanov.scpcore.di.module.NetModule;
@@ -61,15 +60,15 @@ import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment;
 import ru.kuchanov.scpcore.ui.fragment.search.SiteSearchArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.tags.TagsSearchFragment;
 import ru.kuchanov.scpcore.ui.fragment.tags.TagsSearchResultsArticlesFragment;
-import ru.kuchanov.scpcore.ui.holder.ArticleImageHolder;
-import ru.kuchanov.scpcore.ui.holder.ArticleSpoilerHolder;
-import ru.kuchanov.scpcore.ui.holder.ArticleTableHolder;
-import ru.kuchanov.scpcore.ui.holder.ArticleTabsHolder;
-import ru.kuchanov.scpcore.ui.holder.ArticleTagsHolder;
-import ru.kuchanov.scpcore.ui.holder.ArticleTextHolder;
-import ru.kuchanov.scpcore.ui.holder.ArticleTitleHolder;
-import ru.kuchanov.scpcore.ui.holder.HolderMin;
-import ru.kuchanov.scpcore.ui.holder.NativeAdsArticleListHolder;
+import ru.kuchanov.scpcore.ui.holder.article.ArticleImageHolder;
+import ru.kuchanov.scpcore.ui.holder.article.ArticleSpoilerHolder;
+import ru.kuchanov.scpcore.ui.holder.article.ArticleTableHolder;
+import ru.kuchanov.scpcore.ui.holder.article.ArticleTabsHolder;
+import ru.kuchanov.scpcore.ui.holder.article.ArticleTagsHolder;
+import ru.kuchanov.scpcore.ui.holder.article.ArticleTextHolder;
+import ru.kuchanov.scpcore.ui.holder.article.ArticleTitleHolder;
+import ru.kuchanov.scpcore.ui.holder.articlelist.HolderMin;
+import ru.kuchanov.scpcore.ui.holder.article.NativeAdsArticleListHolder;
 
 @Singleton
 @Component(modules = {

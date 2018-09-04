@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.ui.holder;
+package ru.kuchanov.scpcore.ui.holder.article;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -110,8 +110,7 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
         if (!TextUtils.isEmpty(title)) {
             titleTextView.setLinksClickable(true);
             titleTextView.setMovementMethod(LinkMovementMethod.getInstance());
-            //TODO add settings for it
-//            textView.setTextIsSelectable(true);
+            titleTextView.setTextIsSelectable(mMyPreferenceManager.isTextSelectable());
             mSetTextViewHTML.setText(titleTextView, title, mTextItemsClickListener);
         }
 

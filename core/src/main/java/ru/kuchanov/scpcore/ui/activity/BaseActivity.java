@@ -107,7 +107,7 @@ import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
-import ru.kuchanov.scpcore.ui.holder.SocialLoginHolder;
+import ru.kuchanov.scpcore.ui.holder.login.SocialLoginHolder;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import ru.kuchanov.scpcore.util.Entry;

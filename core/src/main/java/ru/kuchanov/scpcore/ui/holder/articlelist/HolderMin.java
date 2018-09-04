@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.ui.holder;
+package ru.kuchanov.scpcore.ui.holder.articlelist;
 
 import android.content.Context;
 import android.support.v7.widget.PopupMenu;
