@@ -186,8 +186,6 @@ public class SettingsBottomSheetDialogFragment
             });
         });
         //font
-        //todo new font apply
-//        CalligraphyUtils.applyFontToTextView(getActivity(), fontPreferedTitle, mMyPreferenceManager.getFontPath());
         fontPrefered.setOnClickListener(view -> fontPreferedSpinner.performClick());
 
         final List<String> fontsPathsList = Arrays.asList(getResources().getStringArray(R.array.fonts));
