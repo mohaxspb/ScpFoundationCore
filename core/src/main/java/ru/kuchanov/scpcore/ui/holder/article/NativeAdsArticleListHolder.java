@@ -32,6 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
@@ -52,6 +53,9 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     @Inject
     protected MyPreferenceManager mMyPreferenceManager;
 
+    @Inject
+    protected ConstantValues mConstantValues;
+
     private ArticlesListAdapter.ArticleClickListener mArticleClickListener;
 
     @BindView(R2.id.container)
@@ -63,9 +67,6 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
 
     @BindView(R2.id.appodealNativeAdViewAppWall)
     NativeAdViewAppWall appodealNativeAdView;
-
-//    @BindView(R2.id.appodealNativeMediaView)
-//    NativeMediaView appodealNativeMediaView;
 
     @BindView(R2.id.scpArtAdView)
     View scpArtAdView;
@@ -211,7 +212,11 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
                     Constants.Firebase.Analitics.EventName.VK_APP_SHARED,
                     new Bundle()
             );
-            final String url = Constants.Urls.SCP_QUIZ_MARKET_URL;
+            final String url = String.format(
+                    Locale.getDefault(),
+                    Constants.Urls.SCP_QUIZ_MARKET_URL,
+                    mConstantValues.getAppLang()
+            );
             IntentUtils.openUrl(url);
         });
 
