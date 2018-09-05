@@ -15,6 +15,7 @@ import com.vk.sdk.dialogs.VKShareDialog
 import com.vk.sdk.dialogs.VKShareDialogBuilder
 import kotlinx.android.synthetic.main.fragment_free_ads_disable_actions.*
 import ru.kuchanov.scpcore.BaseApplication
+import ru.kuchanov.scpcore.ConstantValues
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.DividerDelegate
@@ -27,6 +28,7 @@ import ru.kuchanov.scpcore.mvp.contract.monetization.FreeAdsDisableActionsContra
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 import ru.kuchanov.scpcore.util.IntentUtils
 import timber.log.Timber
+import javax.inject.Inject
 
 /**
  * Created by mohax on 22.01.2018.
@@ -36,6 +38,9 @@ import timber.log.Timber
 class FreeAdsDisableActionsFragment :
         BaseFragment<FreeAdsDisableActionsContract.View, FreeAdsDisableActionsContract.Presenter>(),
         FreeAdsDisableActionsContract.View {
+
+    @Inject
+    lateinit var constantValues: ConstantValues
 
     private lateinit var adapter: ListDelegationAdapter<List<MyListItem>>
 
@@ -95,9 +100,13 @@ class FreeAdsDisableActionsFragment :
 
     override fun onAppInstallClick(id: String) {
         if (FirebaseAuth.getInstance().currentUser == null) {
-            baseActivity?.showOfferLoginPopup { _, _ -> IntentUtils.tryOpenPlayMarket(activity, id) }
+            baseActivity?.showOfferLoginPopup { _, _ ->
+                val linkToMarket = "https://play.google.com/store/apps/details?id=$id&utm_source=scpReader&utm_medium=free_ads_disable&utm_campaign=${constantValues.appLang}"
+                IntentUtils.openUrl(linkToMarket)
+            }
         } else {
-            IntentUtils.tryOpenPlayMarket(activity, id)
+            val linkToMarket = "https://play.google.com/store/apps/details?id=$id&utm_source=scpReader&utm_medium=free_ads_disable&utm_campaign=${constantValues.appLang}"
+            IntentUtils.openUrl(linkToMarket)
         }
     }
 
