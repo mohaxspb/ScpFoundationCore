@@ -1,11 +1,11 @@
 package ru.kuchanov.scpcore.api;
 
-import android.support.annotation.StringDef;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import android.support.annotation.StringDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -79,6 +79,15 @@ public class ParseHtmlUtils {
             }
         }
 //            Timber.d("pageContent.getElementsByClass(\"rimg\"): %s", pageContent.getElementsByClass("rimg"));
+    }
+
+    public static void extractTablesFromDivs(final Element pageContent) {
+        for (final Element ourElement : pageContent.getElementsByTag(TAG_DIV)) {
+            if (ourElement.children().size() == 1 && ourElement.child(0).tagName().equals(TAG_TABLE)) {
+                ourElement.appendChild(ourElement.child(0));
+                ourElement.remove();
+            }
+        }
     }
 
     //todo remake to intDef to be able to use as viewType in adapter

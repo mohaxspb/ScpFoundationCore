@@ -87,7 +87,7 @@ public class DialogUtils {
                 .onPositive((dialog1, which) -> {
                     final String linkToMarket = "https://play.google.com/store/apps/details?id="
                                                 + version.appPackage
-                                                + "d&utm_source=scpReader&utm_medium=appLangsVersions&utm_campaign="
+                                                + "&utm_source=scpReader&utm_medium=appLangsVersions&utm_campaign="
                                                 + mConstantValues.getAppLang();
                     IntentUtils.openUrl(linkToMarket);
                 })
@@ -105,7 +105,7 @@ public class DialogUtils {
         adapter.setCallbacks(position -> {
             final String linkToMarket = "https://play.google.com/store/apps/details?id="
                                         + appLangVersions.get(position).appPackage
-                                        + "d&utm_source=scpReader&utm_medium=appLangsVersions&utm_campaign="
+                                        + "&utm_source=scpReader&utm_medium=appLangsVersions&utm_campaign="
                                         + mConstantValues.getAppLang();
             IntentUtils.openUrl(linkToMarket);
         });

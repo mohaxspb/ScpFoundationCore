@@ -95,7 +95,7 @@ public class DialogUtilsDefault extends ru.kuchanov.scpcore.downloads.DialogUtil
                 .logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
         final BaseActivity baseActivity = (BaseActivity) context;
-        final DialogUtils dialogUtils = new DialogUtils(mPreferenceManager, mDbProviderFactory, mApiClient, constantValues);
+        final DialogUtils dialogUtils = new DialogUtils(mPreferenceManager, mDbProviderFactory, mApiClient, mConstantValues);
         dialogUtils.showProgressDialog(context, R.string.wait);
         final InAppHelper mInAppHelper = new InAppHelper(mPreferenceManager, mDbProviderFactory, mApiClient);
         mInAppHelper.getSubsListToBuyObservable(baseActivity.getIInAppBillingService(), InAppHelper.getFreeTrailSubsSkus())
