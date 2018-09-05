@@ -702,6 +702,9 @@ public class ApiClient {
             }
             ParseHtmlUtils.parseImgsTags(pageContent);
 
+            //extract tables, which are single tag in div
+            ParseHtmlUtils.extractTablesFromDivs(pageContent);
+
             //put all text which is not in any tag in div tag
             for (final Element element : pageContent.children()) {
                 final Node nextSibling = element.nextSibling();
