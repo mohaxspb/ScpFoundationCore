@@ -78,7 +78,6 @@ public interface Constants {
 
         String[] ALL_LINKS_ARRAY = {MAIN, RATE, NEW_ARTICLES, EXPERIMENTS, INCEDENTS, INTERVIEWS, OTHERS, STORIES, LEAKS, OBJECTS_1, OBJECTS_2, OBJECTS_3, OBJECTS_RU, NEWS};
         String BASE_API_URL = "http://scpfoundation.ru";
-        String SCP_ART_AD_UTM = "http://artscp.com/promo?utm_source=%1$s&utm_medium=referral&utm_campaign=app-ads&utm_term=%2$d";
         String SCP_QUIZ_MARKET_URL = "https://play.google.com/store/apps/details?id=ru.kuchanov.scpquiz&utm_source=scpReader&utm_medium=nativeAds&utm_campaign=%1$s";
     }
 
@@ -166,10 +165,8 @@ public interface Constants {
             String NATIVE_ADS_LISTS_ENABLED = "native_ads_lists_enabled";
             String NATIVE_IN_ARTICLE_ENABLED = "native_in_article_enabled";
             String NATIVE_ADS_LISTS_INTERVAL = "native_ads_lists_interval";
-            String NATIVE_ADS_LISTS_SOURCE = "native_ads_lists_source";
             String NATIVE_ADS_LISTS_SOURCE_V2 = "native_ads_lists_source_v2";
-            String ADS_SCP_ART = "ads_scp_art";
-            String ADS_SCP_ART_V2 = "ads_scp_art_v2";
+            String ADS_SCP_ART_V3 = "ads_scp_art_v3";
             String ADS_SCP_ART_ENABLED = "ads_scp_art_enabled";
             //banners
             String GALLERY_BANNER_DISABLED = "gallery_banner_disabled";

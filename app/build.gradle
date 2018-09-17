@@ -145,9 +145,6 @@ android {
             def versionCode = project.hasProperty('devBuild') ? 100 : buildVersionCodeFromVariant(variant)
             def versionName = project.hasProperty('devBuild') ? 100 : getVersionValueAsString(variant)
 
-            variant.mergedFlavor.versionCode = versionCode
-            variant.mergedFlavor.versionName = versionName
-
             //need this as in new gradle plugin there broken functionality of iterating variant during build
             //so we need to set version so
             //see https://developer.android.com/studio/build/gradle-plugin-3-0-0-migration.html#variant_output

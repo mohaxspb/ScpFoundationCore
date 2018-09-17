@@ -13,7 +13,6 @@ import com.bumptech.glide.request.target.Target;
 
 import org.jetbrains.annotations.NotNull;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -137,20 +136,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
 
         scpArtAdView.setVisibility(View.VISIBLE);
 
-        final Context context = mainImageView.getContext();
-        scpArtAdView.setOnClickListener(v -> {
-            FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
-                    Constants.Firebase.Analitics.EventName.VK_APP_SHARED,
-                    new Bundle()
-            );
-            final String url = String.format(
-                    Locale.getDefault(),
-                    Constants.Urls.SCP_ART_AD_UTM,
-                    context.getApplicationInfo().packageName,
-                    scpArtAd.getId()
-            );
-            IntentUtils.openUrl(url);
-        });
+        scpArtAdView.setOnClickListener(v -> IntentUtils.openUrl(scpArtAd.getRedirectUrl()));
 
         ratingBar.setVisibility(View.VISIBLE);
         Glide.with(logoImageView.getContext())

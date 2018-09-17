@@ -9,12 +9,14 @@ import org.joda.time.Period;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
 
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
+import ru.kuchanov.scpcore.monetization.model.ScpArtAdsJson;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
@@ -223,6 +225,14 @@ public class MyPreferenceManager {
 
     public boolean isVkAppShared() {
         return mPreferences.getBoolean(Keys.VK_APP_SHARED, false);
+    }
+
+    public String getScpArtsJson() {
+        String json = FirebaseRemoteConfig.getInstance().getString(Constants.Firebase.RemoteConfigKeys.ADS_SCP_ART_V3);
+        if (TextUtils.isEmpty(json)) {
+            json = ScpArtAdsJson.DEFAULT_JSON;
+        }
+        return json;
     }
     //download all settings END
 

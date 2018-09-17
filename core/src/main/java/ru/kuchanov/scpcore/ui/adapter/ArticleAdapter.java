@@ -264,7 +264,7 @@ public class ArticleAdapter
             return;
         }
         if (mAdsModelsList.isEmpty()) {
-            mAdsModelsList.addAll(createAdsModelsList(true));
+            mAdsModelsList.addAll(createAdsModelsList(true, mMyPreferenceManager));
         }
 
         // Loop through the items array and place a new Native Express ad in every ith position in
