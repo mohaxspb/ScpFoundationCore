@@ -15,7 +15,7 @@ open class LeaderboardUser(
     var levelNum: Int = 0,
     var scoreToNextLevel: Int = 0,
     var curLevelScore: Int = 0
-) : RealmObject() {
+) {
 
     companion object {
         @JvmField
