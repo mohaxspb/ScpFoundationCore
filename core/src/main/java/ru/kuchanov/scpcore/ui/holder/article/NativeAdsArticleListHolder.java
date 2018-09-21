@@ -136,7 +136,13 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
 
         scpArtAdView.setVisibility(View.VISIBLE);
 
-        scpArtAdView.setOnClickListener(v -> IntentUtils.openUrl(scpArtAd.getRedirectUrl()));
+        scpArtAdView.setOnClickListener(v -> {
+            FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
+                    Constants.Firebase.Analitics.EventName.SCP_ART_CLICKED,
+                    new Bundle()
+            );
+            IntentUtils.openUrl(scpArtAd.getRedirectUrl());
+        });
 
         ratingBar.setVisibility(View.VISIBLE);
         Glide.with(logoImageView.getContext())
@@ -195,7 +201,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
 
         scpArtAdView.setOnClickListener(v -> {
             FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
-                    Constants.Firebase.Analitics.EventName.VK_APP_SHARED,
+                    Constants.Firebase.Analitics.EventName.SCP_QUIZ_CLICKED,
                     new Bundle()
             );
             final String url = String.format(

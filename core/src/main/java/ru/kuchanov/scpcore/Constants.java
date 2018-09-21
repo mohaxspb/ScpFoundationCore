@@ -216,6 +216,7 @@ public interface Constants {
                 String APP_INSTALLED = "APP_INSTALLED";
                 String VK_APP_SHARED = "VK_APP_SHARED";
                 String SCP_ART_CLICKED = "SCP_ART_CLICKED";
+                String SCP_QUIZ_CLICKED = "SCP_QUIZ_CLICKED";
             }
 
             interface EventParam {
