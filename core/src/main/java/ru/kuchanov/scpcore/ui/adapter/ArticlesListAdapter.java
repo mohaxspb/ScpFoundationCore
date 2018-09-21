@@ -260,7 +260,7 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return;
         }
         if (mAdsModelsList.isEmpty()) {
-            mAdsModelsList.addAll(createAdsModelsList(false));
+            mAdsModelsList.addAll(createAdsModelsList(false, mMyPreferenceManager));
         }
 
         // Loop through the items array and place a new Native Express ad in every ith position in
@@ -281,7 +281,7 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    public static List<MyListItem> createAdsModelsList(final boolean isArticle) {
+    public static List<MyListItem> createAdsModelsList(final boolean isArticle, final MyPreferenceManager myPreferenceManager) {
         Timber.d("createAdsModelsList");
         final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         final Constants.NativeAdsSource nativeAdsSource =
@@ -289,7 +289,7 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Timber.d("nativeAdsSource: %s", nativeAdsSource);
         final List<ScpArtAdsJson.ScpArtAd> scpArtAdsJson = new GsonBuilder()
                 .create()
-                .fromJson(config.getString(Constants.Firebase.RemoteConfigKeys.ADS_SCP_ART_V2), ScpArtAdsJson.class).getAds();
+                .fromJson(myPreferenceManager.getScpArtsJson(), ScpArtAdsJson.class).getAds();
 
         int appodealIndex = 0;
         final List<MyListItem> adsModelsList = new ArrayList<>();

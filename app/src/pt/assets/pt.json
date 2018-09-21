@@ -200,6 +200,10 @@
             {
                 "key": "ads_scp_art_v2",
                 "value": "{ \"ads\": [ { \"id\": 0, \"imgUrl\": \"https://i.imgur.com/ogoIvbn.jpg\", \"logoUrl\": \"https://i.imgur.com/9euyUkm.png\", \"title\": \"Идет набор сотрудников класса D\", \"subTitle\": \"Предложение ограниченно. Прием заявок будет проводиться 11-12 августа на стенде SCP Foundation\", \"ctaButtonText\": \"Участвовать\" } ] }"
+            },
+            {
+                "key": "ads_scp_art_v3",
+                "value": "{   \"ads\": [     {       \"id\": 1,       \"imgUrl\": \"https://scpfoundation.app/scp/scp-art/bookShop.jpg\",       \"logoUrl\": \"https://scpfoundation.app/scp/scp-art/scpLogoSite.png\",       \"title\": \"Книги SCP Foundation уже в продаже!\",       \"subTitle\": \"Спрашивайте в книжных магазинах своего города или закажите доставку в любой уголок страны\",       \"ctaButtonText\": \"Подробнее\",       \"redirectUrl\": \"http://artscp.com/promo\"     },     {       \"id\": 2,       \"imgUrl\": \"https://scpfoundation.app/scp/scp-art/vk.jpg\",       \"logoUrl\": \"https://scpfoundation.app/scp/scp-art/scpLogoSite.png\",       \"title\": \"Сообщество SCP Foundation Вконтакте\",       \"subTitle\": \"Официальное сообщество вселенной SCP Foundation.Свежие иллюстрации и новости из мира SCP\",       \"ctaButtonText\": \"Вступить!\",       \"redirectUrl\": \"https://vk.com/artscp\"     },     {       \"id\": 3,       \"imgUrl\": \"https://scpfoundation.app/scp/scp-art/fb.jpg\",       \"logoUrl\": \"https://scpfoundation.app/scp/scp-art/scpLogoSite.png\",       \"title\": \"Сообщество SCP Foundation в Facebook\",       \"subTitle\": \"Официальное сообщество вселенной SCP Foundation.Свежие иллюстрации и новости из мира SCP\",       \"ctaButtonText\": \"Вступить!\",       \"redirectUrl\": \"https://www.facebook.com/artscp.project\"     }   ] }"
             }
         ]
     }
