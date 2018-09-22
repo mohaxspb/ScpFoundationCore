@@ -3,8 +3,6 @@ package ru.kuchanov.scpcore.mvp.presenter.monetization
 import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import org.joda.time.DateTime
-import org.joda.time.DateTimeZone
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
@@ -47,6 +45,11 @@ class LeaderboardPresenter(
     apiClient
 ), LeaderboardContract.Presenter {
 
+    companion object {
+        const val APPODEAL_ID = "appodeal"
+        const val LIMIT = 100
+    }
+
     override var isDataLoaded = false
 
     override val data = mutableListOf<MyListItem>()
@@ -83,6 +86,7 @@ class LeaderboardPresenter(
 
         Observable.zip(
             inAppHelper.getInAppsListToBuyObservable(inAppService),
+            //todo change data source
             Observable.just(mDbProviderFactory.dbProvider.leaderboardUsersUnmanaged),
             Observable.just(mDbProviderFactory.dbProvider.userUnmanaged)
         ) { inApps: List<Subscription>, users: List<LeaderboardUser>, user: User? -> Triple(inApps, users, user) }
@@ -190,7 +194,7 @@ class LeaderboardPresenter(
 
                         if (!updated) {
                             view.showSwipeRefreshProgress(true)
-                            updateLeaderboardFromApi()
+                            updateLeaderboardFromApi(0, LIMIT)
                         }
                     },
                     onError = {
@@ -205,42 +209,34 @@ class LeaderboardPresenter(
                     })
     }
 
-    override fun updateLeaderboardFromApi() {
+    //todo offset-limit
+    override fun updateLeaderboardFromApi(offset: Int, limit: Int) {
         if (data.isEmpty()) {
             view.showProgressCenter(true)
             view.enableSwipeRefresh(false)
         } else {
             view.showSwipeRefreshProgress(true)
         }
-        mApiClient.leaderboard.toSingle()
-                .map { leaderBoardResponse ->
-                    val realmUsers = leaderBoardResponse.users.map {
-                        //                    Timber.d("user: $it")
-                        LeaderboardUser(
-                            it.uid,
-                            it.fullName,
-                            it.avatar,
-                            it.score,
-                            it.numOfReadArticles,
-                            it.levelNum,
-                            it.scoreToNextLevel,
-                            it.curLevelScore
-                        )
-                    }
-                    return@map Triple(leaderBoardResponse.lastUpdated, leaderBoardResponse.timeZone, realmUsers)
-                }
+        mApiClient.getLeaderboardUsers(offset, limit)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap { triple -> mDbProviderFactory.dbProvider.saveLeaderboardUsers(triple.third).toSingle().map { triple } }
+                .flatMap { users ->
+                    if (offset == 0) {
+                        mDbProviderFactory.dbProvider.saveLeaderboardUsers(users).map { users }
+                    } else {
+                        Observable.just(users)
+                    }.toSingle()
+                }
                 .subscribeBy(
                     onSuccess = {
-                        Timber.d("serverTime: ${DateTime(it.first, DateTimeZone.forID(it.second))}")
-                        val utcTime = DateTime(it.first, DateTimeZone.forID(it.second)).withZone(DateTimeZone.UTC)
-                        Timber.d("utcTime: $utcTime")
-                        mMyPreferencesManager.leaderBoardUpdatedTime = utcTime.millis
-                        updateTime = utcTime.millis
-                        updated = true
-                        loadData()
+                        //                        Timber.d("serverTime: ${DateTime(it.first, DateTimeZone.forID(it.second))}")
+//                        val utcTime = DateTime(it.first, DateTimeZone.forID(it.second)).withZone(DateTimeZone.UTC)
+//                        Timber.d("utcTime: $utcTime")
+//                        mMyPreferencesManager.leaderBoardUpdatedTime = utcTime.millis
+//                        updateTime = utcTime.millis
+//                        updated = true
+//                        loadData()
+                        //todo show data
                     },
                     onError = {
                         Timber.e(it)
@@ -318,11 +314,5 @@ class LeaderboardPresenter(
         }
     }
 
-    override fun onRewardedVideoClick() {
-        view.onRewardedVideoClick()
-    }
-
-    companion object {
-        const val APPODEAL_ID = "appodeal"
-    }
+    override fun onRewardedVideoClick() = view.onRewardedVideoClick()
 }

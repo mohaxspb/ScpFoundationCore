@@ -34,6 +34,7 @@ public interface VpsServer {
         String SENT = "inviteSent";
     }
 
+    @Deprecated
     @GET("scp-ru-1/LeaderBoard")
     Observable<LeaderBoardResponse> getLeaderboard(@Query("lang") String lang);
 
