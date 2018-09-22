@@ -182,7 +182,6 @@ class LeaderboardPresenter(
                             data.addAll(createViewModels(it, inApps))
 
                             view.showData(data)
-                            view.resetOnScrollListener()
                         } else {
                             view.showBottomProgress(false)
                             view.enableSwipeRefresh(true)
@@ -192,8 +191,8 @@ class LeaderboardPresenter(
                             usersCount += it.size
 
                             view.showData(data)
-                            view.resetOnScrollListener()
                         }
+                        view.resetOnScrollListener()
 
                         //                        Timber.d("serverTime: ${DateTime(it.first, DateTimeZone.forID(it.second))}")
 //                        val utcTime = DateTime(it.first, DateTimeZone.forID(it.second)).withZone(DateTimeZone.UTC)
@@ -211,6 +210,7 @@ class LeaderboardPresenter(
                         view.showProgressCenter(false)
                         view.showBottomProgress(false)
                         view.showSwipeRefreshProgress(false)
+                        view.resetOnScrollListener()
                     }
                 )
     }
