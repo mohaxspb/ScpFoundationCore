@@ -24,6 +24,7 @@ import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
 import ru.kuchanov.scpcore.util.DimensionUtils
 import rx.Observable
+import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.subscribeBy
 import rx.schedulers.Schedulers
@@ -48,13 +49,15 @@ class LeaderboardPresenter(
     companion object {
         const val APPODEAL_ID = "appodeal"
         const val LIMIT = 100
+
+        val levelJson = LevelsJson.levelsJson
     }
 
     override var isDataLoaded = false
 
-    override val data = mutableListOf<MyListItem>()
+    override var data = mutableListOf<MyListItem>()
 
-    override var users: List<LeaderboardUser> = listOf()
+    override var inApps = listOf<Subscription>()
 
     override var myUser: User? = null
 
@@ -64,7 +67,7 @@ class LeaderboardPresenter(
 
     private var updated = false
 
-    override fun loadData() {
+    override fun loadInitialData() {
         Timber.d("getMarketData")
         if (inAppService == null) {
             view.showMessage(R.string.google_services_not_connected)
@@ -84,117 +87,48 @@ class LeaderboardPresenter(
             skuList.addAll(InAppHelper.getNewNoAdsSubsSkus())
         }
 
-        Observable.zip(
-            inAppHelper.getInAppsListToBuyObservable(inAppService),
-            //todo change data source
-            Observable.just(mDbProviderFactory.dbProvider.leaderboardUsersUnmanaged),
-            Observable.just(mDbProviderFactory.dbProvider.userUnmanaged)
-        ) { inApps: List<Subscription>, users: List<LeaderboardUser>, user: User? -> Triple(inApps, users, user) }
+        Single.zip(
+            inAppHelper.getInAppsListToBuyObservable(inAppService).toSingle(),
+            Single.just(mDbProviderFactory.dbProvider.userUnmanaged)
+        ) { inApps: List<Subscription>, user: User? -> Pair(inApps, user) }
+                .doOnSuccess {
+                    inApps = it.first
+                    myUser = it.second
+                }
                 .map {
-                    val levelJson = LevelsJson.levelsJson
-                    val viewModels = mutableListOf<MyListItem>()
-
-                    users = it.second
-                    if (!users.isEmpty()) {
-                        viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
-                        val medalColorsArr = listOf(R.color.medalGold, R.color.medalSilver, R.color.medalBronze)
-                        users.subList(0, 3).forEachIndexed { index, user ->
-                            viewModels.add(
-                                LabelViewModel(
-                                    0,
-                                    textString = BaseApplication.getAppInstance().getString(
-                                        R.string.leaderboard_place,
-                                        index + 1),
-                                    bgColor = R.color.freeAdsBackgroundColor))
-                            viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(8)))
-
-                            val level = levelJson.levels[user.levelNum]
-                            viewModels.add(
-                                LeaderboardUserViewModel(
-                                    index + 1,
-                                    user,
-                                    LevelViewModel(
-                                        level,
-                                        user.scoreToNextLevel,
-                                        levelJson.getLevelMaxScore(level),
-                                        level.id == LevelsJson.MAX_LEVEL_ID),
-                                    medalTint = medalColorsArr[index]
-                                ))
-                        }
-
-                        //levelUp inapp
-                        viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
-                        viewModels.add(
-                            LabelViewModel(
-                                R.string.leaderboard_inapp_label,
-                                textColor = R.color.material_green_500,
-                                bgColor = R.color.freeAdsBackgroundColor))
-                        val levelUpInApp = it.first.firstOrNull()
-                        viewModels.add(
-                            InAppViewModel(
-                                R.string.leaderboard_inapp_title,
-                                R.string.leaderboard_inapp_description,
-                                levelUpInApp?.price ?: "N/A",
-                                levelUpInApp?.productId ?: "N/A",
-                                R.drawable.ic_leaderbord_levelup_icon,
-                                R.color.freeAdsBackgroundColor))
-                        //appodeal rewarded video
-                        val score: Int = FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_REWARDED_VIDEO).toInt()
-                        viewModels.add(
-                            LabelViewModel(
-                                0,
-                                textString = BaseApplication.getAppInstance().getString(
-                                    R.string.leaderboard_inapp_label_undefined,
-                                    score
-                                ),
-                                textColor = R.color.material_green_500,
-                                bgColor = R.color.freeAdsBackgroundColor))
-                        viewModels.add(
-                            InAppViewModel(
-                                R.string.leaderboard_inapp_title,
-                                R.string.leaderboard_appodeal_description,
-                                "FREE",
-                                APPODEAL_ID,
-                                R.drawable.ic_inspect,
-                                R.color.freeAdsBackgroundColor))
-
-                        viewModels.addAll(users.subList(3, users.size).mapIndexed { index, firebaseObjectUser ->
-                            val level = levelJson.levels[firebaseObjectUser.levelNum]
-                            LeaderboardUserViewModel(
-                                index + 3 + 1,
-                                firebaseObjectUser,
-                                LevelViewModel(
-                                    level,
-                                    firebaseObjectUser.scoreToNextLevel,
-                                    levelJson.getLevelMaxScore(level),
-                                    level.id == LevelsJson.MAX_LEVEL_ID),
-                                bgColor = R.color.leaderboardBottomBgColor)
-                        })
-                    }
-                    myUser = it.third
-
-                    return@map Triple(viewModels, it.second, convertUser(myUser, users, levelJson))
+                    mDbProviderFactory.dbProvider.leaderboardUsersUnmanaged
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onNext = {
+                    onSuccess = {
                         isDataLoaded = true
-                        view.showProgressCenter(false)
-                        view.enableSwipeRefresh(true)
-                        view.showSwipeRefreshProgress(false)
-                        view.showRefreshButton(false)
-                        data.clear()
 
-                        data.addAll(it.first)
+                        if (it.isEmpty()) {
+                            view.showProgressCenter(true)
+                            view.enableSwipeRefresh(false)
+                            view.showSwipeRefreshProgress(false)
+                            view.showRefreshButton(false)
 
-                        view.showData(data)
-                        view.showUpdateDate(updateTime)
-                        view.showUser(it.third)
-
-                        if (!updated) {
-                            view.showSwipeRefreshProgress(true)
                             updateLeaderboardFromApi(0, LIMIT)
+                        } else {
+                            view.showProgressCenter(false)
+                            view.enableSwipeRefresh(true)
+                            view.showSwipeRefreshProgress(true)
+                            view.showRefreshButton(false)
+
+                            data.clear()
+                            data.addAll(createViewModels(it, inApps))
+
+                            view.showData(data)
+                            view.showUser(convertUser(user))
+                            //todo update date from api
+                            view.showUpdateDate(updateTime)
+
+                            if (!updated) {
+                                view.showSwipeRefreshProgress(true)
+                                updateLeaderboardFromApi(0, LIMIT)
+                            }
                         }
                     },
                     onError = {
@@ -203,7 +137,7 @@ class LeaderboardPresenter(
 
                         view.showError(it)
                         view.showProgressCenter(false)
-                        view.enableSwipeRefresh(true)
+                        view.enableSwipeRefresh(false)
                         view.showSwipeRefreshProgress(false)
                         view.showRefreshButton(true)
                     })
@@ -211,6 +145,7 @@ class LeaderboardPresenter(
 
     //todo offset-limit
     override fun updateLeaderboardFromApi(offset: Int, limit: Int) {
+        Timber.d("updateLeaderboardFromApi: $offset/$limit")
         if (data.isEmpty()) {
             view.showProgressCenter(true)
             view.enableSwipeRefresh(false)
@@ -229,50 +164,62 @@ class LeaderboardPresenter(
                 }
                 .subscribeBy(
                     onSuccess = {
+                        Timber.d("onSuccess: ${it.size}")
+
+                        if (offset == 0) {
+                            view.showProgressCenter(false)
+                            view.showSwipeRefreshProgress(false)
+                            view.enableSwipeRefresh(true)
+
+                            updated = true
+                            data.clear()
+                            data.addAll(createViewModels(it, inApps))
+                            view.showData(data)
+                        } else {
+                            //todo
+                        }
+
                         //                        Timber.d("serverTime: ${DateTime(it.first, DateTimeZone.forID(it.second))}")
 //                        val utcTime = DateTime(it.first, DateTimeZone.forID(it.second)).withZone(DateTimeZone.UTC)
 //                        Timber.d("utcTime: $utcTime")
 //                        mMyPreferencesManager.leaderBoardUpdatedTime = utcTime.millis
 //                        updateTime = utcTime.millis
 //                        updated = true
-//                        loadData()
-                        //todo show data
+//                        loadInitialData()
                     },
                     onError = {
                         Timber.e(it)
                         view.showError(it)
-//                        view.enableSwipeRefresh(true)
+                        view.enableSwipeRefresh(!data.isEmpty())
+                        view.showRefreshButton(data.isEmpty())
                         view.showProgressCenter(false)
                         view.showSwipeRefreshProgress(false)
                     }
                 )
     }
 
-    private fun convertUser(user: User?, users: List<LeaderboardUser>, levelJson: LevelsJson): LeaderboardUserViewModel? {
+    private fun convertUser(user: User?): LeaderboardUserViewModel? {
         if (user == null) {
             return null
         }
-        var userInFirebase = users.find { leaderboardUser -> leaderboardUser.uid == user.uid }
-
-        if (userInFirebase == null) {
-            val level = levelJson.getLevelForScore(user.score) ?: return null
-            userInFirebase = LeaderboardUser(
-                user.uid,
-                user.fullName,
-                user.avatar,
-                user.score,
-                LeaderboardUser.READ_ARTICLES_COUNT_NONE,
-                levelNum = level.id,
-                scoreToNextLevel = levelJson.scoreToNextLevel(user.score, level),
-                curLevelScore = user.score - level.score
-            )
-        }
+        val levelJson = LevelsJson.levelsJson
+        val level = levelJson.getLevelForScore(user.score) ?: return null
+        val userInFirebase = LeaderboardUser(
+            user.uid,
+            user.fullName,
+            user.avatar,
+            user.score,
+            LeaderboardUser.READ_ARTICLES_COUNT_NONE,
+            levelNum = level.id,
+            scoreToNextLevel = levelJson.scoreToNextLevel(user.score, level),
+            curLevelScore = user.score - level.score
+        )
 
         //set score from realm
         userInFirebase.score = user.score
-        val level = levelJson.levels[userInFirebase.levelNum]
         return LeaderboardUserViewModel(
-            users.indexOf(userInFirebase),
+            //todo create method for calculate user position in API
+            -1,
             userInFirebase,
             LevelViewModel(
                 level,
@@ -290,7 +237,7 @@ class LeaderboardPresenter(
         if (myUser == null) {
             view.showUser(null)
         } else {
-            view.showUser(convertUser(myUser, users, LevelsJson.levelsJson))
+            view.showUser(convertUser(myUser))
         }
     }
 
@@ -315,4 +262,100 @@ class LeaderboardPresenter(
     }
 
     override fun onRewardedVideoClick() = view.onRewardedVideoClick()
+
+    private fun createViewModels(users: List<LeaderboardUser>, inApps: List<Subscription>): List<MyListItem> {
+        val viewModels = mutableListOf<MyListItem>()
+
+        viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
+
+        viewModels.addAll(convertUsers(users, true))
+
+        viewModels.addAll(7, createMonetizationViewModels(inApps))
+
+        return viewModels
+    }
+
+    private fun convertUsers(leaderboardUsers: List<LeaderboardUser>, markFirst: Boolean = false): List<MyListItem> {
+        val viewModels = mutableListOf<MyListItem>()
+
+        viewModels.addAll(leaderboardUsers.mapIndexed { index, firebaseObjectUser ->
+            val level = levelJson.levels[firebaseObjectUser.levelNum]
+            LeaderboardUserViewModel(
+                index + 1,
+                firebaseObjectUser,
+                LevelViewModel(
+                    level,
+                    firebaseObjectUser.scoreToNextLevel,
+                    levelJson.getLevelMaxScore(level),
+                    level.id == LevelsJson.MAX_LEVEL_ID),
+                bgColor = R.color.leaderboardBottomBgColor)
+        })
+
+        if (markFirst) {
+            val medalColorsArr = listOf(R.color.medalGold, R.color.medalSilver, R.color.medalBronze)
+
+            viewModels.subList(0, 3).forEachIndexed { index, listItem ->
+                with(listItem as LeaderboardUserViewModel) {
+                    medalTint = medalColorsArr[index]
+                    bgColor = R.color.freeAdsBackgroundColor
+                }
+            }
+
+            for (index in 0..2 * 2 step 2) {
+                Timber.d("index: $index")
+                viewModels.add(
+                    index,
+                    LabelViewModel(
+                        0,
+                        textString = BaseApplication.getAppInstance().getString(
+                            R.string.leaderboard_place,
+                            index / 2 + 1),
+                        bgColor = R.color.freeAdsBackgroundColor))
+                viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(8)))
+            }
+        }
+
+        return viewModels
+    }
+
+    private fun createMonetizationViewModels(inApps: List<Subscription>): MutableList<MyListItem> {
+        val monetizationViewModels = mutableListOf<MyListItem>()
+        //levelUp inapp
+        monetizationViewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
+        monetizationViewModels.add(
+            LabelViewModel(
+                R.string.leaderboard_inapp_label,
+                textColor = R.color.material_green_500,
+                bgColor = R.color.freeAdsBackgroundColor))
+        val levelUpInApp = inApps.firstOrNull()
+        monetizationViewModels.add(
+            InAppViewModel(
+                R.string.leaderboard_inapp_title,
+                R.string.leaderboard_inapp_description,
+                levelUpInApp?.price ?: "N/A",
+                levelUpInApp?.productId ?: "N/A",
+                R.drawable.ic_leaderbord_levelup_icon,
+                R.color.freeAdsBackgroundColor))
+        //appodeal rewarded video
+        val score: Int = FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_REWARDED_VIDEO).toInt()
+        monetizationViewModels.add(
+            LabelViewModel(
+                0,
+                textString = BaseApplication.getAppInstance().getString(
+                    R.string.leaderboard_inapp_label_undefined,
+                    score
+                ),
+                textColor = R.color.material_green_500,
+                bgColor = R.color.freeAdsBackgroundColor))
+        monetizationViewModels.add(
+            InAppViewModel(
+                R.string.leaderboard_inapp_title,
+                R.string.leaderboard_appodeal_description,
+                "FREE",
+                APPODEAL_ID,
+                R.drawable.ic_inspect,
+                R.color.freeAdsBackgroundColor))
+
+        return monetizationViewModels
+    }
 }

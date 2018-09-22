@@ -63,7 +63,7 @@ class LeaderboardFragment :
             if (connected && isAdded && activity is BaseActivity<*, *>) {
                 getPresenter().inAppService = (activity as BaseActivity<*, *>).getIInAppBillingService()
                 if (!getPresenter().isDataLoaded) {
-                    getPresenter().loadData()
+                    getPresenter().loadInitialData()
                 }
             }
         }
@@ -80,7 +80,7 @@ class LeaderboardFragment :
         recyclerView.itemAnimator?.changeDuration = 0
 
         swipeRefresh.setColorSchemeResources(R.color.zbs_color_red)
-        swipeRefresh.setOnRefreshListener { mPresenter.updateLeaderboardFromApi() }
+        swipeRefresh.setOnRefreshListener { mPresenter.updateLeaderboardFromApi(0, LeaderboardPresenter.LIMIT) }
 
         val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
         delegateManager.addDelegate(DividerDelegate())
@@ -98,13 +98,13 @@ class LeaderboardFragment :
 
         if (presenter.data.isEmpty()) {
             enableSwipeRefresh(false)
-            getPresenter().loadData()
+            getPresenter().loadInitialData()
         } else {
             showProgressCenter(false)
             presenter.apply { showData(data); onUserChanged(myUser); showUpdateDate(updateTime) }
         }
 
-        refresh.setOnClickListener { getPresenter().loadData() }
+        refresh.setOnClickListener { getPresenter().loadInitialData() }
     }
 
     override fun showProgressCenter(show: Boolean) {

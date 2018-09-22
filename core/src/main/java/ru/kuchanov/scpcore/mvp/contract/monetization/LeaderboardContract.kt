@@ -4,8 +4,8 @@ import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LeaderboardUserViewModel
-import ru.kuchanov.scpcore.db.model.LeaderboardUser
 import ru.kuchanov.scpcore.db.model.User
+import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.mvp.base.BaseMvp
 import ru.kuchanov.scpcore.mvp.contract.FragmentToolbarStateSetter
 
@@ -32,14 +32,14 @@ interface LeaderboardContract : BaseMvp {
     interface Presenter : BaseMvp.Presenter<View> {
         val isDataLoaded: Boolean
 
-        val data: List<MyListItem>
-        var users: List<LeaderboardUser>
+        var data: MutableList<MyListItem>
         var myUser: User?
+        var inApps: List<Subscription>
         var updateTime: Long
 
         var inAppService: IInAppBillingService?
 
-        fun loadData()
+        fun loadInitialData()
         fun onSubscriptionClick(id: String, target: Fragment, ignoreUserCheck: Boolean = false)
         fun updateLeaderboardFromApi(offset: Int, limit: Int)
         fun onRewardedVideoClick()
