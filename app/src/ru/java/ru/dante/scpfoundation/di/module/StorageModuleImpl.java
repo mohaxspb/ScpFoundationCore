@@ -200,10 +200,26 @@ public class StorageModuleImpl extends StorageModule {
             }
 
             if (oldVersion == 9) {
-                RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
+                final RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
                 if (articleSchema != null) {
                     articleSchema
                             .addField(Article.FIELD_IS_IN_OBJECTS_5, long.class);
+                }
+                oldVersion++;
+            }
+
+            if (oldVersion == 10) {
+                final RealmObjectSchema leaderboardUserSchema = schema.get(LeaderboardUser.class.getSimpleName());
+                if (leaderboardUserSchema != null) {
+                    leaderboardUserSchema
+                            .removeField(LeaderboardUser.FIELD_UID)
+                            .addField(
+                                    LeaderboardUser.FIELD_ID,
+                                    Long.class,
+                                    FieldAttribute.PRIMARY_KEY,
+                                    FieldAttribute.INDEXED,
+                                    FieldAttribute.REQUIRED
+                            );
                 }
                 oldVersion++;
             }

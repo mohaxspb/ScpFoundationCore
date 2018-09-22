@@ -27,10 +27,14 @@ interface LeaderboardContract : BaseMvp {
         fun showSwipeRefreshProgress(show: Boolean)
         fun enableSwipeRefresh(enable: Boolean)
         fun showOfferLoginForLevelUpPopup()
+        fun resetOnScrollListener()
+        fun showBottomProgress(show: Boolean)
     }
 
     interface Presenter : BaseMvp.Presenter<View> {
         val isDataLoaded: Boolean
+
+        var usersCount: Int
 
         var data: MutableList<MyListItem>
         var myUser: User?
@@ -41,7 +45,9 @@ interface LeaderboardContract : BaseMvp {
 
         fun loadInitialData()
         fun onSubscriptionClick(id: String, target: Fragment, ignoreUserCheck: Boolean = false)
-        fun updateLeaderboardFromApi(offset: Int, limit: Int)
+        fun updateLeaderboardFromApi(offset: Int, limit: Int = LEADERBOARD_REQUEST_LIMIT)
         fun onRewardedVideoClick()
     }
 }
+
+const val LEADERBOARD_REQUEST_LIMIT = 100

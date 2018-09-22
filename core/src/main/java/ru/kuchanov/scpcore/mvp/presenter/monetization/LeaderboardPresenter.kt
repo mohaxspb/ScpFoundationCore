@@ -48,12 +48,13 @@ class LeaderboardPresenter(
 
     companion object {
         const val APPODEAL_ID = "appodeal"
-        const val LIMIT = 100
 
         val levelJson = LevelsJson.levelsJson
     }
 
     override var isDataLoaded = false
+
+    override var usersCount = 0
 
     override var data = mutableListOf<MyListItem>()
 
@@ -68,7 +69,7 @@ class LeaderboardPresenter(
     private var updated = false
 
     override fun loadInitialData() {
-        Timber.d("getMarketData")
+        Timber.d("loadInitialData")
         if (inAppService == null) {
             view.showMessage(R.string.google_services_not_connected)
             view.showProgressCenter(false)
@@ -95,14 +96,16 @@ class LeaderboardPresenter(
                     inApps = it.first
                     myUser = it.second
                 }
-                .map {
-                    mDbProviderFactory.dbProvider.leaderboardUsersUnmanaged
-                }
+                .map { mDbProviderFactory.dbProvider.leaderboardUsersUnmanaged }
+//                .map { if(it.size<3) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                     onSuccess = {
+                        Timber.d("loadInitialData onSuccess: ${it.size}")
                         isDataLoaded = true
+
+                        usersCount = it.size
 
                         if (it.isEmpty()) {
                             view.showProgressCenter(true)
@@ -110,7 +113,7 @@ class LeaderboardPresenter(
                             view.showSwipeRefreshProgress(false)
                             view.showRefreshButton(false)
 
-                            updateLeaderboardFromApi(0, LIMIT)
+                            updateLeaderboardFromApi(0)
                         } else {
                             view.showProgressCenter(false)
                             view.enableSwipeRefresh(true)
@@ -124,10 +127,11 @@ class LeaderboardPresenter(
                             view.showUser(convertUser(user))
                             //todo update date from api
                             view.showUpdateDate(updateTime)
+                            view.resetOnScrollListener()
 
                             if (!updated) {
                                 view.showSwipeRefreshProgress(true)
-                                updateLeaderboardFromApi(0, LIMIT)
+                                updateLeaderboardFromApi(0)
                             }
                         }
                     },
@@ -143,7 +147,6 @@ class LeaderboardPresenter(
                     })
     }
 
-    //todo offset-limit
     override fun updateLeaderboardFromApi(offset: Int, limit: Int) {
         Timber.d("updateLeaderboardFromApi: $offset/$limit")
         if (data.isEmpty()) {
@@ -164,7 +167,7 @@ class LeaderboardPresenter(
                 }
                 .subscribeBy(
                     onSuccess = {
-                        Timber.d("onSuccess: ${it.size}")
+                        Timber.d("updateLeaderboardFromApi onSuccess: ${it.size}")
 
                         if (offset == 0) {
                             view.showProgressCenter(false)
@@ -172,11 +175,24 @@ class LeaderboardPresenter(
                             view.enableSwipeRefresh(true)
 
                             updated = true
+
+                            usersCount = it.size
+
                             data.clear()
                             data.addAll(createViewModels(it, inApps))
+
                             view.showData(data)
+                            view.resetOnScrollListener()
                         } else {
-                            //todo
+                            view.showBottomProgress(false)
+                            view.enableSwipeRefresh(true)
+
+                            data.addAll(convertUsers(it, usersCount))
+
+                            usersCount += it.size
+
+                            view.showData(data)
+                            view.resetOnScrollListener()
                         }
 
                         //                        Timber.d("serverTime: ${DateTime(it.first, DateTimeZone.forID(it.second))}")
@@ -193,6 +209,7 @@ class LeaderboardPresenter(
                         view.enableSwipeRefresh(!data.isEmpty())
                         view.showRefreshButton(data.isEmpty())
                         view.showProgressCenter(false)
+                        view.showBottomProgress(false)
                         view.showSwipeRefreshProgress(false)
                     }
                 )
@@ -202,10 +219,9 @@ class LeaderboardPresenter(
         if (user == null) {
             return null
         }
-        val levelJson = LevelsJson.levelsJson
         val level = levelJson.getLevelForScore(user.score) ?: return null
         val userInFirebase = LeaderboardUser(
-            user.uid,
+            0,
             user.fullName,
             user.avatar,
             user.score,
@@ -232,7 +248,6 @@ class LeaderboardPresenter(
     override fun onUserChanged(user: User?) {
         super.onUserChanged(user)
         myUser = user
-        Timber.d("onUserChanged: $user")
         Timber.d("onUserChanged: $myUser")
         if (myUser == null) {
             view.showUser(null)
@@ -268,20 +283,24 @@ class LeaderboardPresenter(
 
         viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
 
-        viewModels.addAll(convertUsers(users, true))
+        viewModels.addAll(convertUsers(users, 0, true))
 
         viewModels.addAll(7, createMonetizationViewModels(inApps))
 
         return viewModels
     }
 
-    private fun convertUsers(leaderboardUsers: List<LeaderboardUser>, markFirst: Boolean = false): List<MyListItem> {
+    private fun convertUsers(
+        leaderboardUsers: List<LeaderboardUser>,
+        startIndex: Int = 0,
+        markFirst: Boolean = false
+    ): List<MyListItem> {
+        Timber.d("convertUsers: ${leaderboardUsers.size}/${leaderboardUsers[0]}")
         val viewModels = mutableListOf<MyListItem>()
-
         viewModels.addAll(leaderboardUsers.mapIndexed { index, firebaseObjectUser ->
             val level = levelJson.levels[firebaseObjectUser.levelNum]
             LeaderboardUserViewModel(
-                index + 1,
+                index + startIndex + 1,
                 firebaseObjectUser,
                 LevelViewModel(
                     level,
@@ -302,7 +321,6 @@ class LeaderboardPresenter(
             }
 
             for (index in 0..2 * 2 step 2) {
-                Timber.d("index: $index")
                 viewModels.add(
                     index,
                     LabelViewModel(

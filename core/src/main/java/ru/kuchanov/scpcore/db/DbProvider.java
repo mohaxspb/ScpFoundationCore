@@ -106,14 +106,6 @@ public class DbProvider {
                 .filter(RealmResults::isValid);
     }
 
-    public Observable<RealmResults<LeaderboardUser>> getLeaderboardUsers() {
-        return mRealm.where(LeaderboardUser.class)
-                .findAllSortedAsync(LeaderboardUser.FIELD_SCORE, Sort.DESCENDING)
-                .asObservable()
-                .filter(RealmResults::isLoaded)
-                .filter(RealmResults::isValid);
-    }
-
     @NotNull
     public List<LeaderboardUser> getLeaderboardUsersUnmanaged() {
         final List<LeaderboardUser> users = mRealm.where(LeaderboardUser.class)

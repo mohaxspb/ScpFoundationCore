@@ -2,15 +2,16 @@ package ru.kuchanov.scpcore.ui.fragment.monetization
 
 import android.graphics.Bitmap
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
-import android.widget.Space
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SimpleItemAnimator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.LinearLayout
+import android.widget.Space
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.BitmapImageViewTarget
@@ -30,11 +31,14 @@ import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LeaderboardUserViewModel
 import ru.kuchanov.scpcore.db.model.LeaderboardUser
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
+import ru.kuchanov.scpcore.mvp.contract.monetization.LEADERBOARD_REQUEST_LIMIT
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
 import ru.kuchanov.scpcore.mvp.presenter.monetization.LeaderboardPresenter
 import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 import ru.kuchanov.scpcore.ui.holder.login.SocialLoginHolder
+import ru.kuchanov.scpcore.ui.util.EndlessRecyclerViewScrollListener
+import ru.kuchanov.scpcore.util.DimensionUtils
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
@@ -80,7 +84,7 @@ class LeaderboardFragment :
         recyclerView.itemAnimator?.changeDuration = 0
 
         swipeRefresh.setColorSchemeResources(R.color.zbs_color_red)
-        swipeRefresh.setOnRefreshListener { mPresenter.updateLeaderboardFromApi(0, LeaderboardPresenter.LIMIT) }
+        swipeRefresh.setOnRefreshListener { mPresenter.updateLeaderboardFromApi(0) }
 
         val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
         delegateManager.addDelegate(DividerDelegate())
@@ -117,6 +121,13 @@ class LeaderboardFragment :
     }
 
     override fun showSwipeRefreshProgress(show: Boolean) {
+        if (!isAdded) {
+            return
+        }
+        if (!swipeRefresh.isRefreshing && !show) {
+            return
+        }
+        swipeRefresh.setProgressViewEndTarget(false, DimensionUtils.getActionBarHeight(activity!!))
         swipeRefresh.isRefreshing = show
     }
 
@@ -249,6 +260,45 @@ class LeaderboardFragment :
     override fun getToolbarTitle(): Int = R.string.leaderboard_activity_title
 
     override fun getToolbarTextColor(): Int = android.R.color.white
+
+    /**
+     * override it to change or disable endless scrolling behavior
+     */
+    override fun resetOnScrollListener() {
+        recyclerView.clearOnScrollListeners()
+        if (presenter.usersCount < LEADERBOARD_REQUEST_LIMIT || presenter.usersCount % LEADERBOARD_REQUEST_LIMIT != 0) {
+            //so there is to less arts to be able to load from bottom
+            //this can be if we receive few search results
+            //si we just no need to set scrollListener
+            return
+        }
+        recyclerView.addOnScrollListener(object : EndlessRecyclerViewScrollListener() {
+            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
+                Timber.d("onLoadMode with page: %s, and offset: %s", page, view.adapter?.itemCount)
+                showBottomProgress(true)
+                mPresenter.updateLeaderboardFromApi(presenter.usersCount)
+            }
+        })
+
+        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
+        recyclerView.addOnScrollListener(fastScroller.onScrollListener)
+    }
+
+    override fun showBottomProgress(show: Boolean) {
+        if (!isAdded) {
+            return
+        }
+
+        if (show) {
+            val screenHeight = DimensionUtils.getScreenHeight()
+            swipeRefresh.setProgressViewEndTarget(
+                false,
+                (screenHeight - DimensionUtils.getActionBarHeight(activity!!) * 3.5f).toInt()
+            )
+        }
+
+        swipeRefresh.isRefreshing = show
+    }
 
     companion object {
 
