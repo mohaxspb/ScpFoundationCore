@@ -8,6 +8,7 @@ import io.realm.RealmMigration;
 import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
 import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.db.model.LeaderboardUser;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImageTranslation;
@@ -93,7 +94,7 @@ public class StorageModuleImpl extends StorageModule {
             }
 
             if (oldVersion == 4) {
-                RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
+                final RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
                 if (articleSchema != null) {
                     articleSchema
                             .addField(Article.FIELD_IS_IN_OBJECTS_5, long.class);
