@@ -12,14 +12,17 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import ru.kuchanov.scpcore.Constants;
+import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
 import ru.kuchanov.scpcore.monetization.model.ScpArtAdsJson;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
+import ru.kuchanov.scpcore.ui.util.FontUtils;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.APP_INSTALL_REWARD_IN_MILLIS;
@@ -129,6 +132,16 @@ public class MyPreferenceManager {
         super();
         mPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         mGson = gson;
+
+        fixFontNamesIssue(context);
+    }
+
+    private void fixFontNamesIssue(@NotNull final Context context) {
+        //fix font names changed
+        final String fontName = getFontPath();
+        if (!Arrays.asList(context.getResources().getStringArray(R.array.fonts)).contains(fontName)) {
+            setFontPath(FontUtils.DEFAULT_FONT_NAME);
+        }
     }
 
     public void setIsNightMode(final boolean isInNightMode) {
@@ -183,7 +196,7 @@ public class MyPreferenceManager {
     }
 
     public String getFontPath() {
-        return mPreferences.getString(Keys.DESIGN_FONT_PATH, "roboto_regular");
+        return mPreferences.getString(Keys.DESIGN_FONT_PATH, FontUtils.DEFAULT_FONT_NAME);
     }
 
     //download all settings
