@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -140,6 +141,8 @@ public class MyPreferenceManager {
         //fix font names changed
         final String fontName = getFontPath();
         if (!Arrays.asList(context.getResources().getStringArray(R.array.fonts)).contains(fontName)) {
+            Timber.d("fixFontNamesIssue: %s", fontName);
+            Log.e(MyPreferenceManager.class.getSimpleName(), "fixFontNamesIssue: " + fontName);
             setFontPath(FontUtils.DEFAULT_FONT_NAME);
         }
     }
