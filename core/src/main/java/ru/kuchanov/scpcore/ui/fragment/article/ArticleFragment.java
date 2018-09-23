@@ -20,7 +20,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -159,9 +158,32 @@ public class ArticleFragment
                 IntentUtils.openUrl(presenter.getData().commentsUrl);
             }
             return true;
+        } else if (item.getItemId() == R.id.menuItemNextNumberArticle) {
+            if (presenter.getData() == null || TextUtils.isEmpty(presenter.getData().getUrl())) {
+                showMessageLong(R.string.cant_find_next_article);
+            } else if (!TextUtils.isEmpty(presenter.getData().nextArticleUrl())) {
+                getBaseActivity().startArticleActivity(presenter.getData().nextArticleUrl());
+            } else {
+                showMessageLong(R.string.cant_find_next_article);
+            }
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(final Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        final MenuItem commentsMenuItem = menu.findItem(R.id.menuItemCommentsBrowser);
+        final MenuItem nextArticleMenuItem = menu.findItem(R.id.menuItemNextNumberArticle);
+        if (presenter.getData() == null) {
+            commentsMenuItem.setVisible(false);
+            nextArticleMenuItem.setVisible(false);
+        } else {
+            commentsMenuItem.setVisible(!TextUtils.isEmpty(presenter.getData().commentsUrl));
+            nextArticleMenuItem.setVisible(!TextUtils.isEmpty(presenter.getData().nextArticleUrl()));
+        }
     }
 
     @Override
@@ -275,6 +297,7 @@ public class ArticleFragment
     }
 
     private void updateActivityMenuState() {
+        getActivity().invalidateOptionsMenu();
         if (getActivity() instanceof ToolbarStateSetter) {
             if (mArticle.title != null) {
                 ((ToolbarStateSetter) getActivity()).setTitle(mArticle.title);
@@ -484,9 +507,8 @@ public class ArticleFragment
         Timber.d("onSharedPreferenceChanged: key: %s", key);
         switch (key) {
             case MyPreferenceManager.Keys.TEXT_SCALE_ARTICLE:
-                mAdapter.notifyDataSetChanged();
-                break;
             case MyPreferenceManager.Keys.DESIGN_FONT_PATH:
+            case MyPreferenceManager.Keys.IS_TEXT_SELECTABLE:
                 mAdapter.notifyDataSetChanged();
                 break;
             case MyPreferenceManager.Keys.ADS_BANNER_IN_ARTICLE:

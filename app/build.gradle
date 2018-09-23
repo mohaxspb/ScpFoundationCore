@@ -129,6 +129,13 @@ android {
             matchingFallbacks = ['debug', 'release']
         }
 
+        ch {
+            dimension "lang"
+
+            applicationIdSuffix ".ch"
+            matchingFallbacks = ['debug', 'release']
+        }
+
         applicationVariants.all { variant ->
             println('variantApp: ' + variant.getName())
 
@@ -137,9 +144,6 @@ android {
 
             def versionCode = project.hasProperty('devBuild') ? 100 : buildVersionCodeFromVariant(variant)
             def versionName = project.hasProperty('devBuild') ? 100 : getVersionValueAsString(variant)
-
-            variant.mergedFlavor.versionCode = versionCode
-            variant.mergedFlavor.versionName = versionName
 
             //need this as in new gradle plugin there broken functionality of iterating variant during build
             //so we need to set version so
@@ -173,6 +177,7 @@ configurations {
     esDevReleaseCompile
     italyDevReleaseCompile
     ptDevReleaseCompile
+    chDevReleaseCompile
     //prod
     ruProdReleaseCompile
     enProdReleaseCompile
@@ -182,6 +187,7 @@ configurations {
     esProdReleaseCompile
     italyProdReleaseCompile
     ptProdReleaseCompile
+    chProdReleaseCompile
 }
 
 dependencies {

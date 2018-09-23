@@ -26,14 +26,14 @@ import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.ScpArtAdsJson;
-import ru.kuchanov.scpcore.ui.holder.ArticleImageHolder;
-import ru.kuchanov.scpcore.ui.holder.ArticleSpoilerHolder;
-import ru.kuchanov.scpcore.ui.holder.ArticleTableHolder;
-import ru.kuchanov.scpcore.ui.holder.ArticleTabsHolder;
-import ru.kuchanov.scpcore.ui.holder.ArticleTagsHolder;
-import ru.kuchanov.scpcore.ui.holder.ArticleTextHolder;
-import ru.kuchanov.scpcore.ui.holder.ArticleTitleHolder;
-import ru.kuchanov.scpcore.ui.holder.NativeAdsArticleListHolder;
+import ru.kuchanov.scpcore.ui.holder.article.ArticleImageHolder;
+import ru.kuchanov.scpcore.ui.holder.article.ArticleSpoilerHolder;
+import ru.kuchanov.scpcore.ui.holder.article.ArticleTableHolder;
+import ru.kuchanov.scpcore.ui.holder.article.ArticleTabsHolder;
+import ru.kuchanov.scpcore.ui.holder.article.ArticleTagsHolder;
+import ru.kuchanov.scpcore.ui.holder.article.ArticleTextHolder;
+import ru.kuchanov.scpcore.ui.holder.article.ArticleTitleHolder;
+import ru.kuchanov.scpcore.ui.holder.article.NativeAdsArticleListHolder;
 import ru.kuchanov.scpcore.ui.model.ArticleTextPartViewModel;
 import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
 import ru.kuchanov.scpcore.ui.model.TabsViewModel;
@@ -264,7 +264,7 @@ public class ArticleAdapter
             return;
         }
         if (mAdsModelsList.isEmpty()) {
-            mAdsModelsList.addAll(createAdsModelsList(true));
+            mAdsModelsList.addAll(createAdsModelsList(true, mMyPreferenceManager));
         }
 
         // Loop through the items array and place a new Native Express ad in every ith position in

@@ -34,6 +34,7 @@ import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import timber.log.Timber;
 
@@ -100,14 +101,6 @@ public class DbProvider {
         return mRealm.where(Article.class)
                 .notEqualTo(Article.FIELD_IS_IN_READEN, false)
                 .findAllSortedAsync(field, order)
-                .asObservable()
-                .filter(RealmResults::isLoaded)
-                .filter(RealmResults::isValid);
-    }
-
-    public Observable<RealmResults<LeaderboardUser>> getLeaderboardUsers() {
-        return mRealm.where(LeaderboardUser.class)
-                .findAllSortedAsync(LeaderboardUser.FIELD_SCORE, Sort.DESCENDING)
                 .asObservable()
                 .filter(RealmResults::isLoaded)
                 .filter(RealmResults::isValid);
@@ -853,16 +846,15 @@ public class DbProvider {
         return deleteUserData();
     }
 
-    public Observable<Void> saveImages(final List<GalleryImage> vkImages) {
-        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
+    public Single<Void> saveImages(final List<GalleryImage> vkImages) {
+        return Single.create(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //clear
                     realm.delete(GalleryImage.class);
                     realm.insertOrUpdate(vkImages);
                 },
                 () -> {
-                    subscriber.onNext(null);
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(null);
                     mRealm.close();
                 },
                 e -> {

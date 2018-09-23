@@ -107,7 +107,7 @@ import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
-import ru.kuchanov.scpcore.ui.holder.SocialLoginHolder;
+import ru.kuchanov.scpcore.ui.holder.login.SocialLoginHolder;
 import ru.kuchanov.scpcore.ui.util.DialogUtils;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import ru.kuchanov.scpcore.util.Entry;
@@ -117,7 +117,6 @@ import ru.kuchanov.scpcore.util.SystemUtils;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventName;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventParam;
@@ -642,6 +641,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         }
     }
 
+    @Nullable
     public IInAppBillingService getIInAppBillingService() {
         return mService;
     }
@@ -1007,14 +1007,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         }
     }
 
-    /**
-     * we need this for calligraphy
-     */
-    @Override
-    protected void attachBaseContext(final Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
-
     @Override
     public void showFreeAdsDisablePopup() {
         SubscriptionsActivity.start(this, SubscriptionsActivity.TYPE_DISABLE_ADS_FOR_FREE);
@@ -1159,7 +1151,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         // throttling is in progress. The default expiration duration is 43200 (12 hours).
         long cacheExpiration = Constants.Firebase.RemoteConfigKeys.CACHE_EXPIRATION_SECONDS; //default 43200
         if (remoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
-            cacheExpiration = Period.minutes(5).toStandardSeconds().getSeconds();//for 5 min
+            cacheExpiration = Period.minutes(1).toStandardSeconds().getSeconds();
 
         }
         //comment this if you want to use local data

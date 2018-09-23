@@ -9,15 +9,21 @@ import org.joda.time.Period;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 
 import ru.kuchanov.scpcore.Constants;
+import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
+import ru.kuchanov.scpcore.monetization.model.ScpArtAdsJson;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
+import ru.kuchanov.scpcore.ui.util.FontUtils;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.APP_INSTALL_REWARD_IN_MILLIS;
@@ -74,6 +80,7 @@ public class MyPreferenceManager {
         String TEXT_SCALE_UI = "TEXT_SCALE_UI";
         String TEXT_SCALE_ARTICLE = "TEXT_SCALE_ARTICLE";
         String DESIGN_LIST_TYPE = "DESIGN_LIST_TYPE";
+        String IS_TEXT_SELECTABLE = "IS_TEXT_SELECTABLE";
 
         String NOTIFICATION_IS_ON = "NOTIFICATION_IS_ON";
         String NOTIFICATION_PERIOD = "NOTIFICATION_PERIOD";
@@ -109,12 +116,13 @@ public class MyPreferenceManager {
         String ADS_BANNER_IN_ARTICLES_LISTS = "ADS_BANNER_IN_ARTICLES_LISTS";
         String ADS_BANNER_IN_ARTICLE = "ADS_BANNER_IN_ARTICLE";
         String OFFER_ALREADY_SHOWN = "OFFER_ALREADY_SHOWN";
-        String LEADERBOARD_UPDATE_TIME = "LEADERBOARD_UPDATE_TIME";
         String OFFLINE_RANDOM = "OFFLINE_RANDOM";
         String INNER_ARTICLES_DEPTH = "INNER_ARTICLES_DEPTH";
         String DOWNLOAD_FORCE_UPDATE_ENABLED = "DOWNLOAD_FORCE_UPDATE_ENABLED";
         String IMAGES_CACHE_ENABLED = "IMAGES_CACHE_ENABLED";
         String VK_APP_SHARED = "VK_APP_SHARED";
+        String SAVE_NEW_ARTICLES_ENABLED = "SAVE_NEW_ARTICLES_ENABLED";
+        String LEADERBOARD_UPDATE_DATE = "LEADERBOARD_UPDATE_DATE";
     }
 
     private final Gson mGson;
@@ -125,6 +133,16 @@ public class MyPreferenceManager {
         super();
         mPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         mGson = gson;
+
+        fixFontNamesIssue(context);
+    }
+
+    private void fixFontNamesIssue(@NotNull final Context context) {
+        //fix font names changed
+        final String fontName = getFontPath();
+        if (!Arrays.asList(context.getResources().getStringArray(R.array.fonts)).contains(fontName)) {
+            setFontPath(FontUtils.DEFAULT_FONT_NAME);
+        }
     }
 
     public void setIsNightMode(final boolean isInNightMode) {
@@ -151,6 +169,14 @@ public class MyPreferenceManager {
         mPreferences.edit().putFloat(Keys.TEXT_SCALE_ARTICLE, textScale).apply();
     }
 
+    public void setTextIsSelectable(final boolean isTextSelectable) {
+        mPreferences.edit().putBoolean(Keys.IS_TEXT_SELECTABLE, isTextSelectable).apply();
+    }
+
+    public boolean isTextSelectable() {
+        return mPreferences.getBoolean(Keys.IS_TEXT_SELECTABLE, true);
+    }
+
     //design settings
     public boolean isDesignListNewEnabled() {
         return !mPreferences.getString(Keys.DESIGN_LIST_TYPE, SettingsBottomSheetDialogFragment.ListItemType.MIDDLE).equals(SettingsBottomSheetDialogFragment.ListItemType.MIN);
@@ -171,7 +197,7 @@ public class MyPreferenceManager {
     }
 
     public String getFontPath() {
-        return mPreferences.getString(Keys.DESIGN_FONT_PATH, "fonts/Roboto-Regular.ttf");
+        return mPreferences.getString(Keys.DESIGN_FONT_PATH, FontUtils.DEFAULT_FONT_NAME);
     }
 
     //download all settings
@@ -181,6 +207,14 @@ public class MyPreferenceManager {
 
     public void setInnerArticlesDepth(final int innerArticlesDepth) {
         mPreferences.edit().putInt(Keys.INNER_ARTICLES_DEPTH, innerArticlesDepth).apply();
+    }
+
+    public boolean isSaveNewArticlesEnabled() {
+        return mPreferences.getBoolean(Keys.SAVE_NEW_ARTICLES_ENABLED, false);
+    }
+
+    public void setSaveNewArticlesEnabled(final boolean saveNewArticlesEnabled) {
+        mPreferences.edit().putBoolean(Keys.SAVE_NEW_ARTICLES_ENABLED, saveNewArticlesEnabled).apply();
     }
 
     public boolean isDownloadForceUpdateEnabled() {
@@ -205,6 +239,14 @@ public class MyPreferenceManager {
 
     public boolean isVkAppShared() {
         return mPreferences.getBoolean(Keys.VK_APP_SHARED, false);
+    }
+
+    public String getScpArtsJson() {
+        String json = FirebaseRemoteConfig.getInstance().getString(Constants.Firebase.RemoteConfigKeys.ADS_SCP_ART_V3);
+        if (TextUtils.isEmpty(json)) {
+            json = ScpArtAdsJson.DEFAULT_JSON;
+        }
+        return json;
     }
     //download all settings END
 
@@ -678,13 +720,15 @@ public class MyPreferenceManager {
         return mPreferences.getInt(Keys.UNSYNCED_SCORE, 0);
     }
 
-    public void setLeaderBoardUpdatedTime(final long timeInMillis) {
-        mPreferences.edit().putLong(Keys.LEADERBOARD_UPDATE_TIME, timeInMillis).apply();
+    //leaderboard utils
+    public void saveLeaderboardUpdateDate(@NotNull final Date updateDate) {
+        mPreferences.edit().putLong(Keys.LEADERBOARD_UPDATE_DATE, updateDate.getTime()).apply();
     }
 
-    public long getLeaderBoardUpdatedTime() {
-        return mPreferences.getLong(Keys.LEADERBOARD_UPDATE_TIME, 0);
+    public Date getLeaderboardUpdateDate() {
+        return new Date(mPreferences.getLong(Keys.LEADERBOARD_UPDATE_DATE, 0));
     }
+    //leaderboard utils END
 
     //check vk group joined
     public void setLastTimeAppVkGroupJoinedChecked(final long timeInMillis) {

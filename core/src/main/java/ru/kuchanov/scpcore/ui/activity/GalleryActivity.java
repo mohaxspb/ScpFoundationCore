@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -88,7 +89,7 @@ public class GalleryActivity
     }
 
     @Override
-    protected void onSaveInstanceState(final Bundle outState) {
+    protected void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(EXTRA_POSITION, mCurPosition);
     }
@@ -119,7 +120,11 @@ public class GalleryActivity
             @Override
             public void onPageSelected(final int position) {
                 mCurPosition = position;
-                if (position != 0 && position % FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_GALLERY_PHOTOS_BETWEEN_INTERSITIAL) == 0) {
+                long numOfPagesBetweenAds = FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_GALLERY_PHOTOS_BETWEEN_INTERSITIAL);
+                if (numOfPagesBetweenAds == 0) {
+                    numOfPagesBetweenAds = 20L;
+                }
+                if (position != 0 && position % numOfPagesBetweenAds == 0) {
                     final boolean hasSubscription = mMyPreferenceManager.isHasSubscription() || mMyPreferenceManager.isHasNoAdsSubscription();
                     if (!hasSubscription) {
                         if (isAdsLoaded()) {

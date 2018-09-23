@@ -1,17 +1,18 @@
 package ru.kuchanov.scpcore.ui.activity;
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.gson.GsonBuilder;
+
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.MenuItem;
-
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.gson.GsonBuilder;
 
 import java.util.List;
 import java.util.Locale;
@@ -134,7 +135,7 @@ public class MainActivity
     }
 
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final Intent intent = getIntent();
 
@@ -270,6 +271,14 @@ public class MainActivity
             mCurrentSelectedDrawerItemId = id;
             showFragment(Objects3ArticlesFragment.newInstance(), Objects3ArticlesFragment.TAG);
             return true;
+        } else if (id == R.id.objects_IV) {
+            mCurrentSelectedDrawerItemId = id;
+            showFragment(Objects4ArticlesFragment.newInstance(), Objects4ArticlesFragment.TAG);
+            return true;
+        } else if (id == R.id.objects_V) {
+            mCurrentSelectedDrawerItemId = id;
+            showFragment(Objects5ArticlesFragment.newInstance(), Objects5ArticlesFragment.TAG);
+            return true;
         } else if (id == R.id.files) {
             startMaterialsActivity();
             return false;
@@ -305,14 +314,6 @@ public class MainActivity
                     ArticleFragment.TAG + "#" + mConstantValues.getNews()
             );
             return true;
-        } else if (id == R.id.objects_IV) {
-            mCurrentSelectedDrawerItemId = id;
-            showFragment(Objects4ArticlesFragment.newInstance(), Objects4ArticlesFragment.TAG);
-            return true;
-        } else if (id == R.id.objects_V) {
-            mCurrentSelectedDrawerItemId = id;
-            showFragment(Objects5ArticlesFragment.newInstance(), Objects5ArticlesFragment.TAG);
-            return true;
         } else if (id == R.id.stories) {
             mCurrentSelectedDrawerItemId = id;
             showFragment(ArticleFragment.newInstance(mConstantValues.getStories()),
@@ -341,7 +342,7 @@ public class MainActivity
      */
     private void hideFragments(final FragmentTransaction transaction) {
         final List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        if (fragments == null || fragments.isEmpty()) {
+        if (fragments.isEmpty()) {
             return;
         }
         for (final Fragment fragment : fragments) {

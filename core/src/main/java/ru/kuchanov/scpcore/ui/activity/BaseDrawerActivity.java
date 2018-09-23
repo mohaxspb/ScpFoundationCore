@@ -1,12 +1,22 @@
 package ru.kuchanov.scpcore.ui.activity;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.gson.Gson;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
+
+import org.jetbrains.annotations.NotNull;
+
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
@@ -19,13 +29,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.google.android.gms.auth.api.Auth;
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.gson.Gson;
-
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -36,8 +39,8 @@ import ru.kuchanov.scpcore.api.model.remoteconfig.LevelsJson;
 import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.monetization.model.PurchaseData;
 import ru.kuchanov.scpcore.mvp.contract.DrawerMvp;
-import ru.kuchanov.scpcore.ui.holder.HeaderViewHolderLogined;
-import ru.kuchanov.scpcore.ui.holder.HeaderViewHolderUnlogined;
+import ru.kuchanov.scpcore.ui.holder.drawer.HeaderViewHolderLogined;
+import ru.kuchanov.scpcore.ui.holder.drawer.HeaderViewHolderUnlogined;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -53,11 +56,12 @@ import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.StartScreen;
  */
 public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends DrawerMvp.Presenter<V>>
         extends BaseActivity<V, P>
-        implements DrawerMvp.View, SharedPreferences.OnSharedPreferenceChangeListener {
+        implements DrawerMvp.View {
 
     public static final int REQUEST_CODE_INAPP = 1421;
 
     private static final String STATE_CUR_DRAWER_ITEM_ID = "STATE_CUR_DRAWER_ITEM_ID";
+
     protected static final int SELECTED_DRAWER_ITEM_NONE = -1;
 
     @Inject
@@ -65,6 +69,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
 
     @BindView(R2.id.root)
     protected DrawerLayout mDrawerLayout;
+
     @BindView(R2.id.navigationView)
     protected NavigationView mNavigationView;
 
@@ -75,13 +80,13 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
     protected abstract int getDefaultNavItemId();
 
     @Override
-    protected void onSaveInstanceState(final Bundle outState) {
+    protected void onSaveInstanceState(@NotNull final Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_CUR_DRAWER_ITEM_ID, mCurrentSelectedDrawerItemId);
     }
 
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mCurrentSelectedDrawerItemId = getDefaultNavItemId();
@@ -93,10 +98,12 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
             actionBar.setDisplayHomeAsUpEnabled(true);
 
             mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.app_name, R.string.app_name) {
+                @Override
                 public void onDrawerClosed(final View view) {
                     supportInvalidateOptionsMenu();
                 }
 
+                @Override
                 public void onDrawerOpened(final View drawerView) {
                 }
             };
@@ -171,7 +178,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
     }
 
     @Override
-    public void updateUser(final User user) {
+    public void updateUser(@Nullable final User user) {
         Timber.d("updateUser: %s", user);
         if (user != null) {
             for (int i = 0; i < mNavigationView.getHeaderCount(); i++) {
@@ -254,13 +261,14 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
 
             //check if user score is greater than 1000 and offer him/her a free trial if there is no subscription owned
             if (!mMyPreferenceManager.isHasAnySubscription()
-                    && user.score >= 1000
-                    //do not show it after level up gain, where we add 10000 score
-                    && mPresenter.getUser().score < 10000
-                    && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
+                && user.score >= 1000
+                //do not show it after level up gain, where we add 10000 score
+                && mPresenter.getUser().score < 10000
+                && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
                 final Bundle bundle = new Bundle();
                 bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
-                        Constants.Firebase.Analitics.EventValue.SCORE_1000_REACHED);
+                        Constants.Firebase.Analitics.EventValue.SCORE_1000_REACHED
+                );
                 FirebaseAnalytics.getInstance(this)
                         .logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
@@ -286,7 +294,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
         }
     }
 
-    private View.OnClickListener mOnLevelUpClickListener = view -> mInAppHelper.getInAppsListToBuyObservable(getIInAppBillingService()).subscribe(
+    private final View.OnClickListener mOnLevelUpClickListener = view -> mInAppHelper.getInAppsListToBuyObservable(getIInAppBillingService()).subscribe(
             items -> new MaterialDialog.Builder(view.getContext())
                     .title(R.string.dialog_level_up_title)
                     .content(R.string.dialog_level_up_content)
@@ -300,7 +308,8 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                                     getPackageName(),
                                     items.get(0).productId,
                                     "inapp",
-                                    String.valueOf(System.currentTimeMillis()));
+                                    String.valueOf(System.currentTimeMillis())
+                            );
                             PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
                             for (String key : buyIntentBundle.keySet()) {
                                 Timber.d("%s: %s", key, buyIntentBundle.get(key));

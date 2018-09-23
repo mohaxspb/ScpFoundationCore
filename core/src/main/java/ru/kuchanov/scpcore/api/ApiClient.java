@@ -73,6 +73,7 @@ import ru.kuchanov.scpcore.api.model.ArticleFromSearchTagsOnSite;
 import ru.kuchanov.scpcore.api.model.firebase.ArticleInFirebase;
 import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser;
 import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse;
+import ru.kuchanov.scpcore.api.model.response.LeaderboardUsersUpdateDates;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
 import ru.kuchanov.scpcore.api.model.response.VkGroupJoinResponse;
 import ru.kuchanov.scpcore.api.service.ScpReaderServer;
@@ -80,6 +81,7 @@ import ru.kuchanov.scpcore.api.service.ScpServer;
 import ru.kuchanov.scpcore.api.service.VpsServer;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
+import ru.kuchanov.scpcore.db.model.LeaderboardUser;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.db.model.SocialProviderModel;
 import ru.kuchanov.scpcore.db.model.User;
@@ -91,6 +93,7 @@ import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.DimensionUtils;
 import rx.Observable;
+import rx.Single;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -106,6 +109,8 @@ public class ApiClient {
     private static final String REPLACEMENT_HASH = "____";
 
     private static final String REPLACEMENT_SLASH = "_REPLACEMENT_SLASH_";
+
+    private static final String SITE_TAGS_PATH = "system:page-tags/tag/";
 
     @SuppressWarnings("unused")
     protected MyPreferenceManager mPreferencesManager;
@@ -619,7 +624,7 @@ public class ApiClient {
                 if (spanWithRating != null) {
                     final Element ratingSpan = spanWithRating.getElementsByClass("number").first();
 //                    Timber.d("ratingSpan: %s", ratingSpan);
-                    if (ratingSpan != null) {
+                    if (ratingSpan != null && !TextUtils.isEmpty(ratingSpan.text())) {
                         try {
                             rating = Integer.parseInt(ratingSpan.text().substring(1, ratingSpan.text().length()));
 //                            Timber.d("rating: %s", rating);
@@ -689,12 +694,19 @@ public class ApiClient {
             String title = "";
             if (titleEl != null) {
                 title = titleEl.text();
+            } else if (url.contains(SITE_TAGS_PATH)) {
+                final String decodedUrl = java.net.URLDecoder.decode(url, "UTF-8");
+                final String tagName = decodedUrl.substring(url.lastIndexOf(SITE_TAGS_PATH) + SITE_TAGS_PATH.length());
+                title = "TAG: " + tagName;
             }
             final Element upperDivWithLink = doc.getElementById("breadcrumbs");
             if (upperDivWithLink != null) {
                 pageContent.prependChild(upperDivWithLink);
             }
             ParseHtmlUtils.parseImgsTags(pageContent);
+
+            //extract tables, which are single tag in div
+            ParseHtmlUtils.extractTablesFromDivs(pageContent);
 
             //put all text which is not in any tag in div tag
             for (final Element element : pageContent.children()) {
@@ -796,7 +808,11 @@ public class ApiClient {
                 textPartsTypes.add(new RealmString(value));
             }
 
-            final String commentsUrl = mConstantValues.getBaseApiUrl() + doc.getElementById("discuss-button").attr("href");
+            String commentsUrl = null;
+            final Element commentsButtonTag = doc.getElementById("discuss-button");
+            if (commentsButtonTag != null) {
+                commentsUrl = mConstantValues.getBaseApiUrl() + commentsButtonTag.attr("href");
+            }
 
             //finally fill article info
             final Article article = new Article();
@@ -1229,7 +1245,7 @@ public class ApiClient {
         return type;
     }
 
-    public Observable<List<GalleryImage>> getGallery() {
+    public Single<List<GalleryImage>> getGallery() {
         return mScpReaderServer.getGallery();
     }
 
@@ -1921,8 +1937,21 @@ public class ApiClient {
         });
     }
 
+    @Deprecated
     public Observable<LeaderBoardResponse> getLeaderboard() {
         return bindWithUtils(mVpsServer.getLeaderboard(mConstantValues.getAppLang()));
+    }
+
+    public Single<List<LeaderboardUser>> getLeaderboardUsers(final int offset, final int limit) {
+        return mScpReaderServer.getLeaderboardUsers(
+                mConstantValues.getAppLang().toUpperCase(),
+                offset,
+                limit
+        );
+    }
+
+    public Single<List<LeaderboardUsersUpdateDates>> getLeaderboardUsersUpdateDates() {
+        return mScpReaderServer.getLeaderboardUsersUpdateDates();
     }
 
     public Observable<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {

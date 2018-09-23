@@ -1,0 +1,362 @@
+<resources>
+    <!--drawer items-->
+    <string name="drawer_item_1">关于</string>
+    <string name="drawer_item_2">新闻</string>
+    <string name="drawer_item_3">最高评分的条目</string>
+    <string name="drawer_item_4">最近新增的条目</string>
+    <string name="drawer_item_5">随机条目</string>
+    <string name="drawer_item_6">SCP系列I</string>
+    <string name="drawer_item_7">SCP系列II</string>
+    <string name="drawer_item_8">SCP系列III </string>
+    <string name="drawer_item_10">其它条目</string>
+    <string name="drawer_item_12">收藏</string>
+    <string name="drawer_item_13">离线文档</string>
+    <string name="drawer_item_14">画廊</string>
+    <string name="drawer_item_15">搜索</string>
+    <string name="drawer_item_objects4">SCP系列IV</string>
+    <string name="drawer_item_read">浏览文档</string>
+
+    <string name="drawer_item_11">基金会故事</string>
+    <string name="drawer_item_9">SCP-CN系列</string>
+    <!--settings-->
+    <string name="settings">设置</string>
+    <string name="night_mode">夜间模式</string>
+    <string name="text_size">字体大小</string>
+    <string name="in_apps">扩展版本</string>
+    <string name="day_mode">日间模式</string>
+    <string name="unsupported_link">不支持的链接</string>
+    <string name="share">分享</string>
+    <string name="open_with">在浏览器中打开</string>
+    <string name="add_to_favorites">添加到收藏</string>
+    <string name="share_link_text">%1$s\n\分享自\"SCP基金会\"\nhttps://play.google.com/store/apps/details?id=%2$s</string>
+    <string name="share_choser_text">分享…</string>
+    <string name="browser_choser_text">打开方式…</string>
+    <string name="favorites_add">添加到收藏</string>
+    <string name="favorites_remove">从收藏中移出</string>
+    <string name="text_size_article">文档中的字体大小</string>
+    <string name="text_size_lists">列表中的字体大小</string>
+    <string name="text_size_dialog_title">字体大小设置</string>
+    <string name="close">关闭</string>
+    <string name="delete">删除</string>
+    <string name="search">搜索</string>
+
+    <!--drawer items -->
+    <!--TODO maybe use ut instead of upper ones?..-->
+    <string name="about_org">关于基金会</string>
+    <string name="news">新闻</string>
+
+    <!--utils-->
+    <string name="search_hint">输入关键字</string>
+    <string name="error_no_search_results">未找到搜索结果</string>
+    <string name="start_download">文档不在数据库中。开始下载</string>
+
+    <string name="download">下载</string>
+
+    <string name="settings_notif_on">最新文档通知</string>
+    <string name="settings_notif_led_on">LED指示灯</string>
+    <string name="settings_notif_vibrate_on">震动</string>
+    <string name="settings_notif_sound_on">提示音</string>
+    <string name="settings_notification">通知设置</string>
+    <string name="dialog_title_subscriptions">无广告，自动云同步及特殊字体</string>
+    <string name="dialog_title_subscriptions_disabled_free_downloads">无广告，自动云同步，无限量文档下载及特殊字体</string>
+    <string name="current_subscription">您当前的订阅</string>
+    <string name="no_subscriptions">无订阅</string>
+    <string name="refresh">刷新</string>
+    <string name="i_accept">我接受</string>
+    <string name="error_read_licence">错误：无法读取许可文件</string>
+    <string name="new_version_features">新版本</string>
+    <string name="hurray">耶！</string>
+    <string name="in_progress">开发者</string>
+    <string name="settings_design">布局设置</string>
+    <string name="settings_design_list_new">有新的列表布局</string>
+    <string name="dialog_random_page_title">正在连接到基金会</string>
+    <string name="dialog_random_page_message">正在检查许可等级</string>
+    <string name="remove_ads">移除广告？</string>
+    <string name="yes_bliad">是！</string>
+    <string name="app_info">应用信息</string>
+    <string name="remove_ads_for_free">免费移除广告并获得点数</string>
+    <string name="remove_ads_for_free_disabled_free_downloads">免费移除广告，增加文档上限并获得点数</string>
+    <string name="ads_reward_gained">耶！%d小时内无广告！</string>
+    <string name="wait">请稍等…</string>
+    <string name="ads_reward_error_loading">无法处理，请重试…</string>
+    <string name="ads_reward_description_title">手动</string>
+    <string name="ads_reward_description_content">我们会播放一段视频，观看之后您可以暂时的移除广告。您可以重复执行此操作。</string>
+    <string name="ads_reward_ok">好的！</string>
+    <string name="settings_design_list_type">列表的布局</string>
+    <string name="rating">评分 %d</string>
+    <string name="yes_sir">了解！</string>
+    <string name="reward_not_loaded_yet">尚未加载完成。请重试</string>
+    <string name="settings_design_font">字体</string>
+    <string name="login_advantages">人员请注意！认证并不是强制的，但您需要认证进行云同步与读取。它还允许您参加特工的评级。更多指示请咨询您的站点主管。</string>
+    <string name="login_advantages_title">为什么要认证？</string>
+    <string name="login_greetings">欢迎，特工%s</string>
+    <string name="error_login_no_email">无法认证：无邮箱地址</string>
+    <string name="materials">其它文档</string>
+    <string name="only_premium">仅订阅</string>
+    <string name="activate">激活</string>
+    <string name="info">信息</string>
+    <string name="subs_info">额外功能包括：移除广告，所有字体供使用，获得3倍点数，云同步所有已读及收藏文档。但最重要的是——订阅会直接影响到开发进度！</string>
+    <string name="subs_info_disabled_free_downloads">额外功能包括：移除广告，无限量下载文档，所有字体供使用，获得3倍点数，云同步所有已读及收藏文档。但最重要的是——订阅会直接影响到开发进度！</string>
+
+    <string-array name="fag_items">
+        <item>认证</item>
+        <item>云同步</item>
+        <item>评分系统</item>
+    </string-array>
+
+    <string-array name="fag_items_content">
+        <item>1. 您可以点击左上角菜单中的\"登录\"以认证。\n
+	        2. 通过社交网络认证需要提供电子邮件地址，用于作为服务器数据库的ID。\n
+	        3. 认证用于在云存储中阅读和收藏文章，以及参与特工排名。\n</item>
+        <item>1. 只对已注册特工开放。\n
+	        2. 需要网络连接。\n
+	        3. 对已订阅的特工自动开放。\n
+	        4. 未订阅的特工需要进行手动同步。点击\"设置\"。\n
+	        5. 云同步会储存文档的状态 - 阅读进度及收藏等。\n
+	        6. 清除应用数据或登出账户会导致未保存的数据丢失。\n</item>
+        <item>1. 只对已认证特工开放。\n
+	        2. 需要网络连接。\n
+	        3. 对已订阅的特工自动开放。\n
+	        4. 未订阅的特工需要进行手动同步。点击\"设置\"。\n
+	        5. 添加文章至收藏、阅读以上文章、安装应用、参加VK社区组、浏览广告、应用内付费等操作会增加您的点数。以上列表未来会继续增加。\n
+	        6. 点数由管理员管理，订阅并参加VK社区组会倍增您的点数。\n
+	        7. 清除应用数据或登出账户会导致未保存的数据丢失。\n
+	        8. 在增加点数的同时您的授权等级也会增加。注意！授权等级不会有任何实际效果，仅仅影响您头像的装饰物。\n
+	        9. 到下一等级的进度由您头像周围的绿色圆圈表示。\n
+	        10. 到下一等级所需的点数会在点击头像后显示。通常需要5分钟。</item>
+    </string-array>
+
+    <string name="free">免费</string>
+    <string name="dialog_free_ads_disable_title">移除广告</string>
+    <string name="start_market_error">无法启动应用商店</string>
+    <string name="thanks_for_supporting_us">开发者感谢您的支持！</string>
+    <string name="invitation_message">加入基金会！</string>
+    <string name="invitation_cta">加入我们！</string>
+    <string name="invitation_title">SCP机密数据！</string>
+    <string name="invite_friends">邀请您的朋友加入来获得%1$d小时的无广告时间以及%2$d点数！！</string>
+    <string name="watch_video_to_disable_ads">观看一个视频来获得%1$d小时的无广告时间以及%2$d点数</string>
+    <string name="app_install_ads_disable_title">尝试我们的其它应用，获得%1$d小时的无广告时间以及%2$d点数！</string>
+    <string name="vk_group_join_ads_disable_title">加入VK社区，获得%1$d小时的无广告时间以及%2$d点数！</string>
+    <string name="need_vk_group_access">您需要VK组访问权限。请重试。</string>
+    <string name="gallery">画廊</string>
+    <string name="error_login_firebase_connection">登录发生错误。请重试。%s</string>
+    <string name="on_user_logined">欢迎，特工 %s</string>
+    <string name="login_in_progress_custom_token">向基金会服务器查询密钥</string>
+    <string name="error_while_sync">云存储文档失败</string>
+    <string name="sync_fav_success">文档已同步</string>
+    <string name="app_cracked">检测到收容突破尝试。隔离措施已启动。</string>
+    <string name="auto_sync_disabled">自动云同步已关闭</string>
+    <string name="turn_on">开启</string>
+    <string name="enable_auto_sync">开启自动云同步 </string>
+    <string name="sync">云同步</string>
+    <string name="subscribe">订阅</string>
+    <string name="error_while_all_data_sync">数据无法云储存。错误：%s</string>
+    <string name="all_data_sync_success">所有文档已同步至云。已保存文档：%1$d，获得点数：%2$d。</string>
+    <string name="sync_need_auth">需要认证。</string>
+    <string name="authorize">认证</string>
+    <string name="settings_data_sync">储存文档至云</string>
+    <string name="all_data_already_synced">数据已云同步，无需其他操作。</string>
+    <string name="image_loading">图片载入中…</string>
+    <string name="image_saved">图片已保存</string>
+    <string name="image_saving_error">图片保存出错</string>
+    <!--Shortcuts android 7.1-->
+    <string name="new_short">新闻</string>
+    <string name="random_short">随机</string>
+    <string name="dialog_level_up_title">获得5级权限</string>
+    <string name="dialog_level_up_content">人员请注意！您会被授权阅读任何隐藏资料。您只会获得3件物品：10000点数，\"5级权限\"标题和致力于改善这款应用的开发人员们的感谢</string>
+    <string name="dialog_level_up_ok_text">了解！</string>
+    <string name="cracked_level_title">D级</string>
+    <string name="cracked_avatar_message">检测到入侵操作，协议██████已激活。</string>
+    <string name="leaderboard_dialog_title">排行榜</string>
+    <string name="refreshed">%s后更新</string>
+    <string name="progress_leaderboard">连接至基金会HRD…</string>
+    <string name="level">%d级</string>
+    <!--<string name="i_read_and_accept">I\'ve read and understood</string>-->
+    <!--<string name="relogin">Relogin required</string>-->
+    <string name="warning">注意！</string>
+    <!--<string name="dialog_logout_content">When you logout the account, all articles you have selected will be reset! Make sure you synchronized. You can perform the synchronization in Settings.</string>-->
+    <string name="dialog_logout_content">确定要登出吗？排行榜不会记录登出的特工，您也无法获得任何点数和特权</string>
+    <string name="logout">登出</string>
+    <string name="error_getting_path_to_image">图片保存出错。请重试</string>
+    <string name="faq">常见问题</string>
+    <string name="need_login">需要认证</string>
+    <string name="need_login_content">特工请注意！您需要认证后才可以添加文档到收藏夹。这允许您同步所有设备上的文档并参与排行榜排名！</string>
+    <string name="error_inapp">读取数据出错</string>
+    <string name="sort">排序</string>
+    <string name="dialog_sort_title">排序并筛选</string>
+    <string name="dialog_social_login_title">认证</string>
+    <string name="error_login_firebase_user_collision">错误 - 此邮箱已被另一位用户使用。</string>
+    <string name="tags_search">标签搜索</string>
+    <string name="tags_choosen">已选择标签</string>
+    <string name="tags_all">全部标签</string>
+    <string name="tags_search_results">搜索结果</string>
+    <string name="tags">标签：</string>
+
+    <string name="profile_score_info">你拥有%1$d点数。到下个等级还需要%2$d点。</string>
+    <string name="profile_score_info_max_level">你拥有%1$d点数。你已经到达了最高等级！</string>
+
+    <plurals name="plurals_score">
+        <item quantity="zero">%1$d点</item>
+        <item quantity="one">%1$d点</item>
+        <item quantity="two">%1$d点</item>
+        <item quantity="few">%1$d点</item>
+        <item quantity="many">%1$d点</item>
+        <item quantity="other">%1$d点</item>
+    </plurals>
+
+    <string name="filter_none">无筛选</string>
+    <string name="filter_not_read">非只读</string>
+    <string name="filter_read">只读</string>
+    <string name="filter_rating">按评价</string>
+    <string name="filter_title">按标题</string>
+
+    <string name="filter_neutral_or_not_added">已失效或未添加</string>
+    <string name="filter_save">Safe</string>
+    <string name="filter_euclid">Euclid</string>
+    <string name="filter_keter">Keter</string>
+    <string name="filter_thaumiel">Thaumiel</string>
+
+    <string name="notif_new_arts_title">新文档：%1$d%2$s</string>
+    <string name="enter">登录</string>
+    <string name="feedback_title">评价SCP Database</string>
+
+    <string name="stories">基金会故事</string>
+
+    <string name="materials_archive">已归档SCP</string>
+    <string name="materials_jokes">搞笑SCP</string>
+    <string name="materials_others">其它</string>
+    <string name="materials_interview">采访</string>
+    <string name="materials_incidents">事故</string>
+    <string name="materials_experiments">实验</string>
+    <string name="materials_kadr">实验</string>
+
+    <string name="error_connection">连接错误</string>
+    <string name="error_parse">解析HTML出错</string>
+
+    <string name="social_provider_vk_title">VK</string>
+
+    <!--ver 1.0.6+-->
+    <string name="score_increased">已增加%s</string>
+    <string name="random_article_warning">服务器每几分钟会提供新的随机文档。</string>
+    <string name="article_not_translated">此文档尚未被翻译。</string>
+    <string name="offer_app_lang_version_content">您设备的语言为<b>%1$s</b>，我们拥有相应的应用但此文档被翻译成<b>%2$s</b>。是否安装应用？此应用的各语言版本在右上角列出。</string>
+    <string name="open_play_market">打开Play市场</string>
+    <string name="menuAppLangVersions">基金会分部</string>
+    <string name="subscription_no_ads_title">移出广告</string>
+    <string name="subscription_full_version_title">完全版本</string>
+    <string name="attention">注意！</string>
+    <!---->
+    <string name="sign_in_to_disable_ads">认证以获得%1$d小时的无广告并获得%2$d点数，这会增加您的下载量上限！</string>
+    <string name="dialog_offer_login_to_gain_score_title">您想要认证吗？</string>
+
+    <string name="dialog_offer_login_to_gain_score_content">您是否想先认证？认证后您不仅可以移除广告，还可以获取点数来增加您的下载量上限！</string>
+    <string name="dialog_offer_subscription_title">感谢您对开发者的支持！</string>
+    <string name="dialog_offer_subscription_content">您想通过订阅来移除广告，获得无限量的下载，自动云同步以及各种字体吗？</string>
+    <string name="dialog_offer_free_trial_subscription_title">您想要免费尝试完全版本吗？</string>
+
+    <string name="dialog_offer_free_trial_subscription_content">我们会为您提供完全版本%1$d天的试用期。您可以在%2$d天内完全免费地获得无限的离线文档，广告移除，自动云同步以及各种各样的字体！</string>
+
+    <string name="version"><![CDATA[<b>版本：%s</b>]]></string>
+    <string name="snoska">注意：%s</string>
+    <string name="bibliography">参考书目</string>
+
+    <!---->
+    <string name="your_invite_received">您的基金会邀请已被接受！</string>
+    <string name="invite_received_reward_message">您已获得%1$d小时的无广告时间以及%2$d点数！</string>
+    <string name="ads_disabled_for_some_hours">您已获得%d小时的无广告时间！</string>
+    <string name="drawer_item_invite_friends">邀请朋友！</string>
+
+    <!---->
+    <string name="settings_ads_banner_in_lists">在文档列表中插入广告横幅</string>
+    <string name="settings_ads_title">广告设置</string>
+    <string name="settings_ads_native_in_lists">在文档列表中插入过渡广告</string>
+    <string name="settings_ads_native_in_article">在文档中插入过渡广告</string>
+    <string name="settings_ads_banner_in_article">在文档中插入广告横幅</string>
+    <string name="disable_all_ads">关闭所有广告</string>
+    <string name="remove_ads_for_month">每月\n%s</string>
+    <string name="remove_ads_for_free_for_hours"><![CDATA[数小时内\n<b><font color=#4CAF50>免费</font></b>]]></string>
+
+    <!---->
+    <string name="contacts_info"><![CDATA[您可以在<b>GitHub</b>和<b>Trello</b>上追踪项目进度。您可以通过<b>电子邮件</b>联系我们。以下是链接：
+	<br/><br/>
+	GitHub: <a href="https://github.com/mohaxspb/ScpFoundationCore.git">Repository ScpFoundationCore</a>
+<br/><br/>
+	Trello: <a href="https://trello.com/b/K96g075n/scp">待实现的任务列表</a>
+<br/><br/>
+	E-mail: <a href="mailto:neva.spb.rx@gmail.com">如有疑问</a>
+<br/><br/>
+	感谢使用我们的应用！]]></string>
+    <string name="subs_main_text">您可以在此获得基金会的特殊权限并帮助开发者。我们的应用是<![CDATA[<a href="https://github.com/mohaxspb/ScpFoundationCore">开源</a>]]>的，并有<![CDATA[<a href="https://www.youtube.com/watch?v=5RuwbKvLDs0">超酷的云同步</a>]]>。如果您喜欢我们的应用，您可以资助开发者。所有资金将被用于维护项目。此外通过浏览广告您也可以帮助我们。感谢您的任何捐助。谢谢支持！</string>
+    <string name="subs_free_actions_title">免费关闭广告！</string>
+    <string name="subs_free_actions_card_title">支持我们</string>
+    <string name="subs_free_actions_card_description">免费关闭广告，增加离线文档上限并获得点数！</string>
+    <string name="subs_no_ads_title">“静寂”协议</string>
+    <string name="subs_no_ads_description">部署模因以屏蔽应用中的全部广告注入</string>
+    <string name="subs_description">关闭广告，自动云同步，无限量下载文档及特殊字体</string>
+    <string name="subs_level_5_gain">获取5级权限</string>
+    <string name="subs_1_month_title">实验室助理</string>
+    <string name="subs_3_month_title">初级研究员</string>
+    <string name="subs_6_month_title">研究助理</string>
+    <string name="subs_12_month_title">高级研究员</string>
+    <string name="subs_full_description">关闭广告，自动云同步，无限量下载文档及特殊字体。</string>
+    <string name="subs_no_ads_label">一个月无广告</string>
+    <string name="subs_1_month_label">一个月扩展版</string>
+    <string name="subs_3_month_label">三个月扩展版</string>
+    <string name="subs_6_month_label">半年扩展版</string>
+    <string name="subs_12_month_label">一年扩展版</string>
+    <string name="subs_cur_label">您的当前状态</string>
+    <string name="subs_level_5_label">获取5级权限</string>
+    <string name="subs_cur_empty_title">██████ - 未分配</string>
+    <string name="subs_level_5_title">5级权限</string>
+    <string name="subs_percent">-%s%%</string>
+    <string name="subs_leaderboard_activity_title">排行榜</string>
+    <string name="subs_activity_title">支持开发者</string>
+    <string name="subs_level_5_description">10000点数，排名上升并提升离线文档上限至200篇</string>
+    <string name="free_ads_invite_title">邀请你的朋友使用应用</string>
+    <string name="free_ads_rewarded_video_title">观看视频</string>
+    <string name="free_ads_auth_title">登录</string>
+    <string name="free_ads_simple_subtitle">我们会关闭广告%1$d小时并赠送%2$d积分</string>
+    <string name="free_ads_app_install_label">下载我们的其它应用</string>
+    <string name="free_ads_app_install_title">我们会关闭广告%1$d小时并赠送%2$d积分</string>
+    <string name="free_ads_vk_group_label">参加我们的VC组</string>
+    <string name="free_ads_vk_group_title">我们会关闭广告%1$d小时并赠送%2$d积分</string>
+    <string name="free_ads_activity_title">关闭广告</string>
+    <string name="leaderboard_activity_title">特工排名</string>
+    <string name="leaderboard_inapp_title">提升自己的排名。</string>
+    <string name="leaderboard_inapp_description">利用你在基金会的人脉提升排名</string>
+    <string name="leaderboard_place">第%d</string>
+    <string name="leaderboard_inapp_label">排名提升 (+ 10000点)</string>
+    <string name="leaderboard_articles_read">已阅读%d篇文档</string>
+    <string name="score_num">%d点</string>
+    <string name="level_num">%d级</string>
+    <string name="drawer_item_leaderboard">特工排名</string>
+    <string name="ads_will_be_shown_soon">即将展示广告！想要提前关闭它吗？</string>
+    <string name="need_login_for_level_up_content">要参与特工排名，您需要认证。</string>
+
+    <!--todo need to translate-->
+    <string name="leaderboard_appodeal_description">No high-level connections in the Fund? Try to find compromising material and rise in the rankings.</string>
+
+    <!---->
+    <string name="downloads_settings">Download settings</string>
+    <string name="downloads_force_update">Force update text while downloading</string>
+    <string name="download_inner_depth">Download inner articles depth</string>
+    <string name="images_cache_enabled">Local image caching</string>
+    <string name="cached_images_count">Cached images count</string>
+    <string name="cached_images_size">Cached images size</string>
+    <string name="clear_cached_images">Clear cached images</string>
+    <string name="free_ads_vk_share_label">Share the app in VK</string>
+    <string name="share_app_vk_text">Love fantastic and creepy stories? Try the SCP Foundation app - there are thousands of articles to enjoy!</string>
+    <string name="need_vk_wall_access">Permission to post on wall is required. Please login again.</string>
+    <!---->
+    <string name="app_lang_dialog_google_description">Here are other versions of our application in different languages. You can download the necessary language version by clicking the respective link.</string>
+    <string name="scp_quiz_banner_cta">Install</string>
+    <string name="scp_quiz_banner_title">Scp Exam. Check yourself!</string>
+    <string name="scp_quiz_banner_subtitle">It\'s time to pass the test and test your knowledge of the Foundation, are you ready?</string>
+    <string name="no_comments_url_found">No comments url found. Try to update article to get it.</string>
+    <!---->
+    <string name="drawer_item_objects5">Series V</string>
+    <string name="error_no_activity_to_handle_intent">No application to handle this Intent found.</string>
+    <string name="download_new_articles">Save new articles automatically</string>
+    <string name="text_is_selectable">Selectable text</string>
+    <string name="cant_find_next_article">Cannot find next article</string>
+</resources>

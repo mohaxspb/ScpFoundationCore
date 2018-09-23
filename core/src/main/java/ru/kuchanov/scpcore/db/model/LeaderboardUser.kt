@@ -7,7 +7,7 @@ import io.realm.annotations.PrimaryKey
 open class LeaderboardUser(
     @PrimaryKey
     @Index
-    var uid: String = "",
+    var id: Long = 0,
     var fullName: String? = "",
     var avatar: String? = "",
     var score: Int = 0,
@@ -20,6 +20,8 @@ open class LeaderboardUser(
     companion object {
         @JvmField
         val FIELD_UID = "uid"
+        @JvmField
+        val FIELD_ID = "id"
         @JvmField
         val FIELD_FULL_NAME = "fullName"
         @JvmField
@@ -39,6 +41,6 @@ open class LeaderboardUser(
     }
 
     override fun toString(): String {
-        return "LeaderboardUser(uid='$uid', fullName=$fullName, avatar=$avatar, score=$score, numOfReadArticles=$numOfReadArticles, levelNum=$levelNum, scoreToNextLevel=$scoreToNextLevel, curLevelScore=$curLevelScore)"
+        return "LeaderboardUser(id='$id', fullName=$fullName, avatar=$avatar, score=$score, numOfReadArticles=$numOfReadArticles, levelNum=$levelNum, scoreToNextLevel=$scoreToNextLevel, curLevelScore=$curLevelScore)"
     }
 }

@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
@@ -41,17 +42,21 @@ public class DialogUtils {
 
     private final ApiClient mApiClient;
 
+    private final ConstantValues mConstantValues;
+
     private MaterialDialog mProgressDialog;
 
     public DialogUtils(
             final MyPreferenceManager preferenceManager,
             final DbProviderFactory dbProviderFactory,
-            final ApiClient apiClient
+            final ApiClient apiClient,
+            final ConstantValues constantValues
     ) {
         super();
         mPreferenceManager = preferenceManager;
         mDbProviderFactory = dbProviderFactory;
         mApiClient = apiClient;
+        mConstantValues = constantValues;
     }
 
     public void showFaqDialog(final Context context) {
@@ -79,7 +84,13 @@ public class DialogUtils {
                 .content(context.getString(R.string.offer_app_lang_version_content, langName, langName))
                 .title(version.title)
                 .positiveText(R.string.open_play_market)
-                .onPositive((dialog1, which) -> IntentUtils.tryOpenPlayMarket(context, version.appPackage))
+                .onPositive((dialog1, which) -> {
+                    final String linkToMarket = "https://play.google.com/store/apps/details?id="
+                                                + version.appPackage
+                                                + "&utm_source=scpReader&utm_medium=appLangsVersions&utm_campaign="
+                                                + mConstantValues.getAppLang();
+                    IntentUtils.openUrl(linkToMarket);
+                })
                 .build()
                 .show();
     }
@@ -91,7 +102,14 @@ public class DialogUtils {
                         AppLangVersionsJson.class
                 ).langs;
         final AppLangVersionsAdapter adapter = new AppLangVersionsAdapter(appLangVersions);
-        adapter.setCallbacks(position -> IntentUtils.tryOpenPlayMarket(context, appLangVersions.get(position).appPackage));
+        adapter.setCallbacks(position -> {
+            final String linkToMarket = "https://play.google.com/store/apps/details?id="
+                                        + appLangVersions.get(position).appPackage
+                                        + "&utm_source=scpReader&utm_medium=appLangsVersions&utm_campaign="
+                                        + mConstantValues.getAppLang();
+            IntentUtils.openUrl(linkToMarket);
+        });
+
         new MaterialDialog.Builder(context)
                 .title(R.string.menuAppLangVersions)
                 .positiveText(R.string.close)

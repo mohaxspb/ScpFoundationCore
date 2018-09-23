@@ -1,80 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    >
+    xmlns:tools="http://schemas.android.com/tools">
     <item
         android:id="@+id/subscribe"
         android:icon="@drawable/ic_monetization_on_white_24dp"
         android:title="@string/in_apps"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
     <item
         android:id="@+id/removeAds"
         android:icon="@drawable/ic_offline_pin"
         android:title="@string/settings_ads_title"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
     <item
         android:id="@+id/settings"
         android:icon="@drawable/ic_settings_white_24dp"
         android:title="@string/settings"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
     <item
         android:id="@+id/menuItemDownloadAll"
         android:icon="@drawable/ic_download_white_24dp"
         android:title="@string/download_all"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
     <item
         android:id="@+id/night_mode_item"
         android:title="@string/night_mode"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
     <item
         android:id="@+id/text_size"
         android:icon="@drawable/ic_text_fields_black_24dp"
         android:title="@string/text_size"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
     <item
         android:id="@+id/menuItemShare"
         android:icon="@drawable/ic_share_white_24dp"
         android:title="@string/share"
-        app:showAsAction="always"
-        tools:ignore="AlwaysShowAction"
-        />
+        app:showAsAction="never"
+        tools:ignore="AlwaysShowAction" />
     <item
         android:id="@+id/menuItemBrowser"
         android:icon="@drawable/ic_open_in_browser_black_24dp"
         android:title="@string/open_with"
         app:iconTint="@android:color/white"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
     <item
         android:id="@+id/menuItemFavorite"
         android:icon="@drawable/ic_favorite_border_white_24dp"
         android:title="@string/add_to_favorites"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
     <item
         android:id="@+id/faq"
         android:icon="@drawable/ic_help_outline_white_24dp"
         android:title="@string/faq"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
     <item
         android:id="@+id/appLangVersions"
         android:icon="@drawable/ic_menu_ads"
         android:title="@string/menuAppLangVersions"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
     <item
         android:id="@+id/info"
         android:icon="@drawable/ic_info_outline"
         android:title="@string/app_info"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
 </menu>
