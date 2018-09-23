@@ -62,11 +62,11 @@ class LeaderboardPresenter(
 
     override var myUser: User? = null
 
-    override var updateTime: Long = 0
-
     override var inAppService: IInAppBillingService? = null
 
     private var updated = false
+
+    override var updateTime = myPreferencesManager.leaderboardUpdateDate.time
 
     override fun loadInitialData() {
         Timber.d("loadInitialData")
@@ -80,7 +80,6 @@ class LeaderboardPresenter(
         }
         view.showProgressCenter(true)
         view.showRefreshButton(false)
-        updateTime = mMyPreferencesManager.leaderBoardUpdatedTime
         view.showUpdateDate(updateTime)
 
         val skuList = InAppHelper.getNewSubsSkus()
@@ -125,7 +124,6 @@ class LeaderboardPresenter(
 
                             view.showData(data)
                             view.showUser(convertUser(user))
-                            //todo update date from api
                             view.showUpdateDate(updateTime)
                             view.resetOnScrollListener()
 
@@ -156,6 +154,20 @@ class LeaderboardPresenter(
             view.showSwipeRefreshProgress(true)
         }
         mApiClient.getLeaderboardUsers(offset, limit)
+                .flatMap { users ->
+                    if (offset == 0) {
+                        mApiClient.leaderboardUsersUpdateDates.map { updateDates ->
+                            val leaderboardUsersUpdateDates = updateDates
+                                    .find { it.langId.equals(mApiClient.constantValues.appLang, true) }
+
+                            leaderboardUsersUpdateDates?.let {
+                                mMyPreferencesManager.saveLeaderboardUpdateDate(it.updated)
+                            }
+                        }.map { users }
+                    } else {
+                        Single.just(users)
+                    }
+                }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap { users ->
@@ -194,13 +206,8 @@ class LeaderboardPresenter(
                         }
                         view.resetOnScrollListener()
 
-                        //                        Timber.d("serverTime: ${DateTime(it.first, DateTimeZone.forID(it.second))}")
-//                        val utcTime = DateTime(it.first, DateTimeZone.forID(it.second)).withZone(DateTimeZone.UTC)
-//                        Timber.d("utcTime: $utcTime")
-//                        mMyPreferencesManager.leaderBoardUpdatedTime = utcTime.millis
-//                        updateTime = utcTime.millis
-//                        updated = true
-//                        loadInitialData()
+                        updateTime = mMyPreferencesManager.leaderboardUpdateDate.time
+                        view.showUpdateDate(updateTime)
                     },
                     onError = {
                         Timber.e(it)

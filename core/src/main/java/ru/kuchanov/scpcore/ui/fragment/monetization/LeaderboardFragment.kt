@@ -53,6 +53,12 @@ class LeaderboardFragment :
         BaseFragment<LeaderboardContract.View, LeaderboardContract.Presenter>(),
         LeaderboardContract.View {
 
+    companion object {
+        val simpleDateFormat = SimpleDateFormat("HH:mm dd.MM.yy", Locale.getDefault())
+
+        fun newInstance(): LeaderboardFragment = LeaderboardFragment()
+    }
+
     private lateinit var adapter: ListDelegationAdapter<List<MyListItem>>
 
     override fun getLayoutResId() = R.layout.fragment_leaderboard
@@ -224,7 +230,6 @@ class LeaderboardFragment :
         baseActivity?.getSupportActionBar()?.apply {
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = lastUpdated
-            val simpleDateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
             val refreshed = simpleDateFormat.format(calendar.time)
 
             subtitle = getString(R.string.refreshed, refreshed)
@@ -298,12 +303,6 @@ class LeaderboardFragment :
         }
 
         swipeRefresh.isRefreshing = show
-    }
-
-    companion object {
-
-        @JvmStatic
-        fun newInstance(): LeaderboardFragment = LeaderboardFragment()
     }
 }
 

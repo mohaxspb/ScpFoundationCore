@@ -14,6 +14,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
@@ -264,7 +265,7 @@ public class NetModule {
     @Provides
     @Singleton
     Gson providesGson() {
-        return new GsonBuilder().create();
+        return new GsonBuilder().setDateFormat(DateFormat.FULL, DateFormat.FULL).create();
     }
 
     @Provides

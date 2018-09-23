@@ -73,6 +73,7 @@ import ru.kuchanov.scpcore.api.model.ArticleFromSearchTagsOnSite;
 import ru.kuchanov.scpcore.api.model.firebase.ArticleInFirebase;
 import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser;
 import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse;
+import ru.kuchanov.scpcore.api.model.response.LeaderboardUsersUpdateDates;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
 import ru.kuchanov.scpcore.api.model.response.VkGroupJoinResponse;
 import ru.kuchanov.scpcore.api.service.ScpReaderServer;
@@ -1947,6 +1948,10 @@ public class ApiClient {
                 offset,
                 limit
         );
+    }
+
+    public Single<List<LeaderboardUsersUpdateDates>> getLeaderboardUsersUpdateDates() {
+        return mScpReaderServer.getLeaderboardUsersUpdateDates();
     }
 
     public Observable<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {

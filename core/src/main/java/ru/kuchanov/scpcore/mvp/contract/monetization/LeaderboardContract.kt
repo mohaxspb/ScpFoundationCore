@@ -33,15 +33,12 @@ interface LeaderboardContract : BaseMvp {
 
     interface Presenter : BaseMvp.Presenter<View> {
         val isDataLoaded: Boolean
-
         var usersCount: Int
-
         var data: MutableList<MyListItem>
         var myUser: User?
         var inApps: List<Subscription>
-        var updateTime: Long
-
         var inAppService: IInAppBillingService?
+        val updateTime: Long
 
         fun loadInitialData()
         fun onSubscriptionClick(id: String, target: Fragment, ignoreUserCheck: Boolean = false)
