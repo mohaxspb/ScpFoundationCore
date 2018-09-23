@@ -4,8 +4,8 @@ import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LeaderboardUserViewModel
-import ru.kuchanov.scpcore.db.model.LeaderboardUser
 import ru.kuchanov.scpcore.db.model.User
+import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.mvp.base.BaseMvp
 import ru.kuchanov.scpcore.mvp.contract.FragmentToolbarStateSetter
 
@@ -27,21 +27,24 @@ interface LeaderboardContract : BaseMvp {
         fun showSwipeRefreshProgress(show: Boolean)
         fun enableSwipeRefresh(enable: Boolean)
         fun showOfferLoginForLevelUpPopup()
+        fun resetOnScrollListener()
+        fun showBottomProgress(show: Boolean)
     }
 
     interface Presenter : BaseMvp.Presenter<View> {
         val isDataLoaded: Boolean
-
-        val data: List<MyListItem>
-        var users: List<LeaderboardUser>
+        var usersCount: Int
+        var data: MutableList<MyListItem>
         var myUser: User?
-        var updateTime: Long
-
+        var inApps: List<Subscription>
         var inAppService: IInAppBillingService?
+        val updateTime: Long
 
-        fun loadData()
+        fun loadInitialData()
         fun onSubscriptionClick(id: String, target: Fragment, ignoreUserCheck: Boolean = false)
-        fun updateLeaderboardFromApi()
+        fun updateLeaderboardFromApi(offset: Int, limit: Int = LEADERBOARD_REQUEST_LIMIT)
         fun onRewardedVideoClick()
     }
 }
+
+const val LEADERBOARD_REQUEST_LIMIT = 100

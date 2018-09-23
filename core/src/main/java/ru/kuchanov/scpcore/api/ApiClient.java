@@ -73,6 +73,7 @@ import ru.kuchanov.scpcore.api.model.ArticleFromSearchTagsOnSite;
 import ru.kuchanov.scpcore.api.model.firebase.ArticleInFirebase;
 import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser;
 import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse;
+import ru.kuchanov.scpcore.api.model.response.LeaderboardUsersUpdateDates;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
 import ru.kuchanov.scpcore.api.model.response.VkGroupJoinResponse;
 import ru.kuchanov.scpcore.api.service.ScpReaderServer;
@@ -80,6 +81,7 @@ import ru.kuchanov.scpcore.api.service.ScpServer;
 import ru.kuchanov.scpcore.api.service.VpsServer;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
+import ru.kuchanov.scpcore.db.model.LeaderboardUser;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.db.model.SocialProviderModel;
 import ru.kuchanov.scpcore.db.model.User;
@@ -91,6 +93,7 @@ import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.DimensionUtils;
 import rx.Observable;
+import rx.Single;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -1242,7 +1245,7 @@ public class ApiClient {
         return type;
     }
 
-    public Observable<List<GalleryImage>> getGallery() {
+    public Single<List<GalleryImage>> getGallery() {
         return mScpReaderServer.getGallery();
     }
 
@@ -1934,8 +1937,21 @@ public class ApiClient {
         });
     }
 
+    @Deprecated
     public Observable<LeaderBoardResponse> getLeaderboard() {
         return bindWithUtils(mVpsServer.getLeaderboard(mConstantValues.getAppLang()));
+    }
+
+    public Single<List<LeaderboardUser>> getLeaderboardUsers(final int offset, final int limit) {
+        return mScpReaderServer.getLeaderboardUsers(
+                mConstantValues.getAppLang().toUpperCase(),
+                offset,
+                limit
+        );
+    }
+
+    public Single<List<LeaderboardUsersUpdateDates>> getLeaderboardUsersUpdateDates() {
+        return mScpReaderServer.getLeaderboardUsersUpdateDates();
     }
 
     public Observable<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {

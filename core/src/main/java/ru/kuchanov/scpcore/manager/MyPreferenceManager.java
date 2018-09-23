@@ -13,6 +13,7 @@ import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
@@ -115,13 +116,13 @@ public class MyPreferenceManager {
         String ADS_BANNER_IN_ARTICLES_LISTS = "ADS_BANNER_IN_ARTICLES_LISTS";
         String ADS_BANNER_IN_ARTICLE = "ADS_BANNER_IN_ARTICLE";
         String OFFER_ALREADY_SHOWN = "OFFER_ALREADY_SHOWN";
-        String LEADERBOARD_UPDATE_TIME = "LEADERBOARD_UPDATE_TIME";
         String OFFLINE_RANDOM = "OFFLINE_RANDOM";
         String INNER_ARTICLES_DEPTH = "INNER_ARTICLES_DEPTH";
         String DOWNLOAD_FORCE_UPDATE_ENABLED = "DOWNLOAD_FORCE_UPDATE_ENABLED";
         String IMAGES_CACHE_ENABLED = "IMAGES_CACHE_ENABLED";
         String VK_APP_SHARED = "VK_APP_SHARED";
         String SAVE_NEW_ARTICLES_ENABLED = "SAVE_NEW_ARTICLES_ENABLED";
+        String LEADERBOARD_UPDATE_DATE = "LEADERBOARD_UPDATE_DATE";
     }
 
     private final Gson mGson;
@@ -719,13 +720,15 @@ public class MyPreferenceManager {
         return mPreferences.getInt(Keys.UNSYNCED_SCORE, 0);
     }
 
-    public void setLeaderBoardUpdatedTime(final long timeInMillis) {
-        mPreferences.edit().putLong(Keys.LEADERBOARD_UPDATE_TIME, timeInMillis).apply();
+    //leaderboard utils
+    public void saveLeaderboardUpdateDate(@NotNull final Date updateDate) {
+        mPreferences.edit().putLong(Keys.LEADERBOARD_UPDATE_DATE, updateDate.getTime()).apply();
     }
 
-    public long getLeaderBoardUpdatedTime() {
-        return mPreferences.getLong(Keys.LEADERBOARD_UPDATE_TIME, 0);
+    public Date getLeaderboardUpdateDate() {
+        return new Date(mPreferences.getLong(Keys.LEADERBOARD_UPDATE_DATE, 0));
     }
+    //leaderboard utils END
 
     //check vk group joined
     public void setLastTimeAppVkGroupJoinedChecked(final long timeInMillis) {
