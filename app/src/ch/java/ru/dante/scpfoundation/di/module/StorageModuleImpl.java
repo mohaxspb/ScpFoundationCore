@@ -29,8 +29,23 @@ public class StorageModuleImpl extends StorageModule {
 
             Timber.d("providesRealmMigration: %s/%s", oldVersion, newVersion);
 
-            //add new if blocks if schema changed
+            if (oldVersion == 1) {
+                final RealmObjectSchema leaderboardUserSchema = schema.get(LeaderboardUser.class.getSimpleName());
+                if (leaderboardUserSchema != null) {
+                    leaderboardUserSchema
+                            .removeField(LeaderboardUser.FIELD_UID)
+                            .addField(
+                                    LeaderboardUser.FIELD_ID,
+                                    Long.class,
+                                    FieldAttribute.PRIMARY_KEY,
+                                    FieldAttribute.INDEXED,
+                                    FieldAttribute.REQUIRED
+                            );
+                }
+                oldVersion++;
+            }
 
+            //add new if blocks if schema changed
             if (oldVersion < newVersion) {
                 throw new IllegalStateException(String.format(Locale.ENGLISH, "Migration missing from v%d to v%d", oldVersion, newVersion));
             }
