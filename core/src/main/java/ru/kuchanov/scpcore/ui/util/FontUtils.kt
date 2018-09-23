@@ -6,6 +6,8 @@ import ru.kuchanov.scpcore.BaseApplication
 
 object FontUtils {
 
+    const val DEFAULT_FONT_NAME = "roboto_regular"
+
     @JvmStatic
     fun getTypeFaceFromName(fontName: String): Typeface? {
         val context = BaseApplication.getAppInstance()
@@ -15,6 +17,6 @@ object FontUtils {
             "font",
             context.packageName
         )
-        return ResourcesCompat.getFont(context, fontId)
+        return if (fontId != 0) ResourcesCompat.getFont(context, fontId) else null
     }
 }
