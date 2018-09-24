@@ -193,7 +193,11 @@ public class SettingsBottomSheetDialogFragment
         });
 
         textIsSelectableSwitch.setChecked(mMyPreferenceManager.isTextSelectable());
-        textIsSelectableSwitch.setOnCheckedChangeListener((compoundButton, checked) -> mMyPreferenceManager.setTextIsSelectable(checked));
+        //todo show warning for user
+        textIsSelectableSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
+
+            mMyPreferenceManager.setTextIsSelectable(checked);
+        });
 
         //font
         fontPrefered.setOnClickListener(view -> fontPreferedSpinner.performClick());

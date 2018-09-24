@@ -54,14 +54,14 @@ data class LevelsJson(val levels: List<Level>) {
 
         @JvmField
         val MAX_LEVEL_ID = 5
-        @JvmField
-        val NO_SCORE_TO_MAX_LEVEL = -1
+        const val NO_SCORE_TO_MAX_LEVEL = -1
 
+        const val LEVELS_JSON_DEFAULT = """{"levels":[{"id":0,"title":"Level 0 (For Official Use Only)","score":0},{"id":1,"title":"Level 1 (Confidential)","score":1000},{"id":2,"title":"Level 2 (Restricted)","score":2000},{"id":3,"title":"Level 3 (Secret)","score":3000},{"id":4,"title":"Level 4 (Top Secret)","score":6000},{"id":5,"title":"Level 5 (Thaumiel)","score":10000}]}"""
 
         @JvmStatic
         val levelsJson: LevelsJson
             get() {
-                val levelsJsonString = FirebaseRemoteConfig.getInstance().getString(Constants.Firebase.RemoteConfigKeys.LEVELS_JSON)
+                val levelsJsonString = FirebaseRemoteConfig.getInstance().getString(Constants.Firebase.RemoteConfigKeys.LEVELS_JSON) ?: LEVELS_JSON_DEFAULT
                 return Gson().fromJson(levelsJsonString, LevelsJson::class.java)
             }
     }
