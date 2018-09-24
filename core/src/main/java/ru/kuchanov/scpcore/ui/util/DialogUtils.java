@@ -120,7 +120,10 @@ public class DialogUtils {
                 .show();
     }
 
-    public void showFreeTrialSubscriptionOfferDialog(final BaseActivity baseActivity, @NotNull final List<Subscription> subscriptions) {
+    public void showFreeTrialSubscriptionOfferDialog(
+            final BaseActivity baseActivity,
+            @NotNull final List<Subscription> subscriptions
+    ) {
         final boolean trialForYearEnabled = FirebaseRemoteConfig.getInstance()
                 .getBoolean(Constants.Firebase.RemoteConfigKeys.OFFER_TRIAL_FOR_YEAR);
         Collections.sort(subscriptions, Subscription.COMPARATOR_MONTH);
@@ -146,6 +149,22 @@ public class DialogUtils {
                 })
                 .negativeText(android.R.string.cancel)
                 .onNegative((dialog, which) -> dialog.dismiss())
+                .build()
+                .show();
+    }
+
+    public void showSelectableTextWarningDialog(
+            final Context context,
+            final MaterialDialog.SingleButtonCallback positiveCallback,
+            final MaterialDialog.SingleButtonCallback negativeCallback
+    ) {
+        new MaterialDialog.Builder(context)
+                .title(R.string.dialog_selectable_text_title)
+                .content(R.string.dialog_selectable_text_content)
+                .positiveText(android.R.string.ok)
+                .onPositive(positiveCallback)
+                .negativeText(android.R.string.cancel)
+                .onNegative(negativeCallback)
                 .build()
                 .show();
     }

@@ -358,4 +358,6 @@ E-mail: <a href="mailto:neva.spb.rx@gmail.com">По всем вопросам</a
     <string name="download_new_articles">Save new articles automatically</string>
     <string name="text_is_selectable">Selectable text</string>
     <string name="cant_find_next_article">Cannot find next article</string>
+    <string name="dialog_selectable_text_title">Warning!</string>
+    <string name="dialog_selectable_text_content">This feature is experimental and may cause crashes and prevent inner links opening.</string>
 </resources>
