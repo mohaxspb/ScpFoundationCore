@@ -19,6 +19,7 @@ import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -43,6 +44,7 @@ import ru.kuchanov.scpcore.monetization.util.InAppHelper;
 import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerCardDesignAdapter;
+import ru.kuchanov.scpcore.ui.util.DialogUtils;
 import ru.kuchanov.scpcore.ui.util.FontUtils;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import ru.kuchanov.scpcore.util.StorageUtils;
@@ -69,6 +71,9 @@ public class SettingsBottomSheetDialogFragment
 
     @Inject
     InAppHelper mInAppHelper;
+
+    @Inject
+    protected DialogUtils mDialogUtils;
 
     //design
     @BindView(R2.id.listItemStyle)
@@ -193,7 +198,35 @@ public class SettingsBottomSheetDialogFragment
         });
 
         textIsSelectableSwitch.setChecked(mMyPreferenceManager.isTextSelectable());
-        textIsSelectableSwitch.setOnCheckedChangeListener((compoundButton, checked) -> mMyPreferenceManager.setTextIsSelectable(checked));
+        final CompoundButton.OnCheckedChangeListener changeListener = new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(final CompoundButton compoundButton, final boolean checked) {
+                Timber.d("onCheckedChanged: %s", checked);
+                textIsSelectableSwitch.setOnCheckedChangeListener(null);
+                textIsSelectableSwitch.setChecked(false);
+                textIsSelectableSwitch.setOnCheckedChangeListener(this);
+                if (checked) {
+                    mDialogUtils.showSelectableTextWarningDialog(
+                            getActivity(),
+                            (dialog1, which) -> {
+                                textIsSelectableSwitch.setOnCheckedChangeListener(null);
+                                textIsSelectableSwitch.setChecked(true);
+                                mMyPreferenceManager.setTextIsSelectable(true);
+                                textIsSelectableSwitch.setOnCheckedChangeListener(this);
+                            },
+                            (dialog1, which) -> {
+                                textIsSelectableSwitch.setOnCheckedChangeListener(null);
+                                textIsSelectableSwitch.setChecked(false);
+                                mMyPreferenceManager.setTextIsSelectable(false);
+                                textIsSelectableSwitch.setOnCheckedChangeListener(this);
+                            }
+                    );
+                } else {
+                    mMyPreferenceManager.setTextIsSelectable(false);
+                }
+            }
+        };
+        textIsSelectableSwitch.setOnCheckedChangeListener(changeListener);
 
         //font
         fontPrefered.setOnClickListener(view -> fontPreferedSpinner.performClick());

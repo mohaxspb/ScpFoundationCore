@@ -19,6 +19,8 @@ import timber.log.Timber;
 @Module(includes = StorageModule.class)
 public class StorageModuleImpl extends StorageModule {
 
+    private int currentId;
+
     @Override
     protected RealmMigration getRealmMigration() {
         return (realm, oldVersion, newVersion) -> {
@@ -34,10 +36,11 @@ public class StorageModuleImpl extends StorageModule {
                             .addField(
                                     LeaderboardUser.FIELD_ID,
                                     Long.class,
-                                    FieldAttribute.PRIMARY_KEY,
                                     FieldAttribute.INDEXED,
                                     FieldAttribute.REQUIRED
-                            );
+                            )
+                            .transform(obj -> obj.set(LeaderboardUser.FIELD_ID, currentId++))
+                            .addPrimaryKey(LeaderboardUser.FIELD_ID);
                 }
                 oldVersion++;
             }

@@ -69,8 +69,12 @@ public class SystemUtils {
     public static void printCertificateFingerprints() {
         final String[] fingerprints = getCertificateFingerprints(BaseApplication.getAppInstance());
         Timber.d("sha fingerprints");
-        for (final String sha1 : fingerprints) {
-            Timber.d("sha1: %s", sha1);
+        if (fingerprints != null) {
+            for (final String sha1 : fingerprints) {
+                Timber.d("sha1: %s", sha1);
+            }
+        } else {
+            Timber.e(new NullPointerException(), "fingerprints arr is null!");
         }
 
         try {
@@ -122,7 +126,7 @@ public class SystemUtils {
         return coloredTextForSnackBar(context, context.getString(text));
     }
 
-    public static void parseXmlRemoteConfigToJsonAndSendItToEmail(){
+    public static void parseXmlRemoteConfigToJsonAndSendItToEmail() {
         final String[] langs = {"ru", "en", "pl", "de", "fr", "es", "it", "pt"};
         for (final String lang : langs) {
             parseAndCreateFile(lang);
