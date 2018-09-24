@@ -29,6 +29,7 @@ ext {
             def properties = new Properties()
             properties.load(new FileInputStream(marketSkusPropertiesFile))
 
+            //todo ver4 purchases and subscriptions 09.18
             //version 01.18
 //            logger.lifecycle('pathToFileWithData: {}', pathToFileWithData)
 //            logger.lifecycle('properties: {}', properties.propertyNames().toList().toListString())
