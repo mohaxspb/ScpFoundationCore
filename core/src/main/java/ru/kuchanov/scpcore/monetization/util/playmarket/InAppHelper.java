@@ -1,10 +1,11 @@
-package ru.kuchanov.scpcore.monetization.util;
+package ru.kuchanov.scpcore.monetization.util.playmarket;
 
 import com.google.gson.GsonBuilder;
 
 import com.android.vending.billing.IInAppBillingService;
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
@@ -85,35 +86,32 @@ public class InAppHelper {
             final ApiClient apiClient
     ) {
         super();
-        mMyPreferenceManager = (MyPreferenceManager) preferenceManager;
+        mMyPreferenceManager = preferenceManager;
         mDbProviderFactory = dbProviderFactory;
         mApiClient = apiClient;
     }
 
     @SubscriptionType
     public static int getSubscriptionTypeFromItemsList(@NonNull final Iterable<Item> ownedItems) {
+        final Context context = BaseApplication.getAppInstance();
         //add old old donate subs, new ones and one with free trial period
-        final Collection<String> fullVersionSkus = new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.old_skus).split(",")));
-        Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.ver_2_skus).split(","));
-        Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.ver3_skus).split(","));
-        Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.subs_free_trial).split(","));
-        Collections.addAll(fullVersionSkus, BaseApplication.getAppInstance().getString(R.string.ver3_subs_free_trial).split(","));
+        final Collection<String> fullVersionSkus = new ArrayList<>(Arrays.asList(context.getString(R.string.old_skus).split(",")));
+        Collections.addAll(fullVersionSkus, context.getString(R.string.ver_2_skus).split(","));
+        Collections.addAll(fullVersionSkus, context.getString(R.string.ver3_skus).split(","));
+        Collections.addAll(fullVersionSkus, context.getString(R.string.subs_free_trial).split(","));
+        Collections.addAll(fullVersionSkus, context.getString(R.string.ver3_subs_free_trial).split(","));
+        Collections.addAll(fullVersionSkus, context.getString(R.string.ver4_skus).split(","));
+        Collections.addAll(fullVersionSkus, context.getString(R.string.ver4_subs_free_trial).split(","));
 
         final Collection<String> noAdsSkus = new ArrayList<>();
-        noAdsSkus.add(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_old));
-        noAdsSkus.add(BaseApplication.getAppInstance().getString(R.string.subs_no_ads_ver_2));
-        noAdsSkus.add(BaseApplication.getAppInstance().getString(R.string.ver3_subs_no_ads));
+        noAdsSkus.add(context.getString(R.string.subs_no_ads_old));
+        noAdsSkus.add(context.getString(R.string.subs_no_ads_ver_2));
+        noAdsSkus.add(context.getString(R.string.ver3_subs_no_ads));
+        noAdsSkus.add(context.getString(R.string.ver4_subs_no_ads));
 
         final List<String> ownedSkus = getSkuListFromItemsList(ownedItems);
         noAdsSkus.retainAll(ownedSkus);
         fullVersionSkus.retainAll(ownedSkus);
-
-//        @SubscriptionType
-//        final int type = !fullVersionSkus.isEmpty()
-//                                           ? SubscriptionType.FULL_VERSION
-//                                           : !noAdsSkus.isEmpty()
-//                                             ? SubscriptionType.NO_ADS
-//                                             : SubscriptionType.NONE;
 
         @SubscriptionType final int type = fullVersionSkus.isEmpty()
                                            ? noAdsSkus.isEmpty()
@@ -416,18 +414,18 @@ public class InAppHelper {
     }
 
     public static List<String> getNewSubsSkus() {
-        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_skus).split(",")));
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver4_skus).split(",")));
     }
 
     public static List<String> getFreeTrailSubsSkus() {
-        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_subs_free_trial).split(",")));
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver4_subs_free_trial).split(",")));
     }
 
     public static List<String> getNewNoAdsSubsSkus() {
-        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_subs_no_ads).split(",")));
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver4_subs_no_ads).split(",")));
     }
 
     public static List<String> getNewInAppsSkus() {
-        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver3_inapp_skus).split(",")));
+        return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver4_inapp_skus).split(",")));
     }
 }
