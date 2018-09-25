@@ -23,7 +23,7 @@ import ru.kuchanov.scpcore.api.model.remoteconfig.AppLangVersionsJson;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
-import ru.kuchanov.scpcore.monetization.util.InAppHelper;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import ru.kuchanov.scpcore.ui.adapter.AppLangVersionsAdapter;
 import ru.kuchanov.scpcore.util.IntentUtils;

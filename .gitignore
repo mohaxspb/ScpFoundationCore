@@ -14,4 +14,3 @@ google-services.json
 apiKeys.properties
 *.log
 marketSkus.properties
-gradle.properties

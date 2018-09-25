@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.monetization.util;
+package ru.kuchanov.scpcore.monetization.util.appodeal;
 
 import com.appodeal.ads.Appodeal;
 import com.appodeal.ads.NativeAd;

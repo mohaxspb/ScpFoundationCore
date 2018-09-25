@@ -32,7 +32,7 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImageTranslation;
-import ru.kuchanov.scpcore.monetization.util.MyAdListener;
+import ru.kuchanov.scpcore.monetization.util.admob.MyAdListener;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.mvp.contract.GalleryScreenMvp;
 import ru.kuchanov.scpcore.ui.adapter.ImagesAdapter;
