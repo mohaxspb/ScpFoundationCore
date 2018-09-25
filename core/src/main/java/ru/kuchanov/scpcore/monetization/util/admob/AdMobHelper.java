@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.monetization.util;
+package ru.kuchanov.scpcore.monetization.util.admob;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

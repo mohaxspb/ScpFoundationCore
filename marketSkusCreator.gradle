@@ -29,6 +29,11 @@ ext {
             def properties = new Properties()
             properties.load(new FileInputStream(marketSkusPropertiesFile))
 
+            //ver4 purchases and subscriptions 09.18
+            variant.resValue('string', 'ver4_skus', properties.get("marketSkusVer4"))
+            variant.resValue('string', 'ver4_inapp_skus', properties.get("marketSkusInappVer4"))
+            variant.resValue('string', 'ver4_subs_no_ads', properties.get("noAdsSkuVer4"))
+            variant.resValue('string', 'ver4_subs_free_trial', properties.get("subsFreeTrialVer4"))
             //version 01.18
 //            logger.lifecycle('pathToFileWithData: {}', pathToFileWithData)
 //            logger.lifecycle('properties: {}', properties.propertyNames().toList().toListString())

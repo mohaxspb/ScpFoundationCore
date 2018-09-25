@@ -19,7 +19,7 @@ import ru.kuchanov.scpcore.db.model.LeaderboardUser
 import ru.kuchanov.scpcore.db.model.User
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
 import ru.kuchanov.scpcore.monetization.model.Subscription
-import ru.kuchanov.scpcore.monetization.util.InAppHelper
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
 import ru.kuchanov.scpcore.util.DimensionUtils

@@ -1,4 +1,4 @@
-package ru.kuchanov.scpcore.monetization.util;
+package ru.kuchanov.scpcore.monetization.util.admob;
 
 import com.google.android.gms.ads.AdListener;
 
@@ -19,6 +19,7 @@ public class MyAdListener extends AdListener {
     MyPreferenceManager mMyPreferenceManager;
 
     public MyAdListener() {
+        super();
         BaseApplication.getAppComponent().inject(this);
     }
 
