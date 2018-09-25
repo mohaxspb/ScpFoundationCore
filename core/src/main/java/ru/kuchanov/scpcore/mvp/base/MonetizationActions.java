@@ -1,9 +1,6 @@
 package ru.kuchanov.scpcore.mvp.base;
 
-import java.util.List;
-
-import ru.kuchanov.scpcore.monetization.model.Item;
-import ru.kuchanov.scpcore.monetization.util.MyAdListener;
+import ru.kuchanov.scpcore.monetization.util.admob.MyAdListener;
 
 /**
  * Created by mohax on 15.01.2017.

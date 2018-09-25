@@ -12,7 +12,7 @@ import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
 import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
-import ru.kuchanov.scpcore.monetization.util.InAppHelper
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
 import rx.Single

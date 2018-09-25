@@ -39,7 +39,7 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyNotificationManager;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.monetization.util.InAppHelper;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerCardDesignAdapter;
