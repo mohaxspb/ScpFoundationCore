@@ -1297,8 +1297,10 @@ public class ApiClient {
                     String url = BaseApplication.getAppInstance().getString(R.string.tools_api_url) + "scp-ru-1/MyServlet";
                     String params = "?provider=vk&token=" +
                                     id +
-                                    "&email=" + VKAccessToken.currentToken().email +
-                                    "&id=" + VKAccessToken.currentToken().userId;
+                                    "&email=" +
+                                    VKAccessToken.currentToken().email +
+                                    "&id=" +
+                                    VKAccessToken.currentToken().userId;
                     Request request = new Request.Builder()
                             .url(url + params)
                             .build();
