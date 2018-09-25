@@ -174,7 +174,7 @@ public class MyPreferenceManager {
     }
 
     public boolean isTextSelectable() {
-        return mPreferences.getBoolean(Keys.IS_TEXT_SELECTABLE, true);
+        return mPreferences.getBoolean(Keys.IS_TEXT_SELECTABLE, false);
     }
 
     //design settings
