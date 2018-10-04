@@ -1290,6 +1290,7 @@ public class ApiClient {
             final Constants.Firebase.SocialProvider provider,
             final String id
     ) {
+        Timber.d("getAuthInFirebaseWithSocialProviderObservable: %s/%s", provider, id);
         final Observable<FirebaseUser> authToFirebaseObservable;
         switch (provider) {
             case VK:
@@ -1333,6 +1334,9 @@ public class ApiClient {
                         .flatMap(this::authWithCustomToken);
                 break;
             case GOOGLE:
+                Timber.d("googleIdToken: %s", id);
+                //fixme uncomment!
+//                authToFirebaseObservable = null;
                 authToFirebaseObservable = Observable.unsafeCreate(subscriber -> {
                     final AuthCredential credential = GoogleAuthProvider.getCredential(id, null);
                     FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(task -> {
@@ -1344,11 +1348,16 @@ public class ApiClient {
                             subscriber.onCompleted();
                         } else {
                             // If sign in fails, display a message to the user.
-//                            Timber.e(task.getException(), "signInWithCredential:failure");
+                            Timber.e(task.getException(), "signInWithCredential:failure");
                             subscriber.onError(task.getException());
                         }
                     });
                 });
+//                authToFirebaseObservable = Observable.unsafeCreate(subscriber -> {
+//                    OkHttpClient okHttpClient = new OkHttpClient();
+//
+//
+//                })
                 break;
             case FACEBOOK:
                 authToFirebaseObservable = Observable.unsafeCreate(subscriber -> {
