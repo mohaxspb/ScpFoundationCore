@@ -17,6 +17,7 @@ import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract
 import ru.kuchanov.scpcore.ui.fragment.monetization.FreeAdsDisableActionsFragment
 import ru.kuchanov.scpcore.ui.fragment.monetization.LeaderboardFragment
 import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment
+import timber.log.Timber
 
 
 /**
@@ -39,18 +40,21 @@ class SubscriptionsActivity :
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
 
-            title = getString(when (screenToShowType) {
-                TYPE_SUBS -> R.string.subs_activity_title
-                TYPE_DISABLE_ADS_FOR_FREE -> R.string.free_ads_activity_title
-                TYPE_LEADERBOARD -> R.string.subs_leaderboard_activity_title
-                else -> throw IllegalArgumentException("unexpected type: $screenToShowType")
-            })
+            title = getString(
+                when (screenToShowType) {
+                    TYPE_SUBS -> R.string.subs_activity_title
+                    TYPE_DISABLE_ADS_FOR_FREE -> R.string.free_ads_activity_title
+                    TYPE_LEADERBOARD -> R.string.subs_leaderboard_activity_title
+                    else -> throw IllegalArgumentException("unexpected type: $screenToShowType")
+                })
         }
-        toolbar.setTitleTextColor(ContextCompat.getColor(this@SubscriptionsActivity, when (screenToShowType) {
-            TYPE_SUBS, TYPE_LEADERBOARD -> android.R.color.white
-            TYPE_DISABLE_ADS_FOR_FREE -> R.color.freeAdsTextColor
-            else -> throw IllegalArgumentException("unexpected type: $screenToShowType")
-        }))
+        toolbar.setTitleTextColor(
+            ContextCompat.getColor(
+                this@SubscriptionsActivity, when (screenToShowType) {
+                    TYPE_SUBS, TYPE_LEADERBOARD -> android.R.color.white
+                    TYPE_DISABLE_ADS_FOR_FREE -> R.color.freeAdsTextColor
+                    else -> throw IllegalArgumentException("unexpected type: $screenToShowType")
+                }))
 
         if (savedInstanceState == null) {
             when (screenToShowType) {
@@ -114,6 +118,11 @@ class SubscriptionsActivity :
         toolbar.setTitleTextColor(color)
         toolbar.setSubtitleTextColor(color)
         toolbar.navigationIcon?.setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Timber.d("onActivityResult called in SubscriptionsActivity")
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     companion object {

@@ -1023,6 +1023,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        Timber.d("onActivityResult called in BaseActivity");
         final VKCallback<VKAccessToken> vkCallback = new VKCallback<VKAccessToken>() {
             @Override
             public void onResult(final VKAccessToken vkAccessToken) {

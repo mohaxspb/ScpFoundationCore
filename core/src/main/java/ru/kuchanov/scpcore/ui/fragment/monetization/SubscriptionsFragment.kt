@@ -380,7 +380,6 @@ class SubscriptionsFragment :
                     //levelUp 5
                     //add 10 000 score
                     mInAppHelper.consumeInApp(item.productId, item.purchaseToken, baseActivity?.getIInAppBillingService())
-                            .toSingle()
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeBy(

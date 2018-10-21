@@ -320,7 +320,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                             } else {
                                 Timber.e("pendingIntent is NULL!");
                                 mInAppHelper.getOwnedInAppsObservable(getIInAppBillingService())
-                                        .flatMap(itemsOwned -> mInAppHelper.consumeInApp(itemsOwned.get(0).sku, itemsOwned.get(0).purchaseData.purchaseToken, getIInAppBillingService()))
+                                        .flatMapSingle(itemsOwned -> mInAppHelper.consumeInApp(itemsOwned.get(0).sku, itemsOwned.get(0).purchaseData.purchaseToken, getIInAppBillingService()))
                                         .subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe(

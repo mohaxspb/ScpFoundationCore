@@ -16,7 +16,6 @@ import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
-import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -34,6 +33,7 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Item;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
 import rx.Observable;
+import rx.Single;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP;
@@ -168,31 +168,25 @@ public class InAppHelper {
                     final List<Item> validatedItems = new ArrayList<>();
                     for (final Item item : items) {
                         Timber.d("validate item: %s", item.sku);
-                        try {
-                            final PurchaseValidateResponse purchaseValidateResponse = ((ApiClient) mApiClient).validatePurchaseSync(
-                                    true,
-                                    BaseApplication.getAppInstance().getPackageName(),
-                                    item.sku,
-                                    item.purchaseData.purchaseToken
-                            );
-                            switch (purchaseValidateResponse.getStatus()) {
-                                case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_VALID:
-                                    Timber.d("Item successfully validated: %s", item.sku);
-                                    validatedItems.add(item);
-                                    break;
-                                case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_INVALID:
+                        final PurchaseValidateResponse purchaseValidateResponse = mApiClient.validateSubscription(
+                                BaseApplication.getAppInstance().getPackageName(),
+                                item.sku,
+                                item.purchaseData.purchaseToken
+                        ).toBlocking().value();
+                        switch (purchaseValidateResponse.getStatus()) {
+                            case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_VALID:
+                                Timber.d("Item successfully validated: %s", item.sku);
+                                validatedItems.add(item);
+                                break;
+                            case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_INVALID:
 //                                    return Observable.error(new IllegalStateException("Purchase state is INVALID"));
-                                    Timber.e("Invalid subs: %s", item.sku);
-                                    break;
-                                case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_GOOGLE_SERVER_ERROR:
-                                    //if there is error we should cancel subs validating
-                                    return Observable.error(new IllegalStateException("Purchase state cant be validated, as Google Servers sends error"));
-                                default:
-                                    return Observable.error(new IllegalArgumentException("Unexpected validation status: " + purchaseValidateResponse.getStatus()));
-                            }
-                        } catch (final IOException e) {
-                            Timber.e(e, "failed validation request to vps server");
-                            return Observable.error(e);
+                                Timber.e("Invalid subs: %s", item.sku);
+                                break;
+                            case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_GOOGLE_SERVER_ERROR:
+                                //if there is error we should cancel subs validating
+                                return Observable.error(new IllegalStateException("Purchase state cant be validated, as Google Servers sends error"));
+                            default:
+                                return Observable.error(new IllegalArgumentException("Unexpected validation status: " + purchaseValidateResponse.getStatus()));
                         }
                     }
                     return Observable.just(validatedItems);
@@ -311,15 +305,15 @@ public class InAppHelper {
         });
     }
 
-    public Observable<Integer> consumeInApp(
+    public Single<Integer> consumeInApp(
             final String sku,
             final String token,
             final IInAppBillingService mInAppBillingService
     ) {
         final String packageName = BaseApplication.getAppInstance().getPackageName();
 
-        return ((ApiClient) mApiClient).validatePurchase(false, packageName, sku, token)
-                .flatMap(purchaseValidateResponse -> {
+        return mApiClient.validateProduct(packageName, sku, token)
+                .flatMapObservable(purchaseValidateResponse -> {
                     @PurchaseValidateResponse.PurchaseValidationStatus final int status = purchaseValidateResponse.getStatus();
                     Timber.d("PurchaseValidationStatus: %s", status);
                     switch (status) {
@@ -337,7 +331,7 @@ public class InAppHelper {
                         default:
                             return Observable.error(new IllegalArgumentException("Unexpected validation status: " + status));
                     }
-                });
+                }).toSingle();
     }
 
     public Observable<List<Item>> validateSubsObservable(final IInAppBillingService service) {
