@@ -1,12 +1,12 @@
 package ru.kuchanov.scpcore.mvp.contract.monetization
 
-import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
 import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BaseMvp
 import ru.kuchanov.scpcore.mvp.contract.FragmentToolbarStateSetter
+import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 
 /**
  * Created by y.kuchanov on 21.12.16.
@@ -32,7 +32,7 @@ interface SubscriptionsContract : BaseMvp {
         @InAppHelper.SubscriptionType
         var type: Int
 
-        fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService)
+        fun onSubscriptionClick(id: String, target: BaseFragment<*, *>, inAppBillingService: IInAppBillingService)
         fun getMarketData(service: IInAppBillingService)
         var isDataLoaded: Boolean
         fun onCurrentSubscriptionClick(id: String)

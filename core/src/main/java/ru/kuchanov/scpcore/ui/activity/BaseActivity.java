@@ -605,7 +605,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 snackbar.setAction(R.string.yes, action -> {
                     if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO)) {
                         try {
-                            InAppHelper.startSubsBuy(this, mService, InAppHelper.InappType.SUBS, InAppHelper.getNewSubsSkus().get(0));
+                            InAppHelper.startPurchase(this, mService, InAppHelper.InappType.SUBS, InAppHelper.getNewSubsSkus().get(0));
 
                             final Bundle bundle = new Bundle();
                             bundle.putString(EventParam.PLACE, StartScreen.ADS_WILL_SHOWN_SOON);

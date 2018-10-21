@@ -1,6 +1,5 @@
 package ru.kuchanov.scpcore.mvp.presenter.monetization
 
-import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import ru.kuchanov.scpcore.BaseApplication
@@ -22,6 +21,7 @@ import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
+import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 import ru.kuchanov.scpcore.util.DimensionUtils
 import rx.Observable
 import rx.Single
@@ -263,7 +263,8 @@ class LeaderboardPresenter(
         }
     }
 
-    override fun onSubscriptionClick(id: String, target: Fragment, ignoreUserCheck: Boolean) {
+    override fun onSubscriptionClick(id: String, target: BaseFragment<*, *>, ignoreUserCheck: Boolean) {
+        Timber.d("onSubscriptionClick: $id, $target, $ignoreUserCheck")
         //show warning if user not logged in
         if (!ignoreUserCheck && user == null) {
             view.showOfferLoginForLevelUpPopup()
@@ -276,7 +277,7 @@ class LeaderboardPresenter(
             InAppHelper.InappType.SUBS
         }
         try {
-            InAppHelper.startSubsBuy(target, inAppService, type, id)
+            InAppHelper.startPurchase(target, inAppService, type, id)
         } catch (e: Exception) {
             Timber.e(e)
             view.showError(e)

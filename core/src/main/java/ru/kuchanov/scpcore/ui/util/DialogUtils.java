@@ -136,7 +136,7 @@ public class DialogUtils {
                 .positiveText(R.string.yes_bliad)
                 .onPositive((dialog, which) -> {
                     try {
-                        InAppHelper.startSubsBuy(
+                        InAppHelper.startPurchase(
                                 baseActivity,
                                 baseActivity.getIInAppBillingService(),
                                 InAppHelper.InappType.SUBS,

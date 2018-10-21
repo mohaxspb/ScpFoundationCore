@@ -1,5 +1,8 @@
 package ru.kuchanov.scpcore.ui.dialog;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,9 +16,6 @@ import android.support.v7.widget.SwitchCompat;
 import android.text.Html;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -151,7 +151,7 @@ public class AdsSettingsBottomSheetDialogFragment
             noAdsSku = InAppHelper.getNewSubsSkus().get(0);
         }
         try {
-            InAppHelper.startSubsBuy(this, getBaseActivity().getIInAppBillingService(), InAppHelper.InappType.SUBS, noAdsSku);
+            InAppHelper.startPurchase(getBaseActivity(), getBaseActivity().getIInAppBillingService(), InAppHelper.InappType.SUBS, noAdsSku);
         } catch (Exception e) {
             Timber.e(e);
             Snackbar.make(mRoot, e.getMessage(), Snackbar.LENGTH_SHORT).show();

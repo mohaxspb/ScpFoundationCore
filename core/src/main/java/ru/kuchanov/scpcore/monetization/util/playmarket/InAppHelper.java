@@ -13,8 +13,6 @@ import android.os.RemoteException;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringDef;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -32,6 +30,8 @@ import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Item;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
+import ru.kuchanov.scpcore.ui.activity.BaseActivity;
+import ru.kuchanov.scpcore.ui.fragment.BaseFragment;
 import rx.Observable;
 import rx.Single;
 import timber.log.Timber;
@@ -366,8 +366,8 @@ public class InAppHelper {
                 });
     }
 
-    public static void startSubsBuy(
-            final Fragment fragment,
+    public static void startPurchase(
+            final BaseFragment fragment,
             final IInAppBillingService mInAppBillingService,
             @InappType final String type,
             final String sku
@@ -379,15 +379,33 @@ public class InAppHelper {
                 type,
                 String.valueOf(System.currentTimeMillis())
         );
-        final PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
-        if (pendingIntent != null) {
-            final int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
-            fragment.startIntentSenderForResult(pendingIntent.getIntentSender(), requestCode, new Intent(), 0, 0, 0, null);
+        final int responseCode = buyIntentBundle.getInt("RESPONSE_CODE");
+        if (responseCode == RESULT_OK) {
+            final PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
+            if (pendingIntent != null) {
+                final int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
+                fragment.startIntentSenderForResult(
+                        pendingIntent.getIntentSender(),
+                        requestCode,
+                        new Intent(),
+                        0,
+                        0,
+                        0,
+                        null
+                );
+            } else {
+                fragment.showError(new NullPointerException("pendingIntent is NULL!!!"));
+                Timber.wtf("pendingIntent is NULL!!!");
+            }
+            //todo check if RESPONSE_CODE is 7 (owned) and consume inapp
+        } else {
+            fragment.showError(new IllegalStateException("RESPONSE_CODE is not OK: " + responseCode));
+            Timber.wtf("RESPONSE_CODE is not OK: %s", responseCode);
         }
     }
 
-    public static void startSubsBuy(
-            final FragmentActivity activity,
+    public static void startPurchase(
+            final BaseActivity activity,
             final IInAppBillingService mInAppBillingService,
             @InappType final String type,
             final String sku
@@ -399,11 +417,29 @@ public class InAppHelper {
                 type,
                 String.valueOf(System.currentTimeMillis())
         );
-        final PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
-        if (pendingIntent != null) {
-            final int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
-            activity.startIntentSenderForResult(pendingIntent.getIntentSender(), requestCode, new Intent(), 0, 0, 0, null);
+        final int responseCode = buyIntentBundle.getInt("RESPONSE_CODE");
+        if (responseCode == RESULT_OK) {
+            final PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
+            if (pendingIntent != null) {
+                final int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
+                activity.startIntentSenderForResult(
+                        pendingIntent.getIntentSender(),
+                        requestCode,
+                        new Intent(),
+                        0,
+                        0,
+                        0,
+                        null
+                );
+            } else {
+                activity.showError(new NullPointerException("pendingIntent is NULL!!!"));
+                Timber.wtf("pendingIntent is NULL!!!");
+            }
+        } else {
+            activity.showError(new IllegalStateException("RESPONSE_CODE is not OK: " + responseCode));
+            Timber.wtf("RESPONSE_CODE is not OK: %s", responseCode);
         }
+
         //todo think if we must handle consuming inapp here
     }
 

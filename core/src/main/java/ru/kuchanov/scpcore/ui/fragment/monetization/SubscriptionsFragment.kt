@@ -243,6 +243,7 @@ class SubscriptionsFragment :
         val textColor = R.color.subsTextColorBottom
 
         val subsFullOneMonth = toBuy
+                .asSequence()
                 .filter { it.productId !in InAppHelper.getNewNoAdsSubsSkus() }
                 .first { SubscriptionsPresenter.getMonthFromSkuId(it.productId) == 1 }
 

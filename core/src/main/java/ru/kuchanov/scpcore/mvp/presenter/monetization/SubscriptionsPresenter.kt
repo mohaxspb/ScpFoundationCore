@@ -2,7 +2,6 @@
 
 package ru.kuchanov.scpcore.mvp.presenter.monetization
 
-import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import ru.kuchanov.scpcore.Constants
@@ -15,6 +14,7 @@ import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
+import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.subscribeBy
@@ -62,9 +62,8 @@ class SubscriptionsPresenter(
         Single.zip(
             inAppHelper.validateSubsObservable(service).toSingle(),
             inAppHelper.getSubsListToBuyObservable(service, skuList).toSingle(),
-            inAppHelper.getInAppsListToBuyObservable(service).toSingle(),
-            { t1: List<Item>, t2: List<Subscription>, t3: List<Subscription> -> Triple(t1, t2, t3) }
-        )
+            inAppHelper.getInAppsListToBuyObservable(service).toSingle()
+        ) { t1: List<Item>, t2: List<Subscription>, t3: List<Subscription> -> Triple(t1, t2, t3) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
@@ -104,7 +103,7 @@ class SubscriptionsPresenter(
                 )
     }
 
-    override fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService) {
+    override fun onSubscriptionClick(id: String, target: BaseFragment<*,*>, inAppBillingService: IInAppBillingService) {
         if (id == ID_FREE_ADS_DISABLE) {
             view.navigateToDisableAds()
             return
@@ -115,7 +114,7 @@ class SubscriptionsPresenter(
             InAppHelper.InappType.SUBS
         }
         try {
-            InAppHelper.startSubsBuy(target, inAppBillingService, type, id)
+            InAppHelper.startPurchase(target, inAppBillingService, type, id)
         } catch (e: Exception) {
             Timber.e(e)
             view.showError(e)
