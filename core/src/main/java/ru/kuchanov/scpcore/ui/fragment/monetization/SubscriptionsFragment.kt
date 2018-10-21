@@ -329,6 +329,7 @@ class SubscriptionsFragment :
     override fun navigateToLeaderboard() = (baseActivity as SubscriptionsActivity)
             .showScreen(SubscriptionsScreenContract.Screen.LEADERBOARD)
 
+    //todo move to base activity
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Timber.d("onActivityResult called in fragment")
         if (requestCode == REQUEST_CODE_SUBSCRIPTION) {

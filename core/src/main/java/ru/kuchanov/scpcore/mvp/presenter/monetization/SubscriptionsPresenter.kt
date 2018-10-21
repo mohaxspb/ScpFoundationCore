@@ -114,7 +114,8 @@ class SubscriptionsPresenter(
             InAppHelper.InappType.SUBS
         }
         try {
-            InAppHelper.startPurchase(target, inAppBillingService, type, id)
+            //todo
+//            inAppHelper.startPurchase(target, inAppBillingService, type, id)
         } catch (e: Exception) {
             Timber.e(e)
             view.showError(e)

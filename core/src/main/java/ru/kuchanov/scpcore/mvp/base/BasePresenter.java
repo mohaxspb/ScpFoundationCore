@@ -6,7 +6,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 import com.vk.sdk.VKSdk;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import android.content.Context;
@@ -334,12 +333,8 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     }
 
     /**
-     * check if user logged in,
-     * calculate final score to add value from modificators,
-     * if user do not have subscription we increment unsynced score
-     * if user has subscription we increment score in firebase
-     * while incrementing we check if user already received score from group
-     * and if so - do not increment it
+     * check if user logged in, calculate final score to add value from modificators, if user do not have subscription we increment unsynced score if user has subscription we increment score in firebase while incrementing we check if user already received score from group and if so - do not
+     * increment it
      */
     @Override
     public void updateUserScoreForVkGroup(final String id) {
@@ -455,12 +450,8 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     }
 
     /**
-     * check if user logged in,
-     * calculate final score to add value from modificators,
-     * if user do not have subscription we increment unsynced score
-     * if user has subscription we increment score in firebase
-     * while incrementing we check if user already received score from group
-     * and if so - do not increment it
+     * check if user logged in, calculate final score to add value from modificators, if user do not have subscription we increment unsynced score if user has subscription we increment score in firebase while incrementing we check if user already received score from group and if so - do not
+     * increment it
      */
     @Override
     public void updateUserScoreForScoreAction(@ScoreAction final String action) {
@@ -479,17 +470,12 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         //increment scoreInFirebase
         final int totalScoreToAdd = 10000;
 
-//        switch (sku) {
-//            case "level_up_to_5":
-//                totalScoreToAdd = 10000;
-//                break;
-//            default:
-//                throw new IllegalArgumentException("unexpected sku");
-//        }
-
         mApiClient
                 .incrementScoreInFirebaseObservable(totalScoreToAdd)
-                .flatMap(newTotalScore -> mApiClient.addRewardedInapp(sku).flatMap(aVoid -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore)))
+                .flatMap(newTotalScore -> mApiClient
+                        .addRewardedInapp(sku)
+                        .flatMap(aVoid -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
+                )
                 //TODO need to realize it as we realize vk groups and apps - write inapps to json and check if we need to add score for it
                 .subscribe(
                         newTotalScore -> {

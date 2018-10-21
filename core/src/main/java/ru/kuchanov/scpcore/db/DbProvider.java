@@ -1021,8 +1021,7 @@ public class DbProvider {
                     subscriber.onError(e);
                     mRealm.close();
                 }
-                )
-        );
+        ));
     }
 
     public Observable<RealmResults<ArticleTag>> getArticleTagsAsync() {

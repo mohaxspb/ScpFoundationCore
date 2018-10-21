@@ -294,48 +294,47 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
         }
     }
 
-    private final View.OnClickListener mOnLevelUpClickListener = view -> mInAppHelper.getInAppsListToBuyObservable(getIInAppBillingService()).subscribe(
-            items -> new MaterialDialog.Builder(view.getContext())
-                    .title(R.string.dialog_level_up_title)
-                    .content(R.string.dialog_level_up_content)
-                    .neutralText(android.R.string.cancel)
-                    .positiveText(R.string.dialog_level_up_ok_text)
-                    .onPositive((dialog1, which) -> {
-                        Timber.d("onPositive");
-                        try {
-                            Bundle buyIntentBundle = getIInAppBillingService().getBuyIntent(
-                                    3,
-                                    getPackageName(),
-                                    items.get(0).productId,
-                                    "inapp",
-                                    String.valueOf(System.currentTimeMillis())
-                            );
-                            PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
-                            for (String key : buyIntentBundle.keySet()) {
-                                Timber.d("%s: %s", key, buyIntentBundle.get(key));
-                            }
-                            if (pendingIntent != null) {
-                                Timber.d("startIntentSenderForResult");
-                                startIntentSenderForResult(pendingIntent.getIntentSender(), REQUEST_CODE_INAPP, new Intent(), 0, 0, 0, null);
-                            } else {
-                                Timber.e("pendingIntent is NULL!");
-                                mInAppHelper.getOwnedInAppsObservable(getIInAppBillingService())
-                                        .flatMapSingle(itemsOwned -> mInAppHelper.consumeInApp(itemsOwned.get(0).sku, itemsOwned.get(0).purchaseData.purchaseToken, getIInAppBillingService()))
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe(
-                                                result -> Timber.d("consumed result: %s", result),
-                                                Timber::e
-                                        );
-                            }
-                        } catch (Exception e) {
-                            Timber.e(e, "error ");
-                            Snackbar.make(mRoot, e.getMessage(), Snackbar.LENGTH_SHORT).show();
-                        }
-                    })
-                    .show(),
-            this::showError
-    );
+    //todo move to inapphelper
+    private final View.OnClickListener mOnLevelUpClickListener = view -> mInAppHelper.getInAppsListToBuyObservable(getIInAppBillingService())
+            .subscribe(
+                    items -> new MaterialDialog.Builder(view.getContext())
+                            .title(R.string.dialog_level_up_title)
+                            .content(R.string.dialog_level_up_content)
+                            .neutralText(android.R.string.cancel)
+                            .positiveText(R.string.dialog_level_up_ok_text)
+                            .onPositive((dialog1, which) -> {
+                                Timber.d("onPositive");
+                                try {
+                                    Bundle buyIntentBundle = getIInAppBillingService().getBuyIntent(
+                                            3,
+                                            getPackageName(),
+                                            items.get(0).productId,
+                                            "inapp",
+                                            String.valueOf(System.currentTimeMillis())
+                                    );
+                                    PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
+                                    if (pendingIntent != null) {
+                                        Timber.d("startIntentSenderForResult");
+                                        startIntentSenderForResult(pendingIntent.getIntentSender(), REQUEST_CODE_INAPP, new Intent(), 0, 0, 0, null);
+                                    } else {
+                                        Timber.e("pendingIntent is NULL!");
+                                        mInAppHelper.getOwnedInAppsObservable(getIInAppBillingService())
+                                                .flatMapSingle(itemsOwned -> mInAppHelper.consumeInApp(itemsOwned.get(0).sku, itemsOwned.get(0).purchaseData.purchaseToken, getIInAppBillingService()))
+                                                .subscribeOn(Schedulers.io())
+                                                .observeOn(AndroidSchedulers.mainThread())
+                                                .subscribe(
+                                                        result -> Timber.d("consumed result: %s", result),
+                                                        Timber::e
+                                                );
+                                    }
+                                } catch (Exception e) {
+                                    Timber.e(e, "error ");
+                                    Snackbar.make(mRoot, e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                                }
+                            })
+                            .show(),
+                    this::showError
+            );
 
     @Override
     public void showLeaderboard() {

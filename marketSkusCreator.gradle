@@ -1,4 +1,4 @@
-apply from: 'https://raw.githubusercontent.com/mohaxspb/ScpFoundationCore/master/utils.gradle'
+apply from: '../utils.gradle'
 
 ext {
     fillArrays = { variant, fileIsinRoot ->

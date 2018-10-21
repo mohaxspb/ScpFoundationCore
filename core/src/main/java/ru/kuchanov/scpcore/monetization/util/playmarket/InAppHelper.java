@@ -13,6 +13,7 @@ import android.os.RemoteException;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringDef;
+import android.util.Pair;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -23,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
@@ -33,7 +35,10 @@ import ru.kuchanov.scpcore.monetization.model.Subscription;
 import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment;
 import rx.Observable;
+import rx.Scheduler;
 import rx.Single;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP;
@@ -48,7 +53,22 @@ public class InAppHelper {
 
     private final static int API_VERSION_3 = 3;
 
-    public static final int RESULT_OK = 0;
+    public static final int RESULT_OK = 0;// - success
+
+    public static final int RESULT_USER_CANCELED = 1;// - user pressed back or canceled a dialog
+
+    public static final int RESULT_BILLING_UNAVAILABLE = 3;// - this billing API version is not supported for the type requested
+
+    public static final int RESULT_ITEM_UNAVAILABLE = 4;// - requested SKU is not available for purchase
+
+    public static final int RESULT_DEVELOPER_ERROR = 5;// - invalid arguments provided to the API
+
+    public static final int RESULT_ERROR = 6;// - Fatal error during the API action
+
+    public static final int RESULT_ITEM_ALREADY_OWNED = 7;// - Failure to purchase since item is already owned
+
+    public static final int RESULT_ITEM_NOT_OWNED = 8;// - Failure to consume since item is not owned
+
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({
@@ -331,7 +351,10 @@ public class InAppHelper {
                         default:
                             return Observable.error(new IllegalArgumentException("Unexpected validation status: " + status));
                     }
-                }).toSingle();
+                })
+                .toSingle()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<List<Item>> validateSubsObservable(final IInAppBillingService service) {
@@ -366,41 +389,122 @@ public class InAppHelper {
                 });
     }
 
-    public static void startPurchase(
-            final BaseFragment fragment,
+    public Single<IntentSender> startPurchase(
+//            final BaseFragment<BaseMvp.View, BaseMvp.Presenter<BaseMvp.View>> fragment,
             final IInAppBillingService mInAppBillingService,
             @InappType final String type,
             final String sku
-    ) throws RemoteException, IntentSender.SendIntentException {
-        final Bundle buyIntentBundle = mInAppBillingService.getBuyIntent(
+    ) {
+        return Observable.fromCallable(() -> mInAppBillingService.getBuyIntent(
                 API_VERSION_3,
                 BaseApplication.getAppInstance().getPackageName(),
                 sku,
                 type,
                 String.valueOf(System.currentTimeMillis())
-        );
-        final int responseCode = buyIntentBundle.getInt("RESPONSE_CODE");
-        if (responseCode == RESULT_OK) {
-            final PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
-            if (pendingIntent != null) {
-                final int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
-                fragment.startIntentSenderForResult(
-                        pendingIntent.getIntentSender(),
-                        requestCode,
-                        new Intent(),
-                        0,
-                        0,
-                        0,
-                        null
-                );
-            } else {
-                fragment.showError(new NullPointerException("pendingIntent is NULL!!!"));
-                Timber.wtf("pendingIntent is NULL!!!");
-            }
-            //todo check if RESPONSE_CODE is 7 (owned) and consume inapp
-        } else {
-            fragment.showError(new IllegalStateException("RESPONSE_CODE is not OK: " + responseCode));
-            Timber.wtf("RESPONSE_CODE is not OK: %s", responseCode);
+        ))
+                .map(bundle -> new Pair<>(bundle, bundle.getInt("RESPONSE_CODE")))
+                .flatMap(bundleResponseCodePair -> {
+                    if (bundleResponseCodePair.second == RESULT_OK) {
+                        final PendingIntent pendingIntent = bundleResponseCodePair.first.getParcelable("BUY_INTENT");
+                        return Single.just(pendingIntent.getIntentSender()).toObservable();
+                    } else if (bundleResponseCodePair.second == RESULT_ITEM_ALREADY_OWNED) {
+                        return getOwnedInAppsObservable(mInAppBillingService)
+                                .flatMapSingle(itemsOwned -> consumeInApp(
+                                        itemsOwned.get(0).sku,
+                                        itemsOwned.get(0).purchaseData.purchaseToken,
+                                        mInAppBillingService
+                                ))
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .flatMapSingle(integer -> mApiClient
+                                        .incrementScoreInFirebaseObservable(Constants.LEVEL_UP_SCORE_TO_ADD)
+                                        .observeOn(Schedulers.io())
+                                        .flatMap(newTotalScore -> mApiClient
+                                                .addRewardedInapp(sku)
+                                                .flatMap(aVoid -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
+                                        )
+                                        .doOnError(throwable -> mMyPreferenceManager.addUnsyncedScore(Constants.LEVEL_UP_SCORE_TO_ADD))
+                                        .toSingle()
+                                )
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .flatMapSingle(integer -> startPurchase(
+//                                        fragment,
+                                        mInAppBillingService,
+                                        type,
+                                        sku
+                                ));
+                    } else {
+                        return Observable.error(new IllegalStateException(
+                                "RESPONSE_CODE is not OK: " + bundleResponseCodePair.second
+                        ));
+                    }
+                })
+                .toSingle();
+//
+//        return Completable.fromAction(() -> {
+//            try {
+//                final Bundle buyIntentBundle = mInAppBillingService.getBuyIntent(
+//                        API_VERSION_3,
+//                        BaseApplication.getAppInstance().getPackageName(),
+//                        sku,
+//                        type,
+//                        String.valueOf(System.currentTimeMillis())
+//                );
+//                final int responseCode = buyIntentBundle.getInt("RESPONSE_CODE");
+//                if (responseCode == RESULT_OK) {
+//                    final PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
+//                    if (pendingIntent != null) {
+//                        final int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
+//                        fragment.startIntentSenderForResult(
+//                                pendingIntent.getIntentSender(),
+//                                requestCode,
+//                                new Intent(),
+//                                0,
+//                                0,
+//                                0,
+//                                null
+//                        );
+//                    } else {
+//                        fragment.showError(new NullPointerException("pendingIntent is NULL!!!"));
+//                        Timber.wtf("pendingIntent is NULL!!!");
+//                    }
+//                } else if (responseCode == RESULT_ITEM_ALREADY_OWNED) {
+//                    //todo check if RESPONSE_CODE is 7 (owned) and consume inapp
+//                    mInAppHelper.getOwnedInAppsObservable(getIInAppBillingService())
+//                            .flatMapSingle(itemsOwned -> mInAppHelper.consumeInApp(itemsOwned.get(0).sku, itemsOwned.get(0).purchaseData.purchaseToken, getIInAppBillingService()))
+//                            .subscribeOn(Schedulers.io())
+//                            .observeOn(AndroidSchedulers.mainThread())
+//                            .subscribe(
+//                                    result -> Timber.d("consumed result: %s", result),
+//                                    Timber::e
+//                            )
+//                } else {
+//                    fragment.showError(new IllegalStateException("RESPONSE_CODE is not OK: " + responseCode));
+//                    Timber.wtf("RESPONSE_CODE is not OK: %s", responseCode);
+//                }
+//            } catch (RemoteException | IntentSender.SendIntentException e) {
+//                //todo
+//            }
+//        });
+    }
+
+    public void startPurchase(
+            final IntentSender intentSender,
+            final BaseFragment fragment,
+            final int requestCode
+    ) {
+        try {
+            fragment.startIntentSenderForResult(
+                    intentSender,
+                    requestCode,
+                    new Intent(),
+                    0,
+                    0,
+                    0,
+                    null
+            );
+        } catch (final IntentSender.SendIntentException e) {
+            Timber.wtf(e);
+            fragment.showError(e);
         }
     }
 
@@ -435,12 +539,13 @@ public class InAppHelper {
                 activity.showError(new NullPointerException("pendingIntent is NULL!!!"));
                 Timber.wtf("pendingIntent is NULL!!!");
             }
+        } else if (responseCode == RESULT_ITEM_ALREADY_OWNED) {
+            //todo check if RESPONSE_CODE is 7 (owned) and consume inapp
+
         } else {
             activity.showError(new IllegalStateException("RESPONSE_CODE is not OK: " + responseCode));
             Timber.wtf("RESPONSE_CODE is not OK: %s", responseCode);
         }
-
-        //todo think if we must handle consuming inapp here
     }
 
     public static List<String> getNewSubsSkus() {

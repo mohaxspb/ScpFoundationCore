@@ -21,7 +21,9 @@ import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
+import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment
+import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment.Companion.REQUEST_CODE_SUBSCRIPTION
 import ru.kuchanov.scpcore.util.DimensionUtils
 import rx.Observable
 import rx.Single
@@ -276,12 +278,21 @@ class LeaderboardPresenter(
         } else {
             InAppHelper.InappType.SUBS
         }
-        try {
-            InAppHelper.startPurchase(target, inAppService, type, id)
-        } catch (e: Exception) {
-            Timber.e(e)
-            view.showError(e)
+        val requestCode = if (type == InAppHelper.InappType.IN_APP) {
+            REQUEST_CODE_INAPP
+        } else {
+            REQUEST_CODE_SUBSCRIPTION
         }
+        inAppHelper.startPurchase(inAppService, type, id)
+                .subscribeBy(
+                    onSuccess = {
+                        inAppHelper.startPurchase(it, target, requestCode)
+                    },
+                    onError = {
+                        Timber.e(it)
+                        view.showError(it)
+                    }
+                )
     }
 
     override fun onRewardedVideoClick() = view.onRewardedVideoClick()

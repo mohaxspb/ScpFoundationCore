@@ -15,6 +15,7 @@ public interface Constants {
      */
     int NUM_OF_NATIVE_ADS_PER_SCREEN = 3;
     long POST_DELAYED_MILLIS = 500;
+    int LEVEL_UP_SCORE_TO_ADD = 10000;
 
     enum NativeAdsSource {
         ALL, APPODEAL, SCP_ART, SCP_QUIZ
