@@ -11,6 +11,7 @@ import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.tags.TagsSearchResultsArticlesMvp;
 import ru.kuchanov.scpcore.mvp.presenter.articleslists.BaseListArticlesPresenter;
 import rx.Observable;
@@ -23,65 +24,43 @@ public class TagSearchResultsArticlesPresenter
         implements TagsSearchResultsArticlesMvp.Presenter {
 
     private List<ArticleTag> mQueryTags;
+
     private List<String> mArticlesUrls;
-//    private List<Article> mArticles;
 
     public TagSearchResultsArticlesPresenter(
-            MyPreferenceManager myPreferencesManager,
-            DbProviderFactory dbProviderFactory,
-            ApiClient apiClient
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient,
+            final InAppHelper inAppHelper
     ) {
-        super(myPreferencesManager, dbProviderFactory, apiClient);
+        super(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }
 
     @Override
     protected Observable<RealmResults<Article>> getDbObservable() {
-//        return mDbProviderFactory.getDbProvider().getArticlesByIds(mArticlesUrls);
-
         return mArticlesUrls == null || mArticlesUrls.isEmpty() ?
-                Observable.<RealmResults<Article>>empty()
-                        .doOnCompleted(() -> {
-                            if (mArticlesUrls == null) {
-                                getDataFromApi(Constants.Api.ZERO_OFFSET);
-                            } else {
-                                getView().showSwipeProgress(false);
-                            }
-                        })
-                : mDbProviderFactory.getDbProvider().getArticlesByIds(mArticlesUrls);
-
-//        return Observable.<RealmResults<Article>>empty()
-//                .doOnCompleted(() -> {
-//                    if (mArticles == null) {
-//                        getDataFromApi(Constants.Api.ZERO_OFFSET);
-//                    } else {
-//                        getView().showSwipeProgress(false);
-//                    }
-//                });
+               Observable.<RealmResults<Article>>empty()
+                       .doOnCompleted(() -> {
+                           if (mArticlesUrls == null) {
+                               getDataFromApi(Constants.Api.ZERO_OFFSET);
+                           } else {
+                               getView().showSwipeProgress(false);
+                           }
+                       })
+                                                                : mDbProviderFactory.getDbProvider().getArticlesByIds(mArticlesUrls);
     }
 
     @Override
-    protected Observable<List<Article>> getApiObservable(int offset) {
+    protected Observable<List<Article>> getApiObservable(final int offset) {
         return mApiClient.getArticlesByTags(mQueryTags);
     }
 
     @Override
-    protected Observable<Pair<Integer, Integer>> getSaveToDbObservable(List<Article> data, int offset) {
+    protected Observable<Pair<Integer, Integer>> getSaveToDbObservable(final List<Article> data, final int offset) {
 //        //we do not save search results to db
 //        //but we need pass data to view...
 //        //so try to do it here
-//        return Observable.unsafeCreate(subscriber -> {
-//            mArticles = data;
-//            getView().updateData(mArticles);
-//            getView().showCenterProgress(false);
-//            getView().showSwipeProgress(false);
-//            if (mArticles.isEmpty()) {
-//                getView().showMessage(R.string.error_no_search_results);
-//            }
-//            subscriber.onNext(new Pair<>(data.size(), offset));
-//            subscriber.onCompleted();
-//        });
         return mDbProviderFactory.getDbProvider()
-//                .saveMultipleArticlesSync(data)
                 .saveMultipleArticlesWithoutTextSync(data)
                 .doOnNext(articles -> {
                     mArticlesUrls = Article.getListOfUrls(articles);
@@ -91,7 +70,7 @@ public class TagSearchResultsArticlesPresenter
     }
 
     @Override
-    public void setQueryTags(List<ArticleTag> queryTags) {
+    public void setQueryTags(final List<ArticleTag> queryTags) {
         mQueryTags = queryTags;
     }
 
@@ -100,10 +79,12 @@ public class TagSearchResultsArticlesPresenter
         return mQueryTags;
     }
 
-    public void setArticlesUrls(List<String> articles) {
+    @Override
+    public void setArticlesUrls(final List<String> articles) {
         mArticlesUrls = articles;
     }
 
+    @Override
     public List<String> getArticlesUrls() {
         return mArticlesUrls;
     }

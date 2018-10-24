@@ -26,6 +26,7 @@ import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.FreeAdsDisableActionsContract
 import ru.kuchanov.scpcore.util.DimensionUtils
@@ -44,11 +45,13 @@ class FreeAdsDisableActionsPresenter(
     dbProviderFactory: DbProviderFactory,
     apiClient: ApiClient,
     private val mGson: Gson,
-    private val mMyNotificationManager: MyNotificationManager
+    private val mMyNotificationManager: MyNotificationManager,
+    inAppHelper: InAppHelper
 ) : BasePresenter<FreeAdsDisableActionsContract.View>(
     mMyPreferenceManager,
     dbProviderFactory,
-    apiClient
+    apiClient,
+    inAppHelper
 ), FreeAdsDisableActionsContract.Presenter {
 
     private val firebaseAuth = FirebaseAuth.getInstance()

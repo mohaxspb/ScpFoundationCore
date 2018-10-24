@@ -18,12 +18,9 @@ import java.util.Locale;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
-import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.api.model.remoteconfig.AppLangVersionsJson;
-import ru.kuchanov.scpcore.db.DbProviderFactory;
-import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
-import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
+import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp;
 import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import ru.kuchanov.scpcore.ui.adapter.AppLangVersionsAdapter;
 import ru.kuchanov.scpcore.util.IntentUtils;
@@ -36,26 +33,12 @@ import timber.log.Timber;
  */
 public class DialogUtils {
 
-    private final MyPreferenceManager mPreferenceManager;
-
-    private final DbProviderFactory mDbProviderFactory;
-
-    private final ApiClient mApiClient;
-
     private final ConstantValues mConstantValues;
 
     private MaterialDialog mProgressDialog;
 
-    public DialogUtils(
-            final MyPreferenceManager preferenceManager,
-            final DbProviderFactory dbProviderFactory,
-            final ApiClient apiClient,
-            final ConstantValues constantValues
-    ) {
+    public DialogUtils(final ConstantValues constantValues) {
         super();
-        mPreferenceManager = preferenceManager;
-        mDbProviderFactory = dbProviderFactory;
-        mApiClient = apiClient;
         mConstantValues = constantValues;
     }
 
@@ -121,7 +104,7 @@ public class DialogUtils {
     }
 
     public void showFreeTrialSubscriptionOfferDialog(
-            final BaseActivity baseActivity,
+            final BaseActivity<? extends BaseActivityMvp.View, ? extends BaseActivityMvp.Presenter<? extends BaseActivityMvp.View>> baseActivity,
             @NotNull final List<Subscription> subscriptions
     ) {
         final boolean trialForYearEnabled = FirebaseRemoteConfig.getInstance()
@@ -134,20 +117,21 @@ public class DialogUtils {
                 .title(R.string.dialog_offer_free_trial_subscription_title)
                 .content(baseActivity.getString(R.string.dialog_offer_free_trial_subscription_content, freeTrialDays, freeTrialDays))
                 .positiveText(R.string.yes_bliad)
-                .onPositive((dialog, which) -> {
-                    try {
-                        //todo
-                        InAppHelper.startPurchase(
-                                baseActivity,
-                                baseActivity.getIInAppBillingService(),
-                                InAppHelper.InappType.SUBS,
-                                sku
-                        );
-                    } catch (Exception e) {
-                        Timber.e(e);
-                        baseActivity.showError(e);
-                    }
-                })
+                .onPositive((dialog, which) -> baseActivity.getPresenter().onPurchaseClick(
+                        sku, baseActivity, false
+                ))
+                .negativeText(android.R.string.cancel)
+                .onNegative((dialog, which) -> dialog.dismiss())
+                .build()
+                .show();
+    }
+
+    public void showOfferLoginForLevelUpPopup(final BaseActivity baseActivity) {
+        new MaterialDialog.Builder(baseActivity)
+                .title(R.string.need_login)
+                .content(R.string.need_login_for_level_up_content)
+                .positiveText(R.string.authorize)
+                .onPositive((dialog, which) -> baseActivity.showLoginProvidersPopup())
                 .negativeText(android.R.string.cancel)
                 .onNegative((dialog, which) -> dialog.dismiss())
                 .build()

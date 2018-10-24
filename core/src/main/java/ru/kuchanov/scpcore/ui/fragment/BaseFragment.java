@@ -154,100 +154,90 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
 
     @Override
     public void showError(final Throwable throwable) {
-        if (!isAdded()) {
-            return;
+        if (isAdded()) {
+            String message = throwable.getMessage();
+            if (throwable instanceof IOException) {
+                message = getString(R.string.error_connection);
+            } else if (throwable instanceof ScpParseException) {
+                message = getString(R.string.error_parse);
+            }
+            Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(getActivity(), message), Snackbar.LENGTH_SHORT).show();
         }
-        String message = throwable.getMessage();
-        if (throwable instanceof IOException) {
-            message = getString(R.string.error_connection);
-        } else if (throwable instanceof ScpParseException) {
-            message = getString(R.string.error_parse);
-        }
-        Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(getActivity(), message), Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
     public void showMessage(final String message) {
-        if (!isAdded()) {
-            return;
+        if (isAdded()) {
+            Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(getActivity(), message), Snackbar.LENGTH_SHORT).show();
         }
-        Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(getActivity(), message), Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
     public void showMessage(@StringRes final int message) {
-        if (!isAdded()) {
-            return;
+        if (isAdded()) {
+            showMessage(getString(message));
         }
-        showMessage(getString(message));
     }
 
     @Override
     public void showMessageLong(final String message) {
-        if (!isAdded()) {
-            return;
+        if (isAdded()) {
+            Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(getActivity(), message), Snackbar.LENGTH_LONG).show();
         }
-        Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(getActivity(), message), Snackbar.LENGTH_LONG).show();
     }
 
     @Override
     public void showMessageLong(@StringRes final int message) {
-        if (!isAdded()) {
-            return;
+        if (isAdded()) {
+            showMessageLong(getString(message));
         }
-        showMessageLong(getString(message));
     }
 
     @Override
     public void showProgressDialog(final String title) {
-        if (!isAdded()) {
-            return;
+        if (isAdded()) {
+            mProgressDialog = new MaterialDialog.Builder(getActivity())
+                    .progress(true, 0)
+                    .title(title)
+                    .cancelable(false)
+                    .show();
         }
-        mProgressDialog = new MaterialDialog.Builder(getActivity())
-                .progress(true, 0)
-                .title(title)
-                .cancelable(false)
-                .show();
     }
 
     @Override
     public void showProgressDialog(@StringRes final int title) {
-        if (!isAdded()) {
-            return;
+        if (isAdded()) {
+            showProgressDialog(getString(title));
         }
-        showProgressDialog(getString(title));
     }
 
     @Override
     public void dismissProgressDialog() {
-        if (!isAdded()) {
-            return;
+        if (isAdded()) {
+            if (mProgressDialog == null || !mProgressDialog.isShowing()) {
+                return;
+            }
+            mProgressDialog.dismiss();
         }
-        if (mProgressDialog == null || !mProgressDialog.isShowing()) {
-            return;
-        }
-        mProgressDialog.dismiss();
     }
 
     @Override
     public void showNeedLoginPopup() {
-        if (!isAdded()) {
-            return;
+        if (isAdded()) {
+            getBaseActivity().showNeedLoginPopup();
         }
-        getBaseActivity().showNeedLoginPopup();
     }
 
     @Override
     public void showFreeAdsDisablePopup() {
-        if (!isAdded()) {
-            return;
+        if (isAdded()) {
+            getBaseActivity().showFreeAdsDisablePopup();
         }
-        getBaseActivity().showFreeAdsDisablePopup();
     }
 
     @Nullable
     public BaseActivity getBaseActivity() {
-        if(!isAdded()){
+        if (!isAdded()) {
             return null;
         }
         if (!(getActivity() instanceof BaseActivity)) {
@@ -258,18 +248,23 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
 
     @Override
     public void showSnackBarWithAction(final Constants.Firebase.CallToActionReason reason) {
-        if (!isAdded()) {
-            return;
+        if (isAdded()) {
+            getBaseActivity().showSnackBarWithAction(reason);
         }
-        getBaseActivity().showSnackBarWithAction(reason);
     }
 
     @Override
     public void showOfferFreeTrialSubscriptionPopup() {
-        if (!isAdded()) {
-            return;
+        if (isAdded()) {
+            getBaseActivity().showOfferFreeTrialSubscriptionPopup();
         }
-        getBaseActivity().showOfferFreeTrialSubscriptionPopup();
+    }
+
+    @Override
+    public void showOfferLoginForLevelUpPopup() {
+        if (isAdded()) {
+            getBaseActivity().showOfferLoginForLevelUpPopup();
+        }
     }
 
     @Override

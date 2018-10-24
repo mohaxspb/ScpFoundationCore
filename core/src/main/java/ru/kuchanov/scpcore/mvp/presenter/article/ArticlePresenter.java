@@ -8,6 +8,7 @@ import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.downloads.DownloadAllService;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.base.BasePresenter;
 import ru.kuchanov.scpcore.mvp.contract.article.ArticleMvp;
 import rx.android.schedulers.AndroidSchedulers;
@@ -30,9 +31,10 @@ public class ArticlePresenter
     public ArticlePresenter(
             final MyPreferenceManager myPreferencesManager,
             final DbProviderFactory dbProviderFactory,
-            final ApiClient apiClient
+            final ApiClient apiClient,
+            final InAppHelper inAppHelper
     ) {
-        super(myPreferencesManager, dbProviderFactory, apiClient);
+        super(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
         Timber.d("ArticlePresenter constructor");
     }
 

@@ -59,7 +59,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
     dbProviderFactory: DbProviderFactory,
     apiClient: ApiClient,
     private val inAppHelper: InAppHelper
-) : BasePresenter<V>(myPreferencesManager, dbProviderFactory, apiClient), BaseActivityMvp.Presenter<V> {
+) : BasePresenter<V>(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper), BaseActivityMvp.Presenter<V> {
 
     //facebook
     private val callbackManager: CallbackManager = CallbackManager.Factory.create()
@@ -633,7 +633,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 } else {
                     Timber.wtf("Unexpected item.productId: ${item.productId}")
                 }
-            } else{
+            } else {
                 Timber.wtf("Unexpected resultCode: $resultCode")
             }
             return true

@@ -19,6 +19,7 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.di.module.PresentersModule;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 
 /**
  * Created by mohax on 13.07.2017.
@@ -30,61 +31,61 @@ public class PresentersModuleImpl extends PresentersModule {
 
     @Provides
     @Singleton
-    
     ObjectsFrArticles.Presenter providesObjectsFrArticlesPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient,
-             ConstantValues constantValues
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient,
+            final ConstantValues constantValues,
+            final InAppHelper inAppHelper
     ) {
-        return new ObjectsFrArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
+        return new ObjectsFrArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues, inAppHelper);
     }
 
     @Provides
     @Singleton
-    
     ObjectsJpArticles.Presenter providesObjectsJpArticlesPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient,
-             ConstantValues constantValues
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient,
+            final ConstantValues constantValues,
+            final InAppHelper inAppHelper
     ) {
-        return new ObjectsJpArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
+        return new ObjectsJpArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues, inAppHelper);
     }
 
     @Provides
     @Singleton
-    
     ObjectsEsArticles.Presenter providesObjectsEsArticlesPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient,
-             ConstantValues constantValues
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient,
+            final ConstantValues constantValues,
+            final InAppHelper inAppHelper
     ) {
-        return new ObjectsEsArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
+        return new ObjectsEsArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues, inAppHelper);
     }
 
     @Provides
     @Singleton
-    
     ObjectsPlArticles.Presenter providesObjectsPlArticlesPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient,
-             ConstantValues constantValues
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient,
+            final ConstantValues constantValues,
+            final InAppHelper inAppHelper
     ) {
-        return new ObjectsPlArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
+        return new ObjectsPlArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues, inAppHelper);
     }
 
     @Provides
     @Singleton
-    
     ObjectsDeArticles.Presenter providesObjectsDeArticlesPresenter(
-             MyPreferenceManager myPreferencesManager,
-             DbProviderFactory dbProviderFactory,
-             ApiClient apiClient,
-             ConstantValues constantValues
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient,
+            final ConstantValues constantValues,
+            final InAppHelper inAppHelper
     ) {
-        return new ObjectsDeArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
+        return new ObjectsDeArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, constantValues, inAppHelper);
     }
 }

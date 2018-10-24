@@ -387,7 +387,7 @@ public class InAppHelper {
                 });
     }
 
-    public Single<IntentSender> startPurchase(
+    public Single<IntentSender> intentSenderSingle(
             final IInAppBillingService mInAppBillingService,
             @InappType final String type,
             final String sku
@@ -423,7 +423,7 @@ public class InAppHelper {
                                         .toSingle()
                                 )
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .flatMapSingle(integer -> startPurchase(
+                                .flatMapSingle(integer -> intentSenderSingle(
                                         mInAppBillingService,
                                         type,
                                         sku
@@ -458,7 +458,7 @@ public class InAppHelper {
         }
     }
 
-    public static void startPurchase(
+    public static void intentSenderSingle(
             final BaseActivity activity,
             final IInAppBillingService mInAppBillingService,
             @InappType final String type,

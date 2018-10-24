@@ -26,13 +26,8 @@ public class HelpersModule {
 
     @Provides
 //    @Singleton
-    DialogUtils providesDialogUtils(
-            final MyPreferenceManager preferenceManager,
-            final DbProviderFactory dbProviderFactory,
-            final ApiClient apiClient,
-            final ConstantValues constantValues
-    ) {
-        return new DialogUtils(preferenceManager, dbProviderFactory, apiClient, constantValues);
+    DialogUtils providesDialogUtils(final ConstantValues constantValues) {
+        return new DialogUtils(constantValues);
     }
 
     @Provides

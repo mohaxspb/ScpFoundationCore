@@ -10,8 +10,8 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.articleslists.ReadArticlesMvp;
-import ru.kuchanov.scpcore.mvp.presenter.articleslists.BaseListArticlesPresenter;
 import rx.Observable;
 
 public class ReadArticlesPresenter
@@ -19,11 +19,12 @@ public class ReadArticlesPresenter
         implements ReadArticlesMvp.Presenter {
 
     public ReadArticlesPresenter(
-            MyPreferenceManager myPreferencesManager,
-            DbProviderFactory dbProviderFactory,
-            ApiClient apiClient
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient,
+            final InAppHelper inAppHelper
     ) {
-        super(myPreferencesManager, dbProviderFactory, apiClient);
+        super(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }
 
     @Override
@@ -32,13 +33,13 @@ public class ReadArticlesPresenter
     }
 
     @Override
-    protected Observable<List<Article>> getApiObservable(int offset) {
+    protected Observable<List<Article>> getApiObservable(final int offset) {
         isLoading = false;
         return Observable.empty();
     }
 
     @Override
-    protected Observable<Pair<Integer, Integer>> getSaveToDbObservable(List<Article> data, int offset) {
+    protected Observable<Pair<Integer, Integer>> getSaveToDbObservable(final List<Article> data, final int offset) {
         return Observable.empty();
     }
 }

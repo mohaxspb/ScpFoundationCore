@@ -21,9 +21,6 @@ import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
-import ru.kuchanov.scpcore.ui.activity.BaseActivity
-import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP
-import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment.Companion.REQUEST_CODE_SUBSCRIPTION
 import ru.kuchanov.scpcore.util.DimensionUtils
 import rx.Observable
 import rx.Single
@@ -45,7 +42,8 @@ class LeaderboardPresenter(
 ) : BasePresenter<LeaderboardContract.View>(
     myPreferencesManager,
     dbProviderFactory,
-    apiClient
+    apiClient,
+    inAppHelper
 ), LeaderboardContract.Presenter {
 
     companion object {
@@ -263,36 +261,6 @@ class LeaderboardPresenter(
         } else {
             view.showUser(convertUser(myUser))
         }
-    }
-
-    override fun onSubscriptionClick(id: String, target: BaseActivity<*,*>, ignoreUserCheck: Boolean) {
-        Timber.d("onSubscriptionClick: $id, $target, $ignoreUserCheck")
-        //show warning if user not logged in
-        if (!ignoreUserCheck && user == null) {
-            view.showOfferLoginForLevelUpPopup()
-            return
-        }
-
-        val type = if (id in InAppHelper.getNewInAppsSkus()) {
-            InAppHelper.InappType.IN_APP
-        } else {
-            InAppHelper.InappType.SUBS
-        }
-        val requestCode = if (type == InAppHelper.InappType.IN_APP) {
-            REQUEST_CODE_INAPP
-        } else {
-            REQUEST_CODE_SUBSCRIPTION
-        }
-        inAppHelper.startPurchase(inAppService, type, id)
-                .subscribeBy(
-                    onSuccess = {
-                        inAppHelper.startPurchase(it, target, requestCode)
-                    },
-                    onError = {
-                        Timber.e(it)
-                        view.showError(it)
-                    }
-                )
     }
 
     override fun onRewardedVideoClick() = view.onRewardedVideoClick()

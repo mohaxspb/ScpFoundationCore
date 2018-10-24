@@ -270,6 +270,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
+    public void showOfferLoginForLevelUpPopup() {
+        mDialogUtils.showOfferLoginForLevelUpPopup(this);
+    }
+
+    @Override
     public void showLoginProvidersPopup() {
         final List<Constants.Firebase.SocialProvider> providers = new ArrayList<>(Arrays.asList(Constants.Firebase.SocialProvider.values()));
         if (!getResources().getBoolean(R.bool.social_login_vk_enabled)) {
@@ -571,7 +576,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO)) {
                         try {
                             //todo
-                            InAppHelper.startPurchase(
+                            InAppHelper.intentSenderSingle(
                                     this,
                                     mService,
                                     InAppHelper.InappType.SUBS,

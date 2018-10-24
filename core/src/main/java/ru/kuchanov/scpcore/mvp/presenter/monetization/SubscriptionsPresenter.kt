@@ -36,7 +36,8 @@ class SubscriptionsPresenter(
 ) : BasePresenter<SubscriptionsContract.View>(
     myPreferencesManager,
     dbProviderFactory,
-    apiClient
+    apiClient,
+    inAppHelper
 ), SubscriptionsContract.Presenter {
 
     override var isDataLoaded = false
@@ -103,7 +104,7 @@ class SubscriptionsPresenter(
                 )
     }
 
-    override fun onSubscriptionClick(id: String, target: BaseFragment<*,*>, inAppBillingService: IInAppBillingService) {
+    override fun onSubscriptionClick(id: String, target: BaseFragment<*, *>, inAppBillingService: IInAppBillingService) {
         if (id == ID_FREE_ADS_DISABLE) {
             view.navigateToDisableAds()
             return
@@ -115,7 +116,7 @@ class SubscriptionsPresenter(
         }
         try {
             //todo
-//            inAppHelper.startPurchase(target, inAppBillingService, type, id)
+//            inAppHelper.intentSenderSingle(target, inAppBillingService, type, id)
         } catch (e: Exception) {
             Timber.e(e)
             view.showError(e)

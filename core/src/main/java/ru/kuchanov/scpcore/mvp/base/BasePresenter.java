@@ -23,11 +23,16 @@ import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.LoginActions;
+import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
+
+import static ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP;
+import static ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment.REQUEST_CODE_SUBSCRIPTION;
 
 /**
  * Created by y.kuchanov on 21.12.16.
@@ -44,6 +49,8 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 
     protected ApiClient mApiClient;
 
+    protected InAppHelper mInAppHelper;
+
     private User mUser;
 
     protected boolean getUserInConstructor() {
@@ -53,12 +60,14 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     public BasePresenter(
             final MyPreferenceManager myPreferencesManager,
             final DbProviderFactory dbProviderFactory,
-            final ApiClient apiClient
+            final ApiClient apiClient,
+            final InAppHelper inAppHelper
     ) {
         super();
         mMyPreferencesManager = myPreferencesManager;
         mDbProviderFactory = dbProviderFactory;
         mApiClient = apiClient;
+        mInAppHelper = inAppHelper;
 
         if (getUserInConstructor()) {
             getUserFromDb();
@@ -107,6 +116,38 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     @Override
     public User getUser() {
         return mUser;
+    }
+
+    @Override
+    public void onPurchaseClick(final String id, final BaseActivity baseActivity, final boolean ignoreUserCheck) {
+        Timber.d("onPurchaseClick: $id, $baseActivity, $ignoreUserCheck");
+        //show warning if user not logged in
+        if (!ignoreUserCheck && mUser == null) {
+            getView().showOfferLoginForLevelUpPopup();
+            return;
+        }
+
+        final String type;
+        if (InAppHelper.getNewInAppsSkus().contains(id)) {
+            type = InAppHelper.InappType.IN_APP;
+        } else {
+            type = InAppHelper.InappType.SUBS;
+        }
+
+        final int requestCode;
+        if (type.equals(InAppHelper.InappType.IN_APP)) {
+            requestCode = REQUEST_CODE_INAPP;
+        } else {
+            requestCode = REQUEST_CODE_SUBSCRIPTION;
+        }
+        mInAppHelper.intentSenderSingle(baseActivity.getIInAppBillingService(), type, id)
+                .subscribe(
+                        intentSender -> mInAppHelper.startPurchase(intentSender, baseActivity, requestCode),
+                        e -> {
+                            Timber.e(e);
+                            getView().showError(e);
+                        }
+                );
     }
 
     @Override

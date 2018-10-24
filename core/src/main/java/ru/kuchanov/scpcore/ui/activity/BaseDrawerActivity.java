@@ -10,14 +10,11 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
 import org.jetbrains.annotations.NotNull;
 
-import android.app.PendingIntent;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.GravityCompat;
@@ -36,11 +33,10 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.api.model.remoteconfig.LevelsJson;
 import ru.kuchanov.scpcore.db.model.User;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.DrawerMvp;
 import ru.kuchanov.scpcore.ui.holder.drawer.HeaderViewHolderLogined;
 import ru.kuchanov.scpcore.ui.holder.drawer.HeaderViewHolderUnlogined;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventName;
@@ -201,7 +197,20 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                     .show()
             );
 
-            headerViewHolder.levelContainer.setOnClickListener(mOnLevelUpClickListener);
+            headerViewHolder.levelContainer.setOnClickListener(view -> mInAppHelper
+                    .intentSenderSingle(
+                            getIInAppBillingService(),
+                            InAppHelper.InappType.IN_APP,
+                            InAppHelper.getNewInAppsSkus().get(0)
+                    )
+                    .subscribe(
+                            intentSender -> mInAppHelper.startPurchase(intentSender, this, REQUEST_CODE_INAPP),
+                            e -> {
+                                Timber.e(e);
+                                showError(e);
+                            }
+                    )
+            );
 
             headerViewHolder.inapp.setOnClickListener(view -> {
                 SubscriptionsActivity.start(this);
@@ -291,48 +300,6 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                     .show());
         }
     }
-
-    //todo move to inapphelper
-    private final View.OnClickListener mOnLevelUpClickListener = view -> mInAppHelper.getInAppsListToBuyObservable(getIInAppBillingService())
-            .subscribe(
-                    items -> new MaterialDialog.Builder(view.getContext())
-                            .title(R.string.dialog_level_up_title)
-                            .content(R.string.dialog_level_up_content)
-                            .neutralText(android.R.string.cancel)
-                            .positiveText(R.string.dialog_level_up_ok_text)
-                            .onPositive((dialog1, which) -> {
-                                Timber.d("onPositive");
-                                try {
-                                    Bundle buyIntentBundle = getIInAppBillingService().getBuyIntent(
-                                            3,
-                                            getPackageName(),
-                                            items.get(0).productId,
-                                            "inapp",
-                                            String.valueOf(System.currentTimeMillis())
-                                    );
-                                    PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
-                                    if (pendingIntent != null) {
-                                        Timber.d("startIntentSenderForResult");
-                                        startIntentSenderForResult(pendingIntent.getIntentSender(), REQUEST_CODE_INAPP, new Intent(), 0, 0, 0, null);
-                                    } else {
-                                        Timber.e("pendingIntent is NULL!");
-                                        mInAppHelper.getOwnedInAppsObservable(getIInAppBillingService())
-                                                .flatMapSingle(itemsOwned -> mInAppHelper.consumeInApp(itemsOwned.get(0).sku, itemsOwned.get(0).purchaseData.purchaseToken, getIInAppBillingService()))
-                                                .subscribeOn(Schedulers.io())
-                                                .observeOn(AndroidSchedulers.mainThread())
-                                                .subscribe(
-                                                        result -> Timber.d("consumed result: %s", result),
-                                                        Timber::e
-                                                );
-                                    }
-                                } catch (Exception e) {
-                                    Timber.e(e, "error ");
-                                    Snackbar.make(mRoot, e.getMessage(), Snackbar.LENGTH_SHORT).show();
-                                }
-                            })
-                            .show(),
-                    this::showError
-            );
 
     @Override
     public void showLeaderboard() {

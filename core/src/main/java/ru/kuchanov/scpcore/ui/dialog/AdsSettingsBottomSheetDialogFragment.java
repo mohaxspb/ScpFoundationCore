@@ -158,7 +158,7 @@ public class AdsSettingsBottomSheetDialogFragment
         }
         try {
             //todo
-            InAppHelper.startPurchase(
+            InAppHelper.intentSenderSingle(
                     getBaseActivity(),
                     getBaseActivity().getIInAppBillingService(),
                     InAppHelper.InappType.SUBS,

@@ -26,7 +26,6 @@ interface LeaderboardContract : BaseMvp {
         fun showUser(myUser: LeaderboardUserViewModel?)
         fun showSwipeRefreshProgress(show: Boolean)
         fun enableSwipeRefresh(enable: Boolean)
-        fun showOfferLoginForLevelUpPopup()
         fun resetOnScrollListener()
         fun showBottomProgress(show: Boolean)
     }
@@ -41,7 +40,6 @@ interface LeaderboardContract : BaseMvp {
         val updateTime: Long
 
         fun loadInitialData()
-        fun onSubscriptionClick(id: String, target: BaseActivity<*, *>, ignoreUserCheck: Boolean = false)
         fun updateLeaderboardFromApi(offset: Int, limit: Int = LEADERBOARD_REQUEST_LIMIT)
         fun onRewardedVideoClick()
     }
