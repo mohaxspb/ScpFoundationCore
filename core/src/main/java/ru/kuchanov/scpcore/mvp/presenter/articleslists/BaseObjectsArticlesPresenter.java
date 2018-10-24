@@ -12,6 +12,7 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.base.BaseArticlesListMvp;
 import rx.Observable;
 import timber.log.Timber;
@@ -27,9 +28,10 @@ public abstract class BaseObjectsArticlesPresenter<V extends BaseArticlesListMvp
             final MyPreferenceManager myPreferencesManager,
             final DbProviderFactory dbProviderFactory,
             final ApiClient apiClient,
-            final ConstantValues constantValues
+            final ConstantValues constantValues,
+            final InAppHelper inAppHelper
     ) {
-        super(myPreferencesManager, dbProviderFactory, apiClient);
+        super(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
         mConstantValues = constantValues;
     }
 

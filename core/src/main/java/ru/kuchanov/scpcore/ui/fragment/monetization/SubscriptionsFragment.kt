@@ -1,7 +1,5 @@
 package ru.kuchanov.scpcore.ui.fragment.monetization
 
-import android.app.Activity
-import android.content.Intent
 import android.content.SharedPreferences
 import android.support.annotation.DrawableRes
 import android.support.annotation.StringRes
@@ -9,12 +7,9 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.gson.Gson
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegatesManager
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import kotlinx.android.synthetic.main.fragment_subscriptions.*
-import org.json.JSONException
-import org.json.JSONObject
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
@@ -34,10 +29,8 @@ import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptio
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.InAppViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.LabelWithPercentViewModel
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
-import ru.kuchanov.scpcore.manager.MyPreferenceManager
 import ru.kuchanov.scpcore.manager.MyPreferenceManager.Keys
 import ru.kuchanov.scpcore.monetization.model.Item
-import ru.kuchanov.scpcore.monetization.model.PurchaseData
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
@@ -47,28 +40,15 @@ import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Com
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_CURRENT_SUBS_EMPTY
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter.Companion.ID_FREE_ADS_DISABLE
 import ru.kuchanov.scpcore.ui.activity.BaseActivity
-import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP
 import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 import ru.kuchanov.scpcore.util.SystemUtils
-import rx.android.schedulers.AndroidSchedulers
-import rx.lang.kotlin.subscribeBy
-import rx.schedulers.Schedulers
 import timber.log.Timber
-import javax.inject.Inject
 
 class SubscriptionsFragment :
         BaseFragment<SubscriptionsContract.View, SubscriptionsContract.Presenter>(),
         SubscriptionsContract.View, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    @Inject
-    lateinit var mGson: Gson
-    @Inject
-    lateinit var mInAppHelper: InAppHelper
-    @Inject
-    lateinit var myPreferenceManager: MyPreferenceManager
-
-    //    private val items: MutableList<MyListItem> = mutableListOf()
     private lateinit var adapter: ListDelegationAdapter<List<MyListItem>>
 
     override fun callInjections() = BaseApplication.getAppComponent().inject(this)
@@ -93,10 +73,11 @@ class SubscriptionsFragment :
         delegateManager.addDelegate(LabelWithPercentDelegate())
         delegateManager.addDelegate(InAppDelegate { id ->
             baseActivity?.getIInAppBillingService()?.let {
-                this@SubscriptionsFragment.getPresenter().onSubscriptionClick(
+                this@SubscriptionsFragment.getPresenter().onPurchaseClick(
                     id,
-                    this@SubscriptionsFragment,
-                    it)
+                    baseActivity,
+                    false
+                )
             }
         })
         delegateManager.addDelegate(CurSubsDelegate(
@@ -111,10 +92,11 @@ class SubscriptionsFragment :
         delegateManager.addDelegate(CurSubsEmptyDelegate(
             { _ ->
                 baseActivity?.getIInAppBillingService()?.let {
-                    this@SubscriptionsFragment.getPresenter().onSubscriptionClick(
+                    this@SubscriptionsFragment.getPresenter().onPurchaseClick(
                         InAppHelper.getNewInAppsSkus().first(),
-                        this@SubscriptionsFragment,
-                        it)
+                        baseActivity,
+                        false
+                    )
                 }
             },
             {
@@ -243,6 +225,7 @@ class SubscriptionsFragment :
         val textColor = R.color.subsTextColorBottom
 
         val subsFullOneMonth = toBuy
+                .asSequence()
                 .filter { it.productId !in InAppHelper.getNewNoAdsSubsSkus() }
                 .first { SubscriptionsPresenter.getMonthFromSkuId(it.productId) == 1 }
 
@@ -327,82 +310,6 @@ class SubscriptionsFragment :
 
     override fun navigateToLeaderboard() = (baseActivity as SubscriptionsActivity)
             .showScreen(SubscriptionsScreenContract.Screen.LEADERBOARD)
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Timber.d("onActivityResult called in fragment")
-        if (requestCode == REQUEST_CODE_SUBSCRIPTION) {
-            if (data == null) {
-                if (isAdded) {
-                    showMessageLong("Error while parse result, please try again")
-                }
-                return
-            }
-            val responseCode = data.getIntExtra("RESPONSE_CODE", 0)
-            val purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA")
-            //            String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
-
-            if (resultCode == Activity.RESULT_OK && responseCode == InAppHelper.RESULT_OK) {
-                try {
-                    val jo = JSONObject(purchaseData)
-                    val sku = jo.getString("productId")
-                    Timber.d("You have bought the %s", sku)
-
-                    //validate subs list
-                    if (baseActivity != null) {
-                        baseActivity!!.updateOwnedMarketItems()
-                    } else {
-                        Timber.wtf("baseActivity is null!!!")
-                    }
-                } catch (e: JSONException) {
-                    Timber.e(e, "Failed to parse purchase data.")
-                    showError(e)
-                }
-            } else {
-                if (isAdded) {
-                    showMessageLong("Error: response code is not \"0\". Please try again")
-                }
-            }
-        } else if (requestCode == REQUEST_CODE_INAPP) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (data == null) {
-                    Timber.d("error_inapp data is NULL")
-                    showMessage(R.string.error_inapp)
-                    return
-                }
-                //            int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
-                val purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA")
-                //            String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
-                Timber.d("purchaseData %s", purchaseData)
-                val item = mGson.fromJson(purchaseData, PurchaseData::class.java)
-                Timber.d("You have bought the %s", item.productId)
-
-                if (item.productId == InAppHelper.getNewInAppsSkus().first()) {
-                    //levelUp 5
-                    //add 10 000 score
-                    mInAppHelper.consumeInApp(item.productId, item.purchaseToken, baseActivity?.getIInAppBillingService())
-                            .toSingle()
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribeBy(
-                                onSuccess = {
-                                    Timber.d("consume inapp successful, so update user score")
-                                    mPresenter.updateUserScoreForInapp(item.productId)
-
-                                    if (!myPreferenceManager.isHasAnySubscription) {
-                                        baseActivity?.showOfferSubscriptionPopup()
-                                    }
-                                },
-                                onError = {
-                                    Timber.e(it, "error while consume inapp... X3 what to do)))")
-                                    showError(it)
-                                }
-                            )
-                }
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
-        }
-    }
 
     override fun getToolbarTitle() = R.string.subs_activity_title
 

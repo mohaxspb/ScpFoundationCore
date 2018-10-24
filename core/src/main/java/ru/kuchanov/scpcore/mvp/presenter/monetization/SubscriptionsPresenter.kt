@@ -2,7 +2,6 @@
 
 package ru.kuchanov.scpcore.mvp.presenter.monetization
 
-import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import ru.kuchanov.scpcore.Constants
@@ -36,7 +35,8 @@ class SubscriptionsPresenter(
 ) : BasePresenter<SubscriptionsContract.View>(
     myPreferencesManager,
     dbProviderFactory,
-    apiClient
+    apiClient,
+    inAppHelper
 ), SubscriptionsContract.Presenter {
 
     override var isDataLoaded = false
@@ -62,9 +62,8 @@ class SubscriptionsPresenter(
         Single.zip(
             inAppHelper.validateSubsObservable(service).toSingle(),
             inAppHelper.getSubsListToBuyObservable(service, skuList).toSingle(),
-            inAppHelper.getInAppsListToBuyObservable(service).toSingle(),
-            { t1: List<Item>, t2: List<Subscription>, t3: List<Subscription> -> Triple(t1, t2, t3) }
-        )
+            inAppHelper.getInAppsListToBuyObservable(service).toSingle()
+        ) { t1: List<Item>, t2: List<Subscription>, t3: List<Subscription> -> Triple(t1, t2, t3) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
@@ -102,24 +101,6 @@ class SubscriptionsPresenter(
                         view.showRefreshButton(true)
                     }
                 )
-    }
-
-    override fun onSubscriptionClick(id: String, target: Fragment, inAppBillingService: IInAppBillingService) {
-        if (id == ID_FREE_ADS_DISABLE) {
-            view.navigateToDisableAds()
-            return
-        }
-        val type: String = if (id in InAppHelper.getNewInAppsSkus()) {
-            InAppHelper.InappType.IN_APP
-        } else {
-            InAppHelper.InappType.SUBS
-        }
-        try {
-            InAppHelper.startSubsBuy(target, inAppBillingService, type, id)
-        } catch (e: Exception) {
-            Timber.e(e)
-            view.showError(e)
-        }
     }
 
     override fun onCurrentSubscriptionClick(id: String) = view.navigateToDisableAds()

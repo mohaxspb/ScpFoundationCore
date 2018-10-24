@@ -39,18 +39,21 @@ class SubscriptionsActivity :
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
 
-            title = getString(when (screenToShowType) {
-                TYPE_SUBS -> R.string.subs_activity_title
-                TYPE_DISABLE_ADS_FOR_FREE -> R.string.free_ads_activity_title
-                TYPE_LEADERBOARD -> R.string.subs_leaderboard_activity_title
-                else -> throw IllegalArgumentException("unexpected type: $screenToShowType")
-            })
+            title = getString(
+                when (screenToShowType) {
+                    TYPE_SUBS -> R.string.subs_activity_title
+                    TYPE_DISABLE_ADS_FOR_FREE -> R.string.free_ads_activity_title
+                    TYPE_LEADERBOARD -> R.string.subs_leaderboard_activity_title
+                    else -> throw IllegalArgumentException("unexpected type: $screenToShowType")
+                })
         }
-        toolbar.setTitleTextColor(ContextCompat.getColor(this@SubscriptionsActivity, when (screenToShowType) {
-            TYPE_SUBS, TYPE_LEADERBOARD -> android.R.color.white
-            TYPE_DISABLE_ADS_FOR_FREE -> R.color.freeAdsTextColor
-            else -> throw IllegalArgumentException("unexpected type: $screenToShowType")
-        }))
+        toolbar.setTitleTextColor(
+            ContextCompat.getColor(
+                this@SubscriptionsActivity, when (screenToShowType) {
+                    TYPE_SUBS, TYPE_LEADERBOARD -> android.R.color.white
+                    TYPE_DISABLE_ADS_FOR_FREE -> R.color.freeAdsTextColor
+                    else -> throw IllegalArgumentException("unexpected type: $screenToShowType")
+                }))
 
         if (savedInstanceState == null) {
             when (screenToShowType) {

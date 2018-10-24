@@ -4,6 +4,7 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.presenter.BaseDrawerPresenter;
 import ru.kuchanov.scpcore.mvp.contract.article.ArticleScreenMvp;
 import ru.kuchanov.scpcore.ui.fragment.article.ArticleFragment;
@@ -13,8 +14,13 @@ public class ArticleScreenPresenter
         extends BaseDrawerPresenter<ArticleScreenMvp.View>
         implements ArticleScreenMvp.Presenter {
 
-    public ArticleScreenPresenter(MyPreferenceManager myPreferencesManager, DbProviderFactory dbProviderFactory, ApiClient apiClient) {
-        super(myPreferencesManager, dbProviderFactory, apiClient);
+    public ArticleScreenPresenter(
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient,
+            final InAppHelper inAppHelper
+    ) {
+        super(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }
 
     @Override
@@ -23,7 +29,7 @@ public class ArticleScreenPresenter
     }
 
     @Override
-    public void toggleFavorite(String url) {
+    public void toggleFavorite(final String url) {
         Timber.d("toggleFavorite url: %s", url);
         //TODO seems to that we can move it to ArticlePresenter
 //        if (FirebaseAuth.getInstance().getCurrentUser() == null) {

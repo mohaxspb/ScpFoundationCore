@@ -72,7 +72,6 @@ import ru.kuchanov.scpcore.api.error.ScpNoSearchResultsException;
 import ru.kuchanov.scpcore.api.model.ArticleFromSearchTagsOnSite;
 import ru.kuchanov.scpcore.api.model.firebase.ArticleInFirebase;
 import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser;
-import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse;
 import ru.kuchanov.scpcore.api.model.response.LeaderboardUsersUpdateDates;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
 import ru.kuchanov.scpcore.api.model.response.VkGroupJoinResponse;
@@ -1939,11 +1938,6 @@ public class ApiClient {
         });
     }
 
-    @Deprecated
-    public Observable<LeaderBoardResponse> getLeaderboard() {
-        return bindWithUtils(mVpsServer.getLeaderboard(mConstantValues.getAppLang()));
-    }
-
     public Single<List<LeaderboardUser>> getLeaderboardUsers(final int offset, final int limit) {
         return mScpReaderServer.getLeaderboardUsers(
                 mConstantValues.getAppLang().toUpperCase(),
@@ -1984,22 +1978,20 @@ public class ApiClient {
                 }));
     }
 
-    public Observable<PurchaseValidateResponse> validatePurchase(
-            final boolean isSubscription,
+    public Single<PurchaseValidateResponse> validateProduct(
             final String packageName,
             final String sku,
             final String purchaseToken
     ) {
-        return bindWithUtils(mVpsServer.validatePurchase(isSubscription, packageName, sku, purchaseToken));
+        return mScpReaderServer.validateProduct(packageName, sku, purchaseToken);
     }
 
-    public PurchaseValidateResponse validatePurchaseSync(
-            final boolean isSubscription,
+    public Single<PurchaseValidateResponse> validateSubscription(
             final String packageName,
             final String sku,
             final String purchaseToken
-    ) throws IOException {
-        return mVpsServer.validatePurchaseSync(isSubscription, packageName, sku, purchaseToken).execute().body();
+    ) {
+        return mScpReaderServer.validateSubscription(packageName, sku, purchaseToken);
     }
 
     public Observable<Boolean> inviteReceived(final String inviteId, final boolean newOne) {

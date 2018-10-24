@@ -1,5 +1,8 @@
 package ru.kuchanov.scpcore.ui.dialog;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,9 +16,6 @@ import android.support.v7.widget.SwitchCompat;
 import android.text.Html;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,23 +49,29 @@ public class AdsSettingsBottomSheetDialogFragment
 
     @Inject
     MyPreferenceManager mMyPreferenceManager;
+
     @Inject
     MyNotificationManager mMyNotificationManager;
+
     @Inject
     InAppHelper mInAppHelper;
 
     //ads
     @BindView(R2.id.adsInListsBannerSwitch)
     SwitchCompat adsInListsBannerSwitch;
+
     @BindView(R2.id.adsInListsNativeSwitch)
     SwitchCompat adsInListsNativeSwitch;
+
     @BindView(R2.id.adsInArticleBannerSwitch)
     SwitchCompat adsInArticleBannerSwitch;
+
     @BindView(R2.id.adsInArticleNativeSwitch)
     SwitchCompat adsInArticleNativeSwitch;
 
     @BindView(R2.id.removeAdsForMonth)
     TextView removeAdsForMonth;
+
     @BindView(R2.id.removeAdsForFree)
     TextView removeAdsForFree;
 
@@ -151,7 +157,13 @@ public class AdsSettingsBottomSheetDialogFragment
             noAdsSku = InAppHelper.getNewSubsSkus().get(0);
         }
         try {
-            InAppHelper.startSubsBuy(this, getBaseActivity().getIInAppBillingService(), InAppHelper.InappType.SUBS, noAdsSku);
+            //todo
+            InAppHelper.intentSenderSingle(
+                    getBaseActivity(),
+                    getBaseActivity().getIInAppBillingService(),
+                    InAppHelper.InappType.SUBS,
+                    noAdsSku
+            );
         } catch (Exception e) {
             Timber.e(e);
             Snackbar.make(mRoot, e.getMessage(), Snackbar.LENGTH_SHORT).show();

@@ -34,10 +34,6 @@ public interface VpsServer {
         String SENT = "inviteSent";
     }
 
-    @Deprecated
-    @GET("scp-ru-1/LeaderBoard")
-    Observable<LeaderBoardResponse> getLeaderboard(@Query("lang") String lang);
-
     @FormUrlEncoded
     @POST("scp-ru-1/OnInviteReceived")
     Observable<OnInviteReceivedResponse> onInviteReceived(
