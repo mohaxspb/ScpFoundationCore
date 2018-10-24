@@ -106,10 +106,7 @@ class LeaderboardFragment :
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter
 
-        if (presenter.data.isEmpty()) {
-            enableSwipeRefresh(false)
-            getPresenter().loadInitialData()
-        } else {
+        if (presenter.data.isNotEmpty()) {
             showProgressCenter(false)
             presenter.apply { showData(data); onUserChanged(myUser); showUpdateDate(updateTime) }
         }
