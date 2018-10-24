@@ -187,7 +187,7 @@ public class DialogUtils {
                 .title(R.string.dialog_inapp_error_title)
                 .content(baseActivity.getString(R.string.dialog_inapp_error_content, errorMessage))
                 .positiveText(R.string.try_again)
-                .onPositive((dialog, which) -> baseActivity.getPresenter().onLevelUpRetryClick(baseActivity))
+                .onPositive((dialog, which) -> baseActivity.getPresenter().onLevelUpRetryClick(baseActivity.getIInAppBillingService()))
                 .negativeText(android.R.string.cancel)
                 .onNegative((dialog, which) -> dialog.dismiss())
                 .cancelable(false)

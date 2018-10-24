@@ -2,6 +2,7 @@ package ru.kuchanov.scpcore.mvp.base;
 
 import android.support.annotation.StringRes;
 
+import com.android.vending.billing.IInAppBillingService;
 import com.hannesdorfmann.mosby.mvp.MvpPresenter;
 import com.hannesdorfmann.mosby.mvp.MvpView;
 
@@ -62,7 +63,7 @@ public interface BaseMvp {
 
         void onPurchaseClick(String id, BaseActivity baseActivity, boolean ignoreUserCheck);
 
-        void onLevelUpRetryClick(BaseActivity baseActivity);
+        void onLevelUpRetryClick(IInAppBillingService inAppBillingService);
 
         void updateUserScoreForScoreAction(@ScoreAction String action, @NotNull BasePresenter.AddScoreListener addScoreListener);
     }

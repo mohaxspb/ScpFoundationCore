@@ -3,6 +3,7 @@ package ru.kuchanov.scpcore.mvp.base;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
+import com.android.vending.billing.IInAppBillingService;
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 import com.vk.sdk.VKSdk;
 
@@ -152,17 +153,18 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     }
 
     @Override
-    public void onLevelUpRetryClick(@NotNull final BaseActivity baseActivity) {
-        mInAppHelper.intentSenderSingle(
-                baseActivity.getIInAppBillingService(),
-                InAppHelper.InappType.IN_APP,
-                InAppHelper.getNewInAppsSkus().get(0)
-        )
-                .map(intentSender -> mDbProviderFactory.getDbProvider().getScore())
+    public void onLevelUpRetryClick(@NotNull final IInAppBillingService inAppBillingService) {
+        mInAppHelper.getInAppHistoryObservable(inAppBillingService)
+                .flatMap(items -> mInAppHelper.consumeInApp(
+                        items.get(0).sku,
+                        items.get(0).purchaseData.purchaseToken,
+                        inAppBillingService
+                ))
+                .map(response -> mDbProviderFactory.getDbProvider().getScore())
                 .doOnSubscribe(() -> getView().showProgressDialog(R.string.wait))
                 .doOnEach(notification -> getView().dismissProgressDialog())
                 .subscribe(
-                        score -> getView().showMessage(baseActivity.getString(R.string.score_num, score)),
+                        score -> getView().showMessage(BaseApplication.getAppInstance().getString(R.string.score_num, score)),
                         e -> {
                             Timber.e(e);
                             getView().showError(e);

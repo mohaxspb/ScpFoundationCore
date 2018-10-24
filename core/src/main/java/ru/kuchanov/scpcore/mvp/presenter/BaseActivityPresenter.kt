@@ -636,8 +636,17 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 } else {
                     Timber.wtf("Unexpected item.productId: ${item.productId}")
                 }
+            } else if (data?.getIntExtra("RESPONSE_CODE", 0) == InAppHelper.RESULT_ITEM_ALREADY_OWNED) {
+                val message = "RESPONSE_CODE is: InAppHelper.RESULT_ITEM_ALREADY_OWNED"
+                Timber.wtf(message)
+                view.iInAppBillingService?.let { onLevelUpRetryClick(it) }
+                        ?: view.showInAppErrorDialog(BaseApplication.getAppInstance().getString(R.string.error_unexpected))
             } else {
-                Timber.wtf("Unexpected resultCode: $resultCode")
+                val message = "Unexpected resultCode: $resultCode/${data?.extras?.keySet()?.map { "$it/${data.extras[it]}" }}"
+                Timber.wtf(message)
+                if (data?.getIntExtra("RESPONSE_CODE", 0) != InAppHelper.RESULT_USER_CANCELED) {
+                    view.showMessage(message)
+                }
             }
             return true
         } else {
