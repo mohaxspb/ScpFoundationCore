@@ -14,7 +14,6 @@ import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
-import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.subscribeBy
@@ -102,25 +101,6 @@ class SubscriptionsPresenter(
                         view.showRefreshButton(true)
                     }
                 )
-    }
-
-    override fun onSubscriptionClick(id: String, target: BaseFragment<*, *>, inAppBillingService: IInAppBillingService) {
-        if (id == ID_FREE_ADS_DISABLE) {
-            view.navigateToDisableAds()
-            return
-        }
-        val type: String = if (id in InAppHelper.getNewInAppsSkus()) {
-            InAppHelper.InappType.IN_APP
-        } else {
-            InAppHelper.InappType.SUBS
-        }
-        try {
-            //todo
-//            inAppHelper.intentSenderSingle(target, inAppBillingService, type, id)
-        } catch (e: Exception) {
-            Timber.e(e)
-            view.showError(e)
-        }
     }
 
     override fun onCurrentSubscriptionClick(id: String) = view.navigateToDisableAds()

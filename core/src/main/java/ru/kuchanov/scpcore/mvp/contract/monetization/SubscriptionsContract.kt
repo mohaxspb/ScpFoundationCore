@@ -18,7 +18,6 @@ interface SubscriptionsContract : BaseMvp {
     interface View : BaseMvp.View, FragmentToolbarStateSetter {
         fun showProgressCenter(show: Boolean)
         fun showRefreshButton(show: Boolean)
-        //        fun showData(items: List<MyListItem>)
         fun showData(owned: List<Item>, toBuy: List<Subscription>, inApps: List<Subscription>, curSubsType: Int)
 
         fun navigateToDisableAds()
@@ -32,7 +31,6 @@ interface SubscriptionsContract : BaseMvp {
         @InAppHelper.SubscriptionType
         var type: Int
 
-        fun onSubscriptionClick(id: String, target: BaseFragment<*, *>, inAppBillingService: IInAppBillingService)
         fun getMarketData(service: IInAppBillingService)
         var isDataLoaded: Boolean
         fun onCurrentSubscriptionClick(id: String)
