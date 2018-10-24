@@ -7,7 +7,7 @@ import ru.kuchanov.scpcore.db.model.User
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.mvp.base.BaseMvp
 import ru.kuchanov.scpcore.mvp.contract.FragmentToolbarStateSetter
-import ru.kuchanov.scpcore.ui.fragment.BaseFragment
+import ru.kuchanov.scpcore.ui.activity.BaseActivity
 
 /**
  * Created by y.kuchanov on 21.12.16.
@@ -41,7 +41,7 @@ interface LeaderboardContract : BaseMvp {
         val updateTime: Long
 
         fun loadInitialData()
-        fun onSubscriptionClick(id: String, target: BaseFragment<*, *>, ignoreUserCheck: Boolean = false)
+        fun onSubscriptionClick(id: String, target: BaseActivity<*, *>, ignoreUserCheck: Boolean = false)
         fun updateLeaderboardFromApi(offset: Int, limit: Int = LEADERBOARD_REQUEST_LIMIT)
         fun onRewardedVideoClick()
     }

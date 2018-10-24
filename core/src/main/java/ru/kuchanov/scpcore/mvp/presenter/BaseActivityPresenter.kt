@@ -17,10 +17,13 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.gson.GsonBuilder
 import com.vk.sdk.VKAccessToken
 import com.vk.sdk.VKCallback
 import com.vk.sdk.VKSdk
 import com.vk.sdk.api.VKError
+import org.json.JSONException
+import org.json.JSONObject
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
@@ -31,9 +34,13 @@ import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser
 import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.db.model.SocialProviderModel
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
+import ru.kuchanov.scpcore.monetization.model.PurchaseData
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.ui.activity.BaseActivity.RC_SIGN_IN
+import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity
+import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.subscribeBy
@@ -50,14 +57,15 @@ import java.util.*
 abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
     myPreferencesManager: MyPreferenceManager,
     dbProviderFactory: DbProviderFactory,
-    apiClient: ApiClient
+    apiClient: ApiClient,
+    private val inAppHelper: InAppHelper
 ) : BasePresenter<V>(myPreferencesManager, dbProviderFactory, apiClient), BaseActivityMvp.Presenter<V> {
 
     //facebook
-    private val mCallbackManager: CallbackManager = CallbackManager.Factory.create()
+    private val callbackManager: CallbackManager = CallbackManager.Factory.create()
 
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-    private val mAuthListener = { mAuth: FirebaseAuth ->
+    private val authListener = { mAuth: FirebaseAuth ->
         val firebaseUser = mAuth.currentUser
         if (firebaseUser != null) {
             // User is signed in
@@ -73,46 +81,50 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
     private var firebaseArticlesRef: DatabaseReference? = null
     private var firebaseScoreRef: DatabaseReference? = null
 
-    private val articlesChangeListener = object : ValueEventListener {
-        override fun onDataChange(dataSnapshot: DataSnapshot) {
-            Timber.d("articles in user changed!")
-            val t = object : GenericTypeIndicator<Map<String, ArticleInFirebase>>() {
+    private val articlesChangeListener: ValueEventListener by lazy {
+        object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                Timber.d("articles in user changed!")
+                val t = object : GenericTypeIndicator<Map<String, ArticleInFirebase>>() {
 
+                }
+                val map: Map<String, ArticleInFirebase>? = dataSnapshot.getValue(t)
+
+                if (map != null) {
+                    mDbProviderFactory.dbProvider
+                            .saveArticlesFromFirebase(ArrayList(map.values))
+                            .subscribeBy(
+                                onNext = { Timber.d("articles in realm updated!") },
+                                onError = { Timber.e(it) }
+                            )
+                }
             }
-            val map = dataSnapshot.getValue(t)
 
-            if (map != null) {
-                mDbProviderFactory.dbProvider
-                        .saveArticlesFromFirebase(ArrayList(map.values))
-                        .subscribeBy(
-                            onNext = { Timber.d("articles in realm updated!") },
-                            onError = { Timber.e(it) }
-                        )
+            override fun onCancelled(databaseError: DatabaseError) {
+                Timber.e(databaseError.toException())
             }
-        }
-
-        override fun onCancelled(databaseError: DatabaseError) {
-            Timber.e(databaseError.toException())
         }
     }
 
-    private val scoreChangeListener = object : ValueEventListener {
-        override fun onDataChange(dataSnapshot: DataSnapshot) {
-            Timber.d("score in user changed!")
-            val score = dataSnapshot.getValue(Int::class.java)
+    private val scoreChangeListener: ValueEventListener by lazy {
+        object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                Timber.d("score in user changed!")
+                val score = dataSnapshot.getValue(Int::class.java)
 
-            if (score != null) {
-                mDbProviderFactory.dbProvider
-                        .updateUserScore(score)
-                        .subscribeBy(
-                            onNext = { Timber.d("score in realm updated!") },
-                            onError = { Timber.e(it) }
-                        )
+                if (score != null) {
+                    mDbProviderFactory.dbProvider
+                            .updateUserScore(score)
+                            .subscribeBy(
+                                onNext = { Timber.d("score in realm updated!") },
+                                onError = { Timber.e(it) }
+                            )
+                }
             }
-        }
 
-        override fun onCancelled(databaseError: DatabaseError) {
-            Timber.e(databaseError.toException())
+            override fun onCancelled(databaseError: DatabaseError) {
+                Timber.e(databaseError.toException())
+            }
         }
     }
 
@@ -120,7 +132,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
         super.onCreate()
 
         //facebook login
-        LoginManager.getInstance().registerCallback(mCallbackManager, object : FacebookCallback<LoginResult> {
+        LoginManager.getInstance().registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
             override fun onSuccess(loginResult: LoginResult) {
                 Timber.d("onSuccess: %s", loginResult)
                 startFirebaseLogin(Constants.Firebase.SocialProvider.FACEBOOK, loginResult.accessToken.token)
@@ -394,13 +406,13 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
     }
 
     override fun onActivityStarted() {
-        firebaseAuth.addAuthStateListener(mAuthListener)
+        firebaseAuth.addAuthStateListener(authListener)
 
         listenToChangesInFirebase(mMyPreferencesManager.isHasSubscription)
     }
 
     override fun onActivityStopped() {
-        firebaseAuth.removeAuthStateListener(mAuthListener)
+        firebaseAuth.removeAuthStateListener(authListener)
 
         listenToChangesInFirebase(false)
     }
@@ -473,9 +485,8 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 )
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent): Boolean {
-        Timber.d("onActivityResult: ")
-        //todo
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+        Timber.d("onActivityResult: $requestCode, $resultCode, $data")
 
         val vkCallback = object : VKCallback<VKAccessToken> {
             override fun onResult(vkAccessToken: VKAccessToken) {
@@ -543,7 +554,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
         } else if (requestCode == Constants.Firebase.REQUEST_INVITE) {
             if (resultCode == Activity.RESULT_OK) {
                 // Get the invitation IDs of all sent messages
-                val ids = AppInviteInvitation.getInvitationIds(resultCode, data)
+                val ids = AppInviteInvitation.getInvitationIds(resultCode, data!!)
                 for (id in ids) {
                     Timber.d("onActivityResult: sent invitation %s", id)
                     //todo we need to be able to send multiple IDs in one request
@@ -559,8 +570,75 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
             }
 
             return true
+        } else if (requestCode == SubscriptionsFragment.REQUEST_CODE_SUBSCRIPTION) {
+            if (data == null) {
+                view.showMessageLong("Error while parse result, please try again")
+                return true
+            }
+            val responseCode = data.getIntExtra("RESPONSE_CODE", 0)
+            val purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA")
+
+            if (resultCode == Activity.RESULT_OK && responseCode == InAppHelper.RESULT_OK) {
+                try {
+                    val jo = JSONObject(purchaseData)
+                    val sku = jo.getString("productId")
+                    Timber.d("You have bought the %s", sku)
+
+                    //validate subs list
+                    view.updateOwnedMarketItems()
+                } catch (e: JSONException) {
+                    Timber.e(e, "Failed to parse purchase data.")
+                    view.showError(e)
+                }
+            } else {
+                view.showMessageLong("Error: response code is not \"0\". Please try again")
+            }
+            return true
+        } else if (requestCode == BaseDrawerActivity.REQUEST_CODE_INAPP) {
+            Timber.d("REQUEST_CODE_INAPP resultCode == Activity.RESULT_OK: ${resultCode == Activity.RESULT_OK}")
+            if (resultCode == Activity.RESULT_OK) {
+                if (data == null) {
+                    Timber.d("error_inapp data is NULL")
+                    view.showMessage(R.string.error_inapp)
+                    return true
+                }
+                //            int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
+                val purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA")
+                //            String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
+                Timber.d("purchaseData %s", purchaseData)
+                val item = GsonBuilder().create().fromJson(purchaseData, PurchaseData::class.java)
+                Timber.d("You have bought the %s", item.productId)
+
+                if (item.productId == InAppHelper.getNewInAppsSkus().first()) {
+                    //levelUp 5
+                    //add 10 000 score
+                    inAppHelper.consumeInApp(item.productId, item.purchaseToken, view.iInAppBillingService)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeBy(
+                                onSuccess = {
+                                    Timber.d("consume inapp successful, so update user score")
+                                    updateUserScoreForInapp(item.productId)
+
+                                    if (!mMyPreferencesManager.isHasAnySubscription) {
+                                        view.showOfferSubscriptionPopup()
+                                    }
+                                },
+                                onError = {
+                                    //todo show dialog with retry button
+                                    Timber.e(it, "error while consume inapp... X3 what to do)))")
+                                    view.showError(it)
+                                }
+                            )
+                } else {
+                    Timber.wtf("Unexpected item.productId: ${item.productId}")
+                }
+            } else{
+                Timber.wtf("Unexpected resultCode: $resultCode")
+            }
+            return true
         } else {
-            mCallbackManager.onActivityResult(requestCode, resultCode, data)
+            callbackManager.onActivityResult(requestCode, resultCode, data)
             return true
         }
     }

@@ -86,18 +86,20 @@ public class PresentersModule {
     MainMvp.Presenter providesMainPresenter(
             final MyPreferenceManager myPreferencesManager,
             final DbProviderFactory dbProviderFactory,
-            final ApiClient apiClient
+            final ApiClient apiClient,
+            final InAppHelper inAppHelper
     ) {
-        return new MainPresenter(myPreferencesManager, dbProviderFactory, apiClient);
+        return new MainPresenter(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }
 
     @Provides
     ArticleScreenMvp.Presenter providesArticleScreenPresenter(
             final MyPreferenceManager myPreferencesManager,
             final DbProviderFactory dbProviderFactory,
-            final ApiClient apiClient
+            final ApiClient apiClient,
+            final InAppHelper inAppHelper
     ) {
-        return new ArticleScreenPresenter(myPreferencesManager, dbProviderFactory, apiClient);
+        return new ArticleScreenPresenter(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }
 
     @Provides
@@ -105,9 +107,10 @@ public class PresentersModule {
     MaterialsScreenMvp.Presenter providesMaterialsScreenPresenter(
             final MyPreferenceManager myPreferencesManager,
             final DbProviderFactory dbProviderFactory,
-            final ApiClient apiClient
+            final ApiClient apiClient,
+            final InAppHelper inAppHelper
     ) {
-        return new MaterialsScreenPresenter(myPreferencesManager, dbProviderFactory, apiClient);
+        return new MaterialsScreenPresenter(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }
 
     @Provides
@@ -115,9 +118,10 @@ public class PresentersModule {
     TagsScreenMvp.Presenter providesTagsSearchScreenPresenter(
             final MyPreferenceManager myPreferencesManager,
             final DbProviderFactory dbProviderFactory,
-            final ApiClient apiClient
+            final ApiClient apiClient,
+            final InAppHelper inAppHelper
     ) {
-        return new TagsSearchScreenPresenter(myPreferencesManager, dbProviderFactory, apiClient);
+        return new TagsSearchScreenPresenter(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }
 
     @Provides
@@ -125,9 +129,10 @@ public class PresentersModule {
     GalleryScreenMvp.Presenter providesGalleryScreenPresenter(
             final MyPreferenceManager myPreferencesManager,
             final DbProviderFactory dbProviderFactory,
-            final ApiClient apiClient
+            final ApiClient apiClient,
+            final InAppHelper inAppHelper
     ) {
-        return new GalleryScreenPresenter(myPreferencesManager, dbProviderFactory, apiClient);
+        return new GalleryScreenPresenter(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }
 
     @Provides
@@ -337,9 +342,10 @@ public class PresentersModule {
     SubscriptionsScreenContract.Presenter providesSubscriptionsScreenPresenter(
             final MyPreferenceManager myPreferencesManager,
             final DbProviderFactory dbProviderFactory,
-            final ApiClient apiClient
+            final ApiClient apiClient,
+            final InAppHelper inAppHelper
     ) {
-        return new SubscriptionsScreenPresenter(myPreferencesManager, dbProviderFactory, apiClient);
+        return new SubscriptionsScreenPresenter(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }
 
     @Provides

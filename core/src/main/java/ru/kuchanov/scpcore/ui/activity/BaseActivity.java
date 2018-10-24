@@ -612,6 +612,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         }
     }
 
+    @Override
     @Nullable
     public IInAppBillingService getIInAppBillingService() {
         return mService;
@@ -993,7 +994,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
-    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         Timber.d("onActivityResult called in BaseActivity");
 
         if (!presenter.onActivityResult(requestCode, resultCode, data)) {

@@ -21,8 +21,8 @@ import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
+import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP
-import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment.Companion.REQUEST_CODE_SUBSCRIPTION
 import ru.kuchanov.scpcore.util.DimensionUtils
 import rx.Observable
@@ -265,7 +265,7 @@ class LeaderboardPresenter(
         }
     }
 
-    override fun onSubscriptionClick(id: String, target: BaseFragment<*, *>, ignoreUserCheck: Boolean) {
+    override fun onSubscriptionClick(id: String, target: BaseActivity<*,*>, ignoreUserCheck: Boolean) {
         Timber.d("onSubscriptionClick: $id, $target, $ignoreUserCheck")
         //show warning if user not logged in
         if (!ignoreUserCheck && user == null) {

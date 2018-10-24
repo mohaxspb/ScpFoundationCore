@@ -10,7 +10,6 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
 import org.jetbrains.annotations.NotNull;
 
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -37,7 +36,6 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.api.model.remoteconfig.LevelsJson;
 import ru.kuchanov.scpcore.db.model.User;
-import ru.kuchanov.scpcore.monetization.model.PurchaseData;
 import ru.kuchanov.scpcore.mvp.contract.DrawerMvp;
 import ru.kuchanov.scpcore.ui.holder.drawer.HeaderViewHolderLogined;
 import ru.kuchanov.scpcore.ui.holder.drawer.HeaderViewHolderUnlogined;
@@ -339,54 +337,5 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
     @Override
     public void showLeaderboard() {
         SubscriptionsActivity.start(this, SubscriptionsActivity.TYPE_LEADERBOARD);
-    }
-
-    @Override
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        Timber.d("onActivityResult requestCode/resultCode: %s/%s", requestCode, resultCode);
-        if (requestCode == REQUEST_CODE_INAPP) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (data == null) {
-                    Timber.d("error_inapp data is NULL");
-                    showMessage(R.string.error_inapp);
-                    return;
-                }
-//            int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
-                final String purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA");
-//            String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
-                Timber.d("purchaseData %s", purchaseData);
-                final PurchaseData item = mGson.fromJson(purchaseData, PurchaseData.class);
-                Timber.d("You have bought the %s", item.productId);
-
-//                final Bundle bundle = new Bundle();
-//                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, item.productId);
-//                bundle.putFloat(FirebaseAnalytics.Param.VALUE, .5f);
-//                FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.ECOMMERCE_PURCHASE, bundle);
-
-                if (item.productId.equals(getString(R.string.inapp_skus).split(",")[0])) {
-                    //levelUp 5
-                    //add 10 000 score
-                    mInAppHelper.consumeInApp(item.productId, item.purchaseToken, getIInAppBillingService())
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    result -> {
-                                        Timber.d("consume inapp successful, so update user score");
-                                        mPresenter.updateUserScoreForInapp(item.productId);
-
-                                        if (!mMyPreferenceManager.isHasAnySubscription()) {
-                                            showOfferSubscriptionPopup();
-                                        }
-                                    },
-                                    e -> {
-                                        Timber.e(e, "error while consume inapp... X3 what to do)))");
-                                        showError(e);
-                                    }
-                            );
-                }
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
     }
 }
