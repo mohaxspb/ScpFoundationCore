@@ -1,13 +1,26 @@
 package ru.kuchanov.scpcore.mvp.presenter
 
+import android.app.Activity
 import android.content.Intent
 import android.text.TextUtils
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
+import com.google.android.gms.appinvite.AppInviteInvitation
+import com.google.android.gms.auth.api.Auth
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.vk.sdk.VKAccessToken
+import com.vk.sdk.VKCallback
+import com.vk.sdk.VKSdk
+import com.vk.sdk.api.VKError
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
@@ -20,6 +33,7 @@ import ru.kuchanov.scpcore.db.model.SocialProviderModel
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
+import ru.kuchanov.scpcore.ui.activity.BaseActivity.RC_SIGN_IN
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.subscribeBy
@@ -38,6 +52,9 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
     dbProviderFactory: DbProviderFactory,
     apiClient: ApiClient
 ) : BasePresenter<V>(myPreferencesManager, dbProviderFactory, apiClient), BaseActivityMvp.Presenter<V> {
+
+    //facebook
+    private val mCallbackManager: CallbackManager = CallbackManager.Factory.create()
 
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private val mAuthListener = { mAuth: FirebaseAuth ->
@@ -97,6 +114,26 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
         override fun onCancelled(databaseError: DatabaseError) {
             Timber.e(databaseError.toException())
         }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+
+        //facebook login
+        LoginManager.getInstance().registerCallback(mCallbackManager, object : FacebookCallback<LoginResult> {
+            override fun onSuccess(loginResult: LoginResult) {
+                Timber.d("onSuccess: %s", loginResult)
+                startFirebaseLogin(Constants.Firebase.SocialProvider.FACEBOOK, loginResult.accessToken.token)
+            }
+
+            override fun onCancel() {
+                Timber.e("onCancel")
+            }
+
+            override fun onError(error: FacebookException) {
+                Timber.e(error)
+            }
+        })
     }
 
     /**
@@ -436,8 +473,95 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 )
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent): Boolean {
         Timber.d("onActivityResult: ")
         //todo
+
+        val vkCallback = object : VKCallback<VKAccessToken> {
+            override fun onResult(vkAccessToken: VKAccessToken) {
+                //Пользователь успешно авторизовался
+                Timber.d("Auth successful: %s", vkAccessToken.email)
+                if (vkAccessToken.email != null) {
+                    //here can be case, when we login via Google or Facebook, but try to join group to receive reward
+                    //in this case we have firebase user already, so no need to login to firebase
+                    if (FirebaseAuth.getInstance().currentUser != null) {
+                        Timber.e("Firebase user exists, do nothing as we do not implement connect VK acc to Firebase as social provider")
+                    } else {
+                        startFirebaseLogin(
+                            Constants.Firebase.SocialProvider.VK, VKAccessToken.currentToken().accessToken)
+                    }
+                } else {
+                    view.showMessage(R.string.error_login_no_email)
+                    logoutUser()
+                }
+            }
+
+            override fun onError(error: VKError?) {
+                // Произошла ошибка авторизации (например, пользователь запретил авторизацию)
+                val errorMessage = if (error == null) {
+                    BaseApplication.getAppInstance().getString(R.string.error_unexpected)
+                } else {
+                    error.errorMessage
+                }
+                Timber.e("error/errMsg: %s/%s", error, errorMessage)
+                view.showMessage(errorMessage)
+            }
+        }
+
+        if (VKSdk.onActivityResult(requestCode, resultCode, data, vkCallback)) {
+            Timber.d("Vk receives and handled onActivityResult")
+            return true
+        } else if (requestCode == RC_SIGN_IN) {
+            val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
+            if (result == null) {
+                Timber.wtf("GoogleSignInResult is NULL!!!")
+                view.showMessage(R.string.error_unexpected)
+                return true
+            }
+            if (result.isSuccess) {
+                Timber.d("Auth successful: %s", result)
+                // Signed in successfully, show authenticated UI.
+                val acct = result.signInAccount
+                if (acct == null) {
+                    Timber.wtf("GoogleSignInAccount is NULL!")
+                    view.showMessage("GoogleSignInAccount is NULL!")
+                    return true
+                }
+                val email = acct.email
+                if (email?.isNotEmpty() == true) {
+                    startFirebaseLogin(Constants.Firebase.SocialProvider.GOOGLE, acct.idToken!!)
+                } else {
+                    view.showMessage(R.string.error_login_no_email)
+                    logoutUser()
+                }
+                return true
+            } else {
+                // Signed out, show unauthenticated UI.
+                logoutUser()
+                return true
+            }
+        } else if (requestCode == Constants.Firebase.REQUEST_INVITE) {
+            if (resultCode == Activity.RESULT_OK) {
+                // Get the invitation IDs of all sent messages
+                val ids = AppInviteInvitation.getInvitationIds(resultCode, data)
+                for (id in ids) {
+                    Timber.d("onActivityResult: sent invitation %s", id)
+                    //todo we need to be able to send multiple IDs in one request
+                    onInviteSent(id)
+
+                    FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
+                        Constants.Firebase.Analitics.EventName.INVITE_SENT,
+                        null)
+                }
+            } else {
+                // Sending failed or it was canceled, show failure message to the user
+                Timber.d("invitation failed for some reason")
+            }
+
+            return true
+        } else {
+            mCallbackManager.onActivityResult(requestCode, resultCode, data)
+            return true
+        }
     }
 }

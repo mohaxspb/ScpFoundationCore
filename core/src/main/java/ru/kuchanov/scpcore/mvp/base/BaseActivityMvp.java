@@ -25,6 +25,10 @@ public interface BaseActivityMvp {
 
         void onInviteSent(String inviteId);
 
-        void onActivityResult(int requestCode, int resultCode, Intent data);
+        /**
+         *
+         * @return true if handled in presenter
+         */
+        boolean onActivityResult(int requestCode, int resultCode, Intent data);
     }
 }
