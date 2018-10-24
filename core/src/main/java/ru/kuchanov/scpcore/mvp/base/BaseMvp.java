@@ -46,6 +46,8 @@ public interface BaseMvp {
         void showOfferFreeTrialSubscriptionPopup();
 
         void showOfferLoginForLevelUpPopup();
+
+        void showInAppErrorDialog(@NotNull final String errorMessage);
     }
 
     interface Presenter<V extends MvpView> extends MvpPresenter<V>, DataSyncActions {
@@ -59,6 +61,8 @@ public interface BaseMvp {
         void onUserChanged(User user);
 
         void onPurchaseClick(String id, BaseActivity baseActivity, boolean ignoreUserCheck);
+
+        void onLevelUpRetryClick(BaseActivity baseActivity);
 
         void updateUserScoreForScoreAction(@ScoreAction String action, @NotNull BasePresenter.AddScoreListener addScoreListener);
     }

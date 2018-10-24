@@ -625,9 +625,12 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                     }
                                 },
                                 onError = {
-                                    //todo show dialog with retry button
-                                    Timber.e(it, "error while consume inapp... X3 what to do)))")
+                                    Timber.e(it, "error while consume inapp!")
                                     view.showError(it)
+                                    //todo show dialog with retry button
+                                    view.showInAppErrorDialog(
+                                        it.message ?: BaseApplication.getAppInstance().getString(R.string.error_unexpected)
+                                    )
                                 }
                             )
                 } else {

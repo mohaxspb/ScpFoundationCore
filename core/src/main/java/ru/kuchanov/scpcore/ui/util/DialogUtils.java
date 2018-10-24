@@ -178,4 +178,20 @@ public class DialogUtils {
         mProgressDialog.dismiss();
         mProgressDialog = null;
     }
+
+    public void showInAppErrorDialog(
+            final BaseActivity<? extends BaseActivityMvp.View, ? extends BaseActivityMvp.Presenter<? extends BaseActivityMvp.View>> baseActivity,
+            @NotNull final String errorMessage
+    ) {
+        new MaterialDialog.Builder(baseActivity)
+                .title(R.string.dialog_inapp_error_title)
+                .content(baseActivity.getString(R.string.dialog_inapp_error_content, errorMessage))
+                .positiveText(R.string.try_again)
+                .onPositive((dialog, which) -> baseActivity.getPresenter().onLevelUpRetryClick(baseActivity))
+                .negativeText(android.R.string.cancel)
+                .onNegative((dialog, which) -> dialog.dismiss())
+                .cancelable(false)
+                .build()
+                .show();
+    }
 }

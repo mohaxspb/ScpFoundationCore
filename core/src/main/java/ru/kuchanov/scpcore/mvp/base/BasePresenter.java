@@ -6,6 +6,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 import com.vk.sdk.VKSdk;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import android.content.Context;
@@ -146,6 +147,26 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                         e -> {
                             Timber.e(e);
                             getView().showError(e);
+                        }
+                );
+    }
+
+    @Override
+    public void onLevelUpRetryClick(@NotNull final BaseActivity baseActivity) {
+        mInAppHelper.intentSenderSingle(
+                baseActivity.getIInAppBillingService(),
+                InAppHelper.InappType.IN_APP,
+                InAppHelper.getNewInAppsSkus().get(0)
+        )
+                .map(intentSender -> mDbProviderFactory.getDbProvider().getScore())
+                .doOnSubscribe(() -> getView().showProgressDialog(R.string.wait))
+                .doOnEach(notification -> getView().dismissProgressDialog())
+                .subscribe(
+                        score -> getView().showMessage(baseActivity.getString(R.string.score_num, score)),
+                        e -> {
+                            Timber.e(e);
+                            getView().showError(e);
+                            getView().showInAppErrorDialog(e.getMessage());
                         }
                 );
     }

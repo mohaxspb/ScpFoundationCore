@@ -25,6 +25,7 @@ import com.hannesdorfmann.mosby.mvp.MvpActivity;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.Duration;
 import org.joda.time.Period;
 
@@ -880,6 +881,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                             showError(e);
                         }
                 );
+    }
+
+    @Override
+    public void showInAppErrorDialog(@NotNull final String errorMessage) {
+        mDialogUtils.showInAppErrorDialog(this, errorMessage);
     }
 
     @Override

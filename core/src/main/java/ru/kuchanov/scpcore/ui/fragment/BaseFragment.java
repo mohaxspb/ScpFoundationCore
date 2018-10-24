@@ -4,6 +4,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.hannesdorfmann.mosby.mvp.MvpFragment;
 import com.squareup.leakcanary.RefWatcher;
 
+import org.jetbrains.annotations.NotNull;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -232,6 +234,13 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
     public void showFreeAdsDisablePopup() {
         if (isAdded()) {
             getBaseActivity().showFreeAdsDisablePopup();
+        }
+    }
+
+    @Override
+    public void showInAppErrorDialog(final @NotNull String errorMessage) {
+        if (isAdded()) {
+            getBaseActivity().showInAppErrorDialog(errorMessage);
         }
     }
 

@@ -17,7 +17,6 @@ import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract
 import ru.kuchanov.scpcore.ui.fragment.monetization.FreeAdsDisableActionsFragment
 import ru.kuchanov.scpcore.ui.fragment.monetization.LeaderboardFragment
 import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment
-import timber.log.Timber
 
 
 /**
@@ -118,11 +117,6 @@ class SubscriptionsActivity :
         toolbar.setTitleTextColor(color)
         toolbar.setSubtitleTextColor(color)
         toolbar.navigationIcon?.setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Timber.d("onActivityResult called in SubscriptionsActivity")
-        super.onActivityResult(requestCode, resultCode, data)
     }
 
     companion object {
