@@ -201,7 +201,7 @@ dependencies {
     //end of appodeal
     //AppMetrica
     //we add it here and delete jar from appodeal
-    api 'com.yandex.android:mobmetricalib:3.1.0'
+    api 'com.yandex.android:mobmetricalib:3.2.2'
     // Optional. Play Install Referrer library for better attribution.
     implementation 'com.android.installreferrer:installreferrer:1.0'
     //recyclerView fast scroller
