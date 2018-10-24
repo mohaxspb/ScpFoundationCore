@@ -1097,8 +1097,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     //todo we need to be able to send multiple IDs in one request
                     mPresenter.onInviteSent(id);
 
-                    FirebaseAnalytics.getInstance(BaseActivity.this)
-                            .logEvent(EventName.INVITE_SENT, null);
+                    FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.INVITE_SENT, null);
                 }
             } else {
                 // Sending failed or it was canceled, show failure message to the user

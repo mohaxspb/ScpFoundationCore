@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.mvp.base;
 
+import android.content.Intent;
+
 import ru.kuchanov.scpcore.mvp.contract.LoginActions;
 
 /**
@@ -19,11 +21,10 @@ public interface BaseActivityMvp {
 
         void onActivityStopped();
 
-        @Deprecated
-        void reactOnCrackEvent();
-
         void onInviteReceived(String inviteId);
 
         void onInviteSent(String inviteId);
+
+        void onActivityResult(int requestCode, int resultCode, Intent data);
     }
 }

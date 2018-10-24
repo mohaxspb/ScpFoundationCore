@@ -337,7 +337,6 @@ class LeaderboardFragment :
             }
             val responseCode = data.getIntExtra("RESPONSE_CODE", 0)
             val purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA")
-            //            String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
 
             if (resultCode == Activity.RESULT_OK && responseCode == InAppHelper.RESULT_OK) {
                 try {
