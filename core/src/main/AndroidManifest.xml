@@ -31,6 +31,9 @@
         android:supportsRtl="true"
         tools:targetApi="m">
 
+        <!--api 28 crash fix-->
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+
         <!--ads by appodeal-->
         <activity
             android:name="com.appodeal.ads.InterstitialActivity"
