@@ -85,10 +85,10 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
         object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 Timber.d("articles in user changed!")
-                val t = object : GenericTypeIndicator<Map<String, ArticleInFirebase>>() {
+                val t = object : GenericTypeIndicator<Map<String, @JvmSuppressWildcards ArticleInFirebase>>() {
 
                 }
-                val map: Map<String, ArticleInFirebase>? = dataSnapshot.getValue(t)
+                val map: Map<String, @JvmSuppressWildcards ArticleInFirebase>? = dataSnapshot.getValue(t)
 
                 if (map != null) {
                     mDbProviderFactory.dbProvider
