@@ -52,16 +52,21 @@ import timber.log.Timber;
 @Module
 public class NetModule {
 
-    public static final String QUALIFIER_TOKEN_INTERCEPTOR = "tokenInterceptor";
+    private static final String QUALIFIER_TOKEN_INTERCEPTOR = "tokenInterceptor";
 
-    public static final String QUALIFIER_LOGGING_INTERCEPTOR = "loggingInterceptor";
+    private static final String QUALIFIER_LOGGING_INTERCEPTOR = "loggingInterceptor";
 
-    public static final String QUALIFIER_VPS_API = "vpsApi";
+    private static final String QUALIFIER_VPS_API = "vpsApi";
 
-    public static final String QUALIFIER_SCP_READER_API = "scpReaderApi";
+    private static final String QUALIFIER_SCP_READER_API = "scpReaderApi";
 
-    public static final String QUALIFIER_SCP_SITE_API = "scpSiteApi";
+    private static final String QUALIFIER_SCP_SITE_API = "scpSiteApi";
 
+    private static final String QUALIFIER_SCP_READER_API_OKHTTP = "QUALIFIER_SCP_READER_API_OKHTTP";
+
+    private static final String QUALIFIER_COMMON_OKHTTP = "QUALIFIER_COMMON_OKHTTP";
+
+    @SuppressWarnings("ConstantConditions")
     @Provides
     @Named(QUALIFIER_LOGGING_INTERCEPTOR)
     @Singleton
@@ -95,10 +100,24 @@ public class NetModule {
         };
     }
 
-    //todo create separate one for different retrofits
     @Provides
+    @Named(QUALIFIER_COMMON_OKHTTP)
     @Singleton
-    OkHttpClient providesOkHttpClient(
+    OkHttpClient providesCommonOkHttpClient(
+            @Named(QUALIFIER_LOGGING_INTERCEPTOR) final Interceptor loggingInterceptor
+    ) {
+        return new OkHttpClient.Builder()
+                .addInterceptor(loggingInterceptor)
+                .connectTimeout(BuildConfig.TIMEOUT_SECONDS_CONNECT, TimeUnit.SECONDS)
+                .readTimeout(BuildConfig.TIMEOUT_SECONDS_READ, TimeUnit.SECONDS)
+                .writeTimeout(BuildConfig.TIMEOUT_SECONDS_WRITE, TimeUnit.SECONDS)
+                .build();
+    }
+
+    @Provides
+    @Named(QUALIFIER_SCP_READER_API_OKHTTP)
+    @Singleton
+    OkHttpClient providesScpReaderApiOkHttpClient(
             @Named(QUALIFIER_TOKEN_INTERCEPTOR) final Interceptor tokenInterceptor,
             @Named(QUALIFIER_LOGGING_INTERCEPTOR) final Interceptor loggingInterceptor
     ) {
@@ -133,7 +152,7 @@ public class NetModule {
     @Named(QUALIFIER_VPS_API)
     @Singleton
     Retrofit providesVpsRetrofit(
-            final OkHttpClient okHttpClient,
+            @Named(QUALIFIER_COMMON_OKHTTP) final OkHttpClient okHttpClient,
             final Converter.Factory converterFactory,
             final CallAdapter.Factory callAdapterFactory
     ) {
@@ -149,7 +168,7 @@ public class NetModule {
     @Named(QUALIFIER_SCP_READER_API)
     @Singleton
     Retrofit providesScpReaderApiRetrofit(
-            final OkHttpClient okHttpClient,
+            @Named(QUALIFIER_SCP_READER_API_OKHTTP) final OkHttpClient okHttpClient,
             final Converter.Factory converterFactory,
             final CallAdapter.Factory callAdapterFactory
     ) {
@@ -165,7 +184,7 @@ public class NetModule {
     @Named(QUALIFIER_SCP_SITE_API)
     @Singleton
     Retrofit providesScpRetrofit(
-            final OkHttpClient okHttpClient,
+            @Named(QUALIFIER_COMMON_OKHTTP) final OkHttpClient okHttpClient,
             final Converter.Factory converterFactory,
             final CallAdapter.Factory callAdapterFactory
     ) {

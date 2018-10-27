@@ -111,8 +111,7 @@ public class ApiClient {
 
     private static final String SITE_TAGS_PATH = "system:page-tags/tag/";
 
-    @SuppressWarnings("unused")
-    protected MyPreferenceManager mPreferencesManager;
+    private final MyPreferenceManager mPreferencesManager;
 
     protected OkHttpClient mOkHttpClient;
 
@@ -172,11 +171,11 @@ public class ApiClient {
                 final Response response = mOkHttpClient.newCall(request.build()).execute();
 
                 final Request requestResult = response.request();
-                Timber.d("requestResult:" + requestResult);
-                Timber.d("requestResult.url().url():" + requestResult.url().url());
+                Timber.d("requestResult:%s", requestResult);
+                Timber.d("requestResult.url().url():%s", requestResult.url().url());
 
                 final String randomURL = requestResult.url().url().toString();
-                Timber.d("randomUrl = " + randomURL);
+                Timber.d("randomUrl = %s", randomURL);
 
                 subscriber.onNext(randomURL);
                 subscriber.onCompleted();
@@ -188,12 +187,12 @@ public class ApiClient {
     }
 
     public Observable<Integer> getRecentArticlesPageCountObservable() {
-        return bindWithUtils(Observable.<Integer>unsafeCreate((Subscriber<? super Integer> subscriber) -> {
+        return bindWithUtils(Observable.unsafeCreate((Subscriber<? super Integer> subscriber) -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();
 
-            String responseBody = null;
+            String responseBody;
             try {
                 final Response response = mOkHttpClient.newCall(request).execute();
                 final ResponseBody body = response.body();
@@ -230,7 +229,7 @@ public class ApiClient {
     }
 
     public Observable<List<Article>> getRecentArticlesForPage(final int page) {
-        return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
+        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/" + page)
                     .build();
@@ -256,7 +255,7 @@ public class ApiClient {
 
                 subscriber.onNext(articles);
                 subscriber.onCompleted();
-            } catch (Exception | ScpParseException e) {
+            } catch (final Exception | ScpParseException e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
@@ -311,7 +310,7 @@ public class ApiClient {
     }
 
     public Observable<List<Article>> getRatedArticles(final int offset) {
-        return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
+        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
             final int page = offset / mConstantValues.getNumOfArticlesOnRatedPage() + 1/*as pages are not zero based*/;
 
             final Request request = new Request.Builder()
@@ -339,7 +338,7 @@ public class ApiClient {
 
                 subscriber.onNext(articles);
                 subscriber.onCompleted();
-            } catch (Exception | ScpParseException e) {
+            } catch (final Exception | ScpParseException e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
@@ -381,7 +380,7 @@ public class ApiClient {
     }
 
     public Observable<List<Article>> getSearchArticles(final int offset, final String searchQuery) {
-        return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
+        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
             final int page = offset / mConstantValues.getNumOfArticlesOnSearchPage() + 1/*as pages are not zero based*/;
 
             final Request request = new Request.Builder()
@@ -443,7 +442,7 @@ public class ApiClient {
     }
 
     public Observable<List<Article>> getObjectsArticles(final String sObjectsLink) {
-        return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
+        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
             final Request request = new Request.Builder()
                     .url(sObjectsLink)
                     .build();
@@ -469,7 +468,7 @@ public class ApiClient {
 
                 subscriber.onNext(articles);
                 subscriber.onCompleted();
-            } catch (Exception | ScpParseException e) {
+            } catch (final Exception | ScpParseException e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
@@ -852,7 +851,7 @@ public class ApiClient {
     }
 
     /**
-     * We need this as in FR site all article content wraped in another div... ***!!!11
+     * We need this as in FR site all article content wrapped in another div... ***!!!11
      *
      * @return Element with article content
      */
@@ -904,7 +903,7 @@ public class ApiClient {
                         final FileOutputStream ostream = new FileOutputStream(imageFile);
                         bitmap.compress(Bitmap.CompressFormat.PNG, 10, ostream);
                         ostream.close();
-                    } catch (InterruptedException | IOException | ExecutionException e) {
+                    } catch (final InterruptedException | IOException | ExecutionException e) {
                         Timber.e(e);
                     }
                 } else {
@@ -973,7 +972,7 @@ public class ApiClient {
     }
 
     public Observable<List<Article>> getMaterialsArchiveArticles() {
-        return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
+        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getArchive())
                     .build();
@@ -1050,7 +1049,7 @@ public class ApiClient {
     }
 
     public Observable<List<Article>> getMaterialsJokesArticles() {
-        return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
+        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getJokes())
                     .build();
@@ -1128,7 +1127,7 @@ public class ApiClient {
 
     public Observable<Boolean> joinVkGroup(final String groupId) {
         Timber.d("joinVkGroup with groupId: %s", groupId);
-        return bindWithUtils(Observable.<Boolean>unsafeCreate(subscriber -> {
+        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
                     final VKParameters parameters = VKParameters.from(
                             VKApiConst.GROUP_ID, groupId,
                             VKApiConst.ACCESS_TOKEN, VKAccessToken.currentToken(),
@@ -1158,9 +1157,10 @@ public class ApiClient {
     }
 
     @Article.ObjectType
-    private String getObjectTypeByImageUrl(final String imageURL) {
+    private static String getObjectTypeByImageUrl(final String imageURL) {
         @Article.ObjectType final String type;
 
+        //todo change url for objects 2
         switch (imageURL) {
             case "http://scp-ru.wdfiles.com/local--files/scp-list-4/na.png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list-3/na.png":
@@ -1384,14 +1384,14 @@ public class ApiClient {
                         .child(firebaseUser.getUid())
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
-                            public void onDataChange(final DataSnapshot dataSnapshot) {
+                            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                                 final FirebaseObjectUser userFromFireBase = dataSnapshot.getValue(FirebaseObjectUser.class);
                                 subscriber.onNext(userFromFireBase);
                                 subscriber.onCompleted();
                             }
 
                             @Override
-                            public void onCancelled(final DatabaseError databaseError) {
+                            public void onCancelled(@NonNull final DatabaseError databaseError) {
                                 Timber.e(databaseError.toException(), "onCancelled");
                                 subscriber.onError(databaseError.toException());
                             }
@@ -1456,7 +1456,7 @@ public class ApiClient {
         });
     }
 
-    public Observable<Pair<String, String>> nameAndAvatarFromProviderObservable(Constants.Firebase.SocialProvider provider) {
+    public Observable<Pair<String, String>> nameAndAvatarFromProviderObservable(final Constants.Firebase.SocialProvider provider) {
         final Observable<Pair<String, String>> nameAvatarObservable;
         switch (provider) {
             case VK:
@@ -1489,7 +1489,7 @@ public class ApiClient {
         });
     }
 
-    public Observable<Void> updateFirebaseUsersSocialProvidersObservable(List<SocialProviderModel> socialProviderModels) {
+    public Observable<Void> updateFirebaseUsersSocialProvidersObservable(final List<SocialProviderModel> socialProviderModels) {
         return Observable.unsafeCreate(subscriber -> {
             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser != null) {
@@ -1555,7 +1555,7 @@ public class ApiClient {
                         .child(Constants.Firebase.Refs.SCORE)
                         .runTransaction(new Transaction.Handler() {
                             @Override
-                            public Transaction.Result doTransaction(final MutableData mutableData) {
+                            public Transaction.Result doTransaction(@NonNull final MutableData mutableData) {
                                 Integer p = mutableData.getValue(Integer.class);
                                 if (p == null) {
                                     return Transaction.success(mutableData);
@@ -1677,13 +1677,13 @@ public class ApiClient {
                     .child(url);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(final DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                     subscriber.onNext(dataSnapshot.getValue(ArticleInFirebase.class));
                     subscriber.onCompleted();
                 }
 
                 @Override
-                public void onCancelled(final DatabaseError databaseError) {
+                public void onCancelled(@NonNull final DatabaseError databaseError) {
                     subscriber.onError(databaseError.toException());
                 }
             });
@@ -1704,13 +1704,13 @@ public class ApiClient {
                     .child(Constants.Firebase.Refs.SCORE);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(final DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                     subscriber.onNext(dataSnapshot.getValue(Integer.class));
                     subscriber.onCompleted();
                 }
 
                 @Override
-                public void onCancelled(final DatabaseError databaseError) {
+                public void onCancelled(@NonNull final DatabaseError databaseError) {
                     subscriber.onError(databaseError.toException());
                 }
             });
@@ -1732,7 +1732,7 @@ public class ApiClient {
                     .child(Constants.Firebase.Refs.SIGN_IN_REWARD_GAINED);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(final DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                     final Boolean data = dataSnapshot.getValue(Boolean.class);
                     Timber.d("dataSnapshot.getValue(): %s", data);
                     subscriber.onNext(data != null && data);
@@ -1740,7 +1740,7 @@ public class ApiClient {
                 }
 
                 @Override
-                public void onCancelled(final DatabaseError databaseError) {
+                public void onCancelled(@NonNull final DatabaseError databaseError) {
                     subscriber.onError(databaseError.toException());
                 }
             });
@@ -1763,7 +1763,7 @@ public class ApiClient {
                     .child(id);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(final DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                     final VkGroupToJoin data = dataSnapshot.getValue(VkGroupToJoin.class);
                     Timber.d("dataSnapshot.getValue(): %s", data);
                     subscriber.onNext(data != null);
@@ -1771,7 +1771,7 @@ public class ApiClient {
                 }
 
                 @Override
-                public void onCancelled(final DatabaseError databaseError) {
+                public void onCancelled(@NonNull final DatabaseError databaseError) {
                     subscriber.onError(databaseError.toException());
                 }
             });
@@ -1820,7 +1820,7 @@ public class ApiClient {
                     .child(id);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(final DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                     final PlayMarketApplication data = dataSnapshot.getValue(PlayMarketApplication.class);
                     Timber.d("dataSnapshot.getValue(): %s", data);
                     subscriber.onNext(data != null);
@@ -1828,7 +1828,7 @@ public class ApiClient {
                 }
 
                 @Override
-                public void onCancelled(final DatabaseError databaseError) {
+                public void onCancelled(@NonNull final DatabaseError databaseError) {
                     subscriber.onError(databaseError.toException());
                 }
             });
@@ -1861,36 +1861,6 @@ public class ApiClient {
         });
     }
 
-    public Observable<Boolean> isUserGainedSkoreFromInapp(final String sku) {
-        return Observable.unsafeCreate(subscriber -> {
-            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-            if (firebaseUser == null) {
-                subscriber.onError(new IllegalArgumentException("firebase user is null"));
-                return;
-            }
-            final FirebaseDatabase database = FirebaseDatabase.getInstance();
-            final DatabaseReference reference = database.getReference()
-                    .child(Constants.Firebase.Refs.USERS)
-                    .child(firebaseUser.getUid())
-                    .child(Constants.Firebase.Refs.INAPP)
-                    .child(sku);
-            reference.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(final DataSnapshot dataSnapshot) {
-                    final PlayMarketApplication data = dataSnapshot.getValue(PlayMarketApplication.class);
-                    Timber.d("dataSnapshot.getValue(): %s", data);
-                    subscriber.onNext(data != null);
-                    subscriber.onCompleted();
-                }
-
-                @Override
-                public void onCancelled(final DatabaseError databaseError) {
-                    subscriber.onError(databaseError.toException());
-                }
-            });
-        });
-    }
-
     public Observable<Void> addRewardedInapp(final String sku) {
         return Observable.unsafeCreate(subscriber -> {
             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -1905,29 +1875,6 @@ public class ApiClient {
                     .child(Constants.Firebase.Refs.INAPP)
                     .child(sku);
             reference.push().setValue(true, (databaseError, databaseReference) -> {
-                if (databaseError == null) {
-                    subscriber.onNext(null);
-                    subscriber.onCompleted();
-                } else {
-                    subscriber.onError(databaseError.toException());
-                }
-            });
-        });
-    }
-
-    public Observable<Void> setCrackedInFirebase() {
-        return Observable.unsafeCreate(subscriber -> {
-            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-            if (firebaseUser == null) {
-                subscriber.onError(new IllegalArgumentException("firebase user is null"));
-                return;
-            }
-            final FirebaseDatabase database = FirebaseDatabase.getInstance();
-            final DatabaseReference reference = database.getReference()
-                    .child(Constants.Firebase.Refs.USERS)
-                    .child(firebaseUser.getUid())
-                    .child(Constants.Firebase.Refs.CRACKED);
-            reference.setValue(true, (databaseError, databaseReference) -> {
                 if (databaseError == null) {
                     subscriber.onNext(null);
                     subscriber.onCompleted();
