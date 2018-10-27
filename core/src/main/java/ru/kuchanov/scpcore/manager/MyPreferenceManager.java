@@ -4,6 +4,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joda.time.Period;
 
 import android.content.Context;
@@ -123,6 +124,7 @@ public class MyPreferenceManager {
         String VK_APP_SHARED = "VK_APP_SHARED";
         String SAVE_NEW_ARTICLES_ENABLED = "SAVE_NEW_ARTICLES_ENABLED";
         String LEADERBOARD_UPDATE_DATE = "LEADERBOARD_UPDATE_DATE";
+        String ACCESS_TOKEN = "ACCESS_TOKEN";
     }
 
     private final Gson mGson;
@@ -763,6 +765,17 @@ public class MyPreferenceManager {
     public boolean isTimeToValidateSubscriptions() {
         return System.currentTimeMillis() - getLastTimeSubscriptionsValidated() >= PERIOD_BETWEEN_SUBSCRIPTIONS_INVALIDATION_IN_MILLIS;
     }
+
+    //scpReaderApi
+    public void setAccessToken(@Nullable final String accessToken) {
+        mPreferences.edit().putString(Keys.ACCESS_TOKEN, accessToken).apply();
+    }
+
+    @Nullable
+    public String getAccessToken() {
+        return mPreferences.getString(Keys.ACCESS_TOKEN, null);
+    }
+    //scpReaderApi END
 
     //utils
     public boolean isLicenceAccepted() {

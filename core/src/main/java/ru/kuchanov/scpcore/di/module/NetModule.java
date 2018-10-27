@@ -5,13 +5,14 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.TypeAdapter;
-import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+
+import org.jetbrains.annotations.NotNull;
+
+import android.text.TextUtils;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -77,66 +78,24 @@ public class NetModule {
     @Provides
     @Named(QUALIFIER_TOKEN_INTERCEPTOR)
     @Singleton
-    Interceptor providesTokenInterceptor() {
+    Interceptor providesTokenInterceptor(@NotNull final MyPreferenceManager myPreferenceManager) {
         return chain -> {
             final Request original = chain.request();
 
-            final Request request = original.newBuilder()
-//                    .addHeader("Accept", "application/json")
-                    //todo
-                    .build();
+            final Request request;
+            if (TextUtils.isEmpty(myPreferenceManager.getAccessToken())) {
+                request = original;
+            } else {
+                request = original.newBuilder()
+                        .header("Authorization", "Bearer" + myPreferenceManager.getAccessToken())
+                        .build();
+            }
 
             return chain.proceed(request);
         };
     }
 
-    @Provides
-    @Singleton
-    CallAdapter.Factory providesCallAdapterFactory() {
-        return RxJavaCallAdapterFactory.create();
-    }
-
-    @Provides
-    @Singleton
-    Converter.Factory providesConverterFactory(final TypeAdapterFactory typeAdapterFactory) {
-        return GsonConverterFactory.create(
-                new GsonBuilder()
-                        .setExclusionStrategies(new ExclusionStrategy() {
-                            @Override
-                            public boolean shouldSkipField(final FieldAttributes f) {
-                                return f.getDeclaringClass().equals(RealmObject.class);
-                            }
-
-                            @Override
-                            public boolean shouldSkipClass(final Class<?> clazz) {
-                                return false;
-                            }
-                        })
-                        .registerTypeAdapter(new TypeToken<RealmList<RealmString>>() {
-                        }.getType(), new TypeAdapter<RealmList<RealmString>>() {
-
-                            @Override
-                            public void write(final JsonWriter out, final RealmList<RealmString> value) throws IOException {
-                                // Ignore
-                            }
-
-                            @Override
-                            public RealmList<RealmString> read(final JsonReader in) throws IOException {
-                                in.beginArray();
-                                final RealmList<RealmString> list = new RealmList<>();
-                                while (in.hasNext()) {
-                                    list.add(new RealmString(in.nextString()));
-                                }
-                                in.endArray();
-                                return list;
-                            }
-                        })
-                        .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
-                        .registerTypeAdapterFactory(typeAdapterFactory)
-                        .create()
-        );
-    }
-
+    //todo create separate one for different retrofits
     @Provides
     @Singleton
     OkHttpClient providesOkHttpClient(
@@ -150,6 +109,24 @@ public class NetModule {
                 .readTimeout(BuildConfig.TIMEOUT_SECONDS_READ, TimeUnit.SECONDS)
                 .writeTimeout(BuildConfig.TIMEOUT_SECONDS_WRITE, TimeUnit.SECONDS)
                 .build();
+    }
+
+    @Provides
+    @Singleton
+    CallAdapter.Factory providesCallAdapterFactory() {
+        return RxJavaCallAdapterFactory.create();
+    }
+
+    @Provides
+    @Singleton
+    Converter.Factory providesConverterFactory() {
+        return GsonConverterFactory.create(
+                new GsonBuilder()
+                        .setExclusionStrategies(new MyExclusionStrategy())
+                        .registerTypeAdapter(new RealmListTypeToken().getType(), new RealmListTypeAdapter())
+                        .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
+                        .create()
+        );
     }
 
     @Provides
@@ -244,37 +221,6 @@ public class NetModule {
 
     @Provides
     @Singleton
-    TypeAdapterFactory providesTypeAdapterFactory() {
-        return new TypeAdapterFactory() {
-            @Override
-            public <T> TypeAdapter<T> create(final Gson gson, final TypeToken<T> type) {
-                final TypeAdapter<T> delegate = gson.getDelegateAdapter(this, type);
-                final TypeAdapter<JsonElement> elementAdapter = gson.getAdapter(JsonElement.class);
-
-                return new TypeAdapter<T>() {
-                    @Override
-                    public void write(final JsonWriter out, final T value) throws IOException {
-                        delegate.write(out, value);
-                    }
-
-                    @Override
-                    public T read(final JsonReader in) throws IOException {
-                        JsonElement jsonElement = elementAdapter.read(in);
-                        if (jsonElement.isJsonObject()) {
-                            final JsonObject jsonObject = jsonElement.getAsJsonObject();
-                            if (jsonObject.has("result") && jsonObject.get("result").isJsonObject()) {
-                                jsonElement = jsonObject.get("result");
-                            }
-                        }
-                        return delegate.fromJsonTree(jsonElement);
-                    }
-                }.nullSafe();
-            }
-        };
-    }
-
-    @Provides
-    @Singleton
     Gson providesGson() {
         return new GsonBuilder().setDateFormat(DateFormat.FULL, DateFormat.FULL).create();
     }
@@ -287,5 +233,39 @@ public class NetModule {
 
     protected ConstantValues getConstants() {
         return new ConstantValuesDefault();
+    }
+
+    private static class MyExclusionStrategy implements ExclusionStrategy {
+
+        @Override
+        public boolean shouldSkipField(final FieldAttributes f) {
+            return f.getDeclaringClass().equals(RealmObject.class);
+        }
+
+        @Override
+        public boolean shouldSkipClass(final Class<?> clazz) {
+            return false;
+        }
+    }
+
+    private static class RealmListTypeToken extends TypeToken<RealmList<RealmString>> {}
+
+    private static class RealmListTypeAdapter extends TypeAdapter<RealmList<RealmString>> {
+
+        @Override
+        public void write(final JsonWriter out, final RealmList<RealmString> value) {
+            // Ignore
+        }
+
+        @Override
+        public RealmList<RealmString> read(final JsonReader in) throws IOException {
+            in.beginArray();
+            final RealmList<RealmString> list = new RealmList<>();
+            while (in.hasNext()) {
+                list.add(new RealmString(in.nextString()));
+            }
+            in.endArray();
+            return list;
+        }
     }
 }
