@@ -125,6 +125,7 @@ public class MyPreferenceManager {
         String SAVE_NEW_ARTICLES_ENABLED = "SAVE_NEW_ARTICLES_ENABLED";
         String LEADERBOARD_UPDATE_DATE = "LEADERBOARD_UPDATE_DATE";
         String ACCESS_TOKEN = "ACCESS_TOKEN";
+        String REFRESH_TOKEN = "REFRESH_TOKEN";
     }
 
     private final Gson mGson;
@@ -774,6 +775,15 @@ public class MyPreferenceManager {
     @Nullable
     public String getAccessToken() {
         return mPreferences.getString(Keys.ACCESS_TOKEN, null);
+    }
+
+    public void setRefreshToken(@Nullable final String refreshToken) {
+        mPreferences.edit().putString(Keys.REFRESH_TOKEN, refreshToken).apply();
+    }
+
+    @Nullable
+    public String getRefreshToken() {
+        return mPreferences.getString(Keys.REFRESH_TOKEN, null);
     }
     //scpReaderApi END
 

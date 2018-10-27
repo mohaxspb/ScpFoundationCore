@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import android.text.TextUtils;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.text.DateFormat;
 import java.util.concurrent.TimeUnit;
 
@@ -25,9 +26,11 @@ import dagger.Module;
 import dagger.Provides;
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import okhttp3.Credentials;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.CallAdapter;
 import retrofit2.Converter;
@@ -38,8 +41,11 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.ConstantValuesDefault;
+import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.api.model.response.scpreaderapi.AccessTokenResponse;
+import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import timber.log.Timber;
@@ -52,19 +58,29 @@ import timber.log.Timber;
 @Module
 public class NetModule {
 
-    private static final String QUALIFIER_TOKEN_INTERCEPTOR = "tokenInterceptor";
+    //qualifiers
+    private static final String QUALIFIER_TOKEN_INTERCEPTOR = "QUALIFIER_TOKEN_INTERCEPTOR";
 
-    private static final String QUALIFIER_LOGGING_INTERCEPTOR = "loggingInterceptor";
+    private static final String QUALIFIER_LOGGING_INTERCEPTOR = "QUALIFIER_LOGGING_INTERCEPTOR";
 
-    private static final String QUALIFIER_VPS_API = "vpsApi";
+    private static final String QUALIFIER_VPS_API = "QUALIFIER_VPS_API";
 
-    private static final String QUALIFIER_SCP_READER_API = "scpReaderApi";
+    private static final String QUALIFIER_SCP_READER_API = "QUALIFIER_SCP_READER_API";
 
-    private static final String QUALIFIER_SCP_SITE_API = "scpSiteApi";
+    private static final String QUALIFIER_SCP_SITE_API = "QUALIFIER_SCP_SITE_API";
 
     private static final String QUALIFIER_OKHTTP_SCP_READER_API = "QUALIFIER_OKHTTP_SCP_READER_API";
 
     private static final String QUALIFIER_OKHTTP_COMMON = "QUALIFIER_OKHTTP_COMMON";
+
+    private static final String QUALIFIER_UNAUTHORIZE_INTERCEPTOR = "QUALIFIER_UNAUTHORIZE_INTERCEPTOR";
+
+    private static final String QUALIFIER_SCP_READER_API_AUTH = "QUALIFIER_SCP_READER_API_AUTH";
+    //qualifiers END
+
+    private static final String HEADER_AUTHORIZATION = "Authorization";
+
+    private static final String HEADER_VALUE_PART_BEARER = "Bearer";
 
     @SuppressWarnings("ConstantConditions")
     @Provides
@@ -92,11 +108,39 @@ public class NetModule {
                 request = original;
             } else {
                 request = original.newBuilder()
-                        .header("Authorization", "Bearer" + myPreferenceManager.getAccessToken())
+                        .header(HEADER_AUTHORIZATION, HEADER_VALUE_PART_BEARER + myPreferenceManager.getAccessToken())
                         .build();
             }
 
             return chain.proceed(request);
+        };
+    }
+
+    @Provides
+    @Named(QUALIFIER_UNAUTHORIZE_INTERCEPTOR)
+    @Singleton
+    Interceptor providesUnauthorizeInterceptor(
+            @NotNull final ScpReaderAuthApi scpReaderAuthApi,
+            @NotNull final MyPreferenceManager myPreferenceManager
+    ) {
+        return chain -> {
+            Request request = chain.request();
+            Response response = chain.proceed(request);
+            if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                final AccessTokenResponse tokenResponse = scpReaderAuthApi.getAccessTokenByRefreshToken(
+                        Credentials.basic(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET),
+                        Constants.Api.ScpReader.GRANT_TYPE_REFRESH_TOKEN,
+                        myPreferenceManager.getRefreshToken()
+                )
+                        .blockingGet();
+                myPreferenceManager.setAccessToken(tokenResponse.getAccessToken());
+                myPreferenceManager.setRefreshToken(tokenResponse.getRefreshToken());
+                request = request.newBuilder()
+                        .header(HEADER_AUTHORIZATION, HEADER_VALUE_PART_BEARER + tokenResponse.getAccessToken())
+                        .method(request.method(), request.body()).url(request.url()).build();
+                response = chain.proceed(request);
+            }
+            return response;
         };
     }
 
@@ -149,19 +193,25 @@ public class NetModule {
     }
 
     @Provides
-    @Named(QUALIFIER_VPS_API)
+    @Named(QUALIFIER_SCP_READER_API_AUTH)
     @Singleton
-    Retrofit providesVpsRetrofit(
+    Retrofit providesScpReaderApiAuthRetrofit(
             @Named(QUALIFIER_OKHTTP_COMMON) final OkHttpClient okHttpClient,
             final Converter.Factory converterFactory,
             final CallAdapter.Factory callAdapterFactory
     ) {
         return new Retrofit.Builder()
-                .baseUrl(BaseApplication.getAppInstance().getString(R.string.tools_api_url))
+                .baseUrl(BaseApplication.getAppInstance().getString(R.string.scp_reader_api_url))
                 .client(okHttpClient)
                 .addConverterFactory(converterFactory)
                 .addCallAdapterFactory(callAdapterFactory)
                 .build();
+    }
+
+    @Provides
+    @Singleton
+    ScpReaderAuthApi providesScpReaderAuthApi(@Named(QUALIFIER_SCP_READER_API_AUTH) final Retrofit retrofit) {
+        return retrofit.create(ScpReaderAuthApi.class);
     }
 
     @Provides
@@ -174,6 +224,22 @@ public class NetModule {
     ) {
         return new Retrofit.Builder()
                 .baseUrl(BaseApplication.getAppInstance().getString(R.string.scp_reader_api_url))
+                .client(okHttpClient)
+                .addConverterFactory(converterFactory)
+                .addCallAdapterFactory(callAdapterFactory)
+                .build();
+    }
+
+    @Provides
+    @Named(QUALIFIER_VPS_API)
+    @Singleton
+    Retrofit providesVpsRetrofit(
+            @Named(QUALIFIER_OKHTTP_COMMON) final OkHttpClient okHttpClient,
+            final Converter.Factory converterFactory,
+            final CallAdapter.Factory callAdapterFactory
+    ) {
+        return new Retrofit.Builder()
+                .baseUrl(BaseApplication.getAppInstance().getString(R.string.tools_api_url))
                 .client(okHttpClient)
                 .addConverterFactory(converterFactory)
                 .addCallAdapterFactory(callAdapterFactory)
