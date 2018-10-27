@@ -62,9 +62,9 @@ public class NetModule {
 
     private static final String QUALIFIER_SCP_SITE_API = "scpSiteApi";
 
-    private static final String QUALIFIER_SCP_READER_API_OKHTTP = "QUALIFIER_SCP_READER_API_OKHTTP";
+    private static final String QUALIFIER_OKHTTP_SCP_READER_API = "QUALIFIER_OKHTTP_SCP_READER_API";
 
-    private static final String QUALIFIER_COMMON_OKHTTP = "QUALIFIER_COMMON_OKHTTP";
+    private static final String QUALIFIER_OKHTTP_COMMON = "QUALIFIER_OKHTTP_COMMON";
 
     @SuppressWarnings("ConstantConditions")
     @Provides
@@ -101,7 +101,7 @@ public class NetModule {
     }
 
     @Provides
-    @Named(QUALIFIER_COMMON_OKHTTP)
+    @Named(QUALIFIER_OKHTTP_COMMON)
     @Singleton
     OkHttpClient providesCommonOkHttpClient(
             @Named(QUALIFIER_LOGGING_INTERCEPTOR) final Interceptor loggingInterceptor
@@ -115,7 +115,7 @@ public class NetModule {
     }
 
     @Provides
-    @Named(QUALIFIER_SCP_READER_API_OKHTTP)
+    @Named(QUALIFIER_OKHTTP_SCP_READER_API)
     @Singleton
     OkHttpClient providesScpReaderApiOkHttpClient(
             @Named(QUALIFIER_TOKEN_INTERCEPTOR) final Interceptor tokenInterceptor,
@@ -152,7 +152,7 @@ public class NetModule {
     @Named(QUALIFIER_VPS_API)
     @Singleton
     Retrofit providesVpsRetrofit(
-            @Named(QUALIFIER_COMMON_OKHTTP) final OkHttpClient okHttpClient,
+            @Named(QUALIFIER_OKHTTP_COMMON) final OkHttpClient okHttpClient,
             final Converter.Factory converterFactory,
             final CallAdapter.Factory callAdapterFactory
     ) {
@@ -168,7 +168,7 @@ public class NetModule {
     @Named(QUALIFIER_SCP_READER_API)
     @Singleton
     Retrofit providesScpReaderApiRetrofit(
-            @Named(QUALIFIER_SCP_READER_API_OKHTTP) final OkHttpClient okHttpClient,
+            @Named(QUALIFIER_OKHTTP_SCP_READER_API) final OkHttpClient okHttpClient,
             final Converter.Factory converterFactory,
             final CallAdapter.Factory callAdapterFactory
     ) {
@@ -184,7 +184,7 @@ public class NetModule {
     @Named(QUALIFIER_SCP_SITE_API)
     @Singleton
     Retrofit providesScpRetrofit(
-            @Named(QUALIFIER_COMMON_OKHTTP) final OkHttpClient okHttpClient,
+            @Named(QUALIFIER_OKHTTP_COMMON) final OkHttpClient okHttpClient,
             final Converter.Factory converterFactory,
             final CallAdapter.Factory callAdapterFactory
     ) {
@@ -199,7 +199,7 @@ public class NetModule {
     @Provides
     @Singleton
     ApiClient providerApiClient(
-            final OkHttpClient okHttpClient,
+            @Named(QUALIFIER_OKHTTP_COMMON) final OkHttpClient okHttpClient,
             @Named(QUALIFIER_VPS_API) final Retrofit vpsRetrofit,
             @Named(QUALIFIER_SCP_SITE_API) final Retrofit scpRetrofit,
             @Named(QUALIFIER_SCP_READER_API) final Retrofit scpReaderRetrofit,
