@@ -51,8 +51,18 @@ import timber.log.Timber;
 @Module
 public class NetModule {
 
+    public static final String QUALIFIER_TOKEN_INTERCEPTOR = "tokenInterceptor";
+
+    public static final String QUALIFIER_LOGGING_INTERCEPTOR = "loggingInterceptor";
+
+    public static final String QUALIFIER_VPS_API = "vpsApi";
+
+    public static final String QUALIFIER_SCP_READER_API = "scpReaderApi";
+
+    public static final String QUALIFIER_SCP_SITE_API = "scpSiteApi";
+
     @Provides
-    @Named("logging")
+    @Named(QUALIFIER_LOGGING_INTERCEPTOR)
     @Singleton
     Interceptor providesLoggingInterceptor() {
         return new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(
@@ -65,14 +75,15 @@ public class NetModule {
     }
 
     @Provides
-    @Named("headers")
+    @Named(QUALIFIER_TOKEN_INTERCEPTOR)
     @Singleton
-    Interceptor providesHeadersInterceptor() {
+    Interceptor providesTokenInterceptor() {
         return chain -> {
             final Request original = chain.request();
 
             final Request request = original.newBuilder()
-                    .header("Accept", "application/json")
+//                    .addHeader("Accept", "application/json")
+                    //todo
                     .build();
 
             return chain.proceed(request);
@@ -129,11 +140,11 @@ public class NetModule {
     @Provides
     @Singleton
     OkHttpClient providesOkHttpClient(
-            @Named("headers") final Interceptor headersInterceptor,
-            @Named("logging") final Interceptor loggingInterceptor
+            @Named(QUALIFIER_TOKEN_INTERCEPTOR) final Interceptor tokenInterceptor,
+            @Named(QUALIFIER_LOGGING_INTERCEPTOR) final Interceptor loggingInterceptor
     ) {
         return new OkHttpClient.Builder()
-                .addInterceptor(headersInterceptor)
+                .addInterceptor(tokenInterceptor)
                 .addInterceptor(loggingInterceptor)
                 .connectTimeout(BuildConfig.TIMEOUT_SECONDS_CONNECT, TimeUnit.SECONDS)
                 .readTimeout(BuildConfig.TIMEOUT_SECONDS_READ, TimeUnit.SECONDS)
@@ -142,7 +153,7 @@ public class NetModule {
     }
 
     @Provides
-    @Named("vps")
+    @Named(QUALIFIER_VPS_API)
     @Singleton
     Retrofit providesVpsRetrofit(
             final OkHttpClient okHttpClient,
@@ -158,7 +169,7 @@ public class NetModule {
     }
 
     @Provides
-    @Named("scpReaderApi")
+    @Named(QUALIFIER_SCP_READER_API)
     @Singleton
     Retrofit providesScpReaderApiRetrofit(
             final OkHttpClient okHttpClient,
@@ -174,7 +185,7 @@ public class NetModule {
     }
 
     @Provides
-    @Named("scp")
+    @Named(QUALIFIER_SCP_SITE_API)
     @Singleton
     Retrofit providesScpRetrofit(
             final OkHttpClient okHttpClient,
@@ -193,9 +204,9 @@ public class NetModule {
     @Singleton
     ApiClient providerApiClient(
             final OkHttpClient okHttpClient,
-            @Named("vps") final Retrofit vpsRetrofit,
-            @Named("scp") final Retrofit scpRetrofit,
-            @Named("scpReaderApi") final Retrofit scpReaderRetrofit,
+            @Named(QUALIFIER_VPS_API) final Retrofit vpsRetrofit,
+            @Named(QUALIFIER_SCP_SITE_API) final Retrofit scpRetrofit,
+            @Named(QUALIFIER_SCP_READER_API) final Retrofit scpReaderRetrofit,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
@@ -213,9 +224,9 @@ public class NetModule {
 
     protected ApiClient getApiClient(
             final OkHttpClient okHttpClient,
-            @Named("vps") final Retrofit vpsRetrofit,
-            @Named("scp") final Retrofit scpRetrofit,
-            @Named("scpReaderApi") final Retrofit scpReaderRetrofit,
+            final Retrofit vpsRetrofit,
+            final Retrofit scpRetrofit,
+            final Retrofit scpReaderRetrofit,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues

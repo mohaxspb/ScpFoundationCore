@@ -27,9 +27,9 @@ public class NetModuleImpl extends NetModule {
     @Override
     protected ApiClient getApiClient(
             @NonNull final OkHttpClient okHttpClient,
-            @Named("vps") @NonNull final Retrofit vpsRetrofit,
-            @Named("scp") @NonNull final Retrofit scpRetrofit,
-            @Named("scpReaderApi") final Retrofit scpReaderRetrofit,
+            @NonNull final Retrofit vpsRetrofit,
+            @NonNull final Retrofit scpRetrofit,
+            final Retrofit scpReaderRetrofit,
             @NonNull final MyPreferenceManager preferencesManager,
             @NonNull final Gson gson,
             @NonNull final ConstantValues constantValues

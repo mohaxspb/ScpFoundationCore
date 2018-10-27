@@ -1,5 +1,6 @@
 package ru.kuchanov.scpcore.ui.fragment.monetization
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
@@ -54,6 +55,7 @@ class LeaderboardFragment :
         LeaderboardContract.View {
 
     companion object {
+        @SuppressLint("ConstantLocale")
         val simpleDateFormat = SimpleDateFormat("HH:mm dd.MM.yy", Locale.getDefault())
 
         fun newInstance(): LeaderboardFragment = LeaderboardFragment()
