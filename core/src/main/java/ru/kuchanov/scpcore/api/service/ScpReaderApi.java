@@ -17,7 +17,7 @@ import rx.Single;
  * <p>
  * for scp_ru
  */
-public interface ScpReaderServer {
+public interface ScpReaderApi {
 
     @GET("gallery/all")
     Single<List<GalleryImage>> getGallery();

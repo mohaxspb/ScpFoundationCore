@@ -55,8 +55,6 @@ import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import io.realm.RealmList;
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -75,7 +73,7 @@ import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser;
 import ru.kuchanov.scpcore.api.model.response.LeaderboardUsersUpdateDates;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
 import ru.kuchanov.scpcore.api.model.response.VkGroupJoinResponse;
-import ru.kuchanov.scpcore.api.service.ScpReaderServer;
+import ru.kuchanov.scpcore.api.service.ScpReaderApi;
 import ru.kuchanov.scpcore.api.service.ScpServer;
 import ru.kuchanov.scpcore.api.service.VpsServer;
 import ru.kuchanov.scpcore.db.model.Article;
@@ -119,7 +117,7 @@ public class ApiClient {
 
     private final VpsServer mVpsServer;
 
-    private final ScpReaderServer mScpReaderServer;
+    private final ScpReaderApi mScpReaderApi;
 
     private final ScpServer mScpServer;
 
@@ -140,7 +138,7 @@ public class ApiClient {
         mGson = gson;
         mVpsServer = vpsRetrofit.create(VpsServer.class);
         mScpServer = scpRetrofit.create(ScpServer.class);
-        mScpReaderServer = scpReaderRetrofit.create(ScpReaderServer.class);
+        mScpReaderApi = scpReaderRetrofit.create(ScpReaderApi.class);
         mConstantValues = constantValues;
     }
 
@@ -1245,7 +1243,7 @@ public class ApiClient {
     }
 
     public Single<List<GalleryImage>> getGallery() {
-        return mScpReaderServer.getGallery();
+        return mScpReaderApi.getGallery();
     }
 
     private Observable<VKApiUser> getUserDataFromVk() {
@@ -1267,8 +1265,8 @@ public class ApiClient {
         }));
     }
 
-    private Observable<FirebaseUser> authWithCustomToken(final String token) {
-        return Observable.unsafeCreate(subscriber ->
+    private Single<FirebaseUser> authWithCustomToken(final String token) {
+        return Single.create(subscriber ->
                 FirebaseAuth.getInstance().signInWithCustomToken(token).addOnCompleteListener(task -> {
                     Timber.d("signInWithCustomToken:onComplete: %s", task.isSuccessful());
 
@@ -1278,13 +1276,11 @@ public class ApiClient {
                     if (!task.isSuccessful()) {
                         subscriber.onError(task.getException());
                     } else {
-                        subscriber.onNext(task.getResult().getUser());
-                        subscriber.onCompleted();
+                        subscriber.onSuccess(task.getResult().getUser());
                     }
                 }));
     }
 
-    //todo use it via retrofit and update server to return JSON with request result
     public Observable<FirebaseUser> getAuthInFirebaseWithSocialProviderObservable(
             final Constants.Firebase.SocialProvider provider,
             final String id
@@ -1292,44 +1288,15 @@ public class ApiClient {
         final Observable<FirebaseUser> authToFirebaseObservable;
         switch (provider) {
             case VK:
-                authToFirebaseObservable = Observable.<String>unsafeCreate(subscriber -> {
-                    String url = BaseApplication.getAppInstance().getString(R.string.tools_api_url) + "scp-ru-1/MyServlet";
-                    String params = "?provider=vk&token=" +
-                                    id +
-                                    "&email=" +
-                                    VKAccessToken.currentToken().email +
-                                    "&id=" +
-                                    VKAccessToken.currentToken().userId;
-                    Request request = new Request.Builder()
-                            .url(url + params)
-                            .build();
-                    mOkHttpClient.newCall(request).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
-                            subscriber.onError(e);
-                        }
-
-                        @Override
-                        public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
-                            final String responseBody;
-                            final ResponseBody body = response.body();
-                            if (body != null) {
-                                responseBody = body.string();
-                            } else {
-                                subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
-                                return;
-                            }
-                            subscriber.onNext(responseBody);
-                            subscriber.onCompleted();
-                        }
-                    });
-                })
+                authToFirebaseObservable = mVpsServer
+                        .getFirebaseTokenForVkUserId("vk", VKAccessToken.currentToken().userId)
                         .flatMap(response -> TextUtils.isEmpty(response) ?
-                                             Observable.error(new IllegalArgumentException("empty token")) :
-                                             Observable.just(response))
+                                             Single.error(new IllegalArgumentException("Empty firebase token for vk user!")) :
+                                             Single.just(response))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .flatMap(this::authWithCustomToken);
+                        .flatMap(this::authWithCustomToken)
+                        .toObservable();
                 break;
             case GOOGLE:
                 authToFirebaseObservable = Observable.unsafeCreate(subscriber -> {
@@ -1343,7 +1310,6 @@ public class ApiClient {
                             subscriber.onCompleted();
                         } else {
                             // If sign in fails, display a message to the user.
-//                            Timber.e(task.getException(), "signInWithCredential:failure");
                             subscriber.onError(task.getException());
                         }
                     });
@@ -1886,7 +1852,7 @@ public class ApiClient {
     }
 
     public Single<List<LeaderboardUser>> getLeaderboardUsers(final int offset, final int limit) {
-        return mScpReaderServer.getLeaderboardUsers(
+        return mScpReaderApi.getLeaderboardUsers(
                 mConstantValues.getAppLang().toUpperCase(),
                 offset,
                 limit
@@ -1894,7 +1860,7 @@ public class ApiClient {
     }
 
     public Single<List<LeaderboardUsersUpdateDates>> getLeaderboardUsersUpdateDates() {
-        return mScpReaderServer.getLeaderboardUsersUpdateDates();
+        return mScpReaderApi.getLeaderboardUsersUpdateDates();
     }
 
     public Observable<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {
@@ -1930,7 +1896,7 @@ public class ApiClient {
             final String sku,
             final String purchaseToken
     ) {
-        return mScpReaderServer.validateProduct(packageName, sku, purchaseToken);
+        return mScpReaderApi.validateProduct(packageName, sku, purchaseToken);
     }
 
     public Single<PurchaseValidateResponse> validateSubscription(
@@ -1938,7 +1904,7 @@ public class ApiClient {
             final String sku,
             final String purchaseToken
     ) {
-        return mScpReaderServer.validateSubscription(packageName, sku, purchaseToken);
+        return mScpReaderApi.validateSubscription(packageName, sku, purchaseToken);
     }
 
     public Observable<Boolean> inviteReceived(final String inviteId, final boolean newOne) {

@@ -5,16 +5,14 @@ import android.support.annotation.StringDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
-import ru.kuchanov.scpcore.api.model.response.LeaderBoardResponse;
 import ru.kuchanov.scpcore.api.model.response.OnInviteReceivedResponse;
-import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
 import rx.Observable;
+import rx.Single;
 
 /**
  * Created by mohax on 06.05.2017.
@@ -35,7 +33,7 @@ public interface VpsServer {
     }
 
     @FormUrlEncoded
-    @POST("scp-ru-1/OnInviteReceived")
+    @POST("OnInviteReceived")
     Observable<OnInviteReceivedResponse> onInviteReceived(
             @InviteAction @Field("action") String action,
             @Field("inviteId") String inviteId,
@@ -44,7 +42,7 @@ public interface VpsServer {
     );
 
     @FormUrlEncoded
-    @POST("scp-ru-1/OnInviteReceived")
+    @POST("OnInviteReceived")
     Observable<OnInviteReceivedResponse> onInviteSent(
             @InviteAction @Field("action") String action,
             @Field("inviteId") String inviteId,
@@ -52,19 +50,10 @@ public interface VpsServer {
             @Field("fcmToken") String fcmToken
     );
 
-    @GET("purchaseValidation/validate")
-    Observable<PurchaseValidateResponse> validatePurchase(
-            @Query("isSubscription") boolean isSubscription,
-            @Query("package") String packageName,
-            @Query("sku") String sku,
-            @Query("purchaseToken") String purchaseToken
-    );
+    @GET("MyServlet")
+    Single<String> getFirebaseTokenForVkUserId(
+            @Query("provider") String provider,
+            @Query("id") String userId
 
-    @GET("purchaseValidation/validate")
-    Call<PurchaseValidateResponse> validatePurchaseSync(
-            @Query("isSubscription") boolean isSubscription,
-            @Query("package") String packageName,
-            @Query("sku") String sku,
-            @Query("purchaseToken") String purchaseToken
     );
 }

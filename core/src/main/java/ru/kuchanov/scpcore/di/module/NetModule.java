@@ -188,6 +188,7 @@ public class NetModule {
                         .setExclusionStrategies(new MyExclusionStrategy())
                         .registerTypeAdapter(new RealmListTypeToken().getType(), new RealmListTypeAdapter())
                         .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
+                        .setLenient()
                         .create()
         );
     }
