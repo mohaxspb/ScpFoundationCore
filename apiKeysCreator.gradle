@@ -48,10 +48,16 @@ ext {
 
             variant.resValue('string', 'firebase_deep_link', properties.get("firebaseDeepLink"))
 
+            //our APIs data
             variant.resValue('string', 'tools_api_url', properties.get("vpsApiAddress"))
             variant.buildConfigField('String', 'TOOLS_API_URL', '"' + properties.get("vpsApiAddress") + '"')
 
             variant.resValue('string', 'scp_reader_api_url', properties.get("scpReaderApiAddress"))
+            variant.buildConfigField('String', 'SCP_READER_API_URL', '"' + properties.get("scpReaderApiAddress") + '"')
+
+            variant.buildConfigField('String', 'SCP_READER_API_CLIENT_ID', '"' + properties.get("scpReaderApiClientId") + '"')
+            variant.buildConfigField('String', 'SCP_READER_API_CLIENT_SECRET', '"' + properties.get("scpReaderApiClientSecret") + '"')
+            //our APIs data END
 
             variant.resValue('string', 'web_application_id', properties.get("webApplicationId"))
 

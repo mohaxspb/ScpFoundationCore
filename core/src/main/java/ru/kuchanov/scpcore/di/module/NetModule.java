@@ -37,12 +37,10 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.ConstantValuesDefault;
 import ru.kuchanov.scpcore.Constants;
-import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.api.model.response.scpreaderapi.AccessTokenResponse;
 import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
@@ -127,12 +125,14 @@ public class NetModule {
             Request request = chain.request();
             Response response = chain.proceed(request);
             if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                final AccessTokenResponse tokenResponse = scpReaderAuthApi.getAccessTokenByRefreshToken(
-                        Credentials.basic(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET),
-                        Constants.Api.ScpReader.GRANT_TYPE_REFRESH_TOKEN,
-                        myPreferenceManager.getRefreshToken()
-                )
-                        .blockingGet();
+                final AccessTokenResponse tokenResponse = scpReaderAuthApi
+                        .getAccessTokenByRefreshToken(
+                                Credentials.basic(BuildConfig.SCP_READER_API_CLIENT_ID, BuildConfig.SCP_READER_API_CLIENT_SECRET),
+                                Constants.Api.ScpReader.GRANT_TYPE_REFRESH_TOKEN,
+                                myPreferenceManager.getRefreshToken()
+                        )
+                        .toBlocking()
+                        .value();
                 myPreferenceManager.setAccessToken(tokenResponse.getAccessToken());
                 myPreferenceManager.setRefreshToken(tokenResponse.getRefreshToken());
                 request = request.newBuilder()
@@ -201,7 +201,7 @@ public class NetModule {
             final CallAdapter.Factory callAdapterFactory
     ) {
         return new Retrofit.Builder()
-                .baseUrl(BaseApplication.getAppInstance().getString(R.string.scp_reader_api_url))
+                .baseUrl(BuildConfig.SCP_READER_API_URL)
                 .client(okHttpClient)
                 .addConverterFactory(converterFactory)
                 .addCallAdapterFactory(callAdapterFactory)
@@ -223,7 +223,7 @@ public class NetModule {
             final CallAdapter.Factory callAdapterFactory
     ) {
         return new Retrofit.Builder()
-                .baseUrl(BaseApplication.getAppInstance().getString(R.string.scp_reader_api_url))
+                .baseUrl(BuildConfig.SCP_READER_API_URL)
                 .client(okHttpClient)
                 .addConverterFactory(converterFactory)
                 .addCallAdapterFactory(callAdapterFactory)
@@ -239,7 +239,7 @@ public class NetModule {
             final CallAdapter.Factory callAdapterFactory
     ) {
         return new Retrofit.Builder()
-                .baseUrl(BaseApplication.getAppInstance().getString(R.string.tools_api_url))
+                .baseUrl(BuildConfig.TOOLS_API_URL)
                 .client(okHttpClient)
                 .addConverterFactory(converterFactory)
                 .addCallAdapterFactory(callAdapterFactory)
