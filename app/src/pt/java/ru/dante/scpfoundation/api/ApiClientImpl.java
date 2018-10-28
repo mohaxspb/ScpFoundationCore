@@ -44,11 +44,12 @@ public class ApiClientImpl extends ApiClient {
             final Retrofit vpsRetrofit,
             final Retrofit scpRetrofit,
             final Retrofit scpReaderRetrofit,
+            final ScpReaderAuthApi scpReaderAuthApi,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
     ) {
-        super(okHttpClient, vpsRetrofit, scpRetrofit, scpReaderRetrofit, preferencesManager, gson, constantValues);
+        super(okHttpClient, vpsRetrofit, scpRetrofit, scpReaderRetrofit, scpReaderAuthApi, preferencesManager, gson, constantValues);
     }
 
     @Override
@@ -274,7 +275,7 @@ public class ApiClientImpl extends ApiClient {
 
             Timber.d("url: %s", doc.getElementsByTag("a").first().attr("href"));
             String url = doc.getElementsByTag("a").first().attr("href");
-            if(!url.startsWith(mConstantValues.getBaseApiUrl())){
+            if (!url.startsWith(mConstantValues.getBaseApiUrl())) {
                 url = mConstantValues.getBaseApiUrl() + url;
             }
             final String title = doc.text();

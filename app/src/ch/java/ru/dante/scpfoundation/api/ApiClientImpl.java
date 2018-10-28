@@ -43,11 +43,12 @@ public class ApiClientImpl extends ApiClient {
             final Retrofit vpsRetrofit,
             final Retrofit scpRetrofit,
             final Retrofit scpReaderRetrofit,
+            final ScpReaderAuthApi scpReaderAuthApi,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
     ) {
-        super(okHttpClient, vpsRetrofit, scpRetrofit, scpReaderRetrofit, preferencesManager, gson, constantValues);
+        super(okHttpClient, vpsRetrofit, scpRetrofit, scpReaderRetrofit, scpReaderAuthApi, preferencesManager, gson, constantValues);
     }
 
     @Override

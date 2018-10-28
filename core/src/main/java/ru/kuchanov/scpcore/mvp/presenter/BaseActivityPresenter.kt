@@ -70,7 +70,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
         if (firebaseUser != null) {
             // User is signed in
             Timber.d("onAuthStateChanged:signed_in: %s", firebaseUser.uid)
-            listenToChangesInFirebase(mMyPreferencesManager.isHasSubscription)
+            listenToChangesInFirebase(myPreferencesManager.isHasSubscription)
         } else {
             // User is signed out
             Timber.d("onAuthStateChanged: signed_out")
@@ -219,7 +219,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                             userToWriteToDb.socialProviders.add(socialProviderModel)
 
                             //in case of first login we should add score and disable ads temporary
-                            mMyPreferencesManager.applyAwardSignIn()
+                            myPreferencesManager.applyAwardSignIn()
 
                             val score = FirebaseRemoteConfig.getInstance()
                                     .getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_AUTH).toInt()
@@ -245,23 +245,14 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                             Observable.just(it)
                                         }
                                     }
-                                    .doOnNext {
-                                        Timber.d(
-                                            "firebaseUser: %s, %s, %s, %s",
-                                            it?.uid,
-                                            it?.email,
-                                            it?.photoUrl,
-                                            it?.displayName
-                                        )
-                                    }
                                     .flatMap { mApiClient.userObjectFromFirebaseObservable }
                                     .flatMap { mApiClient.writeUserToFirebaseObservable(userToWriteToDb) }
                         }
                     } else {
-                        val socialProviderModel = SocialProviderModel.getSocialProviderModelForProvider(provider)
+                        val socialProviderModel: SocialProviderModel = SocialProviderModel
+                                .getSocialProviderModelForProvider(provider)
                         if (!userObjectInFirebase.socialProviders.contains(socialProviderModel)) {
                             Timber.d("User does not contains provider info: %s", provider)
-                            //                            socialProviderModel.id = id;
                             userObjectInFirebase.socialProviders.add(socialProviderModel)
                             return@flatMap mApiClient.getAuthInFirebaseWithSocialProviderObservable(provider, id)
                                     .flatMap { firebaseUser ->
@@ -287,7 +278,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
 
                         //in case of unrewarded user we should add score and disable ads temporary too
                         if (!userObjectInFirebase.signInRewardGained) {
-                            mMyPreferencesManager.applyAwardSignIn()
+                            myPreferencesManager.applyAwardSignIn()
 
                             val score = FirebaseRemoteConfig.getInstance()
                                     .getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_AUTH).toInt()
@@ -308,15 +299,6 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                         } else {
                                             Observable.just(firebaseUser)
                                         }
-                                    }
-                                    .doOnNext { firebaseUser ->
-                                        Timber.d(
-                                            "firebaseUser: %s, %s, %s, %s",
-                                            firebaseUser?.uid,
-                                            firebaseUser?.email,
-                                            firebaseUser?.photoUrl,
-                                            firebaseUser?.displayName
-                                        )
                                     }
                                     .flatMap { mApiClient.userObjectFromFirebaseObservable }
                                     .flatMap { mApiClient.incrementScoreInFirebaseObservable(score) }
@@ -345,15 +327,6 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                         Observable.just(firebaseUser)
                                     }
                                 }
-                                .doOnNext { firebaseUser ->
-                                    Timber.d(
-                                        "firebaseUser: %s, %s, %s, %s",
-                                        firebaseUser?.uid,
-                                        firebaseUser?.email,
-                                        firebaseUser?.photoUrl,
-                                        firebaseUser?.displayName
-                                    )
-                                }
                                 .flatMap { mApiClient.userObjectFromFirebaseObservable }
                                 .flatMap { Observable.just<FirebaseObjectUser>(userObjectInFirebase) }
                     }
@@ -369,30 +342,46 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 }
                 //save user to realm
                 .flatMap { userObjectInFirebase -> mDbProviderFactory.dbProvider.saveUser(userObjectInFirebase.toRealmUser()) }
+                .observeOn(Schedulers.io())
+                .flatMap { userInRealm ->
+                    mApiClient.loginToScpReaderServer(
+                        provider,
+                        //todo handle VK auth as we must sent json with user data
+                        id
+                    )
+                            //as there is some error on server...
+                            .retry(1)
+                            .doOnSuccess {
+                                myPreferencesManager.apply {
+                                    accessToken = it.accessToken
+                                    refreshToken = it.refreshToken
+                                }
+                            }
+                            .toObservable()
+                            .map { userInRealm }
+                }
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { userInRealm ->
                         Timber.d("user saved")
                         view.dismissProgressDialog()
                         view.showMessage(
-                            BaseApplication.getAppInstance()
-                                    .getString(R.string.on_user_logined, userInRealm.fullName))
+                            BaseApplication.getAppInstance().getString(
+                                R.string.on_user_logined,
+                                userInRealm.fullName))
                     },
                     { e ->
                         Timber.e(e, "error while save user to DB")
                         logoutUser()
                         view.dismissProgressDialog()
                         if (e is FirebaseAuthUserCollisionException) {
-                            view.showError(
-                                ScpLoginException(
-                                    BaseApplication.getAppInstance()
-                                            .getString(R.string.error_login_firebase_user_collision)))
+                            view.showError(ScpLoginException(BaseApplication.getAppInstance().getString(R.string.error_login_firebase_user_collision)))
                         } else {
                             view.showError(
                                 ScpLoginException(
-                                    BaseApplication.getAppInstance()
-                                            .getString(
-                                                R.string.error_login_firebase_connection,
-                                                e.message)))
+                                    BaseApplication.getAppInstance().getString(
+                                        R.string.error_login_firebase_connection,
+                                        e.message)))
                         }
                     }
                 )
@@ -408,7 +397,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
     override fun onActivityStarted() {
         firebaseAuth.addAuthStateListener(authListener)
 
-        listenToChangesInFirebase(mMyPreferencesManager.isHasSubscription)
+        listenToChangesInFirebase(myPreferencesManager.isHasSubscription)
     }
 
     override fun onActivityStopped() {
@@ -463,7 +452,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
         //After invite receive we'll check if it's first time invite received and,
         //if so, send its ID to server, which will check for ID existing and will send push to sender and delete inviteID-pushID pair,
         //else we'll send to server command to delete IDs pair, to prevent collecting useless data.
-        mApiClient.inviteReceived(inviteId, !mMyPreferencesManager.isInviteAlreadyReceived)
+        mApiClient.inviteReceived(inviteId, !myPreferencesManager.isInviteAlreadyReceived)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
@@ -620,7 +609,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                     Timber.d("consume inapp successful, so update user score")
                                     updateUserScoreForInapp(item.productId)
 
-                                    if (!mMyPreferencesManager.isHasAnySubscription) {
+                                    if (!myPreferencesManager.isHasAnySubscription) {
                                         view.showOfferSubscriptionPopup()
                                     }
                                 },

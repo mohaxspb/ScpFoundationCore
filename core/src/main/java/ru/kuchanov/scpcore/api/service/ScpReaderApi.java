@@ -9,7 +9,6 @@ import ru.kuchanov.scpcore.api.model.response.LeaderboardUsersUpdateDates;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
 import ru.kuchanov.scpcore.db.model.LeaderboardUser;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
-import rx.Observable;
 import rx.Single;
 
 /**

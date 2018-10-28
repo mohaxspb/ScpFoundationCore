@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import ru.dante.scpfoundation.ConstantValuesImpl;
 import ru.dante.scpfoundation.api.ApiClientImpl;
+import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.di.module.NetModule;
@@ -30,6 +31,7 @@ public class NetModuleImpl extends NetModule {
             @NonNull Retrofit vpsRetrofit,
             @NonNull Retrofit scpRetrofit,
             final Retrofit scpReaderRetrofit,
+            final ScpReaderAuthApi scpReaderAuthApi,
             @NonNull MyPreferenceManager preferencesManager,
             @NonNull Gson gson,
             @NonNull ConstantValues constantValues

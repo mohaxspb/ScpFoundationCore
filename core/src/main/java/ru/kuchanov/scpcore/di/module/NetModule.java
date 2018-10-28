@@ -270,6 +270,7 @@ public class NetModule {
             @Named(QUALIFIER_VPS_API) final Retrofit vpsRetrofit,
             @Named(QUALIFIER_SCP_SITE_API) final Retrofit scpRetrofit,
             @Named(QUALIFIER_SCP_READER_API) final Retrofit scpReaderRetrofit,
+            final ScpReaderAuthApi scpReaderAuthApi,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
@@ -279,6 +280,7 @@ public class NetModule {
                 vpsRetrofit,
                 scpRetrofit,
                 scpReaderRetrofit,
+                scpReaderAuthApi,
                 preferencesManager,
                 gson,
                 constantValues
@@ -290,6 +292,7 @@ public class NetModule {
             final Retrofit vpsRetrofit,
             final Retrofit scpRetrofit,
             final Retrofit scpReaderRetrofit,
+            final ScpReaderAuthApi scpReaderAuthApi,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
@@ -299,6 +302,7 @@ public class NetModule {
                 vpsRetrofit,
                 scpRetrofit,
                 scpReaderRetrofit,
+                scpReaderAuthApi,
                 preferencesManager,
                 gson,
                 constantValues

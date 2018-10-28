@@ -10,6 +10,7 @@ import dagger.Module;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import ru.dante.scpfoundation.ConstantValuesImpl;
+import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.dante.scpfoundation.api.ApiClientImpl;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
@@ -30,6 +31,7 @@ public class NetModuleImpl extends NetModule {
             @NonNull final Retrofit vpsRetrofit,
             @NonNull final Retrofit scpRetrofit,
             final Retrofit scpReaderRetrofit,
+            final ScpReaderAuthApi scpReaderAuthApi,
             @NonNull final MyPreferenceManager preferencesManager,
             @NonNull final Gson gson,
             @NonNull final ConstantValues constantValues

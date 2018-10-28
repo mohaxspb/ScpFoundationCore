@@ -199,13 +199,13 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
                     .flatMap(apiData -> mDbProviderFactory.getDbProvider().saveArticle(apiData))
                     .observeOn(Schedulers.io())
                     .map(downloadedArticle -> {
-                        if (mMyPreferencesManager.isHasSubscription() && mMyPreferencesManager.getInnerArticlesDepth() != 0) {
+                        if (myPreferencesManager.isHasSubscription() && myPreferencesManager.getInnerArticlesDepth() != 0) {
                             DownloadAllService.getAndSaveInnerArticles(
                                     mDbProviderFactory.getDbProvider(),
                                     mApiClient,
                                     downloadedArticle,
                                     0,
-                                    mMyPreferencesManager.getInnerArticlesDepth()
+                                    myPreferencesManager.getInnerArticlesDepth()
                             );
                         }
 

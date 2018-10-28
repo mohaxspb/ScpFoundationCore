@@ -73,7 +73,9 @@ import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser;
 import ru.kuchanov.scpcore.api.model.response.LeaderboardUsersUpdateDates;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
 import ru.kuchanov.scpcore.api.model.response.VkGroupJoinResponse;
+import ru.kuchanov.scpcore.api.model.response.scpreaderapi.AccessTokenResponse;
 import ru.kuchanov.scpcore.api.service.ScpReaderApi;
+import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.api.service.ScpServer;
 import ru.kuchanov.scpcore.api.service.VpsServer;
 import ru.kuchanov.scpcore.db.model.Article;
@@ -119,6 +121,8 @@ public class ApiClient {
 
     private final ScpReaderApi mScpReaderApi;
 
+    private final ScpReaderAuthApi mScpReaderAuthApi;
+
     private final ScpServer mScpServer;
 
     protected ConstantValues mConstantValues;
@@ -128,6 +132,7 @@ public class ApiClient {
             final Retrofit vpsRetrofit,
             final Retrofit scpRetrofit,
             final Retrofit scpReaderRetrofit,
+            final ScpReaderAuthApi scpReaderAuthApi,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
@@ -139,7 +144,22 @@ public class ApiClient {
         mVpsServer = vpsRetrofit.create(VpsServer.class);
         mScpServer = scpRetrofit.create(ScpServer.class);
         mScpReaderApi = scpReaderRetrofit.create(ScpReaderApi.class);
+        mScpReaderAuthApi = scpReaderAuthApi;
         mConstantValues = constantValues;
+    }
+
+    @NotNull
+    public Single<AccessTokenResponse> loginToScpReaderServer(
+            final Constants.Firebase.SocialProvider socialProvider,
+            final String token
+    ) {
+        return mScpReaderAuthApi.socialLogin(
+                socialProvider,
+                token,
+                ScpReaderAuthApi.FirebaseInstance.getFirebaseInstanceForLang(mConstantValues.getAppLang()),
+                BuildConfig.SCP_READER_API_CLIENT_ID,
+                BuildConfig.SCP_READER_API_CLIENT_SECRET
+        );
     }
 
     protected <T> Observable<T> bindWithUtils(final Observable<T> observable) {
@@ -1265,26 +1285,11 @@ public class ApiClient {
         }));
     }
 
-    private Single<FirebaseUser> authWithCustomToken(final String token) {
-        return Single.create(subscriber ->
-                FirebaseAuth.getInstance().signInWithCustomToken(token).addOnCompleteListener(task -> {
-                    Timber.d("signInWithCustomToken:onComplete: %s", task.isSuccessful());
-
-                    // If sign in fails, display a message to the user. If sign in succeeds
-                    // the auth state listener will be notified and logic to handle the
-                    // signed in user can be handled in the listener.
-                    if (!task.isSuccessful()) {
-                        subscriber.onError(task.getException());
-                    } else {
-                        subscriber.onSuccess(task.getResult().getUser());
-                    }
-                }));
-    }
-
     public Observable<FirebaseUser> getAuthInFirebaseWithSocialProviderObservable(
             final Constants.Firebase.SocialProvider provider,
             final String id
     ) {
+        Timber.d("getAuthInFirebaseWithSocialProviderObservable: %s/%s", provider, id);
         final Observable<FirebaseUser> authToFirebaseObservable;
         switch (provider) {
             case VK:
@@ -1338,6 +1343,22 @@ public class ApiClient {
                 throw new IllegalArgumentException("unexpected provider");
         }
         return authToFirebaseObservable;
+    }
+
+    private Single<FirebaseUser> authWithCustomToken(final String token) {
+        return Single.create(subscriber ->
+                FirebaseAuth.getInstance().signInWithCustomToken(token).addOnCompleteListener(task -> {
+                    Timber.d("signInWithCustomToken:onComplete: %s", task.isSuccessful());
+
+                    // If sign in fails, display a message to the user. If sign in succeeds
+                    // the auth state listener will be notified and logic to handle the
+                    // signed in user can be handled in the listener.
+                    if (!task.isSuccessful()) {
+                        subscriber.onError(task.getException());
+                    } else {
+                        subscriber.onSuccess(task.getResult().getUser());
+                    }
+                }));
     }
 
     public Observable<FirebaseObjectUser> getUserObjectFromFirebaseObservable() {
