@@ -31,6 +31,7 @@ import ru.kuchanov.scpcore.api.ApiClient
 import ru.kuchanov.scpcore.api.error.ScpLoginException
 import ru.kuchanov.scpcore.api.model.firebase.ArticleInFirebase
 import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser
+import ru.kuchanov.scpcore.api.model.scpreader.CommonUserData
 import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.db.model.SocialProviderModel
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
@@ -169,8 +170,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .flatMap { Observable.just(firebaseAuth.currentUser) }
                     } else {
-                        mApiClient.getAuthInFirebaseWithSocialProviderObservable(provider, id)
-                                .flatMap { Observable.just(firebaseUser) }
+                        Observable.just(firebaseUser)
                     }
                 }
                 .flatMap { mApiClient.userObjectFromFirebaseObservable }
@@ -227,50 +227,46 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
 
                             userToWriteToDb.signInRewardGained = true
 
-                            mApiClient.getAuthInFirebaseWithSocialProviderObservable(provider, id)
-                                    .flatMap {
-                                        if (TextUtils.isEmpty(it.email)) {
-                                            mApiClient.nameAndAvatarFromProviderObservable(provider)
-                                                    .flatMap { nameAvatar ->
-                                                        mApiClient.updateFirebaseUsersNameAndAvatarObservable(
-                                                            nameAvatar.first,
-                                                            nameAvatar.second
-                                                        )
-                                                    }
-                                                    .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
-                                                    .subscribeOn(AndroidSchedulers.mainThread())
-                                                    .observeOn(AndroidSchedulers.mainThread())
-                                                    .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
-                                        } else {
-                                            Observable.just(it)
+                            if (TextUtils.isEmpty(firebaseUser.email)) {
+                                mApiClient.nameAndAvatarFromProviderObservable(provider)
+                                        .flatMap { nameAvatar ->
+                                            mApiClient.updateFirebaseUsersNameAndAvatarObservable(
+                                                nameAvatar.first,
+                                                nameAvatar.second
+                                            )
                                         }
-                                    }
+                                        .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
+                                        .subscribeOn(AndroidSchedulers.mainThread())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
+                            } else {
+                                Observable.just(firebaseUser)
+                            }
                                     .flatMap { mApiClient.userObjectFromFirebaseObservable }
                                     .flatMap { mApiClient.writeUserToFirebaseObservable(userToWriteToDb) }
                         }
                     } else {
+                        val firebaseUser = FirebaseAuth.getInstance().currentUser!!
                         val socialProviderModel: SocialProviderModel = SocialProviderModel
                                 .getSocialProviderModelForProvider(provider)
                         if (!userObjectInFirebase.socialProviders.contains(socialProviderModel)) {
                             Timber.d("User does not contains provider info: %s", provider)
                             userObjectInFirebase.socialProviders.add(socialProviderModel)
-                            return@flatMap mApiClient.getAuthInFirebaseWithSocialProviderObservable(provider, id)
-                                    .flatMap { firebaseUser ->
-                                        if (TextUtils.isEmpty(firebaseUser.email)) {
-                                            mApiClient.nameAndAvatarFromProviderObservable(provider)
-                                                    .flatMap { nameAvatar ->
-                                                        mApiClient.updateFirebaseUsersNameAndAvatarObservable(
-                                                            nameAvatar.first,
-                                                            nameAvatar.second)
-                                                    }
-                                                    .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
-                                                    .subscribeOn(AndroidSchedulers.mainThread())
-                                                    .observeOn(AndroidSchedulers.mainThread())
-                                                    .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
-                                        } else {
-                                            Observable.just(firebaseUser)
+
+                            return@flatMap if (TextUtils.isEmpty(firebaseUser.email)) {
+                                mApiClient.nameAndAvatarFromProviderObservable(provider)
+                                        .flatMap { nameAvatar ->
+                                            mApiClient.updateFirebaseUsersNameAndAvatarObservable(
+                                                nameAvatar.first,
+                                                nameAvatar.second)
                                         }
-                                    }
+                                        .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
+                                        .subscribeOn(AndroidSchedulers.mainThread())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
+                            } else {
+                                Observable.just(firebaseUser)
+                            }
                                     .flatMap { mApiClient.userObjectFromFirebaseObservable }
                                     .flatMap { mApiClient.updateFirebaseUsersSocialProvidersObservable(userObjectInFirebase.socialProviders) }
                                     .flatMap<FirebaseObjectUser> { Observable.just(userObjectInFirebase) }
@@ -283,23 +279,20 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                             val score = FirebaseRemoteConfig.getInstance()
                                     .getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_AUTH).toInt()
 
-                            return@flatMap mApiClient.getAuthInFirebaseWithSocialProviderObservable(provider, id)
-                                    .flatMap { firebaseUser ->
-                                        if (TextUtils.isEmpty(firebaseUser.email)) {
-                                            mApiClient.nameAndAvatarFromProviderObservable(provider)
-                                                    .flatMap { nameAvatar ->
-                                                        mApiClient.updateFirebaseUsersNameAndAvatarObservable(
-                                                            nameAvatar.first,
-                                                            nameAvatar.second)
-                                                    }
-                                                    .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
-                                                    .subscribeOn(AndroidSchedulers.mainThread())
-                                                    .observeOn(AndroidSchedulers.mainThread())
-                                                    .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
-                                        } else {
-                                            Observable.just(firebaseUser)
+                            return@flatMap if (TextUtils.isEmpty(firebaseUser.email)) {
+                                mApiClient.nameAndAvatarFromProviderObservable(provider)
+                                        .flatMap { nameAvatar ->
+                                            mApiClient.updateFirebaseUsersNameAndAvatarObservable(
+                                                nameAvatar.first,
+                                                nameAvatar.second)
                                         }
-                                    }
+                                        .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
+                                        .subscribeOn(AndroidSchedulers.mainThread())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
+                            } else {
+                                Observable.just(firebaseUser)
+                            }
                                     .flatMap { mApiClient.userObjectFromFirebaseObservable }
                                     .flatMap { mApiClient.incrementScoreInFirebaseObservable(score) }
                                     .flatMap<Boolean> { mApiClient.setUserRewardedForAuthInFirebaseObservable() }
@@ -310,23 +303,20 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                     }
                         }
 
-                        return@flatMap mApiClient.getAuthInFirebaseWithSocialProviderObservable(provider, id)
-                                .flatMap { firebaseUser ->
-                                    if (TextUtils.isEmpty(firebaseUser.email)) {
-                                        mApiClient.nameAndAvatarFromProviderObservable(provider)
-                                                .flatMap { nameAvatar ->
-                                                    mApiClient.updateFirebaseUsersNameAndAvatarObservable(
-                                                        nameAvatar.first,
-                                                        nameAvatar.second)
-                                                }
-                                                .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
-                                                .subscribeOn(AndroidSchedulers.mainThread())
-                                                .observeOn(AndroidSchedulers.mainThread())
-                                                .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
-                                    } else {
-                                        Observable.just(firebaseUser)
+                        return@flatMap if (TextUtils.isEmpty(firebaseUser.email)) {
+                            mApiClient.nameAndAvatarFromProviderObservable(provider)
+                                    .flatMap { nameAvatar ->
+                                        mApiClient.updateFirebaseUsersNameAndAvatarObservable(
+                                            nameAvatar.first,
+                                            nameAvatar.second)
                                     }
-                                }
+                                    .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
+                                    .subscribeOn(AndroidSchedulers.mainThread())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
+                        } else {
+                            Observable.just(firebaseUser)
+                        }
                                 .flatMap { mApiClient.userObjectFromFirebaseObservable }
                                 .flatMap { Observable.just<FirebaseObjectUser>(userObjectInFirebase) }
                     }
@@ -344,10 +334,20 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 .flatMap { userObjectInFirebase -> mDbProviderFactory.dbProvider.saveUser(userObjectInFirebase.toRealmUser()) }
                 .observeOn(Schedulers.io())
                 .flatMap { userInRealm ->
+                    val stringWithDataForProvider = if (provider == Constants.Firebase.SocialProvider.VK) {
+                        val commonUserDataFromVk = CommonUserData(
+                            id = VKAccessToken.currentToken().userId,
+                            email = VKAccessToken.currentToken().email,
+                            avatarUrl = userInRealm.avatar,
+                            fullName = userInRealm.fullName
+                        )
+                        mApiClient.gson.toJson(commonUserDataFromVk)
+                    } else {
+                        id
+                    }
                     mApiClient.loginToScpReaderServer(
                         provider,
-                        //todo handle VK auth as we must sent json with user data
-                        id
+                        stringWithDataForProvider
                     )
                             //as there is some error on server...
                             .retry(1)

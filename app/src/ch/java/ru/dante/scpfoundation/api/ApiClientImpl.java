@@ -48,7 +48,16 @@ public class ApiClientImpl extends ApiClient {
             final Gson gson,
             final ConstantValues constantValues
     ) {
-        super(okHttpClient, vpsRetrofit, scpRetrofit, scpReaderRetrofit, scpReaderAuthApi, preferencesManager, gson, constantValues);
+        super(
+                okHttpClient,
+                vpsRetrofit,
+                scpRetrofit,
+                scpReaderRetrofit,
+                scpReaderAuthApi,
+                preferencesManager,
+                gson,
+                constantValues
+        );
     }
 
     @Override

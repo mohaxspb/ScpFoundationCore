@@ -1954,6 +1954,10 @@ public class ApiClient {
         return mConstantValues;
     }
 
+    public Gson getGson() {
+        return mGson;
+    }
+
     @NotNull
     public static String formatUrlToFileName(@NotNull final String url) {
         String imageFileName = url.replaceAll("#", REPLACEMENT_HASH);
