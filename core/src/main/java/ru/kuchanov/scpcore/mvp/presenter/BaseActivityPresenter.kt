@@ -192,7 +192,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                                     .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
                                                     .subscribeOn(AndroidSchedulers.mainThread())
                                                     .observeOn(AndroidSchedulers.mainThread())
-                                                    .flatMap { aVoid -> Observable.just(FirebaseAuth.getInstance().currentUser) }
+                                                    .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
                                         } else {
                                             Observable.just(it)
                                         }
@@ -349,8 +349,6 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                         provider,
                         stringWithDataForProvider
                     )
-                            //as there is some error on server...
-                            .retry(1)
                             .doOnSuccess {
                                 myPreferencesManager.apply {
                                     accessToken = it.accessToken
@@ -462,7 +460,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
     }
 
     override fun onInviteSent(inviteId: String) {
-        mApiClient.inviteSent(inviteId, FirebaseInstanceId.getInstance().token)
+        mApiClient.inviteSent(inviteId, FirebaseInstanceId.getInstance().instanceId.result?.token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
@@ -616,7 +614,6 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                 onError = {
                                     Timber.e(it, "error while consume inapp!")
                                     view.showError(it)
-                                    //todo show dialog with retry button
                                     view.showInAppErrorDialog(
                                         it.message ?: BaseApplication.getAppInstance().getString(R.string.error_unexpected)
                                     )
