@@ -22,6 +22,7 @@ import ru.dante.scpfoundation.R;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
@@ -36,45 +37,55 @@ import timber.log.Timber;
 public class ApiClientImpl extends ApiClient {
 
     public ApiClientImpl(
-            OkHttpClient okHttpClient,
-            Retrofit vpsRetrofit,
-            Retrofit scpRetrofit,
+            final OkHttpClient okHttpClient,
+            final Retrofit vpsRetrofit,
+            final Retrofit scpRetrofit,
             final Retrofit scpReaderRetrofit,
-            MyPreferenceManager preferencesManager,
-            Gson gson,
-            ConstantValues constantValues
+            final ScpReaderAuthApi scpReaderAuthApi,
+            final MyPreferenceManager preferencesManager,
+            final Gson gson,
+            final ConstantValues constantValues
     ) {
-        super(okHttpClient, vpsRetrofit, scpRetrofit, scpReaderRetrofit, preferencesManager, gson, constantValues);
+        super(
+                okHttpClient,
+                vpsRetrofit,
+                scpRetrofit,
+                scpReaderRetrofit,
+                scpReaderAuthApi,
+                preferencesManager,
+                gson,
+                constantValues
+        );
     }
 
     public Observable<String> getRandomUrl() {
         Timber.d("getRandomUrl");
         return bindWithUtils(Observable.unsafeCreate(subscriber -> {
-            Request.Builder request = new Request.Builder();
+            final Request.Builder request = new Request.Builder();
             request.url(mConstantValues.getRandomPageUrl());
             request.get();
 
             try {
-                OkHttpClient client = new OkHttpClient.Builder()
+                final OkHttpClient client = new OkHttpClient.Builder()
                         .followRedirects(true)
                         .addInterceptor(new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(HttpLoggingInterceptor.Level.BODY))
                         .build();
-                Response response = client.newCall(request.build()).execute();
+                final Response response = client.newCall(request.build()).execute();
 
-                ResponseBody requestResult = response.body();
+                final ResponseBody requestResult = response.body();
                 if (requestResult != null) {
                     String html = requestResult.string();
                     html = html.substring(html.indexOf("<iframe src=\"http://snippets.wdfiles.com/local--code/code:iframe-redirect#") +
                             "<iframe src=\"http://snippets.wdfiles.com/local--code/code:iframe-redirect#".length());
                     html = html.substring(0, html.indexOf("\""));
-                    String randomURL = html;
+                    final String randomURL = html;
                     Timber.d("randomUrl = " + randomURL);
                     subscriber.onNext(randomURL);
                     subscriber.onCompleted();
                 } else {
                     subscriber.onError(new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse)));
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 Timber.e(e);
                 subscriber.onError(e);
             }
@@ -84,14 +95,14 @@ public class ApiClientImpl extends ApiClient {
     @Override
     public Observable<Integer> getRecentArticlesPageCountObservable() {
         return bindWithUtils(Observable.<Integer>unsafeCreate(subscriber -> {
-            Request request = new Request.Builder()
+            final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();
 
-            String responseBody = null;
+            final String responseBody;
             try {
-                Response response = mOkHttpClient.newCall(request).execute();
-                ResponseBody body = response.body();
+                final Response response = mOkHttpClient.newCall(request).execute();
+                final ResponseBody body = response.body();
                 if (body != null) {
                     responseBody = body.string();
                 } else {
@@ -120,28 +131,28 @@ public class ApiClientImpl extends ApiClient {
     }
 
     @Override
-    protected List<Article> parseForRecentArticles(Document doc) throws ScpParseException {
-        Element contentTypeDescription = doc.getElementsByClass("content-type-description").first();
-        Element pageContent = contentTypeDescription.getElementsByTag("table").first();
+    protected List<Article> parseForRecentArticles(final Document doc) throws ScpParseException {
+        final Element contentTypeDescription = doc.getElementsByClass("content-type-description").first();
+        final Element pageContent = contentTypeDescription.getElementsByTag("table").first();
         if (pageContent == null) {
             throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
         }
 
-        List<Article> articles = new ArrayList<>();
-        Elements listOfElements = pageContent.getElementsByTag("tr");
+        final List<Article> articles = new ArrayList<>();
+        final Elements listOfElements = pageContent.getElementsByTag("tr");
         for (int i = 1/*start from 1 as first row is tables header*/; i < listOfElements.size(); i++) {
-            Elements listOfTd = listOfElements.get(i).getElementsByTag("td");
-            Element firstTd = listOfTd.first();
-            Element tagA = firstTd.getElementsByTag("a").first();
+            final Elements listOfTd = listOfElements.get(i).getElementsByTag("td");
+            final Element firstTd = listOfTd.first();
+            final Element tagA = firstTd.getElementsByTag("a").first();
 
-            String title = tagA.text();
-            String url = mConstantValues.getBaseApiUrl() + tagA.attr("href");
+            final String title = tagA.text();
+            final String url = mConstantValues.getBaseApiUrl() + tagA.attr("href");
             //4 Jun 2017, 22:25
             //createdDate
-            Element createdDateNode = listOfTd.get(1);
-            String createdDate = createdDateNode.text().trim();
+            final Element createdDateNode = listOfTd.get(1);
+            final String createdDate = createdDateNode.text().trim();
 
-            Article article = new Article();
+            final Article article = new Article();
             article.title = title;
             article.url = url.trim();
             article.createdDate = createdDate;
@@ -157,24 +168,24 @@ public class ApiClientImpl extends ApiClient {
         if (pageContent == null) {
             throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
         }
-        Element listPagesBox = pageContent.getElementsByClass("list-pages-box").first();
+        final Element listPagesBox = pageContent.getElementsByClass("list-pages-box").first();
         if (listPagesBox == null) {
             throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
         }
 
-        String allArticles = listPagesBox.getElementsByTag("p").first().html();
-        String[] arrayOfArticles = allArticles.split("<br>");
-        List<Article> articles = new ArrayList<>();
-        for (String arrayItem : arrayOfArticles) {
+        final String allArticles = listPagesBox.getElementsByTag("p").first().html();
+        final String[] arrayOfArticles = allArticles.split("<br>");
+        final List<Article> articles = new ArrayList<>();
+        for (final String arrayItem : arrayOfArticles) {
             doc = Jsoup.parse(arrayItem);
-            Element aTag = doc.getElementsByTag("a").first();
-            String url = mConstantValues.getBaseApiUrl() + aTag.attr("href");
-            String title = aTag.text();
+            final Element aTag = doc.getElementsByTag("a").first();
+            final String url = mConstantValues.getBaseApiUrl() + aTag.attr("href");
+            final String title = aTag.text();
 
             String rating = arrayItem.substring(arrayItem.indexOf("rating: ") + "rating: ".length());
             rating = rating.substring(0, rating.indexOf(", "));
 
-            Article article = new Article();
+            final Article article = new Article();
             article.url = url;
             article.rating = Integer.parseInt(rating);
             article.title = title;
@@ -185,7 +196,7 @@ public class ApiClientImpl extends ApiClient {
     }
 
     @Override
-    protected List<Article> parseForObjectArticles(Document doc) throws ScpParseException {
+    protected List<Article> parseForObjectArticles(final Document doc) throws ScpParseException {
         Element pageContent = doc.getElementById("page-content");
         if (pageContent == null) {
             throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
@@ -207,7 +218,7 @@ public class ApiClientImpl extends ApiClient {
                 if (li.getElementsByTag("a").first().hasClass("newpage")) {
                     continue;
                 }
-                Article article = new Article();
+                final Article article = new Article();
                 article.url = mConstantValues.getBaseApiUrl() + li.getElementsByTag("a").first().attr("href");
                 article.title = li.text();
                 articles.add(article);

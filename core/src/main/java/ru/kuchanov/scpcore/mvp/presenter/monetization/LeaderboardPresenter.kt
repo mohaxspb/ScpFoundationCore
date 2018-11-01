@@ -1,6 +1,5 @@
 package ru.kuchanov.scpcore.mvp.presenter.monetization
 
-import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import ru.kuchanov.scpcore.BaseApplication
@@ -43,7 +42,8 @@ class LeaderboardPresenter(
 ) : BasePresenter<LeaderboardContract.View>(
     myPreferencesManager,
     dbProviderFactory,
-    apiClient
+    apiClient,
+    inAppHelper
 ), LeaderboardContract.Presenter {
 
     companion object {
@@ -161,7 +161,7 @@ class LeaderboardPresenter(
                                     .find { it.langId.equals(mApiClient.constantValues.appLang, true) }
 
                             leaderboardUsersUpdateDates?.let {
-                                mMyPreferencesManager.saveLeaderboardUpdateDate(it.updated)
+                                myPreferencesManager.saveLeaderboardUpdateDate(it.updated)
                             }
                         }.map { users }
                     } else {
@@ -206,7 +206,7 @@ class LeaderboardPresenter(
                         }
                         view.resetOnScrollListener()
 
-                        updateTime = mMyPreferencesManager.leaderboardUpdateDate.time
+                        updateTime = myPreferencesManager.leaderboardUpdateDate.time
                         view.showUpdateDate(updateTime)
                     },
                     onError = {
@@ -260,26 +260,6 @@ class LeaderboardPresenter(
             view.showUser(null)
         } else {
             view.showUser(convertUser(myUser))
-        }
-    }
-
-    override fun onSubscriptionClick(id: String, target: Fragment, ignoreUserCheck: Boolean) {
-        //show warning if user not logged in
-        if (!ignoreUserCheck && user == null) {
-            view.showOfferLoginForLevelUpPopup()
-            return
-        }
-
-        val type = if (id in InAppHelper.getNewInAppsSkus()) {
-            InAppHelper.InappType.IN_APP
-        } else {
-            InAppHelper.InappType.SUBS
-        }
-        try {
-            InAppHelper.startSubsBuy(target, inAppService, type, id)
-        } catch (e: Exception) {
-            Timber.e(e)
-            view.showError(e)
         }
     }
 

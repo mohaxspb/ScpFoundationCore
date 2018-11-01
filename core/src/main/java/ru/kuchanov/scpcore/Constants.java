@@ -15,6 +15,7 @@ public interface Constants {
      */
     int NUM_OF_NATIVE_ADS_PER_SCREEN = 3;
     long POST_DELAYED_MILLIS = 500;
+    int LEVEL_UP_SCORE_TO_ADD = 10000;
 
     enum NativeAdsSource {
         ALL, APPODEAL, SCP_ART, SCP_QUIZ
@@ -42,6 +43,11 @@ public interface Constants {
 
         String NOT_TRANSLATED_ARTICLE_UTIL_URL = "not_translated_yet_article_which_we_cant_show";
         String NOT_TRANSLATED_ARTICLE_URL_DELIMITER = "___";
+
+        interface ScpReader{
+            public static final String GRANT_TYPE_PASSWORD = "password";
+            public static final String GRANT_TYPE_REFRESH_TOKEN = "refresh_token";
+        }
     }
 
     interface Urls {

@@ -20,7 +20,7 @@ apply from: '../apiKeysCreator.gradle'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion '28.0.2'
+    buildToolsVersion '28.0.3'
 
     compileOptions.encoding = 'utf-8'
 
@@ -165,20 +165,20 @@ dependencies {
     api 'com.facebook.android:facebook-core:4.35.0'
     api 'com.facebook.android:facebook-login:4.35.0'
     //firebase
-    api 'com.google.firebase:firebase-core:16.0.3'
-    api 'com.google.firebase:firebase-config:16.0.0'
-    api 'com.google.firebase:firebase-analytics:16.0.3'
-    api 'com.google.firebase:firebase-invites:16.0.3'
-    api 'com.google.firebase:firebase-ads:15.0.1'
-    api 'com.google.firebase:firebase-database:16.0.2'
-    api 'com.google.firebase:firebase-auth:16.0.3'
-    api 'com.google.firebase:firebase-messaging:17.3.2'
+    api 'com.google.firebase:firebase-core:16.0.4'
+    api 'com.google.firebase:firebase-config:16.1.0'
+    api 'com.google.firebase:firebase-analytics:16.0.4'
+    api 'com.google.firebase:firebase-invites:16.0.4'
+    api 'com.google.firebase:firebase-ads:17.0.0'
+    api 'com.google.firebase:firebase-database:16.0.3'
+    api 'com.google.firebase:firebase-auth:16.0.5'
+    api 'com.google.firebase:firebase-messaging:17.3.4'
     //google login
-    api 'com.google.android.gms:play-services-auth:16.0.0'
+    api 'com.google.android.gms:play-services-auth:16.0.1'
     //appodeal
 //    api 'com.google.android.gms:play-services-ads:15.0.1'
-    api "com.google.android.gms:play-services-location:15.0.1"
-    api "com.google.android.gms:play-services-gcm:15.0.1"
+    api "com.google.android.gms:play-services-location:16.0.0"
+    api "com.google.android.gms:play-services-gcm:16.0.0"
     //for Inmobi
     api 'com.google.android.exoplayer:exoplayer:2.8.2'
     implementation 'com.squareup.picasso:picasso:2.5.2' //for Inmobi
@@ -201,7 +201,7 @@ dependencies {
     //end of appodeal
     //AppMetrica
     //we add it here and delete jar from appodeal
-    api 'com.yandex.android:mobmetricalib:3.1.0'
+    api 'com.yandex.android:mobmetricalib:3.2.2'
     // Optional. Play Install Referrer library for better attribution.
     implementation 'com.android.installreferrer:installreferrer:1.0'
     //recyclerView fast scroller
@@ -222,6 +222,7 @@ dependencies {
     api 'joda-time:joda-time:2.10'
 
     //xml to json
+    //todo remove it
     api 'org.json:json:20180130'
 
     //new crash reporting

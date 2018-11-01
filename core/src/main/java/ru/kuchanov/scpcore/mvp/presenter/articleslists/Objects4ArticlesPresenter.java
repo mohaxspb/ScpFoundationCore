@@ -7,8 +7,8 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.articleslists.Objects4Articles;
-import ru.kuchanov.scpcore.mvp.presenter.articleslists.BaseObjectsArticlesPresenter;
 
 public class Objects4ArticlesPresenter
         extends BaseObjectsArticlesPresenter<Objects4Articles.View>
@@ -18,9 +18,10 @@ public class Objects4ArticlesPresenter
             final MyPreferenceManager myPreferencesManager,
             final DbProviderFactory dbProviderFactory,
             final ApiClient apiClient,
-            @NonNull final ConstantValues constantValues
+            @NonNull final ConstantValues constantValues,
+            final InAppHelper inAppHelper
     ) {
-        super(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
+        super(myPreferencesManager, dbProviderFactory, apiClient, constantValues, inAppHelper);
     }
 
     @Override

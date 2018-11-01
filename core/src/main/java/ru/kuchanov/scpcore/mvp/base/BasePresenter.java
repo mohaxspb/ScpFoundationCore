@@ -3,6 +3,7 @@ package ru.kuchanov.scpcore.mvp.base;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
+import com.android.vending.billing.IInAppBillingService;
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 import com.vk.sdk.VKSdk;
 
@@ -24,11 +25,16 @@ import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.LoginActions;
+import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
+
+import static ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP;
+import static ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment.REQUEST_CODE_SUBSCRIPTION;
 
 /**
  * Created by y.kuchanov on 21.12.16.
@@ -39,11 +45,13 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         extends MvpNullObjectBasePresenter<V>
         implements BaseMvp.Presenter<V> {
 
-    protected MyPreferenceManager mMyPreferencesManager;
+    protected MyPreferenceManager myPreferencesManager;
 
     protected DbProviderFactory mDbProviderFactory;
 
     protected ApiClient mApiClient;
+
+    protected InAppHelper mInAppHelper;
 
     private User mUser;
 
@@ -54,12 +62,14 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     public BasePresenter(
             final MyPreferenceManager myPreferencesManager,
             final DbProviderFactory dbProviderFactory,
-            final ApiClient apiClient
+            final ApiClient apiClient,
+            final InAppHelper inAppHelper
     ) {
         super();
-        mMyPreferencesManager = myPreferencesManager;
+        this.myPreferencesManager = myPreferencesManager;
         mDbProviderFactory = dbProviderFactory;
         mApiClient = apiClient;
+        mInAppHelper = inAppHelper;
 
         if (getUserInConstructor()) {
             getUserFromDb();
@@ -111,11 +121,64 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     }
 
     @Override
+    public void onPurchaseClick(final String id, final BaseActivity baseActivity, final boolean ignoreUserCheck) {
+        Timber.d("onPurchaseClick: $id, $baseActivity, $ignoreUserCheck");
+        //show warning if user not logged in
+        if (!ignoreUserCheck && mUser == null) {
+            getView().showOfferLoginForLevelUpPopup();
+            return;
+        }
+
+        final String type;
+        if (InAppHelper.getNewInAppsSkus().contains(id)) {
+            type = InAppHelper.InappType.IN_APP;
+        } else {
+            type = InAppHelper.InappType.SUBS;
+        }
+
+        final int requestCode;
+        if (type.equals(InAppHelper.InappType.IN_APP)) {
+            requestCode = REQUEST_CODE_INAPP;
+        } else {
+            requestCode = REQUEST_CODE_SUBSCRIPTION;
+        }
+        mInAppHelper.intentSenderSingle(baseActivity.getIInAppBillingService(), type, id)
+                .subscribe(
+                        intentSender -> mInAppHelper.startPurchase(intentSender, baseActivity, requestCode),
+                        e -> {
+                            Timber.e(e);
+                            getView().showError(e);
+                        }
+                );
+    }
+
+    @Override
+    public void onLevelUpRetryClick(@NotNull final IInAppBillingService inAppBillingService) {
+        mInAppHelper.getInAppHistoryObservable(inAppBillingService)
+                .flatMap(items -> mInAppHelper.consumeInApp(
+                        items.get(0).sku,
+                        items.get(0).purchaseData.purchaseToken,
+                        inAppBillingService
+                ))
+                .map(response -> mDbProviderFactory.getDbProvider().getScore())
+                .doOnSubscribe(() -> getView().showProgressDialog(R.string.wait))
+                .doOnEach(notification -> getView().dismissProgressDialog())
+                .subscribe(
+                        score -> getView().showMessage(BaseApplication.getAppInstance().getString(R.string.score_num, score)),
+                        e -> {
+                            Timber.e(e);
+                            getView().showError(e);
+                            getView().showInAppErrorDialog(e.getMessage());
+                        }
+                );
+    }
+
+    @Override
     public void updateArticleInFirebase(final Article article, final boolean showResultMessage) {
         Timber.d("updateArticleInFirebase: %s", article.url);
 
-        if (!mMyPreferencesManager.isHasSubscription()) {
-            final long curNumOfAttempts = mMyPreferencesManager.getNumOfAttemptsToAutoSync();
+        if (!myPreferencesManager.isHasSubscription()) {
+            final long curNumOfAttempts = myPreferencesManager.getNumOfAttemptsToAutoSync();
             final long maxNumOfAttempts = FirebaseRemoteConfig.getInstance()
                     .getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_SYNC_ATTEMPTS_BEFORE_CALL_TO_ACTION);
 
@@ -123,10 +186,10 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 
             if (curNumOfAttempts >= maxNumOfAttempts) {
                 //show call to action
-                mMyPreferencesManager.setNumOfAttemptsToAutoSync(0);
+                myPreferencesManager.setNumOfAttemptsToAutoSync(0);
                 getView().showSnackBarWithAction(Constants.Firebase.CallToActionReason.ENABLE_AUTO_SYNC);
             } else {
-                mMyPreferencesManager.setNumOfAttemptsToAutoSync(curNumOfAttempts + 1);
+                myPreferencesManager.setNumOfAttemptsToAutoSync(curNumOfAttempts + 1);
             }
             return;
         }
@@ -142,7 +205,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         @ScoreAction final String action = article.isInReaden ? ScoreAction.READ :
                                            article.isInFavorite != Article.ORDER_NONE ? ScoreAction.FAVORITE : ScoreAction.NONE;
 
-        final int totalScoreToAdd = getTotalScoreToAddFromAction(action, mMyPreferencesManager);
+        final int totalScoreToAdd = getTotalScoreToAddFromAction(action, myPreferencesManager);
 
         //update score for articles, that is not in firebase, than write/update them
         mApiClient
@@ -197,7 +260,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                                                  String action = article.isInReaden ? ScoreAction.READ :
                                                                  article.isInFavorite != Article.ORDER_NONE ? ScoreAction.FAVORITE : ScoreAction.NONE;
 
-                                                 int totalScoreToAdd = getTotalScoreToAddFromAction(action, mMyPreferencesManager);
+                                                 int totalScoreToAdd = getTotalScoreToAddFromAction(action, myPreferencesManager);
 
                                                  return mApiClient
                                                          .getArticleFromFirebase(article)
@@ -224,7 +287,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                 //also increment user score from unsynced score
                 .flatMap(articlesCountAndAddedScore -> {
                     Timber.d("num of updated articles/added score: %s/%s", articlesCountAndAddedScore.first, articlesCountAndAddedScore.second);
-                    int unsyncedScore = mMyPreferencesManager.getNumOfUnsyncedScore();
+                    int unsyncedScore = myPreferencesManager.getNumOfUnsyncedScore();
                     if (unsyncedScore == 0) {
                         //getScore from firebase and update it in Realm
                         //as there can be situation, where we have nothing to sync except of score
@@ -240,7 +303,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                 })
                 //add unsynced score for vkGroups
                 .flatMap(artsAndScoreAdded -> {
-                    VkGroupsToJoinResponse unsyncedScore = mMyPreferencesManager.getUnsyncedVkGroupsJson();
+                    VkGroupsToJoinResponse unsyncedScore = myPreferencesManager.getUnsyncedVkGroupsJson();
                     if (unsyncedScore == null) {
                         //no need to update something
                         return Observable.just(artsAndScoreAdded);
@@ -248,7 +311,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                         //get unjoined vk groups that we must sync
                         @ScoreAction
                         String action = ScoreAction.VK_GROUP;
-                        int actionScore = getTotalScoreToAddFromAction(action, mMyPreferencesManager);
+                        int actionScore = getTotalScoreToAddFromAction(action, myPreferencesManager);
                         return Observable.from(unsyncedScore.items)
                                 .map(vkGroupToJoin -> vkGroupToJoin.id)
                                 .doOnNext(id -> Timber.d("vkGroup id to check: %s", id))
@@ -261,7 +324,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                                                                                 .flatMap(newTotalScore -> mApiClient.addJoinedVkGroup(vkGroupToJoinId).flatMap(aVoid -> Observable.just(actionScore)))))
                                 .toList()
                                 .flatMap(integers -> {
-                                    mMyPreferencesManager.deleteUnsyncedVkGroups();
+                                    myPreferencesManager.deleteUnsyncedVkGroups();
                                     return Observable.just(new Pair<>(
                                                     artsAndScoreAdded.first,
                                                     artsAndScoreAdded.second + actionScore * integers.size()
@@ -272,7 +335,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                 })
                 //add unsynced score for apps
                 .flatMap(artsAndScoreAdded -> {
-                    ApplicationsResponse unsyncedScore = mMyPreferencesManager.getUnsyncedAppsJson();
+                    ApplicationsResponse unsyncedScore = myPreferencesManager.getUnsyncedAppsJson();
                     if (unsyncedScore == null) {
                         //no need to update something
                         return Observable.just(artsAndScoreAdded);
@@ -280,7 +343,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                         //get uninstalled apps that we must sync
                         @ScoreAction
                         String action = ScoreAction.OUR_APP;
-                        int actionScore = getTotalScoreToAddFromAction(action, mMyPreferencesManager);
+                        int actionScore = getTotalScoreToAddFromAction(action, myPreferencesManager);
                         return Observable.from(unsyncedScore.items)
                                 .map(item -> item.id)
                                 .doOnNext(id -> Timber.d("application id to check: %s", id))
@@ -293,7 +356,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                                                                              .flatMap(newTotalScore -> mApiClient.addInstalledApp(itemId).flatMap(aVoid -> Observable.just(actionScore)))))
                                 .toList()
                                 .flatMap(integers -> {
-                                    mMyPreferencesManager.deleteUnsyncedApps();
+                                    myPreferencesManager.deleteUnsyncedApps();
                                     return Observable.just(new Pair<>(
                                                     artsAndScoreAdded.first,
                                                     artsAndScoreAdded.second + actionScore * integers.size()
@@ -320,7 +383,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                             //we should set zero as unsynced score only in onSuccess callback,
                             //to not loose some score from broken connection
                             //reset unsynced score as we already sync it
-                            mMyPreferencesManager.setNumOfUnsyncedScore(0);
+                            myPreferencesManager.setNumOfUnsyncedScore(0);
                         },
                         e -> {
                             Timber.e(e);
@@ -334,12 +397,8 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     }
 
     /**
-     * check if user logged in,
-     * calculate final score to add value from modificators,
-     * if user do not have subscription we increment unsynced score
-     * if user has subscription we increment score in firebase
-     * while incrementing we check if user already received score from group
-     * and if so - do not increment it
+     * check if user logged in, calculate final score to add value from modificators, if user do not have subscription we increment unsynced score if user has subscription we increment score in firebase while incrementing we check if user already received score from group and if so - do not
+     * increment it
      */
     @Override
     public void updateUserScoreForVkGroup(final String id) {
@@ -351,7 +410,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         }
 
         @ScoreAction final String action = ScoreAction.VK_GROUP;
-        final int totalScoreToAdd = getTotalScoreToAddFromAction(action, mMyPreferencesManager);
+        final int totalScoreToAdd = getTotalScoreToAddFromAction(action, myPreferencesManager);
 
         //increment scoreInFirebase
         mApiClient
@@ -375,7 +434,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                             Timber.e(e, "error while increment userCore from action");
                             getView().showError(e);
                             //increment unsynced score to sync it later
-                            mMyPreferencesManager.addUnsyncedVkGroup(id);
+                            myPreferencesManager.addUnsyncedVkGroup(id);
                         }
                 );
     }
@@ -390,14 +449,14 @@ public abstract class BasePresenter<V extends BaseMvp.View>
             return;
         }
 
-        final int totalScoreToAdd = getTotalScoreToAddFromAction(action, mMyPreferencesManager);
+        final int totalScoreToAdd = getTotalScoreToAddFromAction(action, myPreferencesManager);
 
         //update score now only if it's for video or vk_app_share or user has subscription
         final boolean isVideoAction = action.equals(ScoreAction.REWARDED_VIDEO);
         final boolean isVkAppShareAction = action.equals(ScoreAction.VK_APP_SHARE);
-        final boolean hasFullSubscription = mMyPreferencesManager.isHasSubscription();
+        final boolean hasFullSubscription = myPreferencesManager.isHasSubscription();
         if (!hasFullSubscription && !(isVideoAction || isVkAppShareAction)) {
-            final long curNumOfAttempts = mMyPreferencesManager.getNumOfAttemptsToAutoSync();
+            final long curNumOfAttempts = myPreferencesManager.getNumOfAttemptsToAutoSync();
             final long maxNumOfAttempts = FirebaseRemoteConfig.getInstance()
                     .getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_SYNC_ATTEMPTS_BEFORE_CALL_TO_ACTION);
 
@@ -405,17 +464,17 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 
             if (curNumOfAttempts >= maxNumOfAttempts) {
                 //show call to action
-                mMyPreferencesManager.setNumOfAttemptsToAutoSync(0);
+                myPreferencesManager.setNumOfAttemptsToAutoSync(0);
                 //do not show for adding score after showing ads
                 if (!action.equals(ScoreAction.INTERSTITIAL_SHOWN)) {
                     getView().showSnackBarWithAction(Constants.Firebase.CallToActionReason.ENABLE_AUTO_SYNC);
                 }
             } else {
-                mMyPreferencesManager.setNumOfAttemptsToAutoSync(curNumOfAttempts + 1);
+                myPreferencesManager.setNumOfAttemptsToAutoSync(curNumOfAttempts + 1);
             }
 
             //increment unsynced score to sync it later
-            mMyPreferencesManager.addUnsyncedScore(totalScoreToAdd);
+            myPreferencesManager.addUnsyncedScore(totalScoreToAdd);
             return;
         }
 
@@ -435,7 +494,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                                 getView().showMessage(context.getString(R.string.score_increased, context.getResources().getQuantityString(R.plurals.plurals_score, totalScoreToAdd, totalScoreToAdd)));
                             }
                             if (action.equals(ScoreAction.VK_APP_SHARE)) {
-                                mMyPreferencesManager.setVkAppShared();
+                                myPreferencesManager.setVkAppShared();
                             }
                             if (addScoreListener != null) {
                                 addScoreListener.onSuccess();
@@ -445,7 +504,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                             Timber.e(e, "error while increment userCore from action");
                             getView().showError(e);
                             //increment unsynced score to sync it later
-                            mMyPreferencesManager.addUnsyncedScore(totalScoreToAdd);
+                            myPreferencesManager.addUnsyncedScore(totalScoreToAdd);
 
                             if (addScoreListener != null) {
                                 addScoreListener.onError();
@@ -455,12 +514,8 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     }
 
     /**
-     * check if user logged in,
-     * calculate final score to add value from modificators,
-     * if user do not have subscription we increment unsynced score
-     * if user has subscription we increment score in firebase
-     * while incrementing we check if user already received score from group
-     * and if so - do not increment it
+     * check if user logged in, calculate final score to add value from modificators, if user do not have subscription we increment unsynced score if user has subscription we increment score in firebase while incrementing we check if user already received score from group and if so - do not
+     * increment it
      */
     @Override
     public void updateUserScoreForScoreAction(@ScoreAction final String action) {
@@ -479,17 +534,12 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         //increment scoreInFirebase
         final int totalScoreToAdd = 10000;
 
-//        switch (sku) {
-//            case "level_up_to_5":
-//                totalScoreToAdd = 10000;
-//                break;
-//            default:
-//                throw new IllegalArgumentException("unexpected sku");
-//        }
-
         mApiClient
                 .incrementScoreInFirebaseObservable(totalScoreToAdd)
-                .flatMap(newTotalScore -> mApiClient.addRewardedInapp(sku).flatMap(aVoid -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore)))
+                .flatMap(newTotalScore -> mApiClient
+                        .addRewardedInapp(sku)
+                        .flatMap(aVoid -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
+                )
                 //TODO need to realize it as we realize vk groups and apps - write inapps to json and check if we need to add score for it
                 .subscribe(
                         newTotalScore -> {
@@ -501,7 +551,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                             Timber.e(e, "error while increment userCore from inapp");
                             getView().showError(e);
                             //increment unsynced score to sync it later
-                            mMyPreferencesManager.addUnsyncedScore(totalScoreToAdd);
+                            myPreferencesManager.addUnsyncedScore(totalScoreToAdd);
                         }
                 );
     }
@@ -509,13 +559,13 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     @Override
     public void checkIfUserJoinedAppVkGroup() {
 //        Timber.d("checkIfUserJoinedAppVkGroup");
-        if (!VKSdk.isLoggedIn() || !mMyPreferencesManager.isTimeToCheckAppVkGroupJoined()) {
+        if (!VKSdk.isLoggedIn() || !myPreferencesManager.isTimeToCheckAppVkGroupJoined()) {
             return;
         }
-        mMyPreferencesManager.setLastTimeAppVkGroupJoinedChecked(System.currentTimeMillis());
+        myPreferencesManager.setLastTimeAppVkGroupJoinedChecked(System.currentTimeMillis());
         final String appVkGroupId = FirebaseRemoteConfig.getInstance().getString(Constants.Firebase.RemoteConfigKeys.VK_APP_GROUP_ID);
         mApiClient.isUserJoinedVkGroup(appVkGroupId).subscribe(
-                isJoinedAppVkGroup -> mMyPreferencesManager.setAppVkGroupJoined(isJoinedAppVkGroup),
+                isJoinedAppVkGroup -> myPreferencesManager.setAppVkGroupJoined(isJoinedAppVkGroup),
                 Timber::e
         );
     }

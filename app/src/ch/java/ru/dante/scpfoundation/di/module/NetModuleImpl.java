@@ -10,6 +10,7 @@ import dagger.Module;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import ru.dante.scpfoundation.ConstantValuesImpl;
+import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.dante.scpfoundation.api.ApiClientImpl;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
@@ -27,14 +28,16 @@ public class NetModuleImpl extends NetModule {
     @Override
     protected ApiClient getApiClient(
             @NonNull final OkHttpClient okHttpClient,
-            @Named("vps") @NonNull final Retrofit vpsRetrofit,
-            @Named("scp") @NonNull final Retrofit scpRetrofit,
-            @Named("scpReaderApi") final Retrofit scpReaderRetrofit,
+            @NonNull final Retrofit vpsRetrofit,
+            @NonNull final Retrofit scpRetrofit,
+            final Retrofit scpReaderRetrofit,
+            final ScpReaderAuthApi scpReaderAuthApi,
             @NonNull final MyPreferenceManager preferencesManager,
             @NonNull final Gson gson,
             @NonNull final ConstantValues constantValues
     ) {
-        return new ApiClientImpl(okHttpClient, vpsRetrofit, scpRetrofit, scpReaderRetrofit, preferencesManager, gson, constantValues);
+        return new ApiClientImpl(okHttpClient, vpsRetrofit, scpRetrofit, scpReaderRetrofit,
+                scpReaderAuthApi, preferencesManager, gson, constantValues);
     }
 
     @Override

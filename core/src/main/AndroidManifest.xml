@@ -31,6 +31,16 @@
         android:supportsRtl="true"
         tools:targetApi="m">
 
+        <!--admob-->
+        <!--see https://developers.google.com/admob/android/quick-start#update_your_androidmanifestxml-->
+        <!-- Sample AdMob App ID: ca-app-pub-3940256099942544~3347511713 -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/ads_app_id"/>
+
+        <!--api 28 crash fix-->
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+
         <!--ads by appodeal-->
         <activity
             android:name="com.appodeal.ads.InterstitialActivity"
@@ -179,7 +189,7 @@
             </intent-filter>
             <meta-data
                 android:name="metrica:api:level"
-                android:value="67" />
+                android:value="70" />
         </service>
         <service
             android:name="com.yandex.metrica.ConfigurationService"

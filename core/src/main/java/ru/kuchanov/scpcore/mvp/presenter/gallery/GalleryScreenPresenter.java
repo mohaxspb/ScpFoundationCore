@@ -6,6 +6,7 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.GalleryScreenMvp;
 import ru.kuchanov.scpcore.mvp.presenter.BaseDrawerPresenter;
 import rx.android.schedulers.AndroidSchedulers;
@@ -21,9 +22,10 @@ public class GalleryScreenPresenter
     public GalleryScreenPresenter(
             final MyPreferenceManager myPreferencesManager,
             final DbProviderFactory dbProviderFactory,
-            final ApiClient apiClient
+            final ApiClient apiClient,
+            final InAppHelper inAppHelper
     ) {
-        super(myPreferencesManager, dbProviderFactory, apiClient);
+        super(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }
 
     @Override

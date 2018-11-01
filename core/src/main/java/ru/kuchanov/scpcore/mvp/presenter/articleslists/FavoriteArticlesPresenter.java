@@ -10,6 +10,7 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.articleslists.FavoriteArticlesMvp;
 import rx.Observable;
 
@@ -20,9 +21,10 @@ public class FavoriteArticlesPresenter
     public FavoriteArticlesPresenter(
             MyPreferenceManager myPreferencesManager,
             DbProviderFactory dbProviderFactory,
-            ApiClient apiClient
+            ApiClient apiClient,
+            final InAppHelper inAppHelper
     ) {
-        super(myPreferencesManager, dbProviderFactory, apiClient);
+        super(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }
 
     @Override

@@ -10,6 +10,7 @@ import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.downloads.DownloadAllService;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.base.BaseArticlesListMvp;
 import ru.kuchanov.scpcore.mvp.base.BasePresenter;
 import rx.Observable;
@@ -29,9 +30,10 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
     public BaseListArticlesPresenter(
             final MyPreferenceManager myPreferencesManager,
             final DbProviderFactory dbProviderFactory,
-            final ApiClient apiClient
+            final ApiClient apiClient,
+            final InAppHelper inAppHelper
     ) {
-        super(myPreferencesManager, dbProviderFactory, apiClient);
+        super(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }
 
     @Override
@@ -197,13 +199,13 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
                     .flatMap(apiData -> mDbProviderFactory.getDbProvider().saveArticle(apiData))
                     .observeOn(Schedulers.io())
                     .map(downloadedArticle -> {
-                        if (mMyPreferencesManager.isHasSubscription() && mMyPreferencesManager.getInnerArticlesDepth() != 0) {
+                        if (myPreferencesManager.isHasSubscription() && myPreferencesManager.getInnerArticlesDepth() != 0) {
                             DownloadAllService.getAndSaveInnerArticles(
                                     mDbProviderFactory.getDbProvider(),
                                     mApiClient,
                                     downloadedArticle,
                                     0,
-                                    mMyPreferencesManager.getInnerArticlesDepth()
+                                    myPreferencesManager.getInnerArticlesDepth()
                             );
                         }
 

@@ -10,16 +10,21 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.articleslists.RatedArticlesMvp;
-import ru.kuchanov.scpcore.mvp.presenter.articleslists.BaseListArticlesPresenter;
 import rx.Observable;
 
 public class MostRatedArticlesPresenter
         extends BaseListArticlesPresenter<RatedArticlesMvp.View>
         implements RatedArticlesMvp.Presenter {
 
-    public MostRatedArticlesPresenter(MyPreferenceManager myPreferencesManager, DbProviderFactory dbProviderFactory, ApiClient apiClient) {
-        super(myPreferencesManager, dbProviderFactory, apiClient);
+    public MostRatedArticlesPresenter(
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient,
+            final InAppHelper inAppHelper
+    ) {
+        super(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }
 
     @Override
@@ -28,12 +33,12 @@ public class MostRatedArticlesPresenter
     }
 
     @Override
-    protected Observable<List<Article>> getApiObservable(int offset) {
+    protected Observable<List<Article>> getApiObservable(final int offset) {
         return mApiClient.getRatedArticles(offset);
     }
 
     @Override
-    protected Observable<Pair<Integer, Integer>> getSaveToDbObservable(List<Article> data, int offset) {
+    protected Observable<Pair<Integer, Integer>> getSaveToDbObservable(final List<Article> data, final int offset) {
         return mDbProviderFactory.getDbProvider().saveRatedArticlesList(data, offset);
     }
 }

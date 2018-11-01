@@ -152,7 +152,7 @@ class FreeAdsDisableActionsFragment :
                 showError(Exception(error.errorMessage))
             }
         })
-        builder.show(fragmentManager, "VK_SHARE_DIALOG");
+        builder.show(fragmentManager, "VK_SHARE_DIALOG")
     }
 
     override fun onVkLoginAttempt() = VKSdk.login(baseActivity!!, VKScope.EMAIL, VKScope.GROUPS, VKScope.WALL)

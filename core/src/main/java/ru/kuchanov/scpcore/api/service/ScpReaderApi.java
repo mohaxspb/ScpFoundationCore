@@ -6,6 +6,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import ru.kuchanov.scpcore.api.model.response.LeaderboardUsersUpdateDates;
+import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
 import ru.kuchanov.scpcore.db.model.LeaderboardUser;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import rx.Single;
@@ -15,7 +16,7 @@ import rx.Single;
  * <p>
  * for scp_ru
  */
-public interface ScpReaderServer {
+public interface ScpReaderApi {
 
     @GET("gallery/all")
     Single<List<GalleryImage>> getGallery();
@@ -29,4 +30,18 @@ public interface ScpReaderServer {
 
     @GET("firebase/updateDataDates")
     Single<List<LeaderboardUsersUpdateDates>> getLeaderboardUsersUpdateDates();
+
+    @GET("purchase/validateAndroidProduct")
+    Single<PurchaseValidateResponse> validateProduct(
+            @Query("package") String packageName,
+            @Query("sku") String sku,
+            @Query("token") String purchaseToken
+    );
+
+    @GET("purchase/validateAndroidSubscription")
+    Single<PurchaseValidateResponse> validateSubscription(
+            @Query("package") String packageName,
+            @Query("sku") String sku,
+            @Query("token") String purchaseToken
+    );
 }

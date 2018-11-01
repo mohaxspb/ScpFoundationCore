@@ -13,10 +13,8 @@ import android.os.RemoteException;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringDef;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.util.Pair;
 
-import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -26,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
@@ -33,7 +32,11 @@ import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Item;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
+import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import rx.Observable;
+import rx.Single;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP;
@@ -48,7 +51,24 @@ public class InAppHelper {
 
     private final static int API_VERSION_3 = 3;
 
-    public static final int RESULT_OK = 0;
+    private final static int API_VERSION_6 = 6;
+
+    public static final int RESULT_OK = 0;// - success
+
+    public static final int RESULT_USER_CANCELED = 1;// - user pressed back or canceled a dialog
+
+    public static final int RESULT_BILLING_UNAVAILABLE = 3;// - this billing API version is not supported for the type requested
+
+    public static final int RESULT_ITEM_UNAVAILABLE = 4;// - requested SKU is not available for purchase
+
+    public static final int RESULT_DEVELOPER_ERROR = 5;// - invalid arguments provided to the API
+
+    public static final int RESULT_ERROR = 6;// - Fatal error during the API action
+
+    public static final int RESULT_ITEM_ALREADY_OWNED = 7;// - Failure to purchase since item is already owned
+
+    public static final int RESULT_ITEM_NOT_OWNED = 8;// - Failure to consume since item is not owned
+
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({
@@ -168,31 +188,25 @@ public class InAppHelper {
                     final List<Item> validatedItems = new ArrayList<>();
                     for (final Item item : items) {
                         Timber.d("validate item: %s", item.sku);
-                        try {
-                            final PurchaseValidateResponse purchaseValidateResponse = ((ApiClient) mApiClient).validatePurchaseSync(
-                                    true,
-                                    BaseApplication.getAppInstance().getPackageName(),
-                                    item.sku,
-                                    item.purchaseData.purchaseToken
-                            );
-                            switch (purchaseValidateResponse.getStatus()) {
-                                case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_VALID:
-                                    Timber.d("Item successfully validated: %s", item.sku);
-                                    validatedItems.add(item);
-                                    break;
-                                case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_INVALID:
+                        final PurchaseValidateResponse purchaseValidateResponse = mApiClient.validateSubscription(
+                                BaseApplication.getAppInstance().getPackageName(),
+                                item.sku,
+                                item.purchaseData.purchaseToken
+                        ).toBlocking().value();
+                        switch (purchaseValidateResponse.getStatus()) {
+                            case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_VALID:
+                                Timber.d("Item successfully validated: %s", item.sku);
+                                validatedItems.add(item);
+                                break;
+                            case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_INVALID:
 //                                    return Observable.error(new IllegalStateException("Purchase state is INVALID"));
-                                    Timber.e("Invalid subs: %s", item.sku);
-                                    break;
-                                case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_GOOGLE_SERVER_ERROR:
-                                    //if there is error we should cancel subs validating
-                                    return Observable.error(new IllegalStateException("Purchase state cant be validated, as Google Servers sends error"));
-                                default:
-                                    return Observable.error(new IllegalArgumentException("Unexpected validation status: " + purchaseValidateResponse.getStatus()));
-                            }
-                        } catch (final IOException e) {
-                            Timber.e(e, "failed validation request to vps server");
-                            return Observable.error(e);
+                                Timber.e("Invalid subs: %s", item.sku);
+                                break;
+                            case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_GOOGLE_SERVER_ERROR:
+                                //if there is error we should cancel subs validating
+                                return Observable.error(new IllegalStateException("Purchase state cant be validated, as Google Servers sends error"));
+                            default:
+                                return Observable.error(new IllegalArgumentException("Unexpected validation status: " + purchaseValidateResponse.getStatus()));
                         }
                     }
                     return Observable.just(validatedItems);
@@ -204,7 +218,9 @@ public class InAppHelper {
             try {
                 final Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "inapp", null);
 
-                Timber.d("ownedItems bundle: %s", ownedItemsBundle);
+                for (final String key : ownedItemsBundle.keySet()) {
+                    Timber.d("ownedItems bundle: %s/%s", key, ownedItemsBundle.get(key));
+                }
                 if (ownedItemsBundle.getInt("RESPONSE_CODE") == RESULT_OK) {
                     final List<String> ownedSkus = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
                     final List<String> purchaseDataList = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_DATA_LIST");
@@ -227,6 +243,49 @@ public class InAppHelper {
                     }
                 } else {
                     subscriber.onError(new IllegalStateException("ownedItemsBundle.getInt(\"RESPONSE_CODE\") is not 0"));
+                }
+            } catch (final RemoteException e) {
+                Timber.e(e);
+                subscriber.onError(e);
+            }
+        });
+    }
+
+    public Single<List<Item>> getInAppHistoryObservable(final IInAppBillingService mInAppBillingService) {
+        return Single.create(subscriber -> {
+            try {
+                final Bundle bundle = mInAppBillingService.getPurchaseHistory(
+                        API_VERSION_6,
+                        BaseApplication.getAppInstance().getPackageName(),
+                        "inapp",
+                        null,
+                        null
+                );
+
+                for (final String key : bundle.keySet()) {
+                    Timber.d("ownedItems bundle: %s/%s", key, bundle.get(key));
+                }
+                if (bundle.getInt("RESPONSE_CODE") == RESULT_OK) {
+                    final List<String> ownedSkus = bundle.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
+                    final List<String> purchaseDataList = bundle.getStringArrayList("INAPP_PURCHASE_DATA_LIST");
+                    final List<String> signatureList = bundle.getStringArrayList("INAPP_DATA_SIGNATURE_LIST");
+                    final String continuationToken = bundle.getString("INAPP_CONTINUATION_TOKEN");
+
+                    if (ownedSkus == null || purchaseDataList == null || signatureList == null) {
+                        subscriber.onError(new IllegalStateException("some of owned items info is null while get owned items"));
+                    } else {
+                        final List<Item> ownedItemsList = new ArrayList<>();
+                        for (int i = 0; i < purchaseDataList.size(); ++i) {
+                            final String purchaseData = purchaseDataList.get(i);
+                            final String signature = signatureList.get(i);
+                            final String sku = ownedSkus.get(i);
+                            ownedItemsList.add(new Item(purchaseData, signature, sku, continuationToken));
+                        }
+                        Timber.d("ownedItemsList: %s", ownedItemsList);
+                        subscriber.onSuccess(ownedItemsList);
+                    }
+                } else {
+                    subscriber.onError(new IllegalStateException("ownedItemsBundle RESPONSE_CODE is not 0: " + bundle.getInt("RESPONSE_CODE")));
                 }
             } catch (final RemoteException e) {
                 Timber.e(e);
@@ -286,7 +345,8 @@ public class InAppHelper {
                 querySkus.putStringArrayList("ITEM_ID_LIST", (ArrayList<String>) skuList);
                 final Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "inapp", querySkus);
                 Timber.d("skuDetails: %s", skuDetails);
-                if (skuDetails.getInt("RESPONSE_CODE") == RESULT_OK) {
+                final int responseCode = skuDetails.getInt("RESPONSE_CODE");
+                if (responseCode == RESULT_OK) {
                     final List<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
                     if (responseList == null) {
                         subscriber.onError(new IllegalStateException("responseList is null while get subs details"));
@@ -303,7 +363,7 @@ public class InAppHelper {
                     subscriber.onNext(allSubscriptions);
                     subscriber.onCompleted();
                 } else {
-                    subscriber.onError(new IllegalStateException("ownedItemsBundle.getInt(\"RESPONSE_CODE\") is not 0"));
+                    subscriber.onError(new IllegalStateException("ownedItemsBundle RESPONSE_CODE is not 0: " + responseCode));
                 }
             } catch (final RemoteException e) {
                 subscriber.onError(e);
@@ -311,15 +371,15 @@ public class InAppHelper {
         });
     }
 
-    public Observable<Integer> consumeInApp(
+    public Single<Integer> consumeInApp(
             final String sku,
             final String token,
             final IInAppBillingService mInAppBillingService
     ) {
         final String packageName = BaseApplication.getAppInstance().getPackageName();
 
-        return ((ApiClient) mApiClient).validatePurchase(false, packageName, sku, token)
-                .flatMap(purchaseValidateResponse -> {
+        return mApiClient.validateProduct(packageName, sku, token)
+                .flatMapObservable(purchaseValidateResponse -> {
                     @PurchaseValidateResponse.PurchaseValidationStatus final int status = purchaseValidateResponse.getStatus();
                     Timber.d("PurchaseValidationStatus: %s", status);
                     switch (status) {
@@ -337,7 +397,21 @@ public class InAppHelper {
                         default:
                             return Observable.error(new IllegalArgumentException("Unexpected validation status: " + status));
                     }
-                });
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMapSingle(integer -> mApiClient
+                        .incrementScoreInFirebaseObservable(Constants.LEVEL_UP_SCORE_TO_ADD)
+                        .observeOn(Schedulers.io())
+                        .flatMap(newTotalScore -> mApiClient
+                                .addRewardedInapp(sku)
+                                .flatMap(aVoid -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
+                        )
+                        .doOnError(throwable -> mMyPreferenceManager.addUnsyncedScore(Constants.LEVEL_UP_SCORE_TO_ADD))
+                        .toSingle()
+                )
+                .toSingle()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<List<Item>> validateSubsObservable(final IInAppBillingService service) {
@@ -372,28 +446,69 @@ public class InAppHelper {
                 });
     }
 
-    public static void startSubsBuy(
-            final Fragment fragment,
+    public Single<IntentSender> intentSenderSingle(
             final IInAppBillingService mInAppBillingService,
             @InappType final String type,
             final String sku
-    ) throws RemoteException, IntentSender.SendIntentException {
-        final Bundle buyIntentBundle = mInAppBillingService.getBuyIntent(
+    ) {
+        return Observable.fromCallable(() -> mInAppBillingService.getBuyIntent(
                 API_VERSION_3,
                 BaseApplication.getAppInstance().getPackageName(),
                 sku,
                 type,
                 String.valueOf(System.currentTimeMillis())
-        );
-        final PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
-        if (pendingIntent != null) {
-            final int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
-            fragment.startIntentSenderForResult(pendingIntent.getIntentSender(), requestCode, new Intent(), 0, 0, 0, null);
+        ))
+                .map(bundle -> new Pair<>(bundle, bundle.getInt("RESPONSE_CODE")))
+                .flatMap(bundleResponseCodePair -> {
+                    Timber.d("bundleResponseCodePair: %s/%s", bundleResponseCodePair.first, bundleResponseCodePair.second);
+                    if (bundleResponseCodePair.second == RESULT_OK) {
+                        final PendingIntent pendingIntent = bundleResponseCodePair.first.getParcelable("BUY_INTENT");
+                        return Single.just(pendingIntent.getIntentSender()).toObservable();
+                    } else if (bundleResponseCodePair.second == RESULT_ITEM_ALREADY_OWNED) {
+                        return getInAppHistoryObservable(mInAppBillingService)
+                                .flatMap(itemsOwned -> consumeInApp(
+                                        itemsOwned.get(0).sku,
+                                        itemsOwned.get(0).purchaseData.purchaseToken,
+                                        mInAppBillingService
+                                ))
+                                .flatMap(integer -> intentSenderSingle(
+                                        mInAppBillingService,
+                                        type,
+                                        sku
+                                ))
+                                .toObservable();
+                    } else {
+                        return Observable.error(new IllegalStateException(
+                                "RESPONSE_CODE is not OK: " + bundleResponseCodePair.second
+                        ));
+                    }
+                })
+                .toSingle();
+    }
+
+    public void startPurchase(
+            final IntentSender intentSender,
+            final BaseActivity activity,
+            final int requestCode
+    ) {
+        try {
+            activity.startIntentSenderForResult(
+                    intentSender,
+                    requestCode,
+                    new Intent(),
+                    0,
+                    0,
+                    0,
+                    null
+            );
+        } catch (final IntentSender.SendIntentException e) {
+            Timber.wtf(e);
+            activity.showError(e);
         }
     }
 
-    public static void startSubsBuy(
-            final FragmentActivity activity,
+    public static void intentSenderSingle(
+            final BaseActivity activity,
             final IInAppBillingService mInAppBillingService,
             @InappType final String type,
             final String sku
@@ -405,12 +520,31 @@ public class InAppHelper {
                 type,
                 String.valueOf(System.currentTimeMillis())
         );
-        final PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
-        if (pendingIntent != null) {
-            final int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
-            activity.startIntentSenderForResult(pendingIntent.getIntentSender(), requestCode, new Intent(), 0, 0, 0, null);
+        final int responseCode = buyIntentBundle.getInt("RESPONSE_CODE");
+        if (responseCode == RESULT_OK) {
+            final PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
+            if (pendingIntent != null) {
+                final int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
+                activity.startIntentSenderForResult(
+                        pendingIntent.getIntentSender(),
+                        requestCode,
+                        new Intent(),
+                        0,
+                        0,
+                        0,
+                        null
+                );
+            } else {
+                activity.showError(new NullPointerException("pendingIntent is NULL!!!"));
+                Timber.wtf("pendingIntent is NULL!!!");
+            }
+        } else if (responseCode == RESULT_ITEM_ALREADY_OWNED) {
+            //todo check if RESPONSE_CODE is 7 (owned) and consume inapp
+
+        } else {
+            activity.showError(new IllegalStateException("RESPONSE_CODE is not OK: " + responseCode));
+            Timber.wtf("RESPONSE_CODE is not OK: %s", responseCode);
         }
-        //todo think if we must handle consuming inapp here
     }
 
     public static List<String> getNewSubsSkus() {

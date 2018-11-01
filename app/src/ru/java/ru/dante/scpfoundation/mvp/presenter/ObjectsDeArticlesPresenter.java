@@ -8,6 +8,7 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.presenter.articleslists.BaseObjectsArticlesPresenter;
 
 public class ObjectsDeArticlesPresenter
@@ -15,12 +16,13 @@ public class ObjectsDeArticlesPresenter
         implements ObjectsDeArticles.Presenter {
 
     public ObjectsDeArticlesPresenter(
-            MyPreferenceManager myPreferencesManager,
-            DbProviderFactory dbProviderFactory,
-            ApiClient apiClient,
-            @NonNull ConstantValues constantValues
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient,
+            @NonNull final ConstantValues constantValues,
+            final InAppHelper inAppHelper
     ) {
-        super(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
+        super(myPreferencesManager, dbProviderFactory, apiClient, constantValues, inAppHelper);
     }
 
     @Override

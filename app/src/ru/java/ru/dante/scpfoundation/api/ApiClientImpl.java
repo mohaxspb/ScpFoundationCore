@@ -10,19 +10,15 @@ import org.jsoup.nodes.Element;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
-import ru.dante.scpfoundation.api.service.ScpRuApi;
-import ru.dante.scpfoundation.di.AppComponentImpl;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
 import timber.log.Timber;
@@ -34,26 +30,26 @@ import timber.log.Timber;
  */
 public class ApiClientImpl extends ApiClient {
 
-    @Inject
-    @Named("scpRuApi")
-    Retrofit scpRuApiRetrofit;
-
-    private final ScpRuApi scpRuApi;
-
     public ApiClientImpl(
             final OkHttpClient okHttpClient,
             final Retrofit vpsRetrofit,
             final Retrofit scpRetrofit,
             final Retrofit scpReaderRetrofit,
+            final ScpReaderAuthApi scpReaderAuthApi,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
     ) {
-        super(okHttpClient, vpsRetrofit, scpRetrofit, scpReaderRetrofit, preferencesManager, gson, constantValues);
-
-        ((AppComponentImpl) BaseApplication.getAppComponent()).inject(this);
-
-        scpRuApi = scpRuApiRetrofit.create(ScpRuApi.class);
+        super(
+                okHttpClient,
+                vpsRetrofit,
+                scpRetrofit,
+                scpReaderRetrofit,
+                scpReaderAuthApi,
+                preferencesManager,
+                gson,
+                constantValues
+        );
     }
 
     @Override
@@ -63,15 +59,14 @@ public class ApiClientImpl extends ApiClient {
                             .url("https://scpdb.org/api/wikidot_random_page")
                             .build();
 
-                    final String responseBody;
                     try {
                         final OkHttpClient okHttpClient = new OkHttpClient.Builder()
                                 .followRedirects(false)
                                 .build();
                         final Response response = okHttpClient.newCall(request).execute();
-                        final AtomicReference<ResponseBody> body = new AtomicReference<>(response.body());
-                        if (body.get() != null) {
-                            responseBody = body.get().string();
+                        final ResponseBody body = response.body();
+                        if (body != null) {
+                            final String responseBody = body.string();
                             //{"name":"scp-2320"}
                             final String scp = new JsonParser().parse(responseBody).getAsJsonObject().get("name").getAsString();
                             subscriber.onNext(mConstantValues.getBaseApiUrl() + "/" + scp);
@@ -88,7 +83,7 @@ public class ApiClientImpl extends ApiClient {
 
     @Override
     public Observable<Integer> getRecentArticlesPageCountObservable() {
-        return bindWithUtils(Observable.<Integer>unsafeCreate(subscriber -> {
+        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();

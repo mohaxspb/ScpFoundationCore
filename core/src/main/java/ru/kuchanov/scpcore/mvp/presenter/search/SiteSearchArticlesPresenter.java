@@ -13,6 +13,7 @@ import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.error.ScpNoArticleForIdError;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.search.SiteSearchArticlesMvp;
 import ru.kuchanov.scpcore.mvp.presenter.articleslists.BaseListArticlesPresenter;
 import rx.Observable;
@@ -33,9 +34,10 @@ public class SiteSearchArticlesPresenter
     public SiteSearchArticlesPresenter(
             final MyPreferenceManager myPreferencesManager,
             final DbProviderFactory dbProviderFactory,
-            final ApiClient apiClient
+            final ApiClient apiClient,
+            final InAppHelper inAppHelper
     ) {
-        super(myPreferencesManager, dbProviderFactory, apiClient);
+        super(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }
 
     @Override

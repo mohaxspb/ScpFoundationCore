@@ -4,6 +4,7 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.DrawerMvp;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
@@ -17,9 +18,10 @@ public abstract class BaseDrawerPresenter<V extends DrawerMvp.View>
     public BaseDrawerPresenter(
             final MyPreferenceManager myPreferencesManager,
             final DbProviderFactory dbProviderFactory,
-            final ApiClient apiClient
+            final ApiClient apiClient,
+            final InAppHelper inAppHelper
     ) {
-        super(myPreferencesManager, dbProviderFactory, apiClient);
+        super(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }
 
     @Override
@@ -29,7 +31,7 @@ public abstract class BaseDrawerPresenter<V extends DrawerMvp.View>
             getView().showMessage(R.string.random_article_warning);
         }
         getView().showProgressDialog(R.string.dialog_random_page_message);
-        final Single<String> randomUrlObservable = mMyPreferencesManager.isOfflineRandomEnabled()
+        final Single<String> randomUrlObservable = myPreferencesManager.isOfflineRandomEnabled()
                                                        ? mDbProviderFactory.getDbProvider().getRandomUrl().toSingle()
                                                        : mApiClient.getRandomUrl().toSingle()
                                                                .subscribeOn(Schedulers.io())

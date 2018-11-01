@@ -1,6 +1,5 @@
 package ru.kuchanov.scpcore.mvp.contract.monetization
 
-import android.support.v4.app.Fragment
 import com.android.vending.billing.IInAppBillingService
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LeaderboardUserViewModel
@@ -26,7 +25,6 @@ interface LeaderboardContract : BaseMvp {
         fun showUser(myUser: LeaderboardUserViewModel?)
         fun showSwipeRefreshProgress(show: Boolean)
         fun enableSwipeRefresh(enable: Boolean)
-        fun showOfferLoginForLevelUpPopup()
         fun resetOnScrollListener()
         fun showBottomProgress(show: Boolean)
     }
@@ -41,7 +39,6 @@ interface LeaderboardContract : BaseMvp {
         val updateTime: Long
 
         fun loadInitialData()
-        fun onSubscriptionClick(id: String, target: Fragment, ignoreUserCheck: Boolean = false)
         fun updateLeaderboardFromApi(offset: Int, limit: Int = LEADERBOARD_REQUEST_LIMIT)
         fun onRewardedVideoClick()
     }

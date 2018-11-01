@@ -33,7 +33,7 @@ public class StorageModule {
 
     @Provides
     @Singleton
-    MyPreferenceManager providesPreferencesManager(final Context context, final Gson gson) {
+    MyPreferenceManager providesPreferenceManager(final Context context, final Gson gson) {
         return new MyPreferenceManager(context, gson);
     }
 
@@ -44,7 +44,7 @@ public class StorageModule {
     }
 
     protected RealmMigration getRealmMigration() {
-        throw new IllegalStateException("override method in app module!");
+        throw new IllegalStateException("override method in app gradle module!");
     }
 
     @Provides

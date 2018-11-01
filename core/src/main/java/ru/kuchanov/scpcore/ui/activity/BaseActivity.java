@@ -4,16 +4,12 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.appinvite.AppInvite;
-import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.appinvite.FirebaseAppInvite;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
@@ -24,18 +20,12 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.vending.billing.IInAppBillingService;
 import com.appodeal.ads.Appodeal;
 import com.appodeal.ads.Native;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
-import com.vk.sdk.VKAccessToken;
-import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
-import com.vk.sdk.api.VKError;
 
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.Duration;
 import org.joda.time.Period;
 
@@ -63,12 +53,10 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -94,11 +82,11 @@ import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable;
 import ru.kuchanov.scpcore.manager.MyNotificationManager;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.admob.AdMobHelper;
-import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.monetization.util.admob.MyAdListener;
 import ru.kuchanov.scpcore.monetization.util.appodeal.MyAppodealInterstitialCallbacks;
 import ru.kuchanov.scpcore.monetization.util.appodeal.MyAppodealNativeCallbacks;
 import ru.kuchanov.scpcore.monetization.util.appodeal.MyRewardedVideoCallbacks;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp;
 import ru.kuchanov.scpcore.mvp.base.MonetizationActions;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
@@ -144,12 +132,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     public static final String EXTRA_TAGS = "EXTRA_TAGS";
 
     //google login
-    private static final int RC_SIGN_IN = 5555;
+    public static final int RC_SIGN_IN = 5555;
 
     protected GoogleApiClient mGoogleApiClient;
-
-    //facebook
-    private final CallbackManager mCallbackManager = CallbackManager.Factory.create();
     ///////////
 
     @BindView(R2.id.root)
@@ -227,24 +212,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .addApi(AppInvite.API)
                 .build();
-        //facebook login
-        LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(final LoginResult loginResult) {
-                Timber.d("onSuccess: %s", loginResult);
-                mPresenter.startFirebaseLogin(Constants.Firebase.SocialProvider.FACEBOOK, loginResult.getAccessToken().getToken());
-            }
-
-            @Override
-            public void onCancel() {
-                Timber.e("onCancel");
-            }
-
-            @Override
-            public void onError(final FacebookException error) {
-                Timber.e(error);
-            }
-        });
 
         mPresenter.onCreate();
 
@@ -301,6 +268,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     }
                 })
                 .addOnFailureListener(this, e -> Timber.e(e, "getDynamicLink:onFailure"));
+    }
+
+    @Override
+    public void showOfferLoginForLevelUpPopup() {
+        mDialogUtils.showOfferLoginForLevelUpPopup(this);
     }
 
     @Override
@@ -539,8 +511,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     /**
-     * checks if it's time to show rewarded instead of simple interstitial
-     * and it's ready and shows rewarded video or interstitial
+     * checks if it's time to show rewarded instead of simple interstitial and it's ready and shows rewarded video or interstitial
      */
     @Override
     public void showInterstitial(final MyAdListener adListener, final boolean showVideoIfNeedAndCan) {
@@ -605,7 +576,13 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 snackbar.setAction(R.string.yes, action -> {
                     if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO)) {
                         try {
-                            InAppHelper.startSubsBuy(this, mService, InAppHelper.InappType.SUBS, InAppHelper.getNewSubsSkus().get(0));
+                            //todo
+                            InAppHelper.intentSenderSingle(
+                                    this,
+                                    mService,
+                                    InAppHelper.InappType.SUBS,
+                                    InAppHelper.getNewSubsSkus().get(0)
+                            );
 
                             final Bundle bundle = new Bundle();
                             bundle.putString(EventParam.PLACE, StartScreen.ADS_WILL_SHOWN_SOON);
@@ -641,6 +618,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         }
     }
 
+    @Override
     @Nullable
     public IInAppBillingService getIInAppBillingService() {
         return mService;
@@ -752,6 +730,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     /**
      * workaround from http://stackoverflow.com/a/30337653/3212712 to show menu icons
      */
+    @SuppressLint("RestrictedApi")
     @Override
     protected boolean onPrepareOptionsPanel(final View view, final Menu menu) {
         if (menu != null) {
@@ -906,6 +885,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
+    public void showInAppErrorDialog(@NotNull final String errorMessage) {
+        mDialogUtils.showInAppErrorDialog(this, errorMessage);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         final int i = item.getItemId();
         if (i == R.id.settings) {
@@ -1022,84 +1006,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
-    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        final VKCallback<VKAccessToken> vkCallback = new VKCallback<VKAccessToken>() {
-            @Override
-            public void onResult(final VKAccessToken vkAccessToken) {
-                //Пользователь успешно авторизовался
-                Timber.d("Auth successful: %s", vkAccessToken.email);
-                if (vkAccessToken.email != null) {
-                    //here can be case, when we login via Google or Facebook, but try to join group to receive reward
-                    //in this case we have firebase user already, so no need to login to firebase
-                    //FIXME TODO add support of connect vk acc to firebase acc as social provider
-                    if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                        Timber.e("Firebase user exists, do nothing as we do not implement connect VK acc to Firebase as social provider");
-                    } else {
-                        mPresenter.startFirebaseLogin(Constants.Firebase.SocialProvider.VK, VKAccessToken.currentToken().accessToken);
-                    }
-                } else {
-                    Toast.makeText(BaseActivity.this, R.string.error_login_no_email, Toast.LENGTH_SHORT).show();
-                    mPresenter.logoutUser();
-                }
-            }
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        Timber.d("onActivityResult called in BaseActivity");
 
-            @Override
-            public void onError(final VKError error) {
-                // Произошла ошибка авторизации (например, пользователь запретил авторизацию)
-                final String errorMessage = error == null ? getString(R.string.error_unexpected) : error.errorMessage;
-                Timber.e("error/errMsg: %s/%s", error, errorMessage);
-                Toast.makeText(BaseActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-            }
-        };
-        if (VKSdk.onActivityResult(requestCode, resultCode, data, vkCallback)) {
-            Timber.d("Vk receives and handled onActivityResult");
+        if (!presenter.onActivityResult(requestCode, resultCode, data)) {
             super.onActivityResult(requestCode, resultCode, data);
-        } else if (requestCode == RC_SIGN_IN) {
-            final GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if (result == null) {
-                Timber.wtf("GoogleSignInResult is NULL!!!");
-                Toast.makeText(this, R.string.error_unexpected, Toast.LENGTH_LONG).show();
-                return;
-            }
-            if (result.isSuccess()) {
-                Timber.d("Auth successful: %s", result);
-                // Signed in successfully, show authenticated UI.
-                final GoogleSignInAccount acct = result.getSignInAccount();
-                if (acct == null) {
-                    Timber.wtf("GoogleSignInAccount is NULL!");
-                    showMessage("GoogleSignInAccount is NULL!");
-                    return;
-                }
-                final String email = acct.getEmail();
-                if (!TextUtils.isEmpty(email)) {
-                    mPresenter.startFirebaseLogin(Constants.Firebase.SocialProvider.GOOGLE, acct.getIdToken());
-                } else {
-                    Toast.makeText(BaseActivity.this, R.string.error_login_no_email, Toast.LENGTH_SHORT).show();
-                    mPresenter.logoutUser();
-                }
-            } else {
-                // Signed out, show unauthenticated UI.
-                mPresenter.logoutUser();
-            }
-        } else if (requestCode == Constants.Firebase.REQUEST_INVITE) {
-            if (resultCode == RESULT_OK) {
-                // Get the invitation IDs of all sent messages
-                final String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
-                for (final String id : ids) {
-                    Timber.d("onActivityResult: sent invitation %s", id);
-                    //todo we need to be able to send multiple IDs in one request
-                    mPresenter.onInviteSent(id);
-
-                    FirebaseAnalytics.getInstance(BaseActivity.this)
-                            .logEvent(EventName.INVITE_SENT, null);
-                }
-            } else {
-                // Sending failed or it was canceled, show failure message to the user
-                Timber.d("invitation failed for some reason");
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-            mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 

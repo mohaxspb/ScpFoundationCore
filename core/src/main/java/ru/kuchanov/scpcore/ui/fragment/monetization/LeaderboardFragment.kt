@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.ui.fragment.monetization
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Bitmap
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.support.v7.widget.DefaultItemAnimator
@@ -12,7 +14,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.LinearLayout
 import android.widget.Space
-import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.google.firebase.auth.FirebaseAuth
@@ -54,6 +55,7 @@ class LeaderboardFragment :
         LeaderboardContract.View {
 
     companion object {
+        @SuppressLint("ConstantLocale")
         val simpleDateFormat = SimpleDateFormat("HH:mm dd.MM.yy", Locale.getDefault())
 
         fun newInstance(): LeaderboardFragment = LeaderboardFragment()
@@ -96,20 +98,17 @@ class LeaderboardFragment :
         delegateManager.addDelegate(DividerDelegate())
         delegateManager.addDelegate(LabelDelegate())
         delegateManager.addDelegate(LeaderboardDelegate())
-        delegateManager.addDelegate(InAppDelegate {
-            when (it) {
+        delegateManager.addDelegate(InAppDelegate { id ->
+            when (id) {
                 LeaderboardPresenter.APPODEAL_ID -> presenter.onRewardedVideoClick()
-                else -> presenter.onSubscriptionClick(it, this)
+                else -> baseActivity?.let { presenter.onPurchaseClick(id, it, false) }
             }
         })
 
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter
 
-        if (presenter.data.isEmpty()) {
-            enableSwipeRefresh(false)
-            getPresenter().loadInitialData()
-        } else {
+        if (presenter.data.isNotEmpty()) {
             showProgressCenter(false)
             presenter.apply { showData(data); onUserChanged(myUser); showUpdateDate(updateTime) }
         }
@@ -236,20 +235,6 @@ class LeaderboardFragment :
         }
     }
 
-    override fun showOfferLoginForLevelUpPopup() {
-        baseActivity?.apply {
-            MaterialDialog.Builder(this)
-                    .title(R.string.need_login)
-                    .content(R.string.need_login_for_level_up_content)
-                    .positiveText(R.string.authorize)
-                    .onPositive { _, _ -> showLoginProvidersPopup() }
-                    .negativeText(android.R.string.cancel)
-                    .onNegative { dialog: MaterialDialog, _ -> dialog.dismiss() }
-                    .build()
-                    .show()
-        }
-    }
-
     override fun showRefreshButton(show: Boolean) {
         refresh.visibility = if (show) VISIBLE else GONE
     }
@@ -304,6 +289,9 @@ class LeaderboardFragment :
 
         swipeRefresh.isRefreshing = show
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Timber.d("onActivityResult called in fragment")
+        baseActivity?.onActivityResult(requestCode, resultCode, data)
+    }
 }
-
-

@@ -559,6 +559,10 @@ public class DbProvider {
     }
 
     private void saveArticleToRealm(final Article article, final Realm realm) {
+        //prevent writing articles with no url
+        if (TextUtils.isEmpty(article.url)) {
+            return;
+        }
         //if not have subscription
         //check if we have limit in downloads
         //if so - delete one article to save this
@@ -880,6 +884,9 @@ public class DbProvider {
                             articleInFirebase.updated < t1.updated ? -1 : articleInFirebase.updated > t1.updated ? 1 : 0);
                     long counter = 0;
                     for (final ArticleInFirebase article : inFirebaseList) {
+                        if (TextUtils.isEmpty(article.url)) {
+                            continue;
+                        }
                         Article realmArticle = realm.where(Article.class).equalTo(Article.FIELD_URL, article.url).findFirst();
                         if (realmArticle == null) {
                             realmArticle = new Article();
@@ -1014,8 +1021,7 @@ public class DbProvider {
                     subscriber.onError(e);
                     mRealm.close();
                 }
-                )
-        );
+        ));
     }
 
     public Observable<RealmResults<ArticleTag>> getArticleTagsAsync() {

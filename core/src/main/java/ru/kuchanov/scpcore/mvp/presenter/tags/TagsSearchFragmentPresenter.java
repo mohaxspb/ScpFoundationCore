@@ -7,6 +7,7 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.base.BasePresenter;
 import ru.kuchanov.scpcore.mvp.contract.tags.TagsSearchMvp;
 import rx.android.schedulers.AndroidSchedulers;
@@ -22,11 +23,12 @@ public class TagsSearchFragmentPresenter
     private boolean alreadyRefreshFromApi;
 
     public TagsSearchFragmentPresenter(
-            MyPreferenceManager myPreferencesManager,
-            DbProviderFactory dbProviderFactory,
-            ApiClient apiClient
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient,
+            final InAppHelper inAppHelper
     ) {
-        super(myPreferencesManager, dbProviderFactory, apiClient);
+        super(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }
 
     @Override
@@ -82,7 +84,7 @@ public class TagsSearchFragmentPresenter
     }
 
     @Override
-    public void searchByTags(List<ArticleTag> tags) {
+    public void searchByTags(final List<ArticleTag> tags) {
         Timber.d("searchByTags: %s", tags);
 
         getView().showProgress(true);

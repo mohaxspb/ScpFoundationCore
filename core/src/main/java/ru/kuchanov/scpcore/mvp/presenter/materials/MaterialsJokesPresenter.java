@@ -9,6 +9,7 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsJokesMvp;
 import ru.kuchanov.scpcore.mvp.presenter.articleslists.BaseObjectsArticlesPresenter;
 import rx.Observable;
@@ -18,12 +19,13 @@ public class MaterialsJokesPresenter
         implements MaterialsJokesMvp.Presenter {
 
     public MaterialsJokesPresenter(
-            MyPreferenceManager myPreferencesManager,
-            DbProviderFactory dbProviderFactory,
-            ApiClient apiClient,
-            @NonNull ConstantValues constantValues
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient,
+            @NonNull final ConstantValues constantValues,
+            final InAppHelper inAppHelper
     ) {
-        super(myPreferencesManager, dbProviderFactory, apiClient, constantValues);
+        super(myPreferencesManager, dbProviderFactory, apiClient, constantValues, inAppHelper);
     }
 
     @Override
@@ -37,7 +39,7 @@ public class MaterialsJokesPresenter
     }
 
     @Override
-    protected Observable<List<Article>> getApiObservable(int offset) {
+    protected Observable<List<Article>> getApiObservable(final int offset) {
         return mApiClient.getMaterialsJokesArticles();
     }
 }
