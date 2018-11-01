@@ -113,13 +113,13 @@ public class ArticlePresenter
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .map(downloadedArticle -> {
-                    if (mMyPreferencesManager.isHasSubscription() && mMyPreferencesManager.getInnerArticlesDepth() != 0) {
+                    if (myPreferencesManager.isHasSubscription() && myPreferencesManager.getInnerArticlesDepth() != 0) {
                         DownloadAllService.getAndSaveInnerArticles(
                                 mDbProviderFactory.getDbProvider(),
                                 mApiClient,
                                 downloadedArticle,
                                 0,
-                                mMyPreferencesManager.getInnerArticlesDepth()
+                                myPreferencesManager.getInnerArticlesDepth()
                         );
                     }
 

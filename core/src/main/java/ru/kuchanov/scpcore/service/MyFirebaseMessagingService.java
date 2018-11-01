@@ -11,6 +11,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
@@ -48,11 +49,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     DbProviderFactory mDbProviderFactory;
 
     @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) {
+    public void onNewToken(final String s) {
+        super.onNewToken(s);
+        Timber.d("onTokenRefresh(): %s", FirebaseInstanceId.getInstance().getInstanceId().getResult().getToken());
+    }
+
+    @Override
+    public void onMessageReceived(final RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
         BaseApplication.getAppComponent().inject(this);
 
-        Timber.d("onMessageReceived: %s", remoteMessage.getData() != null ? remoteMessage.getData() : null);
+        Timber.d("onMessageReceived: %s", remoteMessage.getData());
 
         //todo need to switch by some key-value pair to be able to handle different pushes
         if (remoteMessage.getNotification() == null) {
@@ -65,28 +72,28 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 //give no ads reward
                 mMyPreferenceManager.applyAwardForInvite();
 
-                String notifMessage;
+                final String notifMessage;
                 if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                     //also increase user score
                     incrementUserScoreForInvite();
 
-                    long numOfMillis = FirebaseRemoteConfig.getInstance()
+                    final long numOfMillis = FirebaseRemoteConfig.getInstance()
                             .getLong(Constants.Firebase.RemoteConfigKeys.INVITE_REWARD_IN_MILLIS);
-                    int hours = Duration.millis(numOfMillis).toStandardHours().getHours();
-                    int score = (int) FirebaseRemoteConfig.getInstance()
+                    final int hours = Duration.millis(numOfMillis).toStandardHours().getHours();
+                    final int score = (int) FirebaseRemoteConfig.getInstance()
                             .getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_INVITE);
                     notifMessage = getString(R.string.invite_received_reward_message, hours, score);
                 } else {
                     Timber.d("Not authorized, so only noAds period is increased");
-                    long numOfMillis = FirebaseRemoteConfig.getInstance()
+                    final long numOfMillis = FirebaseRemoteConfig.getInstance()
                             .getLong(Constants.Firebase.RemoteConfigKeys.INVITE_REWARD_IN_MILLIS);
-                    int hours = Duration.millis(numOfMillis).toStandardHours().getHours();
+                    final int hours = Duration.millis(numOfMillis).toStandardHours().getHours();
                     notifMessage = getString(R.string.ads_disabled_for_some_hours, hours);
                 }
 
-                Intent intent = new Intent(this, MainActivity.class);
+                final Intent intent = new Intent(this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                PendingIntent pendingIntent = PendingIntent.getActivity(
+                final PendingIntent pendingIntent = PendingIntent.getActivity(
                         this,
                         0,
                         intent,
@@ -106,12 +113,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         pendingIntent
                 );
             } else {
-                String title = remoteMessage.getData().get(Constants.Firebase.PushDataKeys.TITLE);
-                String message = remoteMessage.getData().get(Constants.Firebase.PushDataKeys.MESSAGE);
-                String url = remoteMessage.getData().get(Constants.Firebase.PushDataKeys.URL);
-                boolean openInThirdPartyBrowser =
+                final String title = remoteMessage.getData().get(Constants.Firebase.PushDataKeys.TITLE);
+                final String message = remoteMessage.getData().get(Constants.Firebase.PushDataKeys.MESSAGE);
+                final String url = remoteMessage.getData().get(Constants.Firebase.PushDataKeys.URL);
+                final boolean openInThirdPartyBrowser =
                         Boolean.parseBoolean(remoteMessage.getData().get(Constants.Firebase.PushDataKeys.OPEN_IN_THIRD_PARTY_BROWSER));
-                Intent intent;
+                final Intent intent;
                 if (url == null) {
                     intent = new Intent(this, MainActivity.class);
                 } else if (!openInThirdPartyBrowser) {
@@ -123,7 +130,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     intent.setData(Uri.parse(url));
                 }
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                PendingIntent pendingIntent = PendingIntent.getActivity(
+                final PendingIntent pendingIntent = PendingIntent.getActivity(
                         this,
                         0,
                         intent,
@@ -137,9 +144,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 );
             }
         } else {
-            Intent intent = new Intent(this, MainActivity.class);
+            final Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent pendingIntent = PendingIntent.getActivity(
+            final PendingIntent pendingIntent = PendingIntent.getActivity(
                     this,
                     0,
                     intent,
@@ -173,9 +180,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             return;
         }
 
-        @DataSyncActions.ScoreAction
-        String action = DataSyncActions.ScoreAction.INVITE;
-        int totalScoreToAdd = BasePresenter.getTotalScoreToAddFromAction(action, mMyPreferenceManager);
+        @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.INVITE;
+        final int totalScoreToAdd = BasePresenter.getTotalScoreToAddFromAction(action, mMyPreferenceManager);
 
         //increment scoreInFirebase
         mApiClient
@@ -184,9 +190,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(newTotalScore -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
                 .subscribe(
-                        newTotalScore -> {
-                            Timber.d("new total score is: %s", newTotalScore);
-                        },
+                        newTotalScore -> Timber.d("new total score is: %s", newTotalScore),
                         e -> {
                             Timber.e(e, "error while increment userCore from action");
                             //increment unsynced score to sync it later
@@ -195,8 +199,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 );
     }
 
-    private void buildNotification(int id, String title, String message, PendingIntent pendingIntent) {
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "invite push")
+    @SuppressWarnings("TypeMayBeWeakened")
+    private void buildNotification(final int id, final CharSequence title, final String message, final PendingIntent pendingIntent) {
+        final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "invite push")
                 .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_launcher))
                 .setSmallIcon(R.drawable.ic_logo_notification)
                 .setContentTitle(title)
@@ -211,7 +216,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             notificationBuilder.setColor(ContextCompat.getColor(this, R.color.colorPrimary));
         }
 
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(id, notificationBuilder.build());
     }
 }

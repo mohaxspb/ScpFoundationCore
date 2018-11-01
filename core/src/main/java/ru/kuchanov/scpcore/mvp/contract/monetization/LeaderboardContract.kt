@@ -7,7 +7,6 @@ import ru.kuchanov.scpcore.db.model.User
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.mvp.base.BaseMvp
 import ru.kuchanov.scpcore.mvp.contract.FragmentToolbarStateSetter
-import ru.kuchanov.scpcore.ui.activity.BaseActivity
 
 /**
  * Created by y.kuchanov on 21.12.16.

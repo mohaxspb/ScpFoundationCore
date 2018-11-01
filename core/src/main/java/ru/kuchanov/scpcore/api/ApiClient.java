@@ -55,8 +55,6 @@ import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import io.realm.RealmList;
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -75,7 +73,9 @@ import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser;
 import ru.kuchanov.scpcore.api.model.response.LeaderboardUsersUpdateDates;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
 import ru.kuchanov.scpcore.api.model.response.VkGroupJoinResponse;
-import ru.kuchanov.scpcore.api.service.ScpReaderServer;
+import ru.kuchanov.scpcore.api.model.response.scpreaderapi.AccessTokenResponse;
+import ru.kuchanov.scpcore.api.service.ScpReaderApi;
+import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.api.service.ScpServer;
 import ru.kuchanov.scpcore.api.service.VpsServer;
 import ru.kuchanov.scpcore.db.model.Article;
@@ -111,8 +111,7 @@ public class ApiClient {
 
     private static final String SITE_TAGS_PATH = "system:page-tags/tag/";
 
-    @SuppressWarnings("unused")
-    protected MyPreferenceManager mPreferencesManager;
+    private final MyPreferenceManager mPreferencesManager;
 
     protected OkHttpClient mOkHttpClient;
 
@@ -120,7 +119,9 @@ public class ApiClient {
 
     private final VpsServer mVpsServer;
 
-    private final ScpReaderServer mScpReaderServer;
+    private final ScpReaderApi mScpReaderApi;
+
+    private final ScpReaderAuthApi mScpReaderAuthApi;
 
     private final ScpServer mScpServer;
 
@@ -131,6 +132,7 @@ public class ApiClient {
             final Retrofit vpsRetrofit,
             final Retrofit scpRetrofit,
             final Retrofit scpReaderRetrofit,
+            final ScpReaderAuthApi scpReaderAuthApi,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
@@ -141,8 +143,23 @@ public class ApiClient {
         mGson = gson;
         mVpsServer = vpsRetrofit.create(VpsServer.class);
         mScpServer = scpRetrofit.create(ScpServer.class);
-        mScpReaderServer = scpReaderRetrofit.create(ScpReaderServer.class);
+        mScpReaderApi = scpReaderRetrofit.create(ScpReaderApi.class);
+        mScpReaderAuthApi = scpReaderAuthApi;
         mConstantValues = constantValues;
+    }
+
+    @NotNull
+    public Single<AccessTokenResponse> loginToScpReaderServer(
+            final Constants.Firebase.SocialProvider socialProvider,
+            final String token
+    ) {
+        return mScpReaderAuthApi.socialLogin(
+                socialProvider,
+                token,
+                ScpReaderAuthApi.FirebaseInstance.getFirebaseInstanceForLang(mConstantValues.getAppLang()),
+                BuildConfig.SCP_READER_API_CLIENT_ID,
+                BuildConfig.SCP_READER_API_CLIENT_SECRET
+        );
     }
 
     protected <T> Observable<T> bindWithUtils(final Observable<T> observable) {
@@ -172,11 +189,11 @@ public class ApiClient {
                 final Response response = mOkHttpClient.newCall(request.build()).execute();
 
                 final Request requestResult = response.request();
-                Timber.d("requestResult:" + requestResult);
-                Timber.d("requestResult.url().url():" + requestResult.url().url());
+                Timber.d("requestResult:%s", requestResult);
+                Timber.d("requestResult.url().url():%s", requestResult.url().url());
 
                 final String randomURL = requestResult.url().url().toString();
-                Timber.d("randomUrl = " + randomURL);
+                Timber.d("randomUrl = %s", randomURL);
 
                 subscriber.onNext(randomURL);
                 subscriber.onCompleted();
@@ -188,12 +205,12 @@ public class ApiClient {
     }
 
     public Observable<Integer> getRecentArticlesPageCountObservable() {
-        return bindWithUtils(Observable.<Integer>unsafeCreate((Subscriber<? super Integer> subscriber) -> {
+        return bindWithUtils(Observable.unsafeCreate((Subscriber<? super Integer> subscriber) -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();
 
-            String responseBody = null;
+            String responseBody;
             try {
                 final Response response = mOkHttpClient.newCall(request).execute();
                 final ResponseBody body = response.body();
@@ -230,7 +247,7 @@ public class ApiClient {
     }
 
     public Observable<List<Article>> getRecentArticlesForPage(final int page) {
-        return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
+        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/" + page)
                     .build();
@@ -256,7 +273,7 @@ public class ApiClient {
 
                 subscriber.onNext(articles);
                 subscriber.onCompleted();
-            } catch (Exception | ScpParseException e) {
+            } catch (final Exception | ScpParseException e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
@@ -311,7 +328,7 @@ public class ApiClient {
     }
 
     public Observable<List<Article>> getRatedArticles(final int offset) {
-        return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
+        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
             final int page = offset / mConstantValues.getNumOfArticlesOnRatedPage() + 1/*as pages are not zero based*/;
 
             final Request request = new Request.Builder()
@@ -339,7 +356,7 @@ public class ApiClient {
 
                 subscriber.onNext(articles);
                 subscriber.onCompleted();
-            } catch (Exception | ScpParseException e) {
+            } catch (final Exception | ScpParseException e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
@@ -381,7 +398,7 @@ public class ApiClient {
     }
 
     public Observable<List<Article>> getSearchArticles(final int offset, final String searchQuery) {
-        return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
+        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
             final int page = offset / mConstantValues.getNumOfArticlesOnSearchPage() + 1/*as pages are not zero based*/;
 
             final Request request = new Request.Builder()
@@ -443,7 +460,7 @@ public class ApiClient {
     }
 
     public Observable<List<Article>> getObjectsArticles(final String sObjectsLink) {
-        return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
+        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
             final Request request = new Request.Builder()
                     .url(sObjectsLink)
                     .build();
@@ -469,7 +486,7 @@ public class ApiClient {
 
                 subscriber.onNext(articles);
                 subscriber.onCompleted();
-            } catch (Exception | ScpParseException e) {
+            } catch (final Exception | ScpParseException e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
@@ -852,7 +869,7 @@ public class ApiClient {
     }
 
     /**
-     * We need this as in FR site all article content wraped in another div... ***!!!11
+     * We need this as in FR site all article content wrapped in another div... ***!!!11
      *
      * @return Element with article content
      */
@@ -904,7 +921,7 @@ public class ApiClient {
                         final FileOutputStream ostream = new FileOutputStream(imageFile);
                         bitmap.compress(Bitmap.CompressFormat.PNG, 10, ostream);
                         ostream.close();
-                    } catch (InterruptedException | IOException | ExecutionException e) {
+                    } catch (final InterruptedException | IOException | ExecutionException e) {
                         Timber.e(e);
                     }
                 } else {
@@ -973,7 +990,7 @@ public class ApiClient {
     }
 
     public Observable<List<Article>> getMaterialsArchiveArticles() {
-        return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
+        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getArchive())
                     .build();
@@ -1050,7 +1067,7 @@ public class ApiClient {
     }
 
     public Observable<List<Article>> getMaterialsJokesArticles() {
-        return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
+        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getJokes())
                     .build();
@@ -1128,7 +1145,7 @@ public class ApiClient {
 
     public Observable<Boolean> joinVkGroup(final String groupId) {
         Timber.d("joinVkGroup with groupId: %s", groupId);
-        return bindWithUtils(Observable.<Boolean>unsafeCreate(subscriber -> {
+        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
                     final VKParameters parameters = VKParameters.from(
                             VKApiConst.GROUP_ID, groupId,
                             VKApiConst.ACCESS_TOKEN, VKAccessToken.currentToken(),
@@ -1158,9 +1175,10 @@ public class ApiClient {
     }
 
     @Article.ObjectType
-    private String getObjectTypeByImageUrl(final String imageURL) {
+    private static String getObjectTypeByImageUrl(final String imageURL) {
         @Article.ObjectType final String type;
 
+        //todo change url for objects 2
         switch (imageURL) {
             case "http://scp-ru.wdfiles.com/local--files/scp-list-4/na.png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list-3/na.png":
@@ -1245,7 +1263,7 @@ public class ApiClient {
     }
 
     public Single<List<GalleryImage>> getGallery() {
-        return mScpReaderServer.getGallery();
+        return mScpReaderApi.getGallery();
     }
 
     private Observable<VKApiUser> getUserDataFromVk() {
@@ -1267,69 +1285,23 @@ public class ApiClient {
         }));
     }
 
-    private Observable<FirebaseUser> authWithCustomToken(final String token) {
-        return Observable.unsafeCreate(subscriber ->
-                FirebaseAuth.getInstance().signInWithCustomToken(token).addOnCompleteListener(task -> {
-                    Timber.d("signInWithCustomToken:onComplete: %s", task.isSuccessful());
-
-                    // If sign in fails, display a message to the user. If sign in succeeds
-                    // the auth state listener will be notified and logic to handle the
-                    // signed in user can be handled in the listener.
-                    if (!task.isSuccessful()) {
-                        subscriber.onError(task.getException());
-                    } else {
-                        subscriber.onNext(task.getResult().getUser());
-                        subscriber.onCompleted();
-                    }
-                }));
-    }
-
-    //todo use it via retrofit and update server to return JSON with request result
     public Observable<FirebaseUser> getAuthInFirebaseWithSocialProviderObservable(
             final Constants.Firebase.SocialProvider provider,
             final String id
     ) {
+        Timber.d("getAuthInFirebaseWithSocialProviderObservable: %s/%s", provider, id);
         final Observable<FirebaseUser> authToFirebaseObservable;
         switch (provider) {
             case VK:
-                authToFirebaseObservable = Observable.<String>unsafeCreate(subscriber -> {
-                    String url = BaseApplication.getAppInstance().getString(R.string.tools_api_url) + "scp-ru-1/MyServlet";
-                    String params = "?provider=vk&token=" +
-                                    id +
-                                    "&email=" +
-                                    VKAccessToken.currentToken().email +
-                                    "&id=" +
-                                    VKAccessToken.currentToken().userId;
-                    Request request = new Request.Builder()
-                            .url(url + params)
-                            .build();
-                    mOkHttpClient.newCall(request).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
-                            subscriber.onError(e);
-                        }
-
-                        @Override
-                        public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
-                            final String responseBody;
-                            final ResponseBody body = response.body();
-                            if (body != null) {
-                                responseBody = body.string();
-                            } else {
-                                subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
-                                return;
-                            }
-                            subscriber.onNext(responseBody);
-                            subscriber.onCompleted();
-                        }
-                    });
-                })
+                authToFirebaseObservable = mVpsServer
+                        .getFirebaseTokenForVkUserId("vk", VKAccessToken.currentToken().userId)
                         .flatMap(response -> TextUtils.isEmpty(response) ?
-                                             Observable.error(new IllegalArgumentException("empty token")) :
-                                             Observable.just(response))
+                                             Single.error(new IllegalArgumentException("Empty firebase token for vk user!")) :
+                                             Single.just(response))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .flatMap(this::authWithCustomToken);
+                        .flatMap(this::authWithCustomToken)
+                        .toObservable();
                 break;
             case GOOGLE:
                 authToFirebaseObservable = Observable.unsafeCreate(subscriber -> {
@@ -1343,7 +1315,6 @@ public class ApiClient {
                             subscriber.onCompleted();
                         } else {
                             // If sign in fails, display a message to the user.
-//                            Timber.e(task.getException(), "signInWithCredential:failure");
                             subscriber.onError(task.getException());
                         }
                     });
@@ -1374,6 +1345,22 @@ public class ApiClient {
         return authToFirebaseObservable;
     }
 
+    private Single<FirebaseUser> authWithCustomToken(final String token) {
+        return Single.create(subscriber ->
+                FirebaseAuth.getInstance().signInWithCustomToken(token).addOnCompleteListener(task -> {
+                    Timber.d("signInWithCustomToken:onComplete: %s", task.isSuccessful());
+
+                    // If sign in fails, display a message to the user. If sign in succeeds
+                    // the auth state listener will be notified and logic to handle the
+                    // signed in user can be handled in the listener.
+                    if (!task.isSuccessful()) {
+                        subscriber.onError(task.getException());
+                    } else {
+                        subscriber.onSuccess(task.getResult().getUser());
+                    }
+                }));
+    }
+
     public Observable<FirebaseObjectUser> getUserObjectFromFirebaseObservable() {
         return Observable.unsafeCreate(subscriber -> {
             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -1384,14 +1371,14 @@ public class ApiClient {
                         .child(firebaseUser.getUid())
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
-                            public void onDataChange(final DataSnapshot dataSnapshot) {
+                            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                                 final FirebaseObjectUser userFromFireBase = dataSnapshot.getValue(FirebaseObjectUser.class);
                                 subscriber.onNext(userFromFireBase);
                                 subscriber.onCompleted();
                             }
 
                             @Override
-                            public void onCancelled(final DatabaseError databaseError) {
+                            public void onCancelled(@NonNull final DatabaseError databaseError) {
                                 Timber.e(databaseError.toException(), "onCancelled");
                                 subscriber.onError(databaseError.toException());
                             }
@@ -1456,7 +1443,7 @@ public class ApiClient {
         });
     }
 
-    public Observable<Pair<String, String>> nameAndAvatarFromProviderObservable(Constants.Firebase.SocialProvider provider) {
+    public Observable<Pair<String, String>> nameAndAvatarFromProviderObservable(final Constants.Firebase.SocialProvider provider) {
         final Observable<Pair<String, String>> nameAvatarObservable;
         switch (provider) {
             case VK:
@@ -1489,7 +1476,7 @@ public class ApiClient {
         });
     }
 
-    public Observable<Void> updateFirebaseUsersSocialProvidersObservable(List<SocialProviderModel> socialProviderModels) {
+    public Observable<Void> updateFirebaseUsersSocialProvidersObservable(final List<SocialProviderModel> socialProviderModels) {
         return Observable.unsafeCreate(subscriber -> {
             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser != null) {
@@ -1555,7 +1542,7 @@ public class ApiClient {
                         .child(Constants.Firebase.Refs.SCORE)
                         .runTransaction(new Transaction.Handler() {
                             @Override
-                            public Transaction.Result doTransaction(final MutableData mutableData) {
+                            public Transaction.Result doTransaction(@NonNull final MutableData mutableData) {
                                 Integer p = mutableData.getValue(Integer.class);
                                 if (p == null) {
                                     return Transaction.success(mutableData);
@@ -1677,13 +1664,13 @@ public class ApiClient {
                     .child(url);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(final DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                     subscriber.onNext(dataSnapshot.getValue(ArticleInFirebase.class));
                     subscriber.onCompleted();
                 }
 
                 @Override
-                public void onCancelled(final DatabaseError databaseError) {
+                public void onCancelled(@NonNull final DatabaseError databaseError) {
                     subscriber.onError(databaseError.toException());
                 }
             });
@@ -1704,13 +1691,13 @@ public class ApiClient {
                     .child(Constants.Firebase.Refs.SCORE);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(final DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                     subscriber.onNext(dataSnapshot.getValue(Integer.class));
                     subscriber.onCompleted();
                 }
 
                 @Override
-                public void onCancelled(final DatabaseError databaseError) {
+                public void onCancelled(@NonNull final DatabaseError databaseError) {
                     subscriber.onError(databaseError.toException());
                 }
             });
@@ -1732,7 +1719,7 @@ public class ApiClient {
                     .child(Constants.Firebase.Refs.SIGN_IN_REWARD_GAINED);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(final DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                     final Boolean data = dataSnapshot.getValue(Boolean.class);
                     Timber.d("dataSnapshot.getValue(): %s", data);
                     subscriber.onNext(data != null && data);
@@ -1740,7 +1727,7 @@ public class ApiClient {
                 }
 
                 @Override
-                public void onCancelled(final DatabaseError databaseError) {
+                public void onCancelled(@NonNull final DatabaseError databaseError) {
                     subscriber.onError(databaseError.toException());
                 }
             });
@@ -1763,7 +1750,7 @@ public class ApiClient {
                     .child(id);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(final DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                     final VkGroupToJoin data = dataSnapshot.getValue(VkGroupToJoin.class);
                     Timber.d("dataSnapshot.getValue(): %s", data);
                     subscriber.onNext(data != null);
@@ -1771,7 +1758,7 @@ public class ApiClient {
                 }
 
                 @Override
-                public void onCancelled(final DatabaseError databaseError) {
+                public void onCancelled(@NonNull final DatabaseError databaseError) {
                     subscriber.onError(databaseError.toException());
                 }
             });
@@ -1820,7 +1807,7 @@ public class ApiClient {
                     .child(id);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(final DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                     final PlayMarketApplication data = dataSnapshot.getValue(PlayMarketApplication.class);
                     Timber.d("dataSnapshot.getValue(): %s", data);
                     subscriber.onNext(data != null);
@@ -1828,7 +1815,7 @@ public class ApiClient {
                 }
 
                 @Override
-                public void onCancelled(final DatabaseError databaseError) {
+                public void onCancelled(@NonNull final DatabaseError databaseError) {
                     subscriber.onError(databaseError.toException());
                 }
             });
@@ -1861,36 +1848,6 @@ public class ApiClient {
         });
     }
 
-    public Observable<Boolean> isUserGainedSkoreFromInapp(final String sku) {
-        return Observable.unsafeCreate(subscriber -> {
-            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-            if (firebaseUser == null) {
-                subscriber.onError(new IllegalArgumentException("firebase user is null"));
-                return;
-            }
-            final FirebaseDatabase database = FirebaseDatabase.getInstance();
-            final DatabaseReference reference = database.getReference()
-                    .child(Constants.Firebase.Refs.USERS)
-                    .child(firebaseUser.getUid())
-                    .child(Constants.Firebase.Refs.INAPP)
-                    .child(sku);
-            reference.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(final DataSnapshot dataSnapshot) {
-                    final PlayMarketApplication data = dataSnapshot.getValue(PlayMarketApplication.class);
-                    Timber.d("dataSnapshot.getValue(): %s", data);
-                    subscriber.onNext(data != null);
-                    subscriber.onCompleted();
-                }
-
-                @Override
-                public void onCancelled(final DatabaseError databaseError) {
-                    subscriber.onError(databaseError.toException());
-                }
-            });
-        });
-    }
-
     public Observable<Void> addRewardedInapp(final String sku) {
         return Observable.unsafeCreate(subscriber -> {
             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -1915,31 +1872,8 @@ public class ApiClient {
         });
     }
 
-    public Observable<Void> setCrackedInFirebase() {
-        return Observable.unsafeCreate(subscriber -> {
-            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-            if (firebaseUser == null) {
-                subscriber.onError(new IllegalArgumentException("firebase user is null"));
-                return;
-            }
-            final FirebaseDatabase database = FirebaseDatabase.getInstance();
-            final DatabaseReference reference = database.getReference()
-                    .child(Constants.Firebase.Refs.USERS)
-                    .child(firebaseUser.getUid())
-                    .child(Constants.Firebase.Refs.CRACKED);
-            reference.setValue(true, (databaseError, databaseReference) -> {
-                if (databaseError == null) {
-                    subscriber.onNext(null);
-                    subscriber.onCompleted();
-                } else {
-                    subscriber.onError(databaseError.toException());
-                }
-            });
-        });
-    }
-
     public Single<List<LeaderboardUser>> getLeaderboardUsers(final int offset, final int limit) {
-        return mScpReaderServer.getLeaderboardUsers(
+        return mScpReaderApi.getLeaderboardUsers(
                 mConstantValues.getAppLang().toUpperCase(),
                 offset,
                 limit
@@ -1947,7 +1881,7 @@ public class ApiClient {
     }
 
     public Single<List<LeaderboardUsersUpdateDates>> getLeaderboardUsersUpdateDates() {
-        return mScpReaderServer.getLeaderboardUsersUpdateDates();
+        return mScpReaderApi.getLeaderboardUsersUpdateDates();
     }
 
     public Observable<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {
@@ -1983,7 +1917,7 @@ public class ApiClient {
             final String sku,
             final String purchaseToken
     ) {
-        return mScpReaderServer.validateProduct(packageName, sku, purchaseToken);
+        return mScpReaderApi.validateProduct(packageName, sku, purchaseToken);
     }
 
     public Single<PurchaseValidateResponse> validateSubscription(
@@ -1991,7 +1925,7 @@ public class ApiClient {
             final String sku,
             final String purchaseToken
     ) {
-        return mScpReaderServer.validateSubscription(packageName, sku, purchaseToken);
+        return mScpReaderApi.validateSubscription(packageName, sku, purchaseToken);
     }
 
     public Observable<Boolean> inviteReceived(final String inviteId, final boolean newOne) {
@@ -2018,6 +1952,10 @@ public class ApiClient {
 
     public ConstantValues getConstantValues() {
         return mConstantValues;
+    }
+
+    public Gson getGson() {
+        return mGson;
     }
 
     @NotNull

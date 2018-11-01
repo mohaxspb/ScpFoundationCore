@@ -43,6 +43,11 @@ public interface Constants {
 
         String NOT_TRANSLATED_ARTICLE_UTIL_URL = "not_translated_yet_article_which_we_cant_show";
         String NOT_TRANSLATED_ARTICLE_URL_DELIMITER = "___";
+
+        interface ScpReader{
+            public static final String GRANT_TYPE_PASSWORD = "password";
+            public static final String GRANT_TYPE_REFRESH_TOKEN = "refresh_token";
+        }
     }
 
     interface Urls {

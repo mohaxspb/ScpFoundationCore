@@ -31,6 +31,7 @@ import ru.kuchanov.scpcore.api.ApiClient
 import ru.kuchanov.scpcore.api.error.ScpLoginException
 import ru.kuchanov.scpcore.api.model.firebase.ArticleInFirebase
 import ru.kuchanov.scpcore.api.model.firebase.FirebaseObjectUser
+import ru.kuchanov.scpcore.api.model.scpreader.CommonUserData
 import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.db.model.SocialProviderModel
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
@@ -70,7 +71,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
         if (firebaseUser != null) {
             // User is signed in
             Timber.d("onAuthStateChanged:signed_in: %s", firebaseUser.uid)
-            listenToChangesInFirebase(mMyPreferencesManager.isHasSubscription)
+            listenToChangesInFirebase(myPreferencesManager.isHasSubscription)
         } else {
             // User is signed out
             Timber.d("onAuthStateChanged: signed_out")
@@ -169,8 +170,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .flatMap { Observable.just(firebaseAuth.currentUser) }
                     } else {
-                        mApiClient.getAuthInFirebaseWithSocialProviderObservable(provider, id)
-                                .flatMap { Observable.just(firebaseUser) }
+                        Observable.just(firebaseUser)
                     }
                 }
                 .flatMap { mApiClient.userObjectFromFirebaseObservable }
@@ -192,7 +192,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                                     .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
                                                     .subscribeOn(AndroidSchedulers.mainThread())
                                                     .observeOn(AndroidSchedulers.mainThread())
-                                                    .flatMap { aVoid -> Observable.just(FirebaseAuth.getInstance().currentUser) }
+                                                    .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
                                         } else {
                                             Observable.just(it)
                                         }
@@ -219,7 +219,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                             userToWriteToDb.socialProviders.add(socialProviderModel)
 
                             //in case of first login we should add score and disable ads temporary
-                            mMyPreferencesManager.applyAwardSignIn()
+                            myPreferencesManager.applyAwardSignIn()
 
                             val score = FirebaseRemoteConfig.getInstance()
                                     .getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_AUTH).toInt()
@@ -227,59 +227,46 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
 
                             userToWriteToDb.signInRewardGained = true
 
-                            mApiClient.getAuthInFirebaseWithSocialProviderObservable(provider, id)
-                                    .flatMap {
-                                        if (TextUtils.isEmpty(it.email)) {
-                                            mApiClient.nameAndAvatarFromProviderObservable(provider)
-                                                    .flatMap { nameAvatar ->
-                                                        mApiClient.updateFirebaseUsersNameAndAvatarObservable(
-                                                            nameAvatar.first,
-                                                            nameAvatar.second
-                                                        )
-                                                    }
-                                                    .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
-                                                    .subscribeOn(AndroidSchedulers.mainThread())
-                                                    .observeOn(AndroidSchedulers.mainThread())
-                                                    .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
-                                        } else {
-                                            Observable.just(it)
+                            if (TextUtils.isEmpty(firebaseUser.email)) {
+                                mApiClient.nameAndAvatarFromProviderObservable(provider)
+                                        .flatMap { nameAvatar ->
+                                            mApiClient.updateFirebaseUsersNameAndAvatarObservable(
+                                                nameAvatar.first,
+                                                nameAvatar.second
+                                            )
                                         }
-                                    }
-                                    .doOnNext {
-                                        Timber.d(
-                                            "firebaseUser: %s, %s, %s, %s",
-                                            it?.uid,
-                                            it?.email,
-                                            it?.photoUrl,
-                                            it?.displayName
-                                        )
-                                    }
+                                        .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
+                                        .subscribeOn(AndroidSchedulers.mainThread())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
+                            } else {
+                                Observable.just(firebaseUser)
+                            }
                                     .flatMap { mApiClient.userObjectFromFirebaseObservable }
                                     .flatMap { mApiClient.writeUserToFirebaseObservable(userToWriteToDb) }
                         }
                     } else {
-                        val socialProviderModel = SocialProviderModel.getSocialProviderModelForProvider(provider)
+                        val firebaseUser = FirebaseAuth.getInstance().currentUser!!
+                        val socialProviderModel: SocialProviderModel = SocialProviderModel
+                                .getSocialProviderModelForProvider(provider)
                         if (!userObjectInFirebase.socialProviders.contains(socialProviderModel)) {
                             Timber.d("User does not contains provider info: %s", provider)
-                            //                            socialProviderModel.id = id;
                             userObjectInFirebase.socialProviders.add(socialProviderModel)
-                            return@flatMap mApiClient.getAuthInFirebaseWithSocialProviderObservable(provider, id)
-                                    .flatMap { firebaseUser ->
-                                        if (TextUtils.isEmpty(firebaseUser.email)) {
-                                            mApiClient.nameAndAvatarFromProviderObservable(provider)
-                                                    .flatMap { nameAvatar ->
-                                                        mApiClient.updateFirebaseUsersNameAndAvatarObservable(
-                                                            nameAvatar.first,
-                                                            nameAvatar.second)
-                                                    }
-                                                    .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
-                                                    .subscribeOn(AndroidSchedulers.mainThread())
-                                                    .observeOn(AndroidSchedulers.mainThread())
-                                                    .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
-                                        } else {
-                                            Observable.just(firebaseUser)
+
+                            return@flatMap if (TextUtils.isEmpty(firebaseUser.email)) {
+                                mApiClient.nameAndAvatarFromProviderObservable(provider)
+                                        .flatMap { nameAvatar ->
+                                            mApiClient.updateFirebaseUsersNameAndAvatarObservable(
+                                                nameAvatar.first,
+                                                nameAvatar.second)
                                         }
-                                    }
+                                        .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
+                                        .subscribeOn(AndroidSchedulers.mainThread())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
+                            } else {
+                                Observable.just(firebaseUser)
+                            }
                                     .flatMap { mApiClient.userObjectFromFirebaseObservable }
                                     .flatMap { mApiClient.updateFirebaseUsersSocialProvidersObservable(userObjectInFirebase.socialProviders) }
                                     .flatMap<FirebaseObjectUser> { Observable.just(userObjectInFirebase) }
@@ -287,37 +274,25 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
 
                         //in case of unrewarded user we should add score and disable ads temporary too
                         if (!userObjectInFirebase.signInRewardGained) {
-                            mMyPreferencesManager.applyAwardSignIn()
+                            myPreferencesManager.applyAwardSignIn()
 
                             val score = FirebaseRemoteConfig.getInstance()
                                     .getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_AUTH).toInt()
 
-                            return@flatMap mApiClient.getAuthInFirebaseWithSocialProviderObservable(provider, id)
-                                    .flatMap { firebaseUser ->
-                                        if (TextUtils.isEmpty(firebaseUser.email)) {
-                                            mApiClient.nameAndAvatarFromProviderObservable(provider)
-                                                    .flatMap { nameAvatar ->
-                                                        mApiClient.updateFirebaseUsersNameAndAvatarObservable(
-                                                            nameAvatar.first,
-                                                            nameAvatar.second)
-                                                    }
-                                                    .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
-                                                    .subscribeOn(AndroidSchedulers.mainThread())
-                                                    .observeOn(AndroidSchedulers.mainThread())
-                                                    .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
-                                        } else {
-                                            Observable.just(firebaseUser)
+                            return@flatMap if (TextUtils.isEmpty(firebaseUser.email)) {
+                                mApiClient.nameAndAvatarFromProviderObservable(provider)
+                                        .flatMap { nameAvatar ->
+                                            mApiClient.updateFirebaseUsersNameAndAvatarObservable(
+                                                nameAvatar.first,
+                                                nameAvatar.second)
                                         }
-                                    }
-                                    .doOnNext { firebaseUser ->
-                                        Timber.d(
-                                            "firebaseUser: %s, %s, %s, %s",
-                                            firebaseUser?.uid,
-                                            firebaseUser?.email,
-                                            firebaseUser?.photoUrl,
-                                            firebaseUser?.displayName
-                                        )
-                                    }
+                                        .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
+                                        .subscribeOn(AndroidSchedulers.mainThread())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
+                            } else {
+                                Observable.just(firebaseUser)
+                            }
                                     .flatMap { mApiClient.userObjectFromFirebaseObservable }
                                     .flatMap { mApiClient.incrementScoreInFirebaseObservable(score) }
                                     .flatMap<Boolean> { mApiClient.setUserRewardedForAuthInFirebaseObservable() }
@@ -328,32 +303,20 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                     }
                         }
 
-                        return@flatMap mApiClient.getAuthInFirebaseWithSocialProviderObservable(provider, id)
-                                .flatMap { firebaseUser ->
-                                    if (TextUtils.isEmpty(firebaseUser.email)) {
-                                        mApiClient.nameAndAvatarFromProviderObservable(provider)
-                                                .flatMap { nameAvatar ->
-                                                    mApiClient.updateFirebaseUsersNameAndAvatarObservable(
-                                                        nameAvatar.first,
-                                                        nameAvatar.second)
-                                                }
-                                                .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
-                                                .subscribeOn(AndroidSchedulers.mainThread())
-                                                .observeOn(AndroidSchedulers.mainThread())
-                                                .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
-                                    } else {
-                                        Observable.just(firebaseUser)
+                        return@flatMap if (TextUtils.isEmpty(firebaseUser.email)) {
+                            mApiClient.nameAndAvatarFromProviderObservable(provider)
+                                    .flatMap { nameAvatar ->
+                                        mApiClient.updateFirebaseUsersNameAndAvatarObservable(
+                                            nameAvatar.first,
+                                            nameAvatar.second)
                                     }
-                                }
-                                .doOnNext { firebaseUser ->
-                                    Timber.d(
-                                        "firebaseUser: %s, %s, %s, %s",
-                                        firebaseUser?.uid,
-                                        firebaseUser?.email,
-                                        firebaseUser?.photoUrl,
-                                        firebaseUser?.displayName
-                                    )
-                                }
+                                    .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
+                                    .subscribeOn(AndroidSchedulers.mainThread())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
+                        } else {
+                            Observable.just(firebaseUser)
+                        }
                                 .flatMap { mApiClient.userObjectFromFirebaseObservable }
                                 .flatMap { Observable.just<FirebaseObjectUser>(userObjectInFirebase) }
                     }
@@ -369,30 +332,54 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 }
                 //save user to realm
                 .flatMap { userObjectInFirebase -> mDbProviderFactory.dbProvider.saveUser(userObjectInFirebase.toRealmUser()) }
+                .observeOn(Schedulers.io())
+                .flatMap { userInRealm ->
+                    val stringWithDataForProvider = if (provider == Constants.Firebase.SocialProvider.VK) {
+                        val commonUserDataFromVk = CommonUserData(
+                            id = VKAccessToken.currentToken().userId,
+                            email = VKAccessToken.currentToken().email,
+                            avatarUrl = userInRealm.avatar,
+                            fullName = userInRealm.fullName
+                        )
+                        mApiClient.gson.toJson(commonUserDataFromVk)
+                    } else {
+                        id
+                    }
+                    mApiClient.loginToScpReaderServer(
+                        provider,
+                        stringWithDataForProvider
+                    )
+                            .doOnSuccess {
+                                myPreferencesManager.apply {
+                                    accessToken = it.accessToken
+                                    refreshToken = it.refreshToken
+                                }
+                            }
+                            .toObservable()
+                            .map { userInRealm }
+                }
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { userInRealm ->
                         Timber.d("user saved")
                         view.dismissProgressDialog()
                         view.showMessage(
-                            BaseApplication.getAppInstance()
-                                    .getString(R.string.on_user_logined, userInRealm.fullName))
+                            BaseApplication.getAppInstance().getString(
+                                R.string.on_user_logined,
+                                userInRealm.fullName))
                     },
                     { e ->
                         Timber.e(e, "error while save user to DB")
                         logoutUser()
                         view.dismissProgressDialog()
                         if (e is FirebaseAuthUserCollisionException) {
-                            view.showError(
-                                ScpLoginException(
-                                    BaseApplication.getAppInstance()
-                                            .getString(R.string.error_login_firebase_user_collision)))
+                            view.showError(ScpLoginException(BaseApplication.getAppInstance().getString(R.string.error_login_firebase_user_collision)))
                         } else {
                             view.showError(
                                 ScpLoginException(
-                                    BaseApplication.getAppInstance()
-                                            .getString(
-                                                R.string.error_login_firebase_connection,
-                                                e.message)))
+                                    BaseApplication.getAppInstance().getString(
+                                        R.string.error_login_firebase_connection,
+                                        e.message)))
                         }
                     }
                 )
@@ -408,7 +395,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
     override fun onActivityStarted() {
         firebaseAuth.addAuthStateListener(authListener)
 
-        listenToChangesInFirebase(mMyPreferencesManager.isHasSubscription)
+        listenToChangesInFirebase(myPreferencesManager.isHasSubscription)
     }
 
     override fun onActivityStopped() {
@@ -463,7 +450,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
         //After invite receive we'll check if it's first time invite received and,
         //if so, send its ID to server, which will check for ID existing and will send push to sender and delete inviteID-pushID pair,
         //else we'll send to server command to delete IDs pair, to prevent collecting useless data.
-        mApiClient.inviteReceived(inviteId, !mMyPreferencesManager.isInviteAlreadyReceived)
+        mApiClient.inviteReceived(inviteId, !myPreferencesManager.isInviteAlreadyReceived)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
@@ -473,7 +460,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
     }
 
     override fun onInviteSent(inviteId: String) {
-        mApiClient.inviteSent(inviteId, FirebaseInstanceId.getInstance().token)
+        mApiClient.inviteSent(inviteId, FirebaseInstanceId.getInstance().instanceId.result?.token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
@@ -620,14 +607,13 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                     Timber.d("consume inapp successful, so update user score")
                                     updateUserScoreForInapp(item.productId)
 
-                                    if (!mMyPreferencesManager.isHasAnySubscription) {
+                                    if (!myPreferencesManager.isHasAnySubscription) {
                                         view.showOfferSubscriptionPopup()
                                     }
                                 },
                                 onError = {
                                     Timber.e(it, "error while consume inapp!")
                                     view.showError(it)
-                                    //todo show dialog with retry button
                                     view.showInAppErrorDialog(
                                         it.message ?: BaseApplication.getAppInstance().getString(R.string.error_unexpected)
                                     )

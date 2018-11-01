@@ -161,7 +161,7 @@ class LeaderboardPresenter(
                                     .find { it.langId.equals(mApiClient.constantValues.appLang, true) }
 
                             leaderboardUsersUpdateDates?.let {
-                                mMyPreferencesManager.saveLeaderboardUpdateDate(it.updated)
+                                myPreferencesManager.saveLeaderboardUpdateDate(it.updated)
                             }
                         }.map { users }
                     } else {
@@ -206,7 +206,7 @@ class LeaderboardPresenter(
                         }
                         view.resetOnScrollListener()
 
-                        updateTime = mMyPreferencesManager.leaderboardUpdateDate.time
+                        updateTime = myPreferencesManager.leaderboardUpdateDate.time
                         view.showUpdateDate(updateTime)
                     },
                     onError = {
