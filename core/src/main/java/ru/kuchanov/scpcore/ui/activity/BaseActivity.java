@@ -730,6 +730,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     /**
      * workaround from http://stackoverflow.com/a/30337653/3212712 to show menu icons
      */
+    @SuppressLint("RestrictedApi")
     @Override
     protected boolean onPrepareOptionsPanel(final View view, final Menu menu) {
         if (menu != null) {
