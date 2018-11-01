@@ -1182,7 +1182,7 @@ public class ApiClient {
         switch (imageURL) {
             case "http://scp-ru.wdfiles.com/local--files/scp-list-4/na.png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list-3/na.png":
-            case "http://scp-ru.wdfiles.com/local--files/scp-list-2/na(1).png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-2/na.png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list-ru/na(1).png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list/na.png":
             case "http://scp-ru.wdfiles.com/local--files/archive/na.png":
@@ -1197,7 +1197,7 @@ public class ApiClient {
                 break;
             case "http://scp-ru.wdfiles.com/local--files/scp-list-4/safe.png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list-3/safe.png":
-            case "http://scp-ru.wdfiles.com/local--files/scp-list-2/safe(1).png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-2/safe.png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list-ru/safe(1).png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list/safe.png":
             case "http://scp-ru.wdfiles.com/local--files/archive/safe.png":
@@ -1212,7 +1212,7 @@ public class ApiClient {
                 break;
             case "http://scp-ru.wdfiles.com/local--files/scp-list-4/euclid.png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list-3/euclid.png":
-            case "http://scp-ru.wdfiles.com/local--files/scp-list-2/euclid(1).png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-2/euclid.png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list-ru/euclid(1).png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list/euclid.png":
             case "http://scp-ru.wdfiles.com/local--files/archive/euclid.png":
@@ -1227,7 +1227,7 @@ public class ApiClient {
                 break;
             case "http://scp-ru.wdfiles.com/local--files/scp-list-4/keter.png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list-3/keter.png":
-            case "http://scp-ru.wdfiles.com/local--files/scp-list-2/keter(1).png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-2/keter.png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list-ru/keter(1).png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list/keter.png":
             case "http://scp-ru.wdfiles.com/local--files/archive/keter.png":
@@ -1242,7 +1242,7 @@ public class ApiClient {
                 break;
             case "http://scp-ru.wdfiles.com/local--files/scp-list-4/thaumiel.png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list-3/thaumiel.png":
-            case "http://scp-ru.wdfiles.com/local--files/scp-list-2/thaumiel(1).png":
+            case "http://scp-ru.wdfiles.com/local--files/scp-list-2/thaumiel.png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list-ru/thaumiel(1).png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list/thaumiel.png":
             case "http://scp-ru.wdfiles.com/local--files/archive/thaumiel.png":
