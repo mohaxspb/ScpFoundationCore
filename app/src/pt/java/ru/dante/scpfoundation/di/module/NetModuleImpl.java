@@ -36,7 +36,8 @@ public class NetModuleImpl extends NetModule {
             @NonNull final Gson gson,
             @NonNull final ConstantValues constantValues
     ) {
-        return new ApiClientImpl(okHttpClient, vpsRetrofit, scpRetrofit, scpReaderRetrofit, preferencesManager, gson, constantValues);
+        return new ApiClientImpl(okHttpClient, vpsRetrofit, scpRetrofit, scpReaderRetrofit,
+                scpReaderAuthApi, preferencesManager, gson, constantValues);
     }
 
     @Override
