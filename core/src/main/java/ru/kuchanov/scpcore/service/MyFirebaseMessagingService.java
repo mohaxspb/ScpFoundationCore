@@ -51,7 +51,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(final String s) {
         super.onNewToken(s);
-        Timber.d("onTokenRefresh(): %s", FirebaseInstanceId.getInstance().getInstanceId().getResult().getToken());
+        try {
+            Timber.d("onTokenRefresh(): %s", FirebaseInstanceId.getInstance().getInstanceId().getResult().getToken());
+        } catch (final Exception e) {
+            Timber.e(e);
+        }
     }
 
     @Override
