@@ -1,15 +1,5 @@
 package ru.kuchanov.scpcore.ui.activity;
 
-import com.google.android.gms.auth.api.Auth;
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.gson.Gson;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
-
-import org.jetbrains.annotations.NotNull;
-
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -24,6 +14,15 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.google.android.gms.auth.api.Auth;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.gson.Gson;
+
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 
@@ -235,11 +234,14 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                     });
 
             //score and level
-            final LevelsJson levelsJson = LevelsJson.Companion.getLevelsJson();
+            final LevelsJson levelsJson = LevelsJson.getLevelsJson();
 //            Timber.d("levelsJson: %s", levelsJson);
 
             final LevelsJson.Level level = levelsJson.getLevelForScore(user.score);
 //            Timber.d("level: %s", level);
+            if (level == null) {
+                return;
+            }
             if (level.getId() == LevelsJson.MAX_LEVEL_ID) {
                 headerViewHolder.circleProgress.setMaxValue(level.getScore());
                 headerViewHolder.circleProgress.setValue(level.getScore());
@@ -268,10 +270,10 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
 
             //check if user score is greater than 1000 and offer him/her a free trial if there is no subscription owned
             if (!mMyPreferenceManager.isHasAnySubscription()
-                && user.score >= 1000
-                //do not show it after level up gain, where we add 10000 score
-                && mPresenter.getUser().score < 10000
-                && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
+                    && user.score >= 1000
+                    //do not show it after level up gain, where we add 10000 score
+                    && mPresenter.getUser().score < 10000
+                    && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
                 final Bundle bundle = new Bundle();
                 bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
                         Constants.Firebase.Analitics.EventValue.SCORE_1000_REACHED

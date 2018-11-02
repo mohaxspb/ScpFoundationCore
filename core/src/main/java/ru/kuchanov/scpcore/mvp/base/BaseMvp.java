@@ -7,6 +7,7 @@ import com.hannesdorfmann.mosby.mvp.MvpPresenter;
 import com.hannesdorfmann.mosby.mvp.MvpView;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.db.model.User;
@@ -65,6 +66,6 @@ public interface BaseMvp {
 
         void onLevelUpRetryClick(IInAppBillingService inAppBillingService);
 
-        void updateUserScoreForScoreAction(@ScoreAction String action, @NotNull BasePresenter.AddScoreListener addScoreListener);
+        void updateUserScoreForScoreAction(@ScoreAction String action, @Nullable BasePresenter.AddScoreListener addScoreListener);
     }
 }

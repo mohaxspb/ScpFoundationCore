@@ -11,7 +11,6 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
@@ -52,7 +51,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onNewToken(final String s) {
         super.onNewToken(s);
         try {
-            Timber.d("onTokenRefresh(): %s", FirebaseInstanceId.getInstance().getInstanceId().getResult().getToken());
+            Timber.d("onNewToken(): %s", s);
         } catch (final Exception e) {
             Timber.e(e);
         }
