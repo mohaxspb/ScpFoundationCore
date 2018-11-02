@@ -46,8 +46,8 @@ import ru.kuchanov.scpcore.util.SystemUtils
 import timber.log.Timber
 
 class SubscriptionsFragment :
-        BaseFragment<SubscriptionsContract.View, SubscriptionsContract.Presenter>(),
-        SubscriptionsContract.View, SharedPreferences.OnSharedPreferenceChangeListener {
+    BaseFragment<SubscriptionsContract.View, SubscriptionsContract.Presenter>(),
+    SubscriptionsContract.View, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private lateinit var adapter: ListDelegationAdapter<List<MyListItem>>
 
@@ -56,28 +56,35 @@ class SubscriptionsFragment :
     override fun getLayoutResId() = R.layout.fragment_subscriptions
 
     override fun initViews() {
-        InAppBillingServiceConnectionObservable.getInstance().serviceStatusObservable.subscribe { connected ->
+        InAppBillingServiceConnectionObservable.getInstance()
+            .serviceStatusObservable.subscribe { connected ->
             if (!isAdded) {
                 return@subscribe
             }
             if (connected!! && !getPresenter().isDataLoaded && isAdded && activity is BaseActivity<*, *>) {
-                (activity as? BaseActivity<*, *>)?.getIInAppBillingService()?.let { presenter.getMarketData(it) }
+                (activity as? BaseActivity<*, *>)?.getIInAppBillingService()
+                    ?.let { presenter.getMarketData(it) }
             }
         }
 
-        recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+        recyclerView.layoutManager =
+                LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
         delegateManager.addDelegate(DividerDelegate())
         delegateManager.addDelegate(TextDelegate())
         delegateManager.addDelegate(LabelDelegate())
         delegateManager.addDelegate(LabelWithPercentDelegate())
         delegateManager.addDelegate(InAppDelegate { id ->
-            baseActivity?.getIInAppBillingService()?.let {
-                this@SubscriptionsFragment.getPresenter().onPurchaseClick(
-                    id,
-                    baseActivity,
-                    false
-                )
+            if (id == SubscriptionsPresenter.ID_FREE_ADS_DISABLE) {
+                navigateToDisableAds()
+            } else {
+                baseActivity?.getIInAppBillingService()?.let {
+                    this@SubscriptionsFragment.getPresenter().onPurchaseClick(
+                        id,
+                        baseActivity,
+                        false
+                    )
+                }
             }
         })
         delegateManager.addDelegate(CurSubsDelegate(
@@ -85,12 +92,12 @@ class SubscriptionsFragment :
                 getPresenter().onCurrentSubscriptionClick(it)
             },
             {
-                baseActivity?.updateOwnedMarketItems()
-                baseActivity?.getIInAppBillingService()?.apply { this@SubscriptionsFragment.getPresenter().getMarketData(this) }
+                baseActivity?.getIInAppBillingService()
+                    ?.apply { this@SubscriptionsFragment.getPresenter().getMarketData(this) }
             }
         ))
         delegateManager.addDelegate(CurSubsEmptyDelegate(
-            { _ ->
+            {
                 baseActivity?.getIInAppBillingService()?.let {
                     this@SubscriptionsFragment.getPresenter().onPurchaseClick(
                         InAppHelper.getNewInAppsSkus().first(),
@@ -100,8 +107,8 @@ class SubscriptionsFragment :
                 }
             },
             {
-                baseActivity?.updateOwnedMarketItems()
-                baseActivity?.getIInAppBillingService()?.apply { this@SubscriptionsFragment.getPresenter().getMarketData(this) }
+                baseActivity?.getIInAppBillingService()
+                    ?.apply { this@SubscriptionsFragment.getPresenter().getMarketData(this) }
             }
         ))
         adapter = ListDelegationAdapter(delegateManager)
@@ -110,7 +117,8 @@ class SubscriptionsFragment :
         refresh.setOnClickListener {
             baseActivity?.getIInAppBillingService()?.apply {
                 getPresenter().getMarketData(
-                    this)
+                    this
+                )
             }
         }
 
@@ -131,7 +139,12 @@ class SubscriptionsFragment :
     }
 
     //    override fun showData(items: List<MyListItem>) {
-    override fun showData(owned: List<Item>, toBuy: List<Subscription>, inApps: List<Subscription>, curSubsType: Int) {
+    override fun showData(
+        owned: List<Item>,
+        toBuy: List<Subscription>,
+        inApps: List<Subscription>,
+        curSubsType: Int
+    ) {
         Timber.d("showData curSubsType: $curSubsType, owned: $owned, toBuy: $toBuy")
         val items: MutableList<MyListItem> = mutableListOf()
         items.clear()
@@ -144,7 +157,8 @@ class SubscriptionsFragment :
                 BaseApplication.getAppInstance().getString(R.string.free),
                 ID_FREE_ADS_DISABLE,
                 R.drawable.ic_no_money
-            ))
+            )
+        )
         //levelUp
         items.add(LabelViewModel(R.string.subs_level_5_label))
         val levelUp = inApps.first()
@@ -155,7 +169,8 @@ class SubscriptionsFragment :
                 levelUp.price,
                 levelUp.productId,
                 R.drawable.ic_05
-            ))
+            )
+        )
         //cur sub
         items.add(LabelViewModel(R.string.subs_cur_label))
         when (curSubsType) {
@@ -169,7 +184,8 @@ class SubscriptionsFragment :
                         R.string.subs_no_ads_description,
                         ID_CURRENT_SUBS,
                         R.drawable.ic_adblock
-                    ))
+                    )
+                )
             }
             else -> {
                 val item: Item = when {
@@ -212,104 +228,118 @@ class SubscriptionsFragment :
                         description,
                         ID_CURRENT_SUBS,
                         icon
-                    ))
+                    )
+                )
             }
         }
         //bottom panel
         val bgColor = R.color.bgSubsBottom
-        items.add(DividerViewModel(bgColor = bgColor, height = resources.getDimensionPixelSize(R.dimen.defaultMarginMedium)))
+        items.add(
+            DividerViewModel(
+                bgColor = bgColor,
+                height = resources.getDimensionPixelSize(R.dimen.defaultMarginMedium)
+            )
+        )
 
         //no ads
-        val noAdsSubsEnabled = FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)
+        val noAdsSubsEnabled = FirebaseRemoteConfig.getInstance()
+            .getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)
 
         val textColor = R.color.subsTextColorBottom
 
         val subsFullOneMonth = toBuy
-                .asSequence()
-                .filter { it.productId !in InAppHelper.getNewNoAdsSubsSkus() }
-                .first { SubscriptionsPresenter.getMonthFromSkuId(it.productId) == 1 }
+            .asSequence()
+            .filter { it.productId !in InAppHelper.getNewNoAdsSubsSkus() }
+            .first { SubscriptionsPresenter.getMonthFromSkuId(it.productId) == 1 }
 
-        toBuy.sortedWith(Comparator { t1, t2 -> t1.price_amount_micros.compareTo(t2.price_amount_micros) }).forEach {
-            if (noAdsSubsEnabled && (it.productId in InAppHelper.getNewNoAdsSubsSkus())) {
-                items.add(
-                    LabelViewModel(
-                        R.string.subs_no_ads_label,
-                        textColor = textColor,
-                        bgColor = bgColor
-                    ))
-                items.add(
-                    InAppViewModel(
-                        R.string.subs_no_ads_title,
-                        R.string.subs_no_ads_description,
-                        it.price,
-                        it.productId,
-                        R.drawable.ic_adblock,
-                        bgColor
-                    ))
-            } else {
-                @StringRes
-                val label: Int
-                @StringRes
-                val title: Int
-                @StringRes
-                val description: Int = R.string.subs_full_description
-                @DrawableRes
-                val icon: Int
+        toBuy.sortedWith(Comparator { t1, t2 -> t1.price_amount_micros.compareTo(t2.price_amount_micros) })
+            .forEach {
+                if (noAdsSubsEnabled && (it.productId in InAppHelper.getNewNoAdsSubsSkus())) {
+                    items.add(
+                        LabelViewModel(
+                            R.string.subs_no_ads_label,
+                            textColor = textColor,
+                            bgColor = bgColor
+                        )
+                    )
+                    items.add(
+                        InAppViewModel(
+                            R.string.subs_no_ads_title,
+                            R.string.subs_no_ads_description,
+                            it.price,
+                            it.productId,
+                            R.drawable.ic_adblock,
+                            bgColor
+                        )
+                    )
+                } else {
+                    @StringRes
+                    val label: Int
+                    @StringRes
+                    val title: Int
+                    @StringRes
+                    val description: Int = R.string.subs_full_description
+                    @DrawableRes
+                    val icon: Int
 
-                val month = SubscriptionsPresenter.getMonthFromSkuId(it.productId)
-                when (month) {
-                    1 -> {
-                        label = R.string.subs_1_month_label
-                        title = R.string.subs_1_month_title
-                        icon = R.drawable.ic_scp_icon_laborant
+                    val month = SubscriptionsPresenter.getMonthFromSkuId(it.productId)
+                    when (month) {
+                        1 -> {
+                            label = R.string.subs_1_month_label
+                            title = R.string.subs_1_month_title
+                            icon = R.drawable.ic_scp_icon_laborant
+                        }
+                        3 -> {
+                            label = R.string.subs_3_month_label
+                            title = R.string.subs_3_month_title
+                            icon = R.drawable.ic_scp_icon_mns
+                        }
+                        6 -> {
+                            label = R.string.subs_6_month_label
+                            title = R.string.subs_6_month_title
+                            icon = R.drawable.ic_scp_icon_ns
+                        }
+                        12 -> {
+                            label = R.string.subs_12_month_label
+                            title = R.string.subs_12_month_title
+                            icon = R.drawable.ic_scp_icon_sns
+                        }
+                        else -> throw IllegalArgumentException("unexpected subs period")
                     }
-                    3 -> {
-                        label = R.string.subs_3_month_label
-                        title = R.string.subs_3_month_title
-                        icon = R.drawable.ic_scp_icon_mns
-                    }
-                    6 -> {
-                        label = R.string.subs_6_month_label
-                        title = R.string.subs_6_month_title
-                        icon = R.drawable.ic_scp_icon_ns
-                    }
-                    12 -> {
-                        label = R.string.subs_12_month_label
-                        title = R.string.subs_12_month_title
-                        icon = R.drawable.ic_scp_icon_sns
-                    }
-                    else -> throw IllegalArgumentException("unexpected subs period")
+
+                    val oneMonthPriceForMonths = subsFullOneMonth.price_amount_micros * month
+                    val percent = 100L - it.price_amount_micros * 100L / oneMonthPriceForMonths
+                    items.add(
+                        LabelWithPercentViewModel(
+                            label,
+                            if (month != 1) (oneMonthPriceForMonths / 1000000L).toString() + SystemUtils.getCurrencySymbol2(
+                                it.price_currency_code
+                            ) else "",
+                            if (month != 1) percent.toString() else ""
+                        )
+                    )
+                    items.add(
+                        InAppViewModel(
+                            title,
+                            description,
+                            it.price,
+                            it.productId,
+                            icon,
+                            bgColor
+                        )
+                    )
                 }
-
-                val oneMonthPriceForMonths = subsFullOneMonth.price_amount_micros * month
-                val percent = 100L - it.price_amount_micros * 100L / oneMonthPriceForMonths
-                items.add(
-                    LabelWithPercentViewModel(
-                        label,
-                        if (month != 1) (oneMonthPriceForMonths / 1000000L).toString() + SystemUtils.getCurrencySymbol2(it.price_currency_code) else "",
-                        if (month != 1) percent.toString() else ""
-                    ))
-                items.add(
-                    InAppViewModel(
-                        title,
-                        description,
-                        it.price,
-                        it.productId,
-                        icon,
-                        bgColor
-                    ))
             }
-        }
 
         adapter.items = items
         adapter.notifyDataSetChanged()
     }
 
     override fun navigateToDisableAds() = (baseActivity as SubscriptionsActivity)
-            .showScreen(SubscriptionsScreenContract.Screen.FREE_ACTIONS)
+        .showScreen(SubscriptionsScreenContract.Screen.FREE_ACTIONS)
 
     override fun navigateToLeaderboard() = (baseActivity as SubscriptionsActivity)
-            .showScreen(SubscriptionsScreenContract.Screen.LEADERBOARD)
+        .showScreen(SubscriptionsScreenContract.Screen.LEADERBOARD)
 
     override fun getToolbarTitle() = R.string.subs_activity_title
 
@@ -318,7 +348,8 @@ class SubscriptionsFragment :
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
             Keys.HAS_NO_ADS_SUBSCRIPTION, Keys.HAS_SUBSCRIPTION -> {
-                baseActivity?.getIInAppBillingService()?.apply { this@SubscriptionsFragment.getPresenter().getMarketData(this) }
+                baseActivity?.getIInAppBillingService()
+                    ?.apply { this@SubscriptionsFragment.getPresenter().getMarketData(this) }
             }
             else -> {
                 //do nothing

@@ -1,18 +1,17 @@
 package ru.kuchanov.scpcore.mvp.base;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v4.util.Pair;
 
 import com.android.vending.billing.IInAppBillingService;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 import com.vk.sdk.VKSdk;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.util.Pair;
 
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;

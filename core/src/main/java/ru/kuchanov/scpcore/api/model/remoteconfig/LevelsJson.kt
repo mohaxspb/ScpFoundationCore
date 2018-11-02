@@ -3,7 +3,6 @@ package ru.kuchanov.scpcore.api.model.remoteconfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
 import ru.kuchanov.scpcore.Constants
-import java.util.*
 
 /**
  * Created by mohax on 29.04.2017.
@@ -43,8 +42,6 @@ data class LevelsJson(val levels: List<Level>) {
 
     fun getLevelForScore(score: Int): Level? = levels.findLast { score > it.score }
 
-    fun getLevel(levelNum: Int) = levels[levelNum]
-
     data class Level(val id: Int,
         val title: String,
         val score: Int
@@ -52,11 +49,12 @@ data class LevelsJson(val levels: List<Level>) {
 
     companion object {
 
+        @Suppress("MayBeConstant")
         @JvmField
         val MAX_LEVEL_ID = 5
         const val NO_SCORE_TO_MAX_LEVEL = -1
 
-        const val LEVELS_JSON_DEFAULT = """{"levels":[{"id":0,"title":"Level 0 (For Official Use Only)","score":0},{"id":1,"title":"Level 1 (Confidential)","score":1000},{"id":2,"title":"Level 2 (Restricted)","score":2000},{"id":3,"title":"Level 3 (Secret)","score":3000},{"id":4,"title":"Level 4 (Top Secret)","score":6000},{"id":5,"title":"Level 5 (Thaumiel)","score":10000}]}"""
+        private const val LEVELS_JSON_DEFAULT = """{"levels":[{"id":0,"title":"Level 0 (For Official Use Only)","score":0},{"id":1,"title":"Level 1 (Confidential)","score":1000},{"id":2,"title":"Level 2 (Restricted)","score":2000},{"id":3,"title":"Level 3 (Secret)","score":3000},{"id":4,"title":"Level 4 (Top Secret)","score":6000},{"id":5,"title":"Level 5 (Thaumiel)","score":10000}]}"""
 
         @JvmStatic
         val levelsJson: LevelsJson

@@ -460,7 +460,9 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
     }
 
     override fun onInviteSent(inviteId: String) {
-        mApiClient.inviteSent(inviteId, FirebaseInstanceId.getInstance().instanceId.result?.token)
+        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
+            Timber.d("onInviteSent: ${it.result?.token}")
+            mApiClient.inviteSent(inviteId, it.result?.token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
@@ -470,6 +472,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                         view.showError(e)
                     }
                 )
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
@@ -549,7 +552,8 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
 
                     FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
                         Constants.Firebase.Analitics.EventName.INVITE_SENT,
-                        null)
+                        null
+                    )
                 }
             } else {
                 // Sending failed or it was canceled, show failure message to the user
