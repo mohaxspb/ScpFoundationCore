@@ -183,6 +183,9 @@ public class SettingsBottomSheetDialogFragment
         listItemSpinner.setAdapter(adapterCard);
 
         listItemSpinner.post(() -> {
+            if (listItemSpinner == null) {
+                return;
+            }
             listItemSpinner.setSelection(typesList.indexOf(mMyPreferenceManager.getListDesignType()));
             listItemSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -250,6 +253,9 @@ public class SettingsBottomSheetDialogFragment
         fontPreferedSpinner.setSelection(fontsPathsList.indexOf(mMyPreferenceManager.getFontPath()));
 
         fontPreferedSpinner.post(() -> {
+            if (fontPreferedSpinner == null) {
+                return;
+            }
             fontPreferedSpinner.setSelection(fontsList.indexOf(mMyPreferenceManager.getFontPath()));
             fontPreferedSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
