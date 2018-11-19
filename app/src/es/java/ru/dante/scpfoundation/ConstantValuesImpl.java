@@ -181,7 +181,7 @@ public class ConstantValuesImpl implements ConstantValues {
 
         String MAIN = BASE_API_URL + "/";
 
-        String ABOUT_SCP = BASE_API_URL + "/sobre-la-fundacion";
+        String ABOUT_SCP = BASE_API_URL + "/about-the-scp-foundation";
         String NEWS = BASE_API_URL + "/news";
         String RATE = BASE_API_URL + "/paginas-mejor-puntuadas";
         String NEW_ARTICLES = BASE_API_URL + "/recientemente-creados";
