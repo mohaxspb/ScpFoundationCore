@@ -1,13 +1,13 @@
 package ru.kuchanov.scpcore.ui.adapter;
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.gson.Gson;
-
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -259,8 +259,8 @@ public class ArticleAdapter
         //or banners enabled or native disabled
         final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         if (mMyPreferenceManager.isHasAnySubscription()
-            || !mMyPreferenceManager.isTimeToShowBannerAds()
-            || mMyPreferenceManager.isBannerInArticleEnabled()) {
+                || !mMyPreferenceManager.isTimeToShowBannerAds()
+                || mMyPreferenceManager.isBannerInArticleEnabled()) {
             return;
         }
         if (mAdsModelsList.isEmpty()) {
@@ -514,9 +514,11 @@ public class ArticleAdapter
 
         for (final TabsViewModel.TabData tabData : tabsViewModel.getTabDataList()) {
             final Collection<ArticleTextPartViewModel> viewModelsTabs = new ArrayList<>();
+
             for (int i = 0; i < tabData.getTextParts().size(); i++) {
                 @ParseHtmlUtils.TextType final String typeInTab = tabData.getTextPartsTypes().get(i);
                 Object dataInTab = tabData.getTextParts().get(i);
+
                 final boolean isSpoiler = typeInTab.equals(ParseHtmlUtils.TextType.SPOILER);
                 if (isSpoiler) {
                     final List<String> spoilerData = ParseHtmlUtils.parseSpoilerParts((String) dataInTab);

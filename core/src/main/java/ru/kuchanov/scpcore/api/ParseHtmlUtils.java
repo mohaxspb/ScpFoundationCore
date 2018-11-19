@@ -83,7 +83,9 @@ public class ParseHtmlUtils {
 
     public static void extractTablesFromDivs(final Element pageContent) {
         for (final Element ourElement : pageContent.getElementsByTag(TAG_DIV)) {
-            if (ourElement.children().size() == 1 && ourElement.child(0).tagName().equals(TAG_TABLE)) {
+            if (ourElement.children().size() == 1
+                    && ourElement.child(0).tagName().equals(TAG_TABLE)
+                    && !ourElement.hasClass("collapsible-block-content")) {
                 ourElement.appendChild(ourElement.child(0));
                 ourElement.remove();
             }
