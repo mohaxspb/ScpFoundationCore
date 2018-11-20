@@ -479,10 +479,10 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
         Timber.d("onActivityResult: $requestCode, $resultCode, $data")
 
         val vkCallback = object : VKCallback<VKAccessToken> {
-            override fun onResult(vkAccessToken: VKAccessToken) {
+            override fun onResult(vkAccessToken: VKAccessToken?) {
                 //Пользователь успешно авторизовался
-                Timber.d("Auth successful: %s", vkAccessToken.email)
-                if (vkAccessToken.email != null) {
+                if (vkAccessToken?.email != null) {
+                    Timber.d("Auth successful: %s", vkAccessToken.email)
                     //here can be case, when we login via Google or Facebook, but try to join group to receive reward
                     //in this case we have firebase user already, so no need to login to firebase
                     if (FirebaseAuth.getInstance().currentUser != null) {

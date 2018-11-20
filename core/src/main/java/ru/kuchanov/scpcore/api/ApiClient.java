@@ -103,8 +103,7 @@ public class ApiClient {
     private static final String REPLACEMENT_HASH = "____";
 
     private static final String REPLACEMENT_SLASH = "_REPLACEMENT_SLASH_";
-
-    private static final String SITE_TAGS_PATH = "system:page-tags/tag/";
+    private static final String REPLACEMENT_PERCENT = "_REP_PERCENT_";
 
     private final MyPreferenceManager mPreferencesManager;
 
@@ -569,7 +568,7 @@ public class ApiClient {
                 .url(url)
                 .build();
 
-        final String responseBody;
+        String responseBody;
         try {
             final Response response = mOkHttpClient.newCall(request).execute();
             final ResponseBody body = response.body();
@@ -581,6 +580,9 @@ public class ApiClient {
         } catch (final IOException e) {
             throw new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection));
         }
+
+        //remove all fucking RTL(&lrm) used for text-alignment. What a fucking idiots!..
+        responseBody = responseBody.replaceAll("[\\p{Cc}\\p{Cf}]", "");
 
         final Document doc = Jsoup.parse(responseBody);
         final Element pageContent = getArticlePageContentTag(doc);
@@ -1700,6 +1702,7 @@ public class ApiClient {
     public static String formatUrlToFileName(@NotNull final String url) {
         String imageFileName = url.replaceAll("#", REPLACEMENT_HASH);
         imageFileName = imageFileName.replaceAll("/", REPLACEMENT_SLASH);
+        imageFileName = imageFileName.replaceAll("%", REPLACEMENT_PERCENT);
 
         return imageFileName;
     }
