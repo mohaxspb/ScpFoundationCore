@@ -1,5 +1,17 @@
 package ru.kuchanov.scpcore.api;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.util.Pair;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.Target;
+import com.facebook.Profile;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -14,11 +26,6 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.target.Target;
-import com.facebook.Profile;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
@@ -31,20 +38,10 @@ import com.vk.sdk.api.model.VKList;
 
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
 import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
-
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.text.TextUtils;
-import android.util.Pair;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -54,7 +51,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-import io.realm.RealmList;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -89,7 +85,6 @@ import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
-import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.DimensionUtils;
 import rx.Observable;
 import rx.Single;
@@ -587,281 +582,24 @@ public class ApiClient {
             throw new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection));
         }
 
-        try {
-            final Document doc = Jsoup.parse(responseBody);
-            final Element pageContent = getArticlePageContentTag(doc);
-            if (pageContent == null) {
-                Timber.wtf("pageContent is NULL for: %s", url);
-                throw new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse));
-            }
-            final Element p404 = pageContent.getElementById("404-message");
-            if (p404 != null) {
-                final Article article = new Article();
-                article.url = url;
-                article.text = p404.outerHtml();
-                article.title = "404";
-
-                return article;
-            }
-            //замена ссылок в сносках
-            final Elements footnoterefs = pageContent.getElementsByClass("footnoteref");
-            for (final Element snoska : footnoterefs) {
-                final Element aTag = snoska.getElementsByTag("a").first();
-                final StringBuilder digits = new StringBuilder();
-                for (final char c : aTag.id().toCharArray()) {
-                    if (TextUtils.isDigitsOnly(String.valueOf(c))) {
-                        digits.append(String.valueOf(c));
-                    }
-                }
-                aTag.attr("href", "scp://" + digits.toString());
-            }
-            final Elements footnoterefsFooter = pageContent.getElementsByClass("footnote-footer");
-            for (final Element snoska : footnoterefsFooter) {
-                final Element aTag = snoska.getElementsByTag("a").first();
-                snoska.prependText(aTag.text());
-                aTag.remove();
-//                    aTag.replaceWith(new Element(Tag.valueOf("pizda"), aTag.text()));
-            }
-
-            //замена ссылок в библиографии
-            final Elements bibliographi = pageContent.getElementsByClass("bibcite");
-            for (final Element snoska : bibliographi) {
-                final Element aTag = snoska.getElementsByTag("a").first();
-                final String onclickAttr = aTag.attr("onclick");
-
-                final String id = onclickAttr.substring(onclickAttr.indexOf("bibitem-"), onclickAttr.lastIndexOf("'"));
-                aTag.attr("href", id);
-            }
-            //remove rating bar
-            int rating = 0;
-            final Element rateDiv = pageContent.getElementsByClass("page-rate-widget-box").first();
-            if (rateDiv != null) {
-                final Element spanWithRating = rateDiv.getElementsByClass("rate-points").first();
-                if (spanWithRating != null) {
-                    final Element ratingSpan = spanWithRating.getElementsByClass("number").first();
-//                    Timber.d("ratingSpan: %s", ratingSpan);
-                    if (ratingSpan != null && !TextUtils.isEmpty(ratingSpan.text())) {
-                        try {
-                            rating = Integer.parseInt(ratingSpan.text().substring(1, ratingSpan.text().length()));
-//                            Timber.d("rating: %s", rating);
-                        } catch (final Exception e) {
-                            Timber.e(e);
-                        }
-                    }
-                }
-
-                final Element span1 = rateDiv.getElementsByClass("rateup").first();
-                span1.remove();
-                final Element span2 = rateDiv.getElementsByClass("ratedown").first();
-                span2.remove();
-                final Element span3 = rateDiv.getElementsByClass("cancel").first();
-                span3.remove();
-
-                final Elements heritageDiv = rateDiv.parent().getElementsByClass("heritage-emblem");
-                if (heritageDiv != null && !heritageDiv.isEmpty()) {
-                    heritageDiv.first().remove();
-                }
-            }
-            //remove something more
-            final Element svernut = pageContent.getElementById("toc-action-bar");
-            if (svernut != null) {
-                svernut.remove();
-            }
-            final Elements script = pageContent.getElementsByTag("script");
-            for (final Element element : script) {
-                element.remove();
-            }
-            //remove audio link from DE version
-            final Elements audio = pageContent.getElementsByClass("audio-img-block");
-            if (audio != null) {
-                audio.remove();
-            }
-            final Elements audioContent = pageContent.getElementsByClass("audio-block");
-            if (audioContent != null) {
-                audioContent.remove();
-            }
-            final Elements creditRate = pageContent.getElementsByClass("creditRate");
-            if (creditRate != null) {
-                creditRate.remove();
-            }
-
-            final Element uCreditView = pageContent.getElementById("u-credit-view");
-            if (uCreditView != null) {
-                uCreditView.remove();
-            }
-            final Element uCreditOtherwise = pageContent.getElementById("u-credit-otherwise");
-            if (uCreditOtherwise != null) {
-                uCreditOtherwise.remove();
-            }
-            //remove audio link from DE version END
-
-            //replace all spans with strike-through with <s>
-            final Elements spansWithStrike = pageContent.select("span[style=text-decoration: line-through;]");
-            for (final Element element : spansWithStrike) {
-//                    Timber.d("element: %s", element);
-                element.tagName("s");
-                for (final Attribute attribute : element.attributes()) {
-                    element.removeAttr(attribute.getKey());
-                }
-//                    Timber.d("element refactored: %s", element);
-            }
-            //get title
-            final Element titleEl = doc.getElementById("page-title");
-            String title = "";
-            if (titleEl != null) {
-                title = titleEl.text();
-            } else if (url.contains(SITE_TAGS_PATH)) {
-                final String decodedUrl = java.net.URLDecoder.decode(url, "UTF-8");
-                final String tagName = decodedUrl.substring(url.lastIndexOf(SITE_TAGS_PATH) + SITE_TAGS_PATH.length());
-                title = "TAG: " + tagName;
-            }
-            final Element upperDivWithLink = doc.getElementById("breadcrumbs");
-            if (upperDivWithLink != null) {
-                pageContent.prependChild(upperDivWithLink);
-            }
-            ParseHtmlUtils.parseImgsTags(pageContent);
-
-            //extract tables, which are single tag in div
-            ParseHtmlUtils.extractTablesFromDivs(pageContent);
-
-            //put all text which is not in any tag in div tag
-            for (final Element element : pageContent.children()) {
-                final Node nextSibling = element.nextSibling();
-//                    Timber.d("child: ___%s___", nextSibling);
-//                    Timber.d("nextSibling.nodeName(): %s", nextSibling.nodeName());
-                if (nextSibling != null && !nextSibling.toString().equals(" ") && nextSibling.nodeName().equals("#text")) {
-                    element.after(new Element("div").appendChild(nextSibling));
-                }
-
-                //also fix scp-3000, where image and spoiler are in div tag, fucking shit! Web monkeys, ARGH!!!
-                if (!element.children().isEmpty() && element.children().size() == 2
-                    && element.child(0).tagName().equals("img") && element.child(1).className().equals("collapsible-block")) {
-                    element.before(element.childNode(0));
-                    element.after(element.childNode(1));
-                    element.remove();
-                }
-            }
-
-            //replace styles with underline and strike
-            final Elements spans = pageContent.getElementsByTag("span");
-            for (final Element element : spans) {
-                //<span style="text-decoration: underline;">PLEASE</span>
-                if (element.hasAttr("style") && element.attr("style").equals("text-decoration: underline;")) {
-//                    Timber.d("fix underline span: %s", element.outerHtml());
-                    final Element uTag = new Element(Tag.valueOf("u"), "").text(element.text());
-                    element.replaceWith(uTag);
-//                    Timber.d("fixED underline span: %s", uTag.outerHtml());
-                }
-                //<span style="text-decoration: line-through;">условия содержания.</span>
-                if (element.hasAttr("style") && element.attr("style").equals("text-decoration: line-through;")) {
-//                    Timber.d("fix strike span");
-                    final Element sTag = new Element(Tag.valueOf("s"), "");
-                    element.replaceWith(sTag);
-                }
-            }
-
-            //search for relative urls to add domain
-            for (final Element a : pageContent.getElementsByTag("a")) {
-                //replace all links to not translated articles
-                if (a.className().equals("newpage")) {
-                    a.attr("href", Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL
-                                   + Constants.Api.NOT_TRANSLATED_ARTICLE_URL_DELIMITER
-                                   + a.attr("href")
-                    );
-                } else if (a.attr("href").startsWith("/")) {
-                    a.attr("href", mConstantValues.getBaseApiUrl() + a.attr("href"));
-                }
-            }
-
-            //extract tags
-            final RealmList<ArticleTag> articleTags = new RealmList<>();
-            final Element tagsContainer = doc.getElementsByClass("page-tags").first();
-//                Timber.d("tagsContainer: %s", tagsContainer);
-            if (tagsContainer != null) {
-                for (final Element a : tagsContainer./*getElementsByTag("span").first().*/getElementsByTag("a")) {
-                    articleTags.add(new ArticleTag(a.text()));
-//                        Timber.d("tag: %s", articleTags.get(articleTags.size() - 1));
-                }
-            }
-
-            //search for images and add it to separate field to be able to show it in arts lists
-            RealmList<RealmString> imgsUrls = null;
-            final Elements imgsOfArticle = pageContent.getElementsByTag("img");
-            if (!imgsOfArticle.isEmpty()) {
-                imgsUrls = new RealmList<>();
-                for (final Element img : imgsOfArticle) {
-                    imgsUrls.add(new RealmString(img.attr("src")));
-                }
-            }
-
-            //search for inner articles
-            RealmList<RealmString> innerArticlesUrls = null;
-            final Elements innerATags = pageContent.getElementsByTag("a");
-            if (!innerATags.isEmpty()) {
-                innerArticlesUrls = new RealmList<>();
-                for (final Element a : innerATags) {
-                    final String innerUrl = a.attr("href");
-                    if (SetTextViewHTML.LinkType.getLinkType(innerUrl, mConstantValues) == SetTextViewHTML.LinkType.INNER) {
-                        innerArticlesUrls.add(new RealmString(SetTextViewHTML.LinkType.getFormattedUrl(innerUrl, mConstantValues)));
-                    }
-                }
-            }
-
-            //type parsing TODO fucking unformatted info!
-
-            //this we store as article text
-            final String rawText = pageContent.toString();
-//            Timber.d("rawText: %s", rawText);
-
-            //articles textParts
-            final RealmList<RealmString> textParts = new RealmList<>();
-            final List<String> rawTextParts = ParseHtmlUtils.getArticlesTextParts(rawText);
-            for (final String value : rawTextParts) {
-                textParts.add(new RealmString(value));
-            }
-            final RealmList<RealmString> textPartsTypes = new RealmList<>();
-            for (@ParseHtmlUtils.TextType final String value : ParseHtmlUtils.getListOfTextTypes(rawTextParts)) {
-                textPartsTypes.add(new RealmString(value));
-            }
-
-            String commentsUrl = null;
-            final Element commentsButtonTag = doc.getElementById("discuss-button");
-            if (commentsButtonTag != null) {
-                commentsUrl = mConstantValues.getBaseApiUrl() + commentsButtonTag.attr("href");
-            }
-
-            //finally fill article info
+        final Document doc = Jsoup.parse(responseBody);
+        final Element pageContent = getArticlePageContentTag(doc);
+        if (pageContent == null) {
+            Timber.wtf("pageContent is NULL for: %s", url);
+            throw new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse));
+        }
+        final Element p404 = pageContent.getElementById("404-message");
+        if (p404 != null) {
             final Article article = new Article();
-
             article.url = url;
-            article.text = rawText;
-            article.title = title;
-            //textParts
-            article.textParts = textParts;
-            //log
-//                if (article.textParts != null) {
-//                    for (RealmString realmString : article.textParts) {
-//                        Timber.d("part: %s", realmString.val);
-//                    }
-//                } else {
-//                    Timber.d("article.textParts is NULL!");
-//                }
-            article.textPartsTypes = textPartsTypes;
-            //images
-            article.imagesUrls = imgsUrls;
-            //inner articles
-            article.innerArticlesUrls = innerArticlesUrls;
-            //tags
-            article.tags = articleTags;
-            //rating
-            if (rating != 0) {
-                article.rating = rating;
-            }
-
-            Timber.d("commentsUrl: %s", commentsUrl);
-            article.commentsUrl = commentsUrl;
+            article.text = p404.outerHtml();
+            article.title = "404";
 
             return article;
+        }
+
+        try {
+            return ParseHtmlUtils.parseArticle(url, doc, pageContent, mConstantValues);
         } catch (final Exception e) {
             Timber.e(e);
             throw e;
@@ -1296,8 +1034,8 @@ public class ApiClient {
                 authToFirebaseObservable = mVpsServer
                         .getFirebaseTokenForVkUserId("vk", VKAccessToken.currentToken().userId)
                         .flatMap(response -> TextUtils.isEmpty(response) ?
-                                             Single.error(new IllegalArgumentException("Empty firebase token for vk user!")) :
-                                             Single.just(response))
+                                Single.error(new IllegalArgumentException("Empty firebase token for vk user!")) :
+                                Single.just(response))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .flatMap(this::authWithCustomToken)
