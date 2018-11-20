@@ -36,6 +36,7 @@ import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.INVITE_REW
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_IN_ARTICLE_ENABLED;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO_MODIFICATOR;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS;
 
@@ -330,7 +331,7 @@ public class MyPreferenceManager {
 
     public boolean isTimeToShowAds() {
         return System.currentTimeMillis() - getLastTimeAdsShows() >=
-               FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS);
+                FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS);
     }
 
     /**
@@ -339,8 +340,8 @@ public class MyPreferenceManager {
     public boolean isTimeToLoadAds() {
         //i.e. 1 hour - (17:56-17:00) = 4 min, which we compare to 5 min
         return FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS) -
-               (System.currentTimeMillis() - getLastTimeAdsShows())
-               <= PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS;
+                (System.currentTimeMillis() - getLastTimeAdsShows())
+                <= PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS;
     }
 
     /**
@@ -349,8 +350,8 @@ public class MyPreferenceManager {
     public boolean isTimeToNotifyAboutSoonAdsShowing() {
         //i.e. 1 hour - (17:56-17:00) = 4 min, which we compare to 5 min
         return FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS) -
-               (System.currentTimeMillis() - getLastTimeAdsShows())
-               <= PERIOD_WHEN_WE_NOTIFY_ABOUT_ADS && !isOfferAlreadyShown();
+                (System.currentTimeMillis() - getLastTimeAdsShows())
+                <= PERIOD_WHEN_WE_NOTIFY_ABOUT_ADS && !isOfferAlreadyShown();
     }
 
     private boolean isOfferAlreadyShown() {
@@ -382,6 +383,11 @@ public class MyPreferenceManager {
 
     public void setRewardedDescriptionIsNotShown() {
         mPreferences.edit().putBoolean(Keys.ADS_REWARDED_DESCRIPTION_IS_SHOWN, true).apply();
+    }
+
+    public int getOfferSubscriptionInsteadOfRewardedVideoModificator() {
+        final Long modificator = FirebaseRemoteConfig.getInstance().getLong(OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO_MODIFICATOR);
+        return modificator == null ? 5 : modificator.intValue();
     }
 
     //invite
@@ -442,7 +448,7 @@ public class MyPreferenceManager {
 
     public boolean isTimeToShowVideoInsteadOfInterstitial() {
         return getNumOfInterstitialsShown() >=
-               FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_INTERSITIAL_BETWEEN_REWARDED);
+                FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_INTERSITIAL_BETWEEN_REWARDED);
     }
 
     /**

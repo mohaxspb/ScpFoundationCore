@@ -1,8 +1,5 @@
 package ru.kuchanov.scpcore.ui.dialog;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,11 +8,14 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.SwitchCompat;
 import android.text.Html;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +69,12 @@ public class AdsSettingsBottomSheetDialogFragment
     @BindView(R2.id.adsInArticleNativeSwitch)
     SwitchCompat adsInArticleNativeSwitch;
 
+    @BindView(R2.id.adsRemovedTextView)
+    View adsRemovedTextView;
+
+    @BindView(R2.id.adsRemoveActionsView)
+    View adsRemoveActionsView;
+
     @BindView(R2.id.removeAdsForMonth)
     TextView removeAdsForMonth;
 
@@ -90,7 +96,7 @@ public class AdsSettingsBottomSheetDialogFragment
     }
 
     @Override
-    public void setupDialog(Dialog dialog, int style) {
+    public void setupDialog(final Dialog dialog, final int style) {
         super.setupDialog(dialog, style);
 
         adsInListsBannerSwitch.setChecked(mMyPreferenceManager.isBannerInArticlesListsEnabled());
@@ -99,13 +105,13 @@ public class AdsSettingsBottomSheetDialogFragment
         adsInArticleNativeSwitch.setChecked(!mMyPreferenceManager.isBannerInArticleEnabled());
 
         //set text for remove ads price
-        List<String> skus = new ArrayList<>();
-        String noAdsSku;
+        final String noAdsSku;
         if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
             noAdsSku = InAppHelper.getNewNoAdsSubsSkus().get(0);
         } else {
             noAdsSku = InAppHelper.getNewSubsSkus().get(0);
         }
+        final List<String> skus = new ArrayList<>();
         skus.add(noAdsSku);
         mInAppHelper.getSubsListToBuyObservable(getBaseActivity().getIInAppBillingService(), skus)
                 .subscribeOn(Schedulers.io())
@@ -117,31 +123,40 @@ public class AdsSettingsBottomSheetDialogFragment
                 );
 
         removeAdsForFree.setText(Html.fromHtml(getString(R.string.remove_ads_for_free_for_hours)));
+
+        setRemoveAdsViewVisibility();
+    }
+
+    private void setRemoveAdsViewVisibility() {
+        final boolean hasAnySubscription = mMyPreferenceManager.isHasAnySubscription();
+
+        adsRemovedTextView.setVisibility(hasAnySubscription ? View.VISIBLE : View.INVISIBLE);
+        adsRemoveActionsView.setVisibility(hasAnySubscription ? View.INVISIBLE : View.VISIBLE);
     }
 
     @OnCheckedChanged(R2.id.adsInListsBannerSwitch)
-    void onBannerInArticlesListsEnabledCheckChangeListener(boolean checked) {
+    void onBannerInArticlesListsEnabledCheckChangeListener(final boolean checked) {
         Timber.d("setBannerInArticlesListsEnabled: %s", checked);
         mMyPreferenceManager.setBannerInArticlesListsEnabled(checked);
         adsInListsNativeSwitch.setChecked(!checked);
     }
 
     @OnCheckedChanged(R2.id.adsInListsNativeSwitch)
-    void onNativeInArticlesListsEnabledCheckChangeListener(boolean checked) {
+    void onNativeInArticlesListsEnabledCheckChangeListener(final boolean checked) {
         Timber.d("setNativeInArticlesListsEnabled: %s", checked);
         mMyPreferenceManager.setBannerInArticlesListsEnabled(!checked);
         adsInListsBannerSwitch.setChecked(!checked);
     }
 
     @OnCheckedChanged(R2.id.adsInArticleBannerSwitch)
-    void onBannerInArticleEnabledCheckChangeListener(boolean checked) {
+    void onBannerInArticleEnabledCheckChangeListener(final boolean checked) {
         Timber.d("setBannerInArticleEnabled: %s", checked);
         mMyPreferenceManager.setBannerInArticleEnabled(checked);
         adsInArticleNativeSwitch.setChecked(!checked);
     }
 
     @OnCheckedChanged(R2.id.adsInArticleNativeSwitch)
-    void onNativeInArticleEnabledCheckChangeListener(boolean checked) {
+    void onNativeInArticleEnabledCheckChangeListener(final boolean checked) {
         Timber.d("setNativeInArticleEnabled: %s", checked);
         mMyPreferenceManager.setBannerInArticleEnabled(!checked);
         adsInArticleBannerSwitch.setChecked(!checked);
@@ -150,45 +165,36 @@ public class AdsSettingsBottomSheetDialogFragment
     @OnClick(R2.id.removeAdsForMonth)
     void onRemoveAdsForMonthClick() {
         Timber.d("onRemoveAdsForMonthClick");
-        String noAdsSku;
+        final String noAdsSku;
         if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
             noAdsSku = InAppHelper.getNewNoAdsSubsSkus().get(0);
         } else {
             noAdsSku = InAppHelper.getNewSubsSkus().get(0);
         }
-        try {
-            //todo
-            InAppHelper.intentSenderSingle(
-                    getBaseActivity(),
-                    getBaseActivity().getIInAppBillingService(),
-                    InAppHelper.InappType.SUBS,
-                    noAdsSku
-            );
-        } catch (Exception e) {
-            Timber.e(e);
-            Snackbar.make(mRoot, e.getMessage(), Snackbar.LENGTH_SHORT).show();
-        }
-        Bundle bundle = new Bundle();
+
+        getBaseActivity().createPresenter().onPurchaseClick(noAdsSku, getBaseActivity(), true);
+
+        final Bundle bundle = new Bundle();
         bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.StartScreen.REMOVE_ADS_SETTINGS);
-        FirebaseAnalytics.getInstance(getActivity()).logEvent(Constants.Firebase.Analitics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
+        FirebaseAnalytics.getInstance(getBaseActivity()).logEvent(Constants.Firebase.Analitics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
     }
 
     @OnClick(R2.id.removeAdsForFree)
     void onRemoveAdsForFreeClick() {
         Timber.d("onRemoveAdsForFreeClick");
         dismiss();
-        SubscriptionsActivity.start(getActivity(), SubscriptionsActivity.TYPE_DISABLE_ADS_FOR_FREE);
+        SubscriptionsActivity.start(getBaseActivity(), SubscriptionsActivity.TYPE_DISABLE_ADS_FOR_FREE);
     }
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
+    public Dialog onCreateDialog(final Bundle savedInstanceState) {
+        final BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
 
         dialog.setOnShowListener(dialog1 -> {
-            BottomSheetDialog d = (BottomSheetDialog) dialog1;
+            final BottomSheetDialog d = (BottomSheetDialog) dialog1;
 
-            FrameLayout bottomSheet = d.findViewById(android.support.design.R.id.design_bottom_sheet);
+            final FrameLayout bottomSheet = d.findViewById(android.support.design.R.id.design_bottom_sheet);
             if (bottomSheet != null) {
                 BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
             }
@@ -211,12 +217,15 @@ public class AdsSettingsBottomSheetDialogFragment
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+    public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
         if (!isAdded()) {
             return;
         }
         switch (key) {
-            //TODO think if we should react on ads settings here
+            case MyPreferenceManager.Keys.HAS_NO_ADS_SUBSCRIPTION:
+            case MyPreferenceManager.Keys.HAS_SUBSCRIPTION:
+                setRemoveAdsViewVisibility();
+                break;
             default:
                 //do nothing
                 break;

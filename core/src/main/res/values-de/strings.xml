@@ -356,4 +356,5 @@ Vielen Dank für die Nutzung unserer App!]]></string>
     <string name="cant_find_next_article">Cannot find next article</string>
     <string name="dialog_selectable_text_title">Warning!</string>
     <string name="dialog_selectable_text_content">This feature is experimental and may cause crashes and prevent inner links opening.</string>
+    <string name="ads_removed">Ads removed!</string>
 </resources>

@@ -221,10 +221,6 @@ dependencies {
     //time operations
     api 'joda-time:joda-time:2.10'
 
-    //xml to json
-    //todo remove it
-    api 'org.json:json:20180130'
-
     //new crash reporting
     api('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') { transitive = true }
 

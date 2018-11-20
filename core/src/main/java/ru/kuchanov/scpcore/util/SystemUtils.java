@@ -1,11 +1,5 @@
 package ru.kuchanov.scpcore.util;
 
-import com.vk.sdk.util.VKUtil;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.XML;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -20,8 +14,9 @@ import android.text.Html;
 import android.text.Spanned;
 import android.util.Base64;
 
+import com.vk.sdk.util.VKUtil;
+
 import java.io.File;
-import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -124,27 +119,6 @@ public class SystemUtils {
 
     public static Spanned coloredTextForSnackBar(final Context context, @StringRes final int text) {
         return coloredTextForSnackBar(context, context.getString(text));
-    }
-
-    public static void parseXmlRemoteConfigToJsonAndSendItToEmail() {
-        final String[] langs = {"ru", "en", "pl", "de", "fr", "es", "it", "pt"};
-        for (final String lang : langs) {
-            parseAndCreateFile(lang);
-        }
-        sendEmailWithAttachedFiles(langs);
-    }
-
-    private static void parseAndCreateFile(final String lang) {
-        try {
-            final String xmlString = StorageUtils.readFromAssets(BaseApplication.getAppInstance(), "config/" + lang + "/remote_config_defaults.xml");
-            final JSONObject xmlJSONObj = XML.toJSONObject(xmlString);
-            final String jsonPrettyPrintString = xmlJSONObj.toString(4);
-            Timber.d("jsonPrettyPrintString: %s", jsonPrettyPrintString);
-
-            StorageUtils.writeFileOnDevice(lang + ".json", jsonPrettyPrintString);
-        } catch (final IOException | JSONException e) {
-            Timber.e(e);
-        }
     }
 
     //fixme delete
