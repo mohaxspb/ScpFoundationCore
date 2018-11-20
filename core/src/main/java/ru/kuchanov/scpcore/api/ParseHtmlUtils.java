@@ -199,12 +199,15 @@ public class ParseHtmlUtils {
 
         final Element elementExpanded = elementUnfolded.getElementsByClass("collapsible-block-link").first();
         //replacing non-breaking-spaces
-//        spoilerParts.add(elementExpanded.text().replaceAll("&nbsp;", " "));
         spoilerParts.add(elementExpanded.text().replaceAll("\\p{Z}", " "));
 //        Timber.d("spoilerParts: %s", spoilerParts.get(1));
 
         final Element elementContent = elementUnfolded.getElementsByClass("collapsible-block-content").first();
-        spoilerParts.add(elementContent.html());
+        if(elementContent!=null) {
+            spoilerParts.add(elementContent.html());
+        } else {
+            spoilerParts.add("ERROR WHILE PARSING SPOILER CONTENT. Please, let developers know about it, if you see this message)");
+        }
         return spoilerParts;
     }
 
