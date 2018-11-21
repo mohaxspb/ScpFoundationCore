@@ -1,6 +1,6 @@
 <resources>
     <!--no need to translate-->
-    <string name="app_name" translatable="false">SCP Foundation Portuguese On/Offline</string>
+    <string name="app_name" translatable="false">SCP基金会 On/Offline</string>
     <!--end no need to translate-->
 
     <string name="drawer_item_9">SCP-CN系列 </string>

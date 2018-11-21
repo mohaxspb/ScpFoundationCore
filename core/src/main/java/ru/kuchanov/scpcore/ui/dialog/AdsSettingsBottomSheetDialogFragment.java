@@ -111,6 +111,7 @@ public class AdsSettingsBottomSheetDialogFragment
         } else {
             noAdsSku = InAppHelper.getNewSubsSkus().get(0);
         }
+
         final List<String> skus = new ArrayList<>();
         skus.add(noAdsSku);
         mInAppHelper.getSubsListToBuyObservable(getBaseActivity().getIInAppBillingService(), skus)
