@@ -74,15 +74,31 @@ public class ParseHtmlUtils {
         if (rimgs != null) {
             for (final Element rimg : rimgs) {
                 final Elements imgs = rimg.getElementsByTag(TAG_IMG);
-                final Elements descriptions = rimg.getElementsByTag(TAG_SPAN);
-                if (imgs != null && imgs.size() > 1 && descriptions.size() == imgs.size()) {
+//                Timber.d("imgs: %s", imgs);
+//                Timber.d("descriptions: %s", descriptions);
+                if (imgs != null && imgs.size() > 1) {
                     final Collection<Element> rimgsToAdd = new ArrayList<>();
                     for (int i = 0; i < imgs.size(); i++) {
                         final Element img = imgs.get(i);
-                        final Element description = descriptions.get(i);
+
+                        Element nextImgSibling = img.nextElementSibling();
+//                        Timber.d("nextImgSibling: %s", nextImgSibling);
+
+                        final Collection<Element> descriptions = new Elements();
+                        while (nextImgSibling != null && !nextImgSibling.tagName().equals("img")) {
+                            descriptions.add(nextImgSibling);
+                            nextImgSibling = nextImgSibling.nextElementSibling();
+                        }
+//                        Timber.d("descriptions: %s", descriptions);
+
                         final Element newRimg = new Element(TAG_DIV);
                         newRimg.addClass(className);
-                        newRimg.appendChild(img).appendChild(description);
+                        newRimg.appendChild(img);
+
+                        for (final Element element : descriptions) {
+                            newRimg.appendChild(element);
+                        }
+
                         rimgsToAdd.add(newRimg);
                     }
                     Element rimgLast = rimg;
@@ -94,7 +110,6 @@ public class ParseHtmlUtils {
                 }
             }
         }
-//            Timber.d("pageContent.getElementsByClass(\"rimg\"): %s", pageContent.getElementsByClass("rimg"));
     }
 
     public static void extractTablesFromDivs(final Element pageContent) {
@@ -203,7 +218,7 @@ public class ParseHtmlUtils {
 //        Timber.d("spoilerParts: %s", spoilerParts.get(1));
 
         final Element elementContent = elementUnfolded.getElementsByClass("collapsible-block-content").first();
-        if(elementContent!=null) {
+        if (elementContent != null) {
             spoilerParts.add(elementContent.html());
         } else {
             spoilerParts.add("ERROR WHILE PARSING SPOILER CONTENT. Please, let developers know about it, if you see this message)");
