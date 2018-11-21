@@ -275,11 +275,21 @@ public class ParseHtmlUtils {
             if (pageContent.children().size() == 1
                     && pageContent.children().first().tagName().equals("div")) {
                 final Element theOnlyChildDiv = pageContent.children().first();
-                Element child = theOnlyChildDiv.children().first();
+
+                Node child = theOnlyChildDiv.children().first();
+
+                final Collection<Node> children = new ArrayList<>();
                 while (child != null) {
-                    theOnlyChildDiv.after(child);
-                    child = child.nextElementSibling();
+                    children.add(child);
+                    child = child.nextSibling();
                 }
+
+                Node prev = theOnlyChildDiv;
+                for (final Node node : children) {
+                    prev.after(node);
+                    prev = node;
+                }
+
                 theOnlyChildDiv.remove();
             }
 

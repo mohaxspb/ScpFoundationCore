@@ -149,7 +149,12 @@ public class InAppHelper {
     private Observable<List<Item>> getValidatedOwnedSubsObservable(final IInAppBillingService mInAppBillingService) {
         return Observable.<List<Item>>unsafeCreate(subscriber -> {
             try {
-                Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "subs", null);
+                Bundle ownedItemsBundle = mInAppBillingService.getPurchases(
+                        API_VERSION_3,
+                        BaseApplication.getAppInstance().getPackageName(),
+                        "subs",
+                        null
+                );
 
                 Timber.d("ownedItems bundle: %s", ownedItemsBundle);
                 if (ownedItemsBundle.getInt("RESPONSE_CODE") == RESULT_OK) {
@@ -299,7 +304,12 @@ public class InAppHelper {
                 //get all subs detailed info
                 final Bundle querySkus = new Bundle();
                 querySkus.putStringArrayList("ITEM_ID_LIST", (ArrayList<String>) skus);
-                final Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "subs", querySkus);
+                final Bundle skuDetails = mInAppBillingService.getSkuDetails(
+                        API_VERSION_3,
+                        BaseApplication.getAppInstance().getPackageName(),
+                        "subs",
+                        querySkus
+                );
                 final int responseCodeCode = skuDetails.getInt("RESPONSE_CODE");
                 if (responseCodeCode == RESULT_OK) {
                     final List<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
