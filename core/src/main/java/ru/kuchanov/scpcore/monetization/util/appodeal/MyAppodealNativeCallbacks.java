@@ -1,11 +1,7 @@
 package ru.kuchanov.scpcore.monetization.util.appodeal;
 
-import com.appodeal.ads.Appodeal;
 import com.appodeal.ads.NativeAd;
 import com.appodeal.ads.NativeCallbacks;
-
-import ru.kuchanov.scpcore.Constants;
-import timber.log.Timber;
 
 /**
  * Created by mohax on 20.09.2017.
@@ -31,5 +27,10 @@ public class MyAppodealNativeCallbacks implements NativeCallbacks {
     @Override
     public void onNativeClicked(final NativeAd nativeAd) {
 //        Timber.d("onNativeClicked");
+    }
+
+    @Override
+    public void onNativeExpired() {
+//        Timber.d("onNativeExpired");
     }
 }

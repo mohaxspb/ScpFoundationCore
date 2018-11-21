@@ -31,6 +31,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.vending.billing.IInAppBillingService;
 import com.appodeal.ads.Appodeal;
 import com.appodeal.ads.Native;
+import com.appodeal.ads.utils.Log;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -352,10 +353,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         Appodeal.setAutoCacheNativeMedia(true);
         Appodeal.setNativeAdType(Native.NativeAdType.Auto);
         Appodeal.disableLocationPermissionCheck();
-        if (BuildConfig.FLAVOR.equals("dev")) {
-            Appodeal.setTesting(true);
-//            Appodeal.setLogLevel(Log.LogLevel.debug);
-        }
+        //noinspection ConstantConditions
+        Appodeal.setTesting(BuildConfig.FLAVOR.equals("dev"));
+        //noinspection ConstantConditions
+        Appodeal.setLogLevel(BuildConfig.FLAVOR.equals("dev") ? Log.LogLevel.debug : Log.LogLevel.none);
         Appodeal.disableNetwork(this, "vungle");
         Appodeal.disableNetwork(this, "facebook");
         Appodeal.initialize(
@@ -372,22 +373,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
         Appodeal.muteVideosIfCallsMuted(true);
         Appodeal.setRewardedVideoCallbacks(new MyRewardedVideoCallbacks() {
-//            @Override
-//            public void onRewardedVideoFinished(final double i, final String s) {
-//                super.onRewardedVideoFinished(i, s);
-////                mMyPreferenceManager.applyAwardFromAds();
-//                final long numOfMillis = FirebaseRemoteConfig.getInstance()
-//                        .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
-//                final long hours = Duration.millis(numOfMillis).toStandardHours().getHours();
-//                showMessage(getString(R.string.ads_reward_gained, hours));
-//
-//                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventType.REWARD_GAINED, null);
-//
-//                @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.REWARDED_VIDEO;
-//                mPresenter.updateUserScoreForScoreAction(action);
-//
-//                mRoot.postDelayed(() -> mMyPreferenceManager.applyAwardFromAds(), Constants.POST_DELAYED_MILLIS);
-//            }
 
             @Override
             public void onRewardedVideoClosed(final boolean b) {
