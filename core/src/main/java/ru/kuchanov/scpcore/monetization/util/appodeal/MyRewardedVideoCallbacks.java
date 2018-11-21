@@ -33,4 +33,9 @@ public class MyRewardedVideoCallbacks implements RewardedVideoCallbacks {
     public void onRewardedVideoClosed(final boolean b) {
 //        Timber.d("onRewardedVideoClosed: %s", b);
     }
+
+    @Override
+    public void onRewardedVideoExpired() {
+//        Timber.d("onRewardedVideoExpired");
+    }
 }

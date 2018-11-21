@@ -55,4 +55,9 @@ public class MyAppodealInterstitialCallbacks implements InterstitialCallbacks {
         mMyPreferenceManager.setLastTimeAdsShows(System.currentTimeMillis());
         mMyPreferenceManager.setNumOfInterstitialsShown(0);
     }
+
+    @Override
+    public void onInterstitialExpired() {
+        Timber.d("onInterstitialExpired");
+    }
 }
