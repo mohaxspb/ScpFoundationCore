@@ -248,6 +248,12 @@ public class ParseHtmlUtils {
 
                 final List<String> tabsTextParts = getArticlesTextParts(tabText);
                 final List<String> tabsTextPartTypes = getListOfTextTypes(tabsTextParts);
+
+//                Timber.d("TAB!!!");
+//                Timber.d("tabsTextParts: %s", tabsTextParts);
+//                Timber.d("tabsTextPartTypes: %s", tabsTextPartTypes);
+//                Timber.d("TAB!!!");
+
                 tabDataList.add(new TabsViewModel.TabData(tabsTextPartTypes, tabsTextParts));
             }
 
@@ -264,6 +270,20 @@ public class ParseHtmlUtils {
             @NotNull final ConstantValues constantValues
     ) throws Exception {
         try {
+            //some article are in div... I.e. http://scp-wiki-cn.wikidot.com/taboo
+            //so check it and extract text
+            if (pageContent.children().size() == 1
+                    && pageContent.children().first().tagName().equals("div")) {
+                final Element theOnlyChildDiv = pageContent.children().first();
+                Element child = theOnlyChildDiv.children().first();
+                while (child != null) {
+                    theOnlyChildDiv.after(child);
+                    child = child.nextElementSibling();
+                }
+                theOnlyChildDiv.remove();
+            }
+
+
             //замена ссылок в сносках
             final Elements footnoterefs = pageContent.getElementsByClass("footnoteref");
             for (final Element snoska : footnoterefs) {
@@ -420,7 +440,7 @@ public class ParseHtmlUtils {
             }
 
             //replace styles with underline and strike
-            final Elements spans = pageContent.getElementsByTag("span");
+            final Elements spans = pageContent.getElementsByTag(TAG_SPAN);
             for (final Element element : spans) {
                 //<span style="text-decoration: underline;">PLEASE</span>
                 if (element.hasAttr("style") && element.attr("style").equals("text-decoration: underline;")) {

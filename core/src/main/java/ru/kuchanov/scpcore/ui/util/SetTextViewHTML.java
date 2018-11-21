@@ -3,6 +3,7 @@ package ru.kuchanov.scpcore.ui.util;
 import org.jetbrains.annotations.NotNull;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
@@ -69,7 +70,7 @@ public class SetTextViewHTML {
         final int flags = strBuilder.getSpanFlags(span);
         final ClickableSpan clickable = new ClickableSpan() {
             @Override
-            public void updateDrawState(final TextPaint ds) {
+            public void updateDrawState(@NonNull final TextPaint ds) {
                 super.updateDrawState(ds);
                 if (span.getURL().startsWith(Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL)) {
                     ds.setColor(ContextCompat.getColor(BaseApplication.getAppInstance(), R.color.material_red_500));
@@ -77,7 +78,7 @@ public class SetTextViewHTML {
             }
 
             @Override
-            public void onClick(final View view) {
+            public void onClick(@NonNull final View view) {
                 Timber.d("Link clicked: %s", span.getURL());
                 if (textItemsClickListener == null) {
                     Timber.wtf("textItemsClickListener is NULL!!!11");
@@ -133,7 +134,7 @@ public class SetTextViewHTML {
 
         final ClickableSpan click_span = new ClickableSpan() {
             @Override
-            public void onClick(final View widget) {
+            public void onClick(@NonNull final View widget) {
                 Timber.d("makeImgsClickable Click: %s", imageSrc);
                 if (textItemsClickListener != null) {
                     textItemsClickListener.onImageClicked(imageSrc, null);
@@ -151,7 +152,7 @@ public class SetTextViewHTML {
     }
 
     /**
-     * quotes
+     * handle <blockquote>
      *
      * @see <a href="http://stackoverflow.com/a/29114976/3212712">en-SO</a>
      */
