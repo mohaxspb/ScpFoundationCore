@@ -4,13 +4,13 @@ ext {
     fillArrays = { variant, fileIsinRoot ->
         logger.info("fillArrays: {}", variant.productFlavors[0].name)
         def pathToFileWithData
-        if(fileIsinRoot){
+        if (fileIsinRoot) {
             pathToFileWithData = "marketSkus.properties"
             fillSkusData(variant, pathToFileWithData)
         } else {
             pathToFileWithData = "config/" + variant.productFlavors[0].name + "/marketSkus.properties"
             def buildTypeName = variant.buildType.name
-            def flavorMergedName = variant.productFlavors[0].name + variant.productFlavors[1].name;
+            def flavorMergedName = variant.productFlavors[0].name + variant.productFlavors[1].name
 
             if (getCurrentFlavor().equalsIgnoreCase(flavorMergedName) && buildTypeName.equalsIgnoreCase(getCurrentBuildType())) {
 //                logger.lifecycle('flavorName/buildTypeName: {}/{}', flavorMergedName, buildTypeName)
@@ -25,7 +25,7 @@ ext {
         //http://stackoverflow.com/a/41655569/3212712
         //Load market SKUs
         if (rootProject.file(pathToFileWithData).exists()) {
-            def marketSkusPropertiesFile = rootProject.file(pathToFileWithData);
+            def marketSkusPropertiesFile = rootProject.file(pathToFileWithData)
             def properties = new Properties()
             properties.load(new FileInputStream(marketSkusPropertiesFile))
 
@@ -52,12 +52,13 @@ ext {
             variant.resValue('string', 'subs_no_ads_ver_2', properties.get("noAdsSkuVer2"))
             //free trail subs
             variant.resValue('string', 'subs_free_trial', properties.get("subsFreeTrial"))
-        } else {
+        } else {/*
             logger.lifecycle('pathToFileWithData: {}', pathToFileWithData)
             throw new GradleException("You need to have marketSkus.properties file in root of project with " +
                     "marketSkusOld," +
                     "marketSkusVer2," +
                     " variables to build project")
+        */
         }
     }
 }

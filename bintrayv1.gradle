@@ -2,25 +2,27 @@ apply plugin: 'com.jfrog.bintray'
 
 version = libraryVersion
 
-//if (project.hasProperty("android")) { // Android libraries
-//    task sourcesJar(type: Jar) {
-//        classifier = 'sources'
-//        from android.sourceSets.main.java.srcDirs
-//    }
-//
-//    task javadoc(type: Javadoc) {
-////        source = android.sourceSets.main.java.srcDirs
-//        source = sourceSets.main.allJava
-////        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-//        classpath += project.files(android.getBootClasspath().join(File.pathSeparator)) + configurations.compile
-//        options.addStringOption('encoding', 'UTF-8')
-//    }
-//} else { // Java libraries
-//    task sourcesJar(type: Jar, dependsOn: classes) {
-//        classifier = 'sources'
-//        from sourceSets.main.allSource
-//    }
-//}
+/*
+if (project.hasProperty("android")) { // Android libraries
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from android.sourceSets.main.java.srcDirs
+    }
+
+    task javadoc(type: Javadoc) {
+//        source = android.sourceSets.main.java.srcDirs
+        source = sourceSets.main.allJava
+//        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator)) + configurations.compile
+        options.addStringOption('encoding', 'UTF-8')
+    }
+} else { // Java libraries
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+}
+*/
 
 if (project.hasProperty("android")) { // Android libraries
     task sourcesJar(type: Jar) {
@@ -79,36 +81,37 @@ bintray {
         }
     }
 }
+/*
+task createPom {
+    pom {
+        project {
+            packaging 'aar'
 
-//task createPom {
-//    pom {
-//        project {
-//            packaging 'aar'
-//
-//            name project.name
-////            description descr
-//            url siteUrl
-//            inceptionYear '2016'
-//
-//            licenses {
-//                license {
-//                    name 'The Apache Software License, Version 2.0'
-//                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-//                }
-//            }
-//            scm {
-//                connection gitUrl
-//                developerConnection gitUrl
-//                url siteUrl
-//            }
-//            developers {
-//                developer {
-//                    id 'saschpe'
-//                    name 'Sascha Peilicke'
-//                    email 'sascha@peilicke.de'
-//                }
-//            }
-//        }
-//    }.writeTo("$buildDir/poms/pom-default.xml").writeTo("pom.xml")
-//}
-//build.dependsOn createPom
+            name project.name
+//            description descr
+            url siteUrl
+            inceptionYear '2016'
+
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                }
+            }
+            scm {
+                connection gitUrl
+                developerConnection gitUrl
+                url siteUrl
+            }
+            developers {
+                developer {
+                    id 'saschpe'
+                    name 'Sascha Peilicke'
+                    email 'sascha@peilicke.de'
+                }
+            }
+        }
+    }.writeTo("$buildDir/poms/pom-default.xml").writeTo("pom.xml")
+}
+build.dependsOn createPom
+*/

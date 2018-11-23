@@ -2,7 +2,7 @@ ext {
     fillApiArrays = { variant, fileIsInRoot ->
         logger.info("fillApiArrays: {}", variant.productFlavors[0].name)
         def pathToFileWithData
-        if(fileIsInRoot){
+        if (fileIsInRoot) {
 //            logger.lifecycle('fileIsInRoot: {}', fileIsInRoot)
             pathToFileWithData = "apiKeys.properties"
         } else {
@@ -19,7 +19,7 @@ ext {
         //http://stackoverflow.com/a/41655569/3212712
         //Load market SKUs
         if (rootProject.file(pathToFileWithData).exists()) {
-            def marketSkusPropertiesFile = rootProject.file(pathToFileWithData);
+            def marketSkusPropertiesFile = rootProject.file(pathToFileWithData)
             def properties = new Properties()
             properties.load(new FileInputStream(marketSkusPropertiesFile))
 
@@ -71,6 +71,7 @@ ext {
 
             variant.resValue('bool', 'siteHasRatedArticlesList', properties.get("siteHasRatedArticlesList"))
         } else {
+/*
             logger.lifecycle('pathToFileWithData: {}', pathToFileWithData)
             throw new GradleException("You need to have apiKeys.properties file in projectRoot/config/{FLAVOR_NAME} with " +
                     "yandexMetricaApiKey," +
@@ -82,6 +83,8 @@ ext {
                     "webApplicationId" +
                     "vpsApiAddress" +
                     " etc variables to build project")
+        */
         }
+
     }
 }

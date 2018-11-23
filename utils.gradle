@@ -16,14 +16,14 @@ ext {
         }
 //        logger.lifecycle("getCurrentBuildType: {}", buildType)
 
-        return buildType;
+        return buildType
     }
 
     getCurrentFlavor = {
         Gradle gradle = getGradle()
         String tskReqStr = gradle.getStartParameter().getTaskRequests().toString()
 
-        Pattern pattern;
+        Pattern pattern
 
         if (tskReqStr.contains("assemble")) {
             pattern = Pattern.compile("assemble(\\w+)(Release|Debug)")
@@ -32,7 +32,7 @@ ext {
         }
         Matcher matcher = pattern.matcher(tskReqStr)
 
-        def  curFlavor
+        def curFlavor
 
         if (matcher.find()) {
             curFlavor = matcher.group(1).toLowerCase()
@@ -41,6 +41,6 @@ ext {
         }
 //        logger.lifecycle("curFlavor: {}", curFlavor)
 
-        return curFlavor;
+        return curFlavor
     }
 }

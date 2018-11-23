@@ -9,15 +9,15 @@ ext {
 
         (major, minor, patch, build) = [major, minor, patch, build].collect { it.toInteger() }
 
-        (major * 1000000) + (minor * 10000) + (patch * 100) + build;
+        (major * 1000000) + (minor * 10000) + (patch * 100) + build
     }
 
     buildVersionCodeFor3Numbers = {
         def (major, minor, patch) = version.toLowerCase().replaceAll('-', '').tokenize('.')
 
-        (major, minor, patch) = [major, minor, patch].collect{it.toInteger()}
+        (major, minor, patch) = [major, minor, patch].collect { it.toInteger() }
 
-        (major * 10000) + (minor * 100) + patch;
+        (major * 10000) + (minor * 100) + patch
     }
 
     buildVersionCodeFromVariant = { variant ->
@@ -29,15 +29,15 @@ ext {
 
         (major, minor, patch, build) = [major, minor, patch, build].collect { it.toInteger() }
 
-        (major * 1000000) + (minor * 10000) + (patch * 100) + build;
+        (major * 1000000) + (minor * 10000) + (patch * 100) + build
     }
 
-    getVersionValueAsString = {variant ->
+    getVersionValueAsString = { variant ->
         def pathToFileWithData = "config/" + variant.productFlavors[0].name + "/version.properties"
 
         println('pathToFileWithData: ' + pathToFileWithData)
 
-        def marketSkusPropertiesFile = rootProject.file(pathToFileWithData);
+        def marketSkusPropertiesFile = rootProject.file(pathToFileWithData)
         def properties = new Properties()
         properties.load(new FileInputStream(marketSkusPropertiesFile))
 
