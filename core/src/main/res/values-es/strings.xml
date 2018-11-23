@@ -4,26 +4,26 @@
     <string name="drawer_item_1">Sobre La Fundación</string>
     <string name="drawer_item_2">Noticias</string>
     <string name="drawer_item_3">Páginas Mejor Puntuadas</string>
-    <string name="drawer_item_4">Recientemente Creados</string>
+    <string name="drawer_item_4">Creados recientemente</string>
     <string name="drawer_item_5">SCP Aleatorio</string>
     <string name="drawer_item_6">Serie SCP  I</string>
     <string name="drawer_item_7">Serie SCP II</string>
     <string name="drawer_item_8">Serie SCP III</string>
     <string name="drawer_item_9">Serie SCP RU</string>
-    <string name="drawer_item_10">Datos</string>
+    <string name="drawer_item_10">Otros archivos</string>
     <string name="drawer_item_11">Relatos</string>
     <string name="drawer_item_12">Favoritos</string>
-    <string name="drawer_item_13">Páginas Offline</string>
+    <string name="drawer_item_13">Artículos offline</string>
     <string name="drawer_item_14">Galería</string>
     <string name="drawer_item_15">Buscar</string>
     <string name="drawer_item_objects4">Serie SCP IV</string>
     <!--настройки-->
     <string name="enter">Entrar</string>
-    <string name="settings">La configuracion</string>
-    <string name="night_mode">Modo de noche</string>
-    <string name="text_size">Talla de texto</string>
+    <string name="settings">Configuracion</string>
+    <string name="night_mode">Modo nocturno</string>
+    <string name="text_size">Tamaño de letra</string>
     <string name="in_apps">Version extendida</string>
-    <string name="day_mode">Modo día</string>
+    <string name="day_mode">Modo diurno</string>
     <string name="unsupported_link">No compatible enlace</string>
     <string name="share">Compartir</string>
     <string name="open_with">Abrir en el navegador</string>
@@ -41,7 +41,7 @@
     <string name="search">Buscar</string>
 
     <!--drawer items -->
-    <!--TODO maybe use ut instead of upper ones?..-->
+    <!--TODO maybe use it instead of upper ones?..-->
     <string name="about_org">Acerca de organizacion</string>
     <string name="news">Noticias</string>
     <string name="stories">Historias</string>
@@ -81,7 +81,7 @@
     <string name="ads_reward_description_title">Instrucciones</string>
     <string name="ads_reward_description_content">Te mostraremos el video y, después de ver, desactivamos temporalmente el anuncio. Puedes apagarlo tantas veces como quieras!</string>
     <string name="ads_reward_ok">¡Todo despejado!</string>
-    <string name="settings_design_list_type">El diseño del artículo en la lista</string>
+    <string name="settings_design_list_type">Diseño de la lista principal</string>
     <string name="rating">Valorar %d</string>
     <string name="yes_sir">Так точно!</string>
     <string name="reward_not_loaded_yet">Aún no está cargada. Vuelve a intentarlo</string>
@@ -101,29 +101,29 @@
     <string-array name="fag_items">
         <item>Autorización</item>
         <item>Sincronización de nube</item>
-        <item>Sistema de  Valorar</item>
+        <item>Sistema de valoración</item>
     </string-array>
 
     <string-array name="fag_items_content">
-        <item>1. Puede autorizarlo en el menú de la izquierda, en la parte superior y en el botón \"Entrar\".\n
+        <item>1. Puede iniciar sesión en el menú izquierdo, pulsando en el botón \"Entrar\".\n
         2. La entrada a través de la red requiere un correo electrónico especificado en la red porque se utiliza como ID en la base de datos del servidor..\n
         3. Necesita autorización para mantener los artículos leídos y seleccionados en la nube y para participar en el ranking de agentes.\n</item>
         <item>1. Sólo funciona para agentes autorizados.\n
         2. Requiere una conexión a Internet.\n
         3. Funciona automáticamente para los agentes que tienen una suscripción.\n
-        4. Para los agentes thrifty requiere sincronización manual. Mira \"Configuración\".\n
-        5. El estado del artículo se guarda en la nube y se lee y agrega a los favoritos.\n
-        6. Si limpia los datos de la aplicación/salida de la cuenta, se perderán los datos no sincronizados.\n</item>
+        4. Agentes gratuitos deben actualizar manualmente. Ver \"Configuración\".\n
+        5. El estado del artículo, leído o añadido a favoritos, es almacenado en la nube.\n
+        6. Si elimina los datos de la aplicación o cierra su sesión, se perderán los datos no sincrinizados.\n</item>
         <item>1. Sólo funciona para agentes autorizados.\n
         2. Requiere una conexión a Internet.\n
         3. Funciona automáticamente para los agentes que tienen una suscripción.\n
-        4. Para los agentes thrifty requiere sincronización manual. Mira. "Configuración"\n
-        5. Los anteojos están calculados para: Añada artículos a sus favoritos, para leer, para la instalación de aplicaciones, para la visualización de anuncios, Para compras en la aplicación. La lista se ampliará.\n
+        4. Agentes gratuitos deben actualizar manualmente. Ver. "Configuración"\n
+        5. Se otorgan puntos por leer artículos, añadirlos a tus favoritos, instalar aplicaciones, ver anuncios, y hacer cualquier compra en la aplicación. Esta lista está sujeta a expansión.\n
         6. Los modificadores se aplican a todos los puntos - Todos los puntos que reciba serán aumentados para su suscripción.\n
         7. Si limpia los datos de la aplicación/salida de la cuenta, se perderán los datos no sincronizados.\n
-        8. A medida que reciba sus puntos, su nivel de tolerancia crecerá. Atención! El nivel de tolerancia no da ningún beneficio adicional - Es sólo una etiqueta bajo tu avatar.\n
-        9. Progreso hasta que el siguiente nivel es mostrado por la banda verde alrededor del Avatar.\n
-        10. El número de puntos al siguiente nivel se muestra al hacer clic en el avatar.\n
+        8. Según recibas puntos, tu nivel de autorización crecerá. Atención! El nivel de tolerancia no da ningún beneficio adicional - Es sólo una etiqueta bajo tu avatar.\n
+        9. Los puntos que te faltan actualmente para alcanzar el siguiente nivel se muestran en la barra verde alrededor de tu avatar.\n
+        10. Se muestran los puntos actuales al pulsar sobre el avatar.\n
         11. La tabla de clasificación del agente se muestra al hacer clic en el avatar. Se actualiza cada pocos minutos. Normalmente son cinco minutos.</item>
     </string-array>
 
@@ -215,8 +215,8 @@
     <string name="materials_experiments">Protocolos de experimentos</string>
     <string name="materials_incidents">Informes de incidentes</string>
     <string name="materials_interview">Entrevistas con testigos oculares</string>
-    <string name="materials_jokes">SCPs Humorísticos</string>
-    <string name="materials_archive">SCPs Archivados</string>
+    <string name="materials_jokes">SCPs cómicos</string>
+    <string name="materials_archive">SCPs archivados</string>
     <string name="materials_others">Otros materiales</string>
     <string name="materials_kadr">Detrás de las escenas</string>
 
@@ -239,7 +239,7 @@
     <string name="article_not_translated">Este artículo aún no se ha traducido al sitio.</string>
     <string name="offer_app_lang_version_content">El idioma de su dispositivo - <b>%1$s</b>, Y sólo tenemos la misma App donde los artículos son traducidos al <b>%2$s</b>. ¿Desea instalarlo?\n\nLa lista de aplicaciones con traducciones en diferentes idiomas está siempre disponible en el menú superior derecho de cualquier pantalla.</string>
     <string name="open_play_market">Abra el Play Market</string>
-    <string name="menuAppLangVersions">Sucursales del Fondo.</string>
+    <string name="menuAppLangVersions">Ramas de la fundación.</string>
     <!---->
     <string name="subscription_no_ads_title">Deshabilita los anuncios</string>
     <string name="subscription_full_version_title">La versión completa</string>
@@ -262,17 +262,17 @@
     <string name="your_invite_received">¡ su invitación al fondo es aceptada!</string>
     <string name="invite_received_reward_message">¡ la publicidad está desactivada durante %1$d horas, %2$d puntos añadidos!</string>
     <string name="ads_disabled_for_some_hours">¡ el anuncio está apagado por %d horas!</string>
-    <string name="drawer_item_invite_friends">¡ inviten a sus amigos!</string>
+    <string name="drawer_item_invite_friends">¡Invitar amigos!</string>
 
     <!---->
-    <string name="settings_ads_banner_in_lists">El banner en la lista de artículos</string>
+    <string name="settings_ads_banner_in_lists">Banner en lista principal</string>
     <string name="settings_ads_title">Configuración de anuncios</string>
-    <string name="settings_ads_native_in_lists">Anuncios nativa en listas de artículos</string>
+    <string name="settings_ads_native_in_lists">Anuncios nativos en lista principal</string>
     <string name="settings_ads_native_in_article">Anuncios nativa en artículos</string>
     <string name="settings_ads_banner_in_article">Banner en artículos</string>
     <string name="disable_all_ads">Deshabilite todos los anuncios</string>
     <string name="remove_ads_for_month">Un mes por %s</string>
-    <string name="remove_ads_for_free_for_hours"><![CDATA[Por unas horas<br/><b><font color=#4CAF50>LIBRE</font></b>]]></string>
+    <string name="remove_ads_for_free_for_hours"><![CDATA[Por unas horas<br/><b><font color=#4CAF50>GRATIS</font></b>]]></string>
 
     <!---->
     <string name="contacts_info"><![CDATA[Te recordamos que puedes monitorear el progreso del proyecto en <b>GitHub</b> y en <b>Trello</b>. Puede ponerse en contacto con nosotros a través de <b>correo electrónico</b>. Aquí están los links:
@@ -285,19 +285,19 @@ E-mail: <a href="mailto:neva.spb.rx@gmail.com">Para cualquier pregunta</a>
 <br/><br/>
 ¡Gracias por utilizar nuestra aplicación!]]></string>
     <string name="drawer_item_read">Leer artículos</string>
-    <string name="subs_main_text">Aquí puede obtener un permiso especial de la Fundación y ayudar a los desarrolladores. Nuestra aplicación tiene <![CDATA[<a href="https://github.com/mohaxspb/ScpFoundationCore">código abierto</a>]]> y <![CDATA[<a href="https://www.youtube.com/watch?v=5RuwbKvLDs0">fresco sincronización en la nube</a>]]>. Si te gusta nuestra app, puedes apoyar a los desarrolladores. Todos los beneficios van a apoyar el proyecto. También tienes la oportunidad de apoyarnos con sólo mirar el anuncio. Estaremos encantados de cualquier donación. ¡Gracias!</string>
-    <string name="subs_free_actions_title">ОDeshabilitar anuncios, gratis!</string>
-    <string name="subs_free_actions_card_title">Nos apoyan</string>
-    <string name="subs_free_actions_card_description">¡ inhabilite la publicidad, aumente el límite de artículos y Gane puntos para libre!</string>
-    <string name="subs_description">Desactivación de anuncios, sincronización automática de la nube, descarga ilimitada de artículos y fuentes atmosféricas</string>
+    <string name="subs_main_text">Aquí puede obtener un permiso especial de la Fundación y ayudar a los desarrolladores. Nuestra aplicación tiene <![CDATA[<a href="https://github.com/mohaxspb/ScpFoundationCore">código abierto</a>]]> y <![CDATA[<a href="https://www.youtube.com/watch?v=5RuwbKvLDs0">continua sincronización en la nube</a>]]>. Si te gusta nuestra app, puedes apoyar a los desarrolladores. Todos los beneficios van a apoyar el proyecto. También tienes la oportunidad de apoyarnos con sólo mirar un anuncio. Recibiremos alegremente cualquier donación. ¡Gracias!</string>
+    <string name="subs_free_actions_title">¡Desahabilitar anuncios gratis!</string>
+    <string name="subs_free_actions_card_title">Apóyanos</string>
+    <string name="subs_free_actions_card_description">¡Desactive la publicidad, aumente el límite de artículos y gane puntos gratis!</string>
+    <string name="subs_description">Desactive la publicidad, sincronización automática de la nube, descarga ilimitada de artículos y fuentes atmosféricas</string>
     <string name="subs_level_5_gain">Obtener nivel 5</string>
     <string name="subs_no_ads_title">Protocolo "Silencio"</string>
-    <string name="subs_no_ads_description">Lanzamiento del agente bloqueador meme cualquier manifestación del agente publicitario en la aplicación</string>
+    <string name="subs_no_ads_description">Lanza el agente memético que previene cualquier manifestación de los agentes publicitarios en la aplicación</string>
     <string name="subs_1_month_title">Ayudante de laboratorio</string>
     <string name="subs_3_month_title">Investigador Junior</string>
     <string name="subs_6_month_title">Investigador</string>
     <string name="subs_12_month_title">Investigador Senior</string>
-    <string name="subs_full_description">Desactivación de anuncios, sincronización automática de la nube, descarga ilimitada de artículos y fuentes atmosféricas.</string>
+    <string name="subs_full_description">Desactive la publicidad, sincronización automática de la nube, descarga ilimitada de artículos y fuentes atmosféricas.</string>
     <string name="subs_no_ads_label">Mes sin publicidad</string>
     <string name="subs_1_month_label">Versión mensual ampliada</string>
     <string name="subs_3_month_label">Versión extendida durante 3 meses</string>
@@ -320,7 +320,7 @@ E-mail: <a href="mailto:neva.spb.rx@gmail.com">Para cualquier pregunta</a>
     <string name="free_ads_vk_group_label">Únase a nuestro grupo en VC</string>
     <string name="free_ads_vk_group_title">Únete, y vamos a desactivar la publicidad en %1$d horas y le dará %2$d puntos</string>
     <string name="free_ads_activity_title">Deshabilitar anuncios</string>
-    <string name="leaderboard_activity_title">Agentes de calificación</string>
+    <string name="leaderboard_activity_title">Agentes mejor valorados</string>
     <string name="leaderboard_inapp_title">Levántate en el ranking</string>
     <string name="leaderboard_inapp_description">Utilizar la astucia y sus conexiones en el fondo para conseguir alrededor de los colegas y elevarse en el ranking</string>
     <string name="leaderboard_place">%d lugar</string>
@@ -329,7 +329,7 @@ E-mail: <a href="mailto:neva.spb.rx@gmail.com">Para cualquier pregunta</a>
     <string name="leaderboard_articles_read">%d Páginas leídas</string>
     <string name="score_num">%d Puntos</string>
     <string name="level_num">%d Nivel</string>
-    <string name="drawer_item_leaderboard">Agentes de calificación</string>
+    <string name="drawer_item_leaderboard">Agentes mejor valorados</string>
     <string name="ads_will_be_shown_soon">¡ pronto se mostrará la publicidad! ¿desea deshabilitarlo por adelantado?</string>
     <string name="need_login_for_level_up_content">Para participar en el ranking de agentes, es necesario iniciar sesión.</string>
 
@@ -339,7 +339,7 @@ E-mail: <a href="mailto:neva.spb.rx@gmail.com">Para cualquier pregunta</a>
     <!---->
     <string name="downloads_settings">Configuración de descargas</string>
     <string name="downloads_force_update">Forzar actualización de texto mientras se descarga</string>
-    <string name="download_inner_depth">Descargar artículos internos profundidad</string>
+    <string name="download_inner_depth">Profundidad de descarga de artículos internos</string>
     <string name="images_cache_enabled">Caché de imágenes local</string>
     <string name="cached_images_count">Recuento de imágenes en caché</string>
     <string name="cached_images_size">Tamaño de imágenes en caché</string>
@@ -350,8 +350,8 @@ E-mail: <a href="mailto:neva.spb.rx@gmail.com">Para cualquier pregunta</a>
     <!---->
     <string name="drawer_item_objects5">Serie SCP V</string>
     <string name="error_no_activity_to_handle_intent">No application to handle this Intent found.</string>
-    <string name="download_new_articles">Save new articles automatically</string>
-    <string name="text_is_selectable">Selectable text</string>
+    <string name="download_new_articles">Descargar nuevos artículos automáticamente</string>
+    <string name="text_is_selectable">Selección de texto</string>
     <string name="cant_find_next_article">Cannot find next article</string>
     <string name="dialog_selectable_text_title">Warning!</string>
     <string name="dialog_selectable_text_content">This feature is experimental and may cause crashes and prevent inner links opening.</string>
