@@ -1624,6 +1624,10 @@ public class ApiClient {
         return mScpReaderApi.getLeaderboardUsersUpdateDates();
     }
 
+    public Single<Integer> getUserPositionInLeaderboard() {
+        return mScpReaderApi.getUserPositionInLeaderboard(mConstantValues.getAppLang().toUpperCase());
+    }
+
     public Observable<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {
         return bindWithUtils(mScpServer.getArticlesByTags(getScpServerWiki(), ArticleTag.getStringsFromTags(tags)))
                 .map(ArticleFromSearchTagsOnSite::getArticlesFromSiteArticles)
