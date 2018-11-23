@@ -110,7 +110,12 @@ class LeaderboardFragment :
 
         if (presenter.data.isNotEmpty()) {
             showProgressCenter(false)
-            presenter.apply { showData(data); onUserChanged(myUser); showUpdateDate(updateTime) }
+            presenter.apply {
+                showData(data)
+                onUserChanged(myUser)
+                showUpdateDate(updateTime)
+                showUserPosition(userPositionOnLeaderboard)
+            }
         }
 
         refresh.setOnClickListener { getPresenter().loadInitialData() }
@@ -140,6 +145,13 @@ class LeaderboardFragment :
         swipeRefresh.isEnabled = enable
     }
 
+    override fun showUserPosition(positionInLeaderboard: String?) {
+        if (!isAdded) {
+            return
+        }
+        userDataView.chartPlaceTextView.text = positionInLeaderboard
+    }
+
     override fun showUser(myUser: LeaderboardUserViewModel?) {
         if (!isAdded) {
             return
@@ -161,7 +173,7 @@ class LeaderboardFragment :
                 val view = inflater.inflate(R.layout.view_social_login, providersContainer, false)
                 providersContainer.addView(view)
                 val holder = SocialLoginHolder(
-                    view
+                        view
                 ) { baseActivity?.startLogin(loginModel.socialProvider) }
                 holder.bind(loginModel)
 
@@ -177,12 +189,6 @@ class LeaderboardFragment :
         val user = myUser.user
         Timber.d("user: $user")
         with(userDataView) {
-            chartPlaceTextView.text = if (myUser.position == LeaderboardUserViewModel.POSITION_NONE) {
-                "N/A"
-            } else {
-                (myUser.position + 1).toString()
-            }
-
             Glide.with(context)
                     .load(user.avatar)
                     .asBitmap()
@@ -282,8 +288,8 @@ class LeaderboardFragment :
         if (show) {
             val screenHeight = DimensionUtils.getScreenHeight()
             swipeRefresh.setProgressViewEndTarget(
-                false,
-                (screenHeight - DimensionUtils.getActionBarHeight(activity!!) * 3.5f).toInt()
+                    false,
+                    (screenHeight - DimensionUtils.getActionBarHeight(activity!!) * 3.5f).toInt()
             )
         }
 
