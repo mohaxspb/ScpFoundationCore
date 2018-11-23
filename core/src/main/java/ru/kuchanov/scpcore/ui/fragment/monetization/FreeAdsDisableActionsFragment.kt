@@ -13,7 +13,6 @@ import com.vk.sdk.api.model.VKApiPhoto
 import com.vk.sdk.api.model.VKPhotoArray
 import com.vk.sdk.dialogs.VKShareDialog
 import com.vk.sdk.dialogs.VKShareDialogBuilder
-import kotlinx.android.synthetic.main.fragment_free_ads_disable_actions.*
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.ConstantValues
 import ru.kuchanov.scpcore.Constants
@@ -118,29 +117,29 @@ class FreeAdsDisableActionsFragment :
         photos.add(VKApiPhoto(VK_APP_SHARE_IMAGE))
         builder.setUploadedPhotos(photos)
         builder.setAttachmentLink(
-            getString(R.string.app_name),
-            getString(R.string.share_app_vk_link, BaseApplication.getAppInstance().packageName)
+                getString(R.string.app_name),
+                getString(R.string.share_app_vk_link, BaseApplication.getAppInstance().packageName)
         )
         builder.setShareDialogListener(object : VKShareDialog.VKShareDialogListener {
             override fun onVkShareComplete(postId: Int) {
                 FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
-                    Constants.Firebase.Analitics.EventName.VK_APP_SHARED,
-                    Bundle()
+                        Constants.Firebase.Analitics.EventName.VK_APP_SHARED,
+                        Bundle()
                 )
 
                 presenter.applyAwardFromVkShare()
 
                 presenter.updateUserScoreForScoreAction(
-                    DataSyncActions.ScoreAction.VK_APP_SHARE,
-                    object : BasePresenter.AddScoreListener {
-                        override fun onSuccess() {
-                            presenter.createData()
-                            showData(presenter.data)
+                        DataSyncActions.ScoreAction.VK_APP_SHARE,
+                        object : BasePresenter.AddScoreListener {
+                            override fun onSuccess() {
+                                presenter.createData()
+                                showData(presenter.data)
+                            }
+
+                            override fun onError() {}
+
                         }
-
-                        override fun onError() {}
-
-                    }
                 )
             }
 
@@ -169,5 +168,3 @@ class FreeAdsDisableActionsFragment :
         const val VK_APP_SHARE_IMAGE = "photo-599638_456239255"
     }
 }
-
-

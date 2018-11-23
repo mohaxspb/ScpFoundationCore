@@ -9,7 +9,7 @@ import java.util.*
  * for scp-ru
  */
 data class LeaderboardUsersUpdateDates(
-    val id: Long,
-    val langId: String,
-    var updated: Date
+        val id: Long,
+        val langId: String,
+        var updated: Date
 ) : Serializable

@@ -1,13 +1,5 @@
 package ru.kuchanov.scpcore.ui.fragment.article;
 
-import com.google.firebase.auth.FirebaseAuth;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -23,6 +15,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.firebase.auth.FirebaseAuth;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -65,7 +64,7 @@ import timber.log.Timber;
 public class ArticleFragment
         extends BaseFragment<ArticleMvp.View, ArticleMvp.Presenter>
         implements ArticleMvp.View,
-                   SetTextViewHTML.TextItemsClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
+        SetTextViewHTML.TextItemsClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String TAG = ArticleFragment.class.getSimpleName();
 
@@ -367,10 +366,10 @@ public class ArticleFragment
         }
 //        Timber.d("onTocClicked: %s", link);
         final List<String> articlesTextParts = mAdapter.getArticlesTextParts();
-        String digits = "";
+        StringBuilder digits = new StringBuilder();
         for (final char c : link.toCharArray()) {
             if (TextUtils.isDigitsOnly(String.valueOf(c))) {
-                digits += String.valueOf(c);
+                digits.append(String.valueOf(c));
             }
         }
         for (int i = 0; i < articlesTextParts.size(); i++) {
@@ -388,7 +387,7 @@ public class ArticleFragment
 //        Timber.d("srtToCheck1: %s", srtToCheck1);
         for (int i = 0; i < articlesTextParts.size(); i++) {
             if (articlesTextParts.get(i).contains(srtToCheck) ||
-                articlesTextParts.get(i).contains(srtToCheck1)) {
+                    articlesTextParts.get(i).contains(srtToCheck1)) {
 //                Timber.d("found part: %s", articlesTextParts.get(i));
                 mRecyclerView.scrollToPosition(i);
                 return;

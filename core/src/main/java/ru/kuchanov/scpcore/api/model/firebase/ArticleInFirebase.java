@@ -42,11 +42,11 @@ public class ArticleInFirebase implements Serializable {
     @Override
     public String toString() {
         return "ArticleInFirebase{" +
-               "isFavorite=" + isFavorite +
-               ", isRead=" + isRead +
-               ", title='" + title + '\'' +
-               ", url='" + url + '\'' +
-               ", updated=" + updated +
-               '}';
+                "isFavorite=" + isFavorite +
+                ", isRead=" + isRead +
+                ", title='" + title + '\'' +
+                ", url='" + url + '\'' +
+                ", updated=" + updated +
+                '}';
     }
 }

@@ -1,8 +1,5 @@
 package ru.kuchanov.scpcore.receivers;
 
-
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -13,6 +10,8 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.ArrayList;
 import java.util.List;

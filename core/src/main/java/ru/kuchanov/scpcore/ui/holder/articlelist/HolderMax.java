@@ -1,14 +1,13 @@
 package ru.kuchanov.scpcore.ui.holder.articlelist;
 
-import com.google.android.flexbox.FlexboxLayout;
-
-import com.bumptech.glide.Glide;
-
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.google.android.flexbox.FlexboxLayout;
 
 import java.io.File;
 

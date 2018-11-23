@@ -12,7 +12,7 @@ import io.realm.annotations.PrimaryKey;
  * <p>
  * for ScpFoundationRu
  */
-public class ArticleTag extends RealmObject implements Serializable{
+public class ArticleTag extends RealmObject implements Serializable {
 
     public static final String FIELD_TITLE = "title";
 

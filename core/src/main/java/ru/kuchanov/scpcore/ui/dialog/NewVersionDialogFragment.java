@@ -1,7 +1,5 @@
 package ru.kuchanov.scpcore.ui.dialog;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -17,11 +15,13 @@ import android.text.style.URLSpan;
 import android.text.util.Linkify;
 import android.view.View;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
 import javax.inject.Inject;
 
 import ru.kuchanov.rate.PreRate;
-import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
@@ -69,16 +69,16 @@ public class NewVersionDialogFragment extends DialogFragment {
         }
 
         newVersionFeatures = getString(R.string.version, SystemUtils.getPackageInfo().versionName) +
-                             "<br/><br/>" +
-                             newVersionFeatures +
-                             "<br/><br/>" +
-                             "<a href=\"rateApp://rateApp\">" +
-                             getString(R.string.rate_app_title, getString(getActivity().getApplicationInfo().labelRes)) +
-                             "</a>" +
-                             "<br/><br/>" +
-                             getString(R.string.contacts_info) +
-                             "<br/><br/>" +
-                             getString(R.string.license_en, mConstantValues.getBaseApiUrl(), mConstantValues.getBaseApiUrl());
+                "<br/><br/>" +
+                newVersionFeatures +
+                "<br/><br/>" +
+                "<a href=\"rateApp://rateApp\">" +
+                getString(R.string.rate_app_title, getString(getActivity().getApplicationInfo().labelRes)) +
+                "</a>" +
+                "<br/><br/>" +
+                getString(R.string.contacts_info) +
+                "<br/><br/>" +
+                getString(R.string.license_en, mConstantValues.getBaseApiUrl(), mConstantValues.getBaseApiUrl());
 
         ////////
         final CharSequence sequence = Html.fromHtml(newVersionFeatures, null, new MyHtmlTagHandler());

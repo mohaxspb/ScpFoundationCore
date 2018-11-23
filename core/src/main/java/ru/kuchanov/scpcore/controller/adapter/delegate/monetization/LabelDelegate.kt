@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AbsListItemAdapterDelegate
 import kotlinx.android.synthetic.main.list_item_text.view.*
 import ru.kuchanov.scpcore.R
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.LabelViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 
 /**
  * Created by mohax on 15.01.2018.

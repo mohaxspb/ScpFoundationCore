@@ -35,17 +35,17 @@ public class AppLangVersionsJson {
         public int hashCode() {
             return code.hashCode();
         }
-
-//        @Override
-//        public String toString() {
-//            return "AppLangVersion{" +
-//                    "id=" + code +
-//                    ", title='" + title + '\'' +
-//                    ", appPackage=" + appPackage +
-//                    ", icon=" + icon +
-//                    '}';
-//        }
-
+/*
+        @Override
+        public String toString() {
+            return "AppLangVersion{" +
+                    "id=" + code +
+                    ", title='" + title + '\'' +
+                    ", appPackage=" + appPackage +
+                    ", icon=" + icon +
+                    '}';
+        }
+*/
         @Override
         public String toString() {
             return title;

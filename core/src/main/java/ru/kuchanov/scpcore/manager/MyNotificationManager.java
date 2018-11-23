@@ -1,7 +1,5 @@
 package ru.kuchanov.scpcore.manager;
 
-import org.joda.time.Period;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -10,6 +8,8 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+
+import org.joda.time.Period;
 
 import java.util.concurrent.atomic.AtomicReference;
 

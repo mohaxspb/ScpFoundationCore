@@ -11,7 +11,6 @@ import rx.Subscriber;
 public interface BaseArticlesListMvp {
 
     interface View extends BaseListMvp.View {
-
     }
 
     interface Presenter<V extends View> extends BaseListMvp.Presenter<V>, BaseArticleActions {

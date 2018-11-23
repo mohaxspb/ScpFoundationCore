@@ -21,8 +21,7 @@ public class AdMobHelper {
         final AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
 
         if (BuildConfig.FLAVOR.equals("dev")) {
-            @SuppressLint("HardwareIds")
-            final String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+            @SuppressLint("HardwareIds") final String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
             String deviceId = SystemUtils.MD5(androidId);
             if (deviceId != null) {
                 deviceId = deviceId.toUpperCase();

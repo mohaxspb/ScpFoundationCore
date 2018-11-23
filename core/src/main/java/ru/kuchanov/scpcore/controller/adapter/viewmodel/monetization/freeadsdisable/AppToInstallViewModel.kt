@@ -1,7 +1,6 @@
 package ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable
 
 import android.support.annotation.ColorRes
-import android.support.annotation.StringRes
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 
@@ -11,7 +10,7 @@ import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
  * for ScpCore
  */
 data class AppToInstallViewModel(
-        val id:String,
+        val id: String,
         val title: String,
         val subtitle: String,
         val iconUrl: String,

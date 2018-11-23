@@ -1,10 +1,10 @@
 package ru.kuchanov.scpcore.db.model;
 
-import org.jetbrains.annotations.NotNull;
-
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.text.TextUtils;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.lang.annotation.Retention;
@@ -239,7 +239,9 @@ public class Article extends RealmObject implements Serializable {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) {return true;}
+        if (this == o) {
+            return true;
+        }
         if (o == null) {
             return false;
         }
@@ -279,13 +281,15 @@ public class Article extends RealmObject implements Serializable {
     }
 
     //check dates and create proper comparator
-//    public static final Comparator<Article> COMPARATOR_DATE_CREATED = (a1, a2) -> a1.createdDate == null ? a2.createdDate == null : a1.createdDate.compareTo(a1.createdDate);///a1.createdDate.compareTo(a2.createdDate);
-//
-//    public static final Comparator<Article> COMPARATOR_DATE_UPDATED = (a1, a2) -> a1.updatedDate.compareTo(a2.updatedDate);
+/*
+    public static final Comparator<Article> COMPARATOR_DATE_CREATED = (a1, a2) -> a1.createdDate == null ? a2.createdDate == null : a1.createdDate.compareTo(a1.createdDate);
+    //a1.createdDate.compareTo(a2.createdDate);
 
+    public static final Comparator<Article> COMPARATOR_DATE_UPDATED = (a1, a2) -> a1.updatedDate.compareTo(a2.updatedDate);
+*/
     public static final Comparator<Article> COMPARATOR_DATE_RATING = (a1, a2) -> a2.rating - a1.rating;
 
     public static final Comparator<Article> COMPARATOR_TITLE = (a1, a2) -> a1.title == null ? -1 : a1.title.compareTo(a2.title);
 
-    public static final Comparator<Article> COMPARATOR_READ_STATE = (a1, a2) -> Boolean.valueOf(a1.isInReaden).compareTo(a2.isInReaden);
+    public static final Comparator<Article> COMPARATOR_READ_STATE = (a1, a2) -> Boolean.compare(a1.isInReaden, a2.isInReaden);
 }

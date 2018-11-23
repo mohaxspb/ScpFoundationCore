@@ -1,17 +1,16 @@
 package ru.kuchanov.scpcore.db;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-
-import com.facebook.login.LoginManager;
-import com.vk.sdk.VKSdk;
-
-import org.jetbrains.annotations.NotNull;
-
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Pair;
+
+import com.facebook.login.LoginManager;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.vk.sdk.VKSdk;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -551,8 +550,8 @@ public class DbProvider {
                 .filter(RealmResults::isValid)
                 .first()
                 .flatMap(articles -> articles.isEmpty()
-                                     ? Observable.error(new IllegalStateException("No offline articles"))
-                                     : Observable.just(articles))
+                        ? Observable.error(new IllegalStateException("No offline articles"))
+                        : Observable.just(articles))
                 .map(articles -> articles.get(new Random().nextInt(articles.size())).url)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread());
@@ -804,18 +803,20 @@ public class DbProvider {
                 realm -> {
                     realm.delete(User.class);
                     //do not delete it now... As we want to check if it will be better later via Firebase AB testing
-//                    List<Article> favs = realm.where(Article.class)
-//                            .notEqualTo(Article.FIELD_IS_IN_FAVORITE, Article.ORDER_NONE)
-//                            .findAll();
-//                    for (Article article : favs) {
-//                        article.isInFavorite = Article.ORDER_NONE;
-//                    }
-//                    List<Article> read = realm.where(Article.class)
-//                            .equalTo(Article.FIELD_IS_IN_READEN, true)
-//                            .findAll();
-//                    for (Article article : read) {
-//                        article.isInReaden = false;
-//                    }
+/*
+                    List<Article> favs = realm.where(Article.class)
+                            .notEqualTo(Article.FIELD_IS_IN_FAVORITE, Article.ORDER_NONE)
+                            .findAll();
+                    for (Article article : favs) {
+                        article.isInFavorite = Article.ORDER_NONE;
+                    }
+                    List<Article> read = realm.where(Article.class)
+                            .equalTo(Article.FIELD_IS_IN_READEN, true)
+                            .findAll();
+                    for (Article article : read) {
+                        article.isInReaden = false;
+                    }
+*/
                 },
                 () -> {
                     subscriber.onNext(null);
@@ -881,7 +882,7 @@ public class DbProvider {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     Collections.sort(inFirebaseList, (articleInFirebase, t1) ->
-                            articleInFirebase.updated < t1.updated ? -1 : articleInFirebase.updated > t1.updated ? 1 : 0);
+                            Long.compare(articleInFirebase.updated, t1.updated));
                     long counter = 0;
                     for (final ArticleInFirebase article : inFirebaseList) {
                         if (TextUtils.isEmpty(article.url)) {

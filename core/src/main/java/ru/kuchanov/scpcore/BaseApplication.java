@@ -1,5 +1,12 @@
 package ru.kuchanov.scpcore;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
+import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -7,8 +14,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-
-import com.crashlytics.android.Crashlytics;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.vk.sdk.VKAccessToken;
@@ -16,12 +21,6 @@ import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
 import com.yandex.metrica.YandexMetrica;
 import com.yandex.metrica.YandexMetricaConfig;
-
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
-import android.util.Log;
 
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;

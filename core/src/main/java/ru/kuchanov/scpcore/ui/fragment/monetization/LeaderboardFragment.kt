@@ -3,7 +3,6 @@ package ru.kuchanov.scpcore.ui.fragment.monetization
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -14,13 +13,10 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.LinearLayout
 import android.widget.Space
-import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.google.firebase.auth.FirebaseAuth
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegatesManager
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
-import kotlinx.android.synthetic.main.fragment_leaderboard.*
-import kotlinx.android.synthetic.main.fragment_leaderboard.view.*
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
@@ -30,7 +26,6 @@ import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.leaderboard.
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.subscriptions.InAppDelegate
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LeaderboardUserViewModel
-import ru.kuchanov.scpcore.db.model.LeaderboardUser
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable
 import ru.kuchanov.scpcore.mvp.contract.monetization.LEADERBOARD_REQUEST_LIMIT
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
@@ -89,7 +84,7 @@ class LeaderboardFragment :
         } else if (animator is SimpleItemAnimator) {
             animator.supportsChangeAnimations = false
         }
-        recyclerView.itemAnimator?.changeDuration = 0
+        recyclerView.itemAnimator.changeDuration = 0
 
         swipeRefresh.setColorSchemeResources(R.color.zbs_color_red)
         swipeRefresh.setOnRefreshListener { mPresenter.updateLeaderboardFromApi(0) }
@@ -161,7 +156,7 @@ class LeaderboardFragment :
                 val view = inflater.inflate(R.layout.view_social_login, providersContainer, false)
                 providersContainer.addView(view)
                 val holder = SocialLoginHolder(
-                    view
+                        view
                 ) { baseActivity?.startLogin(loginModel.socialProvider) }
                 holder.bind(loginModel)
 
@@ -282,8 +277,8 @@ class LeaderboardFragment :
         if (show) {
             val screenHeight = DimensionUtils.getScreenHeight()
             swipeRefresh.setProgressViewEndTarget(
-                false,
-                (screenHeight - DimensionUtils.getActionBarHeight(activity!!) * 3.5f).toInt()
+                    false,
+                    (screenHeight - DimensionUtils.getActionBarHeight(activity!!) * 3.5f).toInt()
             )
         }
 

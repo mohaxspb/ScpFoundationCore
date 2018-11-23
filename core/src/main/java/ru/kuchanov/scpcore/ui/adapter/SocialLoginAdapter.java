@@ -16,8 +16,7 @@ import ru.kuchanov.scpcore.ui.holder.login.SocialLoginHolder;
 public class SocialLoginAdapter extends BaseRecyclerAdapter<
         SocialLoginHolder.SocialLoginModel,
         BaseAdapterClickListener<SocialLoginHolder.SocialLoginModel>,
-        SocialLoginHolder
-        > {
+        SocialLoginHolder> {
 
     @Override
     public SocialLoginHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {

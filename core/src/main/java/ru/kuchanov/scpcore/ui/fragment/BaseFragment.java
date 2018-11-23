@@ -1,11 +1,5 @@
 package ru.kuchanov.scpcore.ui.fragment;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.hannesdorfmann.mosby.mvp.MvpFragment;
-import com.squareup.leakcanary.RefWatcher;
-
-import org.jetbrains.annotations.NotNull;
-
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -19,6 +13,12 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.hannesdorfmann.mosby.mvp.MvpFragment;
+import com.squareup.leakcanary.RefWatcher;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 
 import javax.inject.Inject;
@@ -26,11 +26,11 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
+import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.mvp.base.BaseMvp;
 import ru.kuchanov.scpcore.mvp.contract.ActivityToolbarStateSetter;
 import ru.kuchanov.scpcore.mvp.contract.FragmentToolbarStateSetter;
@@ -280,8 +280,8 @@ public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Pre
     public void onResume() {
         super.onResume();
         if (getUserVisibleHint()
-            && getActivity() instanceof ActivityToolbarStateSetter
-            && this instanceof FragmentToolbarStateSetter) {
+                && getActivity() instanceof ActivityToolbarStateSetter
+                && this instanceof FragmentToolbarStateSetter) {
             final ActivityToolbarStateSetter activityToolbarStateSetter = (ActivityToolbarStateSetter) getActivity();
             final FragmentToolbarStateSetter fragmentToolbarStateSetter = (FragmentToolbarStateSetter) this;
             activityToolbarStateSetter.setToolbarTitle(fragmentToolbarStateSetter.getToolbarTitle());

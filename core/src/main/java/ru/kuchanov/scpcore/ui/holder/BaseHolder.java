@@ -1,10 +1,10 @@
 package ru.kuchanov.scpcore.ui.holder;
 
-import org.jetbrains.annotations.NotNull;
-
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import org.jetbrains.annotations.NotNull;
 
 import butterknife.ButterKnife;
 import ru.kuchanov.scpcore.monetization.model.BaseModel;

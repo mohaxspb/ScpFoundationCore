@@ -1,16 +1,16 @@
 package ru.kuchanov.scpcore.manager;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
+
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.Period;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -183,7 +183,8 @@ public class MyPreferenceManager {
 
     //design settings
     public boolean isDesignListNewEnabled() {
-        return !mPreferences.getString(Keys.DESIGN_LIST_TYPE, SettingsBottomSheetDialogFragment.ListItemType.MIDDLE).equals(SettingsBottomSheetDialogFragment.ListItemType.MIN);
+        return !mPreferences.getString(Keys.DESIGN_LIST_TYPE, SettingsBottomSheetDialogFragment.ListItemType.MIDDLE)
+                .equals(SettingsBottomSheetDialogFragment.ListItemType.MIN);
     }
 
     public void setListDesignType(@SettingsBottomSheetDialogFragment.ListItemType final String type) {
@@ -192,7 +193,8 @@ public class MyPreferenceManager {
 
     @SettingsBottomSheetDialogFragment.ListItemType
     public String getListDesignType() {
-        @SettingsBottomSheetDialogFragment.ListItemType final String type = mPreferences.getString(Keys.DESIGN_LIST_TYPE, SettingsBottomSheetDialogFragment.ListItemType.MIDDLE);
+        @SettingsBottomSheetDialogFragment.ListItemType final String type
+                = mPreferences.getString(Keys.DESIGN_LIST_TYPE, SettingsBottomSheetDialogFragment.ListItemType.MIDDLE);
         return type;
     }
 
@@ -387,7 +389,7 @@ public class MyPreferenceManager {
 
     public int getOfferSubscriptionInsteadOfRewardedVideoModificator() {
         final Long modificator = FirebaseRemoteConfig.getInstance().getLong(OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO_MODIFICATOR);
-        return modificator == null ? 5 : modificator.intValue();
+        return modificator.intValue();
     }
 
     //invite
@@ -455,7 +457,7 @@ public class MyPreferenceManager {
      * @return is banners temporary disabled from free ads disable options
      */
     public boolean isTimeToShowBannerAds() {
-        return System.currentTimeMillis() >= getTimeForWhichBannersDisabled();
+        return System.currentTimeMillis() < getTimeForWhichBannersDisabled();
     }
 
     public void setTimeForWhichBannersDisabled(final long timeInMillis) {
@@ -637,20 +639,23 @@ public class MyPreferenceManager {
     }
 
     public boolean isFreeTrialOfferedAfterGetting1000Score() {
-        return mPreferences.getBoolean(Keys.FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE, false);
+        return !mPreferences.getBoolean(Keys.FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE, false);
     }
     //subscriptions end
 
     public boolean isDownloadAllEnabledForFree() {
-        return FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_ALL_ENABLED_FOR_FREE);
+        return FirebaseRemoteConfig.getInstance()
+                .getBoolean(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_ALL_ENABLED_FOR_FREE);
     }
 
     public int getScorePerArt() {
-        return (int) FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_SCORE_PER_ARTICLE);
+        return (int) FirebaseRemoteConfig.getInstance()
+                .getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_SCORE_PER_ARTICLE);
     }
 
     public int getFreeOfflineLimit() {
-        return (int) FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_FREE_ARTICLES_LIMIT);
+        return (int) FirebaseRemoteConfig.getInstance()
+                .getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_FREE_ARTICLES_LIMIT);
     }
 
     //auto sync

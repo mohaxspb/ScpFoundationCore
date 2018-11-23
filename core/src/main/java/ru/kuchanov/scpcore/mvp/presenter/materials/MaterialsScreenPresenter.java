@@ -4,8 +4,8 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
-import ru.kuchanov.scpcore.mvp.presenter.BaseDrawerPresenter;
 import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsScreenMvp;
+import ru.kuchanov.scpcore.mvp.presenter.BaseDrawerPresenter;
 
 public class MaterialsScreenPresenter
         extends BaseDrawerPresenter<MaterialsScreenMvp.View>

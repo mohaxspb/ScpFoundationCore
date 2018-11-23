@@ -1,15 +1,14 @@
 package ru.kuchanov.scpcore.ui.util;
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.gson.GsonBuilder;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-
-import org.jetbrains.annotations.NotNull;
-
 import android.content.Context;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.LinearLayoutManager;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.gson.GsonBuilder;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -69,9 +68,9 @@ public class DialogUtils {
                 .positiveText(R.string.open_play_market)
                 .onPositive((dialog1, which) -> {
                     final String linkToMarket = "https://play.google.com/store/apps/details?id="
-                                                + version.appPackage
-                                                + "&utm_source=scpReader&utm_medium=appLangsVersions&utm_campaign="
-                                                + mConstantValues.getAppLang();
+                            + version.appPackage
+                            + "&utm_source=scpReader&utm_medium=appLangsVersions&utm_campaign="
+                            + mConstantValues.getAppLang();
                     IntentUtils.openUrl(linkToMarket);
                 })
                 .build()
@@ -87,9 +86,9 @@ public class DialogUtils {
         final AppLangVersionsAdapter adapter = new AppLangVersionsAdapter(appLangVersions);
         adapter.setCallbacks(position -> {
             final String linkToMarket = "https://play.google.com/store/apps/details?id="
-                                        + appLangVersions.get(position).appPackage
-                                        + "&utm_source=scpReader&utm_medium=appLangsVersions&utm_campaign="
-                                        + mConstantValues.getAppLang();
+                    + appLangVersions.get(position).appPackage
+                    + "&utm_source=scpReader&utm_medium=appLangsVersions&utm_campaign="
+                    + mConstantValues.getAppLang();
             IntentUtils.openUrl(linkToMarket);
         });
 

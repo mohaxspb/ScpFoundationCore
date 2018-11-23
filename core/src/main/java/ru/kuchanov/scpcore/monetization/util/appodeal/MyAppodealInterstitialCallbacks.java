@@ -43,7 +43,7 @@ public class MyAppodealInterstitialCallbacks implements InterstitialCallbacks {
 
     @Override
     public void onInterstitialClicked() {
-        //TODO pass event to analitics
+        //TODO pass event to analytics
 //        Timber.d("onInterstitialClicked");
         mMyPreferenceManager.setLastTimeAdsShows(System.currentTimeMillis());
         mMyPreferenceManager.setNumOfInterstitialsShown(0);

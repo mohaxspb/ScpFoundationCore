@@ -39,27 +39,27 @@ interface ScpReaderAuthApi {
     @FormUrlEncoded
     @POST("oauth/token")
     fun getAccessToken(
-        @Header("Authorization") authorization: String,
-        @Field("grant_type") grantType: String,
-        @Field("username") user: String,
-        @Field("password") password: String
+            @Header("Authorization") authorization: String,
+            @Field("grant_type") grantType: String,
+            @Field("username") user: String,
+            @Field("password") password: String
     ): Single<AccessTokenResponse>
 
     @FormUrlEncoded
     @POST("oauth/token")
     fun getAccessTokenByRefreshToken(
-        @Header("Authorization") authorization: String,
-        @Field("grant_type") grantType: String,
-        @Field("refresh_token") refreshToken: String
+            @Header("Authorization") authorization: String,
+            @Field("grant_type") grantType: String,
+            @Field("refresh_token") refreshToken: String
     ): Single<AccessTokenResponse>
 
     @FormUrlEncoded
     @POST("auth/socialLogin")
-    abstract fun socialLogin(
-        @Field("provider") socialProvider: Constants.Firebase.SocialProvider,
-        @Field("token") token: String,
-        @Field("langId") langId: FirebaseInstance,
-        @Field("clientId") clientId: String,
-        @Field("clientSecret") clientSecret: String
+    fun socialLogin(
+            @Field("provider") socialProvider: Constants.Firebase.SocialProvider,
+            @Field("token") token: String,
+            @Field("langId") langId: FirebaseInstance,
+            @Field("clientId") clientId: String,
+            @Field("clientSecret") clientSecret: String
     ): Single<AccessTokenResponse>
 }

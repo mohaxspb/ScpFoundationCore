@@ -10,7 +10,7 @@ import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
  * for ScpCore
  */
 data class VkGroupToJoinViewModel(
-        val id:String,
+        val id: String,
         val title: String,
         val subtitle: String,
         val iconUrl: String,

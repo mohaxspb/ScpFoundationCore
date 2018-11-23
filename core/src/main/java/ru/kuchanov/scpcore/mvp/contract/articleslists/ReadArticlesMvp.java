@@ -10,10 +10,8 @@ import ru.kuchanov.scpcore.mvp.base.BaseArticlesListMvp;
 public interface ReadArticlesMvp {
 
     interface View extends BaseArticlesListMvp.View {
-
     }
 
     interface Presenter extends BaseArticlesListMvp.Presenter<View> {
-
     }
 }

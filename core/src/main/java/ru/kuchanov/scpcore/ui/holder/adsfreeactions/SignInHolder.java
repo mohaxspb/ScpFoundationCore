@@ -1,10 +1,10 @@
 package ru.kuchanov.scpcore.ui.holder.adsfreeactions;
 
-import org.jetbrains.annotations.NotNull;
-
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.TextView;
+
+import org.jetbrains.annotations.NotNull;
 
 import butterknife.BindView;
 import ru.kuchanov.scpcore.R;

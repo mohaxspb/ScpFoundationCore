@@ -1,7 +1,5 @@
 package ru.kuchanov.scpcore.ui.fragment.articleslists;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialogFragment;
@@ -10,6 +8,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
 import java.util.Arrays;

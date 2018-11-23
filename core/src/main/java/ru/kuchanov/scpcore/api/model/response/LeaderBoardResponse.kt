@@ -9,7 +9,7 @@ import java.io.Serializable
  * for scp-ru
  */
 data class LeaderBoardResponse(
-    var lastUpdated: Long,
-    var timeZone: String,
-    var users: MutableList<FirebaseObjectUser>
+        var lastUpdated: Long,
+        var timeZone: String,
+        var users: MutableList<FirebaseObjectUser>
 ) : Serializable

@@ -11,7 +11,7 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 
 /**
  * Created by y.kuchanov on 22.12.16.
- *
+ * <p>
  * for scp_ru
  */
 @Module
@@ -19,7 +19,7 @@ public class NotificationModule {
 
     @Provides
     @Singleton
-    MyNotificationManager providesNotificationManager( Context context,  MyPreferenceManager preferenceManager) {
+    MyNotificationManager providesNotificationManager(Context context, MyPreferenceManager preferenceManager) {
         return new MyNotificationManager(context, preferenceManager);
     }
 }

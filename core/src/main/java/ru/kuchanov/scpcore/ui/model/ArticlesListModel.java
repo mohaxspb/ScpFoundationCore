@@ -24,8 +24,8 @@ public class ArticlesListModel implements MyListItem {
     @Override
     public String toString() {
         return "ArticlesListModel{" +
-               "type=" + type +
-               ", data=" + data +
-               '}';
+                "type=" + type +
+                ", data=" + data +
+                '}';
     }
 }

@@ -39,15 +39,15 @@ public class TagSearchResultsArticlesPresenter
     @Override
     protected Observable<RealmResults<Article>> getDbObservable() {
         return mArticlesUrls == null || mArticlesUrls.isEmpty() ?
-               Observable.<RealmResults<Article>>empty()
-                       .doOnCompleted(() -> {
-                           if (mArticlesUrls == null) {
-                               getDataFromApi(Constants.Api.ZERO_OFFSET);
-                           } else {
-                               getView().showSwipeProgress(false);
-                           }
-                       })
-                                                                : mDbProviderFactory.getDbProvider().getArticlesByIds(mArticlesUrls);
+                Observable.<RealmResults<Article>>empty()
+                        .doOnCompleted(() -> {
+                            if (mArticlesUrls == null) {
+                                getDataFromApi(Constants.Api.ZERO_OFFSET);
+                            } else {
+                                getView().showSwipeProgress(false);
+                            }
+                        })
+                : mDbProviderFactory.getDbProvider().getArticlesByIds(mArticlesUrls);
     }
 
     @Override

@@ -44,10 +44,10 @@ public class TagsSearchResultsArticlesFragment
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         Timber.d("onViewCreated");
-        List<ArticleTag> tags = ArticleTag.getTagsFromStringList (getArguments().getStringArrayList(BaseActivity.EXTRA_TAGS));
+        List<ArticleTag> tags = ArticleTag.getTagsFromStringList(getArguments().getStringArrayList(BaseActivity.EXTRA_TAGS));
         List<String> articles = null;
-        if(getArguments().containsKey(ArticleActivity.EXTRA_ARTICLES_URLS_LIST)) {
-          articles = getArguments().getStringArrayList(ArticleActivity.EXTRA_ARTICLES_URLS_LIST);
+        if (getArguments().containsKey(ArticleActivity.EXTRA_ARTICLES_URLS_LIST)) {
+            articles = getArguments().getStringArrayList(ArticleActivity.EXTRA_ARTICLES_URLS_LIST);
         }
 //        Timber.d("articles: %s", articles);
 //        Timber.d("tags: %s", tags);

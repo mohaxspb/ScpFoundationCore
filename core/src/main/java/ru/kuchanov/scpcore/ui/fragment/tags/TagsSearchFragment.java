@@ -191,7 +191,7 @@ public class TagsSearchFragment
         public void onTagClicked(TagView view, ArticleTag tag) {
             Timber.d("mAllTagsClickListener: %s", tag);
 
-            if(!getResources().getBoolean(R.bool.multiTagSearchEnabled)){
+            if (!getResources().getBoolean(R.bool.multiTagSearchEnabled)) {
                 for (int i = 0; i < mSearchTagsContainer.getChildCount(); i++) {
                     TagView tagViewToRemove = (TagView) mSearchTagsContainer.getChildAt(i);
                     TagView tagView = new TagView(getActivity());

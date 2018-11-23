@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AbsListItemAdapterDelegate
 import kotlinx.android.synthetic.main.list_item_in_app.view.*
 import ru.kuchanov.scpcore.R
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.InAppViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.InAppViewModel
 
 /**
  * Created by mohax on 15.01.2018.

@@ -417,7 +417,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         Timber.d("setUpBanner");
         if (mMyPreferenceManager.isHasAnySubscription()
                 || !isBannerEnabled()
-                || !mMyPreferenceManager.isTimeToShowBannerAds()) {
+                || mMyPreferenceManager.isTimeToShowBannerAds()) {
             if (mAdView != null) {
                 mAdView.setEnabled(false);
                 mAdView.setVisibility(View.GONE);
@@ -634,7 +634,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     && mPresenter.getUser().score >= 1000
                     //do not show it after level up gain, where we add 10000 score
                     && mPresenter.getUser().score < 10000
-                    && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
+                    && mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
                 final Bundle bundle = new Bundle();
                 bundle.putString(EventParam.PLACE, EventValue.SCORE_1000_REACHED);
                 FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.FREE_TRIAL_OFFER_SHOWN, bundle);

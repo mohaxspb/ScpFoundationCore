@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AbsListItemAdapterDelegate
 import kotlinx.android.synthetic.main.list_item_cur_subs_empty.view.*
 import ru.kuchanov.scpcore.R
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.CurSubsEmptyViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.CurSubsEmptyViewModel
 
 /**
  * Created by mohax on 15.01.2018.

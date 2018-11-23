@@ -1,9 +1,9 @@
 package ru.kuchanov.scpcore.mvp.base;
 
-import com.android.vending.billing.IInAppBillingService;
-
 import android.content.Intent;
 import android.support.annotation.Nullable;
+
+import com.android.vending.billing.IInAppBillingService;
 
 import ru.kuchanov.scpcore.mvp.contract.LoginActions;
 
@@ -31,7 +31,6 @@ public interface BaseActivityMvp {
         void onInviteSent(String inviteId);
 
         /**
-         *
          * @return true if handled in presenter
          */
         boolean onActivityResult(int requestCode, int resultCode, Intent data);

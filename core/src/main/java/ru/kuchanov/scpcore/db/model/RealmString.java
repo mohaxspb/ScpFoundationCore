@@ -10,7 +10,7 @@ import io.realm.RealmObject;
  * <p>
  * We need this wrapper, because Realm unable to store Strings in arrays/lists
  */
-public class RealmString extends RealmObject{
+public class RealmString extends RealmObject {
 
     public String val;
 

@@ -10,11 +10,9 @@ import ru.kuchanov.scpcore.mvp.contract.DrawerMvp;
 public interface MaterialsScreenMvp extends DrawerMvp {
 
     interface View extends DrawerMvp.View {
-
         void onMaterialsListItemClicked(int position);
     }
 
     interface Presenter extends DrawerMvp.Presenter<View> {
-
     }
 }

@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AbsListItemAdapterDelegate
 import kotlinx.android.synthetic.main.list_item_cur_subs.view.*
 import ru.kuchanov.scpcore.R
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.CurSubsViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.CurSubsViewModel
 
 /**
  * Created by mohax on 15.01.2018.
@@ -16,8 +16,8 @@ import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
  * for ScpCore
  */
 class CurSubsDelegate(
-    val clickListener: (String) -> Unit,
-    private val refreshClickListener: () -> Unit
+        val clickListener: (String) -> Unit,
+        private val refreshClickListener: () -> Unit
 ) : AbsListItemAdapterDelegate<CurSubsViewModel, MyListItem, CurSubsDelegate.AppViewHolder>() {
 
     override fun isForViewType(item: MyListItem, items: MutableList<MyListItem>, position: Int) =

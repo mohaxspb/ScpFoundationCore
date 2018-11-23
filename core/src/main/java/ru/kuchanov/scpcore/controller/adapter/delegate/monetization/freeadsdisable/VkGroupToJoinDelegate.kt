@@ -18,26 +18,26 @@ import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisa
  * for ScpCore
  */
 class VkGroupToJoinDelegate(
-    val clickListener: (String) -> Unit
+        val clickListener: (String) -> Unit
 ) : AbsListItemAdapterDelegate<VkGroupToJoinViewModel, MyListItem, VkGroupToJoinDelegate.ViewHolder>() {
 
     override fun isForViewType(
-        item: MyListItem,
-        items: MutableList<MyListItem>,
-        position: Int
+            item: MyListItem,
+            items: MutableList<MyListItem>,
+            position: Int
     ) = item is VkGroupToJoinViewModel
 
     override fun onCreateViewHolder(parent: ViewGroup) = ViewHolder(
-        LayoutInflater.from(parent.context).inflate(
-            R.layout.list_item_free_ads_simple,
-            parent,
-            false)
+            LayoutInflater.from(parent.context).inflate(
+                    R.layout.list_item_free_ads_simple,
+                    parent,
+                    false)
     )
 
     override fun onBindViewHolder(
-        item: VkGroupToJoinViewModel,
-        viewHolder: ViewHolder,
-        payloads: MutableList<Any>
+            item: VkGroupToJoinViewModel,
+            viewHolder: ViewHolder,
+            payloads: MutableList<Any>
     ) {
         with(viewHolder.itemView) {
             setBackgroundResource(item.backgroundColor)

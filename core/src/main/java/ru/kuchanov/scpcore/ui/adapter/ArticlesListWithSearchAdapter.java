@@ -63,16 +63,17 @@ public class ArticlesListWithSearchAdapter extends ArticlesListAdapter {
         super.sortByType(sortType);
         sortArticles(mSearchQuery);
     }
+/*
+    @Override
+    public void onBindViewHolder(HolderMin holder, int position) {
+        holder.bind(mFilteredWithSearchQueryData.get(position));
+        holder.setShouldShowPreview(shouldShowPreview);
+        holder.setShouldShowPopupOnFavoriteClick(shouldShowPopupOnFavoriteClick);
+    }
 
-//    @Override
-//    public void onBindViewHolder(HolderMin holder, int position) {
-//        holder.bind(mFilteredWithSearchQueryData.get(position));
-//        holder.setShouldShowPreview(shouldShowPreview);
-//        holder.setShouldShowPopupOnFavoriteClick(shouldShowPopupOnFavoriteClick);
-//    }
-
-//    @Override
-//    public int getItemCount() {
-//        return mFilteredWithSearchQueryData.size();
-//    }
+    @Override
+    public int getItemCount() {
+        return mFilteredWithSearchQueryData.size();
+    }
+*/
 }

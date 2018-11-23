@@ -1,8 +1,5 @@
 package ru.kuchanov.scpcore.ui.dialog;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.auth.FirebaseAuth;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -24,6 +21,9 @@ import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

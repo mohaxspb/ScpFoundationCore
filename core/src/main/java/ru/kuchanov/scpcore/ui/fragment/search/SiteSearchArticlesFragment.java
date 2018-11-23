@@ -60,7 +60,7 @@ public class SiteSearchArticlesFragment
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        if(!isAdded()){
+        if (!isAdded()) {
             return;
         }
         SearchView searchView = new SearchView(getActivity());

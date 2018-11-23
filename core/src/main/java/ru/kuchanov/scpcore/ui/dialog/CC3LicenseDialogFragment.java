@@ -1,7 +1,5 @@
 package ru.kuchanov.scpcore.ui.dialog;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -10,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import javax.inject.Inject;
 

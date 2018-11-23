@@ -1,7 +1,5 @@
 package ru.kuchanov.scpcore.downloads;
 
-import org.jetbrains.annotations.NotNull;
-
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +10,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.util.Pair;
 import android.text.TextUtils;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -222,7 +222,7 @@ public abstract class DownloadAllService extends Service {
                 .onExceptionResumeNext(Observable.<Integer>empty().delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS))
                 //if we have limit we must not load all lists of articles
                 .map(pageCount -> (rangeStart != RANGE_NONE && rangeEnd != RANGE_NONE)
-                                  ? (int) Math.ceil((double) rangeEnd / getNumOfArticlesOnRecentPage()) : pageCount)
+                        ? (int) Math.ceil((double) rangeEnd / getNumOfArticlesOnRecentPage()) : pageCount)
                 .doOnNext(pageCount -> mMaxProgress = pageCount)
                 //FIX ME for test do not load all arts lists
 //                .doOnNext(pageCount -> mMaxProgress = 2)
@@ -272,16 +272,16 @@ public abstract class DownloadAllService extends Service {
         } else if (type.resId == R.string.type_jokes) {
             articlesObservable = getApiClient().getMaterialsJokesArticles();
         } else if (type.resId == R.string.type_1
-                   || type.resId == R.string.type_2
-                   || type.resId == R.string.type_3
-                   || type.resId == R.string.type_4
-                   || type.resId == R.string.type_5
-                   || type.resId == R.string.type_ru
-                   || type.resId == R.string.type_fr
-                   || type.resId == R.string.type_jp
-                   || type.resId == R.string.type_es
-                   || type.resId == R.string.type_pl
-                   || type.resId == R.string.type_de) {
+                || type.resId == R.string.type_2
+                || type.resId == R.string.type_3
+                || type.resId == R.string.type_4
+                || type.resId == R.string.type_5
+                || type.resId == R.string.type_ru
+                || type.resId == R.string.type_fr
+                || type.resId == R.string.type_jp
+                || type.resId == R.string.type_es
+                || type.resId == R.string.type_pl
+                || type.resId == R.string.type_de) {
             articlesObservable = getApiClient().getObjectsArticles(type.url);
         } else {
             articlesObservable = getApiClient().getMaterialsArticles(type.url);

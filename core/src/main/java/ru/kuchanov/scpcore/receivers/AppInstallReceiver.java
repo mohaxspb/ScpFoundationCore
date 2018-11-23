@@ -1,13 +1,5 @@
 package ru.kuchanov.scpcore.receivers;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
-import com.google.gson.Gson;
-
-import org.joda.time.Duration;
-
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,6 +9,14 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.widget.Toast;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
+import com.google.gson.Gson;
+
+import org.joda.time.Duration;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -107,7 +107,7 @@ public class AppInstallReceiver extends BroadcastReceiver {
 
     private void updateScoreFromAppInstall(final String packageName) {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            Timber.d("user unlogined, do nothing");
+            Timber.d("user not logged in, do nothing");
             return;
         }
 
@@ -118,9 +118,9 @@ public class AppInstallReceiver extends BroadcastReceiver {
         mApiClient
                 .isUserInstallApp(packageName)
                 .flatMap(isUserInstallApp -> isUserInstallApp ?
-                                             Observable.empty() :
-                                             mApiClient.incrementScoreInFirebaseObservable(totalScoreToAdd)
-                                                     .flatMap(newTotalScore -> mApiClient.addInstalledApp(packageName).flatMap(aVoid -> Observable.just(newTotalScore)))
+                        Observable.empty() :
+                        mApiClient.incrementScoreInFirebaseObservable(totalScoreToAdd)
+                                .flatMap(newTotalScore -> mApiClient.addInstalledApp(packageName).flatMap(aVoid -> Observable.just(newTotalScore)))
                 )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -273,7 +273,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                     && user.score >= 1000
                     //do not show it after level up gain, where we add 10000 score
                     && mPresenter.getUser().score < 10000
-                    && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
+                    && mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
                 final Bundle bundle = new Bundle();
                 bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
                         Constants.Firebase.Analitics.EventValue.SCORE_1000_REACHED

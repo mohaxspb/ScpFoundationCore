@@ -14,8 +14,8 @@ interface BaseArticleActions {
     void toggleReadState(Article article);
 
     /**
-     *  we need article as arg, as we should determine if we
-     *  should start download or should delete text
+     * we need article as arg, as we should determine if we
+     * should start download or should delete text
      */
     void toggleOfflineState(Article article);
 

@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.di.module;
 
+import android.text.TextUtils;
+
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.FieldNamingPolicy;
@@ -11,8 +13,6 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 import org.jetbrains.annotations.NotNull;
-
-import android.text.TextUtils;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -87,10 +87,10 @@ public class NetModule {
     Interceptor providesLoggingInterceptor() {
         return new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(
                 BuildConfig.FLAVOR.equals("dev")
-                ?
-                HttpLoggingInterceptor.Level.BODY
-                :
-                HttpLoggingInterceptor.Level.NONE
+                        ?
+                        HttpLoggingInterceptor.Level.BODY
+                        :
+                        HttpLoggingInterceptor.Level.NONE
         );
     }
 
@@ -338,7 +338,8 @@ public class NetModule {
         }
     }
 
-    private static class RealmListTypeToken extends TypeToken<RealmList<RealmString>> {}
+    private static class RealmListTypeToken extends TypeToken<RealmList<RealmString>> {
+    }
 
     private static class RealmListTypeAdapter extends TypeAdapter<RealmList<RealmString>> {
 

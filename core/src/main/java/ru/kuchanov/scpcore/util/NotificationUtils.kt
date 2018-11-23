@@ -10,9 +10,9 @@ import android.support.annotation.RequiresApi
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun createNotificationChannel(
-    context: Context,
-    channelId: String,
-    channelName: String
+        context: Context,
+        channelId: String,
+        channelName: String
 ): String {
     val chan = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
     chan.lightColor = Color.BLUE

@@ -67,8 +67,8 @@ import ru.kuchanov.scpcore.ui.holder.article.ArticleTabsHolder;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleTagsHolder;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleTextHolder;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleTitleHolder;
-import ru.kuchanov.scpcore.ui.holder.articlelist.HolderMin;
 import ru.kuchanov.scpcore.ui.holder.article.NativeAdsArticleListHolder;
+import ru.kuchanov.scpcore.ui.holder.articlelist.HolderMin;
 
 @Singleton
 @Component(modules = {

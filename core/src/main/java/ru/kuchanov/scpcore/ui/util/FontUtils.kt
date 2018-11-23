@@ -13,9 +13,9 @@ object FontUtils {
         val context = BaseApplication.getAppInstance()
         val fontNameCleared = fontName.replace("font/", "").replace(".ttf", "")
         val fontId = context.resources.getIdentifier(
-            fontNameCleared,
-            "font",
-            context.packageName
+                fontNameCleared,
+                "font",
+                context.packageName
         )
         return if (fontId != 0) ResourcesCompat.getFont(context, fontId) else null
     }

@@ -119,26 +119,30 @@ public class Subscription {
     @Override
     public String toString() {
         return "Subscription{" +
-               "productId='" + productId + '\'' +
-               ", type='" + type + '\'' +
-               ", price='" + price + '\'' +
-               ", price_amount_micros=" + price_amount_micros +
-               ", price_currency_code='" + price_currency_code + '\'' +
-               ", title='" + title + '\'' +
-               ", description='" + description + '\'' +
-               ", subscriptionPeriod='" + subscriptionPeriod + '\'' +
-               ", freeTrialPeriod='" + freeTrialPeriod + '\'' +
-               ", introductoryPrice='" + introductoryPrice + '\'' +
-               ", introductoryPriceAmountMicros=" + introductoryPriceAmountMicros +
-               ", introductoryPricePeriod='" + introductoryPricePeriod + '\'' +
-               ", introductoryPriceCycles=" + introductoryPriceCycles +
-               '}';
+                "productId='" + productId + '\'' +
+                ", type='" + type + '\'' +
+                ", price='" + price + '\'' +
+                ", price_amount_micros=" + price_amount_micros +
+                ", price_currency_code='" + price_currency_code + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", subscriptionPeriod='" + subscriptionPeriod + '\'' +
+                ", freeTrialPeriod='" + freeTrialPeriod + '\'' +
+                ", introductoryPrice='" + introductoryPrice + '\'' +
+                ", introductoryPriceAmountMicros=" + introductoryPriceAmountMicros +
+                ", introductoryPricePeriod='" + introductoryPricePeriod + '\'' +
+                ", introductoryPriceCycles=" + introductoryPriceCycles +
+                '}';
     }
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (o == null || getClass() != o.getClass()) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         final Subscription item = (Subscription) o;
 
@@ -163,7 +167,7 @@ public class Subscription {
     };
 
     public static final Comparator<Subscription> COMPARATOR_MONTH = (d, d1) ->
-            Integer.valueOf(d.freeTrialPeriodInDays()).compareTo(d1.freeTrialPeriodInDays());
+            Integer.compare(d.freeTrialPeriodInDays(), d1.freeTrialPeriodInDays());
 
     public int freeTrialPeriodInDays() {
         if (TextUtils.isEmpty(freeTrialPeriod)) {

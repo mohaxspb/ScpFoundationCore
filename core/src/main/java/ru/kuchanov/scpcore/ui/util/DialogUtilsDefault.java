@@ -1,9 +1,9 @@
 package ru.kuchanov.scpcore.ui.util;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-
 import android.content.Context;
 import android.os.Bundle;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
 import java.util.List;

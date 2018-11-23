@@ -1,10 +1,10 @@
 package ru.kuchanov.scpcore.ui.holder.adsfreeactions;
 
-import com.bumptech.glide.Glide;
-
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import butterknife.BindView;
 import ru.kuchanov.scpcore.R2;

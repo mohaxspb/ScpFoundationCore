@@ -1,11 +1,5 @@
 package ru.kuchanov.scpcore.downloads;
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
@@ -13,6 +7,11 @@ import android.support.v4.util.Pair;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.List;
 
@@ -99,16 +98,16 @@ public abstract class DialogUtils {
                         articlesObservable = mApiClient.getMaterialsJokesArticles();
                         numOfArticlesObservable = articlesObservable.map(List::size);
                     } else if (type.resId == R.string.type_1
-                               || type.resId == R.string.type_2
-                               || type.resId == R.string.type_3
-                               || type.resId == R.string.type_4
-                               || type.resId == R.string.type_5
-                               || type.resId == R.string.type_ru
-                               || type.resId == R.string.type_fr
-                               || type.resId == R.string.type_jp
-                               || type.resId == R.string.type_es
-                               || type.resId == R.string.type_pl
-                               || type.resId == R.string.type_de) {
+                            || type.resId == R.string.type_2
+                            || type.resId == R.string.type_3
+                            || type.resId == R.string.type_4
+                            || type.resId == R.string.type_5
+                            || type.resId == R.string.type_ru
+                            || type.resId == R.string.type_fr
+                            || type.resId == R.string.type_jp
+                            || type.resId == R.string.type_es
+                            || type.resId == R.string.type_pl
+                            || type.resId == R.string.type_de) {
                         articlesObservable = mApiClient.getObjectsArticles(type.url);
                         numOfArticlesObservable = articlesObservable.map(List::size);
                     } else {
@@ -172,7 +171,7 @@ public abstract class DialogUtils {
 //                            Timber.d("remConf.getBoolean(RemoteConfigKeys.DOWNLOAD_ALL_ENABLED_FOR_FREE): %s",
 //                                    mPreferenceManager.isDownloadAllEnabledForFree());
                             final boolean ignoreLimit = mPreferenceManager.isHasSubscription()
-                                                        || mPreferenceManager.isDownloadAllEnabledForFree();
+                                    || mPreferenceManager.isDownloadAllEnabledForFree();
 
                             if (type.resId == R.string.type_all) {
                                 if (!ignoreLimit) {

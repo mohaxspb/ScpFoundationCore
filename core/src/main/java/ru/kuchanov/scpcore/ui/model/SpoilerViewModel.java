@@ -10,7 +10,7 @@ import ru.kuchanov.scpcore.api.ParseHtmlUtils;
  * <p>
  * for ScpCore
  */
-public class SpoilerViewModel implements Serializable{
+public class SpoilerViewModel implements Serializable {
 
     public boolean isExpanded;
 

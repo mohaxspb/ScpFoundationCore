@@ -51,18 +51,18 @@ public class FirebaseObjectUser implements Serializable {
     @Override
     public String toString() {
         return "FirebaseObjectUser{" +
-               "uid='" + uid + '\'' +
-               ", fullName='" + fullName + '\'' +
-               ", avatar='" + avatar + '\'' +
-               ", email='" + email + '\'' +
-               ", score=" + score +
-               ", numOfReadArticles=" + numOfReadArticles +
-               ", socialProviders=" + socialProviders +
-               ", articles=" + articles +
-               ", signInRewardGained=" + signInRewardGained +
-               ", levelNum=" + levelNum +
-               ", scoreToNextLevel=" + scoreToNextLevel +
-               ", curLevelScore=" + curLevelScore +
-               '}';
+                "uid='" + uid + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", email='" + email + '\'' +
+                ", score=" + score +
+                ", numOfReadArticles=" + numOfReadArticles +
+                ", socialProviders=" + socialProviders +
+                ", articles=" + articles +
+                ", signInRewardGained=" + signInRewardGained +
+                ", levelNum=" + levelNum +
+                ", scoreToNextLevel=" + scoreToNextLevel +
+                ", curLevelScore=" + curLevelScore +
+                '}';
     }
 }

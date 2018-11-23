@@ -1,6 +1,13 @@
 package ru.kuchanov.scpcore.ui.holder.article;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.appodeal.ads.Appodeal;
 import com.appodeal.ads.NativeAd;
@@ -10,17 +17,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.jetbrains.annotations.NotNull;
-
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import java.util.List;
 import java.util.Locale;
@@ -264,17 +263,19 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         scpArtAdView.setVisibility(View.GONE);
         appodealNativeAdView.setVisibility(View.VISIBLE);
         final NativeAd nativeAd = nativeAdsList.get(appodealAdIndex);
-//        if (nativeAd.containsVideo()) {
-//            appodealNativeMediaView.setVisibility(View.VISIBLE);
-////            appodealNativeAdView.setVisibility(View.VISIBLE);
-////            nativeAd.setNativeMediaView(appodealNativeMediaView);
-//            appodealNativeAdView.setNativeMediaView(appodealNativeMediaView);
-//
-//        } else {
-//            appodealNativeMediaView.setVisibility(View.GONE);
-////            appodealNativeAdView.setVisibility(View.VISIBLE);
-////            appodealNativeAdView.setNativeAd(nativeAd);
-//        }
+/*
+        if (nativeAd.containsVideo()) {
+            appodealNativeMediaView.setVisibility(View.VISIBLE);
+//            appodealNativeAdView.setVisibility(View.VISIBLE);
+//            nativeAd.setNativeMediaView(appodealNativeMediaView);
+            appodealNativeAdView.setNativeMediaView(appodealNativeMediaView);
+
+        } else {
+            appodealNativeMediaView.setVisibility(View.GONE);
+//            appodealNativeAdView.setVisibility(View.VISIBLE);
+//            appodealNativeAdView.setNativeAd(nativeAd);
+        }
+*/
         appodealNativeAdView.setNativeAd(nativeAd);
     }
 }

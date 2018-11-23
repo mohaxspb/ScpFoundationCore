@@ -10,10 +10,8 @@ import ru.kuchanov.scpcore.mvp.contract.DrawerMvp;
 public interface TagsScreenMvp extends DrawerMvp {
 
     interface View extends DrawerMvp.View {
-
     }
 
     interface Presenter extends DrawerMvp.Presenter<View> {
-
     }
 }

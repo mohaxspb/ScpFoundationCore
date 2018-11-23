@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AbsListItemAdapterDelegate
 import kotlinx.android.synthetic.main.list_item_label_with_percent.view.*
 import ru.kuchanov.scpcore.R
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.LabelWithPercentViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.LabelWithPercentViewModel
 import ru.kuchanov.scpcore.ui.util.MyHtmlTagHandler
 
 /**
@@ -27,7 +27,7 @@ class LabelWithPercentDelegate : AbsListItemAdapterDelegate<LabelWithPercentView
     override fun onBindViewHolder(item: LabelWithPercentViewModel, viewHolder: AppViewHolder, payloads: MutableList<Any>) {
         with(viewHolder.itemView) {
             titleTextView.text = context.getString(item.text)
-            priceTextView.text = Html.fromHtml("<s>${item.price}</s>", null,  MyHtmlTagHandler())
+            priceTextView.text = Html.fromHtml("<s>${item.price}</s>", null, MyHtmlTagHandler())
             percentTextView.text = if (!item.percent.isEmpty()) context.getString(R.string.subs_percent, item.percent) else ""
         }
     }

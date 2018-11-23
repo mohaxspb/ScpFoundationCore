@@ -43,8 +43,8 @@ data class LevelsJson(val levels: List<Level>) {
     fun getLevelForScore(score: Int): Level? = levels.findLast { score > it.score }
 
     data class Level(val id: Int,
-        val title: String,
-        val score: Int
+                     val title: String,
+                     val score: Int
     )
 
     companion object {
@@ -59,7 +59,8 @@ data class LevelsJson(val levels: List<Level>) {
         @JvmStatic
         val levelsJson: LevelsJson
             get() {
-                val levelsJsonString = FirebaseRemoteConfig.getInstance().getString(Constants.Firebase.RemoteConfigKeys.LEVELS_JSON) ?: LEVELS_JSON_DEFAULT
+                val levelsJsonString = FirebaseRemoteConfig.getInstance().getString(Constants.Firebase.RemoteConfigKeys.LEVELS_JSON)
+                        ?: LEVELS_JSON_DEFAULT
                 return Gson().fromJson(levelsJsonString, LevelsJson::class.java)
             }
     }

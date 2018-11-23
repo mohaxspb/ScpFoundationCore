@@ -32,10 +32,10 @@ public abstract class BaseDrawerPresenter<V extends DrawerMvp.View>
         }
         getView().showProgressDialog(R.string.dialog_random_page_message);
         final Single<String> randomUrlObservable = myPreferencesManager.isOfflineRandomEnabled()
-                                                       ? mDbProviderFactory.getDbProvider().getRandomUrl().toSingle()
-                                                       : mApiClient.getRandomUrl().toSingle()
-                                                               .subscribeOn(Schedulers.io())
-                                                               .observeOn(AndroidSchedulers.mainThread());
+                ? mDbProviderFactory.getDbProvider().getRandomUrl().toSingle()
+                : mApiClient.getRandomUrl().toSingle()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
         randomUrlObservable.subscribe(
                 url -> {
                     getView().dismissProgressDialog();

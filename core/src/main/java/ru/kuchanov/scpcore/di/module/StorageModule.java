@@ -1,10 +1,10 @@
 package ru.kuchanov.scpcore.di.module;
 
-import com.google.gson.Gson;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
+import com.google.gson.Gson;
 
 import javax.inject.Singleton;
 

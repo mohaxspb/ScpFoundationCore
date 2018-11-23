@@ -158,14 +158,15 @@ public class ApiClient {
 
     protected <T> Observable<T> bindWithUtils(final Observable<T> observable) {
         return observable
-//                .doOnError(throwable -> {
-//                    try {
-//                        Thread.sleep(2000);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                })
-//                .delay(2, TimeUnit.SECONDS)
+/*                .doOnError(throwable -> {
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                })
+                .delay(2, TimeUnit.SECONDS)
+*/
                 ;
     }
 
@@ -675,7 +676,7 @@ public class ApiClient {
     }
 
     public Observable<List<Article>> getMaterialsArticles(final String objectsLink) {
-        return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
+        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
             final Request request = new Request.Builder()
                     .url(objectsLink)
                     .build();
