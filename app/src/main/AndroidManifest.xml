@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="ru.dante.scpfoundation" android:installLocation="auto">
+    package="ru.dante.scpfoundation"
+    android:installLocation="auto">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="com.android.vending.BILLING"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.android.vending.BILLING" />
     <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-feature
         android:name="android.hardware.location"
-        android:required="false"/>
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.location.network"
-        android:required="false"/>
+        android:required="false" />
 
     <application
         android:name=".MyApplicationImpl"
@@ -28,34 +28,38 @@
         android:label="@string/app_name"
         android:supportsRtl="false"
         android:theme="@style/SCP.Theme.Light"
-        tools:replace="android:supportsRtl,android:allowBackup"
-        tools:ignore="GoogleAppIndexingWarning,HardcodedDebugMode">
+        tools:ignore="GoogleAppIndexingWarning,HardcodedDebugMode"
+        tools:replace="android:supportsRtl,android:allowBackup">
 
         <activity android:name="ru.kuchanov.scpcore.ui.activity.MainActivity">
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" android:host="scpfoundation.ru" />
+
+                <data
+                    android:host="scpfoundation.ru"
+                    android:scheme="http" />
             </intent-filter>
         </activity>
 
-        <activity android:name="ru.kuchanov.scpcore.ui.activity.GalleryActivity"/>
+        <activity android:name="ru.kuchanov.scpcore.ui.activity.GalleryActivity" />
 
-        <activity android:name="ru.kuchanov.scpcore.ui.activity.TagSearchActivity"/>
+        <activity android:name="ru.kuchanov.scpcore.ui.activity.TagSearchActivity" />
 
-        <activity android:name="ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity"/>
+        <activity android:name="ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity" />
 
-        <activity android:name="ru.kuchanov.scpcore.ui.activity.ArticleActivity"/>
+        <activity android:name="ru.kuchanov.scpcore.ui.activity.ArticleActivity" />
 
-        <activity android:name="ru.kuchanov.scpcore.ui.activity.MaterialsActivity"/>
+        <activity android:name="ru.kuchanov.scpcore.ui.activity.MaterialsActivity" />
 
         <activity
             android:name="ru.kuchanov.scpcore.ui.activity.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
             <meta-data
@@ -65,17 +69,17 @@
 
         <activity android:name="ru.kuchanov.scpcore.ui.activity.LicenceActivity" />
 
-        <activity android:name="ru.kuchanov.scpcore.ui.activity.WebViewActivity"/>
+        <activity android:name="ru.kuchanov.scpcore.ui.activity.WebViewActivity" />
 
         <!--service-->
-        <service android:name="ru.dante.scpfoundation.service.DownloadAllServiceImpl"/>
+        <service android:name="ru.dante.scpfoundation.service.DownloadAllServiceImpl" />
 
         <!--receiver-->
         <receiver
             android:name="ru.kuchanov.scpcore.receivers.ReceiverTimer"
             android:exported="false">
             <intent-filter>
-                <action android:name="ru.dante.scpfoundation.receivers.ReceiverTimer"/>
+                <action android:name="ru.dante.scpfoundation.receivers.ReceiverTimer" />
             </intent-filter>
         </receiver>
 
@@ -83,7 +87,7 @@
             android:name="ru.kuchanov.scpcore.receivers.ReceiverBoot"
             android:exported="false">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
@@ -91,7 +95,8 @@
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_INSTALL" />
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
-                <data android:scheme="package"/>
+
+                <data android:scheme="package" />
             </intent-filter>
         </receiver>
 
@@ -99,17 +104,19 @@
         <activity
             android:name="com.vk.sdk.VKServiceActivity"
             android:label="ServiceActivity"
-            android:theme="@style/VK.Transparent"/>
+            android:theme="@style/VK.Transparent" />
 
         <!--facebook-->
-        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
         <!--firebase push-->
         <service
             android:name="ru.kuchanov.scpcore.service.MyFirebaseMessagingService"
             tools:ignore="ExportedService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
