@@ -1,26 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/headerHeight"
-    android:background="?toolbarBackgroundGradient"
-    >
+    android:background="?toolbarBackgroundGradient">
 
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_centerInParent="true"
         android:contentDescription="@string/app_name"
-        android:src="@mipmap/ic_launcher"
-        />
+        android:src="@mipmap/ic_launcher" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/login"
@@ -28,35 +24,32 @@
             android:layout_height="wrap_content"
             android:background="?selectableItemBackgroundBorderless"
             android:gravity="center"
-            android:paddingBottom="@dimen/defaultMarginSmall"
-            android:paddingLeft="@dimen/defaultMargin"
             android:paddingStart="@dimen/defaultMargin"
+            android:paddingLeft="@dimen/defaultMargin"
             android:paddingTop="@dimen/defaultMarginSmall"
+            android:paddingBottom="@dimen/defaultMarginSmall"
             android:text="@string/enter"
             android:textColor="@color/material_blue_gray_50"
             android:textSize="23sp"
-            tools:ignore="RtlHardcoded,RtlSymmetry"
-            />
+            tools:ignore="RtlHardcoded,RtlSymmetry" />
 
         <Space
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            />
+            android:layout_weight="1" />
 
         <ImageView
             android:id="@+id/loginInfo"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="@dimen/defaultMarginSmall"
             android:layout_marginEnd="@dimen/defaultMargin"
             android:layout_marginRight="@dimen/defaultMargin"
-            android:scaleType="fitXY"
+            android:layout_marginBottom="@dimen/defaultMarginSmall"
             android:background="?selectableItemBackgroundBorderless"
             android:contentDescription="@string/app_name"
+            android:scaleType="fitXY"
             android:src="@drawable/ic_help_outline_white_24dp"
-            tools:ignore="RtlHardcoded,RtlSymmetry"
-            />
+            tools:ignore="RtlHardcoded,RtlSymmetry" />
     </LinearLayout>
 </RelativeLayout>

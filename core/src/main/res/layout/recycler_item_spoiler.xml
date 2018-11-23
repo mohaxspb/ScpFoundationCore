@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/defaultMargin"
     android:layout_marginTop="@dimen/defaultMarginSmall"
     android:layout_marginRight="@dimen/defaultMargin"
-    android:layout_marginLeft="@dimen/defaultMargin"
     android:background="?windowBackgroundDark"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/title"
@@ -21,7 +19,6 @@
         android:padding="@dimen/defaultMarginSmall"
         android:textColor="?spoilerColorTitle"
         tools:ignore="RtlHardcoded"
-        tools:text="Заголовок спойлера"
-        />
+        tools:text="Заголовок спойлера" />
 
 </LinearLayout>

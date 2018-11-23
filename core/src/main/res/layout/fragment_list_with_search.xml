@@ -1,27 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
-    android:background="?windowbackgroundOverrided"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    android:background="?windowbackgroundOverrided">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:descendantFocusability="beforeDescendants"
-            android:scrollbars="vertical"
-            />
+            android:scrollbars="vertical" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
@@ -30,8 +26,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="right"
         app:rfs_barColor="@android:color/transparent"
-        app:rfs_handleColor="?newArticlesTextColor"
-        />
+        app:rfs_handleColor="?newArticlesTextColor" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/searchFAB"
@@ -42,8 +37,7 @@
         android:src="@drawable/ic_search"
         app:backgroundTint="?colorFAB"
         app:layout_anchor="@id/recyclerView"
-        app:layout_anchorGravity="bottom|end"
-        />
+        app:layout_anchorGravity="bottom|end" />
 
     <ProgressBar
         android:id="@+id/progressCenter"
@@ -54,7 +48,6 @@
         android:indeterminateTint="?newArticlesTextColor"
         android:indeterminateTintMode="src_in"
         android:visibility="gone"
-        tools:targetApi="lollipop"
-        />
+        tools:targetApi="lollipop" />
 
 </android.support.design.widget.CoordinatorLayout>

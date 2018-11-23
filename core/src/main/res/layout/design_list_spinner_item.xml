@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@android:id/text1"
     style="?android:attr/spinnerItemStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:ellipsize="marquee"
+    android:gravity="center"
     android:maxLines="1"
     android:padding="@dimen/defaultMargin"
-    android:gravity="center"
-    tools:layout_gravity="center"
-    tools:text="Roboto-regular"
-    android:textColor="?newArticlesTextColor"
     android:textAlignment="inherit"
-    />
+    android:textColor="?newArticlesTextColor"
+    tools:layout_gravity="center"
+    tools:text="Roboto-regular" />

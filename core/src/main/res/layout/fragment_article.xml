@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -22,8 +19,7 @@
             app:fastScrollHorizontalThumbDrawable="@drawable/state_list_drawable"
             app:fastScrollHorizontalTrackDrawable="@drawable/state_list_transparent"
             app:fastScrollVerticalThumbDrawable="@drawable/state_list_drawable"
-            app:fastScrollVerticalTrackDrawable="@drawable/state_list_transparent"
-            />
+            app:fastScrollVerticalTrackDrawable="@drawable/state_list_transparent" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
@@ -36,6 +32,5 @@
         android:indeterminateTint="?newArticlesTextColor"
         android:indeterminateTintMode="src_in"
         android:visibility="gone"
-        tools:targetApi="lollipop"
-        />
+        tools:targetApi="lollipop" />
 </FrameLayout>

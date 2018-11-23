@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/scpArtAdView"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scpArtAdView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -11,9 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/defaultMarginSmall"
+        android:paddingStart="@dimen/defaultMarginSmall"
         android:paddingEnd="@dimen/defaultMarginSmall"
-        android:paddingStart="@dimen/defaultMarginSmall">
+        android:paddingBottom="@dimen/defaultMarginSmall">
 
         <ImageView
             android:id="@+id/logoImageView"
@@ -98,9 +98,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingBottom="@dimen/defaultMarginSmall"
             android:paddingStart="@dimen/defaultMarginSmall"
             android:paddingTop="@dimen/defaultMarginSmall"
+            android:paddingBottom="@dimen/defaultMarginSmall"
             android:text="@string/scp_art_ad_description"
             android:textSize="12sp"
             tools:ignore="RtlSymmetry" />

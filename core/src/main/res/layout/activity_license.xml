@@ -1,33 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:scrollbarThumbVertical="?scrollbar"
-        android:scrollbars="vertical"
         android:layout_weight="1"
-        >
+        android:scrollbarThumbVertical="?scrollbar"
+        android:scrollbars="vertical">
 
         <TextView
             android:id="@+id/text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/defaultMarginBig"
             android:paddingLeft="@dimen/defaultMargin"
+            android:paddingTop="@dimen/defaultMarginBig"
             android:paddingRight="@dimen/defaultMargin"
             android:paddingBottom="@dimen/defaultMargin"
-            tools:text="Very long, boring and useless text"
             android:textSize="16sp"
-            />
+            tools:text="Very long, boring and useless text" />
     </android.support.v4.widget.NestedScrollView>
 
     <TextView
@@ -35,12 +31,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/zbs_color_red"
-        android:gravity="center"
         android:foreground="?selectableItemBackground"
+        android:gravity="center"
         android:padding="@dimen/defaultMargin"
         android:text="@string/i_accept"
         android:textColor="@android:color/white"
-        android:textSize="19sp"
-        />
+        android:textSize="19sp" />
 
 </LinearLayout>

@@ -1,69 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/subscribe"
         android:icon="@drawable/ic_monetization_on_white_24dp"
         android:title="@string/in_apps"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/removeAds"
         android:icon="@drawable/ic_offline_pin"
         android:title="@string/settings_ads_title"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/settings"
         android:icon="@drawable/ic_settings_white_24dp"
         android:title="@string/settings"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menuItemDownloadAll"
         android:icon="@drawable/ic_download_white_24dp"
         android:title="@string/download_all"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/night_mode_item"
         android:title="@string/night_mode"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/text_size"
         android:icon="@drawable/ic_text_fields_black_24dp"
         android:title="@string/text_size"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/faq"
         android:icon="@drawable/ic_help_outline_white_24dp"
         android:title="@string/faq"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/appLangVersions"
         android:icon="@drawable/ic_menu_ads"
         android:title="@string/menuAppLangVersions"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/info"
         android:icon="@drawable/ic_info_outline"
         android:title="@string/app_info"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
 
 </menu>

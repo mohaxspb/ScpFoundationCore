@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        />
+        android:scrollbars="vertical" />
 
     <FrameLayout
         android:id="@+id/progressContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/whiteHalfTransparent"
-        >
+        android:background="@color/whiteHalfTransparent">
 
         <ProgressBar
             android:id="@+id/progressCenter"
@@ -30,8 +26,7 @@
             android:indeterminateTint="?newArticlesTextColor"
             android:indeterminateTintMode="src_in"
             android:paddingBottom="@dimen/defaultMargin"
-            tools:targetApi="lollipop"
-            />
+            tools:targetApi="lollipop" />
 
     </FrameLayout>
 
@@ -47,7 +42,6 @@
         android:textColor="@color/colorAccent"
         android:textSize="21sp"
         android:visibility="gone"
-        tools:visibility="visible"
-        />
+        tools:visibility="visible" />
 
 </FrameLayout>

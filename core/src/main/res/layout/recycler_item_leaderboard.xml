@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     tools:background="@color/material_grey_400"
-    tools:layout_gravity="center"
-    >
+    tools:layout_gravity="center">
 
     <TextView
         android:id="@+id/place"
@@ -17,8 +15,7 @@
         android:paddingStart="@dimen/defaultMargin"
         android:textSize="24sp"
         tools:ignore="RtlSymmetry"
-        tools:text="1"
-        />
+        tools:text="1" />
 
     <ImageView
         android:id="@+id/avatar"
@@ -27,16 +24,14 @@
         android:layout_gravity="center_vertical"
         android:layout_margin="@dimen/defaultMarginSmall"
         tools:ignore="ContentDescription"
-        tools:src="@mipmap/ic_launcher"
-        />
+        tools:src="@mipmap/ic_launcher" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="4"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/name"
@@ -44,18 +39,16 @@
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/defaultMarginSmall"
             android:textSize="14sp"
-            tools:text="Yuri"
-            />
+            tools:text="Yuri" />
 
         <TextView
             android:id="@+id/level"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/defaultMarginSmall"
             android:paddingTop="@dimen/defaultMarginSmall"
+            android:paddingBottom="@dimen/defaultMarginSmall"
             android:textSize="12sp"
-            tools:text="5 access level"
-            />
+            tools:text="5 access level" />
     </LinearLayout>
 
     <TextView
@@ -65,12 +58,11 @@
         android:layout_gravity="center_vertical"
         android:layout_weight="3"
         android:gravity="end"
-        android:paddingTop="@dimen/defaultMarginSmall"
-        android:paddingBottom="@dimen/defaultMarginSmall"
         android:paddingStart="@dimen/defaultMarginSmall"
+        android:paddingTop="@dimen/defaultMarginSmall"
         android:paddingEnd="@dimen/defaultMargin"
+        android:paddingBottom="@dimen/defaultMarginSmall"
         android:textSize="20sp"
-        tools:text="15545"
-        />
+        tools:text="15545" />
 
 </LinearLayout>

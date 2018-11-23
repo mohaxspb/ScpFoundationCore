@@ -1,130 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <group
-        android:checkableBehavior="single">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
 
         <item
             android:id="@+id/leaderboard"
             android:checked="true"
             android:icon="@drawable/ic_leaderboard"
-            android:title="@string/drawer_item_leaderboard"
-            />
+            android:title="@string/drawer_item_leaderboard" />
         <item
             android:id="@+id/invite"
             android:checked="true"
             android:icon="@drawable/ic_contact_mail_black_24dp"
-            android:title="@string/drawer_item_invite_friends"
-            />
+            android:title="@string/drawer_item_invite_friends" />
         <item
             android:id="@+id/about"
             android:checked="true"
             android:icon="@drawable/ic_drawer_about"
-            android:title="@string/drawer_item_1"
-            />
+            android:title="@string/drawer_item_1" />
         <item
             android:id="@+id/news"
             android:checked="true"
             android:icon="@drawable/ic_drawer_news"
-            android:title="@string/drawer_item_2"
-            />
+            android:title="@string/drawer_item_2" />
         <item
             android:id="@+id/mostRatedArticles"
             android:checked="true"
             android:icon="@drawable/ic_drawer_rated"
-            android:title="@string/drawer_item_3"
-            />
+            android:title="@string/drawer_item_3" />
         <item
             android:id="@+id/mostRecentArticles"
             android:checked="true"
             android:icon="@drawable/ic_drawer_new"
-            android:title="@string/drawer_item_4"
-            />
+            android:title="@string/drawer_item_4" />
         <item
             android:id="@+id/random_page"
             android:checked="true"
             android:icon="@drawable/ic_drawer_random"
-            android:title="@string/drawer_item_5"
-            />
+            android:title="@string/drawer_item_5" />
         <item
             android:id="@+id/objects_I"
             android:checked="true"
             android:icon="@drawable/ic_drawer_object_1"
-            android:title="@string/drawer_item_6"
-            />
+            android:title="@string/drawer_item_6" />
         <item
             android:id="@+id/objects_II"
             android:checked="true"
             android:icon="@drawable/ic_drawer_object_2"
-            android:title="@string/drawer_item_7"
-            />
+            android:title="@string/drawer_item_7" />
         <item
             android:id="@+id/objects_III"
             android:checked="true"
             android:icon="@drawable/ic_drawer_object_3"
-            android:title="@string/drawer_item_8"
-            />
+            android:title="@string/drawer_item_8" />
         <item
             android:id="@+id/objects_IV"
             android:checked="true"
             android:icon="@drawable/ic_drawer_object_4"
-            android:title="@string/drawer_item_objects4"
-            />
+            android:title="@string/drawer_item_objects4" />
         <item
             android:id="@+id/objects_V"
             android:checked="true"
             android:icon="@drawable/ic_obj_5"
-            android:title="@string/drawer_item_objects5"
-            />
+            android:title="@string/drawer_item_objects5" />
         <item
             android:id="@+id/objects_RU"
             android:checked="true"
             android:icon="@drawable/ic_drawer_object_ru"
-            android:title="@string/drawer_item_9"
-            />
+            android:title="@string/drawer_item_9" />
         <item
             android:id="@+id/files"
             android:checked="true"
             android:icon="@drawable/ic_drawer_materials"
-            android:title="@string/drawer_item_10"
-            />
+            android:title="@string/drawer_item_10" />
         <item
             android:id="@+id/stories"
-            android:icon="@drawable/ic_drawer_stories"
             android:checked="true"
-            android:title="@string/drawer_item_11"
-            />
+            android:icon="@drawable/ic_drawer_stories"
+            android:title="@string/drawer_item_11" />
         <item
             android:id="@+id/favorite"
             android:checked="true"
             android:icon="@drawable/ic_drawer_favorites"
-            android:title="@string/drawer_item_12"
-            />
+            android:title="@string/drawer_item_12" />
         <item
             android:id="@+id/offline"
             android:checked="true"
             android:icon="@drawable/ic_drawer_offline"
-            android:title="@string/drawer_item_13"
-            />
+            android:title="@string/drawer_item_13" />
         <item
             android:id="@+id/gallery"
             android:checkable="false"
             android:checked="false"
             android:icon="@drawable/ic_drawer_gallery"
-            android:title="@string/drawer_item_14"
-            />
+            android:title="@string/drawer_item_14" />
         <item
             android:id="@+id/siteSearch"
-            android:icon="@drawable/ic_drawer_search"
             android:checked="false"
-            android:title="@string/drawer_item_15"
-            />
+            android:icon="@drawable/ic_drawer_search"
+            android:title="@string/drawer_item_15" />
         <item
             android:id="@+id/tagsSearch"
-            android:icon="@drawable/ic_tag"
             android:checkable="false"
             android:checked="false"
-            android:title="@string/tags_search"
-            />
+            android:icon="@drawable/ic_tag"
+            android:title="@string/tags_search" />
     </group>
 </menu>

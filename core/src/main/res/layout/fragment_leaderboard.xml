@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:id="@+id/root"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -40,10 +40,10 @@
             android:id="@+id/loginView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:background="@android:color/white"
+            android:orientation="vertical"
             android:paddingTop="@dimen/defaultMarginSmall"
-            android:orientation="vertical">
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="match_parent"
@@ -53,10 +53,10 @@
                 android:textSize="19sp" />
 
             <LinearLayout
+                android:id="@+id/providersContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:id="@+id/providersContainer" />
+                android:orientation="horizontal" />
 
         </LinearLayout>
 
@@ -90,8 +90,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginBottom="@dimen/defaultMarginSmall"
-                    android:layout_marginTop="@dimen/defaultMarginSmall">
+                    android:layout_marginTop="@dimen/defaultMarginSmall"
+                    android:layout_marginBottom="@dimen/defaultMarginSmall">
 
                     <ImageView
                         android:id="@+id/avatarImageView"
@@ -119,9 +119,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:paddingEnd="@dimen/defaultMargin"
                     android:paddingStart="@dimen/defaultMargin"
-                    android:paddingTop="10dp">
+                    android:paddingTop="10dp"
+                    android:paddingEnd="@dimen/defaultMargin">
 
                     <TextView
                         android:id="@+id/nameTextView"
@@ -169,10 +169,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:paddingBottom="3dp"
-                    android:paddingEnd="@dimen/defaultMarginSmall"
                     android:paddingStart="@dimen/defaultMarginSmall"
                     android:paddingTop="3dp"
+                    android:paddingEnd="@dimen/defaultMarginSmall"
+                    android:paddingBottom="3dp"
                     android:textColor="@android:color/black"
                     android:textSize="6sp"
                     tools:ignore="MissingPrefix,SmallSp"
@@ -213,10 +213,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:paddingBottom="3dp"
-                    android:paddingEnd="@dimen/defaultMarginSmall"
                     android:paddingStart="@dimen/defaultMarginSmall"
                     android:paddingTop="3dp"
+                    android:paddingEnd="@dimen/defaultMarginSmall"
+                    android:paddingBottom="3dp"
                     android:textColor="@android:color/black"
                     android:textSize="6sp"
                     tools:ignore="MissingPrefix,SmallSp"

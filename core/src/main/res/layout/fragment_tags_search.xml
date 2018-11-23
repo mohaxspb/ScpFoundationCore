@@ -1,33 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:layout_marginTop="25dp"
-    >
+    tools:layout_marginTop="25dp">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbarThumbVertical="?scrollbar"
-            android:scrollbars="vertical"
-            >
+            android:scrollbars="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                >
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -35,8 +30,7 @@
                     android:padding="@dimen/defaultMargin"
                     android:text="@string/tags_choosen"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    />
+                    android:textStyle="bold" />
 
                 <com.google.android.flexbox.FlexboxLayout
                     android:id="@+id/tagsSearch"
@@ -47,8 +41,7 @@
                     android:paddingRight="@dimen/defaultMarginSmall"
                     app:alignContent="flex_start"
                     app:alignItems="flex_start"
-                    app:flexWrap="wrap"
-                    />
+                    app:flexWrap="wrap" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -56,8 +49,7 @@
                     android:padding="@dimen/defaultMargin"
                     android:text="@string/tags_all"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    />
+                    android:textStyle="bold" />
 
                 <com.google.android.flexbox.FlexboxLayout
                     android:id="@+id/tagsAll"
@@ -68,8 +60,7 @@
                     android:paddingRight="@dimen/defaultMarginSmall"
                     app:alignContent="flex_start"
                     app:alignItems="flex_start"
-                    app:flexWrap="wrap"
-                    />
+                    app:flexWrap="wrap" />
             </LinearLayout>
 
         </android.support.v4.widget.NestedScrollView>
@@ -84,7 +75,6 @@
         android:src="@drawable/ic_search"
         app:backgroundTint="?colorFAB"
         app:layout_anchor="@id/swipeRefresh"
-        app:layout_anchorGravity="bottom|end"
-        />
+        app:layout_anchorGravity="bottom|end" />
 
 </android.support.design.widget.CoordinatorLayout>

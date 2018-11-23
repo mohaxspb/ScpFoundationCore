@@ -6,8 +6,8 @@
     android:background="?selectableItemBackgroundBorderless"
     android:orientation="vertical"
     android:paddingLeft="@dimen/defaultMarginSmall"
-    android:paddingRight="@dimen/defaultMarginSmall"
     android:paddingTop="@dimen/defaultMarginSmall"
+    android:paddingRight="@dimen/defaultMarginSmall"
     tools:ignore="UseCompoundDrawables"
     tools:layout_gravity="center">
 

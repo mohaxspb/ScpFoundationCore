@@ -1,69 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/bgSubsTop"
-    tools:layout_gravity="center"
-    >
+    tools:layout_gravity="center">
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:layout_marginEnd="@dimen/defaultMarginSmall"
         android:layout_marginStart="@dimen/defaultMarginSmall"
         android:layout_marginTop="12dp"
+        android:layout_marginEnd="@dimen/defaultMarginSmall"
+        android:layout_marginBottom="12dp"
         android:foreground="?selectableItemBackground"
         app:cardBackgroundColor="@android:color/white"
         app:cardCornerRadius="@dimen/cardview_default_radius"
-        app:cardElevation="@dimen/cardview_default_elevation"
-        >
+        app:cardElevation="@dimen/cardview_default_elevation">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/iconImageView"
                 android:layout_width="@dimen/subs_image_size"
                 android:layout_height="@dimen/subs_image_size"
                 android:layout_gravity="center_vertical"
-                android:layout_marginBottom="6dp"
-                android:layout_marginEnd="10dp"
                 android:layout_marginStart="6dp"
                 android:layout_marginTop="6dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="6dp"
                 android:background="@color/bgSubsTop"
                 android:padding="@dimen/defaultMarginSmall"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_no_money"
                 android:tint="@android:color/white"
-                tools:ignore="ContentDescription"
-                />
+                tools:ignore="ContentDescription" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:paddingBottom="10dp"
-                android:paddingEnd="10dp"
                 android:paddingTop="10dp"
-                tools:ignore="RtlSymmetry"
-                >
+                android:paddingEnd="10dp"
+                android:paddingBottom="10dp"
+                tools:ignore="RtlSymmetry">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/defaultMarginTiny"
-                    android:orientation="horizontal"
-                    >
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/titleTextView"
@@ -75,8 +68,7 @@
                         android:textColor="@color/subsTextTitleColor"
                         android:textSize="14sp"
                         tools:ignore="MissingPrefix"
-                        tools:text="@string/subs_full_description"
-                        />
+                        tools:text="@string/subs_full_description" />
 
                     <TextView
                         android:id="@+id/priceTextView"
@@ -86,8 +78,7 @@
                         android:textColor="@color/material_green_500"
                         android:textSize="14sp"
                         tools:ignore="MissingPrefix"
-                        tools:text="FREE"
-                        />
+                        tools:text="FREE" />
 
                 </LinearLayout>
 
@@ -99,8 +90,7 @@
                     android:textColor="@color/subsTextColorBottom"
                     android:textSize="12sp"
                     tools:ignore="MissingPrefix"
-                    tools:text="Отлючи рекламу, увеличь лемит статей и заработай очки БЕСПЛАТНО!"
-                    />
+                    tools:text="Отлючи рекламу, увеличь лемит статей и заработай очки БЕСПЛАТНО!" />
 
             </LinearLayout>
 

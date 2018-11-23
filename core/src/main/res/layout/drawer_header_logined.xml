@@ -1,25 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/headerHeight"
     android:background="?toolbarBackgroundGradient"
-    tools:layout_gravity="center"
-    >
+    tools:layout_gravity="center">
 
     <LinearLayout
         android:id="@+id/levelContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
         android:background="?selectableItemBackground"
         android:orientation="horizontal"
         android:paddingBottom="@dimen/defaultMarginSmall"
-        tools:ignore="UseCompoundDrawables"
-        >
+        tools:ignore="UseCompoundDrawables">
 
         <TextView
             android:id="@+id/level"
@@ -30,8 +27,7 @@
             android:gravity="center_vertical"
             android:textColor="@color/material_blue_gray_50"
             android:textSize="17sp"
-            tools:text="3 уровень допуска"
-            />
+            tools:text="3 уровень допуска" />
 
         <ImageView
             android:id="@+id/levelUp"
@@ -43,8 +39,7 @@
             android:padding="@dimen/defaultMarginSmall"
             android:src="@drawable/ic_arrow_upward_white_24dp"
             android:tint="@color/material_green_500"
-            tools:ignore="ContentDescription"
-            />
+            tools:ignore="ContentDescription" />
 
     </LinearLayout>
 
@@ -54,21 +49,19 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/levelContainer"
         android:layout_gravity="bottom|start"
-        android:layout_marginBottom="@dimen/defaultMarginSmall"
         android:layout_marginStart="@dimen/defaultMargin"
+        android:layout_marginBottom="@dimen/defaultMarginSmall"
         android:textColor="@color/material_blue_gray_50"
-        android:textSize="19sp"
-        />
+        android:textSize="19sp" />
 
     <FrameLayout
         android:id="@+id/avatarContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/name"
-        android:layout_marginBottom="@dimen/defaultMarginSmall"
         android:layout_marginStart="@dimen/defaultMargin"
-        android:background="?selectableItemBackgroundBorderless"
-        >
+        android:layout_marginBottom="@dimen/defaultMarginSmall"
+        android:background="?selectableItemBackgroundBorderless">
 
         <at.grabner.circleprogress.CircleProgressView
             android:id="@+id/circleView"
@@ -85,8 +78,7 @@
             app:cpv_rimWidth="8dp"
             app:cpv_seekMode="false"
             app:cpv_showUnit="false"
-            app:cpv_value="10"
-            />
+            app:cpv_value="10" />
 
         <ImageView
             android:id="@+id/avatar"
@@ -94,8 +86,7 @@
             android:layout_height="56dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_adblock"
-            tools:ignore="ContentDescription"
-            />
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/levelNum"
@@ -106,8 +97,7 @@
             android:gravity="center"
             android:textColor="@android:color/white"
             android:textSize="14sp"
-            tools:text="1"
-            />
+            tools:text="1" />
     </FrameLayout>
 
     <ImageView
@@ -116,25 +106,23 @@
         android:layout_height="30dp"
         android:layout_alignBottom="@id/avatarContainer"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="13dp"
         android:layout_marginEnd="@dimen/defaultMargin"
+        android:layout_marginBottom="13dp"
         android:background="?selectableItemBackgroundBorderless"
         android:contentDescription="@string/app_name"
         android:src="@drawable/ic_logout_variant"
-        android:tint="@android:color/white"
-        />
+        android:tint="@android:color/white" />
 
     <ImageView
         android:id="@+id/inapp"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignBottom="@id/avatarContainer"
-        android:layout_marginEnd="@dimen/defaultMargin"
         android:layout_marginStart="40dp"
+        android:layout_marginEnd="@dimen/defaultMargin"
         android:layout_toEndOf="@id/avatarContainer"
         android:background="?selectableItemBackgroundBorderless"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/ic_monetization_on_white_24dp"
-        />
+        android:src="@drawable/ic_monetization_on_white_24dp" />
 
 </RelativeLayout>

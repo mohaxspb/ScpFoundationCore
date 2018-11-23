@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/material_blue_gray_900"
-    xmlns:tools="http://schemas.android.com/tools"
-    >
+    android:background="@color/material_blue_gray_900">
 
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/image_view_touch"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:scaleType="center"
-        />
+        android:scaleType="center" />
 
     <ProgressBar
         android:id="@+id/progressCenter"
@@ -24,6 +21,5 @@
         android:indeterminateTint="@color/material_blue_gray_50"
         android:indeterminateTintMode="src_in"
         android:visibility="gone"
-        tools:targetApi="lollipop"
-        />
+        tools:targetApi="lollipop" />
 </FrameLayout>
