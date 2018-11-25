@@ -66,7 +66,7 @@ public class ApiClientImpl extends ApiClient {
 
     @Override
     public Observable<String> getRandomUrl() {
-        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
+        return Observable.unsafeCreate(subscriber -> {
             final Request.Builder request = new Request.Builder();
             request.url(mConstantValues.getRandomPageUrl());
             request.get();
@@ -99,13 +99,13 @@ public class ApiClientImpl extends ApiClient {
                 Timber.e(e);
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
 
     @Override
     public Observable<Integer> getRecentArticlesPageCountObservable() {
-        return bindWithUtils(Observable.<Integer>unsafeCreate(subscriber -> {
+        return Observable.<Integer>unsafeCreate(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();
@@ -138,7 +138,7 @@ public class ApiClientImpl extends ApiClient {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
 
@@ -244,7 +244,7 @@ public class ApiClientImpl extends ApiClient {
 
     @Override
     public Observable<List<ArticleTag>> getTagsFromSite() {
-        return bindWithUtils(Observable.<List<ArticleTag>>unsafeCreate(subscriber -> {
+        return Observable.<List<ArticleTag>>unsafeCreate(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getBaseApiUrl() + "/system:page-tags/")
                     .build();
@@ -286,7 +286,7 @@ public class ApiClientImpl extends ApiClient {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
 
@@ -298,7 +298,7 @@ public class ApiClientImpl extends ApiClient {
             return Observable.just(Collections.emptyList());
         }
         final String tagTitle = tagsTitles.get(0);
-        return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
+        return Observable.<List<Article>>unsafeCreate(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getBaseApiUrl() + "/system:page-tags/tag/" + tagTitle)
                     .build();
@@ -341,7 +341,7 @@ public class ApiClientImpl extends ApiClient {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
     @Override

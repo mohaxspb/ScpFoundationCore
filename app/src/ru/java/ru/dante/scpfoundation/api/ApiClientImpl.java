@@ -57,7 +57,7 @@ public class ApiClientImpl extends ApiClient {
 
     @Override
     public Observable<String> getRandomUrl() {
-        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
+        return Observable.unsafeCreate(subscriber -> {
                     final Request request = new Request.Builder()
                             .url("https://scpdb.org/api/wikidot_random_page")
                             .build();
@@ -80,13 +80,13 @@ public class ApiClientImpl extends ApiClient {
                     } catch (final IOException e) {
                         subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(ru.kuchanov.scpcore.R.string.error_connection)));
                     }
-                })
+                }
         );
     }
 
     @Override
     public Observable<Integer> getRecentArticlesPageCountObservable() {
-        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
+        return Observable.unsafeCreate(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();
@@ -119,7 +119,7 @@ public class ApiClientImpl extends ApiClient {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
     @Override
