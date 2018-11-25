@@ -13,12 +13,14 @@ interface EnScpSiteApi {
 
     /**
      * @param tags comma separated tags
-     * @param sort i.e rating desc`
+     * @param sort i.e `rating desc`
      */
     @FormUrlEncoded
     @POST("tools/tagGet.php")
-    fun socialLogin(
+    fun getArticlesByTags(
             @Field("tags") tags: String,
             @Field("sort") sort: String
-    ): Single<AccessTokenResponse>
+    ): Single<List<EnSiteTagsSearchResult>>
 }
+
+const val EN_SITE_TAG_SORT = "rating desc"

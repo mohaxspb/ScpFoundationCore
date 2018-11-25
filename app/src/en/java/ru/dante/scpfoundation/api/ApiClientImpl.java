@@ -22,6 +22,7 @@ import ru.dante.scpfoundation.R;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.api.model.ArticleFromSearchTagsOnSite;
 import ru.kuchanov.scpcore.api.service.EnScpSiteApi;
 import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.db.model.Article;
@@ -37,6 +38,8 @@ import timber.log.Timber;
  * for ScpFoundationRu
  */
 public class ApiClientImpl extends ApiClient {
+
+    private final static String EN_SITE_TAG_SORT = "rating desc"
 
     public ApiClientImpl(
             final OkHttpClient okHttpClient,
@@ -235,7 +238,20 @@ public class ApiClientImpl extends ApiClient {
     //todo parse tags
     @Override
     public Observable<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {
-        return super.getArticlesByTags(tags);
+        return mEnScpSiteApi.getArticlesByTags(ArticleTag.getCommaSeparatedStringFromTags(tags), EN_SITE_TAG_SORT)
+                .map(ArticleFromSearchTagsOnSite::getArticlesFromSiteArticles)
+                .map(articles -> {
+                    for (final Article article : articles) {
+                        if (!article.url.startsWith("http://")) {
+                            String start = mConstantValues.getBaseApiUrl();
+                            if (!article.url.startsWith("/")) {
+                                start += "/";
+                            }
+                            article.url = start + article.url;
+                        }
+                    }
+                    return articles;
+                });
     }
 
     //todo parse tags

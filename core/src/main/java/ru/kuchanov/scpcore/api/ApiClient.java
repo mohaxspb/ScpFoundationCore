@@ -118,6 +118,8 @@ public class ApiClient {
 
     private final ScpReaderAuthApi mScpReaderAuthApi;
 
+    protected final EnScpSiteApi mEnScpSiteApi;
+
     private final ScpServer mScpServer;
 
     protected ConstantValues mConstantValues;
@@ -141,6 +143,7 @@ public class ApiClient {
         mScpServer = scpRetrofit.create(ScpServer.class);
         mScpReaderApi = scpReaderRetrofit.create(ScpReaderApi.class);
         mScpReaderAuthApi = scpReaderAuthApi;
+        mEnScpSiteApi = enScpSiteApi;
         mConstantValues = constantValues;
     }
 
