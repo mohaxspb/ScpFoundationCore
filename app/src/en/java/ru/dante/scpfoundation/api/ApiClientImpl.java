@@ -22,6 +22,7 @@ import ru.dante.scpfoundation.R;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.api.service.EnScpSiteApi;
 import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.downloads.ScpParseException;
@@ -42,6 +43,7 @@ public class ApiClientImpl extends ApiClient {
             final Retrofit scpRetrofit,
             final Retrofit scpReaderRetrofit,
             final ScpReaderAuthApi scpReaderAuthApi,
+            final EnScpSiteApi enScpSiteApi,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
@@ -52,12 +54,14 @@ public class ApiClientImpl extends ApiClient {
                 scpRetrofit,
                 scpReaderRetrofit,
                 scpReaderAuthApi,
+                enScpSiteApi,
                 preferencesManager,
                 gson,
                 constantValues
         );
     }
 
+    @Override
     public Observable<String> getRandomUrl() {
         Timber.d("getRandomUrl");
         return bindWithUtils(Observable.unsafeCreate(subscriber -> {
@@ -79,7 +83,7 @@ public class ApiClientImpl extends ApiClient {
                             "<iframe src=\"http://snippets.wdfiles.com/local--code/code:iframe-redirect#".length());
                     html = html.substring(0, html.indexOf("\""));
                     final String randomURL = html;
-                    Timber.d("randomUrl = " + randomURL);
+                    Timber.d("randomUrl = %s", randomURL);
                     subscriber.onNext(randomURL);
                     subscriber.onCompleted();
                 } else {
@@ -94,7 +98,7 @@ public class ApiClientImpl extends ApiClient {
 
     @Override
     public Observable<Integer> getRecentArticlesPageCountObservable() {
-        return bindWithUtils(Observable.<Integer>unsafeCreate(subscriber -> {
+        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();
@@ -123,7 +127,7 @@ public class ApiClientImpl extends ApiClient {
 
                 subscriber.onNext(numOfPages);
                 subscriber.onCompleted();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
@@ -164,7 +168,7 @@ public class ApiClientImpl extends ApiClient {
 
     @Override
     protected List<Article> parseForRatedArticles(Document doc) throws ScpParseException {
-        Element pageContent = doc.getElementById("page-content");
+        final Element pageContent = doc.getElementById("page-content");
         if (pageContent == null) {
             throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
         }
@@ -197,23 +201,22 @@ public class ApiClientImpl extends ApiClient {
 
     @Override
     protected List<Article> parseForObjectArticles(final Document doc) throws ScpParseException {
-        Element pageContent = doc.getElementById("page-content");
+        final Element pageContent = doc.getElementById("page-content");
         if (pageContent == null) {
             throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
         }
-        Elements listPagesBox = pageContent.getElementsByTag("h1");
+        final Elements listPagesBox = pageContent.getElementsByTag("h1");
         listPagesBox.remove();
-        Element collapsibleBlock = pageContent.getElementsByTag("ul").first();
+        final Element collapsibleBlock = pageContent.getElementsByTag("ul").first();
         collapsibleBlock.remove();
-        Element table = pageContent.getElementsByClass("content-toc").first();
+        final Element table = pageContent.getElementsByClass("content-toc").first();
         table.remove();
-        Elements allUls = pageContent.getElementsByClass("content-panel").first().getElementsByTag("ul");
+        final Elements allUls = pageContent.getElementsByClass("content-panel").first().getElementsByTag("ul");
 
-        List<Article> articles = new ArrayList<>();
+        final List<Article> articles = new ArrayList<>();
 
-        for (Element ul : allUls) {
-            Elements allLi = ul.children();
-            for (Element li : allLi) {
+        for (final Element ul : allUls) {
+            for (final Element li : ul.children()) {
                 //do not add empty articles
                 if (li.getElementsByTag("a").first().hasClass("newpage")) {
                     continue;
@@ -227,6 +230,8 @@ public class ApiClientImpl extends ApiClient {
 
         return articles;
     }
+
+    //todo parse tags
 
     @Override
     protected String getScpServerWiki() {

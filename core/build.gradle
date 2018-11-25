@@ -56,6 +56,7 @@ android {
         buildConfigField('int', 'TIMEOUT_SECONDS_WRITE', '60')
 
         buildConfigField('String', 'SCP_API_URL', '"https://scpdb.org/"')
+        buildConfigField('String', 'EN_SCP_API_URL', '"http://home.helenbot.com/"')
 
         //play market refuses not hardcoded strings as intent filter
         resValue('string', 'receiver_action_timer', '"ru.dante.scpfoundation.receivers.ReceiverTimer"')
@@ -135,9 +136,10 @@ android {
         api 'io.reactivex:rxkotlin:1.0.0'
         //Retrofit
         api('com.squareup.retrofit2:retrofit:2.4.0') { exclude module: 'okhttp' }
-        api 'com.squareup.okhttp3:okhttp:3.11.0'
-        api 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+        api 'com.squareup.okhttp3:okhttp:3.12.0'
+        api 'com.squareup.okhttp3:logging-interceptor:3.12.0'
         api 'com.squareup.retrofit2:converter-gson:2.4.0'
+        api 'com.squareup.retrofit2:converter-simplexml:2.3.0'
         api 'com.squareup.retrofit2:adapter-rxjava:2.4.0'
         //jsoup
         api 'org.jsoup:jsoup:1.11.3'
@@ -167,40 +169,22 @@ android {
         api 'com.facebook.android:facebook-core:4.35.0'
         api 'com.facebook.android:facebook-login:4.35.0'
         //firebase
+        //WARNNING!!! There are bug with version update suggestions for firebase libs!
+        //some versions are not yet released and failed to load.
+        //check https://firebase.google.com/support/release-notes/android before update
+        //to find latest versions! Also they can use `androidx` dependencies, which may cause conflicts!
         api 'com.google.firebase:firebase-core:16.0.4'
-        api 'com.google.firebase:firebase-config:16.1.0'
-        api 'com.google.firebase:firebase-analytics:16.0.4'
         api 'com.google.firebase:firebase-invites:16.0.4'
-        api 'com.google.firebase:firebase-ads:17.0.0'
+        api 'com.google.firebase:firebase-analytics:16.0.4'
         api 'com.google.firebase:firebase-database:16.0.3'
+        api 'com.google.firebase:firebase-config:16.1.0'
+        api 'com.google.firebase:firebase-ads:17.0.0'
         api 'com.google.firebase:firebase-auth:16.0.5'
         api 'com.google.firebase:firebase-messaging:17.3.4'
         //google login
         api 'com.google.android.gms:play-services-auth:16.0.1'
-        //appodeal
-//    api 'com.google.android.gms:play-services-ads:15.0.1'
-//        api "com.google.android.gms:play-services-location:16.0.0"
-//        api "com.google.android.gms:play-services-gcm:16.0.0"
-        //for Inmobi
-//        api 'com.google.android.exoplayer:exoplayer:2.8.2'
-//        implementation 'com.squareup.picasso:picasso:2.5.2' //for Inmobi
-//        //      api 'com.squareup.picasso;picasso:2.71828'
-////    implementation name: 'adcolony-3.3.4', ext: 'aar'
-//        api 'com.adcolony:sdk:3.3.5'
-//        api name: 'mobvista-8.11.0-alphab', ext: 'aar'
-//        api name: 'mobvista-8.11.0-common', ext: 'aar'
-//        api name: 'mobvista-8.11.0-interstitial', ext: 'aar'
-//        api name: 'mobvista-8.11.0-interstitialvideo', ext: 'aar'
-//        api name: 'mobvista-8.11.0-mvdownloads', ext: 'aar'
-//        api name: 'mobvista-8.11.0-mvjscommon', ext: 'aar'
-//        api name: 'mobvista-8.11.0-mvnative', ext: 'aar'
-//        api name: 'mobvista-8.11.0-nativeex', ext: 'aar'
-//        api name: 'mobvista-8.11.0-playercommon', ext: 'aar'
-//        api name: 'mobvista-8.11.0-reward', ext: 'aar'
-//        api name: 'mobvista-8.11.0-videocommon', ext: 'aar'
-//        api name: 'mobvista-8.11.0-videofeeds', ext: 'aar'
-//        api name: 'mobvista-8.11.0-videojs', ext: 'aar'
 
+        //appodeal
         implementation 'com.squareup.picasso:picasso:2.5.2' //for Inmobi
         implementation name: 'adcolony-3.3.4', ext: 'aar'
         implementation name: 'mobvista-8.11.3-alphab', ext: 'aar'
@@ -238,7 +222,7 @@ android {
         releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanaryVersion"
         testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanaryVersion"
         //time operations
-        api 'joda-time:joda-time:2.10'
+        api 'joda-time:joda-time:2.10.1'
 
         //new crash reporting
         api('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') { transitive = true }
