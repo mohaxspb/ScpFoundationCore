@@ -196,8 +196,8 @@ dependencies {
 
     //dagger2
     String daggerVersion = '2.16' //2.19
-    api "com.google.dagger:dagger:${daggerVersion}"
-    kapt "com.google.dagger:dagger-compiler:${daggerVersion}"
+    api "com.google.dagger:dagger:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
     //core module
     implementation project(':core')
