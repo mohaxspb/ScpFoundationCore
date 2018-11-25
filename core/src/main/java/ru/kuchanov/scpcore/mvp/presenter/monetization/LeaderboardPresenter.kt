@@ -62,6 +62,8 @@ class LeaderboardPresenter(
 
     override var myUser: User? = null
 
+    override var userPositionOnLeaderboard: String? = null
+
     override var inAppService: IInAppBillingService? = null
 
     private var updated = false
@@ -87,10 +89,11 @@ class LeaderboardPresenter(
             skuList.addAll(InAppHelper.getNewNoAdsSubsSkus())
         }
 
-        Single.zip(
-                inAppHelper.getInAppsListToBuyObservable(inAppService).toSingle(),
-                Single.just(mDbProviderFactory.dbProvider.userUnmanaged)
-        ) { inApps: List<Subscription>, user: User? -> Pair(inApps, user) }
+        Single
+                .zip(
+                        inAppHelper.getInAppsListToBuyObservable(inAppService).toSingle(),
+                        Single.just(mDbProviderFactory.dbProvider.userUnmanaged)
+                ) { inApps: List<Subscription>, user: User? -> Pair(inApps, user) }
                 .doOnSuccess {
                     inApps = it.first
                     myUser = it.second
@@ -99,6 +102,7 @@ class LeaderboardPresenter(
 //                .map { if(it.size<3) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnEach { updateUserPositionOnLeaderboard() }
                 .subscribeBy(
                         onSuccess = {
                             Timber.d("loadInitialData onSuccess: ${it.size}")
@@ -143,6 +147,22 @@ class LeaderboardPresenter(
                             view.showSwipeRefreshProgress(false)
                             view.showRefreshButton(true)
                         })
+    }
+
+    override fun updateUserPositionOnLeaderboard() {
+        if (!myPreferencesManager.accessToken.isNullOrEmpty()) {
+            mApiClient.userPositionInLeaderboard
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    //todo show progress
+                    .subscribeBy(
+                            onSuccess = {
+                                userPositionOnLeaderboard = it.toString()
+                                view.showUserPosition(it.toString())
+                            },
+                            onError = { Timber.e(it) }
+                    )
+        }
     }
 
     override fun updateLeaderboardFromApi(offset: Int, limit: Int) {
@@ -220,6 +240,8 @@ class LeaderboardPresenter(
                             view.resetOnScrollListener()
                         }
                 )
+
+        updateUserPositionOnLeaderboard()
     }
 
     private fun convertUser(user: User?): LeaderboardUserViewModel? {

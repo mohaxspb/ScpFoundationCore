@@ -105,7 +105,12 @@ class LeaderboardFragment :
 
         if (presenter.data.isNotEmpty()) {
             showProgressCenter(false)
-            presenter.apply { showData(data); onUserChanged(myUser); showUpdateDate(updateTime) }
+            presenter.apply {
+                showData(data)
+                onUserChanged(myUser)
+                showUpdateDate(updateTime)
+                showUserPosition(userPositionOnLeaderboard)
+            }
         }
 
         refresh.setOnClickListener { getPresenter().loadInitialData() }
@@ -133,6 +138,13 @@ class LeaderboardFragment :
 
     override fun enableSwipeRefresh(enable: Boolean) {
         swipeRefresh.isEnabled = enable
+    }
+
+    override fun showUserPosition(positionInLeaderboard: String?) {
+        if (!isAdded) {
+            return
+        }
+        userDataView.chartPlaceTextView.text = positionInLeaderboard
     }
 
     override fun showUser(myUser: LeaderboardUserViewModel?) {
@@ -172,12 +184,6 @@ class LeaderboardFragment :
         val user = myUser.user
         Timber.d("user: $user")
         with(userDataView) {
-            chartPlaceTextView.text = if (myUser.position == LeaderboardUserViewModel.POSITION_NONE) {
-                "N/A"
-            } else {
-                (myUser.position + 1).toString()
-            }
-
             Glide.with(context)
                     .load(user.avatar)
                     .asBitmap()
