@@ -24,13 +24,14 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
-import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.api.service.EnScpSiteApi;
+import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
+import rx.Single;
 import timber.log.Timber;
 
 /**
@@ -75,8 +76,8 @@ public class ApiClientImpl extends ApiClient {
                 final OkHttpClient client = new OkHttpClient.Builder()
                         .addInterceptor(new HttpLoggingInterceptor(
                                 message -> Timber.d(message)).setLevel(BuildConfig.FLAVOR.equals("dev")
-                                                                       ? HttpLoggingInterceptor.Level.BODY
-                                                                       : HttpLoggingInterceptor.Level.NONE)
+                                ? HttpLoggingInterceptor.Level.BODY
+                                : HttpLoggingInterceptor.Level.NONE)
                         )
                         .build();
                 final Response response = client.newCall(request.build()).execute();
@@ -105,7 +106,7 @@ public class ApiClientImpl extends ApiClient {
 
     @Override
     public Observable<Integer> getRecentArticlesPageCountObservable() {
-        return Observable.<Integer>unsafeCreate(subscriber -> {
+        return Observable.unsafeCreate(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();
@@ -243,8 +244,8 @@ public class ApiClientImpl extends ApiClient {
     }
 
     @Override
-    public Observable<List<ArticleTag>> getTagsFromSite() {
-        return Observable.<List<ArticleTag>>unsafeCreate(subscriber -> {
+    public Single<List<ArticleTag>> getTagsFromSite() {
+        return Single.<List<ArticleTag>>create(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getBaseApiUrl() + "/system:page-tags/")
                     .build();
@@ -280,8 +281,7 @@ public class ApiClientImpl extends ApiClient {
                     tags.add(tag);
                 }
                 //parse end
-                subscriber.onNext(tags);
-                subscriber.onCompleted();
+                subscriber.onSuccess(tags);
             } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
@@ -291,14 +291,14 @@ public class ApiClientImpl extends ApiClient {
 
 
     @Override
-    public Observable<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {
+    public Single<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {
         final List<String> tagsTitles = ArticleTag.getStringsFromTags(tags);
         //fix index of bounds error
         if (tagsTitles.isEmpty()) {
-            return Observable.just(Collections.emptyList());
+            return Single.just(Collections.emptyList());
         }
         final String tagTitle = tagsTitles.get(0);
-        return Observable.<List<Article>>unsafeCreate(subscriber -> {
+        return Single.create(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getBaseApiUrl() + "/system:page-tags/tag/" + tagTitle)
                     .build();
@@ -335,8 +335,7 @@ public class ApiClientImpl extends ApiClient {
                     articles.add(tag);
                 }
                 //parse end
-                subscriber.onNext(articles);
-                subscriber.onCompleted();
+                subscriber.onSuccess(articles);
             } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);

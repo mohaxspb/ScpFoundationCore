@@ -24,13 +24,14 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
-import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.api.service.EnScpSiteApi;
+import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
+import rx.Single;
 import timber.log.Timber;
 
 /**
@@ -64,6 +65,7 @@ public class ApiClientImpl extends ApiClient {
         );
     }
 
+    @Override
     public Observable<String> getRandomUrl() {
         Timber.d("getRandomUrl");
         return Observable.unsafeCreate(subscriber -> {
@@ -72,15 +74,15 @@ public class ApiClientImpl extends ApiClient {
             request.get();
 
             try {
-                OkHttpClient client = new OkHttpClient.Builder()
+                final OkHttpClient client = new OkHttpClient.Builder()
                         .followRedirects(false)
                         .addInterceptor(new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(BuildConfig.FLAVOR.equals("dev")
                                 ? HttpLoggingInterceptor.Level.BODY
                                 : HttpLoggingInterceptor.Level.NONE))
                         .build();
-                Response response = client.newCall(request.build()).execute();
+                final Response response = client.newCall(request.build()).execute();
 
-                ResponseBody requestResult = response.body();
+                final ResponseBody requestResult = response.body();
                 if (requestResult != null) {
                     String html = requestResult.string();
                     String patternToFindUrl = "<iframe src=\"http://snippets.wdfiles.com/local--code/code:iframe-redirect#";
@@ -237,8 +239,8 @@ public class ApiClientImpl extends ApiClient {
     }
 
     @Override
-    public Observable<List<ArticleTag>> getTagsFromSite() {
-        return Observable.<List<ArticleTag>>unsafeCreate(subscriber -> {
+    public Single<List<ArticleTag>> getTagsFromSite() {
+        return Single.<List<ArticleTag>>create(subscriber -> {
             Request request = new Request.Builder()
                     .url(mConstantValues.getBaseApiUrl() + "/system:page-tags/")
                     .build();
@@ -274,8 +276,7 @@ public class ApiClientImpl extends ApiClient {
                     tags.add(tag);
                 }
                 //parse end
-                subscriber.onNext(tags);
-                subscriber.onCompleted();
+                subscriber.onSuccess(tags);
             } catch (Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
@@ -284,19 +285,19 @@ public class ApiClientImpl extends ApiClient {
     }
 
     @Override
-    public Observable<List<Article>> getArticlesByTags(List<ArticleTag> tags) {
+    public Single<List<Article>> getArticlesByTags(List<ArticleTag> tags) {
 //        Timber.d("getArticlesByTags: %s", tags);
 //        String tagName = tags.get(0).title;
 //        Timber.d("tagName: %s", tagName);
         List<String> tagsTitles = ArticleTag.getStringsFromTags(tags);
         //fix index of bounds error
         if (tagsTitles.isEmpty()) {
-            return Observable.just(Collections.emptyList());
+            return Single.just(Collections.emptyList());
         }
 //        Timber.d("tagsTitles: %s", tagsTitles);
         String tagTitle = tagsTitles.get(0);
 //        Timber.d("tagTitle: %s", tagTitle);
-        return Observable.<List<Article>>unsafeCreate(subscriber -> {
+        return Single.create(subscriber -> {
             Request request = new Request.Builder()
                     .url(mConstantValues.getBaseApiUrl() + "/system:page-tags/tag/" + tagTitle)
                     .build();
@@ -333,9 +334,8 @@ public class ApiClientImpl extends ApiClient {
                     articles.add(tag);
                 }
                 //parse end
-                subscriber.onNext(articles);
-                subscriber.onCompleted();
-            } catch (Exception e) {
+                subscriber.onSuccess(articles);
+            } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
