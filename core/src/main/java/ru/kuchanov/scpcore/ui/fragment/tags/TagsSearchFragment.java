@@ -50,7 +50,7 @@ public class TagsSearchFragment
 
     private ObjectAnimator fabAnimator;
 
-    private List<ArticleTag> mQueryTags = new ArrayList<>();
+    private final List<ArticleTag> mQueryTags = new ArrayList<>();
 
     private ShowTagsSearchResults mShowTagsSearchResults;
 
@@ -59,7 +59,7 @@ public class TagsSearchFragment
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(final Activity activity) {
         super.onAttach(activity);
         mShowTagsSearchResults = (ShowTagsSearchResults) activity;
     }
@@ -96,12 +96,12 @@ public class TagsSearchFragment
 
         mSearchTagsContainer.setOnHierarchyChangeListener(new ViewGroup.OnHierarchyChangeListener() {
             @Override
-            public void onChildViewAdded(View view, View view1) {
+            public void onChildViewAdded(final View view, final View view1) {
                 mSearchFab.show();
             }
 
             @Override
-            public void onChildViewRemoved(View view, View view1) {
+            public void onChildViewRemoved(final View view, final View view1) {
                 if (mSearchTagsContainer.getChildCount() == 0) {
                     mSearchFab.hide();
                 }
@@ -116,12 +116,12 @@ public class TagsSearchFragment
     }
 
     @Override
-    public void showAllTags(List<ArticleTag> data) {
+    public void showAllTags(final List<ArticleTag> data) {
         Timber.d("showAllTags: %s", data.size());
         mAllTagsContainer.removeAllViews();
-        for (ArticleTag tag : data) {
+        for (final ArticleTag tag : data) {
 //            Timber.d("add tag: %s", tag.title);
-            TagView tagView = new TagView(getActivity());
+            final TagView tagView = new TagView(getActivity());
             tagView.setTag(tag);
 
             tagView.setOnTagClickListener(mAllTagsClickListener);
@@ -131,7 +131,7 @@ public class TagsSearchFragment
     }
 
     @Override
-    public void showSearchResults(List<Article> data) {
+    public void showSearchResults(final List<Article> data) {
         Timber.d("showSearchResults: %s", data);
         if (!isAdded()) {
             return;
@@ -156,12 +156,12 @@ public class TagsSearchFragment
     }
 
     @Override
-    public void enableSwipeRefresh(boolean enable) {
+    public void enableSwipeRefresh(final boolean enable) {
         mSwipeRefreshLayout.setEnabled(enable);
     }
 
     @Override
-    public void showProgress(boolean show) {
+    public void showProgress(final boolean show) {
         Timber.d("showProgress: %s", show);
 
         mSearchFab.setImageResource(show ? R.drawable.ic_autorenew : R.drawable.ic_search);
@@ -186,15 +186,15 @@ public class TagsSearchFragment
         }
     }
 
-    private TagView.OnTagClickListener mAllTagsClickListener = new TagView.OnTagClickListener() {
+    private final TagView.OnTagClickListener mAllTagsClickListener = new TagView.OnTagClickListener() {
         @Override
-        public void onTagClicked(TagView view, ArticleTag tag) {
+        public void onTagClicked(final TagView view, final ArticleTag tag) {
             Timber.d("mAllTagsClickListener: %s", tag);
 
             if(!getResources().getBoolean(R.bool.multiTagSearchEnabled)){
                 for (int i = 0; i < mSearchTagsContainer.getChildCount(); i++) {
-                    TagView tagViewToRemove = (TagView) mSearchTagsContainer.getChildAt(i);
-                    TagView tagView = new TagView(getActivity());
+                    final TagView tagViewToRemove = (TagView) mSearchTagsContainer.getChildAt(i);
+                    final TagView tagView = new TagView(getActivity());
                     tagView.setTag(tagViewToRemove.getTag());
 
                     tagView.setOnTagClickListener(mAllTagsClickListener);
@@ -216,9 +216,9 @@ public class TagsSearchFragment
         }
     };
 
-    private TagView.OnTagClickListener mSearchTagsClickListener = new TagView.OnTagClickListener() {
+    private final TagView.OnTagClickListener mSearchTagsClickListener = new TagView.OnTagClickListener() {
         @Override
-        public void onTagClicked(TagView view, ArticleTag tag) {
+        public void onTagClicked(final TagView view, final ArticleTag tag) {
             Timber.d("mSearchTagsClickListener: %s", tag);
             mSearchTagsContainer.removeView(view);
             mAllTagsContainer.addView(view);

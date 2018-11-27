@@ -15,6 +15,7 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.base.BaseArticlesListMvp;
 import rx.Observable;
+import rx.Single;
 import timber.log.Timber;
 
 public abstract class BaseObjectsArticlesPresenter<V extends BaseArticlesListMvp.View>
@@ -57,7 +58,7 @@ public abstract class BaseObjectsArticlesPresenter<V extends BaseArticlesListMvp
     }
 
     @Override
-    protected Observable<List<Article>> getApiObservable(final int offset) {
+    protected Single<List<Article>> getApiObservable(final int offset) {
         return mApiClient.getObjectsArticles(getObjectsLink());
     }
 

@@ -13,6 +13,5 @@ package ru.kuchanov.scpcore.api.model.response
  *     </li>
  * </ul>
  */
-data class EnSiteTagsSearchResult(
-
-)
+//fixme delete it
+class EnSiteTagsSearchResult

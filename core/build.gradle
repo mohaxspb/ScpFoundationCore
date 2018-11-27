@@ -139,7 +139,6 @@ android {
         api 'com.squareup.okhttp3:okhttp:3.12.0'
         api 'com.squareup.okhttp3:logging-interceptor:3.12.0'
         api 'com.squareup.retrofit2:converter-gson:2.4.0'
-        api 'com.squareup.retrofit2:converter-simplexml:2.3.0'
         api 'com.squareup.retrofit2:adapter-rxjava:2.4.0'
         //jsoup
         api 'org.jsoup:jsoup:1.11.3'
@@ -173,7 +172,7 @@ android {
         //some versions are not yet released and failed to load.
         //check https://firebase.google.com/support/release-notes/android before update
         //to find latest versions! Also they can use `androidx` dependencies, which may cause conflicts!
-        api 'com.google.firebase:firebase-core:16.0.4'
+        implementation 'com.google.firebase:firebase-core:16.0.4'
         api 'com.google.firebase:firebase-invites:16.0.4'
         api 'com.google.firebase:firebase-analytics:16.0.4'
         api 'com.google.firebase:firebase-database:16.0.3'

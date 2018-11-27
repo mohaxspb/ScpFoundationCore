@@ -198,6 +198,9 @@ dependencies {
     api "com.google.dagger:dagger:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
+    //need to compile...
+    implementation 'com.google.firebase:firebase-core:16.0.4'
+
     //core module
     implementation project(':core')
 }

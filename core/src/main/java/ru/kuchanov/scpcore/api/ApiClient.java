@@ -227,13 +227,13 @@ public class ApiClient {
         });
     }
 
-    public Observable<List<Article>> getRecentArticlesForOffset(final int offset) {
+    public Single<List<Article>> getRecentArticlesForOffset(final int offset) {
         final int page = offset / mConstantValues.getNumOfArticlesOnRecentPage() + 1/*as pages are not zero based*/;
         return getRecentArticlesForPage(page);
     }
 
-    public Observable<List<Article>> getRecentArticlesForPage(final int page) {
-        return Observable.unsafeCreate(subscriber -> {
+    public Single<List<Article>> getRecentArticlesForPage(final int page) {
+        return Single.create(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/" + page)
                     .build();
@@ -257,8 +257,7 @@ public class ApiClient {
 
                 final List<Article> articles = parseForRecentArticles(doc);
 
-                subscriber.onNext(articles);
-                subscriber.onCompleted();
+                subscriber.onSuccess(articles);
             } catch (final Exception | ScpParseException e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
@@ -313,8 +312,8 @@ public class ApiClient {
         return articles;
     }
 
-    public Observable<List<Article>> getRatedArticles(final int offset) {
-        return Observable.unsafeCreate(subscriber -> {
+    public Single<List<Article>> getRatedArticles(final int offset) {
+        return Single.create(subscriber -> {
             final int page = offset / mConstantValues.getNumOfArticlesOnRatedPage() + 1/*as pages are not zero based*/;
 
             final Request request = new Request.Builder()
@@ -340,8 +339,7 @@ public class ApiClient {
 
                 final List<Article> articles = parseForRatedArticles(doc);
 
-                subscriber.onNext(articles);
-                subscriber.onCompleted();
+                subscriber.onSuccess(articles);
             } catch (final Exception | ScpParseException e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
@@ -383,8 +381,8 @@ public class ApiClient {
         return articles;
     }
 
-    public Observable<List<Article>> getSearchArticles(final int offset, final String searchQuery) {
-        return Observable.unsafeCreate(subscriber -> {
+    public Single<List<Article>> getSearchArticles(final int offset, final String searchQuery) {
+        return Single.create(subscriber -> {
             final int page = offset / mConstantValues.getNumOfArticlesOnSearchPage() + 1/*as pages are not zero based*/;
 
             final Request request = new Request.Builder()
@@ -435,8 +433,7 @@ public class ApiClient {
 
                         articles.add(article);
                     }
-                    subscriber.onNext(articles);
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(articles);
                 }
             } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
@@ -445,8 +442,8 @@ public class ApiClient {
         });
     }
 
-    public Observable<List<Article>> getObjectsArticles(final String sObjectsLink) {
-        return Observable.unsafeCreate(subscriber -> {
+    public Single<List<Article>> getObjectsArticles(final String sObjectsLink) {
+        return Single.create(subscriber -> {
             final Request request = new Request.Builder()
                     .url(sObjectsLink)
                     .build();
@@ -470,8 +467,7 @@ public class ApiClient {
 
                 final List<Article> articles = parseForObjectArticles(doc);
 
-                subscriber.onNext(articles);
-                subscriber.onCompleted();
+                subscriber.onSuccess(articles);
             } catch (final Exception | ScpParseException e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
@@ -666,8 +662,8 @@ public class ApiClient {
         }
     }
 
-    public Observable<List<Article>> getMaterialsArticles(final String objectsLink) {
-        return Observable.<List<Article>>unsafeCreate(subscriber -> {
+    public Single<List<Article>> getMaterialsArticles(final String objectsLink) {
+        return Single.create(subscriber -> {
             final Request request = new Request.Builder()
                     .url(objectsLink)
                     .build();
@@ -712,8 +708,7 @@ public class ApiClient {
                     }
                 }
                 //parse end
-                subscriber.onNext(articles);
-                subscriber.onCompleted();
+                subscriber.onSuccess(articles);
             } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
@@ -721,8 +716,8 @@ public class ApiClient {
         });
     }
 
-    public Observable<List<Article>> getMaterialsArchiveArticles() {
-        return Observable.unsafeCreate(subscriber -> {
+    public Single<List<Article>> getMaterialsArchiveArticles() {
+        return Single.create(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getArchive())
                     .build();
@@ -789,8 +784,7 @@ public class ApiClient {
                     articles.add(article);
                 }
                 //parse end
-                subscriber.onNext(articles);
-                subscriber.onCompleted();
+                subscriber.onSuccess(articles);
             } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
@@ -798,8 +792,8 @@ public class ApiClient {
         });
     }
 
-    public Observable<List<Article>> getMaterialsJokesArticles() {
-        return Observable.unsafeCreate(subscriber -> {
+    public Single<List<Article>> getMaterialsJokesArticles() {
+        return Single.create(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getJokes())
                     .build();
@@ -866,8 +860,7 @@ public class ApiClient {
                     articles.add(article);
                 }
                 //parse end
-                subscriber.onNext(articles);
-                subscriber.onCompleted();
+                subscriber.onSuccess(articles);
             } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
@@ -1077,7 +1070,7 @@ public class ApiClient {
         return authToFirebaseObservable;
     }
 
-    private Single<FirebaseUser> authWithCustomToken(final String token) {
+    private Single<FirebaseUser> authWithCustomToken(@NotNull final String token) {
         return Single.create(subscriber ->
                 FirebaseAuth.getInstance().signInWithCustomToken(token).addOnCompleteListener(task -> {
                     Timber.d("signInWithCustomToken:onComplete: %s", task.isSuccessful());
@@ -1620,7 +1613,7 @@ public class ApiClient {
         return mScpReaderApi.getUserPositionInLeaderboard(mConstantValues.getAppLang().toUpperCase());
     }
 
-    public Observable<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {
+    public Single<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {
         return mScpServer.getArticlesByTags(getScpServerWiki(), ArticleTag.getStringsFromTags(tags))
                 .map(ArticleFromSearchTagsOnSite::getArticlesFromSiteArticles)
                 .map(articles -> {
@@ -1637,7 +1630,7 @@ public class ApiClient {
                 });
     }
 
-    public Observable<List<ArticleTag>> getTagsFromSite() {
+    public Single<List<ArticleTag>> getTagsFromSite() {
         return mScpServer.getTagsList(getScpServerWiki())
                 .map(strings -> {
                     final List<ArticleTag> tags = new ArrayList<>();

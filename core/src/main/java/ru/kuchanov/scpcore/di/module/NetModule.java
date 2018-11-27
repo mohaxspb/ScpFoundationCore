@@ -37,7 +37,6 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.ConstantValuesDefault;
@@ -202,13 +201,6 @@ public class NetModule {
     }
 
     @Provides
-    @Named(QUALIFIER_CONVERTER_FACTORY_XML)
-    @Singleton
-    Converter.Factory providesXmlConverterFactory() {
-        return SimpleXmlConverterFactory.create();
-    }
-
-    @Provides
     @Named(QUALIFIER_SCP_READER_API_AUTH)
     @Singleton
     Retrofit providesScpReaderApiAuthRetrofit(
@@ -285,13 +277,11 @@ public class NetModule {
     @Singleton
     Retrofit providesEnScpRetrofit(
             @Named(QUALIFIER_OKHTTP_COMMON) final OkHttpClient okHttpClient,
-            @Named(QUALIFIER_CONVERTER_FACTORY_XML) final Converter.Factory converterFactory,
             final CallAdapter.Factory callAdapterFactory
     ) {
         return new Retrofit.Builder()
                 .baseUrl(BuildConfig.EN_SCP_API_URL)
                 .client(okHttpClient)
-                .addConverterFactory(converterFactory)
                 .addCallAdapterFactory(callAdapterFactory)
                 .build();
     }

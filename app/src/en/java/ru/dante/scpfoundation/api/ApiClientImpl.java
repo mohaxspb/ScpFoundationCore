@@ -11,8 +11,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -22,7 +24,6 @@ import ru.dante.scpfoundation.R;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
-import ru.kuchanov.scpcore.api.model.ArticleFromSearchTagsOnSite;
 import ru.kuchanov.scpcore.api.service.EnScpSiteApi;
 import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.db.model.Article;
@@ -30,7 +31,10 @@ import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
+import rx.Single;
 import timber.log.Timber;
+
+import static ru.kuchanov.scpcore.api.service.EnScpSiteApiKt.EN_SITE_TAG_SORT;
 
 /**
  * Created by mohax on 13.07.2017.
@@ -38,8 +42,6 @@ import timber.log.Timber;
  * for ScpFoundationRu
  */
 public class ApiClientImpl extends ApiClient {
-
-    private final static String EN_SITE_TAG_SORT = "rating desc"
 
     public ApiClientImpl(
             final OkHttpClient okHttpClient,
@@ -237,27 +239,146 @@ public class ApiClientImpl extends ApiClient {
 
     //todo parse tags
     @Override
-    public Observable<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {
-        return mEnScpSiteApi.getArticlesByTags(ArticleTag.getCommaSeparatedStringFromTags(tags), EN_SITE_TAG_SORT)
-                .map(ArticleFromSearchTagsOnSite::getArticlesFromSiteArticles)
-                .map(articles -> {
-                    for (final Article article : articles) {
-                        if (!article.url.startsWith("http://")) {
-                            String start = mConstantValues.getBaseApiUrl();
-                            if (!article.url.startsWith("/")) {
-                                start += "/";
-                            }
-                            article.url = start + article.url;
-                        }
+    public Single<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {
+//        return mEnScpSiteApi.getArticlesByTags(ArticleTag.getCommaSeparatedStringFromTags(tags), EN_SITE_TAG_SORT)
+//                .map(ArticleFromSearchTagsOnSite::getArticlesFromSiteArticles)
+//                .map(articles -> {
+//                    for (final Article article : articles) {
+//                        if (!article.url.startsWith("http://")) {
+//                            String start = mConstantValues.getBaseApiUrl();
+//                            if (!article.url.startsWith("/")) {
+//                                start += "/";
+//                            }
+//                            article.url = start + article.url;
+//                        }
+//                    }
+//                    return articles;
+//                });
+
+//        @FormUrlEncoded
+//        @POST("tools/tagGet.php")
+//        fun getArticlesByTags(
+//                @Field("tags") tags: String,
+//                @Field("sort") sort: String
+//    ): Single<String>
+
+//        mOkHttpClient.
+String tagsQuery = ArticleTag.getCommaSeparatedStringFromTags(tags);
+        return Single.create(subscriber -> {
+            final Request.Builder request = new Request.Builder();
+            request.url("http://home.helenbot.com/tools/tagGet.php");
+            final RequestBody requestBody = new FormBody.Builder()
+                    .add("tags", tagsQuery)
+                    .add("sort", /*EN_SITE_TAG_SORT*/"rating desc")
+                    .build();
+            request.post(requestBody);
+
+            try {
+                final Response response = mOkHttpClient.newCall(request.build()).execute();
+
+                final ResponseBody requestResult = response.body();
+                if (requestResult != null) {
+                    String html = requestResult.string();
+//                    html = html.substring(html.indexOf("<iframe src=\"http://snippets.wdfiles.com/local--code/code:iframe-redirect#") +
+//                            "<iframe src=\"http://snippets.wdfiles.com/local--code/code:iframe-redirect#".length());
+//                    html = html.substring(0, html.indexOf("\""));
+//                    final String randomURL = html;
+//                    Timber.d("randomUrl = %s", randomURL);
+
+                    Timber.d("html: %s", html);
+                    Document doc = Jsoup.parse(html);
+                    Elements articlesTags = doc.getElementById("taglist").children();
+                    List<Article> articles = new ArrayList<>();
+                    for (Element element : articlesTags) {
+                        Article article = new Article();
+                        Element aTag = element.getElementsByTag("a").first();
+                        article.url = aTag.attr("href");
+                        article.title = aTag.text();
+                        aTag.remove();
+                        String authorAndRating = element.text();
+                        String author = authorAndRating.replace(" Created by: ", "");
+                        author = author.substring(0, author.indexOf(" Rating: "));
+                        Timber.d("authorAndRating: %s", authorAndRating);
+                        String ratingString = authorAndRating.substring(authorAndRating.indexOf(" Rating: "));
+                        int rating = Integer.parseInt(ratingString);
+
+                        article.authorName = author;
+                        article.rating = rating;
+                        articles.add(article);
                     }
-                    return articles;
-                });
+                    subscriber.onSuccess(articles);
+                } else {
+                    subscriber.onError(new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse)));
+                }
+            } catch (final IOException e) {
+                Timber.e(e);
+                subscriber.onError(e);
+            }
+        });
+
+//        return mEnScpSiteApi.getArticlesByTags(ArticleTag.getCommaSeparatedStringFromTags(tags), EN_SITE_TAG_SORT)
+//                .map(html -> {
+//                    Document doc = Jsoup.parse(html);
+//                    Elements articlesTags = doc.getElementById("taglist").children();
+//                    List<Article> articles = new ArrayList<>();
+//                    for (Element element : articlesTags) {
+//                        Article article = new Article();
+//                        Element aTag = element.getElementsByTag("a").first();
+//                        article.url = aTag.attr("href");
+//                        article.title = aTag.text();
+//                        aTag.remove();
+//                        String authorAndRating = element.text();
+//                        String author = authorAndRating.replace(" Created by: ", "");
+//                        author = author.substring(0, author.indexOf(" Rating: "));
+//                        String ratingString = authorAndRating.substring(authorAndRating.indexOf(" Rating: "));
+//                        int rating = Integer.parseInt(ratingString);
+//
+//                        article.authorName = author;
+//                        article.rating = rating;
+//                        articles.add(article);
+//                    }
+//                    return articles;
+//                });
     }
 
-    //todo parse tags
     @Override
-    public Observable<List<ArticleTag>> getTagsFromSite() {
-        return super.getTagsFromSite();
+    public Single<List<ArticleTag>> getTagsFromSite() {
+        return Single.create(subscriber -> {
+            final Request request = new Request.Builder()
+                    .url("http://home.helenbot.com/tags.php")
+                    .build();
+
+            final String responseBody;
+            try {
+                final Response response = mOkHttpClient.newCall(request).execute();
+                final ResponseBody body = response.body();
+                if (body != null) {
+                    responseBody = body.string();
+                } else {
+                    subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(ru.kuchanov.scpcore.R.string.error_parse)));
+                    return;
+                }
+            } catch (final IOException e) {
+                subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection)));
+                return;
+            }
+            try {
+                final Document doc = Jsoup.parse(responseBody);
+
+                //get num of pages
+                final Element selectWithTags = doc.getElementById("taglist");
+                final Elements options = selectWithTags.children();
+                final List<ArticleTag> articleTags = new ArrayList<>();
+                for (final Element option : options) {
+                    articleTags.add(new ArticleTag(option.text()));
+                }
+
+                subscriber.onSuccess(articleTags);
+            } catch (final Exception e) {
+                Timber.e(e, "error while get arts list");
+                subscriber.onError(e);
+            }
+        });
     }
 
     @Override

@@ -3,12 +3,12 @@ package ru.kuchanov.scpcore.api.service
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
-import ru.kuchanov.scpcore.api.model.response.scpreaderapi.AccessTokenResponse
 import rx.Single
 
 /**
  * @see http://www.scp-wiki.net/tag-search
  */
+//fixme delete it
 interface EnScpSiteApi {
 
     /**
@@ -20,7 +20,7 @@ interface EnScpSiteApi {
     fun getArticlesByTags(
             @Field("tags") tags: String,
             @Field("sort") sort: String
-    ): Single<List<EnSiteTagsSearchResult>>
+    ): Single<String>
 }
 
 const val EN_SITE_TAG_SORT = "rating desc"

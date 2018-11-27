@@ -14,8 +14,6 @@ import io.realm.annotations.PrimaryKey;
  */
 public class ArticleTag extends RealmObject implements Serializable {
 
-    public static final String FIELD_TITLE = "title";
-
     @PrimaryKey
     public String title;
 
@@ -70,8 +68,13 @@ public class ArticleTag extends RealmObject implements Serializable {
             return "";
         }
         final StringBuilder result = new StringBuilder();
-        for (final ArticleTag tag : tags) {
-            result.append(",").append(tag.title);
+//        for (final ArticleTag tag : tags) {
+        for (int i = 0; i < tags.size(); i++) {
+            if (i == 0) {
+                result.append(tags.get(i).title);
+            } else {
+                result.append(",").append(tags.get(i).title);
+            }
         }
         return result.toString();
     }

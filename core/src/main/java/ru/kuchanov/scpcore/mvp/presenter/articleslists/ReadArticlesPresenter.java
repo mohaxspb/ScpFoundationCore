@@ -13,6 +13,7 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.articleslists.ReadArticlesMvp;
 import rx.Observable;
+import rx.Single;
 
 public class ReadArticlesPresenter
         extends BaseListArticlesPresenter<ReadArticlesMvp.View>
@@ -33,9 +34,9 @@ public class ReadArticlesPresenter
     }
 
     @Override
-    protected Observable<List<Article>> getApiObservable(final int offset) {
+    protected Single<List<Article>> getApiObservable(final int offset) {
         isLoading = false;
-        return Observable.empty();
+        return Observable.<List<Article>>empty().toSingle();
     }
 
     @Override

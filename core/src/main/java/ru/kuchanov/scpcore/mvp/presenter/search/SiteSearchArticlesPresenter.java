@@ -17,6 +17,7 @@ import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.search.SiteSearchArticlesMvp;
 import ru.kuchanov.scpcore.mvp.presenter.articleslists.BaseListArticlesPresenter;
 import rx.Observable;
+import rx.Single;
 import rx.Subscriber;
 import timber.log.Timber;
 
@@ -59,7 +60,7 @@ public class SiteSearchArticlesPresenter
     }
 
     @Override
-    protected Observable<List<Article>> getApiObservable(final int offset) {
+    protected Single<List<Article>> getApiObservable(final int offset) {
         Timber.d("getApiObservable with query: %s", mQuery);
         return mApiClient.getSearchArticles(offset, mQuery)
                 .doOnSubscribe(() -> {

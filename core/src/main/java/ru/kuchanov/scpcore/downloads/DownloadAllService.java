@@ -29,6 +29,7 @@ import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.util.NotificationUtilsKt;
 import rx.Observable;
+import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
@@ -228,13 +229,13 @@ public abstract class DownloadAllService extends Service {
 //                .doOnNext(pageCount -> mMaxProgress = 2)
                 .flatMap(integer -> Observable.range(1, mMaxProgress))
                 .flatMap(integer -> getApiClient().getRecentArticlesForPage(integer)
-                        .doOnNext(list -> {
+                        .doOnSuccess(list -> {
                             mCurProgress = integer;
                             showNotificationDownloadProgress(getString(R.string.notification_recent_list_title),
                                     mCurProgress, mMaxProgress, mNumOfErrors
                             );
                         })
-                        .flatMap(Observable::from)
+                        .flatMapObservable(Observable::from)
                         .doOnError(throwable -> {
                             mCurProgress = integer;
                             mNumOfErrors++;
@@ -265,7 +266,7 @@ public abstract class DownloadAllService extends Service {
         Timber.d("downloadObjects: %s", type);
         showNotificationDownloadList();
         //download lists
-        final Observable<List<Article>> articlesObservable;
+        final Single<List<Article>> articlesObservable;
 
         if (type.resId == R.string.type_archive) {
             articlesObservable = getApiClient().getMaterialsArchiveArticles();
@@ -294,10 +295,10 @@ public abstract class DownloadAllService extends Service {
                         getString(R.string.error_notification_title),
                         getString(R.string.error_notification_objects_list_download_content)
                 ))
-                .onExceptionResumeNext(Observable.<List<Article>>empty().delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS))
+                .onErrorResumeNext(Observable.<List<Article>>empty().toSingle().delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(articles -> getDbProvider()
+                .flatMapObservable(articles -> getDbProvider()
                         .<Pair<Integer, Integer>>saveObjectsArticlesList(articles, type.dbField)
                         .flatMap(integerIntegerPair -> Observable.just(articles)))
                 .subscribeOn(AndroidSchedulers.mainThread())
