@@ -56,6 +56,8 @@ android {
         buildConfigField('int', 'TIMEOUT_SECONDS_WRITE', '60')
 
         buildConfigField('String', 'SCP_API_URL', '"https://scpdb.org/"')
+
+        //fixme delete it
         buildConfigField('String', 'EN_SCP_API_URL', '"http://home.helenbot.com/"')
 
         //play market refuses not hardcoded strings as intent filter

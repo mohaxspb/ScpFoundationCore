@@ -68,6 +68,7 @@ public class NetModule {
 
     private static final String QUALIFIER_SCP_SITE_API = "QUALIFIER_SCP_SITE_API";
 
+    //fixme delete it
     private static final String QUALIFIER_EN_SCP_SITE_API = "QUALIFIER_EN_SCP_SITE_API";
 
     private static final String QUALIFIER_OKHTTP_SCP_READER_API = "QUALIFIER_OKHTTP_SCP_READER_API";
@@ -272,6 +273,7 @@ public class NetModule {
                 .build();
     }
 
+    //fixme delete it
     @Provides
     @Named(QUALIFIER_EN_SCP_SITE_API)
     @Singleton
@@ -286,6 +288,7 @@ public class NetModule {
                 .build();
     }
 
+    //fixme delete it
     @Provides
     @Singleton
     EnScpSiteApi providesEnScpSiteApi(
