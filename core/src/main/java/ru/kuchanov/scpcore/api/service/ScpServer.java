@@ -6,6 +6,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 import ru.kuchanov.scpcore.api.model.ArticleFromSearchTagsOnSite;
 import rx.Observable;
+import rx.Single;
 
 /**
  * Created by mohax on 06.05.2017.
@@ -15,8 +16,8 @@ import rx.Observable;
 public interface ScpServer {
 
     @GET("_api/wikidot_tags_search/find")
-    Observable<List<ArticleFromSearchTagsOnSite>> getArticlesByTags(@Query("wiki") String wiki, @Query("tag") List<String> tags);
+    Single<List<ArticleFromSearchTagsOnSite>> getArticlesByTags(@Query("wiki") String wiki, @Query("tag") List<String> tags);
 
     @GET("_api/wikidot_tags_search/list")
-    Observable<List<String>> getTagsList(@Query("wiki") String wiki);
+    Single<List<String>> getTagsList(@Query("wiki") String wiki);
 }

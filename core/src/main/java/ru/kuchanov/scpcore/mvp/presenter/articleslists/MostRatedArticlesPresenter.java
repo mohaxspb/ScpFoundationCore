@@ -13,6 +13,7 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.articleslists.RatedArticlesMvp;
 import rx.Observable;
+import rx.Single;
 
 public class MostRatedArticlesPresenter
         extends BaseListArticlesPresenter<RatedArticlesMvp.View>
@@ -33,7 +34,7 @@ public class MostRatedArticlesPresenter
     }
 
     @Override
-    protected Observable<List<Article>> getApiObservable(final int offset) {
+    protected Single<List<Article>> getApiObservable(final int offset) {
         return mApiClient.getRatedArticles(offset);
     }
 

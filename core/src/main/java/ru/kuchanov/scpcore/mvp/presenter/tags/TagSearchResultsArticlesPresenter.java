@@ -15,6 +15,7 @@ import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.tags.TagsSearchResultsArticlesMvp;
 import ru.kuchanov.scpcore.mvp.presenter.articleslists.BaseListArticlesPresenter;
 import rx.Observable;
+import rx.Single;
 
 /**
  * Created by y.kuchanov on 21.12.16.
@@ -51,7 +52,7 @@ public class TagSearchResultsArticlesPresenter
     }
 
     @Override
-    protected Observable<List<Article>> getApiObservable(final int offset) {
+    protected Single<List<Article>> getApiObservable(final int offset) {
         return mApiClient.getArticlesByTags(mQueryTags);
     }
 

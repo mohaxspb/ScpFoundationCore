@@ -18,7 +18,7 @@ public interface TagsSearchMvp extends DrawerMvp {
 
         void showAllTags(List<ArticleTag> data);
 
-        void showSwipeProgress(boolean show);
+        void showSwipeProgress(final boolean show);
 
         void enableSwipeRefresh(boolean enable);
 

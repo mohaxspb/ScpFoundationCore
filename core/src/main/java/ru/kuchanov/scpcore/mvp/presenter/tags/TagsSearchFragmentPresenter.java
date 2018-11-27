@@ -40,7 +40,7 @@ public class TagsSearchFragmentPresenter
         mApiClient.getTagsFromSite()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(data -> mDbProviderFactory.getDbProvider().saveArticleTags(data))
+                .flatMapObservable(data -> mDbProviderFactory.getDbProvider().saveArticleTags(data))
                 .subscribe(
                         data -> {
                             Timber.d("getTagsFromApi onNext: %s", data.size());
@@ -90,7 +90,7 @@ public class TagsSearchFragmentPresenter
         getView().showProgress(true);
 
         mApiClient.getArticlesByTags(tags)
-                .flatMap(articles -> mDbProviderFactory.getDbProvider().saveMultipleArticlesWithoutTextSync(articles))
+                .flatMapObservable(articles -> mDbProviderFactory.getDbProvider().saveMultipleArticlesWithoutTextSync(articles))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

@@ -13,6 +13,7 @@ import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsJokesMvp;
 import ru.kuchanov.scpcore.mvp.presenter.articleslists.BaseObjectsArticlesPresenter;
 import rx.Observable;
+import rx.Single;
 
 public class MaterialsJokesPresenter
         extends BaseObjectsArticlesPresenter<MaterialsJokesMvp.View>
@@ -39,7 +40,7 @@ public class MaterialsJokesPresenter
     }
 
     @Override
-    protected Observable<List<Article>> getApiObservable(final int offset) {
+    protected Single<List<Article>> getApiObservable(final int offset) {
         return mApiClient.getMaterialsJokesArticles();
     }
 }

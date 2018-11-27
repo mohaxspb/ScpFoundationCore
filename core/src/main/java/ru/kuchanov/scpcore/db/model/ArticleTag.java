@@ -12,26 +12,30 @@ import io.realm.annotations.PrimaryKey;
  * <p>
  * for ScpFoundationRu
  */
-public class ArticleTag extends RealmObject implements Serializable{
-
-    public static final String FIELD_TITLE = "title";
+public class ArticleTag extends RealmObject implements Serializable {
 
     @PrimaryKey
     public String title;
 
     public ArticleTag() {
+        super();
     }
 
-    public ArticleTag(String title) {
+    public ArticleTag(final String title) {
+        super();
         this.title = title;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-        ArticleTag tag = (ArticleTag) o;
+        final ArticleTag tag = (ArticleTag) o;
 
         return title.equals(tag.title);
     }
@@ -48,23 +52,39 @@ public class ArticleTag extends RealmObject implements Serializable{
                 '}';
     }
 
-    public static List<String> getStringsFromTags(List<ArticleTag> tags) {
-        List<String> tagsStringlist = new ArrayList<>();
+    public static List<String> getStringsFromTags(final List<ArticleTag> tags) {
+        final List<String> tagsStringlist = new ArrayList<>();
         if (tags == null) {
             return tagsStringlist;
         }
-        for (ArticleTag tag : tags) {
+        for (final ArticleTag tag : tags) {
             tagsStringlist.add(tag.title);
         }
         return tagsStringlist;
     }
 
-    public static List<ArticleTag> getTagsFromStringList(List<String> tags) {
-        List<ArticleTag> tagsStringlist = new ArrayList<>();
+    public static String getCommaSeparatedStringFromTags(final List<ArticleTag> tags) {
+        if (tags == null) {
+            return "";
+        }
+        final StringBuilder result = new StringBuilder();
+//        for (final ArticleTag tag : tags) {
+        for (int i = 0; i < tags.size(); i++) {
+            if (i == 0) {
+                result.append(tags.get(i).title);
+            } else {
+                result.append(",").append(tags.get(i).title);
+            }
+        }
+        return result.toString();
+    }
+
+    public static List<ArticleTag> getTagsFromStringList(final List<String> tags) {
+        final List<ArticleTag> tagsStringlist = new ArrayList<>();
         if (tags == null) {
             return tagsStringlist;
         }
-        for (String tag : tags) {
+        for (final String tag : tags) {
             tagsStringlist.add(new ArticleTag(tag));
         }
         return tagsStringlist;

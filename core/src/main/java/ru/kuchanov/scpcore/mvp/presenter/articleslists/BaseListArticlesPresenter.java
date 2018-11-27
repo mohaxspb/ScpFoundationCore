@@ -14,6 +14,7 @@ import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.base.BaseArticlesListMvp;
 import ru.kuchanov.scpcore.mvp.base.BasePresenter;
 import rx.Observable;
+import rx.Single;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -43,7 +44,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
 
     protected abstract Observable<RealmResults<Article>> getDbObservable();
 
-    protected abstract Observable<List<Article>> getApiObservable(int offset);
+    protected abstract Single<List<Article>> getApiObservable(int offset);
 
     protected abstract Observable<Pair<Integer, Integer>> getSaveToDbObservable(List<Article> data, int offset);
 
@@ -115,7 +116,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
         getApiObservable(offset)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(apiDate -> getSaveToDbObservable(apiDate, offset))
+                .flatMapObservable(apiDate -> getSaveToDbObservable(apiDate, offset))
                 .subscribe(
                         data -> {
 //                            Timber.d("getDataFromApi loaded data size: %s and offset: %s", data.first, data.second);

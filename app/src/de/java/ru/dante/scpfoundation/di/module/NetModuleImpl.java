@@ -12,6 +12,7 @@ import retrofit2.Retrofit;
 import ru.dante.scpfoundation.ConstantValuesImpl;
 import ru.dante.scpfoundation.api.ApiClientImpl;
 import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
+import ru.kuchanov.scpcore.api.service.EnScpSiteApi;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.di.module.NetModule;
@@ -32,12 +33,22 @@ public class NetModuleImpl extends NetModule {
             @NonNull Retrofit scpRetrofit,
             final Retrofit scpReaderRetrofit,
             final ScpReaderAuthApi scpReaderAuthApi,
+            final EnScpSiteApi enScpSiteApi,
             @NonNull MyPreferenceManager preferencesManager,
             @NonNull Gson gson,
             @NonNull ConstantValues constantValues
     ) {
-        return new ApiClientImpl(okHttpClient, vpsRetrofit, scpRetrofit, scpReaderRetrofit,
-                scpReaderAuthApi, preferencesManager, gson, constantValues);
+        return new ApiClientImpl(
+                okHttpClient,
+                vpsRetrofit,
+                scpRetrofit,
+                scpReaderRetrofit,
+                scpReaderAuthApi,
+                enScpSiteApi,
+                preferencesManager,
+                gson,
+                constantValues
+        );
     }
 
     @Override
