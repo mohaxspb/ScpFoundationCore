@@ -28,11 +28,11 @@ public class StorageModuleImpl extends StorageModule {
     @Override
     protected RealmMigration getRealmMigration() {
         return (realm, oldVersion, newVersion) -> {
-            RealmSchema schema = realm.getSchema();
+            final RealmSchema schema = realm.getSchema();
 
             Timber.d("providesRealmMigration: %s/%s", oldVersion, newVersion);
 
-            for (RealmObjectSchema realmObjectSchema : schema.getAll()) {
+            for (final RealmObjectSchema realmObjectSchema : schema.getAll()) {
                 Timber.d("realmObjectSchema: %s", realmObjectSchema.getClassName());
                 Timber.d("realmObjectSchema: %s", realmObjectSchema.getFieldNames());
             }
@@ -55,7 +55,7 @@ public class StorageModuleImpl extends StorageModule {
             }
 
             if (oldVersion == 2) {
-                RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
+                final RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
                 if (articleSchema != null) {
                     articleSchema
                             .removeField("tabsTitles")
@@ -66,7 +66,7 @@ public class StorageModuleImpl extends StorageModule {
             }
 
             if (oldVersion == 3) {
-                RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
+                final RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
                 if (articleSchema != null) {
                     articleSchema
                             .addField(Article.FIELD_IS_IN_OBJECTS_FR, long.class)
@@ -172,7 +172,7 @@ public class StorageModuleImpl extends StorageModule {
             }
 
             if (oldVersion == 8) {
-                RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
+                final RealmObjectSchema articleSchema = schema.get(Article.class.getSimpleName());
                 if (articleSchema != null) {
                     articleSchema
                             .addField(Article.FIELD_IS_IN_OBJECTS_5, long.class);

@@ -14,6 +14,8 @@ import io.realm.annotations.PrimaryKey;
  */
 public class ArticleTag extends RealmObject implements Serializable {
 
+    public static final String FIELD_TITLE = "title";
+
     @PrimaryKey
     public String title;
 
