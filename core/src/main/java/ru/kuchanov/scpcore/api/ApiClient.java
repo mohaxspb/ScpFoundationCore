@@ -190,24 +190,24 @@ public class ApiClient {
         });
     }
 
-    public Observable<Integer> getRecentArticlesPageCountObservable() {
-        return Observable.unsafeCreate((Subscriber<? super Integer> subscriber) -> {
+    public Single<Integer> getRecentArticlesPageCountObservable() {
+        return Single.create(singleSubscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();
 
-            String responseBody;
+            final String responseBody;
             try {
                 final Response response = mOkHttpClient.newCall(request).execute();
                 final ResponseBody body = response.body();
                 if (body != null) {
                     responseBody = body.string();
                 } else {
-                    subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
+                    singleSubscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
                 }
             } catch (final IOException e) {
-                subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection)));
+                singleSubscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection)));
                 return;
             }
             try {
@@ -218,11 +218,10 @@ public class ApiClient {
                 final String text = spanWithNumber.text();
                 final Integer numOfPages = Integer.valueOf(text.substring(text.lastIndexOf(" ") + 1));
 
-                subscriber.onNext(numOfPages);
-                subscriber.onCompleted();
+                singleSubscriber.onSuccess(numOfPages);
             } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
-                subscriber.onError(e);
+                singleSubscriber.onError(e);
             }
         });
     }
@@ -265,6 +264,7 @@ public class ApiClient {
         });
     }
 
+    @SuppressWarnings("WeakerAccess") //as it's overrided in other flavors
     protected List<Article> parseForRecentArticles(final Document doc) throws ScpParseException {
         final Element pageContent = doc.getElementsByClass("wiki-content-table").first();
         if (pageContent == null) {

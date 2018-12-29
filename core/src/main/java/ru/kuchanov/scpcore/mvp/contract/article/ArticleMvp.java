@@ -32,5 +32,7 @@ public interface ArticleMvp {
         void getDataFromApi();
 
         void setArticleIsReaden(String url);
+
+        void toggleFavorite(String url);
     }
 }

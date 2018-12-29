@@ -31,15 +31,14 @@ public class TagSearchActivity
     private List<ArticleTag> mTags;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (getIntent().hasExtra(EXTRA_SHOW_DISABLE_ADS)) {
             showSnackBarWithAction(Constants.Firebase.CallToActionReason.REMOVE_ADS);
             getIntent().removeExtra(EXTRA_SHOW_DISABLE_ADS);
 
-            @DataSyncActions.ScoreAction
-            String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
+            @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
             mPresenter.updateUserScoreForScoreAction(action);
         }
 
@@ -85,7 +84,7 @@ public class TagSearchActivity
     }
 
     @Override
-    public boolean onNavigationItemClicked(int id) {
+    public boolean onNavigationItemClicked(final int id) {
         Timber.d("onNavigationItemClicked with id: %s", id);
         String link = null;
 
@@ -149,11 +148,11 @@ public class TagSearchActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         Timber.d("onOptionsItemSelected with id: %s", item);
-        int i = item.getItemId();
+        final int i = item.getItemId();
         if (i == R.id.text_size) {
-            BottomSheetDialogFragment fragmentDialogTextAppearance =
+            final BottomSheetDialogFragment fragmentDialogTextAppearance =
                     TextSizeDialogFragment.newInstance(TextSizeDialogFragment.TextSizeType.ALL);
             fragmentDialogTextAppearance.show(getSupportFragmentManager(), TextSizeDialogFragment.TAG);
             return true;
@@ -163,15 +162,10 @@ public class TagSearchActivity
     }
 
     @Override
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         if (mToolbar != null) {
             mToolbar.setTitle(title);
         }
-    }
-
-    @Override
-    public void setFavoriteState(boolean isInFavorite) {
-        //nothing to do
     }
 
     @Override
@@ -184,8 +178,8 @@ public class TagSearchActivity
     }
 
     @Override
-    public void showResults(List<Article> data, List<ArticleTag> tags) {
-        Fragment fragmentResults = TagsSearchResultsArticlesFragment.newInstance(data, tags);
+    public void showResults(final List<Article> data, final List<ArticleTag> tags) {
+        final Fragment fragmentResults = TagsSearchResultsArticlesFragment.newInstance(data, tags);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.content, fragmentResults, TagsSearchResultsArticlesFragment.TAG)
                 .addToBackStack(TagsSearchResultsArticlesFragment.TAG)

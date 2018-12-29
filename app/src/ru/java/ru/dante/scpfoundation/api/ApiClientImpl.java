@@ -22,6 +22,7 @@ import ru.kuchanov.scpcore.api.service.EnScpSiteApi;
 import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
+import rx.Single;
 import timber.log.Timber;
 
 /**
@@ -85,8 +86,8 @@ public class ApiClientImpl extends ApiClient {
     }
 
     @Override
-    public Observable<Integer> getRecentArticlesPageCountObservable() {
-        return Observable.unsafeCreate(subscriber -> {
+    public Single<Integer> getRecentArticlesPageCountObservable() {
+        return Single.create(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();
@@ -113,8 +114,7 @@ public class ApiClientImpl extends ApiClient {
                 final String text = spanWithNumber.text();
                 final Integer numOfPages = Integer.valueOf(text.substring(text.lastIndexOf(" ") + 1));
 
-                subscriber.onNext(numOfPages);
-                subscriber.onCompleted();
+                subscriber.onSuccess(numOfPages);
             } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
