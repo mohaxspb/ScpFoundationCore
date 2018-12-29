@@ -96,6 +96,7 @@ public abstract class DownloadAllService extends Service {
         return instance != null;
     }
 
+    @SuppressWarnings("TypeMayBeWeakened")
     public static void startDownloadWithType(
             final Context ctx,
             final DownloadEntry type,
@@ -220,14 +221,14 @@ public abstract class DownloadAllService extends Service {
                             getString(R.string.error_notification_recent_list_download_content)
                     );
                 })
-                .onExceptionResumeNext(Observable.<Integer>empty().delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS))
+                .onErrorResumeNext(Observable.<Integer>empty().toSingle().delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS))
                 //if we have limit we must not load all lists of articles
                 .map(pageCount -> (rangeStart != RANGE_NONE && rangeEnd != RANGE_NONE)
                                   ? (int) Math.ceil((double) rangeEnd / getNumOfArticlesOnRecentPage()) : pageCount)
-                .doOnNext(pageCount -> mMaxProgress = pageCount)
+                .doOnSuccess(pageCount -> mMaxProgress = pageCount)
                 //FIX ME for test do not load all arts lists
 //                .doOnNext(pageCount -> mMaxProgress = 2)
-                .flatMap(integer -> Observable.range(1, mMaxProgress))
+                .flatMapObservable(integer -> Observable.range(1, mMaxProgress))
                 .flatMap(integer -> getApiClient().getRecentArticlesForPage(integer)
                         .doOnSuccess(list -> {
                             mCurProgress = integer;
@@ -243,7 +244,8 @@ public abstract class DownloadAllService extends Service {
                                     mCurProgress, mMaxProgress, mNumOfErrors
                             );
                         })
-                        .onExceptionResumeNext(Observable.empty()))
+                        .onExceptionResumeNext(Observable.empty())
+                )
                 .toList()
 //                //FIX ME test value
 //                .flatMap(list -> Observable.just(list.subList(0, mMaxProgress)))
@@ -360,17 +362,13 @@ public abstract class DownloadAllService extends Service {
                                 Timber.d("downloaded: %s", articleDownloaded.getUrl());
                                 mCurProgress++;
                                 Timber.d("mCurProgress %s, mMaxProgress: %s", mCurProgress, mMaxProgress);
-                                showNotificationDownloadProgress(getString(R.string.download_objects_title),
-                                        mCurProgress, mMaxProgress, mNumOfErrors
-                                );
                             } else {
                                 mNumOfErrors++;
                                 mCurProgress++;
-                                showNotificationDownloadProgress(
-                                        getString(R.string.download_objects_title),
-                                        mCurProgress, mMaxProgress, mNumOfErrors
-                                );
                             }
+                            showNotificationDownloadProgress(getString(R.string.download_objects_title),
+                                    mCurProgress, mMaxProgress, mNumOfErrors
+                            );
                         } catch (Exception | ScpParseException e) {
                             Timber.e(e);
                             mNumOfErrors++;
@@ -438,7 +436,7 @@ public abstract class DownloadAllService extends Service {
                 apiClient.downloadImagesOnDisk(articleDownloaded);
 
                 getAndSaveInnerArticles(dbProvider, apiClient, innerArticleDownloaded, depthLevel + 1, maxDepth);
-            } catch (Exception | ScpParseException e) {
+            } catch (final Exception | ScpParseException e) {
                 Timber.e(e, "error while save inner article");
             }
         }

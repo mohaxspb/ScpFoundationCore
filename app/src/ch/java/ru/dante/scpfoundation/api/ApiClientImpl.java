@@ -175,7 +175,6 @@ public class ApiClientImpl extends ApiClient {
         return articles;
     }
 
-
     @Override
     protected List<Article> parseForRatedArticles(Document doc) throws ScpParseException {
         final Element pageContent = doc.getElementById("page-content");

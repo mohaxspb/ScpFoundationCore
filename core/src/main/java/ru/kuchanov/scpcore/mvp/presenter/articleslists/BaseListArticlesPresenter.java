@@ -153,6 +153,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
 
     @Override
     public void toggleFavoriteState(final Article article) {
+        Timber.d("toggleFavoriteState: %s", article.url);
 //        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
 //            getView().showNeedLoginPopup();
 //            return;
@@ -161,7 +162,8 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
             return;
         }
         Timber.d("toggleFavoriteState: %s", article);
-        mDbProviderFactory.getDbProvider().toggleFavorite(article.url)
+        mDbProviderFactory.getDbProvider()
+                .toggleFavorite(article.url)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(article1 -> mDbProviderFactory.getDbProvider().setArticleSynced(article1, false))
@@ -180,7 +182,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
         Timber.d("toggleReadState: %s", article);
         mDbProviderFactory.getDbProvider().toggleReaden(article.url)
                 .flatMap(articleUrl -> mDbProviderFactory.getDbProvider().getUnmanagedArticleAsyncOnes(articleUrl))
-                .flatMap(article1 -> mDbProviderFactory.getDbProvider().setArticleSynced(article1, false))
+                .flatMapSingle(article1 -> mDbProviderFactory.getDbProvider().setArticleSynced(article1, false))
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getToggleReadSubscriber());
@@ -244,7 +246,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
 
             @Override
             public void onNext(final Article article) {
-                Timber.d("favs state now is: %s", article.isInFavorite != Article.ORDER_NONE);
+                Timber.d("favorites state now is: %s", article.isInFavorite != Article.ORDER_NONE);
                 updateArticleInFirebase(article, true);
             }
         };

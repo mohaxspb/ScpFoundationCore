@@ -1,13 +1,5 @@
 package ru.kuchanov.scpcore.ui.fragment.article;
 
-import com.google.firebase.auth.FirebaseAuth;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -23,6 +15,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.firebase.auth.FirebaseAuth;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -65,7 +64,7 @@ import timber.log.Timber;
 public class ArticleFragment
         extends BaseFragment<ArticleMvp.View, ArticleMvp.Presenter>
         implements ArticleMvp.View,
-                   SetTextViewHTML.TextItemsClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
+        SetTextViewHTML.TextItemsClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String TAG = ArticleFragment.class.getSimpleName();
 
@@ -166,6 +165,8 @@ public class ArticleFragment
             } else {
                 showMessageLong(R.string.cant_find_next_article);
             }
+        } else if (item.getItemId() == R.id.menuItemFavorite) {
+            presenter.toggleFavorite(mArticle.url);
         }
 
         return super.onOptionsItemSelected(item);
@@ -177,12 +178,20 @@ public class ArticleFragment
 
         final MenuItem commentsMenuItem = menu.findItem(R.id.menuItemCommentsBrowser);
         final MenuItem nextArticleMenuItem = menu.findItem(R.id.menuItemNextNumberArticle);
+        final MenuItem favoriteMenuItem = menu.findItem(R.id.menuItemFavorite);
         if (presenter.getData() == null) {
             commentsMenuItem.setVisible(false);
             nextArticleMenuItem.setVisible(false);
+            favoriteMenuItem.setVisible(false);
         } else {
             commentsMenuItem.setVisible(!TextUtils.isEmpty(presenter.getData().commentsUrl));
             nextArticleMenuItem.setVisible(!TextUtils.isEmpty(presenter.getData().nextArticleUrl()));
+            favoriteMenuItem.setVisible(true);
+
+            final boolean isInFavorite = mArticle.isInFavorite != Article.ORDER_NONE;
+
+            favoriteMenuItem.setIcon(isInFavorite ? R.drawable.ic_favorite_white_24dp : R.drawable.ic_favorite_border_white_24dp);
+            favoriteMenuItem.setTitle(isInFavorite ? R.string.favorites_remove : R.string.favorites_add);
         }
     }
 
@@ -271,7 +280,7 @@ public class ArticleFragment
         if (mArticle == null || mArticle.text == null) {
             return;
         }
-//        Timber.d("setUserVisibleHint url: %s, value: %b", url, getUserVisibleHint());
+        Timber.d("setUserVisibleHint url: %s, value: %b, isFavorite: %s", url, getUserVisibleHint(), article.isInFavorite);
         if (getUserVisibleHint()) {
             updateActivityMenuState();
         }
@@ -302,7 +311,6 @@ public class ArticleFragment
             if (mArticle.title != null) {
                 ((ToolbarStateSetter) getActivity()).setTitle(mArticle.title);
             }
-            ((ToolbarStateSetter) getActivity()).setFavoriteState(mArticle.isInFavorite != Article.ORDER_NONE);
         }
     }
 
@@ -388,7 +396,7 @@ public class ArticleFragment
 //        Timber.d("srtToCheck1: %s", srtToCheck1);
         for (int i = 0; i < articlesTextParts.size(); i++) {
             if (articlesTextParts.get(i).contains(srtToCheck) ||
-                articlesTextParts.get(i).contains(srtToCheck1)) {
+                    articlesTextParts.get(i).contains(srtToCheck1)) {
 //                Timber.d("found part: %s", articlesTextParts.get(i));
                 mRecyclerView.scrollToPosition(i);
                 return;
@@ -423,7 +431,7 @@ public class ArticleFragment
             mp.prepareAsync();
             mp.setOnPreparedListener(mediaPlayer -> mp.start());
             mp.setOnCompletionListener(MediaPlayer::release);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             Timber.e(e, "error play music");
             showError(e);
         }
@@ -528,7 +536,5 @@ public class ArticleFragment
     public interface ToolbarStateSetter {
 
         void setTitle(String title);
-
-        void setFavoriteState(boolean isInFavorite);
     }
 }

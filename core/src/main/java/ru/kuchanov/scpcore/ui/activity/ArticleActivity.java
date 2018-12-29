@@ -13,8 +13,8 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
-import ru.kuchanov.scpcore.mvp.contract.article.ArticleScreenMvp;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
+import ru.kuchanov.scpcore.mvp.contract.article.ArticleScreenMvp;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesPagerAdapter;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.fragment.article.ArticleFragment;
@@ -156,9 +156,6 @@ public class ArticleActivity
         } else if (i == R.id.menuItemBrowser) {
             IntentUtils.openUrl(mUrls.get(mCurPosition));
             return true;
-        } else if (i == R.id.menuItemFavorite) {
-            mPresenter.toggleFavorite(mUrls.get(mCurPosition));
-            return true;
         } else if (i == R.id.text_size) {
             final BottomSheetDialogFragment fragmentDialogTextAppearance = TextSizeDialogFragment.newInstance(TextSizeDialogFragment.TextSizeType.ARTICLE);
             fragmentDialogTextAppearance.show(getSupportFragmentManager(), TextSizeDialogFragment.TAG);
@@ -172,18 +169,6 @@ public class ArticleActivity
     public void setTitle(final String title) {
         if (mToolbar != null) {
             mToolbar.setTitle(title);
-        }
-    }
-
-    @Override
-    public void setFavoriteState(final boolean isInFavorite) {
-//        Timber.d("setFavoriteState: %s", isInFavorite);
-        if (mToolbar != null && mToolbar.getMenu() != null) {
-            final MenuItem item = mToolbar.getMenu().findItem(R.id.menuItemFavorite);
-            if (item != null) {
-                item.setIcon(isInFavorite ? R.drawable.ic_favorite_white_24dp : R.drawable.ic_favorite_border_white_24dp);
-                item.setTitle(isInFavorite ? R.string.favorites_remove : R.string.favorites_add);
-            }
         }
     }
 

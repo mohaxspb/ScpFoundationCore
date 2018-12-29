@@ -345,10 +345,11 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                     } else {
                         id
                     }
-                    mApiClient.loginToScpReaderServer(
-                            provider,
-                            stringWithDataForProvider
-                    )
+                    return@flatMap mApiClient
+                            .loginToScpReaderServer(
+                                    provider,
+                                    stringWithDataForProvider
+                            )
                             .doOnSuccess {
                                 myPreferencesManager.apply {
                                     accessToken = it.accessToken
