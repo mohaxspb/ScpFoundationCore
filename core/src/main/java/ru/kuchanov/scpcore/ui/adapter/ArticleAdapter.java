@@ -25,7 +25,6 @@ import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.monetization.model.ScpArtAdsJson;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleImageHolder;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleSpoilerHolder;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleTableHolder;
@@ -68,8 +67,6 @@ public class ArticleAdapter
     private static final int TYPE_TABS = 6;
 
     private static final int TYPE_NATIVE_APPODEAL = 7;
-
-    private static final int TYPE_NATIVE_SCP_ART = 8;
 
     private static final int TYPE_NATIVE_SCP_QUIZ = 9;
 
@@ -300,8 +297,6 @@ public class ArticleAdapter
                 return TYPE_TAGS;
             case ParseHtmlUtils.TextType.TABS:
                 return TYPE_TABS;
-            case ParseHtmlUtils.TextType.NATIVE_ADS_SCP_ART:
-                return TYPE_NATIVE_SCP_ART;
             case ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL:
                 return TYPE_NATIVE_APPODEAL;
             case ParseHtmlUtils.TextType.NATIVE_ADS_SCP_QUIZ:
@@ -336,7 +331,6 @@ public class ArticleAdapter
             case TYPE_TABS:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_tabs, parent, false);
                 return new ArticleTabsHolder(view, this);
-            case TYPE_NATIVE_SCP_ART:
             case TYPE_NATIVE_APPODEAL:
             case TYPE_NATIVE_SCP_QUIZ:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_native_container, parent, false);
@@ -375,9 +369,6 @@ public class ArticleAdapter
                 ((NativeAdsArticleListHolder) holder).bind((Integer) textPartViewModel.data);
             }
             break;
-            case TYPE_NATIVE_SCP_ART:
-                ((NativeAdsArticleListHolder) holder).bind((ScpArtAdsJson.ScpArtAd) textPartViewModel.data);
-                break;
             case TYPE_NATIVE_SCP_QUIZ:
                 ((NativeAdsArticleListHolder) holder).bind();
                 break;
