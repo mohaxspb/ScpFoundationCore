@@ -797,6 +797,17 @@ public class DbProvider {
         ));
     }
 
+    public Observable<Integer> getReadArticlesCount() {
+        return mRealm
+                .where(Article.class)
+                .equalTo(Article.FIELD_IS_IN_READEN, true)
+                .findAllAsync()
+                .asObservable()
+                .map(articles -> articles.size())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     private Observable<Void> deleteUserData() {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {

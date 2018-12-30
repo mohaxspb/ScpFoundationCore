@@ -170,11 +170,13 @@ public class NetModule {
     @Singleton
     OkHttpClient providesScpReaderApiOkHttpClient(
             @Named(QUALIFIER_TOKEN_INTERCEPTOR) final Interceptor tokenInterceptor,
-            @Named(QUALIFIER_LOGGING_INTERCEPTOR) final Interceptor loggingInterceptor
+            @Named(QUALIFIER_LOGGING_INTERCEPTOR) final Interceptor loggingInterceptor,
+            @Named(QUALIFIER_UNAUTHORIZE_INTERCEPTOR) final Interceptor unauthInterceptor
     ) {
         return new OkHttpClient.Builder()
                 .addInterceptor(tokenInterceptor)
                 .addInterceptor(loggingInterceptor)
+                .addInterceptor(unauthInterceptor)
                 .connectTimeout(BuildConfig.TIMEOUT_SECONDS_CONNECT, TimeUnit.SECONDS)
                 .readTimeout(BuildConfig.TIMEOUT_SECONDS_READ, TimeUnit.SECONDS)
                 .writeTimeout(BuildConfig.TIMEOUT_SECONDS_WRITE, TimeUnit.SECONDS)
@@ -206,7 +208,7 @@ public class NetModule {
     @Singleton
     Retrofit providesScpReaderApiAuthRetrofit(
             @Named(QUALIFIER_OKHTTP_COMMON) final OkHttpClient okHttpClient,
-            @Named(QUALIFIER_CONVERTER_FACTORY_GSON)  final Converter.Factory converterFactory,
+            @Named(QUALIFIER_CONVERTER_FACTORY_GSON) final Converter.Factory converterFactory,
             final CallAdapter.Factory callAdapterFactory
     ) {
         return new Retrofit.Builder()

@@ -39,6 +39,7 @@ interface LeaderboardContract : BaseMvp {
         var inApps: List<Subscription>
         var inAppService: IInAppBillingService?
         val updateTime: Long
+        var readArticlesCount: Int
 
         fun loadInitialData()
         fun updateLeaderboardFromApi(offset: Int, limit: Int = LEADERBOARD_REQUEST_LIMIT)

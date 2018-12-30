@@ -79,7 +79,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
                             }
                         },
                         e -> {
-                            Timber.e(e);
+                            Timber.e(e, "Error while get articles from DB");
                             getView().showCenterProgress(false);
                             getView().enableSwipeRefresh(true);
                             getView().showError(e);

@@ -203,6 +203,7 @@ class LeaderboardFragment :
                     })
 
             nameTextView.text = user.fullName
+            Timber.d("user.numOfReadArticles: ${user.numOfReadArticles}")
             readArticlesCountTextView.text = if (user.numOfReadArticles == LeaderboardUser.READ_ARTICLES_COUNT_NONE) {
                 "N/A"
             } else {
