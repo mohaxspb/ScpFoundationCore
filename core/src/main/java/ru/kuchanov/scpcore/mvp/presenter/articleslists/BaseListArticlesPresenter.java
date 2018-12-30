@@ -120,7 +120,6 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
                 .subscribe(
                         data -> {
 //                            Timber.d("getDataFromApi loaded data size: %s and offset: %s", data.first, data.second);
-
                             isLoading = false;
 
                             getView().enableSwipeRefresh(true);
@@ -129,7 +128,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
                             getView().showCenterProgress(false);
                         },
                         e -> {
-                            Timber.e(e);
+                            Timber.e(e, "Error while getDataFromApi");
 
                             isLoading = false;
 
