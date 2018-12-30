@@ -76,26 +76,28 @@ public class ApiClientImpl extends ApiClient {
             try {
                 final OkHttpClient client = new OkHttpClient.Builder()
                         .followRedirects(false)
-                        .addInterceptor(new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(BuildConfig.FLAVOR.equals("dev")
+                        .addInterceptor(new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(
+                                BuildConfig.FLAVOR.equals("dev")
                                 ? HttpLoggingInterceptor.Level.BODY
-                                : HttpLoggingInterceptor.Level.NONE))
+                                : HttpLoggingInterceptor.Level.NONE
+                        ))
                         .build();
                 final Response response = client.newCall(request.build()).execute();
 
                 final ResponseBody requestResult = response.body();
                 if (requestResult != null) {
                     String html = requestResult.string();
-                    String patternToFindUrl = "<iframe src=\"http://snippets.wdfiles.com/local--code/code:iframe-redirect#";
+                    final String patternToFindUrl = "<iframe src=\"http://snippets.wdfiles.com/local--code/code:iframe-redirect#";
                     html = html.substring(html.indexOf(patternToFindUrl) + patternToFindUrl.length());
                     html = html.substring(0, html.indexOf("\""));
-                    String randomURL = html;
-                    Timber.d("randomUrl = " + randomURL);
+                    final String randomURL = html;
+                    Timber.d("randomUrl = %s", randomURL);
                     subscriber.onNext(randomURL);
                     subscriber.onCompleted();
                 } else {
                     subscriber.onError(new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse)));
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 Timber.e(e);
                 subscriber.onError(e);
             }
@@ -103,37 +105,36 @@ public class ApiClientImpl extends ApiClient {
     }
 
     @Override
-    public Observable<Integer> getRecentArticlesPageCountObservable() {
-        return Observable.<Integer>unsafeCreate(subscriber -> {
-            Request request = new Request.Builder()
+    public Single<Integer> getRecentArticlesPageCountObservable() {
+        return Single.create(subscriber -> {
+            final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();
 
-            String responseBody = null;
+            final String responseBody;
             try {
-                Response response = mOkHttpClient.newCall(request).execute();
-                ResponseBody body = response.body();
+                final Response response = mOkHttpClient.newCall(request).execute();
+                final ResponseBody body = response.body();
                 if (body != null) {
                     responseBody = body.string();
                 } else {
                     subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(ru.kuchanov.scpcore.R.string.error_parse)));
                     return;
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection)));
                 return;
             }
             try {
-                Document doc = Jsoup.parse(responseBody);
+                final Document doc = Jsoup.parse(responseBody);
 
                 //get num of pages
-                Element spanWithNumber = doc.getElementsByClass("pager-no").first();
-                String text = spanWithNumber.text();
-                Integer numOfPages = Integer.valueOf(text.substring(text.lastIndexOf(" ") + 1));
+                final Element spanWithNumber = doc.getElementsByClass("pager-no").first();
+                final String text = spanWithNumber.text();
+                final Integer numOfPages = Integer.valueOf(text.substring(text.lastIndexOf(" ") + 1));
 
-                subscriber.onNext(numOfPages);
-                subscriber.onCompleted();
-            } catch (Exception e) {
+                subscriber.onSuccess(numOfPages);
+            } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
@@ -141,28 +142,28 @@ public class ApiClientImpl extends ApiClient {
     }
 
     @Override
-    protected List<Article> parseForRecentArticles(Document doc) throws ScpParseException {
-        Element contentTypeDescription = doc.getElementsByClass("content-type-description").first();
-        Element pageContent = contentTypeDescription.getElementsByTag("table").first();
+    protected List<Article> parseForRecentArticles(final Document doc) throws ScpParseException {
+        final Element contentTypeDescription = doc.getElementsByClass("content-type-description").first();
+        final Element pageContent = contentTypeDescription.getElementsByTag("table").first();
         if (pageContent == null) {
             throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
         }
 
-        List<Article> articles = new ArrayList<>();
-        Elements listOfElements = pageContent.getElementsByTag("tr");
+        final List<Article> articles = new ArrayList<>();
+        final Elements listOfElements = pageContent.getElementsByTag("tr");
         for (int i = 1/*start from 1 as first row is tables header*/; i < listOfElements.size(); i++) {
-            Elements listOfTd = listOfElements.get(i).getElementsByTag("td");
-            Element firstTd = listOfTd.first();
-            Element tagA = firstTd.getElementsByTag("a").first();
+            final Elements listOfTd = listOfElements.get(i).getElementsByTag("td");
+            final Element firstTd = listOfTd.first();
+            final Element tagA = firstTd.getElementsByTag("a").first();
 
-            String title = tagA.text();
-            String url = mConstantValues.getBaseApiUrl() + tagA.attr("href");
+            final String title = tagA.text();
+            final String url = mConstantValues.getBaseApiUrl() + tagA.attr("href");
             //4 Jun 2017, 22:25
             //createdDate
-            Element createdDateNode = listOfTd.get(1);
-            String createdDate = createdDateNode.text().trim();
+            final Element createdDateNode = listOfTd.get(1);
+            final String createdDate = createdDateNode.text().trim();
 
-            Article article = new Article();
+            final Article article = new Article();
             article.title = title;
             article.url = url.trim();
             article.createdDate = createdDate;
@@ -174,28 +175,28 @@ public class ApiClientImpl extends ApiClient {
 
     @Override
     protected List<Article> parseForRatedArticles(Document doc) throws ScpParseException {
-        Element pageContent = doc.getElementById("page-content");
+        final Element pageContent = doc.getElementById("page-content");
         if (pageContent == null) {
             throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
         }
-        Element listPagesBox = pageContent.getElementsByClass("list-pages-box").first();
+        final Element listPagesBox = pageContent.getElementsByClass("list-pages-box").first();
         if (listPagesBox == null) {
             throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
         }
 
-        String allArticles = listPagesBox.getElementsByTag("p").first().html();
-        String[] arrayOfArticles = allArticles.split("<br>");
-        List<Article> articles = new ArrayList<>();
-        for (String arrayItem : arrayOfArticles) {
+        final String allArticles = listPagesBox.getElementsByTag("p").first().html();
+        final String[] arrayOfArticles = allArticles.split("<br>");
+        final List<Article> articles = new ArrayList<>();
+        for (final String arrayItem : arrayOfArticles) {
             doc = Jsoup.parse(arrayItem);
-            Element aTag = doc.getElementsByTag("a").first();
-            String url = mConstantValues.getBaseApiUrl() + aTag.attr("href");
-            String title = aTag.text();
+            final Element aTag = doc.getElementsByTag("a").first();
+            final String url = mConstantValues.getBaseApiUrl() + aTag.attr("href");
+            final String title = aTag.text();
 
             String rating = arrayItem.substring(arrayItem.indexOf("Bewertung: ") + "Bewertung: ".length());
             rating = rating.substring(0, rating.indexOf(", "));
 
-            Article article = new Article();
+            final Article article = new Article();
             article.url = url;
             article.rating = Integer.parseInt(rating);
             article.title = title;
@@ -206,29 +207,29 @@ public class ApiClientImpl extends ApiClient {
     }
 
     @Override
-    protected List<Article> parseForObjectArticles(Document doc) throws ScpParseException {
-        Element pageContent = doc.getElementById("page-content");
+    protected List<Article> parseForObjectArticles(final Document doc) throws ScpParseException {
+        final Element pageContent = doc.getElementById("page-content");
         if (pageContent == null) {
             throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
         }
-        Elements listPagesBox = pageContent.getElementsByTag("h1");
+        final Elements listPagesBox = pageContent.getElementsByTag("h1");
         listPagesBox.remove();
-        Element collapsibleBlock = pageContent.getElementsByTag("ul").first();
+        final Element collapsibleBlock = pageContent.getElementsByTag("ul").first();
         collapsibleBlock.remove();
 //        Element table = pageContent.getElementsByClass("content-toc").first();
 //        table.remove();
-        Elements allUls = pageContent.getElementsByClass("content-panel").first().getElementsByTag("ul");
+        final Elements allUls = pageContent.getElementsByClass("content-panel").first().getElementsByTag("ul");
 
-        List<Article> articles = new ArrayList<>();
+        final List<Article> articles = new ArrayList<>();
 
-        for (Element ul : allUls) {
-            Elements allLi = ul.children();
-            for (Element li : allLi) {
+        for (final Element ul : allUls) {
+            final Elements allLi = ul.children();
+            for (final Element li : allLi) {
                 //do not add empty articles
                 if (li.getElementsByTag("a").first().hasClass("newpage")) {
                     continue;
                 }
-                Article article = new Article();
+                final Article article = new Article();
                 article.url = mConstantValues.getBaseApiUrl() + li.getElementsByTag("a").first().attr("href");
                 article.title = li.text();
                 articles.add(article);
@@ -240,44 +241,44 @@ public class ApiClientImpl extends ApiClient {
 
     @Override
     public Single<List<ArticleTag>> getTagsFromSite() {
-        return Single.<List<ArticleTag>>create(subscriber -> {
-            Request request = new Request.Builder()
+        return Single.create(subscriber -> {
+            final Request request = new Request.Builder()
                     .url(mConstantValues.getBaseApiUrl() + "/system:page-tags/")
                     .build();
 
-            String responseBody = null;
+            final String responseBody;
             try {
-                Response response = mOkHttpClient.newCall(request).execute();
-                ResponseBody body = response.body();
+                final Response response = mOkHttpClient.newCall(request).execute();
+                final ResponseBody body = response.body();
                 if (body != null) {
                     responseBody = body.string();
                 } else {
                     subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection)));
                 return;
             }
             try {
-                Document doc = Jsoup.parse(responseBody);
-                Element pageContent = doc.getElementById("page-content");
+                final Document doc = Jsoup.parse(responseBody);
+                final Element pageContent = doc.getElementById("page-content");
                 if (pageContent == null) {
                     subscriber.onError(new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
                 }
 
-                List<ArticleTag> tags = new ArrayList<>();
+                final List<ArticleTag> tags = new ArrayList<>();
 
-                Element allTags = doc.getElementsByClass("pages-tag-cloud-box").first();
-                for (Element tagNode : allTags.getElementsByClass("tag")) {
-                    ArticleTag tag = new ArticleTag();
+                final Element allTags = doc.getElementsByClass("pages-tag-cloud-box").first();
+                for (final Element tagNode : allTags.getElementsByClass("tag")) {
+                    final ArticleTag tag = new ArticleTag();
                     tag.title = tagNode.text();
                     tags.add(tag);
                 }
                 //parse end
                 subscriber.onSuccess(tags);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
@@ -285,50 +286,50 @@ public class ApiClientImpl extends ApiClient {
     }
 
     @Override
-    public Single<List<Article>> getArticlesByTags(List<ArticleTag> tags) {
+    public Single<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {
 //        Timber.d("getArticlesByTags: %s", tags);
 //        String tagName = tags.get(0).title;
 //        Timber.d("tagName: %s", tagName);
-        List<String> tagsTitles = ArticleTag.getStringsFromTags(tags);
+        final List<String> tagsTitles = ArticleTag.getStringsFromTags(tags);
         //fix index of bounds error
         if (tagsTitles.isEmpty()) {
             return Single.just(Collections.emptyList());
         }
 //        Timber.d("tagsTitles: %s", tagsTitles);
-        String tagTitle = tagsTitles.get(0);
+        final String tagTitle = tagsTitles.get(0);
 //        Timber.d("tagTitle: %s", tagTitle);
         return Single.create(subscriber -> {
-            Request request = new Request.Builder()
+            final Request request = new Request.Builder()
                     .url(mConstantValues.getBaseApiUrl() + "/system:page-tags/tag/" + tagTitle)
                     .build();
 
-            String responseBody = null;
+            final String responseBody;
             try {
-                Response response = mOkHttpClient.newCall(request).execute();
-                ResponseBody body = response.body();
+                final Response response = mOkHttpClient.newCall(request).execute();
+                final ResponseBody body = response.body();
                 if (body != null) {
                     responseBody = body.string();
                 } else {
                     subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection)));
                 return;
             }
             try {
-                Document doc = Jsoup.parse(responseBody);
-                Element pageContent = doc.getElementById("page-content");
+                final Document doc = Jsoup.parse(responseBody);
+                final Element pageContent = doc.getElementById("page-content");
                 if (pageContent == null) {
                     subscriber.onError(new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
                 }
 
-                List<Article> articles = new ArrayList<>();
+                final List<Article> articles = new ArrayList<>();
 
-                Element allTags = doc.getElementById("tagged-pages-list");
-                for (Element tagNode : allTags.getElementsByTag("a")) {
-                    Article tag = new Article();
+                final Element allTags = doc.getElementById("tagged-pages-list");
+                for (final Element tagNode : allTags.getElementsByTag("a")) {
+                    final Article tag = new Article();
                     tag.title = tagNode.text();
                     tag.url = mConstantValues.getBaseApiUrl() + tagNode.attr("href");
                     articles.add(tag);
