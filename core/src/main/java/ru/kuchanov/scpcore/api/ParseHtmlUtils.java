@@ -113,12 +113,14 @@ public class ParseHtmlUtils {
     }
 
     private static void extractTablesFromDivs(final Element pageContent) {
-        for (final Element ourElement : pageContent.getElementsByTag(TAG_DIV)) {
-            if (ourElement.children().size() == 1
-                    && ourElement.child(0).tagName().equals(TAG_TABLE)
-                    && !ourElement.hasClass("collapsible-block-content")) {
-                ourElement.appendChild(ourElement.child(0));
-                ourElement.remove();
+//        Timber.d("extractTablesFromDivs");
+        for (final Element div : pageContent.getElementsByTag(TAG_DIV)) {
+            if (div.children().size() == 1
+                    && div.child(0).tagName().equals(TAG_TABLE)
+                    && !div.hasClass("collapsible-block-content")) {
+//                Timber.d("extractTablesFromDivs: %s", div.child(0));
+                div.after(div.child(0));
+                div.remove();
             }
         }
     }
@@ -428,6 +430,7 @@ public class ParseHtmlUtils {
 
             //extract tables, which are single tag in div
             ParseHtmlUtils.extractTablesFromDivs(pageContent);
+//            Timber.d("after tables extract: %s", pageContent.getElementsByTag("table").first().outerHtml());
 
             //put all text which is not in any tag in div tag
             for (final Element element : pageContent.children()) {

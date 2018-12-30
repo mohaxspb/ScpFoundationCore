@@ -2,6 +2,7 @@ package ru.kuchanov.scpcore.mvp.presenter.articleslists;
 
 import android.util.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.RealmResults;
@@ -36,7 +37,7 @@ public class OfflineArticlesPresenter
     @Override
     protected Single<List<Article>> getApiObservable(final int offset) {
         isLoading = false;
-        return Observable.<List<Article>>empty().toSingle();
+        return Single.just(new ArrayList<>());
     }
 
     @Override
