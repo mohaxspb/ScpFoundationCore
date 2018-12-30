@@ -129,7 +129,7 @@ public class ParseHtmlUtils {
             TextType.TEXT, TextType.SPOILER, TextType.IMAGE,
             TextType.TABLE, TextType.TITLE, TextType.TAGS,
             TextType.TABS,
-            TextType.NATIVE_ADS_APPODEAL, TextType.NATIVE_ADS_SCP_ART, TextType.NATIVE_ADS_SCP_QUIZ
+            TextType.NATIVE_ADS_APPODEAL, TextType.NATIVE_ADS_SCP_QUIZ
     })
     public @interface TextType {
 
@@ -141,7 +141,6 @@ public class ParseHtmlUtils {
         String TAGS = "TAGS";
         String TABS = "TABS";
         String NATIVE_ADS_APPODEAL = "NATIVE_ADS_APPODEAL";
-        String NATIVE_ADS_SCP_ART = "NATIVE_ADS_SCP_ART";
         String NATIVE_ADS_SCP_QUIZ = "NATIVE_ADS_SCP_QUIZ";
     }
 

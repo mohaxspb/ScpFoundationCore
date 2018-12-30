@@ -1,16 +1,15 @@
 package ru.kuchanov.scpcore.manager;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.Period;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +19,6 @@ import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
-import ru.kuchanov.scpcore.monetization.model.ScpArtAdsJson;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
@@ -243,14 +241,6 @@ public class MyPreferenceManager {
 
     public boolean isVkAppShared() {
         return mPreferences.getBoolean(Keys.VK_APP_SHARED, false);
-    }
-
-    public String getScpArtsJson() {
-        String json = FirebaseRemoteConfig.getInstance().getString(Constants.Firebase.RemoteConfigKeys.ADS_SCP_ART_V3);
-        if (TextUtils.isEmpty(json)) {
-            json = ScpArtAdsJson.DEFAULT_JSON;
-        }
-        return json;
     }
     //download all settings END
 

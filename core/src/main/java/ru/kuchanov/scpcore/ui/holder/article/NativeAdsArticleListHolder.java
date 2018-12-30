@@ -1,6 +1,13 @@
 package ru.kuchanov.scpcore.ui.holder.article;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.appodeal.ads.Appodeal;
 import com.appodeal.ads.NativeAd;
@@ -10,17 +17,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-
-import org.jetbrains.annotations.NotNull;
-
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.List;
 import java.util.Locale;
@@ -36,7 +33,6 @@ import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.monetization.model.ScpArtAdsJson;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.IntentUtils;
@@ -129,68 +125,6 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         this.clickListener = clickListener;
     }
 
-    public void bind(@NotNull final ScpArtAdsJson.ScpArtAd scpArtAd) {
-        Timber.d("scpArtAd: %s", scpArtAd);
-//        appodealNativeMediaView.setVisibility(View.GONE);
-        appodealNativeAdView.setVisibility(View.GONE);
-
-        scpArtAdView.setVisibility(View.VISIBLE);
-
-        scpArtAdView.setOnClickListener(v -> {
-            FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
-                    Constants.Firebase.Analitics.EventName.SCP_ART_CLICKED,
-                    new Bundle()
-            );
-            IntentUtils.openUrl(scpArtAd.getRedirectUrl());
-        });
-
-        ratingBar.setVisibility(View.VISIBLE);
-        Glide.with(logoImageView.getContext())
-                .load(scpArtAd.getLogoUrl())
-                .error(R.drawable.ic_scp_art_ad_img)
-                .fitCenter()
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(logoImageView);
-
-        titleTextView.setText(scpArtAd.getTitle());
-        subtitleTextView.setText(scpArtAd.getSubTitle());
-        ctaTextView.setText(scpArtAd.getCtaButtonText());
-
-        progressCenter.setVisibility(View.VISIBLE);
-        Glide.with(mainImageView.getContext())
-                .load(scpArtAd.getImgUrl())
-                .error(R.drawable.art_scp_default_ads)
-                .fitCenter()
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .listener(new RequestListener<String, GlideDrawable>() {
-                    @Override
-                    public boolean onException(
-                            final Exception e,
-                            final String model,
-                            final Target<GlideDrawable> target,
-                            final boolean isFirstResource
-                    ) {
-                        Timber.e(e, "ERROR while load image for scp art");
-                        progressCenter.setVisibility(View.GONE);
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(
-                            final GlideDrawable resource,
-                            final String model,
-                            final Target<GlideDrawable> target,
-                            final boolean isFromMemoryCache,
-                            final boolean isFirstResource
-                    ) {
-                        progressCenter.setVisibility(View.GONE);
-                        return false;
-                    }
-                })
-                .into(mainImageView);
-    }
 
     public void bind() {
         Timber.d("scpQuizAds showing");
