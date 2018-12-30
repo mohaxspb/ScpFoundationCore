@@ -38,7 +38,7 @@ public class ReadArticlesFragment
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         //remove as we already have one here
         menu.findItem(R.id.menuItemDownloadAll).setVisible(false);

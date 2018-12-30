@@ -14,6 +14,7 @@ import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LevelViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.subscriptions.InAppViewModel
 import ru.kuchanov.scpcore.db.DbProviderFactory
+import ru.kuchanov.scpcore.db.model.Article
 import ru.kuchanov.scpcore.db.model.LeaderboardUser
 import ru.kuchanov.scpcore.db.model.User
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
@@ -70,6 +71,8 @@ class LeaderboardPresenter(
 
     override var updateTime = myPreferencesManager.leaderboardUpdateDate.time
 
+    override var readArticlesCount: Int = Article.ORDER_NONE
+
     override fun loadInitialData() {
         Timber.d("loadInitialData")
         if (inAppService == null) {
@@ -93,16 +96,23 @@ class LeaderboardPresenter(
                 .zip(
                         inAppHelper.getInAppsListToBuyObservable(inAppService).toSingle(),
                         Single.just(mDbProviderFactory.dbProvider.userUnmanaged)
-                ) { inApps: List<Subscription>, user: User? -> Pair(inApps, user) }
+                ) { inApps: List<Subscription>, user: User? ->
+                    Pair(
+                            inApps,
+                            user
+                    )
+                }
                 .doOnSuccess {
                     inApps = it.first
                     myUser = it.second
                 }
                 .map { mDbProviderFactory.dbProvider.leaderboardUsersUnmanaged }
-//                .map { if(it.size<3) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnEach { updateUserPositionOnLeaderboard() }
+                .doOnSuccess {
+                    updateUserPositionOnLeaderboard()
+                    updateUserReadArticlesCount()
+                }
                 .subscribeBy(
                         onSuccess = {
                             Timber.d("loadInitialData onSuccess: ${it.size}")
@@ -147,6 +157,21 @@ class LeaderboardPresenter(
                             view.showSwipeRefreshProgress(false)
                             view.showRefreshButton(true)
                         })
+    }
+
+    private fun updateUserReadArticlesCount() {
+        Timber.d("updateUserReadArticlesCount")
+        mDbProviderFactory
+                .dbProvider
+                .readArticlesCount
+                .subscribeBy(
+                        onNext = {
+                            Timber.d("updateUserReadArticlesCount onNext: $it")
+                            readArticlesCount = it
+                            view.showUser(convertUser(myUser))
+                        },
+                        onError = { Timber.e(it, "Error while updateUserReadArticlesCount") }
+                )
     }
 
     override fun updateUserPositionOnLeaderboard() {
@@ -254,7 +279,7 @@ class LeaderboardPresenter(
                 user.fullName,
                 user.avatar,
                 user.score,
-                LeaderboardUser.READ_ARTICLES_COUNT_NONE,
+                readArticlesCount,
                 levelNum = level.id,
                 scoreToNextLevel = levelJson.scoreToNextLevel(user.score, level),
                 curLevelScore = user.score - level.score
