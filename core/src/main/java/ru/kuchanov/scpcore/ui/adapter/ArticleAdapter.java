@@ -535,7 +535,7 @@ public class ArticleAdapter
                     //add textParts for expanded spoilers
                     if (spoilerViewModel.isExpanded) {
                         Timber.d("expanded spoiler title: %s", spoilerViewModel.titles.get(0));
-                        final List<ArticleTextPartViewModel> viewModelsInSpoiler = new ArrayList<>();
+                        final Collection<ArticleTextPartViewModel> viewModelsInSpoiler = new ArrayList<>();
                         for (int u = 0; u < spoilerViewModel.mSpoilerTextPartsTypes.size(); u++) {
                             @ParseHtmlUtils.TextType final String typeInSpoiler = spoilerViewModel.mSpoilerTextPartsTypes.get(u);
 
@@ -582,8 +582,8 @@ public class ArticleAdapter
 
                 //add textParts for expanded spoilers
                 if (spoilerViewModel.isExpanded) {
-                    final List<ArticleTextPartViewModel> viewModelsInSpoiler = new ArrayList<>();
                     Timber.d("expanded spoiler title: %s", spoilerViewModel.titles.get(0));
+                    final Collection<ArticleTextPartViewModel> viewModelsInSpoiler = new ArrayList<>();
                     for (int u = 0; u < spoilerViewModel.mSpoilerTextPartsTypes.size(); u++) {
                         @ParseHtmlUtils.TextType final String typeInSpoiler = spoilerViewModel.mSpoilerTextPartsTypes.get(u);
 

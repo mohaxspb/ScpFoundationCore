@@ -345,14 +345,18 @@ public class ArticleFragment
                 final Document document = Jsoup.parse(articlesTextParts.get(i));
                 final Elements divTag = document.getElementsByAttributeValue("id", linkToFind);
                 if (!divTag.isEmpty()) {
-                    String textThatWeTryToFindSoManyTime = divTag.html();
-                    textThatWeTryToFindSoManyTime = textThatWeTryToFindSoManyTime.substring(3, textThatWeTryToFindSoManyTime.length());
-                    Timber.d("textThatWeTryToFindSoManyTime: %s", textThatWeTryToFindSoManyTime);
-                    new MaterialDialog.Builder(getActivity())
-                            .title(getString(R.string.snoska, link))
-                            .content(Html.fromHtml(textThatWeTryToFindSoManyTime, null, new MyHtmlTagHandler()))
-                            .show();
-                    break;
+                    try {
+                        String textThatWeTryToFindSoManyTime = divTag.html();
+                        textThatWeTryToFindSoManyTime = textThatWeTryToFindSoManyTime.substring(3, textThatWeTryToFindSoManyTime.length());
+                        Timber.d("textThatWeTryToFindSoManyTime: %s", textThatWeTryToFindSoManyTime);
+                        new MaterialDialog.Builder(getActivity())
+                                .title(getString(R.string.snoska, link))
+                                .content(Html.fromHtml(textThatWeTryToFindSoManyTime, null, new MyHtmlTagHandler()))
+                                .show();
+                        break;
+                    } catch (final Exception e) {
+                        Timber.wtf(e, "Error while parse snoska");
+                    }
                 }
             }
         }
