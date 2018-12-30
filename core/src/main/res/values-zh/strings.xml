@@ -326,6 +326,7 @@
     <string name="leaderboard_inapp_description">利用你在基金会的人脉提升排名</string>
     <string name="leaderboard_place">第%d</string>
     <string name="leaderboard_inapp_label">排名提升 (+ 10000点)</string>
+    <string name="leaderboard_inapp_label_undefined">Climb in the rankings (+ %d points)</string>
     <string name="leaderboard_articles_read">已阅读%d篇文档</string>
     <string name="score_num">%d点</string>
     <string name="level_num">%d级</string>
@@ -362,4 +363,6 @@
     <string name="dialog_selectable_text_title">Warning!</string>
     <string name="dialog_selectable_text_content">This feature is experimental and may cause crashes and prevent inner links opening.</string>
     <string name="ads_removed">Ads removed!</string>
+    <string name="add_to_read">Add to read</string>
+    <string name="remove_from_read">Remove from read</string>
 </resources>

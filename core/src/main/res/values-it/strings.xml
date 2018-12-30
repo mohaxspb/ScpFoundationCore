@@ -357,4 +357,6 @@ Grazie per aver utilizzato la nostra applicazione!]]></string>
     <string name="dialog_selectable_text_title">Warning!</string>
     <string name="dialog_selectable_text_content">This feature is experimental and may cause crashes and prevent inner links opening.</string>
     <string name="ads_removed">Ads removed!</string>
+    <string name="add_to_read">Add to read</string>
+    <string name="remove_from_read">Remove from read</string>
 </resources>
