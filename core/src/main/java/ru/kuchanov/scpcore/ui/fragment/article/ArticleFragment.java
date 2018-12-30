@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -116,7 +117,7 @@ public class ArticleFragment
     }
 
     @Override
-    public void onSaveInstanceState(final Bundle outState) {
+    public void onSaveInstanceState(@NotNull final Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_TABS, (ArrayList<TabsViewModel>) mTabsViewModels);
         outState.putSerializable(KEY_EXPANDED_SPOILERS, (ArrayList<SpoilerViewModel>) mExpandedSpoilers);
@@ -128,7 +129,7 @@ public class ArticleFragment
     }
 
     @Override
-    public void onCreate(final Bundle savedInstanceState) {
+    public void onCreate(@Nullable final Bundle savedInstanceState) {
 //        Timber.d("onCreate");
         super.onCreate(savedInstanceState);
         url = getArguments().getString(EXTRA_URL);
@@ -167,6 +168,8 @@ public class ArticleFragment
             }
         } else if (item.getItemId() == R.id.menuItemFavorite) {
             presenter.toggleFavorite(mArticle.url);
+        } else if (item.getItemId() == R.id.menuItemRead) {
+            presenter.setArticleIsReaden(mArticle.url);
         }
 
         return super.onOptionsItemSelected(item);
@@ -179,19 +182,24 @@ public class ArticleFragment
         final MenuItem commentsMenuItem = menu.findItem(R.id.menuItemCommentsBrowser);
         final MenuItem nextArticleMenuItem = menu.findItem(R.id.menuItemNextNumberArticle);
         final MenuItem favoriteMenuItem = menu.findItem(R.id.menuItemFavorite);
+        final MenuItem readMenuItem = menu.findItem(R.id.menuItemRead);
         if (presenter.getData() == null) {
             commentsMenuItem.setVisible(false);
             nextArticleMenuItem.setVisible(false);
             favoriteMenuItem.setVisible(false);
+            readMenuItem.setVisible(false);
         } else {
             commentsMenuItem.setVisible(!TextUtils.isEmpty(presenter.getData().commentsUrl));
             nextArticleMenuItem.setVisible(!TextUtils.isEmpty(presenter.getData().nextArticleUrl()));
+
             favoriteMenuItem.setVisible(true);
-
             final boolean isInFavorite = mArticle.isInFavorite != Article.ORDER_NONE;
-
             favoriteMenuItem.setIcon(isInFavorite ? R.drawable.ic_favorite_white_24dp : R.drawable.ic_favorite_border_white_24dp);
             favoriteMenuItem.setTitle(isInFavorite ? R.string.favorites_remove : R.string.favorites_add);
+
+            readMenuItem.setVisible(true);
+            readMenuItem.setIcon(mArticle.isInReaden ? R.drawable.ic_drafts_black_24dp : R.drawable.ic_email_white_24dp);
+            readMenuItem.setTitle(mArticle.isInReaden ? R.string.remove_from_read : R.string.add_to_read);
         }
     }
 

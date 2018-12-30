@@ -352,6 +352,7 @@ E-mail: <a href="mailto:neva.spb.rx@gmail.com">По всем вопросам</a
     <string name="scp_quiz_banner_cta">Установить</string>
     <string name="scp_quiz_banner_title">Scp Exam. Проверь себя!</string>
     <string name="scp_quiz_banner_subtitle">Пора пройти тест и проверить свои знания Фонда, ты готов?</string>
+    <string name="no_comments_url_found">Адрес обсуждения не найден. Попробуйте обновить</string>
     <!---->
     <string name="drawer_item_objects5">Объекты V</string>
     <string name="error_no_activity_to_handle_intent">No application to handle this Intent found.</string>
@@ -360,5 +361,10 @@ E-mail: <a href="mailto:neva.spb.rx@gmail.com">По всем вопросам</a
     <string name="cant_find_next_article">Cannot find next article</string>
     <string name="dialog_selectable_text_title">Warning!</string>
     <string name="dialog_selectable_text_content">This feature is experimental and may cause crashes and prevent inner links opening.</string>
-    <string name="ads_removed">Ads removed!</string>
+    <string name="dialog_inapp_error_title">Ошибка</string>
+    <string name="dialog_inapp_error_content">Ошибка: %s</string>
+    <string name="try_again">Поробуйте ещё раз</string>
+    <string name="ads_removed">Реклама отключена!</string>
+    <string name="add_to_read">Добавить в прочитанное</string>
+    <string name="remove_from_read">Удалить из прочитанного</string>
 </resources>
