@@ -179,9 +179,11 @@ public class TagsSearchFragment
             }
             fabAnimator.start();
         } else {
-            fabAnimator.removeAllListeners();
-            fabAnimator.end();
-            fabAnimator.cancel();
+            if (fabAnimator != null) {
+                fabAnimator.removeAllListeners();
+                fabAnimator.end();
+                fabAnimator.cancel();
+            }
             mSearchFab.setRotation(0);
         }
     }
@@ -191,7 +193,7 @@ public class TagsSearchFragment
         public void onTagClicked(final TagView view, final ArticleTag tag) {
             Timber.d("mAllTagsClickListener: %s", tag);
 
-            if(!getResources().getBoolean(R.bool.multiTagSearchEnabled)){
+            if (!getResources().getBoolean(R.bool.multiTagSearchEnabled)) {
                 for (int i = 0; i < mSearchTagsContainer.getChildCount(); i++) {
                     final TagView tagViewToRemove = (TagView) mSearchTagsContainer.getChildAt(i);
                     final TagView tagView = new TagView(getActivity());
