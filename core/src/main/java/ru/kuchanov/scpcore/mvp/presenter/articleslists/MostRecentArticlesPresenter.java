@@ -13,6 +13,7 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.articleslists.RecentArticlesMvp;
 import rx.Observable;
+import rx.Single;
 
 public class MostRecentArticlesPresenter
         extends BaseListArticlesPresenter<RecentArticlesMvp.View>
@@ -33,7 +34,7 @@ public class MostRecentArticlesPresenter
     }
 
     @Override
-    protected Observable<List<Article>> getApiObservable(final int offset) {
+    protected Single<List<Article>> getApiObservable(final int offset) {
         return mApiClient.getRecentArticlesForOffset(offset);
     }
 

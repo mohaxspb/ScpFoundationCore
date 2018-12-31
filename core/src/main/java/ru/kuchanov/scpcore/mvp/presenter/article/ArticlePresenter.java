@@ -24,7 +24,7 @@ public class ArticlePresenter
      */
     private String mArticleUrl;
 
-    private Article mData;
+    private Article mArticle;
 
     private boolean alreadyRefreshedFromApi;
 
@@ -63,7 +63,7 @@ public class ArticlePresenter
 
     @Override
     public Article getData() {
-        return mData;
+        return mArticle;
     }
 
     @Override
@@ -76,31 +76,33 @@ public class ArticlePresenter
         getView().showCenterProgress(true);
         getView().enableSwipeRefresh(false);
 
-        mDbProviderFactory.getDbProvider().getUnmanagedArticleAsync(mArticleUrl).subscribe(
-                data -> {
-                    Timber.d("getDataFromDb data: %s", data);
-                    mData = data;
-                    if (mData == null) {
-                        if (!alreadyRefreshedFromApi) {
-                            getDataFromApi();
+        mDbProviderFactory.getDbProvider()
+                .getUnmanagedArticleAsync(mArticleUrl)
+                .subscribe(
+                        data -> {
+                            Timber.d("getDataFromDb data: %s", data);
+                            mArticle = data;
+                            if (mArticle == null) {
+                                if (!alreadyRefreshedFromApi) {
+                                    getDataFromApi();
+                                }
+                            } else if (mArticle.text == null) {
+                                getView().showData(mArticle);
+                                if (!alreadyRefreshedFromApi) {
+                                    getDataFromApi();
+                                }
+                            } else {
+                                getView().showData(mArticle);
+                                getView().showCenterProgress(false);
+                                getView().enableSwipeRefresh(true);
+                            }
+                        },
+                        e -> {
+                            getView().showCenterProgress(false);
+                            getView().enableSwipeRefresh(true);
+                            getView().showError(e);
                         }
-                    } else if (mData.text == null) {
-                        getView().showData(mData);
-                        if (!alreadyRefreshedFromApi) {
-                            getDataFromApi();
-                        }
-                    } else {
-                        getView().showData(mData);
-                        getView().showCenterProgress(false);
-                        getView().enableSwipeRefresh(true);
-                    }
-                },
-                e -> {
-                    getView().showCenterProgress(false);
-                    getView().enableSwipeRefresh(true);
-                    getView().showError(e);
-                }
-        );
+                );
     }
 
     @Override
@@ -158,16 +160,39 @@ public class ArticlePresenter
 //            getView().showNeedLoginPopup();
 //            return;
 //        }
-        mDbProviderFactory.getDbProvider()
+        mDbProviderFactory
+                .getDbProvider()
                 .toggleReaden(url)
                 .flatMap(articleUrl -> mDbProviderFactory.getDbProvider().getUnmanagedArticleAsyncOnes(articleUrl))
-                .flatMap(article1 -> mDbProviderFactory.getDbProvider().setArticleSynced(article1, false))
+                .flatMapSingle(article -> mDbProviderFactory.getDbProvider().setArticleSynced(article, false))
                 .subscribe(
                         article -> {
                             Timber.d("read state now is: %s", article.isInReaden);
                             updateArticleInFirebase(article, false);
                         },
-                        Timber::e
+                        e -> getView().showError(e)
+                );
+    }
+
+    @Override
+    public void toggleFavorite(final String url) {
+        Timber.d("toggleFavorite url: %s", url);
+//        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+//            getView().showNeedLoginPopup();
+//            return;
+//        }
+        mDbProviderFactory
+                .getDbProvider()
+                .toggleFavorite(url)
+                .flatMap(article1 -> mDbProviderFactory.getDbProvider().setArticleSynced(article1, false))
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        article -> {
+                            Timber.d("fav state now is: %s", article.isInFavorite);
+                            updateArticleInFirebase(article, true);
+                        },
+                        e -> getView().showError(e)
                 );
     }
 }

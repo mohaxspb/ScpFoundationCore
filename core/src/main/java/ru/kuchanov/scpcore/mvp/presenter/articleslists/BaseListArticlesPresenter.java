@@ -14,6 +14,7 @@ import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.base.BaseArticlesListMvp;
 import ru.kuchanov.scpcore.mvp.base.BasePresenter;
 import rx.Observable;
+import rx.Single;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -43,7 +44,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
 
     protected abstract Observable<RealmResults<Article>> getDbObservable();
 
-    protected abstract Observable<List<Article>> getApiObservable(int offset);
+    protected abstract Single<List<Article>> getApiObservable(int offset);
 
     protected abstract Observable<Pair<Integer, Integer>> getSaveToDbObservable(List<Article> data, int offset);
 
@@ -78,7 +79,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
                             }
                         },
                         e -> {
-                            Timber.e(e);
+                            Timber.e(e, "Error while get articles from DB");
                             getView().showCenterProgress(false);
                             getView().enableSwipeRefresh(true);
                             getView().showError(e);
@@ -115,11 +116,10 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
         getApiObservable(offset)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(apiDate -> getSaveToDbObservable(apiDate, offset))
+                .flatMapObservable(apiDate -> getSaveToDbObservable(apiDate, offset))
                 .subscribe(
                         data -> {
 //                            Timber.d("getDataFromApi loaded data size: %s and offset: %s", data.first, data.second);
-
                             isLoading = false;
 
                             getView().enableSwipeRefresh(true);
@@ -128,7 +128,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
                             getView().showCenterProgress(false);
                         },
                         e -> {
-                            Timber.e(e);
+                            Timber.e(e, "Error while getDataFromApi");
 
                             isLoading = false;
 
@@ -152,6 +152,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
 
     @Override
     public void toggleFavoriteState(final Article article) {
+        Timber.d("toggleFavoriteState: %s", article.url);
 //        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
 //            getView().showNeedLoginPopup();
 //            return;
@@ -160,7 +161,8 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
             return;
         }
         Timber.d("toggleFavoriteState: %s", article);
-        mDbProviderFactory.getDbProvider().toggleFavorite(article.url)
+        mDbProviderFactory.getDbProvider()
+                .toggleFavorite(article.url)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(article1 -> mDbProviderFactory.getDbProvider().setArticleSynced(article1, false))
@@ -179,7 +181,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
         Timber.d("toggleReadState: %s", article);
         mDbProviderFactory.getDbProvider().toggleReaden(article.url)
                 .flatMap(articleUrl -> mDbProviderFactory.getDbProvider().getUnmanagedArticleAsyncOnes(articleUrl))
-                .flatMap(article1 -> mDbProviderFactory.getDbProvider().setArticleSynced(article1, false))
+                .flatMapSingle(article1 -> mDbProviderFactory.getDbProvider().setArticleSynced(article1, false))
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getToggleReadSubscriber());
@@ -243,7 +245,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
 
             @Override
             public void onNext(final Article article) {
-                Timber.d("favs state now is: %s", article.isInFavorite != Article.ORDER_NONE);
+                Timber.d("favorites state now is: %s", article.isInFavorite != Article.ORDER_NONE);
                 updateArticleInFirebase(article, true);
             }
         };

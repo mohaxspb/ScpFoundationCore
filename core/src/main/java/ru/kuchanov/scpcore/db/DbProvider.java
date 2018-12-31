@@ -1,17 +1,16 @@
 package ru.kuchanov.scpcore.db;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-
-import com.facebook.login.LoginManager;
-import com.vk.sdk.VKSdk;
-
-import org.jetbrains.annotations.NotNull;
-
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Pair;
+
+import com.facebook.login.LoginManager;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.vk.sdk.VKSdk;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -551,8 +550,8 @@ public class DbProvider {
                 .filter(RealmResults::isValid)
                 .first()
                 .flatMap(articles -> articles.isEmpty()
-                                     ? Observable.error(new IllegalStateException("No offline articles"))
-                                     : Observable.just(articles))
+                        ? Observable.error(new IllegalStateException("No offline articles"))
+                        : Observable.just(articles))
                 .map(articles -> articles.get(new Random().nextInt(articles.size())).url)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread());
@@ -651,8 +650,9 @@ public class DbProvider {
         }
     }
 
-    public Observable<Article> toggleFavorite(final String url) {
-        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
+    public Single<Article> toggleFavorite(final String url) {
+        Timber.d("toggleFavorite: %s", url);
+        return Single.<Article>create(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //check if we have app in db and update
                     final Article articleInDb = realm.where(Article.class)
@@ -667,22 +667,20 @@ public class DbProvider {
                             articleInDb.isInFavorite = Article.ORDER_NONE;
                         }
 
-                        subscriber.onNext(realm.copyFromRealm(articleInDb));
-                        subscriber.onCompleted();
+                        subscriber.onSuccess(realm.copyFromRealm(articleInDb));
                     } else {
                         Timber.e("No article to add to favorites for ID: %s", url);
                         subscriber.onError(new ScpNoArticleForIdError(url));
                     }
                 },
-                () -> {
-                    subscriber.onCompleted();
-                    mRealm.close();
-                },
+                mRealm::close,
                 e -> {
                     subscriber.onError(e);
                     mRealm.close();
                 }
-        ));
+        ))
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     /**
@@ -797,6 +795,17 @@ public class DbProvider {
                     mRealm.close();
                 }
         ));
+    }
+
+    public Observable<Integer> getReadArticlesCount() {
+        return mRealm
+                .where(Article.class)
+                .equalTo(Article.FIELD_IS_IN_READEN, true)
+                .findAllAsync()
+                .asObservable()
+                .map(articles -> articles.size())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     private Observable<Void> deleteUserData() {
@@ -929,31 +938,34 @@ public class DbProvider {
         );
     }
 
-    public Observable<Article> setArticleSynced(final Article article, final boolean synced) {
+    public Single<Article> setArticleSynced(final Article article, final boolean synced) {
         Timber.d("setArticleSynced url: %s, newState: %s", article.url, synced);
         final boolean managed = article.isManaged();
         final String url = article.url;
-        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
-                realm -> {
-                    final Article articleInDb = realm.where(Article.class).equalTo(Article.FIELD_URL, url).findFirst();
-                    if (articleInDb != null) {
-                        articleInDb.synced = synced ? Article.SYNCED_OK : Article.SYNCED_NEED;
-                    } else {
-                        subscriber.onError(new ScpNoArticleForIdError(article.url));
-                    }
-                },
-                () -> {
-                    if (!managed) {
-                        article.synced = synced ? Article.SYNCED_OK : Article.SYNCED_NEED;
-                    }
-                    subscriber.onNext(article);
-                    subscriber.onCompleted();
-                    mRealm.close();
-                },
-                e -> {
-                    mRealm.close();
-                    subscriber.onError(e);
-                }
+        Timber.d("MyThreadName: %s", Thread.currentThread().getName());
+        return Single.create(subscriber ->
+                mRealm.executeTransactionAsync(
+                        realm -> {
+                            final Article articleInDb = realm.where(Article.class)
+                                    .equalTo(Article.FIELD_URL, url)
+                                    .findFirst();
+                            if (articleInDb != null) {
+                                articleInDb.synced = synced ? Article.SYNCED_OK : Article.SYNCED_NEED;
+                            } else {
+                                subscriber.onError(new ScpNoArticleForIdError(article.url));
+                            }
+                        },
+                        () -> {
+                            if (!managed) {
+                                article.synced = synced ? Article.SYNCED_OK : Article.SYNCED_NEED;
+                            }
+                            subscriber.onSuccess(article);
+                            mRealm.close();
+                        },
+                        e -> {
+                            mRealm.close();
+                            subscriber.onError(e);
+                        }
                 )
         );
     }

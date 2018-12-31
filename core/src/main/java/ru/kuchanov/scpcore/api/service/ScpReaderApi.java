@@ -28,6 +28,11 @@ public interface ScpReaderApi {
             @Query("limit") final int limit
     );
 
+    @GET("firebase/{langEnum}/users/leaderboard/position")
+    Single<Integer> getUserPositionInLeaderboard(
+            @Path("langEnum") final String langEnum
+    );
+
     @GET("firebase/updateDataDates")
     Single<List<LeaderboardUsersUpdateDates>> getLeaderboardUsersUpdateDates();
 

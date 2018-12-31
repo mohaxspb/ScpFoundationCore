@@ -12,10 +12,11 @@ public class User extends RealmObject {
 
     public static final String FIELD_SCORE = "score";
     public static final String FIELD_UID = "uid";
-    public static final String FIELD_SOCIAL_PROVIDERS= "socialProviders";
-    public static final String FIELD_EMAIL= "email";
+    public static final String FIELD_SOCIAL_PROVIDERS = "socialProviders";
+    public static final String FIELD_EMAIL = "email";
 
-    public String uid;
+    private String uid;
+
     public String fullName;
 
     public String avatar;
@@ -34,6 +35,7 @@ public class User extends RealmObject {
             final int score,
             final RealmList<SocialProviderModel> socialProviders
     ) {
+        super();
         this.uid = uid;
         this.fullName = fullName;
         this.avatar = avatar;
@@ -43,6 +45,7 @@ public class User extends RealmObject {
     }
 
     public User() {
+        super();
     }
 
     @Override

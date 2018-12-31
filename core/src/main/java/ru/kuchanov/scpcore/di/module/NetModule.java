@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.di.module;
 
+import android.text.TextUtils;
+
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.FieldNamingPolicy;
@@ -11,8 +13,6 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 import org.jetbrains.annotations.NotNull;
-
-import android.text.TextUtils;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -43,6 +43,7 @@ import ru.kuchanov.scpcore.ConstantValuesDefault;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.api.model.response.scpreaderapi.AccessTokenResponse;
+import ru.kuchanov.scpcore.api.service.EnScpSiteApi;
 import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
@@ -67,6 +68,9 @@ public class NetModule {
 
     private static final String QUALIFIER_SCP_SITE_API = "QUALIFIER_SCP_SITE_API";
 
+    //fixme delete it
+    private static final String QUALIFIER_EN_SCP_SITE_API = "QUALIFIER_EN_SCP_SITE_API";
+
     private static final String QUALIFIER_OKHTTP_SCP_READER_API = "QUALIFIER_OKHTTP_SCP_READER_API";
 
     private static final String QUALIFIER_OKHTTP_COMMON = "QUALIFIER_OKHTTP_COMMON";
@@ -74,6 +78,9 @@ public class NetModule {
     private static final String QUALIFIER_UNAUTHORIZE_INTERCEPTOR = "QUALIFIER_UNAUTHORIZE_INTERCEPTOR";
 
     private static final String QUALIFIER_SCP_READER_API_AUTH = "QUALIFIER_SCP_READER_API_AUTH";
+
+    private static final String QUALIFIER_CONVERTER_FACTORY_GSON = "QUALIFIER_CONVERTER_FACTORY_GSON";
+    private static final String QUALIFIER_CONVERTER_FACTORY_XML = "QUALIFIER_CONVERTER_FACTORY_XML";
     //qualifiers END
 
     private static final String HEADER_AUTHORIZATION = "Authorization";
@@ -87,10 +94,10 @@ public class NetModule {
     Interceptor providesLoggingInterceptor() {
         return new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(
                 BuildConfig.FLAVOR.equals("dev")
-                ?
-                HttpLoggingInterceptor.Level.BODY
-                :
-                HttpLoggingInterceptor.Level.NONE
+                        ?
+                        HttpLoggingInterceptor.Level.BODY
+                        :
+                        HttpLoggingInterceptor.Level.NONE
         );
     }
 
@@ -163,11 +170,13 @@ public class NetModule {
     @Singleton
     OkHttpClient providesScpReaderApiOkHttpClient(
             @Named(QUALIFIER_TOKEN_INTERCEPTOR) final Interceptor tokenInterceptor,
-            @Named(QUALIFIER_LOGGING_INTERCEPTOR) final Interceptor loggingInterceptor
+            @Named(QUALIFIER_LOGGING_INTERCEPTOR) final Interceptor loggingInterceptor,
+            @Named(QUALIFIER_UNAUTHORIZE_INTERCEPTOR) final Interceptor unauthInterceptor
     ) {
         return new OkHttpClient.Builder()
                 .addInterceptor(tokenInterceptor)
                 .addInterceptor(loggingInterceptor)
+                .addInterceptor(unauthInterceptor)
                 .connectTimeout(BuildConfig.TIMEOUT_SECONDS_CONNECT, TimeUnit.SECONDS)
                 .readTimeout(BuildConfig.TIMEOUT_SECONDS_READ, TimeUnit.SECONDS)
                 .writeTimeout(BuildConfig.TIMEOUT_SECONDS_WRITE, TimeUnit.SECONDS)
@@ -181,6 +190,7 @@ public class NetModule {
     }
 
     @Provides
+    @Named(QUALIFIER_CONVERTER_FACTORY_GSON)
     @Singleton
     Converter.Factory providesConverterFactory() {
         return GsonConverterFactory.create(
@@ -198,7 +208,7 @@ public class NetModule {
     @Singleton
     Retrofit providesScpReaderApiAuthRetrofit(
             @Named(QUALIFIER_OKHTTP_COMMON) final OkHttpClient okHttpClient,
-            final Converter.Factory converterFactory,
+            @Named(QUALIFIER_CONVERTER_FACTORY_GSON) final Converter.Factory converterFactory,
             final CallAdapter.Factory callAdapterFactory
     ) {
         return new Retrofit.Builder()
@@ -211,7 +221,9 @@ public class NetModule {
 
     @Provides
     @Singleton
-    ScpReaderAuthApi providesScpReaderAuthApi(@Named(QUALIFIER_SCP_READER_API_AUTH) final Retrofit retrofit) {
+    ScpReaderAuthApi providesScpReaderAuthApi(
+            @Named(QUALIFIER_SCP_READER_API_AUTH) final Retrofit retrofit
+    ) {
         return retrofit.create(ScpReaderAuthApi.class);
     }
 
@@ -220,7 +232,7 @@ public class NetModule {
     @Singleton
     Retrofit providesScpReaderApiRetrofit(
             @Named(QUALIFIER_OKHTTP_SCP_READER_API) final OkHttpClient okHttpClient,
-            final Converter.Factory converterFactory,
+            @Named(QUALIFIER_CONVERTER_FACTORY_GSON) final Converter.Factory converterFactory,
             final CallAdapter.Factory callAdapterFactory
     ) {
         return new Retrofit.Builder()
@@ -236,7 +248,7 @@ public class NetModule {
     @Singleton
     Retrofit providesVpsRetrofit(
             @Named(QUALIFIER_OKHTTP_COMMON) final OkHttpClient okHttpClient,
-            final Converter.Factory converterFactory,
+            @Named(QUALIFIER_CONVERTER_FACTORY_GSON) final Converter.Factory converterFactory,
             final CallAdapter.Factory callAdapterFactory
     ) {
         return new Retrofit.Builder()
@@ -252,7 +264,7 @@ public class NetModule {
     @Singleton
     Retrofit providesScpRetrofit(
             @Named(QUALIFIER_OKHTTP_COMMON) final OkHttpClient okHttpClient,
-            final Converter.Factory converterFactory,
+            @Named(QUALIFIER_CONVERTER_FACTORY_GSON) final Converter.Factory converterFactory,
             final CallAdapter.Factory callAdapterFactory
     ) {
         return new Retrofit.Builder()
@@ -263,6 +275,30 @@ public class NetModule {
                 .build();
     }
 
+    //fixme delete it
+    @Provides
+    @Named(QUALIFIER_EN_SCP_SITE_API)
+    @Singleton
+    Retrofit providesEnScpRetrofit(
+            @Named(QUALIFIER_OKHTTP_COMMON) final OkHttpClient okHttpClient,
+            final CallAdapter.Factory callAdapterFactory
+    ) {
+        return new Retrofit.Builder()
+                .baseUrl(BuildConfig.EN_SCP_API_URL)
+                .client(okHttpClient)
+                .addCallAdapterFactory(callAdapterFactory)
+                .build();
+    }
+
+    //fixme delete it
+    @Provides
+    @Singleton
+    EnScpSiteApi providesEnScpSiteApi(
+            @Named(QUALIFIER_EN_SCP_SITE_API) final Retrofit retrofit
+    ) {
+        return retrofit.create(EnScpSiteApi.class);
+    }
+
     @Provides
     @Singleton
     ApiClient providerApiClient(
@@ -271,6 +307,7 @@ public class NetModule {
             @Named(QUALIFIER_SCP_SITE_API) final Retrofit scpRetrofit,
             @Named(QUALIFIER_SCP_READER_API) final Retrofit scpReaderRetrofit,
             final ScpReaderAuthApi scpReaderAuthApi,
+            final EnScpSiteApi enScpSiteApi,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
@@ -281,6 +318,7 @@ public class NetModule {
                 scpRetrofit,
                 scpReaderRetrofit,
                 scpReaderAuthApi,
+                enScpSiteApi,
                 preferencesManager,
                 gson,
                 constantValues
@@ -293,6 +331,7 @@ public class NetModule {
             final Retrofit scpRetrofit,
             final Retrofit scpReaderRetrofit,
             final ScpReaderAuthApi scpReaderAuthApi,
+            final EnScpSiteApi enScpSiteApi,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
@@ -303,6 +342,7 @@ public class NetModule {
                 scpRetrofit,
                 scpReaderRetrofit,
                 scpReaderAuthApi,
+                enScpSiteApi,
                 preferencesManager,
                 gson,
                 constantValues
@@ -338,7 +378,8 @@ public class NetModule {
         }
     }
 
-    private static class RealmListTypeToken extends TypeToken<RealmList<RealmString>> {}
+    private static class RealmListTypeToken extends TypeToken<RealmList<RealmString>> {
+    }
 
     private static class RealmListTypeAdapter extends TypeAdapter<RealmList<RealmString>> {
 

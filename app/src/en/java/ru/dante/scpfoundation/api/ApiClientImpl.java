@@ -9,10 +9,13 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -22,11 +25,14 @@ import ru.dante.scpfoundation.R;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.api.service.EnScpSiteApi;
 import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
+import rx.Single;
 import timber.log.Timber;
 
 /**
@@ -42,6 +48,7 @@ public class ApiClientImpl extends ApiClient {
             final Retrofit scpRetrofit,
             final Retrofit scpReaderRetrofit,
             final ScpReaderAuthApi scpReaderAuthApi,
+            final EnScpSiteApi enScpSiteApi,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
@@ -52,15 +59,17 @@ public class ApiClientImpl extends ApiClient {
                 scpRetrofit,
                 scpReaderRetrofit,
                 scpReaderAuthApi,
+                enScpSiteApi,
                 preferencesManager,
                 gson,
                 constantValues
         );
     }
 
+    @Override
     public Observable<String> getRandomUrl() {
         Timber.d("getRandomUrl");
-        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
+        return Observable.unsafeCreate(subscriber -> {
             final Request.Builder request = new Request.Builder();
             request.url(mConstantValues.getRandomPageUrl());
             request.get();
@@ -79,7 +88,7 @@ public class ApiClientImpl extends ApiClient {
                             "<iframe src=\"http://snippets.wdfiles.com/local--code/code:iframe-redirect#".length());
                     html = html.substring(0, html.indexOf("\""));
                     final String randomURL = html;
-                    Timber.d("randomUrl = " + randomURL);
+                    Timber.d("randomUrl = %s", randomURL);
                     subscriber.onNext(randomURL);
                     subscriber.onCompleted();
                 } else {
@@ -89,12 +98,12 @@ public class ApiClientImpl extends ApiClient {
                 Timber.e(e);
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
     @Override
-    public Observable<Integer> getRecentArticlesPageCountObservable() {
-        return bindWithUtils(Observable.<Integer>unsafeCreate(subscriber -> {
+    public Single<Integer> getRecentArticlesPageCountObservable() {
+        return Single.create(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();
@@ -121,13 +130,12 @@ public class ApiClientImpl extends ApiClient {
                 final String text = spanWithNumber.text();
                 final Integer numOfPages = Integer.valueOf(text.substring(text.lastIndexOf(" ") + 1));
 
-                subscriber.onNext(numOfPages);
-                subscriber.onCompleted();
-            } catch (Exception e) {
+                subscriber.onSuccess(numOfPages);
+            } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
     @Override
@@ -164,7 +172,7 @@ public class ApiClientImpl extends ApiClient {
 
     @Override
     protected List<Article> parseForRatedArticles(Document doc) throws ScpParseException {
-        Element pageContent = doc.getElementById("page-content");
+        final Element pageContent = doc.getElementById("page-content");
         if (pageContent == null) {
             throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
         }
@@ -197,23 +205,22 @@ public class ApiClientImpl extends ApiClient {
 
     @Override
     protected List<Article> parseForObjectArticles(final Document doc) throws ScpParseException {
-        Element pageContent = doc.getElementById("page-content");
+        final Element pageContent = doc.getElementById("page-content");
         if (pageContent == null) {
             throw new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse));
         }
-        Elements listPagesBox = pageContent.getElementsByTag("h1");
+        final Elements listPagesBox = pageContent.getElementsByTag("h1");
         listPagesBox.remove();
-        Element collapsibleBlock = pageContent.getElementsByTag("ul").first();
+        final Element collapsibleBlock = pageContent.getElementsByTag("ul").first();
         collapsibleBlock.remove();
-        Element table = pageContent.getElementsByClass("content-toc").first();
+        final Element table = pageContent.getElementsByClass("content-toc").first();
         table.remove();
-        Elements allUls = pageContent.getElementsByClass("content-panel").first().getElementsByTag("ul");
+        final Elements allUls = pageContent.getElementsByClass("content-panel").first().getElementsByTag("ul");
 
-        List<Article> articles = new ArrayList<>();
+        final List<Article> articles = new ArrayList<>();
 
-        for (Element ul : allUls) {
-            Elements allLi = ul.children();
-            for (Element li : allLi) {
+        for (final Element ul : allUls) {
+            for (final Element li : ul.children()) {
                 //do not add empty articles
                 if (li.getElementsByTag("a").first().hasClass("newpage")) {
                     continue;
@@ -226,6 +233,100 @@ public class ApiClientImpl extends ApiClient {
         }
 
         return articles;
+    }
+
+    @Override
+    public Single<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {
+        final String tagsQuery = ArticleTag.getCommaSeparatedStringFromTags(tags);
+        return Single.create(subscriber -> {
+            final Request.Builder request = new Request.Builder();
+            request.url("http://home.helenbot.com/tools/tagGet.php");
+            final RequestBody requestBody = new FormBody.Builder()
+                    .add("tags", tagsQuery)
+                    .add("sort", "rating desc")
+                    .build();
+            request.post(requestBody);
+
+            try {
+                final Response response = mOkHttpClient.newCall(request.build()).execute();
+
+                final ResponseBody requestResult = response.body();
+                if (requestResult != null) {
+                    final String html = requestResult.string();
+
+                    final Document doc = Jsoup.parse(html);
+                    final Elements articlesTags = doc.getElementById("taglist").children();
+                    if (articlesTags.size() == 1 && articlesTags.get(0).text().equals("No Articles Matching")) {
+                        subscriber.onSuccess(Collections.emptyList());
+                        return;
+                    }
+                    final List<Article> articles = new ArrayList<>();
+                    for (final Element element : articlesTags) {
+                        final Article article = new Article();
+                        final Element aTag = element.getElementsByTag("a").first();
+                        article.url = aTag.attr("href");
+                        article.title = aTag.text();
+                        aTag.remove();
+                        final String authorAndRating = element.text();
+                        String author = authorAndRating.replace(" Created by: ", "");
+                        author = author.substring(0, author.indexOf(" Rating: "));
+
+                        article.authorName = author;
+                        final String ratingString = authorAndRating.substring(
+                                authorAndRating.indexOf(" Rating: ") + " Rating: ".length()
+                        );
+                        article.rating = Integer.parseInt(ratingString);
+                        articles.add(article);
+                    }
+                    subscriber.onSuccess(articles);
+                } else {
+                    subscriber.onError(new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse)));
+                }
+            } catch (final IOException e) {
+                Timber.e(e);
+                subscriber.onError(e);
+            }
+        });
+    }
+
+    @Override
+    public Single<List<ArticleTag>> getTagsFromSite() {
+        return Single.create(subscriber -> {
+            final Request request = new Request.Builder()
+                    .url("http://home.helenbot.com/tags.php")
+                    .build();
+
+            final String responseBody;
+            try {
+                final Response response = mOkHttpClient.newCall(request).execute();
+                final ResponseBody body = response.body();
+                if (body != null) {
+                    responseBody = body.string();
+                } else {
+                    subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(ru.kuchanov.scpcore.R.string.error_parse)));
+                    return;
+                }
+            } catch (final IOException e) {
+                subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection)));
+                return;
+            }
+            try {
+                final Document doc = Jsoup.parse(responseBody);
+
+                //get num of pages
+                final Element selectWithTags = doc.getElementById("taglist");
+                final Elements options = selectWithTags.children();
+                final List<ArticleTag> articleTags = new ArrayList<>();
+                for (final Element option : options) {
+                    articleTags.add(new ArticleTag(option.text()));
+                }
+
+                subscriber.onSuccess(articleTags);
+            } catch (final Exception e) {
+                Timber.e(e, "error while get arts list");
+                subscriber.onError(e);
+            }
+        });
     }
 
     @Override

@@ -27,6 +27,7 @@ interface LeaderboardContract : BaseMvp {
         fun enableSwipeRefresh(enable: Boolean)
         fun resetOnScrollListener()
         fun showBottomProgress(show: Boolean)
+        fun showUserPosition(positionInLeaderboard: String?)
     }
 
     interface Presenter : BaseMvp.Presenter<View> {
@@ -34,13 +35,16 @@ interface LeaderboardContract : BaseMvp {
         var usersCount: Int
         var data: MutableList<MyListItem>
         var myUser: User?
+        var userPositionOnLeaderboard: String?
         var inApps: List<Subscription>
         var inAppService: IInAppBillingService?
         val updateTime: Long
+        var readArticlesCount: Int
 
         fun loadInitialData()
         fun updateLeaderboardFromApi(offset: Int, limit: Int = LEADERBOARD_REQUEST_LIMIT)
         fun onRewardedVideoClick()
+        fun updateUserPositionOnLeaderboard()
     }
 }
 

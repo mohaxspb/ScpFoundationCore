@@ -2,6 +2,7 @@ package ru.kuchanov.scpcore.mvp.presenter.articleslists;
 
 import android.util.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.RealmResults;
@@ -13,6 +14,7 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.articleslists.OfflineArticlesMvp;
 import rx.Observable;
+import rx.Single;
 
 public class OfflineArticlesPresenter
         extends BaseListArticlesPresenter<OfflineArticlesMvp.View>
@@ -33,9 +35,9 @@ public class OfflineArticlesPresenter
     }
 
     @Override
-    protected Observable<List<Article>> getApiObservable(final int offset) {
+    protected Single<List<Article>> getApiObservable(final int offset) {
         isLoading = false;
-        return Observable.empty();
+        return Single.just(new ArrayList<>());
     }
 
     @Override

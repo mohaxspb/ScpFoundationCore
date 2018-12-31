@@ -11,6 +11,7 @@ import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsArchiveMvp;
 import ru.kuchanov.scpcore.mvp.presenter.articleslists.BaseObjectsArticlesPresenter;
 import rx.Observable;
+import rx.Single;
 
 /**
  * Created by y.kuchanov on 21.12.16.
@@ -40,7 +41,7 @@ public class MaterialsArchivePresenter
     }
 
     @Override
-    protected Observable<List<Article>> getApiObservable(final int offset) {
+    protected Single<List<Article>> getApiObservable(final int offset) {
         return mApiClient.getMaterialsArchiveArticles();
     }
 }

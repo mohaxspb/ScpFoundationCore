@@ -1,9 +1,5 @@
 package ru.kuchanov.scpcore.monetization.util.playmarket;
 
-import com.google.gson.GsonBuilder;
-
-import com.android.vending.billing.IInAppBillingService;
-
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +10,9 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringDef;
 import android.util.Pair;
+
+import com.android.vending.billing.IInAppBillingService;
+import com.google.gson.GsonBuilder;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -38,9 +37,6 @@ import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
-
-import static ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP;
-import static ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment.REQUEST_CODE_SUBSCRIPTION;
 
 /**
  * Created by mohax on 02.02.2017.
@@ -134,10 +130,10 @@ public class InAppHelper {
         fullVersionSkus.retainAll(ownedSkus);
 
         @SubscriptionType final int type = fullVersionSkus.isEmpty()
-                                           ? noAdsSkus.isEmpty()
-                                             ? SubscriptionType.NONE
-                                             : SubscriptionType.NO_ADS
-                                           : SubscriptionType.FULL_VERSION;
+                ? noAdsSkus.isEmpty()
+                ? SubscriptionType.NONE
+                : SubscriptionType.NO_ADS
+                : SubscriptionType.FULL_VERSION;
 
         return type;
     }
@@ -153,7 +149,12 @@ public class InAppHelper {
     private Observable<List<Item>> getValidatedOwnedSubsObservable(final IInAppBillingService mInAppBillingService) {
         return Observable.<List<Item>>unsafeCreate(subscriber -> {
             try {
-                Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "subs", null);
+                Bundle ownedItemsBundle = mInAppBillingService.getPurchases(
+                        API_VERSION_3,
+                        BaseApplication.getAppInstance().getPackageName(),
+                        "subs",
+                        null
+                );
 
                 Timber.d("ownedItems bundle: %s", ownedItemsBundle);
                 if (ownedItemsBundle.getInt("RESPONSE_CODE") == RESULT_OK) {
@@ -303,7 +304,12 @@ public class InAppHelper {
                 //get all subs detailed info
                 final Bundle querySkus = new Bundle();
                 querySkus.putStringArrayList("ITEM_ID_LIST", (ArrayList<String>) skus);
-                final Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "subs", querySkus);
+                final Bundle skuDetails = mInAppBillingService.getSkuDetails(
+                        API_VERSION_3,
+                        BaseApplication.getAppInstance().getPackageName(),
+                        "subs",
+                        querySkus
+                );
                 final int responseCodeCode = skuDetails.getInt("RESPONSE_CODE");
                 if (responseCodeCode == RESULT_OK) {
                     final List<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
@@ -504,46 +510,6 @@ public class InAppHelper {
         } catch (final IntentSender.SendIntentException e) {
             Timber.wtf(e);
             activity.showError(e);
-        }
-    }
-
-    public static void intentSenderSingle(
-            final BaseActivity activity,
-            final IInAppBillingService mInAppBillingService,
-            @InappType final String type,
-            final String sku
-    ) throws RemoteException, IntentSender.SendIntentException {
-        final Bundle buyIntentBundle = mInAppBillingService.getBuyIntent(
-                API_VERSION_3,
-                BaseApplication.getAppInstance().getPackageName(),
-                sku,
-                type,
-                String.valueOf(System.currentTimeMillis())
-        );
-        final int responseCode = buyIntentBundle.getInt("RESPONSE_CODE");
-        if (responseCode == RESULT_OK) {
-            final PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
-            if (pendingIntent != null) {
-                final int requestCode = type.equals(InappType.IN_APP) ? REQUEST_CODE_INAPP : REQUEST_CODE_SUBSCRIPTION;
-                activity.startIntentSenderForResult(
-                        pendingIntent.getIntentSender(),
-                        requestCode,
-                        new Intent(),
-                        0,
-                        0,
-                        0,
-                        null
-                );
-            } else {
-                activity.showError(new NullPointerException("pendingIntent is NULL!!!"));
-                Timber.wtf("pendingIntent is NULL!!!");
-            }
-        } else if (responseCode == RESULT_ITEM_ALREADY_OWNED) {
-            //todo check if RESPONSE_CODE is 7 (owned) and consume inapp
-
-        } else {
-            activity.showError(new IllegalStateException("RESPONSE_CODE is not OK: " + responseCode));
-            Timber.wtf("RESPONSE_CODE is not OK: %s", responseCode);
         }
     }
 

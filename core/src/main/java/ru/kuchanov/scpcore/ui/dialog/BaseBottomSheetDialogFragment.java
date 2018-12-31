@@ -40,7 +40,7 @@ public abstract class BaseBottomSheetDialogFragment extends BottomSheetDialogFra
     private Unbinder unbinder;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         callInjection();
     }
@@ -64,14 +64,14 @@ public abstract class BaseBottomSheetDialogFragment extends BottomSheetDialogFra
             mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
 
                 @Override
-                public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                public void onStateChanged(@NonNull final View bottomSheet, final int newState) {
                     if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                         dismiss();
                     }
                 }
 
                 @Override
-                public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                public void onSlide(@NonNull final View bottomSheet, final float slideOffset) {
                 }
             };
         }
@@ -79,17 +79,17 @@ public abstract class BaseBottomSheetDialogFragment extends BottomSheetDialogFra
     }
 
     @Override
-    public void setupDialog(Dialog dialog, int style) {
+    public void setupDialog(final Dialog dialog, final int style) {
         super.setupDialog(dialog, style);
-        View contentView = View.inflate(getContext(), getLayoutResId(), null);
+        final View contentView = View.inflate(getContext(), getLayoutResId(), null);
         dialog.setContentView(contentView);
 
         unbinder = ButterKnife.bind(this, dialog);
 
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) contentView.getParent()).getLayoutParams();
-        CoordinatorLayout.Behavior behavior = params.getBehavior();
+        final CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) contentView.getParent()).getLayoutParams();
+        final CoordinatorLayout.Behavior behavior = params.getBehavior();
 
-        if (behavior != null && behavior instanceof BottomSheetBehavior) {
+        if (behavior instanceof BottomSheetBehavior) {
             ((BottomSheetBehavior) behavior).setBottomSheetCallback(getBottomSheetBehaviorCallback());
         }
     }
@@ -99,16 +99,16 @@ public abstract class BaseBottomSheetDialogFragment extends BottomSheetDialogFra
     /**
      * do not use activities method as SnackBar can't be shown over bottomsheet dialog
      */
-    public void showSnackBarWithAction(Constants.Firebase.CallToActionReason reason) {
+    public void showSnackBarWithAction(final Constants.Firebase.CallToActionReason reason) {
         Timber.d("showSnackBarWithAction: %s", reason);
-        Snackbar snackbar;
+        final Snackbar snackbar;
         switch (reason) {
             case REMOVE_ADS:
                 snackbar = Snackbar.make(mRoot, R.string.remove_ads, Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.yes_bliad, v -> {
                     SubscriptionsActivity.start(getActivity());
 
-                    Bundle bundle = new Bundle();
+                    final Bundle bundle = new Bundle();
                     bundle.putString(EventParam.PLACE, StartScreen.SNACK_BAR);
                     FirebaseAnalytics.getInstance(getActivity()).logEvent(EventName.SUBSCRIPTIONS_SHOWN, bundle);
                 });
@@ -118,7 +118,7 @@ public abstract class BaseBottomSheetDialogFragment extends BottomSheetDialogFra
                 snackbar.setAction(R.string.activate, action -> {
                     SubscriptionsActivity.start(getActivity());
 
-                    Bundle bundle = new Bundle();
+                    final Bundle bundle = new Bundle();
                     bundle.putString(EventParam.PLACE, StartScreen.FONT);
                     FirebaseAnalytics.getInstance(getActivity()).logEvent(EventName.SUBSCRIPTIONS_SHOWN, bundle);
                 });
@@ -128,7 +128,7 @@ public abstract class BaseBottomSheetDialogFragment extends BottomSheetDialogFra
                 snackbar.setAction(R.string.turn_on, v -> {
                     SubscriptionsActivity.start(getActivity());
 
-                    Bundle bundle = new Bundle();
+                    final Bundle bundle = new Bundle();
                     bundle.putString(EventParam.PLACE, StartScreen.AUTO_SYNC_SNACKBAR);
                     FirebaseAnalytics.getInstance(getActivity()).logEvent(EventName.SUBSCRIPTIONS_SHOWN, bundle);
                 });

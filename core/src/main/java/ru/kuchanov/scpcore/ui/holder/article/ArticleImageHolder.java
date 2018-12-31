@@ -1,16 +1,5 @@
 package ru.kuchanov.scpcore.ui.holder.article;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.load.resource.gif.GifDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +10,18 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.File;
 
@@ -98,11 +99,13 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
         titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, articleTextScale * textSizePrimary);
 
         final String title;
-        if (!document.getElementsByTag("span").isEmpty()) {
-            title = document.getElementsByTag("span").first().html();
-//            Timber.d("title: %s", title);
-        } else if (!document.getElementsByClass("scp-image-caption").isEmpty()) {
-            title = document.getElementsByClass("scp-image-caption").first().html();
+        final Elements spans = document.getElementsByTag("span");
+        final Elements scpImageCaptions = document.getElementsByClass("scp-image-caption");
+        if (!spans.isEmpty()) {
+//            title = spans.first().html();
+            title = spans.html();
+        } else if (!scpImageCaptions.isEmpty()) {
+            title = scpImageCaptions.first().html();
         } else {
             title = null;
         }

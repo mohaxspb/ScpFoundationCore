@@ -4,16 +4,15 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
 
-import javax.inject.Named;
-
 import dagger.Module;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import ru.dante.scpfoundation.ConstantValuesImpl;
 import ru.dante.scpfoundation.api.ApiClientImpl;
-import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.api.service.EnScpSiteApi;
+import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.di.module.NetModule;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 
@@ -27,17 +26,27 @@ public class NetModuleImpl extends NetModule {
 
     @Override
     protected ApiClient getApiClient(
-            @NonNull OkHttpClient okHttpClient,
-            @NonNull Retrofit vpsRetrofit,
-            @NonNull Retrofit scpRetrofit,
+            @NonNull final OkHttpClient okHttpClient,
+            @NonNull final Retrofit vpsRetrofit,
+            @NonNull final Retrofit scpRetrofit,
             final Retrofit scpReaderRetrofit,
             final ScpReaderAuthApi scpReaderAuthApi,
-            @NonNull MyPreferenceManager preferencesManager,
-            @NonNull Gson gson,
-            @NonNull ConstantValues constantValues
+            final EnScpSiteApi enScpSiteApi,
+            @NonNull final MyPreferenceManager preferencesManager,
+            @NonNull final Gson gson,
+            @NonNull final ConstantValues constantValues
     ) {
-        return new ApiClientImpl(okHttpClient, vpsRetrofit, scpRetrofit, scpReaderRetrofit,
-                scpReaderAuthApi, preferencesManager, gson, constantValues);
+        return new ApiClientImpl(
+                okHttpClient,
+                vpsRetrofit,
+                scpRetrofit,
+                scpReaderRetrofit,
+                scpReaderAuthApi,
+                enScpSiteApi,
+                preferencesManager,
+                gson,
+                constantValues
+        );
     }
 
     @Override

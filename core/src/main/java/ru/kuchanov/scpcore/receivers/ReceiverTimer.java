@@ -87,7 +87,7 @@ public class ReceiverTimer extends BroadcastReceiver {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(newArticles -> mDbProviderFactory.getDbProvider()
+                .flatMapObservable(newArticles -> mDbProviderFactory.getDbProvider()
                         .saveRecentArticlesList(newArticles, Constants.Api.ZERO_OFFSET)
                         .flatMap(newArticlesAddedToDb -> {
                             if (mMyPreferencesManager.isSaveNewArticlesEnabled()) {

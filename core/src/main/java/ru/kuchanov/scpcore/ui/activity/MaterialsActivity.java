@@ -30,15 +30,14 @@ public class MaterialsActivity
     MaterialsActivity.MaterialClickListener mMaterialClickListener;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (getIntent().hasExtra(EXTRA_SHOW_DISABLE_ADS)) {
             showSnackBarWithAction(Constants.Firebase.CallToActionReason.REMOVE_ADS);
             getIntent().removeExtra(EXTRA_SHOW_DISABLE_ADS);
 
-            @DataSyncActions.ScoreAction
-            String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
+            @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
             mPresenter.updateUserScoreForScoreAction(action);
         }
 
@@ -76,7 +75,7 @@ public class MaterialsActivity
     }
 
     @Override
-    public boolean onNavigationItemClicked(int id) {
+    public boolean onNavigationItemClicked(final int id) {
         Timber.d("onNavigationItemClicked with id: %s", id);
         String link = null;
 
@@ -135,11 +134,11 @@ public class MaterialsActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         Timber.d("onOptionsItemSelected with id: %s", item);
-        int i = item.getItemId();
+        final int i = item.getItemId();
         if (i == R.id.text_size) {
-            BottomSheetDialogFragment fragmentDialogTextAppearance =
+            final BottomSheetDialogFragment fragmentDialogTextAppearance =
                     TextSizeDialogFragment.newInstance(TextSizeDialogFragment.TextSizeType.ALL);
             fragmentDialogTextAppearance.show(getSupportFragmentManager(), TextSizeDialogFragment.TAG);
             return true;
@@ -149,20 +148,15 @@ public class MaterialsActivity
     }
 
     @Override
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         if (mToolbar != null) {
             mToolbar.setTitle(title);
         }
     }
 
     @Override
-    public void setFavoriteState(boolean isInFavorite) {
-        //nothing to do
-    }
-
-    @Override
-    public void onMaterialsListItemClicked(int position) {
-        List<String> materials = Arrays.asList(getResources().getStringArray(R.array.materials_titles));
+    public void onMaterialsListItemClicked(final int position) {
+        final List<String> materials = Arrays.asList(getResources().getStringArray(R.array.materials_titles));
         Timber.d("onMaterialsListItemClicked: %s", materials.get(position));
 
         mMaterialClickListener.onMaterialClick(position, this);

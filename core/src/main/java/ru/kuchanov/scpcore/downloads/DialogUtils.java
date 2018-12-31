@@ -25,6 +25,7 @@ import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -86,12 +87,12 @@ public abstract class DialogUtils {
 
                     logDownloadAttempt(type);
 
-                    Observable<Integer> numOfArticlesObservable;
-                    Observable<List<Article>> articlesObservable;
+                    Single<Integer> numOfArticlesObservable;
+                    Single<List<Article>> articlesObservable;
                     if (type.resId == R.string.type_all) {
                         //simply start download all with popup for limit users,
                         //in which tell, that we can't now how many arts he can load
-                        numOfArticlesObservable = Observable.just(Integer.MIN_VALUE);
+                        numOfArticlesObservable = Single.just(Integer.MIN_VALUE);
                     } else if (type.resId == R.string.type_archive) {
                         articlesObservable = mApiClient.getMaterialsArchiveArticles();
                         numOfArticlesObservable = articlesObservable.map(List::size);
@@ -141,7 +142,7 @@ public abstract class DialogUtils {
 
     private void loadArticlesAndCountThem(
             final Context context,
-            final Observable<Integer> countObservable,
+            final Single<Integer> countObservable,
             final DownloadEntry type
     ) {
         final MaterialDialog progress = new MaterialDialog.Builder(context)
@@ -153,7 +154,7 @@ public abstract class DialogUtils {
         progress.show();
 
         countObservable
-                .flatMap(numOfArts -> {
+                .flatMapObservable(numOfArts -> {
                     int limit = (int) FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_FREE_ARTICLES_LIMIT);
 
                     DbProvider dbProvider = mDbProviderFactory.getDbProvider();

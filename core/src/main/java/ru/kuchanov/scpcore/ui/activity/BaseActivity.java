@@ -1,5 +1,38 @@
 package ru.kuchanov.scpcore.ui.activity;
 
+import android.annotation.SuppressLint;
+import android.app.DialogFragment;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
+import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.android.vending.billing.IInAppBillingService;
+import com.appodeal.ads.Appodeal;
+import com.appodeal.ads.Native;
+import com.appodeal.ads.utils.Log;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
@@ -15,12 +48,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.google.gson.Gson;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.android.vending.billing.IInAppBillingService;
-import com.appodeal.ads.Appodeal;
-import com.appodeal.ads.Native;
-import com.facebook.login.LoginManager;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
@@ -28,35 +55,6 @@ import com.vk.sdk.VKSdk;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.Duration;
 import org.joda.time.Period;
-
-import android.annotation.SuppressLint;
-import android.app.DialogFragment;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentSender;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.os.RemoteException;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -66,6 +64,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -123,7 +122,7 @@ import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_AD
 public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends BaseActivityMvp.Presenter<V>>
         extends MvpActivity<V, P>
         implements BaseActivityMvp.View,
-                   SharedPreferences.OnSharedPreferenceChangeListener, GoogleApiClient.OnConnectionFailedListener {
+        SharedPreferences.OnSharedPreferenceChangeListener, GoogleApiClient.OnConnectionFailedListener {
 
     public static final String EXTRA_ARTICLES_URLS_LIST = "EXTRA_ARTICLES_URLS_LIST";
 
@@ -354,10 +353,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         Appodeal.setAutoCacheNativeMedia(true);
         Appodeal.setNativeAdType(Native.NativeAdType.Auto);
         Appodeal.disableLocationPermissionCheck();
-        if (BuildConfig.FLAVOR.equals("dev")) {
-            Appodeal.setTesting(true);
-//            Appodeal.setLogLevel(Log.LogLevel.debug);
-        }
+        //noinspection ConstantConditions
+        Appodeal.setTesting(BuildConfig.FLAVOR.equals("dev"));
+        //noinspection ConstantConditions
+        Appodeal.setLogLevel(BuildConfig.FLAVOR.equals("dev") ? Log.LogLevel.debug : Log.LogLevel.none);
         Appodeal.disableNetwork(this, "vungle");
         Appodeal.disableNetwork(this, "facebook");
         Appodeal.initialize(
@@ -374,22 +373,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
         Appodeal.muteVideosIfCallsMuted(true);
         Appodeal.setRewardedVideoCallbacks(new MyRewardedVideoCallbacks() {
-//            @Override
-//            public void onRewardedVideoFinished(final double i, final String s) {
-//                super.onRewardedVideoFinished(i, s);
-////                mMyPreferenceManager.applyAwardFromAds();
-//                final long numOfMillis = FirebaseRemoteConfig.getInstance()
-//                        .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
-//                final long hours = Duration.millis(numOfMillis).toStandardHours().getHours();
-//                showMessage(getString(R.string.ads_reward_gained, hours));
-//
-//                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventType.REWARD_GAINED, null);
-//
-//                @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.REWARDED_VIDEO;
-//                mPresenter.updateUserScoreForScoreAction(action);
-//
-//                mRoot.postDelayed(() -> mMyPreferenceManager.applyAwardFromAds(), Constants.POST_DELAYED_MILLIS);
-//            }
 
             @Override
             public void onRewardedVideoClosed(final boolean b) {
@@ -433,8 +416,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     private void setUpBanner() {
         Timber.d("setUpBanner");
         if (mMyPreferenceManager.isHasAnySubscription()
-            || !isBannerEnabled()
-            || !mMyPreferenceManager.isTimeToShowBannerAds()) {
+                || !isBannerEnabled()
+                || !mMyPreferenceManager.isTimeToShowBannerAds()) {
             if (mAdView != null) {
                 mAdView.setEnabled(false);
                 mAdView.setVisibility(View.GONE);
@@ -574,24 +557,14 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             case ADS_WILL_SHOWN_SOON:
                 snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, R.string.ads_will_be_shown_soon), Snackbar.LENGTH_LONG);
                 snackbar.setAction(R.string.yes, action -> {
-                    if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO)) {
-                        try {
-                            //todo
-                            InAppHelper.intentSenderSingle(
-                                    this,
-                                    mService,
-                                    InAppHelper.InappType.SUBS,
-                                    InAppHelper.getNewSubsSkus().get(0)
-                            );
-
-                            final Bundle bundle = new Bundle();
-                            bundle.putString(EventParam.PLACE, StartScreen.ADS_WILL_SHOWN_SOON);
-                            FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.SUBSCRIPTIONS_SHOWN, bundle);
-                        } catch (final RemoteException e) {
-                            Timber.e(e);
-                        } catch (final IntentSender.SendIntentException e) {
-                            Timber.e(e);
-                        }
+                    final int modificator = mMyPreferenceManager.getOfferSubscriptionInsteadOfRewardedVideoModificator();
+                    final int randomInt = new Random().nextInt(modificator);
+                    if (randomInt > 1) {
+                        presenter.onPurchaseClick(
+                                InAppHelper.getNewSubsSkus().get(0),
+                                this,
+                                true
+                        );
                     } else {
                         //show rewarded video after description
                         showRewardedVideoFlowDescription();
@@ -657,11 +630,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             //but service not connected yet
             //check if user score is greter than 1000 and offer him/her a free trial if there is no subscription owned
             if (!mMyPreferenceManager.isHasAnySubscription()
-                && mPresenter.getUser() != null
-                && mPresenter.getUser().score >= 1000
-                //do not show it after level up gain, where we add 10000 score
-                && mPresenter.getUser().score < 10000
-                && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
+                    && mPresenter.getUser() != null
+                    && mPresenter.getUser().score >= 1000
+                    //do not show it after level up gain, where we add 10000 score
+                    && mPresenter.getUser().score < 10000
+                    && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
                 final Bundle bundle = new Bundle();
                 bundle.putString(EventParam.PLACE, EventValue.SCORE_1000_REACHED);
                 FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.FREE_TRIAL_OFFER_SHOWN, bundle);

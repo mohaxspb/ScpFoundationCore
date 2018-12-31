@@ -1,16 +1,15 @@
 package ru.kuchanov.scpcore.manager;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.Period;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +19,6 @@ import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
-import ru.kuchanov.scpcore.monetization.model.ScpArtAdsJson;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
@@ -36,6 +34,7 @@ import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.INVITE_REW
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_IN_ARTICLE_ENABLED;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO_MODIFICATOR;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS;
 
@@ -243,14 +242,6 @@ public class MyPreferenceManager {
     public boolean isVkAppShared() {
         return mPreferences.getBoolean(Keys.VK_APP_SHARED, false);
     }
-
-    public String getScpArtsJson() {
-        String json = FirebaseRemoteConfig.getInstance().getString(Constants.Firebase.RemoteConfigKeys.ADS_SCP_ART_V3);
-        if (TextUtils.isEmpty(json)) {
-            json = ScpArtAdsJson.DEFAULT_JSON;
-        }
-        return json;
-    }
     //download all settings END
 
     //new arts notifications
@@ -330,7 +321,7 @@ public class MyPreferenceManager {
 
     public boolean isTimeToShowAds() {
         return System.currentTimeMillis() - getLastTimeAdsShows() >=
-               FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS);
+                FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS);
     }
 
     /**
@@ -339,8 +330,8 @@ public class MyPreferenceManager {
     public boolean isTimeToLoadAds() {
         //i.e. 1 hour - (17:56-17:00) = 4 min, which we compare to 5 min
         return FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS) -
-               (System.currentTimeMillis() - getLastTimeAdsShows())
-               <= PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS;
+                (System.currentTimeMillis() - getLastTimeAdsShows())
+                <= PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS;
     }
 
     /**
@@ -349,8 +340,8 @@ public class MyPreferenceManager {
     public boolean isTimeToNotifyAboutSoonAdsShowing() {
         //i.e. 1 hour - (17:56-17:00) = 4 min, which we compare to 5 min
         return FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS) -
-               (System.currentTimeMillis() - getLastTimeAdsShows())
-               <= PERIOD_WHEN_WE_NOTIFY_ABOUT_ADS && !isOfferAlreadyShown();
+                (System.currentTimeMillis() - getLastTimeAdsShows())
+                <= PERIOD_WHEN_WE_NOTIFY_ABOUT_ADS && !isOfferAlreadyShown();
     }
 
     private boolean isOfferAlreadyShown() {
@@ -382,6 +373,11 @@ public class MyPreferenceManager {
 
     public void setRewardedDescriptionIsNotShown() {
         mPreferences.edit().putBoolean(Keys.ADS_REWARDED_DESCRIPTION_IS_SHOWN, true).apply();
+    }
+
+    public int getOfferSubscriptionInsteadOfRewardedVideoModificator() {
+        final Long modificator = FirebaseRemoteConfig.getInstance().getLong(OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO_MODIFICATOR);
+        return modificator == null ? 5 : modificator.intValue();
     }
 
     //invite
@@ -442,7 +438,7 @@ public class MyPreferenceManager {
 
     public boolean isTimeToShowVideoInsteadOfInterstitial() {
         return getNumOfInterstitialsShown() >=
-               FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_INTERSITIAL_BETWEEN_REWARDED);
+                FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_INTERSITIAL_BETWEEN_REWARDED);
     }
 
     /**

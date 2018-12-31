@@ -1,13 +1,13 @@
 package ru.kuchanov.scpcore.ui.adapter;
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.gson.Gson;
-
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +25,6 @@ import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.monetization.model.ScpArtAdsJson;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleImageHolder;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleSpoilerHolder;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleTableHolder;
@@ -68,8 +67,6 @@ public class ArticleAdapter
     private static final int TYPE_TABS = 6;
 
     private static final int TYPE_NATIVE_APPODEAL = 7;
-
-    private static final int TYPE_NATIVE_SCP_ART = 8;
 
     private static final int TYPE_NATIVE_SCP_QUIZ = 9;
 
@@ -259,8 +256,8 @@ public class ArticleAdapter
         //or banners enabled or native disabled
         final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         if (mMyPreferenceManager.isHasAnySubscription()
-            || !mMyPreferenceManager.isTimeToShowBannerAds()
-            || mMyPreferenceManager.isBannerInArticleEnabled()) {
+                || !mMyPreferenceManager.isTimeToShowBannerAds()
+                || mMyPreferenceManager.isBannerInArticleEnabled()) {
             return;
         }
         if (mAdsModelsList.isEmpty()) {
@@ -300,8 +297,6 @@ public class ArticleAdapter
                 return TYPE_TAGS;
             case ParseHtmlUtils.TextType.TABS:
                 return TYPE_TABS;
-            case ParseHtmlUtils.TextType.NATIVE_ADS_SCP_ART:
-                return TYPE_NATIVE_SCP_ART;
             case ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL:
                 return TYPE_NATIVE_APPODEAL;
             case ParseHtmlUtils.TextType.NATIVE_ADS_SCP_QUIZ:
@@ -336,7 +331,6 @@ public class ArticleAdapter
             case TYPE_TABS:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_tabs, parent, false);
                 return new ArticleTabsHolder(view, this);
-            case TYPE_NATIVE_SCP_ART:
             case TYPE_NATIVE_APPODEAL:
             case TYPE_NATIVE_SCP_QUIZ:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_native_container, parent, false);
@@ -375,9 +369,6 @@ public class ArticleAdapter
                 ((NativeAdsArticleListHolder) holder).bind((Integer) textPartViewModel.data);
             }
             break;
-            case TYPE_NATIVE_SCP_ART:
-                ((NativeAdsArticleListHolder) holder).bind((ScpArtAdsJson.ScpArtAd) textPartViewModel.data);
-                break;
             case TYPE_NATIVE_SCP_QUIZ:
                 ((NativeAdsArticleListHolder) holder).bind();
                 break;
@@ -514,9 +505,11 @@ public class ArticleAdapter
 
         for (final TabsViewModel.TabData tabData : tabsViewModel.getTabDataList()) {
             final Collection<ArticleTextPartViewModel> viewModelsTabs = new ArrayList<>();
+
             for (int i = 0; i < tabData.getTextParts().size(); i++) {
                 @ParseHtmlUtils.TextType final String typeInTab = tabData.getTextPartsTypes().get(i);
                 Object dataInTab = tabData.getTextParts().get(i);
+
                 final boolean isSpoiler = typeInTab.equals(ParseHtmlUtils.TextType.SPOILER);
                 if (isSpoiler) {
                     final List<String> spoilerData = ParseHtmlUtils.parseSpoilerParts((String) dataInTab);
@@ -533,7 +526,7 @@ public class ArticleAdapter
                     //add textParts for expanded spoilers
                     if (spoilerViewModel.isExpanded) {
                         Timber.d("expanded spoiler title: %s", spoilerViewModel.titles.get(0));
-                        final List<ArticleTextPartViewModel> viewModelsInSpoiler = new ArrayList<>();
+                        final Collection<ArticleTextPartViewModel> viewModelsInSpoiler = new ArrayList<>();
                         for (int u = 0; u < spoilerViewModel.mSpoilerTextPartsTypes.size(); u++) {
                             @ParseHtmlUtils.TextType final String typeInSpoiler = spoilerViewModel.mSpoilerTextPartsTypes.get(u);
 
@@ -580,8 +573,8 @@ public class ArticleAdapter
 
                 //add textParts for expanded spoilers
                 if (spoilerViewModel.isExpanded) {
-                    final List<ArticleTextPartViewModel> viewModelsInSpoiler = new ArrayList<>();
                     Timber.d("expanded spoiler title: %s", spoilerViewModel.titles.get(0));
+                    final Collection<ArticleTextPartViewModel> viewModelsInSpoiler = new ArrayList<>();
                     for (int u = 0; u < spoilerViewModel.mSpoilerTextPartsTypes.size(); u++) {
                         @ParseHtmlUtils.TextType final String typeInSpoiler = spoilerViewModel.mSpoilerTextPartsTypes.get(u);
 

@@ -1,5 +1,17 @@
 package ru.kuchanov.scpcore.api;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.util.Pair;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.Target;
+import com.facebook.Profile;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -14,11 +26,6 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.target.Target;
-import com.facebook.Profile;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
@@ -31,20 +38,10 @@ import com.vk.sdk.api.model.VKList;
 
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
 import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
-
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.text.TextUtils;
-import android.util.Pair;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -54,7 +51,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-import io.realm.RealmList;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -74,6 +70,7 @@ import ru.kuchanov.scpcore.api.model.response.LeaderboardUsersUpdateDates;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
 import ru.kuchanov.scpcore.api.model.response.VkGroupJoinResponse;
 import ru.kuchanov.scpcore.api.model.response.scpreaderapi.AccessTokenResponse;
+import ru.kuchanov.scpcore.api.service.EnScpSiteApi;
 import ru.kuchanov.scpcore.api.service.ScpReaderApi;
 import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.api.service.ScpServer;
@@ -89,7 +86,6 @@ import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
-import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.DimensionUtils;
 import rx.Observable;
 import rx.Single;
@@ -108,8 +104,7 @@ public class ApiClient {
     private static final String REPLACEMENT_HASH = "____";
 
     private static final String REPLACEMENT_SLASH = "_REPLACEMENT_SLASH_";
-
-    private static final String SITE_TAGS_PATH = "system:page-tags/tag/";
+    private static final String REPLACEMENT_PERCENT = "_REP_PERCENT_";
 
     private final MyPreferenceManager mPreferencesManager;
 
@@ -123,6 +118,8 @@ public class ApiClient {
 
     private final ScpReaderAuthApi mScpReaderAuthApi;
 
+    protected final EnScpSiteApi mEnScpSiteApi;
+
     private final ScpServer mScpServer;
 
     protected ConstantValues mConstantValues;
@@ -133,6 +130,7 @@ public class ApiClient {
             final Retrofit scpRetrofit,
             final Retrofit scpReaderRetrofit,
             final ScpReaderAuthApi scpReaderAuthApi,
+            final EnScpSiteApi enScpSiteApi,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
@@ -145,6 +143,7 @@ public class ApiClient {
         mScpServer = scpRetrofit.create(ScpServer.class);
         mScpReaderApi = scpReaderRetrofit.create(ScpReaderApi.class);
         mScpReaderAuthApi = scpReaderAuthApi;
+        mEnScpSiteApi = enScpSiteApi;
         mConstantValues = constantValues;
     }
 
@@ -162,21 +161,8 @@ public class ApiClient {
         );
     }
 
-    protected <T> Observable<T> bindWithUtils(final Observable<T> observable) {
-        return observable
-//                .doOnError(throwable -> {
-//                    try {
-//                        Thread.sleep(2000);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                })
-//                .delay(2, TimeUnit.SECONDS)
-                ;
-    }
-
     public Observable<String> getRandomUrl() {
-        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
+        return Observable.unsafeCreate(subscriber -> {
             final Request.Builder request = new Request.Builder();
             request.url(mConstantValues.getRandomPageUrl());
             request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
@@ -201,27 +187,27 @@ public class ApiClient {
                 Timber.e(e);
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
-    public Observable<Integer> getRecentArticlesPageCountObservable() {
-        return bindWithUtils(Observable.unsafeCreate((Subscriber<? super Integer> subscriber) -> {
+    public Single<Integer> getRecentArticlesPageCountObservable() {
+        return Single.create(singleSubscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();
 
-            String responseBody;
+            final String responseBody;
             try {
                 final Response response = mOkHttpClient.newCall(request).execute();
                 final ResponseBody body = response.body();
                 if (body != null) {
                     responseBody = body.string();
                 } else {
-                    subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
+                    singleSubscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_parse)));
                     return;
                 }
             } catch (final IOException e) {
-                subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection)));
+                singleSubscriber.onError(new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection)));
                 return;
             }
             try {
@@ -232,22 +218,21 @@ public class ApiClient {
                 final String text = spanWithNumber.text();
                 final Integer numOfPages = Integer.valueOf(text.substring(text.lastIndexOf(" ") + 1));
 
-                subscriber.onNext(numOfPages);
-                subscriber.onCompleted();
+                singleSubscriber.onSuccess(numOfPages);
             } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
-                subscriber.onError(e);
+                singleSubscriber.onError(e);
             }
-        }));
+        });
     }
 
-    public Observable<List<Article>> getRecentArticlesForOffset(final int offset) {
+    public Single<List<Article>> getRecentArticlesForOffset(final int offset) {
         final int page = offset / mConstantValues.getNumOfArticlesOnRecentPage() + 1/*as pages are not zero based*/;
         return getRecentArticlesForPage(page);
     }
 
-    public Observable<List<Article>> getRecentArticlesForPage(final int page) {
-        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
+    public Single<List<Article>> getRecentArticlesForPage(final int page) {
+        return Single.create(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/" + page)
                     .build();
@@ -271,15 +256,15 @@ public class ApiClient {
 
                 final List<Article> articles = parseForRecentArticles(doc);
 
-                subscriber.onNext(articles);
-                subscriber.onCompleted();
+                subscriber.onSuccess(articles);
             } catch (final Exception | ScpParseException e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
+    @SuppressWarnings("WeakerAccess") //as it's overrided in other flavors
     protected List<Article> parseForRecentArticles(final Document doc) throws ScpParseException {
         final Element pageContent = doc.getElementsByClass("wiki-content-table").first();
         if (pageContent == null) {
@@ -327,8 +312,8 @@ public class ApiClient {
         return articles;
     }
 
-    public Observable<List<Article>> getRatedArticles(final int offset) {
-        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
+    public Single<List<Article>> getRatedArticles(final int offset) {
+        return Single.create(subscriber -> {
             final int page = offset / mConstantValues.getNumOfArticlesOnRatedPage() + 1/*as pages are not zero based*/;
 
             final Request request = new Request.Builder()
@@ -354,13 +339,12 @@ public class ApiClient {
 
                 final List<Article> articles = parseForRatedArticles(doc);
 
-                subscriber.onNext(articles);
-                subscriber.onCompleted();
+                subscriber.onSuccess(articles);
             } catch (final Exception | ScpParseException e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
     protected List<Article> parseForRatedArticles(final Document doc) throws ScpParseException {
@@ -397,8 +381,8 @@ public class ApiClient {
         return articles;
     }
 
-    public Observable<List<Article>> getSearchArticles(final int offset, final String searchQuery) {
-        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
+    public Single<List<Article>> getSearchArticles(final int offset, final String searchQuery) {
+        return Single.create(subscriber -> {
             final int page = offset / mConstantValues.getNumOfArticlesOnSearchPage() + 1/*as pages are not zero based*/;
 
             final Request request = new Request.Builder()
@@ -449,18 +433,17 @@ public class ApiClient {
 
                         articles.add(article);
                     }
-                    subscriber.onNext(articles);
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(articles);
                 }
             } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
-    public Observable<List<Article>> getObjectsArticles(final String sObjectsLink) {
-        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
+    public Single<List<Article>> getObjectsArticles(final String sObjectsLink) {
+        return Single.create(subscriber -> {
             final Request request = new Request.Builder()
                     .url(sObjectsLink)
                     .build();
@@ -484,13 +467,12 @@ public class ApiClient {
 
                 final List<Article> articles = parseForObjectArticles(doc);
 
-                subscriber.onNext(articles);
-                subscriber.onCompleted();
+                subscriber.onSuccess(articles);
             } catch (final Exception | ScpParseException e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
     protected List<Article> parseForObjectArticles(Document doc) throws ScpParseException {
@@ -574,7 +556,7 @@ public class ApiClient {
                 .url(url)
                 .build();
 
-        final String responseBody;
+        String responseBody;
         try {
             final Response response = mOkHttpClient.newCall(request).execute();
             final ResponseBody body = response.body();
@@ -587,281 +569,27 @@ public class ApiClient {
             throw new IOException(BaseApplication.getAppInstance().getString(R.string.error_connection));
         }
 
-        try {
-            final Document doc = Jsoup.parse(responseBody);
-            final Element pageContent = getArticlePageContentTag(doc);
-            if (pageContent == null) {
-                Timber.wtf("pageContent is NULL for: %s", url);
-                throw new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse));
-            }
-            final Element p404 = pageContent.getElementById("404-message");
-            if (p404 != null) {
-                final Article article = new Article();
-                article.url = url;
-                article.text = p404.outerHtml();
-                article.title = "404";
+        //remove all fucking RTL(&lrm) used for text-alignment. What a fucking idiots!..
+        responseBody = responseBody.replaceAll("[\\p{Cc}\\p{Cf}]", "");
 
-                return article;
-            }
-            //замена ссылок в сносках
-            final Elements footnoterefs = pageContent.getElementsByClass("footnoteref");
-            for (final Element snoska : footnoterefs) {
-                final Element aTag = snoska.getElementsByTag("a").first();
-                final StringBuilder digits = new StringBuilder();
-                for (final char c : aTag.id().toCharArray()) {
-                    if (TextUtils.isDigitsOnly(String.valueOf(c))) {
-                        digits.append(String.valueOf(c));
-                    }
-                }
-                aTag.attr("href", "scp://" + digits.toString());
-            }
-            final Elements footnoterefsFooter = pageContent.getElementsByClass("footnote-footer");
-            for (final Element snoska : footnoterefsFooter) {
-                final Element aTag = snoska.getElementsByTag("a").first();
-                snoska.prependText(aTag.text());
-                aTag.remove();
-//                    aTag.replaceWith(new Element(Tag.valueOf("pizda"), aTag.text()));
-            }
-
-            //замена ссылок в библиографии
-            final Elements bibliographi = pageContent.getElementsByClass("bibcite");
-            for (final Element snoska : bibliographi) {
-                final Element aTag = snoska.getElementsByTag("a").first();
-                final String onclickAttr = aTag.attr("onclick");
-
-                final String id = onclickAttr.substring(onclickAttr.indexOf("bibitem-"), onclickAttr.lastIndexOf("'"));
-                aTag.attr("href", id);
-            }
-            //remove rating bar
-            int rating = 0;
-            final Element rateDiv = pageContent.getElementsByClass("page-rate-widget-box").first();
-            if (rateDiv != null) {
-                final Element spanWithRating = rateDiv.getElementsByClass("rate-points").first();
-                if (spanWithRating != null) {
-                    final Element ratingSpan = spanWithRating.getElementsByClass("number").first();
-//                    Timber.d("ratingSpan: %s", ratingSpan);
-                    if (ratingSpan != null && !TextUtils.isEmpty(ratingSpan.text())) {
-                        try {
-                            rating = Integer.parseInt(ratingSpan.text().substring(1, ratingSpan.text().length()));
-//                            Timber.d("rating: %s", rating);
-                        } catch (final Exception e) {
-                            Timber.e(e);
-                        }
-                    }
-                }
-
-                final Element span1 = rateDiv.getElementsByClass("rateup").first();
-                span1.remove();
-                final Element span2 = rateDiv.getElementsByClass("ratedown").first();
-                span2.remove();
-                final Element span3 = rateDiv.getElementsByClass("cancel").first();
-                span3.remove();
-
-                final Elements heritageDiv = rateDiv.parent().getElementsByClass("heritage-emblem");
-                if (heritageDiv != null && !heritageDiv.isEmpty()) {
-                    heritageDiv.first().remove();
-                }
-            }
-            //remove something more
-            final Element svernut = pageContent.getElementById("toc-action-bar");
-            if (svernut != null) {
-                svernut.remove();
-            }
-            final Elements script = pageContent.getElementsByTag("script");
-            for (final Element element : script) {
-                element.remove();
-            }
-            //remove audio link from DE version
-            final Elements audio = pageContent.getElementsByClass("audio-img-block");
-            if (audio != null) {
-                audio.remove();
-            }
-            final Elements audioContent = pageContent.getElementsByClass("audio-block");
-            if (audioContent != null) {
-                audioContent.remove();
-            }
-            final Elements creditRate = pageContent.getElementsByClass("creditRate");
-            if (creditRate != null) {
-                creditRate.remove();
-            }
-
-            final Element uCreditView = pageContent.getElementById("u-credit-view");
-            if (uCreditView != null) {
-                uCreditView.remove();
-            }
-            final Element uCreditOtherwise = pageContent.getElementById("u-credit-otherwise");
-            if (uCreditOtherwise != null) {
-                uCreditOtherwise.remove();
-            }
-            //remove audio link from DE version END
-
-            //replace all spans with strike-through with <s>
-            final Elements spansWithStrike = pageContent.select("span[style=text-decoration: line-through;]");
-            for (final Element element : spansWithStrike) {
-//                    Timber.d("element: %s", element);
-                element.tagName("s");
-                for (final Attribute attribute : element.attributes()) {
-                    element.removeAttr(attribute.getKey());
-                }
-//                    Timber.d("element refactored: %s", element);
-            }
-            //get title
-            final Element titleEl = doc.getElementById("page-title");
-            String title = "";
-            if (titleEl != null) {
-                title = titleEl.text();
-            } else if (url.contains(SITE_TAGS_PATH)) {
-                final String decodedUrl = java.net.URLDecoder.decode(url, "UTF-8");
-                final String tagName = decodedUrl.substring(url.lastIndexOf(SITE_TAGS_PATH) + SITE_TAGS_PATH.length());
-                title = "TAG: " + tagName;
-            }
-            final Element upperDivWithLink = doc.getElementById("breadcrumbs");
-            if (upperDivWithLink != null) {
-                pageContent.prependChild(upperDivWithLink);
-            }
-            ParseHtmlUtils.parseImgsTags(pageContent);
-
-            //extract tables, which are single tag in div
-            ParseHtmlUtils.extractTablesFromDivs(pageContent);
-
-            //put all text which is not in any tag in div tag
-            for (final Element element : pageContent.children()) {
-                final Node nextSibling = element.nextSibling();
-//                    Timber.d("child: ___%s___", nextSibling);
-//                    Timber.d("nextSibling.nodeName(): %s", nextSibling.nodeName());
-                if (nextSibling != null && !nextSibling.toString().equals(" ") && nextSibling.nodeName().equals("#text")) {
-                    element.after(new Element("div").appendChild(nextSibling));
-                }
-
-                //also fix scp-3000, where image and spoiler are in div tag, fucking shit! Web monkeys, ARGH!!!
-                if (!element.children().isEmpty() && element.children().size() == 2
-                    && element.child(0).tagName().equals("img") && element.child(1).className().equals("collapsible-block")) {
-                    element.before(element.childNode(0));
-                    element.after(element.childNode(1));
-                    element.remove();
-                }
-            }
-
-            //replace styles with underline and strike
-            final Elements spans = pageContent.getElementsByTag("span");
-            for (final Element element : spans) {
-                //<span style="text-decoration: underline;">PLEASE</span>
-                if (element.hasAttr("style") && element.attr("style").equals("text-decoration: underline;")) {
-//                    Timber.d("fix underline span: %s", element.outerHtml());
-                    final Element uTag = new Element(Tag.valueOf("u"), "").text(element.text());
-                    element.replaceWith(uTag);
-//                    Timber.d("fixED underline span: %s", uTag.outerHtml());
-                }
-                //<span style="text-decoration: line-through;">условия содержания.</span>
-                if (element.hasAttr("style") && element.attr("style").equals("text-decoration: line-through;")) {
-//                    Timber.d("fix strike span");
-                    final Element sTag = new Element(Tag.valueOf("s"), "");
-                    element.replaceWith(sTag);
-                }
-            }
-
-            //search for relative urls to add domain
-            for (final Element a : pageContent.getElementsByTag("a")) {
-                //replace all links to not translated articles
-                if (a.className().equals("newpage")) {
-                    a.attr("href", Constants.Api.NOT_TRANSLATED_ARTICLE_UTIL_URL
-                                   + Constants.Api.NOT_TRANSLATED_ARTICLE_URL_DELIMITER
-                                   + a.attr("href")
-                    );
-                } else if (a.attr("href").startsWith("/")) {
-                    a.attr("href", mConstantValues.getBaseApiUrl() + a.attr("href"));
-                }
-            }
-
-            //extract tags
-            final RealmList<ArticleTag> articleTags = new RealmList<>();
-            final Element tagsContainer = doc.getElementsByClass("page-tags").first();
-//                Timber.d("tagsContainer: %s", tagsContainer);
-            if (tagsContainer != null) {
-                for (final Element a : tagsContainer./*getElementsByTag("span").first().*/getElementsByTag("a")) {
-                    articleTags.add(new ArticleTag(a.text()));
-//                        Timber.d("tag: %s", articleTags.get(articleTags.size() - 1));
-                }
-            }
-
-            //search for images and add it to separate field to be able to show it in arts lists
-            RealmList<RealmString> imgsUrls = null;
-            final Elements imgsOfArticle = pageContent.getElementsByTag("img");
-            if (!imgsOfArticle.isEmpty()) {
-                imgsUrls = new RealmList<>();
-                for (final Element img : imgsOfArticle) {
-                    imgsUrls.add(new RealmString(img.attr("src")));
-                }
-            }
-
-            //search for inner articles
-            RealmList<RealmString> innerArticlesUrls = null;
-            final Elements innerATags = pageContent.getElementsByTag("a");
-            if (!innerATags.isEmpty()) {
-                innerArticlesUrls = new RealmList<>();
-                for (final Element a : innerATags) {
-                    final String innerUrl = a.attr("href");
-                    if (SetTextViewHTML.LinkType.getLinkType(innerUrl, mConstantValues) == SetTextViewHTML.LinkType.INNER) {
-                        innerArticlesUrls.add(new RealmString(SetTextViewHTML.LinkType.getFormattedUrl(innerUrl, mConstantValues)));
-                    }
-                }
-            }
-
-            //type parsing TODO fucking unformatted info!
-
-            //this we store as article text
-            final String rawText = pageContent.toString();
-//            Timber.d("rawText: %s", rawText);
-
-            //articles textParts
-            final RealmList<RealmString> textParts = new RealmList<>();
-            final List<String> rawTextParts = ParseHtmlUtils.getArticlesTextParts(rawText);
-            for (final String value : rawTextParts) {
-                textParts.add(new RealmString(value));
-            }
-            final RealmList<RealmString> textPartsTypes = new RealmList<>();
-            for (@ParseHtmlUtils.TextType final String value : ParseHtmlUtils.getListOfTextTypes(rawTextParts)) {
-                textPartsTypes.add(new RealmString(value));
-            }
-
-            String commentsUrl = null;
-            final Element commentsButtonTag = doc.getElementById("discuss-button");
-            if (commentsButtonTag != null) {
-                commentsUrl = mConstantValues.getBaseApiUrl() + commentsButtonTag.attr("href");
-            }
-
-            //finally fill article info
+        final Document doc = Jsoup.parse(responseBody);
+        final Element pageContent = getArticlePageContentTag(doc);
+        if (pageContent == null) {
+            Timber.wtf("pageContent is NULL for: %s", url);
+            throw new ScpParseException(BaseApplication.getAppInstance().getString(R.string.error_parse));
+        }
+        final Element p404 = pageContent.getElementById("404-message");
+        if (p404 != null) {
             final Article article = new Article();
-
             article.url = url;
-            article.text = rawText;
-            article.title = title;
-            //textParts
-            article.textParts = textParts;
-            //log
-//                if (article.textParts != null) {
-//                    for (RealmString realmString : article.textParts) {
-//                        Timber.d("part: %s", realmString.val);
-//                    }
-//                } else {
-//                    Timber.d("article.textParts is NULL!");
-//                }
-            article.textPartsTypes = textPartsTypes;
-            //images
-            article.imagesUrls = imgsUrls;
-            //inner articles
-            article.innerArticlesUrls = innerArticlesUrls;
-            //tags
-            article.tags = articleTags;
-            //rating
-            if (rating != 0) {
-                article.rating = rating;
-            }
-
-            Timber.d("commentsUrl: %s", commentsUrl);
-            article.commentsUrl = commentsUrl;
+            article.text = p404.outerHtml();
+            article.title = "404";
 
             return article;
+        }
+
+        try {
+            return ParseHtmlUtils.parseArticle(url, doc, pageContent, mConstantValues);
         } catch (final Exception e) {
             Timber.e(e);
             throw e;
@@ -879,7 +607,7 @@ public class ApiClient {
 
     public Observable<Article> getArticle(final String url) {
         Timber.d("start download article: %s", url);
-        return bindWithUtils(Observable.<Article>unsafeCreate(subscriber -> {
+        return Observable.<Article>unsafeCreate(subscriber -> {
             try {
                 Article article = getArticleFromApi(url);
                 subscriber.onNext(article);
@@ -887,7 +615,7 @@ public class ApiClient {
             } catch (Exception | ScpParseException e) {
                 subscriber.onError(e);
             }
-        }))
+        })
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .map(article -> {
@@ -934,8 +662,8 @@ public class ApiClient {
         }
     }
 
-    public Observable<List<Article>> getMaterialsArticles(final String objectsLink) {
-        return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
+    public Single<List<Article>> getMaterialsArticles(final String objectsLink) {
+        return Single.create(subscriber -> {
             final Request request = new Request.Builder()
                     .url(objectsLink)
                     .build();
@@ -980,17 +708,16 @@ public class ApiClient {
                     }
                 }
                 //parse end
-                subscriber.onNext(articles);
-                subscriber.onCompleted();
+                subscriber.onSuccess(articles);
             } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
-    public Observable<List<Article>> getMaterialsArchiveArticles() {
-        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
+    public Single<List<Article>> getMaterialsArchiveArticles() {
+        return Single.create(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getArchive())
                     .build();
@@ -1057,17 +784,16 @@ public class ApiClient {
                     articles.add(article);
                 }
                 //parse end
-                subscriber.onNext(articles);
-                subscriber.onCompleted();
+                subscriber.onSuccess(articles);
             } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
-    public Observable<List<Article>> getMaterialsJokesArticles() {
-        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
+    public Single<List<Article>> getMaterialsJokesArticles() {
+        return Single.create(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getJokes())
                     .build();
@@ -1134,18 +860,17 @@ public class ApiClient {
                     articles.add(article);
                 }
                 //parse end
-                subscriber.onNext(articles);
-                subscriber.onCompleted();
+                subscriber.onSuccess(articles);
             } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
     public Observable<Boolean> joinVkGroup(final String groupId) {
         Timber.d("joinVkGroup with groupId: %s", groupId);
-        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
+        return Observable.unsafeCreate(subscriber -> {
                     final VKParameters parameters = VKParameters.from(
                             VKApiConst.GROUP_ID, groupId,
                             VKApiConst.ACCESS_TOKEN, VKAccessToken.currentToken(),
@@ -1170,7 +895,7 @@ public class ApiClient {
                             subscriber.onError(new Throwable(error.toString()));
                         }
                     });
-                })
+                }
         );
     }
 
@@ -1296,8 +1021,8 @@ public class ApiClient {
                 authToFirebaseObservable = mVpsServer
                         .getFirebaseTokenForVkUserId("vk", VKAccessToken.currentToken().userId)
                         .flatMap(response -> TextUtils.isEmpty(response) ?
-                                             Single.error(new IllegalArgumentException("Empty firebase token for vk user!")) :
-                                             Single.just(response))
+                                Single.error(new IllegalArgumentException("Empty firebase token for vk user!")) :
+                                Single.just(response))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .flatMap(this::authWithCustomToken)
@@ -1345,7 +1070,7 @@ public class ApiClient {
         return authToFirebaseObservable;
     }
 
-    private Single<FirebaseUser> authWithCustomToken(final String token) {
+    private Single<FirebaseUser> authWithCustomToken(@NotNull final String token) {
         return Single.create(subscriber ->
                 FirebaseAuth.getInstance().signInWithCustomToken(token).addOnCompleteListener(task -> {
                     Timber.d("signInWithCustomToken:onComplete: %s", task.isSuccessful());
@@ -1884,8 +1609,12 @@ public class ApiClient {
         return mScpReaderApi.getLeaderboardUsersUpdateDates();
     }
 
-    public Observable<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {
-        return bindWithUtils(mScpServer.getArticlesByTags(getScpServerWiki(), ArticleTag.getStringsFromTags(tags)))
+    public Single<Integer> getUserPositionInLeaderboard() {
+        return mScpReaderApi.getUserPositionInLeaderboard(mConstantValues.getAppLang().toUpperCase());
+    }
+
+    public Single<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {
+        return mScpServer.getArticlesByTags(getScpServerWiki(), ArticleTag.getStringsFromTags(tags))
                 .map(ArticleFromSearchTagsOnSite::getArticlesFromSiteArticles)
                 .map(articles -> {
                     for (final Article article : articles) {
@@ -1901,15 +1630,15 @@ public class ApiClient {
                 });
     }
 
-    public Observable<List<ArticleTag>> getTagsFromSite() {
-        return bindWithUtils(mScpServer.getTagsList(getScpServerWiki())
+    public Single<List<ArticleTag>> getTagsFromSite() {
+        return mScpServer.getTagsList(getScpServerWiki())
                 .map(strings -> {
                     final List<ArticleTag> tags = new ArrayList<>();
                     for (final String divWithTagData : strings) {
                         tags.add(new ArticleTag(divWithTagData));
                     }
                     return tags;
-                }));
+                });
     }
 
     public Single<PurchaseValidateResponse> validateProduct(
@@ -1962,6 +1691,7 @@ public class ApiClient {
     public static String formatUrlToFileName(@NotNull final String url) {
         String imageFileName = url.replaceAll("#", REPLACEMENT_HASH);
         imageFileName = imageFileName.replaceAll("/", REPLACEMENT_SLASH);
+        imageFileName = imageFileName.replaceAll("%", REPLACEMENT_PERCENT);
 
         return imageFileName;
     }

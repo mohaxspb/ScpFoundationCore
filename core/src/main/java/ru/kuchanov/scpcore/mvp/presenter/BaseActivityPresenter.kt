@@ -56,10 +56,10 @@ import java.util.*
  * for scp_ru
  */
 abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
-    myPreferencesManager: MyPreferenceManager,
-    dbProviderFactory: DbProviderFactory,
-    apiClient: ApiClient,
-    private val inAppHelper: InAppHelper
+        myPreferencesManager: MyPreferenceManager,
+        dbProviderFactory: DbProviderFactory,
+        apiClient: ApiClient,
+        private val inAppHelper: InAppHelper
 ) : BasePresenter<V>(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper), BaseActivityMvp.Presenter<V> {
 
     //facebook
@@ -95,8 +95,8 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                     mDbProviderFactory.dbProvider
                             .saveArticlesFromFirebase(ArrayList(map.values))
                             .subscribeBy(
-                                onNext = { Timber.d("articles in realm updated!") },
-                                onError = { Timber.e(it) }
+                                    onNext = { Timber.d("articles in realm updated!") },
+                                    onError = { Timber.e(it) }
                             )
                 }
             }
@@ -117,8 +117,8 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                     mDbProviderFactory.dbProvider
                             .updateUserScore(score)
                             .subscribeBy(
-                                onNext = { Timber.d("score in realm updated!") },
-                                onError = { Timber.e(it) }
+                                    onNext = { Timber.d("score in realm updated!") },
+                                    onError = { Timber.e(it) }
                             )
                 }
             }
@@ -161,8 +161,8 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                 .flatMap { mApiClient.nameAndAvatarFromProviderObservable(provider) }
                                 .flatMap { nameAvatar ->
                                     mApiClient.updateFirebaseUsersNameAndAvatarObservable(
-                                        nameAvatar.first,
-                                        nameAvatar.second
+                                            nameAvatar.first,
+                                            nameAvatar.second
                                     )
                                 }
                                 .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
@@ -185,8 +185,8 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                             mApiClient.nameAndAvatarFromProviderObservable(provider)
                                                     .flatMap { nameAvatar ->
                                                         mApiClient.updateFirebaseUsersNameAndAvatarObservable(
-                                                            nameAvatar.first,
-                                                            nameAvatar.second
+                                                                nameAvatar.first,
+                                                                nameAvatar.second
                                                         )
                                                     }
                                                     .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
@@ -200,11 +200,11 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                     .flatMap { mApiClient.userObjectFromFirebaseObservable }
                                     .flatMap {
                                         Observable.error<FirebaseObjectUser>(
-                                            ScpLoginException(
-                                                BaseApplication.getAppInstance()
-                                                        .getString(
-                                                            R.string.error_login_firebase_connection,
-                                                            "firebase user is null")))
+                                                ScpLoginException(
+                                                        BaseApplication.getAppInstance()
+                                                                .getString(
+                                                                        R.string.error_login_firebase_connection,
+                                                                        "firebase user is null")))
                                     }
                         } else {
                             val userToWriteToDb = FirebaseObjectUser()
@@ -231,8 +231,8 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                 mApiClient.nameAndAvatarFromProviderObservable(provider)
                                         .flatMap { nameAvatar ->
                                             mApiClient.updateFirebaseUsersNameAndAvatarObservable(
-                                                nameAvatar.first,
-                                                nameAvatar.second
+                                                    nameAvatar.first,
+                                                    nameAvatar.second
                                             )
                                         }
                                         .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
@@ -257,8 +257,8 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                 mApiClient.nameAndAvatarFromProviderObservable(provider)
                                         .flatMap { nameAvatar ->
                                             mApiClient.updateFirebaseUsersNameAndAvatarObservable(
-                                                nameAvatar.first,
-                                                nameAvatar.second)
+                                                    nameAvatar.first,
+                                                    nameAvatar.second)
                                         }
                                         .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
                                         .subscribeOn(AndroidSchedulers.mainThread())
@@ -283,8 +283,8 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                 mApiClient.nameAndAvatarFromProviderObservable(provider)
                                         .flatMap { nameAvatar ->
                                             mApiClient.updateFirebaseUsersNameAndAvatarObservable(
-                                                nameAvatar.first,
-                                                nameAvatar.second)
+                                                    nameAvatar.first,
+                                                    nameAvatar.second)
                                         }
                                         .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
                                         .subscribeOn(AndroidSchedulers.mainThread())
@@ -307,8 +307,8 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                             mApiClient.nameAndAvatarFromProviderObservable(provider)
                                     .flatMap { nameAvatar ->
                                         mApiClient.updateFirebaseUsersNameAndAvatarObservable(
-                                            nameAvatar.first,
-                                            nameAvatar.second)
+                                                nameAvatar.first,
+                                                nameAvatar.second)
                                     }
                                     .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
                                     .subscribeOn(AndroidSchedulers.mainThread())
@@ -336,19 +336,20 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 .flatMap { userInRealm ->
                     val stringWithDataForProvider = if (provider == Constants.Firebase.SocialProvider.VK) {
                         val commonUserDataFromVk = CommonUserData(
-                            id = VKAccessToken.currentToken().userId,
-                            email = VKAccessToken.currentToken().email,
-                            avatarUrl = userInRealm.avatar,
-                            fullName = userInRealm.fullName
+                                id = VKAccessToken.currentToken().userId,
+                                email = VKAccessToken.currentToken().email,
+                                avatarUrl = userInRealm.avatar,
+                                fullName = userInRealm.fullName
                         )
                         mApiClient.gson.toJson(commonUserDataFromVk)
                     } else {
                         id
                     }
-                    mApiClient.loginToScpReaderServer(
-                        provider,
-                        stringWithDataForProvider
-                    )
+                    return@flatMap mApiClient
+                            .loginToScpReaderServer(
+                                    provider,
+                                    stringWithDataForProvider
+                            )
                             .doOnSuccess {
                                 myPreferencesManager.apply {
                                     accessToken = it.accessToken
@@ -360,35 +361,35 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { userInRealm ->
-                        Timber.d("user saved")
-                        view.dismissProgressDialog()
-                        view.showMessage(
-                            BaseApplication.getAppInstance().getString(
-                                R.string.on_user_logined,
-                                userInRealm.fullName))
-                    },
-                    { e ->
-                        Timber.e(e, "error while save user to DB")
-                        logoutUser()
-                        view.dismissProgressDialog()
-                        if (e is FirebaseAuthUserCollisionException) {
-                            view.showError(ScpLoginException(BaseApplication.getAppInstance().getString(R.string.error_login_firebase_user_collision)))
-                        } else {
-                            view.showError(
-                                ScpLoginException(
+                        { userInRealm ->
+                            Timber.d("user saved")
+                            view.dismissProgressDialog()
+                            view.showMessage(
                                     BaseApplication.getAppInstance().getString(
-                                        R.string.error_login_firebase_connection,
-                                        e.message)))
+                                            R.string.on_user_logined,
+                                            userInRealm.fullName))
+                        },
+                        { e ->
+                            Timber.e(e, "error while save user to DB")
+                            logoutUser()
+                            view.dismissProgressDialog()
+                            if (e is FirebaseAuthUserCollisionException) {
+                                view.showError(ScpLoginException(BaseApplication.getAppInstance().getString(R.string.error_login_firebase_user_collision)))
+                            } else {
+                                view.showError(
+                                        ScpLoginException(
+                                                BaseApplication.getAppInstance().getString(
+                                                        R.string.error_login_firebase_connection,
+                                                        e.message)))
+                            }
                         }
-                    }
                 )
     }
 
     override fun logoutUser() {
         mDbProviderFactory.dbProvider.logout().subscribe(
-            { Timber.d("logout successful") },
-            { e -> Timber.e(e, "error while logout user") }
+                { Timber.d("logout successful") },
+                { e -> Timber.e(e, "error while logout user") }
         )
     }
 
@@ -454,8 +455,8 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onNext = { Timber.d("invite id successfully sent to server") },
-                    onError = { Timber.e(it) }
+                        onNext = { Timber.d("invite id successfully sent to server") },
+                        onError = { Timber.e(it) }
                 )
     }
 
@@ -463,15 +464,15 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
             Timber.d("onInviteSent: ${it.result?.token}")
             mApiClient.inviteSent(inviteId, it.result?.token)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onNext = { Timber.d("invite id and fcmToken successfully sent to server") },
-                    onError = { e ->
-                        Timber.e(e)
-                        view.showError(e)
-                    }
-                )
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(
+                            onNext = { Timber.d("invite id and fcmToken successfully sent to server") },
+                            onError = { e ->
+                                Timber.e(e)
+                                view.showError(e)
+                            }
+                    )
         }
     }
 
@@ -479,17 +480,17 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
         Timber.d("onActivityResult: $requestCode, $resultCode, $data")
 
         val vkCallback = object : VKCallback<VKAccessToken> {
-            override fun onResult(vkAccessToken: VKAccessToken) {
+            override fun onResult(vkAccessToken: VKAccessToken?) {
                 //Пользователь успешно авторизовался
-                Timber.d("Auth successful: %s", vkAccessToken.email)
-                if (vkAccessToken.email != null) {
+                if (vkAccessToken?.email != null) {
+                    Timber.d("Auth successful: %s", vkAccessToken.email)
                     //here can be case, when we login via Google or Facebook, but try to join group to receive reward
                     //in this case we have firebase user already, so no need to login to firebase
                     if (FirebaseAuth.getInstance().currentUser != null) {
                         Timber.e("Firebase user exists, do nothing as we do not implement connect VK acc to Firebase as social provider")
                     } else {
                         startFirebaseLogin(
-                            Constants.Firebase.SocialProvider.VK, VKAccessToken.currentToken().accessToken)
+                                Constants.Firebase.SocialProvider.VK, VKAccessToken.currentToken().accessToken)
                     }
                 } else {
                     view.showMessage(R.string.error_login_no_email)
@@ -551,8 +552,8 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                     onInviteSent(id)
 
                     FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
-                        Constants.Firebase.Analitics.EventName.INVITE_SENT,
-                        null
+                            Constants.Firebase.Analitics.EventName.INVITE_SENT,
+                            null
                     )
                 }
             } else {
@@ -607,21 +608,22 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeBy(
-                                onSuccess = {
-                                    Timber.d("consume inapp successful, so update user score")
-                                    updateUserScoreForInapp(item.productId)
+                                    onSuccess = {
+                                        Timber.d("consume inapp successful, so update user score")
+                                        updateUserScoreForInapp(item.productId)
 
-                                    if (!myPreferencesManager.isHasAnySubscription) {
-                                        view.showOfferSubscriptionPopup()
+                                        if (!myPreferencesManager.isHasAnySubscription) {
+                                            view.showOfferSubscriptionPopup()
+                                        }
+                                    },
+                                    onError = {
+                                        Timber.e(it, "error while consume inapp!")
+                                        view.showError(it)
+                                        view.showInAppErrorDialog(
+                                                it.message
+                                                        ?: BaseApplication.getAppInstance().getString(R.string.error_unexpected)
+                                        )
                                     }
-                                },
-                                onError = {
-                                    Timber.e(it, "error while consume inapp!")
-                                    view.showError(it)
-                                    view.showInAppErrorDialog(
-                                        it.message ?: BaseApplication.getAppInstance().getString(R.string.error_unexpected)
-                                    )
-                                }
                             )
                 } else {
                     Timber.wtf("Unexpected item.productId: ${item.productId}")

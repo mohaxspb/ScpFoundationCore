@@ -18,7 +18,7 @@ public interface Constants {
     int LEVEL_UP_SCORE_TO_ADD = 10000;
 
     enum NativeAdsSource {
-        ALL, APPODEAL, SCP_ART, SCP_QUIZ
+        ALL, APPODEAL, SCP_QUIZ
     }
 
     interface Api {
@@ -172,7 +172,6 @@ public interface Constants {
             String NATIVE_IN_ARTICLE_ENABLED = "native_in_article_enabled";
             String NATIVE_ADS_LISTS_INTERVAL = "native_ads_lists_interval";
             String NATIVE_ADS_LISTS_SOURCE_V2 = "native_ads_lists_source_v2";
-            String ADS_SCP_ART_V3 = "ads_scp_art_v3";
             String ADS_SCP_ART_ENABLED = "ads_scp_art_enabled";
             //banners
             String GALLERY_BANNER_DISABLED = "gallery_banner_disabled";
@@ -202,7 +201,7 @@ public interface Constants {
             String NO_ADS_SUBS_ENABLED = "no_ads_subs_enabled";
 
             String APP_LANG_VERSIONS = "app_lang_versions";
-            String OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO = "offer_subs_instead_of_rewarded_video";
+            String OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO_MODIFICATOR = "offer_subs_instead_of_rewarded_video_modificator";
             String OFFER_TRIAL_FOR_YEAR = "offer_trial_for_year";
             long CACHE_EXPIRATION_SECONDS = 20000;
         }

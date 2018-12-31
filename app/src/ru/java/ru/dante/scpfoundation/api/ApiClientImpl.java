@@ -18,9 +18,11 @@ import retrofit2.Retrofit;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.api.service.EnScpSiteApi;
 import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
+import rx.Single;
 import timber.log.Timber;
 
 /**
@@ -36,6 +38,7 @@ public class ApiClientImpl extends ApiClient {
             final Retrofit scpRetrofit,
             final Retrofit scpReaderRetrofit,
             final ScpReaderAuthApi scpReaderAuthApi,
+            final EnScpSiteApi enScpSiteApi,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
@@ -46,6 +49,7 @@ public class ApiClientImpl extends ApiClient {
                 scpRetrofit,
                 scpReaderRetrofit,
                 scpReaderAuthApi,
+                enScpSiteApi,
                 preferencesManager,
                 gson,
                 constantValues
@@ -54,7 +58,7 @@ public class ApiClientImpl extends ApiClient {
 
     @Override
     public Observable<String> getRandomUrl() {
-        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
+        return Observable.unsafeCreate(subscriber -> {
                     final Request request = new Request.Builder()
                             .url("https://scpdb.org/api/wikidot_random_page")
                             .build();
@@ -77,13 +81,13 @@ public class ApiClientImpl extends ApiClient {
                     } catch (final IOException e) {
                         subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(ru.kuchanov.scpcore.R.string.error_connection)));
                     }
-                })
+                }
         );
     }
 
     @Override
-    public Observable<Integer> getRecentArticlesPageCountObservable() {
-        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
+    public Single<Integer> getRecentArticlesPageCountObservable() {
+        return Single.create(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();
@@ -110,13 +114,12 @@ public class ApiClientImpl extends ApiClient {
                 final String text = spanWithNumber.text();
                 final Integer numOfPages = Integer.valueOf(text.substring(text.lastIndexOf(" ") + 1));
 
-                subscriber.onNext(numOfPages);
-                subscriber.onCompleted();
+                subscriber.onSuccess(numOfPages);
             } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
     @Override

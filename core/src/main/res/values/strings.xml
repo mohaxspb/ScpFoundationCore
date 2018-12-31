@@ -393,4 +393,7 @@ Thanks for using our app!]]></string>
     <string name="dialog_inapp_error_title">Error</string>
     <string name="dialog_inapp_error_content">Error: %s</string>
     <string name="try_again">Try again</string>
+    <string name="ads_removed">Ads removed!</string>
+    <string name="add_to_read">Add to read</string>
+    <string name="remove_from_read">Remove from read</string>
 </resources>

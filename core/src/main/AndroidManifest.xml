@@ -3,11 +3,11 @@
     package="ru.kuchanov.scpcore"
     android:installLocation="auto">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="com.android.vending.BILLING"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.android.vending.BILLING" />
     <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -27,21 +27,34 @@
 
     <application
         android:allowBackup="true"
-        android:usesCleartextTraffic="true"
+        android:appComponentFactory="whateverString"
         android:supportsRtl="true"
-        tools:targetApi="m">
+        android:usesCleartextTraffic="true"
+        tools:replace="android:appComponentFactory"
+        tools:targetApi="p">
 
         <!--admob-->
         <!--see https://developers.google.com/admob/android/quick-start#update_your_androidmanifestxml-->
         <!-- Sample AdMob App ID: ca-app-pub-3940256099942544~3347511713 -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/ads_app_id"/>
+            android:value="@string/ads_app_id" />
 
         <!--api 28 crash fix-->
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
 
         <!--ads by appodeal-->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:theme="@android:style/Theme.Translucent" />
+
         <activity
             android:name="com.appodeal.ads.InterstitialActivity"
             android:configChanges="orientation|screenSize"
@@ -67,18 +80,10 @@
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
+
         <activity
             android:name="com.appodeal.ads.TestActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-
-        <activity
-            android:name="com.google.android.gms.ads.AdActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-            android:theme="@android:style/Theme.Translucent" />
 
         <activity
             android:name="org.nexage.sourcekit.vast.activity.VASTActivity"
@@ -141,9 +146,9 @@
 
         <!-- Facebook -->
         <!--suppress AndroidDomInspection -->
-        <!--<activity-->
-            <!--android:name="com.facebook.ads.AudienceNetworkActivity"-->
-            <!--android:configChanges="keyboardHidden|orientation|screenSize" />-->
+        <activity
+            android:name="com.facebook.ads.AudienceNetworkActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
         <!-- End Facebook -->
 
         <!-- Startapp -->
@@ -181,7 +186,8 @@
             android:name="com.yandex.metrica.MetricaService"
             android:enabled="true"
             android:exported="true"
-            android:process=":Metrica">
+            android:process=":Metrica"
+            tools:ignore="ExportedService">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
                 <action android:name="com.yandex.metrica.IMetricaService" />
@@ -204,11 +210,18 @@
                 <action android:name="com.yandex.metrica.configuration.ACTION_START" />
             </intent-filter>
         </service>
+        <service
+            android:name="com.yandex.metrica.ConfigurationJobService"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:process=":Metrica"></service>
 
         <receiver
             android:name="com.yandex.metrica.MetricaEventHandler"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
@@ -272,59 +285,23 @@
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-
-        <service
-            android:name="com.evernote.android.job.v21.PlatformJobService"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service
-            android:name="com.evernote.android.job.v14.PlatformAlarmService"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service
-            android:name="com.evernote.android.job.v14.PlatformAlarmServiceExact"
-            android:exported="false" />
-
-        <receiver
-            android:name="com.evernote.android.job.v14.PlatformAlarmReceiver"
-            android:exported="false">
-            <intent-filter>
-                <!-- Keep the filter for legacy intents -->
-                <action android:name="com.evernote.android.job.v14.RUN_JOB" />
-                <action android:name="net.vrallev.android.job.v14.RUN_JOB" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name="com.evernote.android.job.JobBootReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
-                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
-            </intent-filter>
-        </receiver>
-
-        <service
-            android:name="com.evernote.android.job.gcm.PlatformGcmService"
-            android:enabled="true"
-            tools:replace="android:enabled">
-            <intent-filter>
-                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
-            </intent-filter>
-        </service>
-        <service
-            android:name="com.evernote.android.job.JobRescheduleService"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <activity
+            android:name="com.vungle.warren.ui.VungleWebViewActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity
+            android:name="com.vungle.warren.ui.VungleFlexViewActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <!-- End Vungle -->
 
         <!-- Flurry-ads -->
         <!--suppress AndroidDomInspection -->
-        <!--<activity-->
-            <!--android:name="com.flurry.android.FlurryFullscreenTakeoverActivity"-->
-            <!--android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"-->
-            <!--android:theme="@android:style/Theme.Translucent.NoTitleBar" />-->
+        <!--<activity android:name="com.flurry.android.FlurryFullscreenTakeoverActivity"-->
+        <!--android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize">-->
+        <!--</activity>-->
         <!-- End Flurry-ads -->
 
         <!-- Mobvista -->
@@ -344,18 +321,12 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity
-            android:name="com.mobvista.msdk.videofeeds.vfplayer.VideoFeedsActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait" />
-        <activity android:name="com.mobvista.msdk.out.LoadingActivity" />
-        <activity
             android:name="com.mobvista.msdk.interstitial.view.MVInterstitialActivity"
-            android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.mobvista.msdk.mvjscommon.authority.activity.MVAuthorityActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity android:name="com.mobvista.msdk.out.LoadingActivity" />
         <!-- End Mobvista -->
 
         <!-- Tapjoy -->
@@ -424,51 +395,12 @@
             tools:ignore="UnusedAttribute" />
         <!-- End Inmobi -->
 
-        <!-- Ogury -->
-        <meta-data
-            android:name="presage_key"
-            android:value="000000" />
-        <service
-            android:name="io.presage.PresageService"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":remote">
-            <intent-filter>
-                <action android:name="io.presage.PresageService.PIVOT" />
-            </intent-filter>
-        </service>
-        <activity
-            android:name="io.presage.activities.PresageActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-            android:hardwareAccelerated="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
-            <intent-filter>
-                <action android:name="io.presage.intent.action.LAUNCH_WEBVIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <receiver android:name="io.presage.receiver.NetworkChangeReceiver">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
-                <action android:name="io.presage.receiver.NetworkChangeReceiver.ONDESTROY" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name="io.presage.receiver.AlarmReceiver" />
-
-        <provider
-            android:name="io.presage.provider.PresageProvider"
-            android:authorities="${applicationId}.PresageProvider"
-            android:enabled="true"
-            android:exported="true" />
-        <!-- End Ogury -->
-
         <!-- Mailru -->
         <activity
             android:name="com.my.target.common.MyTargetActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
         <!-- End Mailru -->
+
         <!--end of ads by appodeal-->
 
     </application>

@@ -24,12 +24,14 @@ import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
+import ru.kuchanov.scpcore.api.service.EnScpSiteApi;
 import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import rx.Observable;
+import rx.Single;
 import timber.log.Timber;
 
 /**
@@ -45,6 +47,7 @@ public class ApiClientImpl extends ApiClient {
             final Retrofit scpRetrofit,
             final Retrofit scpReaderRetrofit,
             final ScpReaderAuthApi scpReaderAuthApi,
+            final EnScpSiteApi enScpSiteApi,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
             final ConstantValues constantValues
@@ -55,6 +58,7 @@ public class ApiClientImpl extends ApiClient {
                 scpRetrofit,
                 scpReaderRetrofit,
                 scpReaderAuthApi,
+                enScpSiteApi,
                 preferencesManager,
                 gson,
                 constantValues
@@ -63,7 +67,7 @@ public class ApiClientImpl extends ApiClient {
 
     @Override
     public Observable<String> getRandomUrl() {
-        return bindWithUtils(Observable.unsafeCreate(subscriber -> {
+        return Observable.unsafeCreate(subscriber -> {
             final Request.Builder request = new Request.Builder();
             request.url(mConstantValues.getRandomPageUrl());
             request.get();
@@ -72,8 +76,8 @@ public class ApiClientImpl extends ApiClient {
                 final OkHttpClient client = new OkHttpClient.Builder()
                         .addInterceptor(new HttpLoggingInterceptor(
                                 message -> Timber.d(message)).setLevel(BuildConfig.FLAVOR.equals("dev")
-                                                                       ? HttpLoggingInterceptor.Level.BODY
-                                                                       : HttpLoggingInterceptor.Level.NONE)
+                                ? HttpLoggingInterceptor.Level.BODY
+                                : HttpLoggingInterceptor.Level.NONE)
                         )
                         .build();
                 final Response response = client.newCall(request.build()).execute();
@@ -96,13 +100,13 @@ public class ApiClientImpl extends ApiClient {
                 Timber.e(e);
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
 
     @Override
-    public Observable<Integer> getRecentArticlesPageCountObservable() {
-        return bindWithUtils(Observable.<Integer>unsafeCreate(subscriber -> {
+    public Single<Integer> getRecentArticlesPageCountObservable() {
+        return Single.create(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getNewArticles() + "/p/1")
                     .build();
@@ -129,13 +133,12 @@ public class ApiClientImpl extends ApiClient {
                 final String text = spanWithNumber.text();
                 final Integer numOfPages = Integer.valueOf(text.substring(text.lastIndexOf(" ") + 1));
 
-                subscriber.onNext(numOfPages);
-                subscriber.onCompleted();
+                subscriber.onSuccess(numOfPages);
             } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
 
@@ -170,7 +173,6 @@ public class ApiClientImpl extends ApiClient {
 
         return articles;
     }
-
 
     @Override
     protected List<Article> parseForRatedArticles(Document doc) throws ScpParseException {
@@ -240,8 +242,8 @@ public class ApiClientImpl extends ApiClient {
     }
 
     @Override
-    public Observable<List<ArticleTag>> getTagsFromSite() {
-        return bindWithUtils(Observable.<List<ArticleTag>>unsafeCreate(subscriber -> {
+    public Single<List<ArticleTag>> getTagsFromSite() {
+        return Single.<List<ArticleTag>>create(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getBaseApiUrl() + "/system:page-tags/")
                     .build();
@@ -277,25 +279,24 @@ public class ApiClientImpl extends ApiClient {
                     tags.add(tag);
                 }
                 //parse end
-                subscriber.onNext(tags);
-                subscriber.onCompleted();
+                subscriber.onSuccess(tags);
             } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
 
     @Override
-    public Observable<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {
+    public Single<List<Article>> getArticlesByTags(final List<ArticleTag> tags) {
         final List<String> tagsTitles = ArticleTag.getStringsFromTags(tags);
         //fix index of bounds error
         if (tagsTitles.isEmpty()) {
-            return Observable.just(Collections.emptyList());
+            return Single.just(Collections.emptyList());
         }
         final String tagTitle = tagsTitles.get(0);
-        return bindWithUtils(Observable.<List<Article>>unsafeCreate(subscriber -> {
+        return Single.create(subscriber -> {
             final Request request = new Request.Builder()
                     .url(mConstantValues.getBaseApiUrl() + "/system:page-tags/tag/" + tagTitle)
                     .build();
@@ -332,13 +333,12 @@ public class ApiClientImpl extends ApiClient {
                     articles.add(tag);
                 }
                 //parse end
-                subscriber.onNext(articles);
-                subscriber.onCompleted();
+                subscriber.onSuccess(articles);
             } catch (final Exception e) {
                 Timber.e(e, "error while get arts list");
                 subscriber.onError(e);
             }
-        }));
+        });
     }
 
     @Override

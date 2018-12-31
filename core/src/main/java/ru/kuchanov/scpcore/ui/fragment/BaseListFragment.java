@@ -124,6 +124,7 @@ public abstract class BaseListFragment<V extends BaseListMvp.View, P extends Bas
                 getAdapter().notifyDataSetChanged();
                 break;
             case MyPreferenceManager.Keys.ADS_BANNER_IN_ARTICLES_LISTS:
+            case MyPreferenceManager.Keys.TIME_FOR_WHICH_BANNERS_DISABLED:
                 updateData(mPresenter.getData());
                 break;
             case MyPreferenceManager.Keys.DESIGN_LIST_TYPE:

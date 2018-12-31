@@ -29,6 +29,7 @@ import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.util.NotificationUtilsKt;
 import rx.Observable;
+import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
@@ -95,6 +96,7 @@ public abstract class DownloadAllService extends Service {
         return instance != null;
     }
 
+    @SuppressWarnings("TypeMayBeWeakened")
     public static void startDownloadWithType(
             final Context ctx,
             final DownloadEntry type,
@@ -219,22 +221,22 @@ public abstract class DownloadAllService extends Service {
                             getString(R.string.error_notification_recent_list_download_content)
                     );
                 })
-                .onExceptionResumeNext(Observable.<Integer>empty().delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS))
+                .onErrorResumeNext(Observable.<Integer>empty().toSingle().delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS))
                 //if we have limit we must not load all lists of articles
                 .map(pageCount -> (rangeStart != RANGE_NONE && rangeEnd != RANGE_NONE)
                                   ? (int) Math.ceil((double) rangeEnd / getNumOfArticlesOnRecentPage()) : pageCount)
-                .doOnNext(pageCount -> mMaxProgress = pageCount)
+                .doOnSuccess(pageCount -> mMaxProgress = pageCount)
                 //FIX ME for test do not load all arts lists
 //                .doOnNext(pageCount -> mMaxProgress = 2)
-                .flatMap(integer -> Observable.range(1, mMaxProgress))
+                .flatMapObservable(integer -> Observable.range(1, mMaxProgress))
                 .flatMap(integer -> getApiClient().getRecentArticlesForPage(integer)
-                        .doOnNext(list -> {
+                        .doOnSuccess(list -> {
                             mCurProgress = integer;
                             showNotificationDownloadProgress(getString(R.string.notification_recent_list_title),
                                     mCurProgress, mMaxProgress, mNumOfErrors
                             );
                         })
-                        .flatMap(Observable::from)
+                        .flatMapObservable(Observable::from)
                         .doOnError(throwable -> {
                             mCurProgress = integer;
                             mNumOfErrors++;
@@ -242,7 +244,8 @@ public abstract class DownloadAllService extends Service {
                                     mCurProgress, mMaxProgress, mNumOfErrors
                             );
                         })
-                        .onExceptionResumeNext(Observable.empty()))
+                        .onExceptionResumeNext(Observable.empty())
+                )
                 .toList()
 //                //FIX ME test value
 //                .flatMap(list -> Observable.just(list.subList(0, mMaxProgress)))
@@ -265,7 +268,7 @@ public abstract class DownloadAllService extends Service {
         Timber.d("downloadObjects: %s", type);
         showNotificationDownloadList();
         //download lists
-        final Observable<List<Article>> articlesObservable;
+        final Single<List<Article>> articlesObservable;
 
         if (type.resId == R.string.type_archive) {
             articlesObservable = getApiClient().getMaterialsArchiveArticles();
@@ -294,10 +297,10 @@ public abstract class DownloadAllService extends Service {
                         getString(R.string.error_notification_title),
                         getString(R.string.error_notification_objects_list_download_content)
                 ))
-                .onExceptionResumeNext(Observable.<List<Article>>empty().delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS))
+                .onErrorResumeNext(Observable.<List<Article>>empty().toSingle().delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(articles -> getDbProvider()
+                .flatMapObservable(articles -> getDbProvider()
                         .<Pair<Integer, Integer>>saveObjectsArticlesList(articles, type.dbField)
                         .flatMap(integerIntegerPair -> Observable.just(articles)))
                 .subscribeOn(AndroidSchedulers.mainThread())
@@ -359,17 +362,13 @@ public abstract class DownloadAllService extends Service {
                                 Timber.d("downloaded: %s", articleDownloaded.getUrl());
                                 mCurProgress++;
                                 Timber.d("mCurProgress %s, mMaxProgress: %s", mCurProgress, mMaxProgress);
-                                showNotificationDownloadProgress(getString(R.string.download_objects_title),
-                                        mCurProgress, mMaxProgress, mNumOfErrors
-                                );
                             } else {
                                 mNumOfErrors++;
                                 mCurProgress++;
-                                showNotificationDownloadProgress(
-                                        getString(R.string.download_objects_title),
-                                        mCurProgress, mMaxProgress, mNumOfErrors
-                                );
                             }
+                            showNotificationDownloadProgress(getString(R.string.download_objects_title),
+                                    mCurProgress, mMaxProgress, mNumOfErrors
+                            );
                         } catch (Exception | ScpParseException e) {
                             Timber.e(e);
                             mNumOfErrors++;
@@ -437,7 +436,7 @@ public abstract class DownloadAllService extends Service {
                 apiClient.downloadImagesOnDisk(articleDownloaded);
 
                 getAndSaveInnerArticles(dbProvider, apiClient, innerArticleDownloaded, depthLevel + 1, maxDepth);
-            } catch (Exception | ScpParseException e) {
+            } catch (final Exception | ScpParseException e) {
                 Timber.e(e, "error while save inner article");
             }
         }

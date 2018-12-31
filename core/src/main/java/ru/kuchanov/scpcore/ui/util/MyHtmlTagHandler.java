@@ -26,32 +26,32 @@ public class MyHtmlTagHandler implements TagHandler {
      * Keeps track of lists (ol, ul). On bottom of Stack is the outermost list
      * and on top of Stack is the most nested list
      */
-    private Stack<String> lists = new Stack<>();
+    private final Stack<String> lists = new Stack<>();
 
     /**
      * Tracks indexes of ordered lists so that after a nested list ends
      * we can continue with correct index of outer list
      */
-    private Stack<Integer> olNextIndex = new Stack<>();
+    private final Stack<Integer> olNextIndex = new Stack<>();
 
     /**
      * @see android.text.Html
      */
-    private static void start(Editable text, Object mark) {
-        int len = text.length();
+    private static void start(final Editable text, final Object mark) {
+        final int len = text.length();
         text.setSpan(mark, len, len, Spanned.SPAN_MARK_MARK);
     }
 
     /**
      * Modified from {@link android.text.Html}
      */
-    private static void end(Editable text, Class<?> kind, Object... replaces) {
-        int len = text.length();
-        Object obj = getLast(text, kind);
-        int where = text.getSpanStart(obj);
+    private static void end(final Editable text, final Class<?> kind, final Object... replaces) {
+        final int len = text.length();
+        final Object obj = getLast(text, kind);
+        final int where = text.getSpanStart(obj);
         text.removeSpan(obj);
         if (where != len) {
-            for (Object replace : replaces) {
+            for (final Object replace : replaces) {
                 text.setSpan(replace, where, len, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
@@ -60,12 +60,12 @@ public class MyHtmlTagHandler implements TagHandler {
     /**
      * @see android.text.Html
      */
-    private static Object getLast(Spanned text, Class<?> kind) {
+    private static Object getLast(final Spanned text, final Class<?> kind) {
         /*
          * This knows that the last returned object from getSpans()
-		 * will be the most recently added.
-		 */
-        Object[] objs = text.getSpans(0, text.length(), kind);
+         * will be the most recently added.
+         */
+        final Object[] objs = text.getSpans(0, text.length(), kind);
         if (objs.length == 0) {
             return null;
         }
@@ -73,7 +73,12 @@ public class MyHtmlTagHandler implements TagHandler {
     }
 
     @Override
-    public void handleTag(boolean opening, String tag, Editable output, XMLReader xmlReader) {
+    public void handleTag(
+            final boolean opening,
+            final String tag,
+            final Editable output,
+            final XMLReader xmlReader
+    ) {
         switch (tag) {
             case "html":
             case "body":
@@ -107,7 +112,7 @@ public class MyHtmlTagHandler implements TagHandler {
     /**
      * @link https://bitbucket.org/Kuitsi/android-textview-html-list/src/c866e64acc3336890cfde00fae2e59565fe0c1bf/app/src/main/java/fi/iki/kuitsi/listtest/MyTagHandler.java?at=master&fileviewer=file-view-default
      */
-    private void processUlOlLi(boolean opening, String tag, Editable output) {
+    private void processUlOlLi(final boolean opening, final String tag, final Editable output) {
         if (tag.equalsIgnoreCase("ul")) {
             if (opening) {
                 lists.push(tag);
@@ -127,7 +132,7 @@ public class MyHtmlTagHandler implements TagHandler {
                 if (output.length() > 0 && output.charAt(output.length() - 1) != '\n') {
                     output.append("\n");
                 }
-                String parentList = lists.peek();
+                final String parentList = lists.peek();
                 if (parentList.equalsIgnoreCase("ol")) {
                     start(output, new Ol());
                     output.append(olNextIndex.peek().toString()).append(". ");
@@ -150,7 +155,7 @@ public class MyHtmlTagHandler implements TagHandler {
                             bulletMargin -= (lists.size() - 2) * listItemIndent;
                         }
                     }
-                    BulletSpan newBullet = new BulletSpan(bulletMargin);
+                    final BulletSpan newBullet = new BulletSpan(bulletMargin);
                     end(output,
                             Ul.class,
                             new LeadingMarginSpan.Standard(listItemIndent * (lists.size() - 1)),
@@ -172,13 +177,13 @@ public class MyHtmlTagHandler implements TagHandler {
         }
     }
 
-    private void processStrike(boolean opening, Editable output) {
-        int len = output.length();
+    private static void processStrike(final boolean opening, final Editable output) {
+        final int len = output.length();
         if (opening) {
             output.setSpan(new StrikethroughSpan(), len, len, Spanned.SPAN_MARK_MARK);
         } else {
-            Object obj = getLast(output, StrikethroughSpan.class);
-            int where = output.getSpanStart(obj);
+            final Object obj = getLast(output, StrikethroughSpan.class);
+            final int where = output.getSpanStart(obj);
 
             output.removeSpan(obj);
 
@@ -188,14 +193,14 @@ public class MyHtmlTagHandler implements TagHandler {
         }
     }
 
-    private void processU(boolean opening, Editable output) {
+    private static void processU(final boolean opening, final Editable output) {
         Timber.d("processU: %s", output);
-        int len = output.length();
+        final int len = output.length();
         if (opening) {
             output.setSpan(new UnderlineSpan(), len, len, Spanned.SPAN_MARK_MARK);
         } else {
-            Object obj = getLast(output, UnderlineSpan.class);
-            int where = output.getSpanStart(obj);
+            final Object obj = getLast(output, UnderlineSpan.class);
+            final int where = output.getSpanStart(obj);
 
             output.removeSpan(obj);
 
