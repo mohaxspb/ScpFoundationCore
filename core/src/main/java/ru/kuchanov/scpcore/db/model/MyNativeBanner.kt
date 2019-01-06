@@ -56,20 +56,3 @@ open class MyNativeBanner(
 enum class BannerType {
     QUIZ, ART
 }
-
-//[
-//    {
-//        "id": 5,
-//        "imageUrl": "ads/files/5/image",
-//        "logoUrl": "ads/files/5/logo",
-//        "title": "Книги SCP Foundation уже в продаже!",
-//        "subTitle": "Спрашивайте в книжных магазинах своего города или закажите доставку в любой уголок страны",
-//        "ctaButtonText": "Подробнее",
-//        "redirectUrl": "http://artscp.com/promo?utm_source=ru.kuchanov.scpfoundation&utm_medium=referral&utm_campaign=app-ads&utm_term=1",
-//        "bannerType": "ART",
-//        "enabled": false,
-//        "authorId": 32062,
-//        "created": "2019-01-06T17:42:59.341Z",
-//        "updated": "2019-01-06T17:42:59.347Z"
-//    }
-//]
