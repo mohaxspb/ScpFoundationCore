@@ -313,6 +313,10 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                             : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_SCP_QUIZ, new Random().nextInt())
                             );
                             break;
+                        case ART:
+                            //todo
+
+                            break;
                         default:
                             throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
                     }
@@ -332,6 +336,10 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                     ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_SCP_QUIZ, new Random().nextInt(), false)
                                     : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_SCP_QUIZ, new Random().nextInt())
                     );
+                    break;
+                case ART:
+                    //todo
+
                     break;
                 default:
                     throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);

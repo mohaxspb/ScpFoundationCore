@@ -18,7 +18,7 @@ public interface Constants {
     int LEVEL_UP_SCORE_TO_ADD = 10000;
 
     enum NativeAdsSource {
-        ALL, APPODEAL, SCP_QUIZ
+        ALL, APPODEAL, SCP_QUIZ, ART
     }
 
     interface Api {
@@ -44,7 +44,7 @@ public interface Constants {
         String NOT_TRANSLATED_ARTICLE_UTIL_URL = "not_translated_yet_article_which_we_cant_show";
         String NOT_TRANSLATED_ARTICLE_URL_DELIMITER = "___";
 
-        interface ScpReader{
+        interface ScpReader {
             public static final String GRANT_TYPE_PASSWORD = "password";
             public static final String GRANT_TYPE_REFRESH_TOKEN = "refresh_token";
         }

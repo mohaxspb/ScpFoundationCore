@@ -8,6 +8,7 @@ import retrofit2.http.Query;
 import ru.kuchanov.scpcore.api.model.response.LeaderboardUsersUpdateDates;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
 import ru.kuchanov.scpcore.db.model.LeaderboardUser;
+import ru.kuchanov.scpcore.db.model.MyNativeBanner;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import rx.Single;
 
@@ -49,4 +50,7 @@ public interface ScpReaderApi {
             @Query("sku") String sku,
             @Query("token") String purchaseToken
     );
+
+    @GET("ads/all")
+    Single<List<MyNativeBanner>> getAllBanners();
 }
