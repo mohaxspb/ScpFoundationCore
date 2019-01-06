@@ -596,6 +596,18 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         );
     }
 
+    public void updateMyNativeBanners() {
+        mApiClient
+                .getAllBanners()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(banners -> mDbProviderFactory.getDbProvider().saveBanners(banners))
+                .subscribe(
+                        banners -> Timber.d("updateMyNativeBanners onSuccess: %s", banners),
+                        e -> Timber.e(e, "Error while updateMyNativeBanners")
+                );
+    }
+
     public static int getTotalScoreToAddFromAction(
             @ScoreAction final String action,
             final MyPreferenceManager mMyPreferencesManager

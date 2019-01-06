@@ -1048,17 +1048,40 @@ public class DbProvider {
     }
 
     public Observable<List<ArticleTag>> saveArticleTags(final List<ArticleTag> data) {
-        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
-                realm -> realm.insertOrUpdate(data),
-                () -> {
-                    mRealm.close();
-                    subscriber.onNext(data);
-                    subscriber.onCompleted();
-                },
-                e -> {
-                    mRealm.close();
-                    subscriber.onError(e);
-                }
+        return Observable.unsafeCreate(subscriber ->
+                mRealm.executeTransactionAsync(
+                        realm -> realm.insertOrUpdate(data),
+                        () -> {
+                            mRealm.close();
+                            subscriber.onNext(data);
+                            subscriber.onCompleted();
+                        },
+                        e -> {
+                            mRealm.close();
+                            subscriber.onError(e);
+                        }
+                )
+        );
+    }
+
+    public Single<List<MyNativeBanner>> saveBanners(final List<MyNativeBanner> banners) {
+        Timber.d("saveBanners: %s", banners);
+        return Single.create(subscriber ->
+                mRealm.executeTransactionAsync(
+                        realm -> {
+                            //remove all
+                            realm.delete(MyNativeBanner.class);
+                            //insert all
+                            realm.insertOrUpdate(banners);
+                        },
+                        () -> {
+                            mRealm.close();
+                            subscriber.onSuccess(banners);
+                        },
+                        e -> {
+                            mRealm.close();
+                            subscriber.onError(e);
+                        }
                 )
         );
     }
@@ -1072,21 +1095,25 @@ public class DbProvider {
     public Observable<RealmResults<MyNativeBanner>> getQuizBanners() {
         return mRealm.where(MyNativeBanner.class)
                 .equalTo(MyNativeBanner.FIELD_BANNER_TYPE, BannerType.QUIZ.name())
-                .equalTo(MyNativeBanner.FIELD_ENABLE, true)
+                .equalTo(MyNativeBanner.FIELD_ENABLED, true)
                 .findAll()
                 .asObservable();
     }
 
     public List<MyNativeBanner> getAllArtBanners() {
-        return mRealm.copyFromRealm(mRealm.where(MyNativeBanner.class)
-                .equalTo(MyNativeBanner.FIELD_BANNER_TYPE, BannerType.ART.name())
-                .findAll());
+        return mRealm.copyFromRealm(
+                mRealm.where(MyNativeBanner.class)
+                        .equalTo(MyNativeBanner.FIELD_BANNER_TYPE, BannerType.ART.name())
+                        .findAll()
+        );
     }
 
     public List<MyNativeBanner> getEnabledArtBanners() {
-        return mRealm.copyFromRealm(mRealm.where(MyNativeBanner.class)
-                .equalTo(MyNativeBanner.FIELD_BANNER_TYPE, BannerType.ART.name())
-                .equalTo(MyNativeBanner.FIELD_ENABLE, true)
-                .findAll());
+        return mRealm.copyFromRealm(
+                mRealm.where(MyNativeBanner.class)
+                        .equalTo(MyNativeBanner.FIELD_BANNER_TYPE, BannerType.ART.name())
+                        .equalTo(MyNativeBanner.FIELD_ENABLED, true)
+                        .findAll()
+        );
     }
 }

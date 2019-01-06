@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.lang.annotation.Retention;
@@ -22,6 +24,7 @@ import java.util.Random;
 import javax.inject.Inject;
 
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ParseHtmlUtils;
@@ -284,13 +287,26 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public static List<MyListItem> createAdsModelsList(final boolean isArticle, final MyPreferenceManager myPreferenceManager) {
         Timber.d("createAdsModelsList");
         final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-        final Constants.NativeAdsSource nativeAdsSource =
-                Constants.NativeAdsSource.values()[(int) config.getLong(NATIVE_ADS_LISTS_SOURCE_V2)];
-        Timber.d("nativeAdsSource: %s", nativeAdsSource);
+        final Constants.NativeAdsSource nativeAdsSource;
+
 
         final DbProvider dbProvider = BaseApplication.getAppComponent().getDbProviderFactory().getDbProvider();
-        //todo get all for some users ids
-        final List<MyNativeBanner> artBanners = dbProvider.getEnabledArtBanners();
+
+        final List<MyNativeBanner> artBanners;
+        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        final String bannerAuthorEmail = BuildConfig.BANNER_AUTHOR_EMAIL;
+        if (firebaseUser != null && bannerAuthorEmail.equals(firebaseUser.getEmail())) {
+            nativeAdsSource = Constants.NativeAdsSource.ART;
+//            Timber.d("dbProvider.getAllArtBanners(): %s", dbProvider.getAllArtBanners());
+//            Timber.d("dbProvider.getEnabledArtBanners(): %s", dbProvider.getEnabledArtBanners());
+//            Timber.d("dbProvider.getQuizBanners(): %s", dbProvider.getQuizBanners());
+//            Timber.d("dbProvider.getAllBanners(): %s", dbProvider.getAllBanners());
+            artBanners = dbProvider.getAllArtBanners();
+        } else {
+            nativeAdsSource = Constants.NativeAdsSource.values()[(int) config.getLong(NATIVE_ADS_LISTS_SOURCE_V2)];
+            artBanners = dbProvider.getEnabledArtBanners();
+        }
+        Timber.d("nativeAdsSource: %s", nativeAdsSource);
         Timber.d("artBanners: %s", artBanners);
 
         int appodealIndex = 0;

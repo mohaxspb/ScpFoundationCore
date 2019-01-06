@@ -245,7 +245,7 @@ public class StorageModuleImpl extends StorageModule {
                         .addField(MyNativeBanner.FIELD_SUB_TITLE, String.class)
                         .addField(MyNativeBanner.FIELD_CTA_BUTTON_TEXT, String.class)
                         .addField(MyNativeBanner.FIELD_REDIRECT_URL, String.class)
-                        .addField(MyNativeBanner.FIELD_ENABLE, Boolean.class)
+                        .addField(MyNativeBanner.FIELD_ENABLED, Boolean.class)
                         .addField(MyNativeBanner.FIELD_AUTHOR_ID, Long.class)
                         .addField(MyNativeBanner.FIELD_CREATED, String.class)
                         .addField(MyNativeBanner.FIELD_UPDATED, String.class)
@@ -259,7 +259,7 @@ public class StorageModuleImpl extends StorageModule {
                 banner.setString(MyNativeBanner.FIELD_SUB_TITLE, "Спрашивайте в книжных магазинах своего города или закажите доставку в любой уголок страны");
                 banner.setString(MyNativeBanner.FIELD_CTA_BUTTON_TEXT, "Подробнее");
                 banner.setString(MyNativeBanner.FIELD_REDIRECT_URL, "http://artscp.com/promo?utm_source=ru.kuchanov.scpfoundation&utm_medium=referral&utm_campaign=app-ads&utm_term=1");
-                banner.setBoolean(MyNativeBanner.FIELD_ENABLE, true);
+                banner.setBoolean(MyNativeBanner.FIELD_ENABLED, true);
                 banner.setLong(MyNativeBanner.FIELD_AUTHOR_ID, 32062);
                 banner.setString(MyNativeBanner.FIELD_CREATED, "2019-01-06T17:42:59.341Z");
                 banner.setString(MyNativeBanner.FIELD_UPDATED, "2019-01-06T17:42:59.341Z");

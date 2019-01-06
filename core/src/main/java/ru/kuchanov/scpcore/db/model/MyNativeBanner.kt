@@ -14,7 +14,7 @@ open class MyNativeBanner(
         var subTitle: String? = "",
         var ctaButtonText: String? = "",
         var redirectUrl: String? = "",
-        var enable: Boolean? = false,
+        var enabled: Boolean? = false,
         var authorId: Long? = 0,
         var created: String? = "",
         var updated: String? = "",
@@ -37,7 +37,7 @@ open class MyNativeBanner(
         @JvmField
         val FIELD_REDIRECT_URL = "redirectUrl"
         @JvmField
-        val FIELD_ENABLE = "enable"
+        val FIELD_ENABLED = "enabled"
         @JvmField
         val FIELD_AUTHOR_ID = "authorId"
         @JvmField
@@ -46,6 +46,10 @@ open class MyNativeBanner(
         val FIELD_UPDATED = "updated"
         @JvmField
         val FIELD_BANNER_TYPE = "bannerType"
+    }
+
+    override fun toString(): String {
+        return "MyNativeBanner(id=$id, imageUrl=$imageUrl, logoUrl=$logoUrl, title=$title, subTitle=$subTitle, ctaButtonText=$ctaButtonText, redirectUrl=$redirectUrl, enabled=$enabled, authorId=$authorId, created=$created, updated=$updated, bannerType=$bannerType)"
     }
 }
 

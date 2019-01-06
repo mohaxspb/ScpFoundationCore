@@ -213,6 +213,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         scpArtAdView.setVisibility(View.VISIBLE);
 
         scpArtAdView.setOnClickListener(v -> {
+            Timber.d("MyNativeBanner: onClick %s", scpArtAd);
             FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
                     Constants.Firebase.Analitics.EventName.SCP_ART_CLICKED,
                     new Bundle()
@@ -234,6 +235,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         ctaTextView.setText(scpArtAd.getCtaButtonText());
 
         progressCenter.setVisibility(View.VISIBLE);
+        Timber.d("imageUrl: %s", BuildConfig.SCP_READER_API_URL + scpArtAd.getImageUrl());
         Glide.with(mainImageView.getContext())
                 .load(BuildConfig.SCP_READER_API_URL + scpArtAd.getImageUrl())
                 .error(R.drawable.art_scp_default_ads)

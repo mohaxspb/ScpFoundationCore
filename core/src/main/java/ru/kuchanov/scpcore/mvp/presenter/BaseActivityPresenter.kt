@@ -60,7 +60,11 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
         dbProviderFactory: DbProviderFactory,
         apiClient: ApiClient,
         private val inAppHelper: InAppHelper
-) : BasePresenter<V>(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper), BaseActivityMvp.Presenter<V> {
+) : BasePresenter<V>(
+        myPreferencesManager,
+        dbProviderFactory,
+        apiClient, inAppHelper
+), BaseActivityMvp.Presenter<V> {
 
     //facebook
     private val callbackManager: CallbackManager = CallbackManager.Factory.create()
@@ -147,6 +151,9 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 Timber.e(error)
             }
         })
+
+        //update MyNativeBanners
+        updateMyNativeBanners();
     }
 
     /**
