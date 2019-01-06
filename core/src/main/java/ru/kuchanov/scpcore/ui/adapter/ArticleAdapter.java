@@ -23,6 +23,7 @@ import ru.kuchanov.scpcore.api.ParseHtmlUtils;
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
+import ru.kuchanov.scpcore.db.model.MyNativeBanner;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleImageHolder;
@@ -69,6 +70,8 @@ public class ArticleAdapter
     private static final int TYPE_NATIVE_APPODEAL = 7;
 
     private static final int TYPE_NATIVE_SCP_QUIZ = 9;
+
+    private static final int TYPE_NATIVE_SCP_ART = 10;
 
     @Inject
     MyPreferenceManager mMyPreferenceManager;
@@ -301,11 +304,14 @@ public class ArticleAdapter
                 return TYPE_NATIVE_APPODEAL;
             case ParseHtmlUtils.TextType.NATIVE_ADS_SCP_QUIZ:
                 return TYPE_NATIVE_SCP_QUIZ;
+            case ParseHtmlUtils.TextType.NATIVE_ADS_ART:
+                return TYPE_NATIVE_SCP_ART;
             default:
                 throw new IllegalArgumentException("unexpected type: " + type);
         }
     }
 
+    @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
         final View view;
@@ -331,6 +337,7 @@ public class ArticleAdapter
             case TYPE_TABS:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_tabs, parent, false);
                 return new ArticleTabsHolder(view, this);
+            case TYPE_NATIVE_SCP_ART:
             case TYPE_NATIVE_APPODEAL:
             case TYPE_NATIVE_SCP_QUIZ:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_native_container, parent, false);
@@ -360,6 +367,7 @@ public class ArticleAdapter
                 ((ArticleTableHolder) holder).bind(textPartViewModel);
                 break;
             case TYPE_TAGS:
+                //noinspection unchecked
                 ((ArticleTagsHolder) holder).bind((RealmList<ArticleTag>) textPartViewModel.data);
                 break;
             case TYPE_TABS:
@@ -371,6 +379,9 @@ public class ArticleAdapter
             break;
             case TYPE_NATIVE_SCP_QUIZ:
                 ((NativeAdsArticleListHolder) holder).bind();
+                break;
+            case TYPE_NATIVE_SCP_ART:
+                ((NativeAdsArticleListHolder) holder).bind((MyNativeBanner) textPartViewModel.data);
                 break;
             default:
                 throw new IllegalArgumentException("unexpected item type: " + getItemViewType(position));

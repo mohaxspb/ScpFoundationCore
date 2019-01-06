@@ -257,8 +257,8 @@ public class StorageModuleImpl extends StorageModule {
                 banner.setString(MyNativeBanner.FIELD_IMAGE_URL, "ads/files/5/image");
                 banner.setString(MyNativeBanner.FIELD_TITLE, "Книги SCP Foundation уже в продаже!");
                 banner.setString(MyNativeBanner.FIELD_SUB_TITLE, "Спрашивайте в книжных магазинах своего города или закажите доставку в любой уголок страны");
-                banner.setString(MyNativeBanner.FIELD_CTA_BUTTON_TEXT, "Книги SCP Foundation уже в продаже!");
-                banner.setString(MyNativeBanner.FIELD_REDIRECT_URL, "Книги SCP Foundation уже в продаже!");
+                banner.setString(MyNativeBanner.FIELD_CTA_BUTTON_TEXT, "Подробнее");
+                banner.setString(MyNativeBanner.FIELD_REDIRECT_URL, "http://artscp.com/promo?utm_source=ru.kuchanov.scpfoundation&utm_medium=referral&utm_campaign=app-ads&utm_term=1");
                 banner.setBoolean(MyNativeBanner.FIELD_ENABLE, true);
                 banner.setLong(MyNativeBanner.FIELD_AUTHOR_ID, 32062);
                 banner.setString(MyNativeBanner.FIELD_CREATED, "2019-01-06T17:42:59.341Z");

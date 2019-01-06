@@ -53,7 +53,6 @@ enum class BannerType {
     QUIZ, ART
 }
 
-
 //[
 //    {
 //        "id": 5,

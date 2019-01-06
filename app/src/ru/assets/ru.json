@@ -191,7 +191,7 @@
       },
       {
         "key": "ads_scp_art_enabled",
-        "value": false
+        "value": true
       },
       {
         "key": "native_ads_lists_source_v2",

@@ -1,10 +1,9 @@
 package ru.kuchanov.scpcore.di;
 
-import org.jetbrains.annotations.NotNull;
-
 import javax.inject.Singleton;
 
 import dagger.Component;
+import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.di.module.AppModule;
 import ru.kuchanov.scpcore.di.module.HelpersModule;
 import ru.kuchanov.scpcore.di.module.NetModule;
@@ -67,8 +66,8 @@ import ru.kuchanov.scpcore.ui.holder.article.ArticleTabsHolder;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleTagsHolder;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleTextHolder;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleTitleHolder;
-import ru.kuchanov.scpcore.ui.holder.articlelist.HolderMin;
 import ru.kuchanov.scpcore.ui.holder.article.NativeAdsArticleListHolder;
+import ru.kuchanov.scpcore.ui.holder.articlelist.HolderMin;
 
 @Singleton
 @Component(modules = {
@@ -143,7 +142,7 @@ public interface AppComponent {
 
     void inject(FreeAdsDisableActionsFragment fragment);
 
-    void inject(@NotNull LeaderboardFragment leaderboardFragment);
+    void inject(LeaderboardFragment leaderboardFragment);
 
     void inject(TextSizeDialogFragment dialogFragment);
 
@@ -196,4 +195,6 @@ public interface AppComponent {
     void inject(DownloadAllServiceDefault service);
 
     void inject(MyFirebaseMessagingService myFirebaseMessagingService);
+
+    DbProviderFactory getDbProviderFactory();
 }
