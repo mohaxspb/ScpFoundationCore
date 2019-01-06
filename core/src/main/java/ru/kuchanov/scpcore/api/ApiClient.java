@@ -78,6 +78,7 @@ import ru.kuchanov.scpcore.api.service.VpsServer;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.LeaderboardUser;
+import ru.kuchanov.scpcore.db.model.MyNativeBanner;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.db.model.SocialProviderModel;
 import ru.kuchanov.scpcore.db.model.User;
@@ -89,7 +90,6 @@ import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
 import ru.kuchanov.scpcore.util.DimensionUtils;
 import rx.Observable;
 import rx.Single;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -118,6 +118,7 @@ public class ApiClient {
 
     private final ScpReaderAuthApi mScpReaderAuthApi;
 
+    //fixme delete it
     protected final EnScpSiteApi mEnScpSiteApi;
 
     private final ScpServer mScpServer;
@@ -130,6 +131,7 @@ public class ApiClient {
             final Retrofit scpRetrofit,
             final Retrofit scpReaderRetrofit,
             final ScpReaderAuthApi scpReaderAuthApi,
+            //fixme delete it
             final EnScpSiteApi enScpSiteApi,
             final MyPreferenceManager preferencesManager,
             final Gson gson,
@@ -143,6 +145,7 @@ public class ApiClient {
         mScpServer = scpRetrofit.create(ScpServer.class);
         mScpReaderApi = scpReaderRetrofit.create(ScpReaderApi.class);
         mScpReaderAuthApi = scpReaderAuthApi;
+        //fixme delete it
         mEnScpSiteApi = enScpSiteApi;
         mConstantValues = constantValues;
     }
@@ -159,6 +162,10 @@ public class ApiClient {
                 BuildConfig.SCP_READER_API_CLIENT_ID,
                 BuildConfig.SCP_READER_API_CLIENT_SECRET
         );
+    }
+
+    public Single<List<MyNativeBanner>> getAllBanners() {
+        return mScpReaderApi.getAllBanners();
     }
 
     public Observable<String> getRandomUrl() {

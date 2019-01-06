@@ -13,6 +13,11 @@ import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImageTranslation;
 import ru.kuchanov.scpcore.di.module.StorageModule;
+import ru.kuchanov.scpcore.db.model.MyNativeBanner;
+import io.realm.RealmResults;
+import io.realm.DynamicRealmObject;
+import ru.kuchanov.scpcore.db.model.BannerType;
+import ru.kuchanov.scpcore.db.model.RealmString;
 import timber.log.Timber;
 
 /**
@@ -172,6 +177,46 @@ public class StorageModuleImpl extends StorageModule {
                             .transform(obj -> obj.set(LeaderboardUser.FIELD_ID, currentId++))
                             .addPrimaryKey(LeaderboardUser.FIELD_ID);
                 }
+                oldVersion++;
+            }
+
+            if (oldVersion == 9) {
+                schema.create(MyNativeBanner.class.getSimpleName())
+                        .addField(
+                                MyNativeBanner.FIELD_ID,
+                                Long.class,
+                                FieldAttribute.PRIMARY_KEY,
+                                FieldAttribute.REQUIRED
+                        )
+                        .addField(MyNativeBanner.FIELD_LOGO_URL, String.class)
+                        .addField(MyNativeBanner.FIELD_IMAGE_URL, String.class)
+                        .addField(MyNativeBanner.FIELD_TITLE, String.class)
+                        .addField(MyNativeBanner.FIELD_SUB_TITLE, String.class)
+                        .addField(MyNativeBanner.FIELD_CTA_BUTTON_TEXT, String.class)
+                        .addField(MyNativeBanner.FIELD_REDIRECT_URL, String.class)
+                        .addField(MyNativeBanner.FIELD_ENABLED, Boolean.class)
+                        .addField(MyNativeBanner.FIELD_AUTHOR_ID, Long.class)
+                        .addField(MyNativeBanner.FIELD_CREATED, String.class)
+                        .addField(MyNativeBanner.FIELD_UPDATED, String.class)
+                        .addField(MyNativeBanner.FIELD_BANNER_TYPE, String.class);
+
+
+                final DynamicRealmObject banner = realm.createObject(MyNativeBanner.class.getSimpleName(), 999999);
+                banner.setString(MyNativeBanner.FIELD_LOGO_URL, "ads/files/5/logo");
+                banner.setString(MyNativeBanner.FIELD_IMAGE_URL, "ads/files/5/image");
+                banner.setString(MyNativeBanner.FIELD_TITLE, "Книги SCP Foundation уже в продаже!");
+                banner.setString(MyNativeBanner.FIELD_SUB_TITLE, "Спрашивайте в книжных магазинах своего города или закажите доставку в любой уголок страны");
+                banner.setString(MyNativeBanner.FIELD_CTA_BUTTON_TEXT, "Подробнее");
+                banner.setString(MyNativeBanner.FIELD_REDIRECT_URL, "http://artscp.com/promo?utm_source=ru.kuchanov.scpfoundation&utm_medium=referral&utm_campaign=app-ads&utm_term=1");
+                banner.setBoolean(MyNativeBanner.FIELD_ENABLED, true);
+                banner.setLong(MyNativeBanner.FIELD_AUTHOR_ID, 32062);
+                banner.setString(MyNativeBanner.FIELD_CREATED, "2019-01-06T17:42:59.341Z");
+                banner.setString(MyNativeBanner.FIELD_UPDATED, "2019-01-06T17:42:59.341Z");
+                banner.setString(MyNativeBanner.FIELD_BANNER_TYPE, BannerType.ART.name());
+
+                final RealmResults<DynamicRealmObject> banners = realm.where(MyNativeBanner.class.getSimpleName()).findAll();
+                Timber.d("banners: %s", banners);
+
                 oldVersion++;
             }
 

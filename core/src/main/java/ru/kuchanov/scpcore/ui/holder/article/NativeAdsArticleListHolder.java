@@ -19,6 +19,8 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -28,10 +30,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
+import ru.kuchanov.scpcore.db.model.MyNativeBanner;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
@@ -198,17 +202,71 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         scpArtAdView.setVisibility(View.GONE);
         appodealNativeAdView.setVisibility(View.VISIBLE);
         final NativeAd nativeAd = nativeAdsList.get(appodealAdIndex);
-//        if (nativeAd.containsVideo()) {
-//            appodealNativeMediaView.setVisibility(View.VISIBLE);
-////            appodealNativeAdView.setVisibility(View.VISIBLE);
-////            nativeAd.setNativeMediaView(appodealNativeMediaView);
-//            appodealNativeAdView.setNativeMediaView(appodealNativeMediaView);
-//
-//        } else {
-//            appodealNativeMediaView.setVisibility(View.GONE);
-////            appodealNativeAdView.setVisibility(View.VISIBLE);
-////            appodealNativeAdView.setNativeAd(nativeAd);
-//        }
         appodealNativeAdView.setNativeAd(nativeAd);
+    }
+
+    public void bind(@NotNull final MyNativeBanner scpArtAd) {
+        Timber.d("scpArtAd: %s", scpArtAd);
+//        appodealNativeMediaView.setVisibility(View.GONE);
+        appodealNativeAdView.setVisibility(View.GONE);
+
+        scpArtAdView.setVisibility(View.VISIBLE);
+
+        scpArtAdView.setOnClickListener(v -> {
+            Timber.d("MyNativeBanner: onClick %s", scpArtAd);
+            FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
+                    Constants.Firebase.Analitics.EventName.SCP_ART_CLICKED,
+                    new Bundle()
+            );
+            IntentUtils.openUrl(scpArtAd.getRedirectUrl());
+        });
+
+        ratingBar.setVisibility(View.VISIBLE);
+        Glide.with(logoImageView.getContext())
+                .load(BuildConfig.SCP_READER_API_URL + scpArtAd.getLogoUrl())
+                .error(R.drawable.ic_scp_art_ad_img)
+                .fitCenter()
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(logoImageView);
+
+        titleTextView.setText(scpArtAd.getTitle());
+        subtitleTextView.setText(scpArtAd.getSubTitle());
+        ctaTextView.setText(scpArtAd.getCtaButtonText());
+
+        progressCenter.setVisibility(View.VISIBLE);
+        Timber.d("imageUrl: %s", BuildConfig.SCP_READER_API_URL + scpArtAd.getImageUrl());
+        Glide.with(mainImageView.getContext())
+                .load(BuildConfig.SCP_READER_API_URL + scpArtAd.getImageUrl())
+                .error(R.drawable.art_scp_default_ads)
+                .fitCenter()
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(
+                            final Exception e,
+                            final String model,
+                            final Target<GlideDrawable> target,
+                            final boolean isFirstResource
+                    ) {
+                        Timber.e(e, "ERROR while load image for scp art");
+                        progressCenter.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(
+                            final GlideDrawable resource,
+                            final String model,
+                            final Target<GlideDrawable> target,
+                            final boolean isFromMemoryCache,
+                            final boolean isFirstResource
+                    ) {
+                        progressCenter.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .into(mainImageView);
     }
 }
