@@ -29,6 +29,13 @@ public class MostRatedArticlesPresenter
     }
 
     @Override
+    public void getDataFromApi(final int offset) {
+        super.getDataFromApi(offset);
+
+        updateMyNativeBanners();
+    }
+
+    @Override
     protected Observable<RealmResults<Article>> getDbObservable() {
         return mDbProviderFactory.getDbProvider().getArticlesSortedAsync(Article.FIELD_IS_IN_MOST_RATED, Sort.ASCENDING);
     }

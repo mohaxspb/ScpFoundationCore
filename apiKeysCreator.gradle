@@ -57,6 +57,8 @@ ext {
 
             variant.buildConfigField('String', 'SCP_READER_API_CLIENT_ID', '"' + properties.get("scpReaderApiClientId") + '"')
             variant.buildConfigField('String', 'SCP_READER_API_CLIENT_SECRET', '"' + properties.get("scpReaderApiClientSecret") + '"')
+
+            variant.buildConfigField('String', 'BANNER_AUTHOR_EMAIL', '"' + properties.get("bannerAuthorEmail") + '"')
             //our APIs data END
 
             variant.resValue('string', 'web_application_id', properties.get("webApplicationId"))

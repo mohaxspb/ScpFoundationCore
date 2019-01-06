@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -28,7 +29,9 @@ import ru.kuchanov.scpcore.api.model.firebase.ArticleInFirebase;
 import ru.kuchanov.scpcore.db.error.ScpNoArticleForIdError;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
+import ru.kuchanov.scpcore.db.model.BannerType;
 import ru.kuchanov.scpcore.db.model.LeaderboardUser;
+import ru.kuchanov.scpcore.db.model.MyNativeBanner;
 import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
@@ -985,7 +988,7 @@ public class DbProvider {
      */
     public Observable<Integer> setArticlesSynced(final List<Article> articles, final boolean synced) {
         Timber.d("setArticlesSynced size: %s, new state: %s", articles.size(), synced);
-        final List<String> urls = new ArrayList<>();
+        final Collection<String> urls = new ArrayList<>();
         for (final Article article : articles) {
             urls.add(article.url);
         }
@@ -1045,18 +1048,72 @@ public class DbProvider {
     }
 
     public Observable<List<ArticleTag>> saveArticleTags(final List<ArticleTag> data) {
-        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
-                realm -> realm.insertOrUpdate(data),
-                () -> {
-                    mRealm.close();
-                    subscriber.onNext(data);
-                    subscriber.onCompleted();
-                },
-                e -> {
-                    mRealm.close();
-                    subscriber.onError(e);
-                }
+        return Observable.unsafeCreate(subscriber ->
+                mRealm.executeTransactionAsync(
+                        realm -> realm.insertOrUpdate(data),
+                        () -> {
+                            mRealm.close();
+                            subscriber.onNext(data);
+                            subscriber.onCompleted();
+                        },
+                        e -> {
+                            mRealm.close();
+                            subscriber.onError(e);
+                        }
                 )
+        );
+    }
+
+    public Single<List<MyNativeBanner>> saveBanners(final List<MyNativeBanner> banners) {
+        Timber.d("saveBanners: %s", banners);
+        return Single.create(subscriber ->
+                mRealm.executeTransactionAsync(
+                        realm -> {
+                            //remove all
+                            realm.delete(MyNativeBanner.class);
+                            //insert all
+                            realm.insertOrUpdate(banners);
+                        },
+                        () -> {
+                            mRealm.close();
+                            subscriber.onSuccess(banners);
+                        },
+                        e -> {
+                            mRealm.close();
+                            subscriber.onError(e);
+                        }
+                )
+        );
+    }
+
+    public Observable<RealmResults<MyNativeBanner>> getAllBanners() {
+        return mRealm.where(MyNativeBanner.class)
+                .findAll()
+                .asObservable();
+    }
+
+    public Observable<RealmResults<MyNativeBanner>> getQuizBanners() {
+        return mRealm.where(MyNativeBanner.class)
+                .equalTo(MyNativeBanner.FIELD_BANNER_TYPE, BannerType.QUIZ.name())
+                .equalTo(MyNativeBanner.FIELD_ENABLED, true)
+                .findAll()
+                .asObservable();
+    }
+
+    public List<MyNativeBanner> getAllArtBanners() {
+        return mRealm.copyFromRealm(
+                mRealm.where(MyNativeBanner.class)
+                        .equalTo(MyNativeBanner.FIELD_BANNER_TYPE, BannerType.ART.name())
+                        .findAll()
+        );
+    }
+
+    public List<MyNativeBanner> getEnabledArtBanners() {
+        return mRealm.copyFromRealm(
+                mRealm.where(MyNativeBanner.class)
+                        .equalTo(MyNativeBanner.FIELD_BANNER_TYPE, BannerType.ART.name())
+                        .equalTo(MyNativeBanner.FIELD_ENABLED, true)
+                        .findAll()
         );
     }
 }
