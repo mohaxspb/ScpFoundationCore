@@ -7,8 +7,6 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'realm-android'
 //butterknife
 apply plugin: 'com.jakewharton.butterknife'
-//new crash reporting
-apply plugin: 'io.fabric'
 
 //here is script to generate version code from version name
 //which is set in gradle.properties as value of version var
@@ -20,7 +18,6 @@ apply from: '../apiKeysCreator.gradle'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion '28.0.3'
 
     compileOptions.encoding = 'utf-8'
 
@@ -131,7 +128,7 @@ android {
         //multidex to support more than 65K methods
         api 'com.android.support:multidex:1.0.3'
         //adapter delegates
-        api 'com.hannesdorfmann:adapterdelegates3:3.0.1'
+        api 'com.hannesdorfmann:adapterdelegates3:3.1.0'
         //rx
         api 'io.reactivex:rxandroid:1.2.1'
         api 'io.reactivex:rxjava:1.3.8'
@@ -152,7 +149,9 @@ android {
         kapt "com.google.dagger:dagger-compiler:$daggerVersion"
         //butterKnife
         String butterKnifeVersion = '8.8.1'
-        api "com.jakewharton:butterknife:$butterKnifeVersion"
+        api "com.jakewharton:butterknife:$butterKnifeVersion", {
+            exclude group: 'com.android.support'
+        }
         kapt "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
         //image
         api 'com.github.bumptech.glide:glide:3.8.0'
@@ -167,20 +166,20 @@ android {
         //vk
         api 'com.vk:androidsdk:1.6.9'
         //facebook
-        api 'com.facebook.android:facebook-core:4.35.0'
-        api 'com.facebook.android:facebook-login:4.35.0'
+        api 'com.facebook.android:facebook-core:4.38.1'
+        api 'com.facebook.android:facebook-login:4.38.1'
         //firebase
         //WARNNING!!! There are bug with version update suggestions for firebase libs!
         //some versions are not yet released and failed to load.
         //check https://firebase.google.com/support/release-notes/android before update
         //to find latest versions! Also they can use `androidx` dependencies, which may cause conflicts!
-        implementation 'com.google.firebase:firebase-core:16.0.4'
-        api 'com.google.firebase:firebase-invites:16.0.4'
-        api 'com.google.firebase:firebase-analytics:16.0.4'
-        api 'com.google.firebase:firebase-database:16.0.3'
-        api 'com.google.firebase:firebase-config:16.1.0'
-        api 'com.google.firebase:firebase-ads:17.0.0'
-        api 'com.google.firebase:firebase-auth:16.0.5'
+        api 'com.google.firebase:firebase-core:16.0.6'
+        api 'com.google.firebase:firebase-invites:16.0.6'
+        api 'com.google.firebase:firebase-analytics:16.0.6'
+        api 'com.google.firebase:firebase-database:16.0.5'
+        api 'com.google.firebase:firebase-config:16.1.3'
+        api 'com.google.firebase:firebase-ads:17.1.2'
+        api 'com.google.firebase:firebase-auth:16.1.0'
         api 'com.google.firebase:firebase-messaging:17.3.4'
         //google login
         api 'com.google.android.gms:play-services-auth:16.0.1'

@@ -414,7 +414,16 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     private void setUpBanner() {
-        Timber.d("setUpBanner");
+//        Timber.d("setUpBanner");
+//        Timber.d("mMyPreferenceManager.isHasAnySubscription(): %s", mMyPreferenceManager.isHasAnySubscription());
+//        Timber.d("!isBannerEnabled(): %s", !isBannerEnabled());
+//        Timber.d("!mMyPreferenceManager.isTimeToShowBannerAds(): %s", !mMyPreferenceManager.isTimeToShowBannerAds());
+//        Timber.d("mAdView != null: %s", mAdView != null);
+//        Timber.d("mMyPreferenceManager.isHasAnySubscription()\n|| !isBannerEnabled()\n || !mMyPreferenceManager.isTimeToShowBannerAds(): %s",
+//                mMyPreferenceManager.isHasAnySubscription()
+//                || !isBannerEnabled()
+//                || !mMyPreferenceManager.isTimeToShowBannerAds()
+//        );
         if (mMyPreferenceManager.isHasAnySubscription()
                 || !isBannerEnabled()
                 || !mMyPreferenceManager.isTimeToShowBannerAds()) {
@@ -424,6 +433,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             }
         } else {
             if (mAdView != null) {
+//                Timber.d("Enable banner! mAdView.isLoading(): %s", mAdView.isLoading());
                 mAdView.setEnabled(true);
                 mAdView.setVisibility(View.VISIBLE);
                 if (!mAdView.isLoading()) {

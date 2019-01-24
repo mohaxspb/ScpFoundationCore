@@ -15,7 +15,6 @@ apply from: '../apiKeysCreator.gradle'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "ru.dante.scpfoundation"
@@ -199,7 +198,7 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
     //need to compile...
-    implementation 'com.google.firebase:firebase-core:16.0.4'
+    implementation 'com.google.firebase:firebase-core:16.0.6'
 
     //core module
     implementation project(':core')
