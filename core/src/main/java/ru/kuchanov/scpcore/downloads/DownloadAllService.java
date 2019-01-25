@@ -1,7 +1,5 @@
 package ru.kuchanov.scpcore.downloads;
 
-import org.jetbrains.annotations.NotNull;
-
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -10,8 +8,10 @@ import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.util.Pair;
 import android.text.TextUtils;
+import android.widget.Toast;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -221,30 +221,36 @@ public abstract class DownloadAllService extends Service {
                             getString(R.string.error_notification_recent_list_download_content)
                     );
                 })
-                .onErrorResumeNext(Observable.<Integer>empty().toSingle().delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS))
+                .onErrorResumeNext(
+                        Single
+                                .just(0)
+                                .delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS)
+                )
                 //if we have limit we must not load all lists of articles
                 .map(pageCount -> (rangeStart != RANGE_NONE && rangeEnd != RANGE_NONE)
-                                  ? (int) Math.ceil((double) rangeEnd / getNumOfArticlesOnRecentPage()) : pageCount)
+                        ? (int) Math.ceil((double) rangeEnd / getNumOfArticlesOnRecentPage()) : pageCount)
                 .doOnSuccess(pageCount -> mMaxProgress = pageCount)
                 //FIX ME for test do not load all arts lists
 //                .doOnNext(pageCount -> mMaxProgress = 2)
                 .flatMapObservable(integer -> Observable.range(1, mMaxProgress))
-                .flatMap(integer -> getApiClient().getRecentArticlesForPage(integer)
-                        .doOnSuccess(list -> {
-                            mCurProgress = integer;
-                            showNotificationDownloadProgress(getString(R.string.notification_recent_list_title),
-                                    mCurProgress, mMaxProgress, mNumOfErrors
-                            );
-                        })
-                        .flatMapObservable(Observable::from)
-                        .doOnError(throwable -> {
-                            mCurProgress = integer;
-                            mNumOfErrors++;
-                            showNotificationDownloadProgress(getString(R.string.notification_recent_list_title),
-                                    mCurProgress, mMaxProgress, mNumOfErrors
-                            );
-                        })
-                        .onExceptionResumeNext(Observable.empty())
+                .flatMap(pageNumber ->
+                        getApiClient()
+                                .getRecentArticlesForPage(pageNumber)
+                                .doOnSuccess(list -> {
+                                    mCurProgress = pageNumber;
+                                    showNotificationDownloadProgress(getString(R.string.notification_recent_list_title),
+                                            mCurProgress, mMaxProgress, mNumOfErrors
+                                    );
+                                })
+                                .flatMapObservable(Observable::from)
+                                .doOnError(throwable -> {
+                                    mCurProgress = pageNumber;
+                                    mNumOfErrors++;
+                                    showNotificationDownloadProgress(getString(R.string.notification_recent_list_title),
+                                            mCurProgress, mMaxProgress, mNumOfErrors
+                                    );
+                                })
+                                .onExceptionResumeNext(Observable.empty())
                 )
                 .toList()
 //                //FIX ME test value
@@ -255,6 +261,15 @@ public abstract class DownloadAllService extends Service {
                 .subscribe(
                         article -> {
                             Timber.d("download complete");
+                            stopDownloadAndRemoveNotif();
+                        },
+                        error -> {
+                            Timber.e(error, "error while download all articles");
+                            Toast.makeText(
+                                    DownloadAllService.this,
+                                    R.string.error_unexpected,
+                                    Toast.LENGTH_LONG
+                            ).show();
                             stopDownloadAndRemoveNotif();
                         }
                 );
@@ -275,16 +290,16 @@ public abstract class DownloadAllService extends Service {
         } else if (type.resId == R.string.type_jokes) {
             articlesObservable = getApiClient().getMaterialsJokesArticles();
         } else if (type.resId == R.string.type_1
-                   || type.resId == R.string.type_2
-                   || type.resId == R.string.type_3
-                   || type.resId == R.string.type_4
-                   || type.resId == R.string.type_5
-                   || type.resId == R.string.type_ru
-                   || type.resId == R.string.type_fr
-                   || type.resId == R.string.type_jp
-                   || type.resId == R.string.type_es
-                   || type.resId == R.string.type_pl
-                   || type.resId == R.string.type_de) {
+                || type.resId == R.string.type_2
+                || type.resId == R.string.type_3
+                || type.resId == R.string.type_4
+                || type.resId == R.string.type_5
+                || type.resId == R.string.type_ru
+                || type.resId == R.string.type_fr
+                || type.resId == R.string.type_jp
+                || type.resId == R.string.type_es
+                || type.resId == R.string.type_pl
+                || type.resId == R.string.type_de) {
             articlesObservable = getApiClient().getObjectsArticles(type.url);
         } else {
             articlesObservable = getApiClient().getMaterialsArticles(type.url);
@@ -297,18 +312,33 @@ public abstract class DownloadAllService extends Service {
                         getString(R.string.error_notification_title),
                         getString(R.string.error_notification_objects_list_download_content)
                 ))
-                .onErrorResumeNext(Observable.<List<Article>>empty().toSingle().delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS))
+                .onErrorResumeNext(
+                        Single
+                                .just(new ArrayList<Article>())
+                                .delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS)
+                )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMapObservable(articles -> getDbProvider()
-                        .<Pair<Integer, Integer>>saveObjectsArticlesList(articles, type.dbField)
-                        .flatMap(integerIntegerPair -> Observable.just(articles)))
+                .flatMapObservable(articles ->
+                        getDbProvider()
+                                .saveObjectsArticlesList(articles, type.dbField)
+                                .flatMap(integerIntegerPair -> Observable.just(articles))
+                )
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
                 .flatMap(this::downloadAndSaveArticles)
                 .subscribe(
                         article -> {
-                            Timber.d("download complete");
+                            Timber.d("download objects complete");
+                            stopDownloadAndRemoveNotif();
+                        },
+                        error -> {
+                            Timber.e(error, "error while download objects articles");
+                            Toast.makeText(
+                                    DownloadAllService.this,
+                                    R.string.error_unexpected,
+                                    Toast.LENGTH_LONG
+                            ).show();
                             stopDownloadAndRemoveNotif();
                         }
                 );
@@ -391,14 +421,22 @@ public abstract class DownloadAllService extends Service {
                             getString(R.string.error_notification_download_failed, e.getMessage())
                     );
                 })
-                .onErrorResumeNext(Observable.<List<Article>>just(Collections.emptyList()).delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS))
+                .onErrorResumeNext(
+                        Observable
+                                .<List<Article>>just(Collections.emptyList())
+                                .delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS)
+                )
                 .doOnNext(articles -> showNotificationSimple(
                         getString(R.string.download_complete_title),
                         getString(R.string.download_complete_title_content,
                                 mCurProgress - mNumOfErrors, mMaxProgress, mNumOfErrors
                         )
                 ))
-                .flatMap(articles -> Observable.just(articles).delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS));
+                .flatMap(articles ->
+                        Observable
+                                .just(articles)
+                                .delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS)
+                );
     }
 
     private final Func1<List<Article>, List<Article>> limitArticles = articles -> {
@@ -466,30 +504,12 @@ public abstract class DownloadAllService extends Service {
 //        }
     }
 
-    private void showNotificationDownloadProgress(final CharSequence title, final int cur, final int max, final int errorsCount) {
-//        final NotificationCompat.Builder builderArticlesList = new NotificationCompat.Builder(this, getChanelId());
-//        final String content = getString(R.string.download_progress_content, cur, max, errorsCount);
-//        builderArticlesList.setContentTitle(title)
-//                .setAutoCancel(false)
-//                .setContentText(content)
-//                .setProgress(max, cur, false)
-//                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-//                .setSmallIcon(R.drawable.ic_download_white_24dp);
-//
-//        startForeground(NOTIFICATION_ID, builderArticlesList.build());
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            final Notification.Builder builderArticlesList = new Notification.Builder(this, getChanelId());
-//            final String content = getString(R.string.download_progress_content, cur, max, errorsCount);
-//            builderArticlesList.setContentTitle(title)
-//                    .setAutoCancel(false)
-//                    .setContentText(content)
-//                    .setProgress(max, cur, false)
-//                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-//                    .setSmallIcon(R.drawable.ic_download_white_24dp);
-//
-//            startForeground(NOTIFICATION_ID, builderArticlesList.build());
-//        } else {
+    private void showNotificationDownloadProgress(
+            final CharSequence title,
+            final int cur,
+            final int max,
+            final int errorsCount
+    ) {
         final NotificationCompat.Builder builderArticlesList = new NotificationCompat.Builder(this, getChanelId());
         final String content = getString(R.string.download_progress_content, cur, max, errorsCount);
         builderArticlesList.setContentTitle(title)
@@ -500,20 +520,9 @@ public abstract class DownloadAllService extends Service {
                 .setSmallIcon(R.drawable.ic_download_white_24dp);
 
         startForeground(NOTIFICATION_ID, builderArticlesList.build());
-//        }
     }
 
     private void showNotificationSimple(final CharSequence title, final CharSequence content) {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            final Notification.Builder builderArticlesList = new Notification.Builder(this, getChanelId());
-//            builderArticlesList
-//                    .setContentTitle(title)
-//                    .setContentText(content)
-//                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-//                    .setSmallIcon(R.drawable.ic_bug_report_white_24dp);
-//
-//            startForeground(NOTIFICATION_ID, builderArticlesList.build());
-//        } else {
         final NotificationCompat.Builder builderArticlesList = new NotificationCompat.Builder(this, getChanelId());
         builderArticlesList
                 .setContentTitle(title)
@@ -522,7 +531,6 @@ public abstract class DownloadAllService extends Service {
                 .setSmallIcon(R.drawable.ic_bug_report_white_24dp);
 
         startForeground(NOTIFICATION_ID, builderArticlesList.build());
-//        }
     }
 
     private String getChanelId() {
