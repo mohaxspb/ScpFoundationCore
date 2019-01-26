@@ -34,13 +34,16 @@ public class IntentUtils {
         intent.setAction(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_TEXT, url);
         intent.setType("text/plain");
-        BaseApplication.getAppInstance().startActivity(
-                Intent.createChooser(
-                        intent,
-                        BaseApplication.getAppInstance().getResources().getText(R.string.share_choser_text)
-                )
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        );
+        BaseApplication
+                .getAppInstance()
+                .startActivity(
+                        Intent
+                                .createChooser(
+                                        intent,
+                                        BaseApplication.getAppInstance().getResources().getText(R.string.share_choser_text)
+                                )
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                );
     }
 
     public static void openUrl(final String url) {
