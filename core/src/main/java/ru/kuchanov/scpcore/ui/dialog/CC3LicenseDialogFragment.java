@@ -1,7 +1,5 @@
 package ru.kuchanov.scpcore.ui.dialog;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -10,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import javax.inject.Inject;
 
@@ -120,7 +120,7 @@ public class CC3LicenseDialogFragment extends DialogFragment {
         return dialog;
     }
 
-    private void setContentText(final TextView content, final String text) {
+    private static void setContentText(final TextView content, final String text) {
         content.setText(Html.fromHtml(text));
     }
 
