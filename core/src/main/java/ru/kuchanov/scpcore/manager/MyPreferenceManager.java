@@ -784,14 +784,6 @@ public class MyPreferenceManager {
     //scpReaderApi END
 
     //utils
-    public boolean isLicenceAccepted() {
-        return mPreferences.getBoolean(Keys.LICENCE_ACCEPTED, false);
-    }
-
-    public void setLicenceAccepted() {
-        mPreferences.edit().putBoolean(Keys.LICENCE_ACCEPTED, true).apply();
-    }
-
     public boolean isPersonalDataAccepted() {
         return mPreferences.getBoolean(Keys.PERSONAL_DATA_ACCEPTED, false);
     }

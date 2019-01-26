@@ -44,11 +44,12 @@ import ru.kuchanov.scpcore.util.SystemUtils;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.APP_LANG_VERSIONS;
-import static ru.kuchanov.scpcore.ui.activity.LicenceActivity.EXTRA_SHOW_ABOUT;
 
 public class MainActivity
         extends BaseDrawerActivity<MainMvp.View, MainMvp.Presenter>
         implements MainMvp.View {
+
+    public static final String EXTRA_SHOW_ABOUT = "EXTRA_SHOW_ABOUT";
 
     public static final String EXTRA_LINK = "EXTRA_LINK";
 
