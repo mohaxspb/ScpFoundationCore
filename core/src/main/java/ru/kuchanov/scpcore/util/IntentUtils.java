@@ -1,7 +1,5 @@
 package ru.kuchanov.scpcore.util;
 
-import com.google.android.gms.appinvite.AppInviteInvitation;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,6 +10,8 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
+
+import com.google.android.gms.appinvite.AppInviteInvitation;
 
 import java.util.List;
 
@@ -32,12 +32,7 @@ public class IntentUtils {
         final Intent intent = new Intent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setAction(Intent.ACTION_SEND);
-        final String fullMessage = BaseApplication.getAppInstance().getString(
-                R.string.share_link_text,
-                url,
-                BaseApplication.getAppInstance().getPackageName()
-        );
-        intent.putExtra(Intent.EXTRA_TEXT, fullMessage);
+        intent.putExtra(Intent.EXTRA_TEXT, url);
         intent.setType("text/plain");
         BaseApplication.getAppInstance().startActivity(
                 Intent.createChooser(
@@ -51,13 +46,16 @@ public class IntentUtils {
     public static void openUrl(final String url) {
         final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        BaseApplication.getAppInstance().startActivity(
-                Intent.createChooser(
-                        intent,
-                        BaseApplication.getAppInstance().getResources().getText(R.string.browser_choser_text)
-                )
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        );
+        BaseApplication
+                .getAppInstance()
+                .startActivity(
+                        Intent
+                                .createChooser(
+                                        intent,
+                                        BaseApplication.getAppInstance().getResources().getText(R.string.browser_choser_text)
+                                )
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                );
     }
 
     public static void shareBitmapWithText(final AppCompatActivity activity, final String text, final Bitmap bitmap) {
@@ -67,15 +65,10 @@ public class IntentUtils {
             return;
         }
         final Uri bmpUri = Uri.parse(pathOfBmp);
-        final String fullMessage = BaseApplication.getAppInstance().getString(
-                R.string.share_link_text,
-                text,
-                BaseApplication.getAppInstance().getPackageName()
-        );
         final Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Intent.EXTRA_STREAM, bmpUri);
-        intent.putExtra(Intent.EXTRA_TEXT, fullMessage);
+        intent.putExtra(Intent.EXTRA_TEXT, text);
         intent.setType("image/png");
 
         if (checkIntent(activity, intent)) {
@@ -85,6 +78,8 @@ public class IntentUtils {
         }
     }
 
+    //fixme remove it, as Invites deprecated
+    @Deprecated()
     public static void firebaseInvite(final FragmentActivity activity) {
         String message = activity.getString(R.string.invitation_message);
         if (message.length() > Constants.Firebase.INVITE_CTA_MAX_LENGTH) {
