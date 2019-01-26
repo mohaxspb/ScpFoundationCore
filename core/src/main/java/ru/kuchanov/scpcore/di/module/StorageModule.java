@@ -49,7 +49,10 @@ public class StorageModule {
 
     @Provides
     @Singleton
-    RealmConfiguration providesRealmConfiguration(final RealmMigration realmMigration, final Context context) {
+    RealmConfiguration providesRealmConfiguration(
+            final RealmMigration realmMigration,
+            final Context context
+    ) {
         return new RealmConfiguration.Builder()
                 .schemaVersion(context.getResources().getInteger(R.integer.realm_version))
                 .migration(realmMigration)

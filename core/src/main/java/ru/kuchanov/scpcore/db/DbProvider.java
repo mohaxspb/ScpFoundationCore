@@ -48,7 +48,10 @@ public class DbProvider {
 
     private final ConstantValues mConstantValues;
 
-    DbProvider(final MyPreferenceManager myPreferenceManager, final ConstantValues constantValues) {
+    DbProvider(
+            final MyPreferenceManager myPreferenceManager,
+            final ConstantValues constantValues
+    ) {
         super();
         mRealm = Realm.getDefaultInstance();
         mMyPreferenceManager = myPreferenceManager;
@@ -77,7 +80,10 @@ public class DbProvider {
                 .filter(RealmResults::isValid);
     }
 
-    public Observable<RealmResults<Article>> getArticlesSortedAsync(final String field, final Sort order) {
+    public Observable<RealmResults<Article>> getArticlesSortedAsync(
+            final String field,
+            final Sort order
+    ) {
         return mRealm.where(Article.class)
                 .notEqualTo(field, Article.ORDER_NONE)
                 .findAllSortedAsync(field, order)
@@ -86,7 +92,10 @@ public class DbProvider {
                 .filter(RealmResults::isValid);
     }
 
-    public Observable<RealmResults<Article>> getOfflineArticlesSortedAsync(final String field, final Sort order) {
+    public Observable<RealmResults<Article>> getOfflineArticlesSortedAsync(
+            final String field,
+            final Sort order
+    ) {
         return mRealm.where(Article.class)
                 .notEqualTo(Article.FIELD_TEXT, (String) null)
                 //remove articles from main activity
@@ -99,7 +108,10 @@ public class DbProvider {
                 .filter(RealmResults::isValid);
     }
 
-    public Observable<RealmResults<Article>> getReadArticlesSortedAsync(final String field, final Sort order) {
+    public Observable<RealmResults<Article>> getReadArticlesSortedAsync(
+            final String field,
+            final Sort order
+    ) {
         return mRealm.where(Article.class)
                 .notEqualTo(Article.FIELD_IS_IN_READEN, false)
                 .findAllSortedAsync(field, order)
@@ -135,7 +147,10 @@ public class DbProvider {
         ));
     }
 
-    public Observable<Pair<Integer, Integer>> saveRecentArticlesList(final List<Article> apiData, final int offset) {
+    public Observable<Pair<Integer, Integer>> saveRecentArticlesList(
+            final List<Article> apiData,
+            final int offset
+    ) {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //remove all aps from nominees if we update list
@@ -182,7 +197,10 @@ public class DbProvider {
         ));
     }
 
-    public Observable<Pair<Integer, Integer>> saveRatedArticlesList(final List<Article> data, final int offset) {
+    public Observable<Pair<Integer, Integer>> saveRatedArticlesList(
+            final List<Article> data,
+            final int offset
+    ) {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //remove all aps from nominees if we update list
@@ -222,7 +240,10 @@ public class DbProvider {
         ));
     }
 
-    public Observable<Pair<Integer, Integer>> saveObjectsArticlesList(final List<Article> data, final String inDbField) {
+    public Observable<Pair<Integer, Integer>> saveObjectsArticlesList(
+            final List<Article> data,
+            final String inDbField
+    ) {
         return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //remove all articles from this list while update it
@@ -440,7 +461,7 @@ public class DbProvider {
         return mRealm.where(Article.class)
                 .equalTo(Article.FIELD_URL, articleUrl)
                 .findAllAsync()
-                .<List<Article>>asObservable()
+                .asObservable()
                 .filter(RealmResults::isLoaded)
                 .filter(RealmResults::isValid)
                 .flatMap(arts -> arts.isEmpty() ? Observable.just(null) : Observable.just(mRealm.copyFromRealm(arts.first())));
@@ -450,7 +471,7 @@ public class DbProvider {
         return mRealm.where(Article.class)
                 .equalTo(Article.FIELD_URL, articleUrl)
                 .findAllAsync()
-                .<List<Article>>asObservable()
+                .asObservable()
                 .filter(RealmResults::isLoaded)
                 .filter(RealmResults::isValid)
                 .first()
@@ -862,7 +883,7 @@ public class DbProvider {
         return deleteUserData();
     }
 
-    public Single<Void> saveImages(final List<GalleryImage> vkImages) {
+    public Single<Void> saveImages(final Collection<GalleryImage> vkImages) {
         return Single.create(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //clear
