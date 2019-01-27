@@ -39,8 +39,19 @@ public class ArticlePresenter
 
     @Override
     public void onVisibleToUser() {
-        //todo insert transaction
         Timber.d("onVisibleToUser: %s  ||  %s", mArticleUrl, mArticle);
+
+        mDbProviderFactory
+                .getDbProvider()
+                .addReadHistoryTransaction(mArticleUrl)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        readHistoryTransaction -> {
+                            Timber.d("readHistoryTransaction: %s", readHistoryTransaction);
+                        },
+                        error -> Timber.e(error, "Error while insert new readHistoryTransaction")
+                );
     }
 
     @Override
@@ -101,6 +112,17 @@ public class ArticlePresenter
     @Override
     public void getDataFromApi() {
         Timber.d("getDataFromApi: %s", mArticleUrl);
+
+        if (true) {
+            mDbProviderFactory
+                    .getDbProvider()
+                    .getAllReadHistoryTransactions()
+                    .subscribe(
+                            readHistoryTransactions -> Timber.d("readHistoryTransactions: %s", readHistoryTransactions),
+                            error -> Timber.e(error, "Error while getAllReadHistoryTransactions")
+                    );
+        }
+
         if (TextUtils.isEmpty(mArticleUrl)) {
             return;
         }

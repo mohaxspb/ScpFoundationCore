@@ -32,6 +32,7 @@ import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.BannerType;
 import ru.kuchanov.scpcore.db.model.LeaderboardUser;
 import ru.kuchanov.scpcore.db.model.MyNativeBanner;
+import ru.kuchanov.scpcore.db.model.ReadHistoryTransaction;
 import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
@@ -1136,5 +1137,50 @@ public class DbProvider {
                         .equalTo(MyNativeBanner.FIELD_ENABLED, true)
                         .findAll()
         );
+    }
+
+    public Single<ReadHistoryTransaction> addReadHistoryTransaction(@NonNull final String articleUrl) {
+        return Single
+                .create(singleSubscriber -> {
+                    //create ID
+                    mRealm.executeTransaction(realm -> {
+                        final Number maxId = realm
+                                .where(ReadHistoryTransaction.class)
+                                .max(ReadHistoryTransaction.FIELD_ID);
+                        final long nextId = maxId == null ? 0 : maxId.longValue() + 1;
+
+                        //find title
+                        @Nullable final Article articleForUrl = realm
+                                .where(Article.class)
+                                .equalTo(Article.FIELD_URL, articleUrl)
+                                .findFirst();
+                        @Nullable final String title;
+                        if (articleForUrl != null && !TextUtils.isEmpty(articleForUrl.title)) {
+                            title = articleForUrl.title;
+                        } else {
+                            title = articleUrl;
+                        }
+
+                        final ReadHistoryTransaction readHistoryTransaction = new ReadHistoryTransaction(
+                                nextId,
+                                title,
+                                articleUrl,
+                                System.currentTimeMillis()
+                        );
+
+                        realm.insertOrUpdate(readHistoryTransaction);
+                        realm.close();
+
+                        singleSubscriber.onSuccess(readHistoryTransaction);
+                    });
+                });
+    }
+
+    public Observable<RealmResults<ReadHistoryTransaction>> getAllReadHistoryTransactions() {
+        return mRealm.where(ReadHistoryTransaction.class)
+                .findAllAsync()
+                .asObservable()
+                .filter(RealmResults::isLoaded)
+                .filter(RealmResults::isValid);
     }
 }
