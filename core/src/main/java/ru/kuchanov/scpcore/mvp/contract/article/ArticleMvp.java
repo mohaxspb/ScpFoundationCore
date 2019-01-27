@@ -34,5 +34,7 @@ public interface ArticleMvp {
         void setArticleIsReaden(String url);
 
         void toggleFavorite(String url);
+
+        void onVisibleToUser();
     }
 }

@@ -14,19 +14,20 @@ import ru.kuchanov.scpcore.ui.fragment.article.ArticleFragment;
  * for scp_ru
  */
 public class ArticlesPagerAdapter extends FragmentStatePagerAdapter {
+
     private List<String> mData;
 
-    public ArticlesPagerAdapter(FragmentManager fm) {
+    public ArticlesPagerAdapter(final FragmentManager fm) {
         super(fm);
     }
 
-    public void setData(List<String> data) {
+    public void setData(final List<String> data) {
         mData = data;
         notifyDataSetChanged();
     }
 
     @Override
-    public Fragment getItem(int position) {
+    public Fragment getItem(final int position) {
         return ArticleFragment.newInstance(mData.get(position));
     }
 

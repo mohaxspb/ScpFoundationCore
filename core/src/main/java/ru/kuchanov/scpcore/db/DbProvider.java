@@ -1086,7 +1086,7 @@ public class DbProvider {
     }
 
     public Single<List<MyNativeBanner>> saveBanners(final List<MyNativeBanner> banners) {
-        Timber.d("saveBanners: %s", banners);
+        Timber.d("saveBanners: %s", banners.size());
         return Single.create(subscriber ->
                 mRealm.executeTransactionAsync(
                         realm -> {

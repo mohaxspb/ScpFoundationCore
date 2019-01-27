@@ -1,6 +1,5 @@
 package ru.kuchanov.scpcore.mvp.presenter.article;
 
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import ru.kuchanov.scpcore.api.ApiClient;
@@ -39,15 +38,9 @@ public class ArticlePresenter
     }
 
     @Override
-    public void attachView(@NonNull final ArticleMvp.View view) {
-        Timber.d("attachView");
-        super.attachView(view);
-    }
-
-    @Override
-    public void getUserFromDb() {
-        Timber.d("getUserFromDb");
-        super.getUserFromDb();
+    public void onVisibleToUser() {
+        //todo insert transaction
+        Timber.d("onVisibleToUser: %s  ||  %s", mArticleUrl, mArticle);
     }
 
     @Override

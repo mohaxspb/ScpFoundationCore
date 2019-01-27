@@ -234,6 +234,10 @@ public class ArticleFragment
         mPresenter.setArticleId(url);
         mPresenter.getDataFromDb();
 
+        if (getUserVisibleHint()) {
+            mPresenter.onVisibleToUser();
+        }
+
         if (mArticle != null) {
             showData(mArticle);
         }
@@ -275,6 +279,7 @@ public class ArticleFragment
 //        Timber.d("setUserVisibleHint url: %s, isVisibleToUser: %b", url, isVisibleToUser);
         if (isVisibleToUser && mArticle != null) {
             updateActivityMenuState();
+            mPresenter.onVisibleToUser();
         }
     }
 
