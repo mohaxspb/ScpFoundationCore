@@ -46,7 +46,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
 
     protected abstract Single<List<Article>> getApiObservable(int offset);
 
-    protected abstract Observable<Pair<Integer, Integer>> getSaveToDbObservable(List<Article> data, int offset);
+    protected abstract Single<Pair<Integer, Integer>> getSaveToDbObservable(List<Article> data, int offset);
 
     @Override
     public void getDataFromDb() {
@@ -116,7 +116,7 @@ public abstract class BaseListArticlesPresenter<V extends BaseArticlesListMvp.Vi
         getApiObservable(offset)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMapObservable(apiDate -> getSaveToDbObservable(apiDate, offset))
+                .flatMap(apiDate -> getSaveToDbObservable(apiDate, offset))
                 .subscribe(
                         data -> {
 //                            Timber.d("getDataFromApi loaded data size: %s and offset: %s", data.first, data.second);
