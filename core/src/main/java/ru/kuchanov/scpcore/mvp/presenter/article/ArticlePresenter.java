@@ -44,7 +44,7 @@ public class ArticlePresenter
         mDbProviderFactory
                 .getDbProvider()
                 .addReadHistoryTransaction(mArticleUrl)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         readHistoryTransaction -> {

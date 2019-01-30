@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.Random;
 
 import io.realm.Realm;
+import io.realm.RealmModel;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import ru.kuchanov.scpcore.ConstantValues;
@@ -1136,41 +1137,48 @@ public class DbProvider {
         );
     }
 
-    public Single<ReadHistoryTransaction> addReadHistoryTransaction(@NonNull final String articleUrl) {
+    public Single<String> addReadHistoryTransaction(@NonNull final String articleUrl) {
         return Single
-                .create(singleSubscriber -> {
-                    //create ID
-                    mRealm.executeTransactionAsync(realm -> {
-                        final Number maxId = realm
-                                .where(ReadHistoryTransaction.class)
-                                .max(ReadHistoryTransaction.FIELD_ID);
-                        final long nextId = maxId == null ? 0 : maxId.longValue() + 1;
+                .create(singleSubscriber ->
+                        mRealm.executeTransactionAsync(
+                                realm -> {
+                                    //create ID
+                                    final Number maxId = realm
+                                            .where(ReadHistoryTransaction.class)
+                                            .max(ReadHistoryTransaction.FIELD_ID);
+                                    final long nextId = (maxId == null ? 0 : maxId.longValue()) + 1;
 
-                        //find title
-                        @Nullable final Article articleForUrl = realm
-                                .where(Article.class)
-                                .equalTo(Article.FIELD_URL, articleUrl)
-                                .findFirst();
-                        @Nullable final String title;
-                        if (articleForUrl != null && !TextUtils.isEmpty(articleForUrl.title)) {
-                            title = articleForUrl.title;
-                        } else {
-                            title = articleUrl;
-                        }
+                                    //find title
+                                    @Nullable final Article articleForUrl = realm
+                                            .where(Article.class)
+                                            .equalTo(Article.FIELD_URL, articleUrl)
+                                            .findFirst();
+                                    @Nullable final String title;
+                                    if (articleForUrl != null && !TextUtils.isEmpty(articleForUrl.title)) {
+                                        title = articleForUrl.title;
+                                    } else {
+                                        title = articleUrl;
+                                    }
 
-                        final ReadHistoryTransaction readHistoryTransaction = new ReadHistoryTransaction(
-                                nextId,
-                                title,
-                                articleUrl,
-                                System.currentTimeMillis()
-                        );
+                                    final RealmModel readHistoryTransaction = new ReadHistoryTransaction(
+                                            nextId,
+                                            title,
+                                            articleUrl,
+                                            System.currentTimeMillis()
+                                    );
 
-                        realm.insertOrUpdate(readHistoryTransaction);
-                        realm.close();
-
-                        singleSubscriber.onSuccess(readHistoryTransaction);
-                    });
-                });
+                                    realm.insertOrUpdate(readHistoryTransaction);
+                                },
+                                () -> {
+                                    mRealm.close();
+                                    singleSubscriber.onSuccess(articleUrl);
+                                },
+                                error -> {
+                                    mRealm.close();
+                                    singleSubscriber.onError(error);
+                                }
+                        )
+                );
     }
 
     public Observable<RealmResults<ReadHistoryTransaction>> getAllReadHistoryTransactions() {
