@@ -1,8 +1,5 @@
 package ru.kuchanov.scpcore.ui.activity;
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.gson.GsonBuilder;
-
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +10,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.MenuItem;
+
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.gson.GsonBuilder;
 
 import java.util.List;
 import java.util.Locale;
@@ -104,8 +104,8 @@ public class MainActivity
         } else if (link.equals(mConstantValues.getNews())) {
             mCurrentSelectedDrawerItemId = (R.id.news);
         } else if (link.equals(mConstantValues.getBaseApiUrl())
-                   || link.equals(mConstantValues.getBaseApiUrl() + "/")
-                   || link.equals(mConstantValues.getMostRated())) {
+                || link.equals(mConstantValues.getBaseApiUrl() + "/")
+                || link.equals(mConstantValues.getMostRated())) {
             mCurrentSelectedDrawerItemId = R.id.mostRatedArticles;
         } else if (link.equals(mConstantValues.getNewArticles())) {
             mCurrentSelectedDrawerItemId = R.id.mostRecentArticles;
@@ -212,10 +212,10 @@ public class MainActivity
     @Override
     protected int getDefaultNavItemId() {
         return getIntent().hasExtra(EXTRA_SHOW_ABOUT)
-               ? R.id.about
-               : getResources().getBoolean(R.bool.siteHasRatedArticlesList)
-                 ? R.id.mostRatedArticles
-                 : R.id.objects_I;
+                ? R.id.about
+                : getResources().getBoolean(R.bool.siteHasRatedArticlesList)
+                ? R.id.mostRatedArticles
+                : R.id.objects_I;
     }
 
     @Override
@@ -304,6 +304,9 @@ public class MainActivity
             return true;
         } else if (id == R.id.tagsSearch) {
             startTagsSearchActivity();
+            return true;
+        } else if (id == R.id.readHistory) {
+            //todo
             return true;
         } else if (id == R.id.objects_RU) {
             mCurrentSelectedDrawerItemId = id;

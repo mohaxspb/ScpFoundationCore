@@ -359,4 +359,5 @@ Grazie per aver utilizzato la nostra applicazione!]]></string>
     <string name="ads_removed">Ads removed!</string>
     <string name="add_to_read">Add to read</string>
     <string name="remove_from_read">Remove from read</string>
+    <string name="read_history">Read history</string>
 </resources>

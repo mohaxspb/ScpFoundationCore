@@ -109,5 +109,11 @@
             android:checked="false"
             android:icon="@drawable/ic_tag"
             android:title="@string/tags_search" />
+        <item
+            android:id="@+id/readHistory"
+            android:checkable="false"
+            android:checked="false"
+            android:icon="@drawable/ic_history_black_24dp"
+            android:title="@string/read_history" />
     </group>
 </menu>
