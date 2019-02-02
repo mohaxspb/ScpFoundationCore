@@ -38,6 +38,7 @@
     <attr name="iconArrowDownSmall" format="reference"/>
     <attr name="iconOfflineAdd" format="reference"/>
     <attr name="iconOfflineRemove" format="reference"/>
+    <attr name="iconDelete" format="reference"/>
     <attr name="iconEmptyImage" format="reference"/>
     <!---->
     <attr name="windowbackgroundOverrided" format="color|reference"/>

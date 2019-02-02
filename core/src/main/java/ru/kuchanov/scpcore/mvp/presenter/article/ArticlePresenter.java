@@ -113,6 +113,7 @@ public class ArticlePresenter
     public void getDataFromApi() {
         Timber.d("getDataFromApi: %s", mArticleUrl);
 
+        //fixme remove it
         if (true) {
             mDbProviderFactory
                     .getDbProvider()

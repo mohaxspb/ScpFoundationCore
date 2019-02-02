@@ -38,6 +38,7 @@ import ru.kuchanov.scpcore.ui.fragment.articleslists.OfflineArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.RatedArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.ReadArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.RecentArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.monetization.ReadHistoryFragment;
 import ru.kuchanov.scpcore.ui.fragment.search.SiteSearchArticlesFragment;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import ru.kuchanov.scpcore.util.SystemUtils;
@@ -306,7 +307,8 @@ public class MainActivity
             startTagsSearchActivity();
             return true;
         } else if (id == R.id.readHistory) {
-            //todo
+            mCurrentSelectedDrawerItemId = id;
+            showFragment(ReadHistoryFragment.newInstance(), ReadHistoryFragment.TAG);
             return true;
         } else if (id == R.id.objects_RU) {
             mCurrentSelectedDrawerItemId = id;
@@ -395,6 +397,8 @@ public class MainActivity
             title = getString(R.string.drawer_item_11);
         } else if (id == R.id.read) {
             title = getString(R.string.drawer_item_read);
+        } else if (id == R.id.readHistory) {
+            title = getString(R.string.read_history);
         } else {
             Timber.e("unexpected item ID");
             title = null;

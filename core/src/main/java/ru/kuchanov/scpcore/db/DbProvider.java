@@ -1183,7 +1183,7 @@ public class DbProvider {
 
     public Observable<RealmResults<ReadHistoryTransaction>> getAllReadHistoryTransactions() {
         return mRealm.where(ReadHistoryTransaction.class)
-                .findAllAsync()
+                .findAllSortedAsync(ReadHistoryTransaction.FIELD_CREATED, Sort.DESCENDING)
                 .asObservable()
                 .filter(RealmResults::isLoaded)
                 .filter(RealmResults::isValid);
