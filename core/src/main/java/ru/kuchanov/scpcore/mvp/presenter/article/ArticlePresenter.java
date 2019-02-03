@@ -1,6 +1,5 @@
 package ru.kuchanov.scpcore.mvp.presenter.article;
 
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import ru.kuchanov.scpcore.api.ApiClient;
@@ -39,15 +38,20 @@ public class ArticlePresenter
     }
 
     @Override
-    public void attachView(@NonNull final ArticleMvp.View view) {
-        Timber.d("attachView");
-        super.attachView(view);
-    }
+    public void onVisibleToUser() {
+        Timber.d("onVisibleToUser: %s  ||  %s", mArticleUrl, mArticle);
 
-    @Override
-    public void getUserFromDb() {
-        Timber.d("getUserFromDb");
-        super.getUserFromDb();
+        mDbProviderFactory
+                .getDbProvider()
+                .addReadHistoryTransaction(mArticleUrl)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        readHistoryTransaction -> {
+                            Timber.d("readHistoryTransaction: %s", readHistoryTransaction);
+                        },
+                        error -> Timber.e(error, "Error while insert new readHistoryTransaction")
+                );
     }
 
     @Override
@@ -108,6 +112,18 @@ public class ArticlePresenter
     @Override
     public void getDataFromApi() {
         Timber.d("getDataFromApi: %s", mArticleUrl);
+
+        //fixme remove it
+        if (true) {
+            mDbProviderFactory
+                    .getDbProvider()
+                    .getAllReadHistoryTransactions()
+                    .subscribe(
+                            readHistoryTransactions -> Timber.d("readHistoryTransactions: %s", readHistoryTransactions),
+                            error -> Timber.e(error, "Error while getAllReadHistoryTransactions")
+                    );
+        }
+
         if (TextUtils.isEmpty(mArticleUrl)) {
             return;
         }

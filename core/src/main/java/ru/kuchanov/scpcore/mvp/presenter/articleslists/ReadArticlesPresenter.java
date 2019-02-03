@@ -43,7 +43,7 @@ public class ReadArticlesPresenter
     }
 
     @Override
-    protected Observable<Pair<Integer, Integer>> getSaveToDbObservable(final List<Article> data, final int offset) {
-        return Observable.empty();
+    protected Single<Pair<Integer, Integer>> getSaveToDbObservable(final List<Article> data, final int offset) {
+        return Single.just(new Pair<>(data.size(), offset));
     }
 }

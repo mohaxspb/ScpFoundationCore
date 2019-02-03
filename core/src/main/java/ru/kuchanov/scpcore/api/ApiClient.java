@@ -535,13 +535,18 @@ public class ApiClient {
         final String[] arrayOfArticles = allArticles.split("<br>");
         final List<Article> articles = new ArrayList<>();
         for (final String arrayItem : arrayOfArticles) {
-            doc = Jsoup.parse(arrayItem);
+            if (TextUtils.isEmpty(arrayItem.trim())) {
+                continue;
+            }
+//            Timber.d("arrayItem: %s", arrayItem);
+            final Document arrayItemParsed = Jsoup.parse(arrayItem);
+//            Timber.d("arrayItemParsed: %s", arrayItemParsed);
             //type of object
-            final String imageURL = doc.getElementsByTag("img").first().attr("src");
+            final String imageURL = arrayItemParsed.getElementsByTag("img").first().attr("src");
             @Article.ObjectType final String type = getObjectTypeByImageUrl(imageURL);
 
-            final String url = mConstantValues.getBaseApiUrl() + doc.getElementsByTag("a").first().attr("href");
-            final String title = doc.text();
+            final String url = mConstantValues.getBaseApiUrl() + arrayItemParsed.getElementsByTag("a").first().attr("href");
+            final String title = arrayItemParsed.text();
 
             final Article article = new Article();
 
@@ -612,13 +617,12 @@ public class ApiClient {
         return doc.getElementById("page-content");
     }
 
-    public Observable<Article> getArticle(final String url) {
+    public Single<Article> getArticle(final String url) {
         Timber.d("start download article: %s", url);
-        return Observable.<Article>unsafeCreate(subscriber -> {
+        return Single.<Article>create(subscriber -> {
             try {
                 Article article = getArticleFromApi(url);
-                subscriber.onNext(article);
-                subscriber.onCompleted();
+                subscriber.onSuccess(article);
             } catch (Exception | ScpParseException e) {
                 subscriber.onError(e);
             }
@@ -631,7 +635,7 @@ public class ApiClient {
 
                     return article;
                 })
-                .onErrorResumeNext(throwable -> Observable.error(new ScpException(throwable, url)));
+                .onErrorResumeNext(throwable -> Single.error(new ScpException(throwable, url)));
     }
 
     /**

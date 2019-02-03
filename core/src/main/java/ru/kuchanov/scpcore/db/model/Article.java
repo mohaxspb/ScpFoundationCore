@@ -1,10 +1,10 @@
 package ru.kuchanov.scpcore.db.model;
 
-import org.jetbrains.annotations.NotNull;
-
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.text.TextUtils;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.lang.annotation.Retention;
@@ -239,7 +239,9 @@ public class Article extends RealmObject implements Serializable {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) {return true;}
+        if (this == o) {
+            return true;
+        }
         if (o == null) {
             return false;
         }

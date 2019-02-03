@@ -63,7 +63,7 @@ public abstract class BaseObjectsArticlesPresenter<V extends BaseArticlesListMvp
     }
 
     @Override
-    protected Observable<Pair<Integer, Integer>> getSaveToDbObservable(final List<Article> data, final int offset) {
+    protected Single<Pair<Integer, Integer>> getSaveToDbObservable(final List<Article> data, final int offset) {
         return mDbProviderFactory.getDbProvider().saveObjectsArticlesList(data, getObjectsInDbFieldName());
     }
 }

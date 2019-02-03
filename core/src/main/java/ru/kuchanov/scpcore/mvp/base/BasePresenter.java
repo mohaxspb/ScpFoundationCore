@@ -603,7 +603,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(banners -> mDbProviderFactory.getDbProvider().saveBanners(banners))
                 .subscribe(
-                        banners -> Timber.d("updateMyNativeBanners onSuccess: %s", banners),
+                        banners -> Timber.d("updateMyNativeBanners onSuccess: %s", banners.size()),
                         e -> Timber.e(e, "Error while updateMyNativeBanners")
                 );
     }

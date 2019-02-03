@@ -36,6 +36,7 @@ import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsOtherMvp;
 import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsScreenMvp;
 import ru.kuchanov.scpcore.mvp.contract.monetization.FreeAdsDisableActionsContract;
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract;
+import ru.kuchanov.scpcore.mvp.contract.monetization.ReadHistoryContract;
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract;
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract;
 import ru.kuchanov.scpcore.mvp.contract.search.SiteSearchArticlesMvp;
@@ -66,6 +67,7 @@ import ru.kuchanov.scpcore.mvp.presenter.materials.MaterialsOtherPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.materials.MaterialsScreenPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.monetization.FreeAdsDisableActionsPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.monetization.LeaderboardPresenter;
+import ru.kuchanov.scpcore.mvp.presenter.monetization.ReadHistoryPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsScreenPresenter;
 import ru.kuchanov.scpcore.mvp.presenter.search.SiteSearchArticlesPresenter;
@@ -210,6 +212,17 @@ public class PresentersModule {
             final InAppHelper inAppHelper
     ) {
         return new ReadArticlesPresenter(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
+    }
+
+    @Provides
+    @Singleton
+    ReadHistoryContract.Presenter providesReadHistoryPresenter(
+            final MyPreferenceManager myPreferencesManager,
+            final DbProviderFactory dbProviderFactory,
+            final ApiClient apiClient,
+            final InAppHelper inAppHelper
+    ) {
+        return new ReadHistoryPresenter(myPreferencesManager, dbProviderFactory, apiClient, inAppHelper);
     }
 
     @Provides

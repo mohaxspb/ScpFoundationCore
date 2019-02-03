@@ -40,15 +40,15 @@ public class TagSearchResultsArticlesPresenter
     @Override
     protected Observable<RealmResults<Article>> getDbObservable() {
         return mArticlesUrls == null || mArticlesUrls.isEmpty() ?
-               Observable.<RealmResults<Article>>empty()
-                       .doOnCompleted(() -> {
-                           if (mArticlesUrls == null) {
-                               getDataFromApi(Constants.Api.ZERO_OFFSET);
-                           } else {
-                               getView().showSwipeProgress(false);
-                           }
-                       })
-                                                                : mDbProviderFactory.getDbProvider().getArticlesByIds(mArticlesUrls);
+                Observable.<RealmResults<Article>>empty()
+                        .doOnCompleted(() -> {
+                            if (mArticlesUrls == null) {
+                                getDataFromApi(Constants.Api.ZERO_OFFSET);
+                            } else {
+                                getView().showSwipeProgress(false);
+                            }
+                        })
+                : mDbProviderFactory.getDbProvider().getArticlesByIds(mArticlesUrls);
     }
 
     @Override
@@ -57,17 +57,19 @@ public class TagSearchResultsArticlesPresenter
     }
 
     @Override
-    protected Observable<Pair<Integer, Integer>> getSaveToDbObservable(final List<Article> data, final int offset) {
+    protected Single<Pair<Integer, Integer>> getSaveToDbObservable(final List<Article> data, final int offset) {
 //        //we do not save search results to db
 //        //but we need pass data to view...
 //        //so try to do it here
         return mDbProviderFactory.getDbProvider()
                 .saveMultipleArticlesWithoutTextSync(data)
-                .doOnNext(articles -> {
-                    mArticlesUrls = Article.getListOfUrls(articles);
-                    getDataFromDb();
-                })
-                .flatMap(articles -> Observable.just(new Pair<>(data.size(), offset)));
+                .doOnSuccess(
+                        articles -> {
+                            mArticlesUrls = Article.getListOfUrls(articles);
+                            getDataFromDb();
+                        }
+                )
+                .flatMap(articles -> Single.just(new Pair<>(data.size(), offset)));
     }
 
     @Override

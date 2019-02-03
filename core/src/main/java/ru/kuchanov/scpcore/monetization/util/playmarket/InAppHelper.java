@@ -157,7 +157,8 @@ public class InAppHelper {
                 );
 
                 Timber.d("ownedItems bundle: %s", ownedItemsBundle);
-                if (ownedItemsBundle.getInt("RESPONSE_CODE") == RESULT_OK) {
+                final int playMarketResponseCode = ownedItemsBundle.getInt("RESPONSE_CODE");
+                if (playMarketResponseCode == RESULT_OK) {
                     //TODO use gson for parsing
                     List<String> ownedSkus = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
                     List<String> purchaseDataList = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_DATA_LIST");
@@ -178,7 +179,11 @@ public class InAppHelper {
                         subscriber.onCompleted();
                     }
                 } else {
-                    subscriber.onError(new IllegalStateException("ownedItemsBundle.getInt(\"RESPONSE_CODE\") is not 0"));
+                    subscriber.onError(
+                            new IllegalStateException(
+                                    "ownedItemsBundle RESPONSE_CODE is not 0. It's " + playMarketResponseCode
+                            )
+                    );
                 }
             } catch (RemoteException e) {
                 Timber.e(e);

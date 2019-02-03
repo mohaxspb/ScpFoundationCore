@@ -23,7 +23,6 @@ import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.LeaderboardContract
 import ru.kuchanov.scpcore.util.DimensionUtils
-import rx.Observable
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.subscribeBy
@@ -219,8 +218,8 @@ class LeaderboardPresenter(
                     if (offset == 0) {
                         mDbProviderFactory.dbProvider.saveLeaderboardUsers(users).map { users }
                     } else {
-                        Observable.just(users)
-                    }.toSingle()
+                        Single.just(users)
+                    }
                 }
                 .subscribeBy(
                         onSuccess = {

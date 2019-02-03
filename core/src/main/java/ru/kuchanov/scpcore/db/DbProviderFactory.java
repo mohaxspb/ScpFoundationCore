@@ -15,7 +15,11 @@ public class DbProviderFactory {
     private final MyPreferenceManager mMyPreferenceManager;
     private final ConstantValues mConstantValues;
 
-    public DbProviderFactory(final RealmConfiguration realmConfiguration, final MyPreferenceManager preferenceManager, final ConstantValues constantValues) {
+    public DbProviderFactory(
+            final RealmConfiguration realmConfiguration,
+            final MyPreferenceManager preferenceManager,
+            final ConstantValues constantValues
+    ) {
         super();
         Realm.setDefaultConfiguration(realmConfiguration);
         mMyPreferenceManager = preferenceManager;

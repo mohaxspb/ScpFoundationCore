@@ -414,7 +414,16 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     private void setUpBanner() {
-        Timber.d("setUpBanner");
+//        Timber.d("setUpBanner");
+//        Timber.d("mMyPreferenceManager.isHasAnySubscription(): %s", mMyPreferenceManager.isHasAnySubscription());
+//        Timber.d("!isBannerEnabled(): %s", !isBannerEnabled());
+//        Timber.d("!mMyPreferenceManager.isTimeToShowBannerAds(): %s", !mMyPreferenceManager.isTimeToShowBannerAds());
+//        Timber.d("mAdView != null: %s", mAdView != null);
+//        Timber.d("mMyPreferenceManager.isHasAnySubscription()\n|| !isBannerEnabled()\n || !mMyPreferenceManager.isTimeToShowBannerAds(): %s",
+//                mMyPreferenceManager.isHasAnySubscription()
+//                || !isBannerEnabled()
+//                || !mMyPreferenceManager.isTimeToShowBannerAds()
+//        );
         if (mMyPreferenceManager.isHasAnySubscription()
                 || !isBannerEnabled()
                 || !mMyPreferenceManager.isTimeToShowBannerAds()) {
@@ -424,6 +433,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             }
         } else {
             if (mAdView != null) {
+//                Timber.d("Enable banner! mAdView.isLoading(): %s", mAdView.isLoading());
                 mAdView.setEnabled(true);
                 mAdView.setVisibility(View.VISIBLE);
                 if (!mAdView.isLoading()) {
@@ -511,12 +521,16 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
-    public void showSnackBarWithAction(final Constants.Firebase.CallToActionReason reason) {
+    public void showSnackBarWithAction(@NonNull final Constants.Firebase.CallToActionReason reason) {
         Timber.d("showSnackBarWithAction: %s", reason);
         final Snackbar snackbar;
         switch (reason) {
             case REMOVE_ADS:
-                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, R.string.remove_ads), Snackbar.LENGTH_LONG);
+                snackbar = Snackbar.make(
+                        mRoot,
+                        SystemUtils.coloredTextForSnackBar(this, R.string.remove_ads),
+                        Snackbar.LENGTH_LONG
+                );
                 snackbar.setAction(R.string.yes_bliad, v -> {
                     snackbar.dismiss();
                     SubscriptionsActivity.start(this);
@@ -527,7 +541,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 });
                 break;
             case ENABLE_FONTS:
-                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, R.string.only_premium), Snackbar.LENGTH_LONG);
+                snackbar = Snackbar.make(
+                        mRoot,
+                        SystemUtils.coloredTextForSnackBar(this, R.string.only_premium),
+                        Snackbar.LENGTH_LONG
+                );
                 snackbar.setAction(R.string.activate, action -> {
                     SubscriptionsActivity.start(this);
 
@@ -537,7 +555,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 });
                 break;
             case ENABLE_AUTO_SYNC:
-                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, R.string.auto_sync_disabled), Snackbar.LENGTH_LONG);
+                snackbar = Snackbar.make(
+                        mRoot,
+                        SystemUtils.coloredTextForSnackBar(this, R.string.auto_sync_disabled),
+                        Snackbar.LENGTH_LONG
+                );
                 snackbar.setAction(R.string.turn_on, v -> {
                     snackbar.dismiss();
                     SubscriptionsActivity.start(this);
@@ -548,7 +570,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 });
                 break;
             case SYNC_NEED_AUTH:
-                snackbar = Snackbar.make(mRoot, SystemUtils.coloredTextForSnackBar(this, R.string.sync_need_auth), Snackbar.LENGTH_LONG);
+                snackbar = Snackbar.make(
+                        mRoot,
+                        SystemUtils.coloredTextForSnackBar(this, R.string.sync_need_auth),
+                        Snackbar.LENGTH_LONG
+                );
                 snackbar.setAction(R.string.authorize, v -> {
                     snackbar.dismiss();
                     showLoginProvidersPopup();
@@ -776,17 +802,23 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showProgressDialog(final String title) {
-        mDialogUtils.showProgressDialog(this, title);
+        if (!isDestroyed() || !isFinishing()) {
+            mDialogUtils.showProgressDialog(this, title);
+        }
     }
 
     @Override
     public void showProgressDialog(@StringRes final int title) {
-        mDialogUtils.showProgressDialog(this, getString(title));
+        if (!isDestroyed() || !isFinishing()) {
+            mDialogUtils.showProgressDialog(this, getString(title));
+        }
     }
 
     @Override
     public void dismissProgressDialog() {
-        mDialogUtils.dismissProgressDialog();
+        if (!isDestroyed() || !isFinishing()) {
+            mDialogUtils.dismissProgressDialog();
+        }
     }
 
     @Override
@@ -804,7 +836,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showOfferLoginPopup(final MaterialDialog.SingleButtonCallback cancelCallback) {
-        if (!hasWindowFocus()) {
+        if (!hasWindowFocus() || isDestroyed() || isFinishing()) {
             return;
         }
         new MaterialDialog.Builder(this)
@@ -820,6 +852,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showOfferSubscriptionPopup() {
+        if (!hasWindowFocus() || isDestroyed() || isFinishing()) {
+            return;
+        }
         Timber.d("showOfferSubscriptionPopup");
         new MaterialDialog.Builder(this)
                 .title(R.string.dialog_offer_subscription_title)
@@ -840,6 +875,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showOfferFreeTrialSubscriptionPopup() {
+        if (!hasWindowFocus() || isDestroyed() || isFinishing()) {
+            return;
+        }
         showProgressDialog(R.string.wait);
         mInAppHelper.getSubsListToBuyObservable(mService, InAppHelper.getFreeTrailSubsSkus())
                 .subscribeOn(Schedulers.io())
@@ -859,6 +897,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showInAppErrorDialog(@NotNull final String errorMessage) {
+        if (!hasWindowFocus() || isDestroyed() || isFinishing()) {
+            return;
+        }
         mDialogUtils.showInAppErrorDialog(this, errorMessage);
     }
 

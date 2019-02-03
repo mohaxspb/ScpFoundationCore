@@ -90,7 +90,11 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
 
             actionBar.setDisplayHomeAsUpEnabled(true);
 
-            mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.app_name, R.string.app_name) {
+            mDrawerToggle = new ActionBarDrawerToggle(
+                    this,
+                    mDrawerLayout,
+                    R.string.app_name, R.string.app_name
+            ) {
                 @Override
                 public void onDrawerClosed(final View view) {
                     supportInvalidateOptionsMenu();
@@ -182,7 +186,8 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
 
             final HeaderViewHolderLogined headerViewHolder = new HeaderViewHolderLogined(headerLogined);
 
-            headerViewHolder.logout.setOnClickListener(view -> new MaterialDialog.Builder(BaseDrawerActivity.this)
+            headerViewHolder.logout.setOnClickListener(view -> new MaterialDialog
+                    .Builder(BaseDrawerActivity.this)
                     .title(R.string.warning)
                     .content(R.string.dialog_logout_content)
                     .negativeText(R.string.close)
@@ -203,7 +208,11 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                             InAppHelper.getNewInAppsSkus().get(0)
                     )
                     .subscribe(
-                            intentSender -> mInAppHelper.startPurchase(intentSender, this, REQUEST_CODE_INAPP),
+                            intentSender -> mInAppHelper.startPurchase(
+                                    intentSender,
+                                    this,
+                                    REQUEST_CODE_INAPP
+                            ),
                             e -> {
                                 Timber.e(e);
                                 showError(e);
@@ -227,7 +236,8 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                     .into(new BitmapImageViewTarget(headerViewHolder.avatar) {
                         @Override
                         protected void setResource(final Bitmap resource) {
-                            final RoundedBitmapDrawable circularBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+                            final RoundedBitmapDrawable circularBitmapDrawable =
+                                    RoundedBitmapDrawableFactory.create(getResources(), resource);
                             circularBitmapDrawable.setCircular(true);
                             headerViewHolder.avatar.setImageDrawable(circularBitmapDrawable);
                         }
@@ -288,7 +298,11 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
             for (int i = 0; i < mNavigationView.getHeaderCount(); i++) {
                 mNavigationView.removeHeaderView(mNavigationView.getHeaderView(i));
             }
-            final View headerUnlogined = LayoutInflater.from(this).inflate(R.layout.drawer_header_unlogined, mNavigationView, false);
+            final View headerUnlogined = LayoutInflater.from(this).inflate(
+                    R.layout.drawer_header_unlogined,
+                    mNavigationView,
+                    false
+            );
             mNavigationView.addHeaderView(headerUnlogined);
 
             final HeaderViewHolderUnlogined headerViewHolder = new HeaderViewHolderUnlogined(headerUnlogined);

@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.di;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -19,7 +21,6 @@ import ru.kuchanov.scpcore.service.DownloadAllServiceDefault;
 import ru.kuchanov.scpcore.service.MyFirebaseMessagingService;
 import ru.kuchanov.scpcore.ui.activity.ArticleActivity;
 import ru.kuchanov.scpcore.ui.activity.GalleryActivity;
-import ru.kuchanov.scpcore.ui.activity.LicenceActivity;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
 import ru.kuchanov.scpcore.ui.activity.SplashActivity;
@@ -55,6 +56,7 @@ import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsJokesFragment;
 import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsOtherFragment;
 import ru.kuchanov.scpcore.ui.fragment.monetization.FreeAdsDisableActionsFragment;
 import ru.kuchanov.scpcore.ui.fragment.monetization.LeaderboardFragment;
+import ru.kuchanov.scpcore.ui.fragment.monetization.ReadHistoryFragment;
 import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment;
 import ru.kuchanov.scpcore.ui.fragment.search.SiteSearchArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.tags.TagsSearchFragment;
@@ -79,8 +81,6 @@ import ru.kuchanov.scpcore.ui.holder.articlelist.HolderMin;
         HelpersModule.class
 })
 public interface AppComponent {
-
-    void inject(LicenceActivity activity);
 
     void inject(ArticleActivity activity);
 
@@ -143,6 +143,8 @@ public interface AppComponent {
     void inject(FreeAdsDisableActionsFragment fragment);
 
     void inject(LeaderboardFragment leaderboardFragment);
+
+    void inject(ReadHistoryFragment readHistoryFragment);
 
     void inject(TextSizeDialogFragment dialogFragment);
 

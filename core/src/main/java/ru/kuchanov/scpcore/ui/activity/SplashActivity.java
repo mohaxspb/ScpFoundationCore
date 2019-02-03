@@ -9,9 +9,8 @@ import javax.inject.Inject;
 
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.util.StorageUtils;
 
-import static ru.kuchanov.scpcore.ui.activity.LicenceActivity.EXTRA_SHOW_ABOUT;
+import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_ABOUT;
 
 /**
  * Created by Ivan Semkin on 4/23/2017.
@@ -24,7 +23,7 @@ public class SplashActivity extends AppCompatActivity {
     MyPreferenceManager mMyPreferenceManager;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         BaseApplication.getAppComponent().inject(this);
@@ -33,16 +32,11 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void startNextActivity() {
-        Intent intent;
-        if (StorageUtils.fileExistsInAssets("licence.txt") && !mMyPreferenceManager.isLicenceAccepted()) {
-            intent = new Intent(this, LicenceActivity.class);
+        final Intent intent;
+        if (!mMyPreferenceManager.isPersonalDataAccepted()) {
+            intent = new Intent(this, MainActivity.class).putExtra(EXTRA_SHOW_ABOUT, true);
         } else {
-            if (!mMyPreferenceManager.isLicenceAccepted()) {
-                intent = new Intent(this, MainActivity.class).putExtra(EXTRA_SHOW_ABOUT, true);
-                mMyPreferenceManager.setLicenceAccepted();
-            } else {
-                intent = new Intent(this, MainActivity.class);
-            }
+            intent = new Intent(this, MainActivity.class);
         }
         startActivity(intent);
         finishAffinity();

@@ -90,7 +90,7 @@ public class TagsSearchFragmentPresenter
         getView().showProgress(true);
 
         mApiClient.getArticlesByTags(tags)
-                .flatMapObservable(articles -> mDbProviderFactory.getDbProvider().saveMultipleArticlesWithoutTextSync(articles))
+                .flatMap(articles -> mDbProviderFactory.getDbProvider().saveMultipleArticlesWithoutTextSync(articles))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

@@ -377,7 +377,7 @@ public class MyPreferenceManager {
 
     public int getOfferSubscriptionInsteadOfRewardedVideoModificator() {
         final Long modificator = FirebaseRemoteConfig.getInstance().getLong(OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO_MODIFICATOR);
-        return modificator == null ? 5 : modificator.intValue();
+        return modificator == null ? 5 + 1 : modificator.intValue() + 1;
     }
 
     //invite
@@ -784,14 +784,6 @@ public class MyPreferenceManager {
     //scpReaderApi END
 
     //utils
-    public boolean isLicenceAccepted() {
-        return mPreferences.getBoolean(Keys.LICENCE_ACCEPTED, false);
-    }
-
-    public void setLicenceAccepted() {
-        mPreferences.edit().putBoolean(Keys.LICENCE_ACCEPTED, true).apply();
-    }
-
     public boolean isPersonalDataAccepted() {
         return mPreferences.getBoolean(Keys.PERSONAL_DATA_ACCEPTED, false);
     }

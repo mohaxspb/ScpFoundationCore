@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.Random;
 
 import io.realm.Realm;
+import io.realm.RealmModel;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import ru.kuchanov.scpcore.ConstantValues;
@@ -32,9 +33,11 @@ import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.BannerType;
 import ru.kuchanov.scpcore.db.model.LeaderboardUser;
 import ru.kuchanov.scpcore.db.model.MyNativeBanner;
+import ru.kuchanov.scpcore.db.model.ReadHistoryTransaction;
 import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import rx.Completable;
 import rx.Observable;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
@@ -48,7 +51,10 @@ public class DbProvider {
 
     private final ConstantValues mConstantValues;
 
-    DbProvider(final MyPreferenceManager myPreferenceManager, final ConstantValues constantValues) {
+    DbProvider(
+            final MyPreferenceManager myPreferenceManager,
+            final ConstantValues constantValues
+    ) {
         super();
         mRealm = Realm.getDefaultInstance();
         mMyPreferenceManager = myPreferenceManager;
@@ -77,7 +83,10 @@ public class DbProvider {
                 .filter(RealmResults::isValid);
     }
 
-    public Observable<RealmResults<Article>> getArticlesSortedAsync(final String field, final Sort order) {
+    public Observable<RealmResults<Article>> getArticlesSortedAsync(
+            final String field,
+            final Sort order
+    ) {
         return mRealm.where(Article.class)
                 .notEqualTo(field, Article.ORDER_NONE)
                 .findAllSortedAsync(field, order)
@@ -86,7 +95,10 @@ public class DbProvider {
                 .filter(RealmResults::isValid);
     }
 
-    public Observable<RealmResults<Article>> getOfflineArticlesSortedAsync(final String field, final Sort order) {
+    public Observable<RealmResults<Article>> getOfflineArticlesSortedAsync(
+            final String field,
+            final Sort order
+    ) {
         return mRealm.where(Article.class)
                 .notEqualTo(Article.FIELD_TEXT, (String) null)
                 //remove articles from main activity
@@ -99,7 +111,10 @@ public class DbProvider {
                 .filter(RealmResults::isValid);
     }
 
-    public Observable<RealmResults<Article>> getReadArticlesSortedAsync(final String field, final Sort order) {
+    public Observable<RealmResults<Article>> getReadArticlesSortedAsync(
+            final String field,
+            final Sort order
+    ) {
         return mRealm.where(Article.class)
                 .notEqualTo(Article.FIELD_IS_IN_READEN, false)
                 .findAllSortedAsync(field, order)
@@ -115,8 +130,8 @@ public class DbProvider {
         return users.isEmpty() ? Collections.emptyList() : mRealm.copyFromRealm(users);
     }
 
-    public Observable<Integer> saveLeaderboardUsers(final List<LeaderboardUser> data) {
-        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
+    public Single<Integer> saveLeaderboardUsers(@NotNull final List<LeaderboardUser> data) {
+        return Single.create(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //remove all users
                     realm.delete(LeaderboardUser.class);
@@ -124,8 +139,7 @@ public class DbProvider {
                     realm.insertOrUpdate(data);
                 },
                 () -> {
-                    subscriber.onNext(data.size());
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(data.size());
                     mRealm.close();
                 },
                 e -> {
@@ -135,8 +149,11 @@ public class DbProvider {
         ));
     }
 
-    public Observable<Pair<Integer, Integer>> saveRecentArticlesList(final List<Article> apiData, final int offset) {
-        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
+    public Single<Pair<Integer, Integer>> saveRecentArticlesList(
+            final List<Article> apiData,
+            final int offset
+    ) {
+        return Single.create(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //remove all aps from nominees if we update list
                     if (offset == 0) {
@@ -171,8 +188,7 @@ public class DbProvider {
                     }
                 },
                 () -> {
-                    subscriber.onNext(new Pair<>(apiData.size(), offset));
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(new Pair<>(apiData.size(), offset));
                     mRealm.close();
                 },
                 e -> {
@@ -182,8 +198,11 @@ public class DbProvider {
         ));
     }
 
-    public Observable<Pair<Integer, Integer>> saveRatedArticlesList(final List<Article> data, final int offset) {
-        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
+    public Single<Pair<Integer, Integer>> saveRatedArticlesList(
+            final List<Article> data,
+            final int offset
+    ) {
+        return Single.create(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //remove all aps from nominees if we update list
                     if (offset == 0) {
@@ -211,8 +230,7 @@ public class DbProvider {
                     }
                 },
                 () -> {
-                    subscriber.onNext(new Pair<>(data.size(), offset));
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(new Pair<>(data.size(), offset));
                     mRealm.close();
                 },
                 e -> {
@@ -222,8 +240,11 @@ public class DbProvider {
         ));
     }
 
-    public Observable<Pair<Integer, Integer>> saveObjectsArticlesList(final List<Article> data, final String inDbField) {
-        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
+    public Single<Pair<Integer, Integer>> saveObjectsArticlesList(
+            final List<Article> data,
+            final String inDbField
+    ) {
+        return Single.create(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //remove all articles from this list while update it
                     final List<Article> articleList = realm.where(Article.class)
@@ -421,8 +442,7 @@ public class DbProvider {
                     }
                 },
                 () -> {
-                    subscriber.onNext(new Pair<>(data.size(), 0));
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(new Pair<>(data.size(), 0));
                     mRealm.close();
                 },
                 e -> {
@@ -440,7 +460,7 @@ public class DbProvider {
         return mRealm.where(Article.class)
                 .equalTo(Article.FIELD_URL, articleUrl)
                 .findAllAsync()
-                .<List<Article>>asObservable()
+                .asObservable()
                 .filter(RealmResults::isLoaded)
                 .filter(RealmResults::isValid)
                 .flatMap(arts -> arts.isEmpty() ? Observable.just(null) : Observable.just(mRealm.copyFromRealm(arts.first())));
@@ -450,7 +470,7 @@ public class DbProvider {
         return mRealm.where(Article.class)
                 .equalTo(Article.FIELD_URL, articleUrl)
                 .findAllAsync()
-                .<List<Article>>asObservable()
+                .asObservable()
                 .filter(RealmResults::isLoaded)
                 .filter(RealmResults::isValid)
                 .first()
@@ -467,7 +487,8 @@ public class DbProvider {
         return mRealm.where(Article.class).equalTo(Article.FIELD_URL, url).findFirst();
     }
 
-    public Observable<List<Article>> saveMultipleArticlesWithoutTextSync(final List<Article> data) {
+    public Single<List<Article>> saveMultipleArticlesWithoutTextSync(final List<Article> data) {
+        //todo change to async transaction
         mRealm.executeTransaction(realm -> {
 //            realm.insertOrUpdate(articles);
             //check if we have app in db and update
@@ -486,19 +507,18 @@ public class DbProvider {
             }
         });
         mRealm.close();
-        return Observable.just(data);
+        return Single.just(data);
     }
 
     /**
      * @param article obj to save
      * @return Observable that emits unmanaged saved article on successful insert or throws error
      */
-    public Observable<Article> saveArticle(final Article article) {
-        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
+    public Single<Article> saveArticle(final Article article) {
+        return Single.create(subscriber -> mRealm.executeTransactionAsync(
                 realm -> saveArticleToRealm(article, realm),
                 () -> {
-                    subscriber.onNext(article);
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(article);
                     mRealm.close();
                 },
                 e -> {
@@ -723,8 +743,8 @@ public class DbProvider {
         ));
     }
 
-    public Observable<String> deleteArticlesText(final String url) {
-        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
+    public Single<String> deleteArticlesText(final String url) {
+        return Single.create(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //check if we have app in db and update
                     final Article articleInDb = realm.where(Article.class)
@@ -734,16 +754,13 @@ public class DbProvider {
                         articleInDb.text = null;
                         articleInDb.textParts = null;
                         articleInDb.textPartsTypes = null;
-
-                        subscriber.onNext(url);
-                        subscriber.onCompleted();
                     } else {
                         Timber.e("No article to add to favorites for ID: %s", url);
                         subscriber.onError(new ScpNoArticleForIdError(url));
                     }
                 },
                 () -> {
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(url);
                     mRealm.close();
                 },
                 e -> {
@@ -811,26 +828,10 @@ public class DbProvider {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    private Observable<Void> deleteUserData() {
-        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
-                realm -> {
-                    realm.delete(User.class);
-                    //do not delete it now... As we want to check if it will be better later via Firebase AB testing
-//                    List<Article> favs = realm.where(Article.class)
-//                            .notEqualTo(Article.FIELD_IS_IN_FAVORITE, Article.ORDER_NONE)
-//                            .findAll();
-//                    for (Article article : favs) {
-//                        article.isInFavorite = Article.ORDER_NONE;
-//                    }
-//                    List<Article> read = realm.where(Article.class)
-//                            .equalTo(Article.FIELD_IS_IN_READEN, true)
-//                            .findAll();
-//                    for (Article article : read) {
-//                        article.isInReaden = false;
-//                    }
-                },
+    private Completable deleteUserData() {
+        return Completable.fromEmitter(subscriber -> mRealm.executeTransactionAsync(
+                realm -> realm.delete(User.class),
                 () -> {
-                    subscriber.onNext(null);
                     subscriber.onCompleted();
                     mRealm.close();
                 },
@@ -841,7 +842,7 @@ public class DbProvider {
         ));
     }
 
-    public Observable<Void> logout() {
+    public Completable logout() {
         //run loop through enum with providers and logout from each of them
         for (final Constants.Firebase.SocialProvider provider : Constants.Firebase.SocialProvider.values()) {
             switch (provider) {
@@ -862,7 +863,7 @@ public class DbProvider {
         return deleteUserData();
     }
 
-    public Single<Void> saveImages(final List<GalleryImage> vkImages) {
+    public Single<Void> saveImages(final Collection<GalleryImage> vkImages) {
         return Single.create(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //clear
@@ -1065,7 +1066,7 @@ public class DbProvider {
     }
 
     public Single<List<MyNativeBanner>> saveBanners(final List<MyNativeBanner> banners) {
-        Timber.d("saveBanners: %s", banners);
+        Timber.d("saveBanners: %s", banners.size());
         return Single.create(subscriber ->
                 mRealm.executeTransactionAsync(
                         realm -> {
@@ -1114,6 +1115,93 @@ public class DbProvider {
                         .equalTo(MyNativeBanner.FIELD_BANNER_TYPE, BannerType.ART.name())
                         .equalTo(MyNativeBanner.FIELD_ENABLED, true)
                         .findAll()
+        );
+    }
+
+    public Single<String> addReadHistoryTransaction(@NonNull final String articleUrl) {
+        return Single
+                .create(singleSubscriber ->
+                        mRealm.executeTransactionAsync(
+                                realm -> {
+                                    //create ID
+                                    final Number maxId = realm
+                                            .where(ReadHistoryTransaction.class)
+                                            .max(ReadHistoryTransaction.FIELD_ID);
+                                    final long nextId = (maxId == null ? 0 : maxId.longValue()) + 1;
+
+                                    //find title
+                                    @Nullable final Article articleForUrl = realm
+                                            .where(Article.class)
+                                            .equalTo(Article.FIELD_URL, articleUrl)
+                                            .findFirst();
+                                    @Nullable final String title;
+                                    if (articleForUrl != null && !TextUtils.isEmpty(articleForUrl.title)) {
+                                        title = articleForUrl.title;
+                                    } else {
+                                        title = articleUrl;
+                                    }
+
+                                    final RealmModel readHistoryTransaction = new ReadHistoryTransaction(
+                                            nextId,
+                                            title,
+                                            articleUrl,
+                                            System.currentTimeMillis()
+                                    );
+
+                                    realm.insertOrUpdate(readHistoryTransaction);
+                                },
+                                () -> {
+                                    mRealm.close();
+                                    singleSubscriber.onSuccess(articleUrl);
+                                },
+                                error -> {
+                                    mRealm.close();
+                                    singleSubscriber.onError(error);
+                                }
+                        )
+                );
+    }
+
+    public Observable<RealmResults<ReadHistoryTransaction>> getAllReadHistoryTransactions() {
+        return mRealm.where(ReadHistoryTransaction.class)
+                .findAllSortedAsync(ReadHistoryTransaction.FIELD_CREATED, Sort.DESCENDING)
+                .asObservable()
+                .filter(RealmResults::isLoaded)
+                .filter(RealmResults::isValid);
+    }
+
+    public Completable deleteReadHistoryTransactionById(final long id) {
+        return Completable.fromEmitter(subscriber -> mRealm.executeTransactionAsync(
+                realm -> realm
+                        .where(ReadHistoryTransaction.class)
+                        .equalTo(ReadHistoryTransaction.FIELD_ID, id)
+                        .findFirst()
+                        .deleteFromRealm(),
+                () -> {
+                    subscriber.onCompleted();
+                    mRealm.close();
+                },
+                e -> {
+                    subscriber.onError(e);
+                    mRealm.close();
+                }
+        ));
+    }
+
+    public Single<Boolean> hasReadHistoryTransactions() {
+        return Single.create(subscriber ->
+                mRealm.executeTransactionAsync(
+                        realm -> subscriber.onSuccess(
+                                realm
+                                        .where(ReadHistoryTransaction.class)
+                                        .count() > 0
+                        ),
+                        mRealm::close,
+                        e -> {
+                            mRealm.close();
+                            subscriber.onError(e);
+                        }
+                )
         );
     }
 }
