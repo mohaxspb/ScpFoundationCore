@@ -56,7 +56,7 @@ public abstract class BaseApplication extends MultiDexApplication {
 
     VKAccessTokenTracker vkAccessTokenTracker = new VKAccessTokenTracker() {
         @Override
-        public void onVKAccessTokenChanged(VKAccessToken oldToken, VKAccessToken newToken) {
+        public void onVKAccessTokenChanged(final VKAccessToken oldToken, final VKAccessToken newToken) {
             if (newToken == null) {
                 //VKAccessToken is invalid
                 //TODO may be we need to logout user...
@@ -110,7 +110,7 @@ public abstract class BaseApplication extends MultiDexApplication {
         } else {
             Timber.plant(new Timber.DebugTree() {
                 @Override
-                protected void log(int priority, String tag, String message, Throwable t) {
+                protected void log(final int priority, final String tag, @NonNull final String message, Throwable t) {
                     if (priority == Log.ERROR) {
                         //maybe send error via some service, i.e. firebase or googleAnalitics
                         super.log(priority, tag, message, t);
@@ -138,7 +138,7 @@ public abstract class BaseApplication extends MultiDexApplication {
     }
 
     @Override
-    protected void attachBaseContext(Context base) {
+    protected void attachBaseContext(final Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
     }

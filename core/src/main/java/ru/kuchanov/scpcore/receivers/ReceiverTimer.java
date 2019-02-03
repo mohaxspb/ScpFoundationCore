@@ -1,8 +1,6 @@
 package ru.kuchanov.scpcore.receivers;
 
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -13,6 +11,8 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
-import rx.Observable;
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -87,11 +87,11 @@ public class ReceiverTimer extends BroadcastReceiver {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMapObservable(newArticles -> mDbProviderFactory.getDbProvider()
+                .flatMap(newArticles -> mDbProviderFactory.getDbProvider()
                         .saveRecentArticlesList(newArticles, Constants.Api.ZERO_OFFSET)
                         .flatMap(newArticlesAddedToDb -> {
                             if (mMyPreferencesManager.isSaveNewArticlesEnabled()) {
-                                return Observable.just(newArticles)
+                                return Single.just(newArticles)
                                         .map(articles -> {
                                             int limit = (int) FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_FREE_ARTICLES_LIMIT);
 
@@ -136,10 +136,10 @@ public class ReceiverTimer extends BroadcastReceiver {
                                                 }
                                             }
                                             dbProvider.close();
-                                            return Observable.just(articles);
+                                            return Single.just(articles);
                                         });
                             } else {
-                                return Observable.just(newArticles);
+                                return Single.just(newArticles);
                             }
                         }))
                 .observeOn(AndroidSchedulers.mainThread())

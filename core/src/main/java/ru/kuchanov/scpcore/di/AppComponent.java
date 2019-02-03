@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.di;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -54,6 +56,7 @@ import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsJokesFragment;
 import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsOtherFragment;
 import ru.kuchanov.scpcore.ui.fragment.monetization.FreeAdsDisableActionsFragment;
 import ru.kuchanov.scpcore.ui.fragment.monetization.LeaderboardFragment;
+import ru.kuchanov.scpcore.ui.fragment.monetization.ReadHistoryFragment;
 import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment;
 import ru.kuchanov.scpcore.ui.fragment.search.SiteSearchArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.tags.TagsSearchFragment;
@@ -140,6 +143,8 @@ public interface AppComponent {
     void inject(FreeAdsDisableActionsFragment fragment);
 
     void inject(LeaderboardFragment leaderboardFragment);
+
+    void inject(ReadHistoryFragment readHistoryFragment);
 
     void inject(TextSizeDialogFragment dialogFragment);
 

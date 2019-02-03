@@ -255,7 +255,7 @@ public abstract class DownloadAllService extends Service {
                 .toList()
 //                //FIX ME test value
 //                .flatMap(list -> Observable.just(list.subList(0, mMaxProgress)))
-                .flatMap(this::downloadAndSaveArticles)
+                .flatMapSingle(this::downloadAndSaveArticles)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(
@@ -319,10 +319,10 @@ public abstract class DownloadAllService extends Service {
                 )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMapObservable(articles ->
+                .flatMap(articles ->
                         getDbProvider()
                                 .saveObjectsArticlesList(articles, type.dbField)
-                                .flatMap(integerIntegerPair -> Observable.just(articles))
+                                .flatMap(integerIntegerPair -> Single.just(articles))
                 )
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
@@ -348,8 +348,8 @@ public abstract class DownloadAllService extends Service {
         mCompositeSubscription.add(subscription);
     }
 
-    private Observable<List<Article>> downloadAndSaveArticles(final List<Article> articlesToDownload) {
-        return Observable.just(articlesToDownload)
+    private Single<List<Article>> downloadAndSaveArticles(final List<Article> articlesToDownload) {
+        return Single.just(articlesToDownload)
                 //decrease amount by limit
                 .map(limitArticles)
                 //check for already downloaded articles
@@ -410,7 +410,7 @@ public abstract class DownloadAllService extends Service {
                         }
                     }
                     dbProvider.close();
-                    return Observable.just(articles);
+                    return Single.just(articles);
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -422,18 +422,18 @@ public abstract class DownloadAllService extends Service {
                     );
                 })
                 .onErrorResumeNext(
-                        Observable
+                        Single
                                 .<List<Article>>just(Collections.emptyList())
                                 .delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS)
                 )
-                .doOnNext(articles -> showNotificationSimple(
+                .doOnSuccess(articles -> showNotificationSimple(
                         getString(R.string.download_complete_title),
                         getString(R.string.download_complete_title_content,
                                 mCurProgress - mNumOfErrors, mMaxProgress, mNumOfErrors
                         )
                 ))
                 .flatMap(articles ->
-                        Observable
+                        Single
                                 .just(articles)
                                 .delay(DELAY_BEFORE_HIDE_NOTIFICATION, TimeUnit.SECONDS)
                 );

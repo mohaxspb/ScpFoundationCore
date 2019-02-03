@@ -1,18 +1,19 @@
 package ru.kuchanov.scpcore.ui.activity;
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.gson.GsonBuilder;
-
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.MenuItem;
+
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.gson.GsonBuilder;
 
 import java.util.List;
 import java.util.Locale;
@@ -38,7 +39,9 @@ import ru.kuchanov.scpcore.ui.fragment.articleslists.OfflineArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.RatedArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.ReadArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.RecentArticlesFragment;
+import ru.kuchanov.scpcore.ui.fragment.monetization.ReadHistoryFragment;
 import ru.kuchanov.scpcore.ui.fragment.search.SiteSearchArticlesFragment;
+import ru.kuchanov.scpcore.util.AttributeGetter;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import ru.kuchanov.scpcore.util.SystemUtils;
 import timber.log.Timber;
@@ -104,8 +107,8 @@ public class MainActivity
         } else if (link.equals(mConstantValues.getNews())) {
             mCurrentSelectedDrawerItemId = (R.id.news);
         } else if (link.equals(mConstantValues.getBaseApiUrl())
-                   || link.equals(mConstantValues.getBaseApiUrl() + "/")
-                   || link.equals(mConstantValues.getMostRated())) {
+                || link.equals(mConstantValues.getBaseApiUrl() + "/")
+                || link.equals(mConstantValues.getMostRated())) {
             mCurrentSelectedDrawerItemId = R.id.mostRatedArticles;
         } else if (link.equals(mConstantValues.getNewArticles())) {
             mCurrentSelectedDrawerItemId = R.id.mostRecentArticles;
@@ -167,6 +170,25 @@ public class MainActivity
                 dialogFragment.show(getFragmentManager(), NewVersionDialogFragment.TAG);
             }
         }
+
+        if (savedInstanceState == null) {
+            mPresenter.onFirstViewAttached();
+        }
+    }
+
+    @Override
+    public void showReadHistoryTransactionsSnackBar() {
+        final Snackbar snackbar = Snackbar.make(
+                mRoot,
+                SystemUtils.coloredTextForSnackBar(this, R.string.continue_reading),
+                Snackbar.LENGTH_INDEFINITE
+        );
+        snackbar.setAction(R.string.open, v -> {
+            snackbar.dismiss();
+            showFragment(ReadHistoryFragment.newInstance(), ReadHistoryFragment.TAG);
+        });
+        snackbar.setActionTextColor(AttributeGetter.getColor(this, R.attr.snackbarActionTextColor));
+        snackbar.show();
     }
 
     public void showAppLangOrVersionFeaturesDialog() {
@@ -212,10 +234,10 @@ public class MainActivity
     @Override
     protected int getDefaultNavItemId() {
         return getIntent().hasExtra(EXTRA_SHOW_ABOUT)
-               ? R.id.about
-               : getResources().getBoolean(R.bool.siteHasRatedArticlesList)
-                 ? R.id.mostRatedArticles
-                 : R.id.objects_I;
+                ? R.id.about
+                : getResources().getBoolean(R.bool.siteHasRatedArticlesList)
+                ? R.id.mostRatedArticles
+                : R.id.objects_I;
     }
 
     @Override
@@ -305,6 +327,10 @@ public class MainActivity
         } else if (id == R.id.tagsSearch) {
             startTagsSearchActivity();
             return true;
+        } else if (id == R.id.readHistory) {
+            mCurrentSelectedDrawerItemId = id;
+            showFragment(ReadHistoryFragment.newInstance(), ReadHistoryFragment.TAG);
+            return true;
         } else if (id == R.id.objects_RU) {
             mCurrentSelectedDrawerItemId = id;
             showFragment(ObjectsRuArticlesFragment.newInstance(), ObjectsRuArticlesFragment.TAG);
@@ -392,6 +418,8 @@ public class MainActivity
             title = getString(R.string.drawer_item_11);
         } else if (id == R.id.read) {
             title = getString(R.string.drawer_item_read);
+        } else if (id == R.id.readHistory) {
+            title = getString(R.string.read_history);
         } else {
             Timber.e("unexpected item ID");
             title = null;

@@ -16,14 +16,37 @@ import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisa
  *
  * for ScpCore
  */
-class DisableAdsForAuthDelegate(val clickListener: () -> Unit) : AbsListItemAdapterDelegate<DisableAdsForAuthViewModel, MyListItem, DisableAdsForAuthDelegate.ViewHolder>() {
+class DisableAdsForAuthDelegate(
+        val clickListener: () -> Unit
+) : AbsListItemAdapterDelegate<
+        DisableAdsForAuthViewModel,
+        MyListItem,
+        DisableAdsForAuthDelegate.ViewHolder
+        >() {
 
-    override fun isForViewType(item: MyListItem, items: MutableList<MyListItem>, position: Int) = item is DisableAdsForAuthViewModel
+    override fun isForViewType(
+            item: MyListItem,
+            items: MutableList<MyListItem>,
+            position: Int
+    ) =
+            item is DisableAdsForAuthViewModel
 
     override fun onCreateViewHolder(parent: ViewGroup) =
-            ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.list_item_free_ads_simple, parent, false))
+            ViewHolder(
+                    LayoutInflater
+                            .from(parent.context)
+                            .inflate(
+                                    R.layout.list_item_free_ads_simple,
+                                    parent,
+                                    false
+                            )
+            )
 
-    override fun onBindViewHolder(item: DisableAdsForAuthViewModel, viewHolder: ViewHolder, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(
+            item: DisableAdsForAuthViewModel,
+            viewHolder: ViewHolder,
+            payloads: MutableList<Any>
+    ) {
         with(viewHolder.itemView) {
             setBackgroundResource(item.backgroundColor)
             titleTextView.text = context.getString(item.title)

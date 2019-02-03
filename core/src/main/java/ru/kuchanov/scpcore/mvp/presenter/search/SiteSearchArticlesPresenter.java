@@ -73,19 +73,18 @@ public class SiteSearchArticlesPresenter
     }
 
     @Override
-    protected Observable<Pair<Integer, Integer>> getSaveToDbObservable(final List<Article> data, final int offset) {
+    protected Single<Pair<Integer, Integer>> getSaveToDbObservable(final List<Article> data, final int offset) {
         //we do not save search results to db
         //but we need pass data to view...
         //so try to do it here
-        return Observable.unsafeCreate(subscriber -> {
+        return Single.create(subscriber -> {
             if (offset == 0) {
                 mSearchData = data;
             } else {
                 mSearchData.addAll(data);
             }
             getView().updateData(mSearchData);
-            subscriber.onNext(new Pair<>(data.size(), offset));
-            subscriber.onCompleted();
+            subscriber.onSuccess(new Pair<>(data.size(), offset));
         });
     }
 

@@ -5,16 +5,16 @@ import io.realm.annotations.Index
 import io.realm.annotations.PrimaryKey
 
 open class LeaderboardUser(
-    @PrimaryKey
-    @Index
-    var id: Long = 0,
-    var fullName: String? = "",
-    var avatar: String? = "",
-    var score: Int = 0,
-    var numOfReadArticles: Int = 0,
-    var levelNum: Int = 0,
-    var scoreToNextLevel: Int = 0,
-    var curLevelScore: Int = 0
+        @PrimaryKey
+        @Index
+        var id: Long = 0,
+        var fullName: String? = "",
+        var avatar: String? = "",
+        var score: Int = 0,
+        var numOfReadArticles: Int = 0,
+        var levelNum: Int = 0,
+        var scoreToNextLevel: Int = 0,
+        var curLevelScore: Int = 0
 ) : RealmObject() {
 
     companion object {
