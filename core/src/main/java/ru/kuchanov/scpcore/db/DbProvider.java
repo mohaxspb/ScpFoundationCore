@@ -37,6 +37,7 @@ import ru.kuchanov.scpcore.db.model.ReadHistoryTransaction;
 import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import rx.Completable;
 import rx.Observable;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
@@ -743,8 +744,8 @@ public class DbProvider {
         ));
     }
 
-    public Observable<String> deleteArticlesText(final String url) {
-        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
+    public Single<String> deleteArticlesText(final String url) {
+        return Single.create(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //check if we have app in db and update
                     final Article articleInDb = realm.where(Article.class)
@@ -754,16 +755,13 @@ public class DbProvider {
                         articleInDb.text = null;
                         articleInDb.textParts = null;
                         articleInDb.textPartsTypes = null;
-
-                        subscriber.onNext(url);
-                        subscriber.onCompleted();
                     } else {
                         Timber.e("No article to add to favorites for ID: %s", url);
                         subscriber.onError(new ScpNoArticleForIdError(url));
                     }
                 },
                 () -> {
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(url);
                     mRealm.close();
                 },
                 e -> {
@@ -831,26 +829,10 @@ public class DbProvider {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    private Observable<Void> deleteUserData() {
-        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
-                realm -> {
-                    realm.delete(User.class);
-                    //do not delete it now... As we want to check if it will be better later via Firebase AB testing
-//                    List<Article> favs = realm.where(Article.class)
-//                            .notEqualTo(Article.FIELD_IS_IN_FAVORITE, Article.ORDER_NONE)
-//                            .findAll();
-//                    for (Article article : favs) {
-//                        article.isInFavorite = Article.ORDER_NONE;
-//                    }
-//                    List<Article> read = realm.where(Article.class)
-//                            .equalTo(Article.FIELD_IS_IN_READEN, true)
-//                            .findAll();
-//                    for (Article article : read) {
-//                        article.isInReaden = false;
-//                    }
-                },
+    private Completable deleteUserData() {
+        return Completable.fromEmitter(subscriber -> mRealm.executeTransactionAsync(
+                realm -> realm.delete(User.class),
                 () -> {
-                    subscriber.onNext(null);
                     subscriber.onCompleted();
                     mRealm.close();
                 },
@@ -861,7 +843,7 @@ public class DbProvider {
         ));
     }
 
-    public Observable<Void> logout() {
+    public Completable logout() {
         //run loop through enum with providers and logout from each of them
         for (final Constants.Firebase.SocialProvider provider : Constants.Firebase.SocialProvider.values()) {
             switch (provider) {
@@ -1187,5 +1169,23 @@ public class DbProvider {
                 .asObservable()
                 .filter(RealmResults::isLoaded)
                 .filter(RealmResults::isValid);
+    }
+
+    public Completable deleteReadHistoryTransactionById(final long id) {
+        return Completable.fromEmitter(subscriber -> mRealm.executeTransactionAsync(
+                realm -> realm
+                        .where(ReadHistoryTransaction.class)
+                        .equalTo(ReadHistoryTransaction.FIELD_ID, id)
+                        .findFirst()
+                        .deleteFromRealm(),
+                () -> {
+                    subscriber.onCompleted();
+                    mRealm.close();
+                },
+                e -> {
+                    subscriber.onError(e);
+                    mRealm.close();
+                }
+        ));
     }
 }

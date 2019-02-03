@@ -39,7 +39,6 @@ class ReadHistoryPresenter(
                 .subscribeBy(
                         onNext = {
                             Timber.d("it size: ${it.size}")
-                            //todo
                             view.showData(it)
                         },
                         onError = {
@@ -54,6 +53,15 @@ class ReadHistoryPresenter(
     }
 
     override fun onTranactionDeleteClicked(id: Long) {
-        //todo delete transaction
+        mDbProviderFactory
+                .dbProvider
+                .deleteReadHistoryTransactionById(id)
+                .subscribeBy(
+                        onCompleted = { Timber.d("deleted") },
+                        onError = {
+                            Timber.e(it, "Error while delete transaction")
+                            view.showError(it)
+                        }
+                )
     }
 }
