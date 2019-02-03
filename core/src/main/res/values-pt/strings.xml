@@ -361,4 +361,6 @@
     <string name="add_to_read">Add to read</string>
     <string name="remove_from_read">Remove from read</string>
     <string name="read_history">Read history</string>
+    <string name="open">Open</string>
+    <string name="continue_reading">Continue reading?</string>
 </resources>

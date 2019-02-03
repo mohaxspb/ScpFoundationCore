@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
@@ -40,6 +41,7 @@ import ru.kuchanov.scpcore.ui.fragment.articleslists.ReadArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.articleslists.RecentArticlesFragment;
 import ru.kuchanov.scpcore.ui.fragment.monetization.ReadHistoryFragment;
 import ru.kuchanov.scpcore.ui.fragment.search.SiteSearchArticlesFragment;
+import ru.kuchanov.scpcore.util.AttributeGetter;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import ru.kuchanov.scpcore.util.SystemUtils;
 import timber.log.Timber;
@@ -168,6 +170,25 @@ public class MainActivity
                 dialogFragment.show(getFragmentManager(), NewVersionDialogFragment.TAG);
             }
         }
+
+        if (savedInstanceState == null) {
+            mPresenter.onFirstViewAttached();
+        }
+    }
+
+    @Override
+    public void showReadHistoryTransactionsSnackBar() {
+        final Snackbar snackbar = Snackbar.make(
+                mRoot,
+                SystemUtils.coloredTextForSnackBar(this, R.string.continue_reading),
+                Snackbar.LENGTH_INDEFINITE
+        );
+        snackbar.setAction(R.string.open, v -> {
+            snackbar.dismiss();
+            showFragment(ReadHistoryFragment.newInstance(), ReadHistoryFragment.TAG);
+        });
+        snackbar.setActionTextColor(AttributeGetter.getColor(this, R.attr.snackbarActionTextColor));
+        snackbar.show();
     }
 
     public void showAppLangOrVersionFeaturesDialog() {

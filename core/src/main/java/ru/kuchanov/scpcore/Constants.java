@@ -92,7 +92,11 @@ public interface Constants {
         int INVITE_CTA_MAX_LENGTH = 20;
 
         enum CallToActionReason {
-            REMOVE_ADS, ENABLE_AUTO_SYNC, SYNC_NEED_AUTH, ENABLE_FONTS, ADS_WILL_SHOWN_SOON
+            REMOVE_ADS,
+            ENABLE_AUTO_SYNC,
+            SYNC_NEED_AUTH,
+            ENABLE_FONTS,
+            ADS_WILL_SHOWN_SOON
         }
 
         enum SocialProvider {

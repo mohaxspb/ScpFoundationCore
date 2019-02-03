@@ -1188,4 +1188,21 @@ public class DbProvider {
                 }
         ));
     }
+
+    public Single<Boolean> hasReadHistoryTransactions() {
+        return Single.create(subscriber ->
+                mRealm.executeTransactionAsync(
+                        realm -> subscriber.onSuccess(
+                                realm
+                                        .where(ReadHistoryTransaction.class)
+                                        .count() > 0
+                        ),
+                        mRealm::close,
+                        e -> {
+                            mRealm.close();
+                            subscriber.onError(e);
+                        }
+                )
+        );
+    }
 }

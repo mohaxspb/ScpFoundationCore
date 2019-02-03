@@ -521,7 +521,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
-    public void showSnackBarWithAction(final Constants.Firebase.CallToActionReason reason) {
+    public void showSnackBarWithAction(@NonNull final Constants.Firebase.CallToActionReason reason) {
         Timber.d("showSnackBarWithAction: %s", reason);
         final Snackbar snackbar;
         switch (reason) {
