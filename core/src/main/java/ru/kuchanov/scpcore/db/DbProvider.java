@@ -514,12 +514,11 @@ public class DbProvider {
      * @param article obj to save
      * @return Observable that emits unmanaged saved article on successful insert or throws error
      */
-    public Observable<Article> saveArticle(final Article article) {
-        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
+    public Single<Article> saveArticle(final Article article) {
+        return Single.create(subscriber -> mRealm.executeTransactionAsync(
                 realm -> saveArticleToRealm(article, realm),
                 () -> {
-                    subscriber.onNext(article);
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(article);
                     mRealm.close();
                 },
                 e -> {

@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    >
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:id="@+id/banner_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?toolbarBackgroundGradient"
-            />
+            android:background="?toolbarBackgroundGradient" />
 
         <com.google.android.gms.ads.AdView
             android:id="@+id/banner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             ads:adSize="SMART_BANNER"
-            ads:adUnitId="@string/ad_unit_id_main_screen_banner"
-            />
+            ads:adUnitId="@string/ad_unit_id_main_screen_banner" />
 
-        <FrameLayout
-            android:id="@+id/content"
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/coordinatorLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="?windowbackgroundOverrided"
-            android:fitsSystemWindows="true"
-            />
+            android:layout_weight="1">
+
+            <FrameLayout
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?windowbackgroundOverrided"
+                android:fitsSystemWindows="true" />
+        </android.support.design.widget.CoordinatorLayout>
     </LinearLayout>
 
     <android.support.design.widget.NavigationView
@@ -53,7 +53,6 @@
         app:headerLayout="@layout/drawer_header_unlogined"
         app:itemIconTint="?navigationViewItemIconColor"
         app:itemTextColor="?navigationViewItemTextColor"
-        app:menu="@menu/my_navigation_items"
-        />
+        app:menu="@menu/my_navigation_items" />
 
 </android.support.v4.widget.DrawerLayout>

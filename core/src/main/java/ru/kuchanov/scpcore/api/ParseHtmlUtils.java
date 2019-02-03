@@ -445,8 +445,10 @@ public class ParseHtmlUtils {
                 //also fix scp-3000, where image and spoiler are in div tag, fucking shit! Web monkeys, ARGH!!!
                 if (!element.children().isEmpty() && element.children().size() == 2
                         && element.child(0).tagName().equals("img") && element.child(1).className().equals("collapsible-block")) {
-                    element.before(element.childNode(0));
-                    element.after(element.childNode(1));
+                    final Node imgTag = element.childNode(0);
+                    final Node spoiler = element.childNode(1);
+                    element.before(imgTag);
+                    element.after(spoiler);
                     element.remove();
                 }
             }

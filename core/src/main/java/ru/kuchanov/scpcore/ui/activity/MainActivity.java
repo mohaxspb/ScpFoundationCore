@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -18,10 +19,12 @@ import com.google.gson.GsonBuilder;
 import java.util.List;
 import java.util.Locale;
 
+import butterknife.BindView;
 import ru.kuchanov.rate.PreRate;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
+import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.api.model.remoteconfig.AppLangVersionsJson;
 import ru.kuchanov.scpcore.mvp.contract.MainMvp;
 import ru.kuchanov.scpcore.ui.dialog.CC3LicenseDialogFragment;
@@ -65,6 +68,9 @@ public class MainActivity
         intent.putExtra(EXTRA_LINK, link);
         context.startActivity(intent);
     }
+
+    @BindView(R2.id.coordinatorLayout)
+    protected CoordinatorLayout mCoordinatorLayout;
 
     @Override
     protected void callInjections() {
@@ -179,7 +185,7 @@ public class MainActivity
     @Override
     public void showReadHistoryTransactionsSnackBar() {
         final Snackbar snackbar = Snackbar.make(
-                mRoot,
+                mCoordinatorLayout,
                 SystemUtils.coloredTextForSnackBar(this, R.string.continue_reading),
                 Snackbar.LENGTH_INDEFINITE
         );

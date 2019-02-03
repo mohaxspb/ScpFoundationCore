@@ -617,13 +617,12 @@ public class ApiClient {
         return doc.getElementById("page-content");
     }
 
-    public Observable<Article> getArticle(final String url) {
+    public Single<Article> getArticle(final String url) {
         Timber.d("start download article: %s", url);
-        return Observable.<Article>unsafeCreate(subscriber -> {
+        return Single.<Article>create(subscriber -> {
             try {
                 Article article = getArticleFromApi(url);
-                subscriber.onNext(article);
-                subscriber.onCompleted();
+                subscriber.onSuccess(article);
             } catch (Exception | ScpParseException e) {
                 subscriber.onError(e);
             }
@@ -636,7 +635,7 @@ public class ApiClient {
 
                     return article;
                 })
-                .onErrorResumeNext(throwable -> Observable.error(new ScpException(throwable, url)));
+                .onErrorResumeNext(throwable -> Single.error(new ScpException(throwable, url)));
     }
 
     /**
