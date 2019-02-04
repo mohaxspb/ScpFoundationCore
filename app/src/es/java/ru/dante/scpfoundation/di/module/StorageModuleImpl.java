@@ -3,22 +3,21 @@ package ru.dante.scpfoundation.di.module;
 import java.util.Locale;
 
 import dagger.Module;
+import io.realm.DynamicRealmObject;
 import io.realm.FieldAttribute;
 import io.realm.RealmMigration;
 import io.realm.RealmObjectSchema;
+import io.realm.RealmResults;
 import io.realm.RealmSchema;
 import ru.kuchanov.scpcore.db.model.Article;
+import ru.kuchanov.scpcore.db.model.BannerType;
 import ru.kuchanov.scpcore.db.model.LeaderboardUser;
+import ru.kuchanov.scpcore.db.model.MyNativeBanner;
 import ru.kuchanov.scpcore.db.model.ReadHistoryTransaction;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImageTranslation;
 import ru.kuchanov.scpcore.di.module.StorageModule;
-import ru.kuchanov.scpcore.db.model.MyNativeBanner;
-import io.realm.RealmResults;
-import io.realm.DynamicRealmObject;
-import ru.kuchanov.scpcore.db.model.BannerType;
-import ru.kuchanov.scpcore.db.model.RealmString;
 import timber.log.Timber;
 
 /**

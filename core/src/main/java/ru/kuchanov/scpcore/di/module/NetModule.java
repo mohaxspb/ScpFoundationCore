@@ -93,10 +93,10 @@ public class NetModule {
     @Singleton
     Interceptor providesLoggingInterceptor() {
         return new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(
-                BuildConfig.FLAVOR.equals("dev")
-                        ?
-                        HttpLoggingInterceptor.Level.BODY
-                        :
+//                BuildConfig.FLAVOR.equals("dev")
+//                        ?
+//                        HttpLoggingInterceptor.Level.BODY
+//                        :
                         HttpLoggingInterceptor.Level.NONE
         );
     }

@@ -7,6 +7,7 @@ import io.realm.FieldAttribute;
 import io.realm.RealmMigration;
 import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
+import ru.kuchanov.scpcore.db.model.ReadHistoryTransaction;
 import ru.kuchanov.scpcore.db.model.LeaderboardUser;
 import ru.kuchanov.scpcore.di.module.StorageModule;
 import ru.kuchanov.scpcore.db.model.MyNativeBanner;
