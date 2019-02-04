@@ -166,6 +166,21 @@ public class StorageModuleImpl extends StorageModule {
                 oldVersion++;
             }
 
+            if (oldVersion == 7) {
+                schema.create(ReadHistoryTransaction.class.getSimpleName())
+                        .addField(
+                                MyNativeBanner.FIELD_ID,
+                                Long.class,
+                                FieldAttribute.PRIMARY_KEY,
+                                FieldAttribute.REQUIRED
+                        )
+                        .addField(ReadHistoryTransaction.FIELD_TITLE, String.class)
+                        .addField(ReadHistoryTransaction.FIELD_URL, String.class)
+                        .addField(ReadHistoryTransaction.FIELD_CREATED, Long.class);
+
+                oldVersion++;
+            }
+
             //add new if blocks if schema changed
             if (oldVersion < newVersion) {
                 throw new IllegalStateException(String.format(Locale.ENGLISH, "Migration missing from v%d to v%d", oldVersion, newVersion));
