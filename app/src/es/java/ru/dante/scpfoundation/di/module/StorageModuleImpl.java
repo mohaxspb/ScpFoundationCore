@@ -9,6 +9,7 @@ import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.LeaderboardUser;
+import ru.kuchanov.scpcore.db.model.ReadHistoryTransaction;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImageTranslation;
@@ -216,6 +217,21 @@ public class StorageModuleImpl extends StorageModule {
 
                 final RealmResults<DynamicRealmObject> banners = realm.where(MyNativeBanner.class.getSimpleName()).findAll();
                 Timber.d("banners: %s", banners);
+
+                oldVersion++;
+            }
+
+            if (oldVersion == 10) {
+                schema.create(ReadHistoryTransaction.class.getSimpleName())
+                        .addField(
+                                MyNativeBanner.FIELD_ID,
+                                Long.class,
+                                FieldAttribute.PRIMARY_KEY,
+                                FieldAttribute.REQUIRED
+                        )
+                        .addField(ReadHistoryTransaction.FIELD_TITLE, String.class)
+                        .addField(ReadHistoryTransaction.FIELD_URL, String.class)
+                        .addField(ReadHistoryTransaction.FIELD_CREATED, Long.class);
 
                 oldVersion++;
             }
