@@ -609,11 +609,9 @@ public class ApiClient {
     }
 
     /**
-     * We need this as in FR site all article content wrapped in another div... ***!!!11
-     *
      * @return Element with article content
      */
-    protected Element getArticlePageContentTag(final Document doc) {
+    private Element getArticlePageContentTag(final Document doc) {
         return doc.getElementById("page-content");
     }
 
