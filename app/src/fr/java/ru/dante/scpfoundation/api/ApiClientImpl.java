@@ -66,15 +66,6 @@ public class ApiClientImpl extends ApiClient {
     }
 
     @Override
-    protected Element getArticlePageContentTag(final Document doc) {
-        //need to get text from <div style="min-height:600px&quot;"> which is first and only one child of page-content div
-        final Element pageContent = doc.getElementById("page-content").getElementsByAttributeValueStarting("style", "min-height:600px").first();
-        pageContent.removeAttr("style").attr("id", "page-content");
-//        Timber.d("pageContent: %s", pageContent);
-        return pageContent;
-    }
-
-    @Override
     public Observable<String> getRandomUrl() {
         Timber.d("getRandomUrl");
         return Observable.unsafeCreate(subscriber -> {
@@ -87,8 +78,8 @@ public class ApiClientImpl extends ApiClient {
                         .followRedirects(false)
                         .addInterceptor(new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(
                                 BuildConfig.FLAVOR.equals("dev")
-                                ? HttpLoggingInterceptor.Level.BODY
-                                : HttpLoggingInterceptor.Level.NONE
+                                        ? HttpLoggingInterceptor.Level.BODY
+                                        : HttpLoggingInterceptor.Level.NONE
                         ))
                         .build();
                 final Response response = client.newCall(request.build()).execute();
