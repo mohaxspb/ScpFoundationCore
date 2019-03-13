@@ -272,6 +272,8 @@ public interface Constants {
         interface PushTopics {
 
             String MAIN = "main";
+
+            String TEST = "test";
         }
     }
 }

@@ -17,6 +17,8 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import org.joda.time.Duration;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import ru.kuchanov.scpcore.BaseApplication;
@@ -42,8 +44,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Inject
     MyPreferenceManager mMyPreferenceManager;
+
     @Inject
     ApiClient mApiClient;
+
     @Inject
     DbProviderFactory mDbProviderFactory;
 
@@ -116,11 +120,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         pendingIntent
                 );
             } else {
-                final String title = remoteMessage.getData().get(Constants.Firebase.PushDataKeys.TITLE);
-                final String message = remoteMessage.getData().get(Constants.Firebase.PushDataKeys.MESSAGE);
-                final String url = remoteMessage.getData().get(Constants.Firebase.PushDataKeys.URL);
-                final boolean openInThirdPartyBrowser =
-                        Boolean.parseBoolean(remoteMessage.getData().get(Constants.Firebase.PushDataKeys.OPEN_IN_THIRD_PARTY_BROWSER));
+                Map<String, String> data = remoteMessage.getData();
+                final String title = data.get(Constants.Firebase.PushDataKeys.TITLE);
+                final String message = data.get(Constants.Firebase.PushDataKeys.MESSAGE);
+                final String url = data.get(Constants.Firebase.PushDataKeys.URL);
+                final boolean openInThirdPartyBrowser = Boolean.parseBoolean(
+                        data.get(Constants.Firebase.PushDataKeys.OPEN_IN_THIRD_PARTY_BROWSER)
+                );
                 final Intent intent;
                 if (url == null) {
                     intent = new Intent(this, MainActivity.class);
@@ -177,6 +183,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //        }
     }
 
+    @Deprecated
     private void incrementUserScoreForInvite() {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             Timber.d("user unlogined, do nothing");
@@ -202,6 +209,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 );
     }
 
+    @Deprecated
     @SuppressWarnings("TypeMayBeWeakened")
     private void buildNotification(final int id, final CharSequence title, final String message, final PendingIntent pendingIntent) {
         final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "invite push")
