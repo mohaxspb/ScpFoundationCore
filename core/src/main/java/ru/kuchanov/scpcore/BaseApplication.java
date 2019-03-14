@@ -1,5 +1,12 @@
 package ru.kuchanov.scpcore;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
+import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -7,8 +14,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-
-import com.crashlytics.android.Crashlytics;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.vk.sdk.VKAccessToken;
@@ -16,12 +21,6 @@ import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
 import com.yandex.metrica.YandexMetrica;
 import com.yandex.metrica.YandexMetricaConfig;
-
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
-import android.util.Log;
 
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
@@ -68,6 +67,7 @@ public abstract class BaseApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        //noinspection ConstantConditions
         if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
             // You should not init your app in this process.
@@ -127,7 +127,17 @@ public abstract class BaseApplication extends MultiDexApplication {
         Realm.init(this);
 
         //subscribe to main push topic
-        FirebaseMessaging.getInstance().subscribeToTopic(Constants.Firebase.PushTopics.MAIN);
+        //noinspection ConstantConditions
+        final String topic = BuildConfig.DEBUG || BuildConfig.FLAVOR.equals("dev")
+                ? Constants.Firebase.PushTopics.TEST
+                : Constants.Firebase.PushTopics.MAIN;
+        Timber.d("Subscribe to FCM topic: %s", topic);
+        FirebaseMessaging
+                .getInstance()
+                .subscribeToTopic(topic)
+                .addOnCompleteListener(task -> Timber.d("subscribeToTopic onComplete: %s", task.getResult()))
+                .addOnSuccessListener(command -> Timber.d("subscribeToTopic onSuccess: %s", command))
+                .addOnFailureListener(e -> Timber.e(e, "subscribeToTopic onFailure"));
 
         //need to initialize it manually
         //https://stackoverflow.com/a/50782095/3212712

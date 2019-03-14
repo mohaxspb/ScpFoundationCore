@@ -45,8 +45,7 @@ public interface Constants {
         String NOT_TRANSLATED_ARTICLE_URL_DELIMITER = "___";
 
         interface ScpReader {
-            public static final String GRANT_TYPE_PASSWORD = "password";
-            public static final String GRANT_TYPE_REFRESH_TOKEN = "refresh_token";
+            String GRANT_TYPE_REFRESH_TOKEN = "refresh_token";
         }
     }
 
@@ -142,7 +141,6 @@ public interface Constants {
             String VK_GROUPS = "vkGroups";
             String APPS = "apps";
             String INAPP = "inapp";
-            String CRACKED = "cracked";
             String SOCIAL_PROVIDER = "socialProviders";
             String SIGN_IN_REWARD_GAINED = "signInRewardGained";
         }
@@ -272,6 +270,8 @@ public interface Constants {
         interface PushTopics {
 
             String MAIN = "main";
+
+            String TEST = "test";
         }
     }
 }
