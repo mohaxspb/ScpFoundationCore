@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import ru.kuchanov.scpcore.BaseApplication;
+import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
@@ -31,6 +32,7 @@ import ru.kuchanov.scpcore.mvp.base.BasePresenter;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import ru.kuchanov.scpcore.ui.activity.WebViewActivity;
+import ru.kuchanov.scpcore.util.NotificationUtilsKt;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -42,6 +44,10 @@ import timber.log.Timber;
  */
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
+    public static final String CHANEL_ID = "FCM_CHANEL_ID";
+
+    public static final String CHANEL_NAME = "FCM_CHANEL_NAME";
+
     @Inject
     MyPreferenceManager mMyPreferenceManager;
 
@@ -50,6 +56,24 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Inject
     DbProviderFactory mDbProviderFactory;
+
+    @Inject
+    protected ConstantValues mConstantValues;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        BaseApplication.getAppComponent().inject(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationUtilsKt.createNotificationChannel(
+                    this,
+                    CHANEL_ID + "_" + mConstantValues.getAppLang(),
+                    CHANEL_NAME + "_" + mConstantValues.getAppLang()
+            );
+        }
+    }
 
     @Override
     public void onNewToken(final String s) {
@@ -63,10 +87,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(final RemoteMessage remoteMessage) {
-        super.onMessageReceived(remoteMessage);
-        BaseApplication.getAppComponent().inject(this);
-
         Timber.d("onMessageReceived: %s", remoteMessage.getData());
+        super.onMessageReceived(remoteMessage);
 
         //todo need to switch by some key-value pair to be able to handle different pushes
         if (remoteMessage.getNotification() == null) {
@@ -173,14 +195,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     pendingIntent
             );
         }
-
-//        Map data = remoteMessage.loadData();
-//        String type = (String) data.get(Constants.PushFields.PUSH_FIELD_TYPE);
-//
-//        if (TextUtils.isEmpty(type)) {
-//            Timber.e("type is empty!");
-//            return;
-//        }
     }
 
     @Deprecated
@@ -209,10 +223,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 );
     }
 
-    @Deprecated
     @SuppressWarnings("TypeMayBeWeakened")
-    private void buildNotification(final int id, final CharSequence title, final String message, final PendingIntent pendingIntent) {
-        final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "invite push")
+    private void buildNotification(
+            final int id,
+            final CharSequence title,
+            final String message,
+            final PendingIntent pendingIntent
+    ) {
+        final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, getChanelId())
                 .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_launcher))
                 .setSmallIcon(R.drawable.ic_logo_notification)
                 .setContentTitle(title)
@@ -229,5 +247,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(id, notificationBuilder.build());
+    }
+
+    private String getChanelId() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return NotificationUtilsKt.createNotificationChannel(
+                    this,
+                    CHANEL_ID + "_" + mConstantValues.getAppLang(),
+                    CHANEL_NAME + "_" + mConstantValues.getAppLang()
+            );
+        } else {
+            return "";
+        }
     }
 }
