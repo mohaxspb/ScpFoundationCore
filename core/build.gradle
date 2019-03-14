@@ -173,14 +173,14 @@ android {
         //some versions are not yet released and failed to load.
         //check https://firebase.google.com/support/release-notes/android before update
         //to find latest versions! Also they can use `androidx` dependencies, which may cause conflicts!
-        api 'com.google.firebase:firebase-core:16.0.6'
-        api 'com.google.firebase:firebase-invites:16.0.6'
-        api 'com.google.firebase:firebase-analytics:16.0.6'
-        api 'com.google.firebase:firebase-database:16.0.5'
-        api 'com.google.firebase:firebase-config:16.1.3'
-        api 'com.google.firebase:firebase-ads:17.1.2'
-        api 'com.google.firebase:firebase-auth:16.1.0'
-        api 'com.google.firebase:firebase-messaging:17.3.4'
+        api 'com.google.firebase:firebase-core:16.0.7'
+        api 'com.google.firebase:firebase-invites:16.1.0'
+        api 'com.google.firebase:firebase-analytics:16.3.0'
+        api 'com.google.firebase:firebase-database:16.1.0'
+        api 'com.google.firebase:firebase-config:16.4.0'
+        api 'com.google.firebase:firebase-ads:17.1.3'
+        api 'com.google.firebase:firebase-auth:16.2.0'
+        api 'com.google.firebase:firebase-messaging:17.4.0'
         //google login
         api 'com.google.android.gms:play-services-auth:16.0.1'
 
