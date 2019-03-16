@@ -183,7 +183,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate(@Nullable final Bundle savedInstanceState) {
         Timber.d("onCreate");
         callInjections();
         if (mMyPreferenceManager.isNightMode()) {
@@ -228,7 +228,13 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
 
         //just log fcm token for test purposes
-        Timber.d("fcmToken: %s", FirebaseInstanceId.getInstance().getToken());
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnSuccessListener(
+                        instanceIdResult -> Timber.d(
+                                "FCM result: %s",
+                                instanceIdResult.getToken()
+                        )
+                );
 
         //app invite
         FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())
@@ -1041,6 +1047,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         // Fetching configs from the server is normally limited to 5 requests per hour.
         // Enabling developer mode allows many more requests to be made per hour, so developers
         // can test different config values during development.
+        //noinspection ConstantConditions
         final FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
                 .setDeveloperModeEnabled(BuildConfig.FLAVOR.equals("dev"))
                 .build();

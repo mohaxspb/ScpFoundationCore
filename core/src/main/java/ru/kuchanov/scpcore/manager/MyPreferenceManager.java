@@ -38,6 +38,8 @@ import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.OFFER_SUBS
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS;
 
+import static ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment.ListItemType;
+
 /**
  * Created by y.kuchanov on 22.12.16.
  * <p>
@@ -93,7 +95,6 @@ public class MyPreferenceManager {
         String ADS_NUM_OF_INTERSTITIALS_SHOWN = "ADS_NUM_OF_INTERSTITIALS_SHOWN";
         String ADS_REWARDED_DESCRIPTION_IS_SHOWN = "ADS_REWARDED_DESCRIPTION_IS_SHOWN";
 
-        String LICENCE_ACCEPTED = "LICENCE_ACCEPTED";
         String CUR_APP_VERSION = "CUR_APP_VERSION";
         String DESIGN_FONT_PATH = "DESIGN_FONT_PATH";
         String PACKAGE_INSTALLED = "PACKAGE_INSTALLED";
@@ -181,7 +182,12 @@ public class MyPreferenceManager {
 
     //design settings
     public boolean isDesignListNewEnabled() {
-        return !mPreferences.getString(Keys.DESIGN_LIST_TYPE, SettingsBottomSheetDialogFragment.ListItemType.MIDDLE).equals(SettingsBottomSheetDialogFragment.ListItemType.MIN);
+        @SettingsBottomSheetDialogFragment.ListItemType
+        final String listItemType = mPreferences.getString(
+                Keys.DESIGN_LIST_TYPE,
+                ListItemType.MIDDLE
+        );
+        return !ListItemType.MIN.equals(listItemType);
     }
 
     public void setListDesignType(@SettingsBottomSheetDialogFragment.ListItemType final String type) {
@@ -190,8 +196,7 @@ public class MyPreferenceManager {
 
     @SettingsBottomSheetDialogFragment.ListItemType
     public String getListDesignType() {
-        @SettingsBottomSheetDialogFragment.ListItemType final String type = mPreferences.getString(Keys.DESIGN_LIST_TYPE, SettingsBottomSheetDialogFragment.ListItemType.MIDDLE);
-        return type;
+        return mPreferences.getString(Keys.DESIGN_LIST_TYPE, ListItemType.MIDDLE);
     }
 
     public void setFontPath(final String type) {
@@ -400,7 +405,7 @@ public class MyPreferenceManager {
 //        setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
     }
 
-    //END invite
+    //invite END
 
     public void setLastTimeAdsShows(final long timeInMillis) {
         mPreferences.edit().putLong(Keys.ADS_LAST_TIME_SHOWS, timeInMillis).apply();
