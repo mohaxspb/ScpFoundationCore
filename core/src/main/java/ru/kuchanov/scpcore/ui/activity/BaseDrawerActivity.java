@@ -109,6 +109,14 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
             mDrawerLayout.addDrawerListener(mDrawerToggle);
         }
 
+        setupNavigationView(savedInstanceState);
+
+        updateUser(mPresenter.getUser());
+    }
+
+    private void setupNavigationView(@Nullable final Bundle savedInstanceState) {
+        mNavigationView.getMenu().findItem(R.id.gallery).setVisible(mMyPreferenceManager.imagesEnabled());
+
         mNavigationView.setNavigationItemSelectedListener(item -> {
             mPresenter.onNavigationItemClicked(item.getItemId());
             mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -123,8 +131,6 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
         } else {
             mNavigationView.getMenu().setGroupCheckable(0, false, true);
         }
-
-        updateUser(mPresenter.getUser());
     }
 
     /**

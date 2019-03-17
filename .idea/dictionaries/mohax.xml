@@ -2,11 +2,13 @@
   <dictionary name="mohax">
     <words>
       <w>appodeal</w>
+      <w>cooldown</w>
       <w>crashlytics</w>
       <w>firebase</w>
       <w>gson</w>
       <w>interstitials</w>
       <w>leaderboard</w>
+      <w>logined</w>
       <w>modificator</w>
       <w>mohax</w>
       <w>scpfoundation</w>

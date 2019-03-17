@@ -205,6 +205,10 @@ public interface Constants {
             String APP_LANG_VERSIONS = "app_lang_versions";
             String OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO_MODIFICATOR = "offer_subs_instead_of_rewarded_video_modificator";
             String OFFER_TRIAL_FOR_YEAR = "offer_trial_for_year";
+
+            //misc
+            String IMAGES_ENABLED = "images_enabled";
+
             long CACHE_EXPIRATION_SECONDS = 20000;
         }
 

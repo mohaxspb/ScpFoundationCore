@@ -50,27 +50,35 @@ public class MyPreferenceManager {
     /**
      * check if user joined app vk group each 1 day
      */
-    private static final long PERIOD_BETWEEN_APP_VK_GROUP_JOINED_CHECK_IN_MILLIS = Period.days(1).toStandardDuration().getMillis(); //Period.days(1).getDays()
+    private static final long PERIOD_BETWEEN_APP_VK_GROUP_JOINED_CHECK_IN_MILLIS =
+            Period.days(1).toStandardDuration().getMillis(); //Period.days(1).getDays()
 
     /**
      * update user subs every 6 hours
      */
-    private static final long PERIOD_BETWEEN_SUBSCRIPTIONS_INVALIDATION_IN_MILLIS = Period.hours(6).toStandardDuration().getMillis();
+    private static final long PERIOD_BETWEEN_SUBSCRIPTIONS_INVALIDATION_IN_MILLIS =
+            Period.hours(6).toStandardDuration().getMillis();
 
     /**
      * used to calculate is it time to request new Interstitial ads (15 min)
      */
-    private static final long PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS = Period.minutes(15).toStandardDuration().getMillis();
+    private static final long PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS =
+            Period.minutes(15).toStandardDuration().getMillis();
 
     /**
      * used to calculate is it time to request new Interstitial ads (15 min)
      */
-    private static final long PERIOD_WHEN_WE_NOTIFY_ABOUT_ADS = Period.minutes(15).toStandardDuration().getMillis();
+    private static final long PERIOD_WHEN_WE_NOTIFY_ABOUT_ADS =
+            Period.minutes(15).toStandardDuration().getMillis();
 
     /**
      * offer free trial every 7 days
      */
-    private static final long FREE_TRIAL_OFFERED_PERIOD = Period.days(7).toStandardDuration().getMillis();
+    private static final long FREE_TRIAL_OFFERED_PERIOD =
+            Period.days(7).toStandardDuration().getMillis();
+
+    private static final long IMAGES_DISABLED_PERIOD =
+            Period.days(1).toStandardDuration().getMillis();
 
     private static final int NUM_OF_DISABLE_ADS_REWARDS_COUNT_BEFORE_OFFER_SHOWING = 3;
 
@@ -142,6 +150,7 @@ public class MyPreferenceManager {
         //misc
         String CUR_APP_VERSION = "CUR_APP_VERSION";
         String PERSONAL_DATA_ACCEPTED = "PERSONAL_DATA_ACCEPTED";
+        String FIRST_LAUNCH_TIME = "FIRST_LAUNCH_TIME";
 
         String LEADERBOARD_UPDATE_DATE = "LEADERBOARD_UPDATE_DATE";
     }
@@ -200,11 +209,11 @@ public class MyPreferenceManager {
 
     //design settings
     public boolean isDesignListNewEnabled() {
-        @SettingsBottomSheetDialogFragment.ListItemType
-        final String listItemType = mPreferences.getString(
-                Keys.DESIGN_LIST_TYPE,
-                ListItemType.MIDDLE
-        );
+        @SettingsBottomSheetDialogFragment.ListItemType final String listItemType =
+                mPreferences.getString(
+                        Keys.DESIGN_LIST_TYPE,
+                        ListItemType.MIDDLE
+                );
         return !ListItemType.MIN.equals(listItemType);
     }
 
@@ -821,5 +830,22 @@ public class MyPreferenceManager {
 
     public void setCurAppVersion(final int versionCode) {
         mPreferences.edit().putInt(Keys.CUR_APP_VERSION, versionCode).apply();
+    }
+
+    public long getFirstLaunchTime() {
+        long firstLaunchTime = mPreferences.getLong(Keys.FIRST_LAUNCH_TIME, 0);
+        if (firstLaunchTime == 0) {
+            firstLaunchTime = System.currentTimeMillis();
+            mPreferences.edit().putLong(Keys.FIRST_LAUNCH_TIME, firstLaunchTime).apply();
+        }
+        return firstLaunchTime;
+    }
+
+    public boolean imagesEnabled() {
+        final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
+        final boolean enabledInRemoteConfig = remoteConfig.getBoolean(Constants.Firebase.RemoteConfigKeys.IMAGES_ENABLED);
+        final long periodFromFirstLaunch = System.currentTimeMillis() - getFirstLaunchTime();
+        final boolean enoughTimeLeftFromFirstLaunch = periodFromFirstLaunch >= IMAGES_DISABLED_PERIOD;
+        return enabledInRemoteConfig || enoughTimeLeftFromFirstLaunch;
     }
 }
