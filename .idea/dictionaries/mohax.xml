@@ -4,11 +4,14 @@
       <w>appodeal</w>
       <w>crashlytics</w>
       <w>firebase</w>
+      <w>gson</w>
       <w>interstitials</w>
+      <w>leaderboard</w>
       <w>modificator</w>
       <w>mohax</w>
       <w>scpfoundation</w>
       <w>unlogined</w>
+      <w>unsynced</w>
     </words>
   </dictionary>
 </component>
