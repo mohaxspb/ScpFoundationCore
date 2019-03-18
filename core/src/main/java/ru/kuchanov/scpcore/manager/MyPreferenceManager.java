@@ -832,13 +832,15 @@ public class MyPreferenceManager {
         mPreferences.edit().putInt(Keys.CUR_APP_VERSION, versionCode).apply();
     }
 
+    /**
+     * Use it only for backward compatibility
+     */
+    public void setFirstLaunchTime(final long firstLaunchTime) {
+        mPreferences.edit().putLong(Keys.FIRST_LAUNCH_TIME, firstLaunchTime).apply();
+    }
+
     public long getFirstLaunchTime() {
-        long firstLaunchTime = mPreferences.getLong(Keys.FIRST_LAUNCH_TIME, 0);
-        if (firstLaunchTime == 0) {
-            firstLaunchTime = System.currentTimeMillis();
-            mPreferences.edit().putLong(Keys.FIRST_LAUNCH_TIME, firstLaunchTime).apply();
-        }
-        return firstLaunchTime;
+        return mPreferences.getLong(Keys.FIRST_LAUNCH_TIME, 0);
     }
 
     public boolean imagesEnabled() {

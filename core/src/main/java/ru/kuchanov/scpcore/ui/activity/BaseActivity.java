@@ -345,6 +345,15 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             mMyPreferenceManager.setLastTimeAdsShows(System.currentTimeMillis() + initialAdsDisablePeriodInMillis);
             //also disable banners for same period
             mMyPreferenceManager.setTimeForWhichBannersDisabled(System.currentTimeMillis() + initialAdsDisablePeriodInMillis);
+
+            //also disable images
+            mMyPreferenceManager.setFirstLaunchTime(System.currentTimeMillis());
+        } else {
+            //also fix images disabling for old users
+            //If there is already LastTimeAdsShows so it's not first launch, so if FirstLaunchTime is not set - set it
+            if (mMyPreferenceManager.getFirstLaunchTime() == 0) {
+                mMyPreferenceManager.setFirstLaunchTime(System.currentTimeMillis() - Period.days(1).getMillis());
+            }
         }
 
         //init frameworks
