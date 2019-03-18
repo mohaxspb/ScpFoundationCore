@@ -38,6 +38,8 @@ import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.OFFER_SUBS
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS;
 
+import static ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment.ListItemType;
+
 /**
  * Created by y.kuchanov on 22.12.16.
  * <p>
@@ -48,27 +50,35 @@ public class MyPreferenceManager {
     /**
      * check if user joined app vk group each 1 day
      */
-    private static final long PERIOD_BETWEEN_APP_VK_GROUP_JOINED_CHECK_IN_MILLIS = Period.days(1).toStandardDuration().getMillis(); //Period.days(1).getDays()
+    private static final long PERIOD_BETWEEN_APP_VK_GROUP_JOINED_CHECK_IN_MILLIS =
+            Period.days(1).toStandardDuration().getMillis(); //Period.days(1).getDays()
 
     /**
      * update user subs every 6 hours
      */
-    private static final long PERIOD_BETWEEN_SUBSCRIPTIONS_INVALIDATION_IN_MILLIS = Period.hours(6).toStandardDuration().getMillis();
+    private static final long PERIOD_BETWEEN_SUBSCRIPTIONS_INVALIDATION_IN_MILLIS =
+            Period.hours(6).toStandardDuration().getMillis();
 
     /**
      * used to calculate is it time to request new Interstitial ads (15 min)
      */
-    private static final long PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS = Period.minutes(15).toStandardDuration().getMillis();
+    private static final long PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS =
+            Period.minutes(15).toStandardDuration().getMillis();
 
     /**
      * used to calculate is it time to request new Interstitial ads (15 min)
      */
-    private static final long PERIOD_WHEN_WE_NOTIFY_ABOUT_ADS = Period.minutes(15).toStandardDuration().getMillis();
+    private static final long PERIOD_WHEN_WE_NOTIFY_ABOUT_ADS =
+            Period.minutes(15).toStandardDuration().getMillis();
 
     /**
      * offer free trial every 7 days
      */
-    private static final long FREE_TRIAL_OFFERED_PERIOD = Period.days(7).toStandardDuration().getMillis();
+    private static final long FREE_TRIAL_OFFERED_PERIOD =
+            Period.days(7).toStandardDuration().getMillis();
+
+    public static final long IMAGES_DISABLED_PERIOD =
+            Period.days(1).toStandardDuration().getMillis();
 
     private static final int NUM_OF_DISABLE_ADS_REWARDS_COUNT_BEFORE_OFFER_SHOWING = 3;
 
@@ -76,55 +86,73 @@ public class MyPreferenceManager {
 
     public interface Keys {
 
+        //design
         String NIGHT_MODE = "NIGHT_MODE";
         String TEXT_SCALE_UI = "TEXT_SCALE_UI";
         String TEXT_SCALE_ARTICLE = "TEXT_SCALE_ARTICLE";
         String DESIGN_LIST_TYPE = "DESIGN_LIST_TYPE";
         String IS_TEXT_SELECTABLE = "IS_TEXT_SELECTABLE";
+        String DESIGN_FONT_PATH = "DESIGN_FONT_PATH";
 
+        //new articles notifications
         String NOTIFICATION_IS_ON = "NOTIFICATION_IS_ON";
         String NOTIFICATION_PERIOD = "NOTIFICATION_PERIOD";
         String NOTIFICATION_VIBRATION_IS_ON = "NOTIFICATION_VIBRATION_IS_ON";
         String NOTIFICATION_LED_IS_ON = "NOTIFICATION_LED_IS_ON";
         String NOTIFICATION_SOUND_IS_ON = "NOTIFICATION_SOUND_IS_ON";
 
+        //ads
         String ADS_LAST_TIME_SHOWS = "ADS_LAST_TIME_SHOWS";
         String TIME_FOR_WHICH_BANNERS_DISABLED = "TIME_FOR_WHICH_BANNERS_DISABLED";
         String ADS_NUM_OF_INTERSTITIALS_SHOWN = "ADS_NUM_OF_INTERSTITIALS_SHOWN";
         String ADS_REWARDED_DESCRIPTION_IS_SHOWN = "ADS_REWARDED_DESCRIPTION_IS_SHOWN";
+        String ADS_BANNER_IN_ARTICLES_LISTS = "ADS_BANNER_IN_ARTICLES_LISTS";
+        String ADS_BANNER_IN_ARTICLE = "ADS_BANNER_IN_ARTICLE";
 
-        String LICENCE_ACCEPTED = "LICENCE_ACCEPTED";
-        String CUR_APP_VERSION = "CUR_APP_VERSION";
-        String DESIGN_FONT_PATH = "DESIGN_FONT_PATH";
-        String PACKAGE_INSTALLED = "PACKAGE_INSTALLED";
-        String VK_GROUP_JOINED = "VK_GROUP_JOINED";
+        String OFFER_ALREADY_SHOWN = "OFFER_ALREADY_SHOWN";
+        //subscriptions
         String HAS_SUBSCRIPTION = "HAS_SUBSCRIPTION";
         String HAS_NO_ADS_SUBSCRIPTION = "HAS_NO_ADS_SUBSCRIPTION";
+
+        String FREE_TRIAL_OFFERED_PERIODICAL = "FREE_TRIAL_OFFERED_PERIODICAL";
+        String FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE = "FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE";
+
+        String LAST_TIME_SUBSCRIPTIONS_INVALIDATED = "LAST_TIME_SUBSCRIPTIONS_INVALIDATED";
+
+        //data sync
         String AUTO_SYNC_ATTEMPTS = "AUTO_SYNC_ATTEMPTS";
         String UNSYNCED_SCORE = "UNSYNCED_SCORE";
         String UNSYNCED_VK_GROUPS = "UNSYNCED_VK_GROUPS";
         String UNSYNCED_APPS = "UNSYNCED_APPS";
-        String APP_VK_GROUP_JOINED_LAST_TIME_CHECKED = "APP_VK_GROUP_JOINED_LAST_TIME_CHECKED";
-        String APP_VK_GROUP_JOINED = "APP_VK_GROUP_JOINED";
-        String LAST_TIME_SUBSCRIPTIONS_INVALIDATED = "LAST_TIME_SUBSCRIPTIONS_INVALIDATED";
-        String PERSONAL_DATA_ACCEPTED = "PERSONAL_DATA_ACCEPTED";
-        String AWARD_FROM_AUTH_GAINED = "AWARD_FROM_AUTH_GAINED";
-        String FREE_ADS_DISABLE_REWARD_GAINED_COUNT = "FREE_ADS_DISABLE_REWARD_GAINED_COUNT";
-        String FREE_TRIAL_OFFERED_PERIODICAL = "FREE_TRIAL_OFFERED_PERIODICAL";
-        String FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE = "FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE";
-        String INVITE_ALREADY_RECEIVED = "INVITE_ALREADY_RECEIVED";
-        String ADS_BANNER_IN_ARTICLES_LISTS = "ADS_BANNER_IN_ARTICLES_LISTS";
-        String ADS_BANNER_IN_ARTICLE = "ADS_BANNER_IN_ARTICLE";
-        String OFFER_ALREADY_SHOWN = "OFFER_ALREADY_SHOWN";
+
+        //offline access
         String OFFLINE_RANDOM = "OFFLINE_RANDOM";
         String INNER_ARTICLES_DEPTH = "INNER_ARTICLES_DEPTH";
         String DOWNLOAD_FORCE_UPDATE_ENABLED = "DOWNLOAD_FORCE_UPDATE_ENABLED";
         String IMAGES_CACHE_ENABLED = "IMAGES_CACHE_ENABLED";
-        String VK_APP_SHARED = "VK_APP_SHARED";
         String SAVE_NEW_ARTICLES_ENABLED = "SAVE_NEW_ARTICLES_ENABLED";
-        String LEADERBOARD_UPDATE_DATE = "LEADERBOARD_UPDATE_DATE";
+
+        //score awards
+        String PACKAGE_INSTALLED = "PACKAGE_INSTALLED";
+        String VK_GROUP_JOINED = "VK_GROUP_JOINED";
+        String APP_VK_GROUP_JOINED_LAST_TIME_CHECKED = "APP_VK_GROUP_JOINED_LAST_TIME_CHECKED";
+        String APP_VK_GROUP_JOINED = "APP_VK_GROUP_JOINED";
+        String AWARD_FROM_AUTH_GAINED = "AWARD_FROM_AUTH_GAINED";
+        String FREE_ADS_DISABLE_REWARD_GAINED_COUNT = "FREE_ADS_DISABLE_REWARD_GAINED_COUNT";
+        @Deprecated
+        String INVITE_ALREADY_RECEIVED = "INVITE_ALREADY_RECEIVED";
+        String VK_APP_SHARED = "VK_APP_SHARED";
+
+        //API
         String ACCESS_TOKEN = "ACCESS_TOKEN";
         String REFRESH_TOKEN = "REFRESH_TOKEN";
+
+        //misc
+        String CUR_APP_VERSION = "CUR_APP_VERSION";
+        String PERSONAL_DATA_ACCEPTED = "PERSONAL_DATA_ACCEPTED";
+        String FIRST_LAUNCH_TIME = "FIRST_LAUNCH_TIME";
+
+        String LEADERBOARD_UPDATE_DATE = "LEADERBOARD_UPDATE_DATE";
     }
 
     private final Gson mGson;
@@ -181,7 +209,12 @@ public class MyPreferenceManager {
 
     //design settings
     public boolean isDesignListNewEnabled() {
-        return !mPreferences.getString(Keys.DESIGN_LIST_TYPE, SettingsBottomSheetDialogFragment.ListItemType.MIDDLE).equals(SettingsBottomSheetDialogFragment.ListItemType.MIN);
+        @SettingsBottomSheetDialogFragment.ListItemType final String listItemType =
+                mPreferences.getString(
+                        Keys.DESIGN_LIST_TYPE,
+                        ListItemType.MIDDLE
+                );
+        return !ListItemType.MIN.equals(listItemType);
     }
 
     public void setListDesignType(@SettingsBottomSheetDialogFragment.ListItemType final String type) {
@@ -190,8 +223,7 @@ public class MyPreferenceManager {
 
     @SettingsBottomSheetDialogFragment.ListItemType
     public String getListDesignType() {
-        @SettingsBottomSheetDialogFragment.ListItemType final String type = mPreferences.getString(Keys.DESIGN_LIST_TYPE, SettingsBottomSheetDialogFragment.ListItemType.MIDDLE);
-        return type;
+        return mPreferences.getString(Keys.DESIGN_LIST_TYPE, ListItemType.MIDDLE);
     }
 
     public void setFontPath(final String type) {
@@ -400,7 +432,7 @@ public class MyPreferenceManager {
 //        setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
     }
 
-    //END invite
+    //invite END
 
     public void setLastTimeAdsShows(final long timeInMillis) {
         mPreferences.edit().putLong(Keys.ADS_LAST_TIME_SHOWS, timeInMillis).apply();
@@ -798,5 +830,24 @@ public class MyPreferenceManager {
 
     public void setCurAppVersion(final int versionCode) {
         mPreferences.edit().putInt(Keys.CUR_APP_VERSION, versionCode).apply();
+    }
+
+    /**
+     * Use it only for backward compatibility
+     */
+    public void setFirstLaunchTime(final long firstLaunchTime) {
+        mPreferences.edit().putLong(Keys.FIRST_LAUNCH_TIME, firstLaunchTime).apply();
+    }
+
+    public long getFirstLaunchTime() {
+        return mPreferences.getLong(Keys.FIRST_LAUNCH_TIME, 0);
+    }
+
+    public boolean imagesEnabled() {
+        final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
+        final boolean enabledInRemoteConfig = remoteConfig.getBoolean(Constants.Firebase.RemoteConfigKeys.IMAGES_ENABLED);
+        final long periodFromFirstLaunch = System.currentTimeMillis() - getFirstLaunchTime();
+        final boolean enoughTimeLeftFromFirstLaunch = periodFromFirstLaunch >= IMAGES_DISABLED_PERIOD;
+        return enabledInRemoteConfig || enoughTimeLeftFromFirstLaunch;
     }
 }

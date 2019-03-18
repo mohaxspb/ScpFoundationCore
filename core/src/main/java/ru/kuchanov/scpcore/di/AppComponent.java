@@ -70,6 +70,7 @@ import ru.kuchanov.scpcore.ui.holder.article.ArticleTextHolder;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleTitleHolder;
 import ru.kuchanov.scpcore.ui.holder.article.NativeAdsArticleListHolder;
 import ru.kuchanov.scpcore.ui.holder.articlelist.HolderMin;
+import ru.kuchanov.scpcore.ui.util.URLImageParser;
 
 @Singleton
 @Component(modules = {
@@ -197,6 +198,8 @@ public interface AppComponent {
     void inject(DownloadAllServiceDefault service);
 
     void inject(MyFirebaseMessagingService myFirebaseMessagingService);
+
+    void inject(URLImageParser urlImageParser);
 
     DbProviderFactory getDbProviderFactory();
 }

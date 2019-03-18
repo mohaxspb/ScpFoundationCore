@@ -208,6 +208,10 @@
       {
         "key": "offer_subs_instead_of_rewarded_video_modificator",
         "value": 5
+      },
+      {
+        "key": "images_enabled",
+        "value": false
       }
     ]
   }

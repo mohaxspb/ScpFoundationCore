@@ -16,9 +16,14 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.target.ViewTarget;
 
+import javax.inject.Inject;
+
+import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.R;
+import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import ru.kuchanov.scpcore.util.DimensionUtils;
+import timber.log.Timber;
 
 /**
  * Created by mohax on 05.01.2017.
@@ -28,7 +33,11 @@ import ru.kuchanov.scpcore.util.DimensionUtils;
 public class URLImageParser implements Html.ImageGetter {
     private TextView mTextView;
 
+    @Inject
+    MyPreferenceManager myPreferenceManager;
+
     public URLImageParser(TextView textView) {
+        BaseApplication.getAppComponent().inject(this);
         mTextView = textView;
     }
 
@@ -38,31 +47,64 @@ public class URLImageParser implements Html.ImageGetter {
         int holderId = AttributeGetter.getDrawableId(mTextView.getContext(), R.attr.iconEmptyImage);
         urlDrawable.placeHolder = ContextCompat.getDrawable(mTextView.getContext(), holderId);
 
-        Glide.with(mTextView.getContext()).load(source)
-                .listener(new RequestListener<String, GlideDrawable>() {
-                    @Override
-                    public boolean onException(Exception e, String s, Target<GlideDrawable> glideDrawableTarget, boolean b) {
-                        return false;
-                    }
+        if (myPreferenceManager.imagesEnabled()) {
+            Glide
+                    .with(mTextView.getContext())
+                    .load(source)
+                    .listener(new RequestListener<String, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, String s, Target<GlideDrawable> glideDrawableTarget, boolean b) {
+                            return false;
+                        }
 
-                    @Override
-                    public boolean onResourceReady(GlideDrawable d, String s, Target<GlideDrawable> glideDrawableTarget, boolean b, boolean b2) {
-                        setProperImageSize(urlDrawable, d);
+                        @Override
+                        public boolean onResourceReady(GlideDrawable d, String s, Target<GlideDrawable> glideDrawableTarget, boolean b, boolean b2) {
+                            setProperImageSize(urlDrawable, d);
 
-                        mTextView.invalidate();
-                        mTextView.setText(mTextView.getText());
-                        return true;
-                    }
-                })
-                .into(new ViewTarget<TextView, GlideDrawable>(mTextView) {
-                    @Override
-                    public void onResourceReady(GlideDrawable d, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                        setProperImageSize(urlDrawable, d);
+                            mTextView.invalidate();
+                            mTextView.setText(mTextView.getText());
+                            return true;
+                        }
+                    })
+                    .into(new ViewTarget<TextView, GlideDrawable>(mTextView) {
+                        @Override
+                        public void onResourceReady(GlideDrawable d, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                            setProperImageSize(urlDrawable, d);
 
-                        mTextView.invalidate();
-                        mTextView.setText(mTextView.getText());
-                    }
-                });
+                            mTextView.invalidate();
+                            mTextView.setText(mTextView.getText());
+                        }
+                    });
+        } else {
+            Timber.d("Images not enabled!");
+            Glide
+                    .with(mTextView.getContext())
+                    .load(holderId)
+                    .listener(new RequestListener<Integer, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, Integer s, Target<GlideDrawable> glideDrawableTarget, boolean b) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(GlideDrawable d, Integer s, Target<GlideDrawable> glideDrawableTarget, boolean b, boolean b2) {
+                            setProperImageSize(urlDrawable, d);
+
+                            mTextView.invalidate();
+                            mTextView.setText(mTextView.getText());
+                            return true;
+                        }
+                    })
+                    .into(new ViewTarget<TextView, GlideDrawable>(mTextView) {
+                        @Override
+                        public void onResourceReady(GlideDrawable d, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                            setProperImageSize(urlDrawable, d);
+
+                            mTextView.invalidate();
+                            mTextView.setText(mTextView.getText());
+                        }
+                    });
+        }
         return urlDrawable;
     }
 

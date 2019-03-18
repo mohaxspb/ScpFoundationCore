@@ -87,6 +87,9 @@ public class ArticleFragment
     RecyclerView mRecyclerView;
 
     @Inject
+    MyPreferenceManager myPreferenceManager;
+
+    @Inject
     DialogUtils mDialogUtils;
 
     @Inject
@@ -426,7 +429,9 @@ public class ArticleFragment
         if (!isAdded()) {
             return;
         }
-        GalleryActivity.startForImage(getActivity(), link, description);
+        if (myPreferenceManager.imagesEnabled()) {
+            GalleryActivity.startForImage(getActivity(), link, description);
+        }
     }
 
     @Override

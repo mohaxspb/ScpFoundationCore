@@ -112,6 +112,7 @@ import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventValue;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.StartScreen;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.UserPropertyKey;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED;
+import static ru.kuchanov.scpcore.manager.MyPreferenceManager.IMAGES_DISABLED_PERIOD;
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
 
 /**
@@ -183,7 +184,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate(@Nullable final Bundle savedInstanceState) {
         Timber.d("onCreate");
         callInjections();
         if (mMyPreferenceManager.isNightMode()) {
@@ -228,7 +229,13 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
 
         //just log fcm token for test purposes
-        Timber.d("fcmToken: %s", FirebaseInstanceId.getInstance().getToken());
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnSuccessListener(
+                        instanceIdResult -> Timber.d(
+                                "FCM result: %s",
+                                instanceIdResult.getToken()
+                        )
+                );
 
         //app invite
         FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())
@@ -339,6 +346,16 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             mMyPreferenceManager.setLastTimeAdsShows(System.currentTimeMillis() + initialAdsDisablePeriodInMillis);
             //also disable banners for same period
             mMyPreferenceManager.setTimeForWhichBannersDisabled(System.currentTimeMillis() + initialAdsDisablePeriodInMillis);
+
+            //also disable images
+            mMyPreferenceManager.setFirstLaunchTime(System.currentTimeMillis());
+        } else {
+            //also fix images disabling for old users
+            //If there is already LastTimeAdsShows so it's not first launch, so if FirstLaunchTime is not set - set it
+            if (mMyPreferenceManager.getFirstLaunchTime() == 0) {
+                long curTime = System.currentTimeMillis();
+                mMyPreferenceManager.setFirstLaunchTime(curTime - IMAGES_DISABLED_PERIOD);
+            }
         }
 
         //init frameworks
@@ -1041,6 +1058,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         // Fetching configs from the server is normally limited to 5 requests per hour.
         // Enabling developer mode allows many more requests to be made per hour, so developers
         // can test different config values during development.
+        //noinspection ConstantConditions
         final FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
                 .setDeveloperModeEnabled(BuildConfig.FLAVOR.equals("dev"))
                 .build();
