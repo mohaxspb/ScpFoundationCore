@@ -346,13 +346,16 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             //also disable banners for same period
             mMyPreferenceManager.setTimeForWhichBannersDisabled(System.currentTimeMillis() + initialAdsDisablePeriodInMillis);
 
+            Timber.d("initAds disable images LastTimeAdsShows() == 0");
             //also disable images
             mMyPreferenceManager.setFirstLaunchTime(System.currentTimeMillis());
         } else {
+            Timber.d("initAds disable images LastTimeAdsShows() != 0");
+            Timber.d("initAds disable images mMyPreferenceManager.getFirstLaunchTime() == 0: %s", mMyPreferenceManager.getFirstLaunchTime() == 0);
             //also fix images disabling for old users
             //If there is already LastTimeAdsShows so it's not first launch, so if FirstLaunchTime is not set - set it
             if (mMyPreferenceManager.getFirstLaunchTime() == 0) {
-                mMyPreferenceManager.setFirstLaunchTime(System.currentTimeMillis() - Period.days(1).getMillis());
+                mMyPreferenceManager.setFirstLaunchTime(System.currentTimeMillis() - Period.hours(25).getMillis());
             }
         }
 
