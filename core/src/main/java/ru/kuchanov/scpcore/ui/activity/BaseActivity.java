@@ -112,6 +112,7 @@ import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventValue;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.StartScreen;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.UserPropertyKey;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED;
+import static ru.kuchanov.scpcore.manager.MyPreferenceManager.IMAGES_DISABLED_PERIOD;
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
 
 /**
@@ -355,7 +356,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             //also fix images disabling for old users
             //If there is already LastTimeAdsShows so it's not first launch, so if FirstLaunchTime is not set - set it
             if (mMyPreferenceManager.getFirstLaunchTime() == 0) {
-                mMyPreferenceManager.setFirstLaunchTime(System.currentTimeMillis() - Period.hours(25).getMillis());
+                long curTime = System.currentTimeMillis();
+                Timber.d("ImageDisabled period: %s", curTime);
+                mMyPreferenceManager.setFirstLaunchTime(curTime - IMAGES_DISABLED_PERIOD);
             }
         }
 

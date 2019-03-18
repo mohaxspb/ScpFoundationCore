@@ -77,7 +77,7 @@ public class MyPreferenceManager {
     private static final long FREE_TRIAL_OFFERED_PERIOD =
             Period.days(7).toStandardDuration().getMillis();
 
-    private static final long IMAGES_DISABLED_PERIOD =
+    public static final long IMAGES_DISABLED_PERIOD =
             Period.days(1).toStandardDuration().getMillis();
 
     private static final int NUM_OF_DISABLE_ADS_REWARDS_COUNT_BEFORE_OFFER_SHOWING = 3;
