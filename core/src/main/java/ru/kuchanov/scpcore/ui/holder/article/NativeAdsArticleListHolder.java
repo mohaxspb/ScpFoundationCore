@@ -9,9 +9,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.appodeal.ads.Appodeal;
-import com.appodeal.ads.NativeAd;
-import com.appodeal.ads.native_ad.views.NativeAdViewAppWall;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -21,7 +18,6 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -64,8 +60,8 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     @BindView(R2.id.nativeAdViewContainer)
     View nativeAdViewContainer;
 
-    @BindView(R2.id.appodealNativeAdViewAppWall)
-    NativeAdViewAppWall appodealNativeAdView;
+//    @BindView(R2.id.appodealNativeAdViewAppWall)
+//    NativeAdViewAppWall appodealNativeAdView;
 
     @BindView(R2.id.scpArtAdView)
     View scpArtAdView;
@@ -133,7 +129,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     public void bind() {
         Timber.d("scpQuizAds showing");
 //        appodealNativeMediaView.setVisibility(View.GONE);
-        appodealNativeAdView.setVisibility(View.GONE);
+//        appodealNativeAdView.setVisibility(View.GONE);
 
         scpArtAdView.setVisibility(View.VISIBLE);
 
@@ -193,22 +189,22 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     public void bind(final int appodealAdIndex) {
         Timber.d("appodealAdIndex: %s", appodealAdIndex);
 
-        final List<NativeAd> nativeAdsList = Appodeal.getNativeAds(Constants.NUM_OF_NATIVE_ADS_PER_SCREEN);
-        Timber.d("nativeAdsList.size(): %s", nativeAdsList.size());
-        if (nativeAdsList.size() <= appodealAdIndex) {
-            Timber.d("No appodeal ads loaded yet for index: %s", appodealAdIndex);
-            return;
-        }
-        scpArtAdView.setVisibility(View.GONE);
-        appodealNativeAdView.setVisibility(View.VISIBLE);
-        final NativeAd nativeAd = nativeAdsList.get(appodealAdIndex);
-        appodealNativeAdView.setNativeAd(nativeAd);
+//        final List<NativeAd> nativeAdsList = Appodeal.getNativeAds(Constants.NUM_OF_NATIVE_ADS_PER_SCREEN);
+//        Timber.d("nativeAdsList.size(): %s", nativeAdsList.size());
+//        if (nativeAdsList.size() <= appodealAdIndex) {
+//            Timber.d("No appodeal ads loaded yet for index: %s", appodealAdIndex);
+//            return;
+//        }
+//        scpArtAdView.setVisibility(View.GONE);
+//        appodealNativeAdView.setVisibility(View.VISIBLE);
+//        final NativeAd nativeAd = nativeAdsList.get(appodealAdIndex);
+//        appodealNativeAdView.setNativeAd(nativeAd);
     }
 
     public void bind(@NotNull final MyNativeBanner scpArtAd) {
         Timber.d("scpArtAd: %s", scpArtAd);
 //        appodealNativeMediaView.setVisibility(View.GONE);
-        appodealNativeAdView.setVisibility(View.GONE);
+//        appodealNativeAdView.setVisibility(View.GONE);
 
         scpArtAdView.setVisibility(View.VISIBLE);
 
@@ -235,7 +231,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         ctaTextView.setText(scpArtAd.getCtaButtonText());
 
         progressCenter.setVisibility(View.VISIBLE);
-        Timber.d("imageUrl: %s", BuildConfig.SCP_READER_API_URL + scpArtAd.getImageUrl());
+        Timber.d("imageUrl: %s%s", BuildConfig.SCP_READER_API_URL, scpArtAd.getImageUrl());
         Glide.with(mainImageView.getContext())
                 .load(BuildConfig.SCP_READER_API_URL + scpArtAd.getImageUrl())
                 .error(R.drawable.art_scp_default_ads)

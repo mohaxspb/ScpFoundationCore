@@ -29,9 +29,6 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.vending.billing.IInAppBillingService;
-import com.appodeal.ads.Appodeal;
-import com.appodeal.ads.Native;
-import com.appodeal.ads.utils.Log;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -53,7 +50,6 @@ import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 
 import org.jetbrains.annotations.NotNull;
-import org.joda.time.Duration;
 import org.joda.time.Period;
 
 import java.io.IOException;
@@ -82,9 +78,6 @@ import ru.kuchanov.scpcore.manager.MyNotificationManager;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.admob.AdMobHelper;
 import ru.kuchanov.scpcore.monetization.util.admob.MyAdListener;
-import ru.kuchanov.scpcore.monetization.util.appodeal.MyAppodealInterstitialCallbacks;
-import ru.kuchanov.scpcore.monetization.util.appodeal.MyAppodealNativeCallbacks;
-import ru.kuchanov.scpcore.monetization.util.appodeal.MyRewardedVideoCallbacks;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp;
 import ru.kuchanov.scpcore.mvp.base.MonetizationActions;
@@ -107,11 +100,9 @@ import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventName;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventParam;
-import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventType;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventValue;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.StartScreen;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.UserPropertyKey;
-import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED;
 import static ru.kuchanov.scpcore.manager.MyPreferenceManager.IMAGES_DISABLED_PERIOD;
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
 
@@ -365,63 +356,32 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         mInterstitialAd.setAdUnitId(getString(R.string.ad_unit_id_interstitial));
         mInterstitialAd.setAdListener(new MyAdListener());
 
-        //appodeal
-        Appodeal.setAutoCacheNativeIcons(true);
-        Appodeal.setAutoCacheNativeMedia(true);
-        Appodeal.setNativeAdType(Native.NativeAdType.Auto);
-        Appodeal.disableLocationPermissionCheck();
-        //noinspection ConstantConditions
-        Appodeal.setTesting(BuildConfig.FLAVOR.equals("dev"));
-        //noinspection ConstantConditions
-        Appodeal.setLogLevel(BuildConfig.FLAVOR.equals("dev") ? Log.LogLevel.debug : Log.LogLevel.none);
-        Appodeal.disableNetwork(this, "vungle");
-        Appodeal.disableNetwork(this, "facebook");
-        Appodeal.initialize(
-                this,
-                getString(R.string.appodeal_app_key),
-                Appodeal.REWARDED_VIDEO | Appodeal.INTERSTITIAL | Appodeal.NATIVE,
-                true
-        );
+        //todo rewarded video by admob
+//        Appodeal.setRewardedVideoCallbacks(new MyRewardedVideoCallbacks() {
+//
+//            @Override
+//            public void onRewardedVideoClosed(final boolean b) {
+//                super.onRewardedVideoClosed(b);
+//
+//                final long numOfMillis = FirebaseRemoteConfig.getInstance()
+//                        .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
+//                final long hours = Duration.millis(numOfMillis).toStandardHours().getHours();
+//                showMessage(getString(R.string.ads_reward_gained, hours));
+//
+//                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventType.REWARD_GAINED, null);
+//
+//                @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.REWARDED_VIDEO;
+//                mPresenter.updateUserScoreForScoreAction(action);
+//
+//                mRoot.postDelayed(() -> mMyPreferenceManager.applyAwardFromAds(), Constants.POST_DELAYED_MILLIS);
+//            }
+//        });
 
-        //user settings
-//        UserSettings userSettings = Appodeal.getUserSettings(this);
-        //we should get this data from each network while login and store it in i.e. prefs to set it here.
-        //also we should update it periodically
-
-        Appodeal.muteVideosIfCallsMuted(true);
-        Appodeal.setRewardedVideoCallbacks(new MyRewardedVideoCallbacks() {
-
-            @Override
-            public void onRewardedVideoClosed(final boolean b) {
-                super.onRewardedVideoClosed(b);
-
-                final long numOfMillis = FirebaseRemoteConfig.getInstance()
-                        .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
-                final long hours = Duration.millis(numOfMillis).toStandardHours().getHours();
-                showMessage(getString(R.string.ads_reward_gained, hours));
-
-                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventType.REWARD_GAINED, null);
-
-                @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.REWARDED_VIDEO;
-                mPresenter.updateUserScoreForScoreAction(action);
-
-                mRoot.postDelayed(() -> mMyPreferenceManager.applyAwardFromAds(), Constants.POST_DELAYED_MILLIS);
-            }
-        });
-        Appodeal.setInterstitialCallbacks(new MyAppodealInterstitialCallbacks() {
-            @Override
-            public void onInterstitialClosed() {
-                super.onInterstitialClosed();
-                @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
-                mPresenter.updateUserScoreForScoreAction(action);
-            }
-        });
-
-        final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-        if (config.getBoolean(NATIVE_ADS_LISTS_ENABLED)) {
-            Appodeal.setNativeCallbacks(new MyAppodealNativeCallbacks());
-            Appodeal.cache(this, Appodeal.NATIVE, Constants.NUM_OF_NATIVE_ADS_PER_SCREEN);
-        }
+//        final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+//        if (config.getBoolean(NATIVE_ADS_LISTS_ENABLED)) {
+//            Appodeal.setNativeCallbacks(new MyAppodealNativeCallbacks());
+//            Appodeal.cache(this, Appodeal.NATIVE, Constants.NUM_OF_NATIVE_ADS_PER_SCREEN);
+//        }
 
         if (!isAdsLoaded() && mMyPreferenceManager.isTimeToLoadAds()) {
             requestNewInterstitial();
@@ -483,13 +443,14 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showRewardedVideo() {
-        if (Appodeal.isLoaded(Appodeal.REWARDED_VIDEO)) {
-            FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventType.REWARD_REQUESTED, null);
-
-            Appodeal.show(this, Appodeal.REWARDED_VIDEO);
-        } else {
-            showMessage(R.string.reward_not_loaded_yet);
-        }
+        //todo rewarded video by admob
+//        if (Appodeal.isLoaded(Appodeal.REWARDED_VIDEO)) {
+//            FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventType.REWARD_REQUESTED, null);
+//
+//            Appodeal.show(this, Appodeal.REWARDED_VIDEO);
+//        } else {
+//            showMessage(R.string.reward_not_loaded_yet);
+//        }
     }
 
     @Override
@@ -527,14 +488,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     public void showInterstitial(final MyAdListener adListener, final boolean showVideoIfNeedAndCan) {
         //reset offer shown state to notify user before next ad will be shown
         mMyPreferenceManager.setOfferAlreadyShown(false);
-        if (mMyPreferenceManager.isTimeToShowVideoInsteadOfInterstitial() && Appodeal.isLoaded(Appodeal.INTERSTITIAL)) {
-            //TODO we should redirect user to desired activity...
-            Appodeal.show(this, Appodeal.INTERSTITIAL);
-        } else {
-            //add score in activity, that will be shown from close callback of listener
-            mInterstitialAd.setAdListener(adListener);
-            mInterstitialAd.show();
-        }
+        //add score in activity, that will be shown from close callback of listener
+        mInterstitialAd.setAdListener(adListener);
+        mInterstitialAd.show();
     }
 
     @Override
@@ -983,8 +939,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         setUpBanner();
 
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
-
-        Appodeal.onResume(this, Appodeal.BANNER);
     }
 
     @Override

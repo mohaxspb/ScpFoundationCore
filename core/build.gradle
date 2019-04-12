@@ -184,29 +184,8 @@ android {
         //google login
         api 'com.google.android.gms:play-services-auth:16.0.1'
 
-        //appodeal
-        implementation 'com.squareup.picasso:picasso:2.5.2' //for Inmobi
-        implementation name: 'adcolony-3.3.4', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-alphab', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-common', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-interstitial', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-interstitialvideo', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-mvdownloads', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-mvjscommon', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-mvnative', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-nativeex', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-playercommon', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-reward', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-videocommon', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-videofeeds', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-videojs', ext: 'aar'
-        implementation name: 'ogury-3.0.13', ext: 'aar'
-        //end of appodeal
         //AppMetrica
-        //we add it here and delete jar from appodeal
         api 'com.yandex.android:mobmetricalib:3.2.2'
-        // Optional. Play Install Referrer library for better attribution.
-        implementation 'com.android.installreferrer:installreferrer:1.0'
         //recyclerView fast scroller
         api 'xyz.danoz:recyclerviewfastscroller:0.1.3'
         //circular progress
