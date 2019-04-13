@@ -1,15 +1,14 @@
 package ru.kuchanov.scpcore.ui.fragment.articleslists;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +21,6 @@ import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.mvp.base.BaseArticlesListMvp;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
-import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.fragment.BaseListFragment;
 import ru.kuchanov.scpcore.ui.util.EndlessRecyclerViewScrollListener;
 import timber.log.Timber;
@@ -218,15 +216,6 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
             public void onTagClick(final ArticleTag tag) {
                 Timber.d("onTagClick: %s", tag);
                 getBaseActivity().startTagsSearchActivity(new ArrayList<>(Collections.singletonList(tag)));
-            }
-
-            @Override
-            public void onAdsSettingsClick() {
-                if (!isAdded()) {
-                    return;
-                }
-                final BottomSheetDialogFragment dialogFragment = AdsSettingsBottomSheetDialogFragment.newInstance();
-                dialogFragment.show(getActivity().getSupportFragmentManager(), dialogFragment.getTag());
             }
 
             @Override

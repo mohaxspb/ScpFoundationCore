@@ -197,11 +197,6 @@ public class ImagesPagerAdapter extends PagerAdapter {
                 }
 
                 @Override
-                public void onAdsSettingsClick() {
-                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
-                }
-
-                @Override
                 public void onRewardedVideoClick() {
                     ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
                 }

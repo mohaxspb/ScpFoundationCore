@@ -83,7 +83,6 @@ import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp;
 import ru.kuchanov.scpcore.mvp.base.MonetizationActions;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.ui.adapter.SocialLoginAdapter;
-import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
@@ -889,10 +888,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             final Bundle bundle = new Bundle();
             bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, StartScreen.MENU);
             FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-            return true;
-        } else if (i == R.id.removeAds) {
-            final BottomSheetDialogFragment subsDF = AdsSettingsBottomSheetDialogFragment.newInstance();
-            subsDF.show(getSupportFragmentManager(), subsDF.getTag());
             return true;
         } else if (i == R.id.night_mode_item) {
             mMyPreferenceManager.setIsNightMode(!mMyPreferenceManager.isNightMode());

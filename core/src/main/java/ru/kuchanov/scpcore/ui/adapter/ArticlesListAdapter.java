@@ -495,8 +495,6 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         void onTagClick(ArticleTag tag);
 
-        void onAdsSettingsClick();
-
         void onRewardedVideoClick();
 
         //todo add listeners for native ads clicks - we'll use it to mesure banner/native effectivnes
