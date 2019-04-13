@@ -432,7 +432,7 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case ArticleListNodeType.NATIVE_ADS_APPODEAL:
             case ArticleListNodeType.NATIVE_ADS_ART:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_native_container, parent, false);
-                viewHolder = new NativeAdsArticleListHolder(view, mArticleClickListener);
+                viewHolder = new NativeAdsArticleListHolder(view);
                 break;
             default:
                 throw new IllegalArgumentException("unexpected viewType: " + viewType);

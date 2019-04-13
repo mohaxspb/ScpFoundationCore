@@ -22,7 +22,7 @@
             <!--android:layout_height="wrap_content"-->
             <!--/>-->
 
-        <include layout="@layout/native_ads_buttons" />
+        <!--<include layout="@layout/native_ads_buttons" />-->
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

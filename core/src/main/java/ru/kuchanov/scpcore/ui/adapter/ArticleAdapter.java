@@ -341,7 +341,7 @@ public class ArticleAdapter
             case TYPE_NATIVE_APPODEAL:
             case TYPE_NATIVE_SCP_QUIZ:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_native_container, parent, false);
-                return new NativeAdsArticleListHolder(view, mTextItemsClickListener);
+                return new NativeAdsArticleListHolder(view);
             default:
                 throw new IllegalArgumentException("unexpected type: " + viewType);
         }

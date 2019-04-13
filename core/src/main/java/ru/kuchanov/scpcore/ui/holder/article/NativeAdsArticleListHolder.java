@@ -24,7 +24,6 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.ConstantValues;
@@ -33,8 +32,6 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.MyNativeBanner;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
-import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
@@ -51,7 +48,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     @Inject
     protected ConstantValues mConstantValues;
 
-    private ArticlesListAdapter.ArticleClickListener mArticleClickListener;
+//    private ArticlesListAdapter.ArticleClickListener mArticleClickListener;
 
     @BindView(R2.id.container)
     ViewGroup container;
@@ -87,42 +84,32 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     @BindView(R2.id.progressCenter)
     ProgressBar progressCenter;
 
-    private SetTextViewHTML.TextItemsClickListener clickListener;
+//    private SetTextViewHTML.TextItemsClickListener clickListener;
 
-    @OnClick(R2.id.adsSettingsContainer)
-    void onAdsSettingsClick() {
-        if (mArticleClickListener != null) {
-            mArticleClickListener.onAdsSettingsClick();
-        }
-        if (clickListener != null) {
-            clickListener.onAdsSettingsClick();
-        }
-    }
+//    @OnClick(R2.id.adsSettingsContainer)
+//    void onAdsSettingsClick() {
+//        if (mArticleClickListener != null) {
+//            mArticleClickListener.onAdsSettingsClick();
+//        }
+//        if (clickListener != null) {
+//            clickListener.onAdsSettingsClick();
+//        }
+//    }
 
-    @OnClick(R2.id.rewardedVideoContainer)
-    void onRewardedVideoClick() {
-        if (mArticleClickListener != null) {
-            mArticleClickListener.onRewardedVideoClick();
-        }
-        if (clickListener != null) {
-            clickListener.onRewardedVideoClick();
-        }
-    }
+//    @OnClick(R2.id.rewardedVideoContainer)
+//    void onRewardedVideoClick() {
+//        if (mArticleClickListener != null) {
+//            mArticleClickListener.onRewardedVideoClick();
+//        }
+//        if (clickListener != null) {
+//            clickListener.onRewardedVideoClick();
+//        }
+//    }
 
-    public NativeAdsArticleListHolder(final View itemView, final ArticlesListAdapter.ArticleClickListener clickListener) {
+    public NativeAdsArticleListHolder(final View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         BaseApplication.getAppComponent().inject(this);
-
-        mArticleClickListener = clickListener;
-    }
-
-    public NativeAdsArticleListHolder(final View itemView, final SetTextViewHTML.TextItemsClickListener clickListener) {
-        super(itemView);
-        ButterKnife.bind(this, itemView);
-        BaseApplication.getAppComponent().inject(this);
-
-        this.clickListener = clickListener;
     }
 
 
