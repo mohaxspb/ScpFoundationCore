@@ -258,8 +258,7 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         //do not add native ads items if user has subscription or banners temporary disabled
         //or banners enabled or native disabled
         if (mMyPreferenceManager.isHasAnySubscription()
-                || !mMyPreferenceManager.isTimeToShowBannerAds()
-                || mMyPreferenceManager.isBannerInArticlesListsEnabled()) {
+                || !mMyPreferenceManager.isTimeToShowBannerAds()) {
             return;
         }
         if (mAdsModelsList.isEmpty()) {

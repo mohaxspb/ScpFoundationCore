@@ -259,8 +259,7 @@ public class ArticleAdapter
         //or banners enabled or native disabled
         final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         if (mMyPreferenceManager.isHasAnySubscription()
-                || !mMyPreferenceManager.isTimeToShowBannerAds()
-                || mMyPreferenceManager.isBannerInArticleEnabled()) {
+                || !mMyPreferenceManager.isTimeToShowBannerAds()) {
             return;
         }
         if (mAdsModelsList.isEmpty()) {

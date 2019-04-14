@@ -953,8 +953,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             case MyPreferenceManager.Keys.NIGHT_MODE:
                 recreate();
                 break;
-            case MyPreferenceManager.Keys.ADS_BANNER_IN_ARTICLE:
-            case MyPreferenceManager.Keys.ADS_BANNER_IN_ARTICLES_LISTS:
             case MyPreferenceManager.Keys.TIME_FOR_WHICH_BANNERS_DISABLED:
                 //check if there is banner in layout
                 setUpBanner();

@@ -188,7 +188,6 @@ public class TagSearchActivity
 
     @Override
     public boolean isBannerEnabled() {
-        //TODO think if should show banner here
         return false;
     }
 }

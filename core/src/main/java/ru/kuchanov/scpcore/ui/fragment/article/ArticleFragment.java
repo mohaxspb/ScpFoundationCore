@@ -530,9 +530,6 @@ public class ArticleFragment
             case MyPreferenceManager.Keys.IS_TEXT_SELECTABLE:
                 mAdapter.notifyDataSetChanged();
                 break;
-            case MyPreferenceManager.Keys.ADS_BANNER_IN_ARTICLE:
-                showData(mPresenter.getData());
-                break;
             case MyPreferenceManager.Keys.TIME_FOR_WHICH_BANNERS_DISABLED:
                 final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd EEE HH:mm:ss", Locale.getDefault());
                 Timber.d("Nex time is: %s", simpleDateFormat.format(new Date(sharedPreferences.getLong(key, 0))));

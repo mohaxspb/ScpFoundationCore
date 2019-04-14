@@ -179,8 +179,6 @@ public class ArticleActivity
 
     @Override
     public boolean isBannerEnabled() {
-//        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-//        return !config.getBoolean(ARTICLE_BANNER_DISABLED) && !config.getBoolean(NATIVE_IN_ARTICLE_ENABLED);
-        return mMyPreferenceManager.isBannerInArticleEnabled();
+        return true;
     }
 }
