@@ -13,13 +13,6 @@
         />
 
     <item
-        android:id="@+id/removeAds"
-        android:icon="@drawable/ic_offline_pin"
-        android:title="@string/settings_ads_title"
-        app:showAsAction="never"
-        />
-
-    <item
         android:id="@+id/settings"
         android:icon="@drawable/ic_settings_white_24dp"
         android:title="@string/settings"

@@ -1,7 +1,5 @@
 package ru.kuchanov.scpcore.ui.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +16,8 @@ import android.text.style.QuoteSpan;
 import android.text.style.URLSpan;
 import android.view.View;
 import android.widget.TextView;
+
+import org.jetbrains.annotations.NotNull;
 
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.ConstantValues;
@@ -202,7 +202,7 @@ public class SetTextViewHTML {
                 return NOT_TRANSLATED;
             }
             if (!link.startsWith(mConstantValues.getBaseApiUrl()) ||
-                link.startsWith(mConstantValues.getBaseApiUrl() + "/forum")) {
+                    link.startsWith(mConstantValues.getBaseApiUrl() + "/forum")) {
                 return EXTERNAL;
             }
             return INNER;
@@ -263,8 +263,6 @@ public class SetTextViewHTML {
         void onSpoilerCollapse(SpoilerViewModel spoilerViewModel);
 
         void onTabSelected(TabsViewModel tabsViewModel);
-
-        void onAdsSettingsClick();
 
         void onRewardedVideoClick();
     }

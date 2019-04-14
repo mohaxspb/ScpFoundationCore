@@ -5,7 +5,6 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -46,7 +45,6 @@ import ru.kuchanov.scpcore.mvp.contract.article.ArticleMvp;
 import ru.kuchanov.scpcore.ui.activity.GalleryActivity;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import ru.kuchanov.scpcore.ui.adapter.ArticleAdapter;
-import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment;
 import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
 import ru.kuchanov.scpcore.ui.model.TabsViewModel;
@@ -512,15 +510,6 @@ public class ArticleFragment
     }
 
     @Override
-    public void onAdsSettingsClick() {
-        if (!isAdded()) {
-            return;
-        }
-        final BottomSheetDialogFragment subsDF = AdsSettingsBottomSheetDialogFragment.newInstance();
-        subsDF.show(getActivity().getSupportFragmentManager(), subsDF.getTag());
-    }
-
-    @Override
     public void onRewardedVideoClick() {
         if (!isAdded()) {
             return;
@@ -540,9 +529,6 @@ public class ArticleFragment
             case MyPreferenceManager.Keys.DESIGN_FONT_PATH:
             case MyPreferenceManager.Keys.IS_TEXT_SELECTABLE:
                 mAdapter.notifyDataSetChanged();
-                break;
-            case MyPreferenceManager.Keys.ADS_BANNER_IN_ARTICLE:
-                showData(mPresenter.getData());
                 break;
             case MyPreferenceManager.Keys.TIME_FOR_WHICH_BANNERS_DISABLED:
                 final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd EEE HH:mm:ss", Locale.getDefault());

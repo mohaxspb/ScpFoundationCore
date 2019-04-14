@@ -9,9 +9,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.appodeal.ads.Appodeal;
-import com.appodeal.ads.NativeAd;
-import com.appodeal.ads.native_ad.views.NativeAdViewAppWall;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -21,14 +18,12 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.ConstantValues;
@@ -37,8 +32,6 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.MyNativeBanner;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
-import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
@@ -55,7 +48,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     @Inject
     protected ConstantValues mConstantValues;
 
-    private ArticlesListAdapter.ArticleClickListener mArticleClickListener;
+//    private ArticlesListAdapter.ArticleClickListener mArticleClickListener;
 
     @BindView(R2.id.container)
     ViewGroup container;
@@ -64,8 +57,8 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     @BindView(R2.id.nativeAdViewContainer)
     View nativeAdViewContainer;
 
-    @BindView(R2.id.appodealNativeAdViewAppWall)
-    NativeAdViewAppWall appodealNativeAdView;
+//    @BindView(R2.id.appodealNativeAdViewAppWall)
+//    NativeAdViewAppWall appodealNativeAdView;
 
     @BindView(R2.id.scpArtAdView)
     View scpArtAdView;
@@ -91,49 +84,39 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     @BindView(R2.id.progressCenter)
     ProgressBar progressCenter;
 
-    private SetTextViewHTML.TextItemsClickListener clickListener;
+//    private SetTextViewHTML.TextItemsClickListener clickListener;
 
-    @OnClick(R2.id.adsSettingsContainer)
-    void onAdsSettingsClick() {
-        if (mArticleClickListener != null) {
-            mArticleClickListener.onAdsSettingsClick();
-        }
-        if (clickListener != null) {
-            clickListener.onAdsSettingsClick();
-        }
-    }
+//    @OnClick(R2.id.adsSettingsContainer)
+//    void onAdsSettingsClick() {
+//        if (mArticleClickListener != null) {
+//            mArticleClickListener.onAdsSettingsClick();
+//        }
+//        if (clickListener != null) {
+//            clickListener.onAdsSettingsClick();
+//        }
+//    }
 
-    @OnClick(R2.id.rewardedVideoContainer)
-    void onRewardedVideoClick() {
-        if (mArticleClickListener != null) {
-            mArticleClickListener.onRewardedVideoClick();
-        }
-        if (clickListener != null) {
-            clickListener.onRewardedVideoClick();
-        }
-    }
+//    @OnClick(R2.id.rewardedVideoContainer)
+//    void onRewardedVideoClick() {
+//        if (mArticleClickListener != null) {
+//            mArticleClickListener.onRewardedVideoClick();
+//        }
+//        if (clickListener != null) {
+//            clickListener.onRewardedVideoClick();
+//        }
+//    }
 
-    public NativeAdsArticleListHolder(final View itemView, final ArticlesListAdapter.ArticleClickListener clickListener) {
+    public NativeAdsArticleListHolder(final View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         BaseApplication.getAppComponent().inject(this);
-
-        mArticleClickListener = clickListener;
-    }
-
-    public NativeAdsArticleListHolder(final View itemView, final SetTextViewHTML.TextItemsClickListener clickListener) {
-        super(itemView);
-        ButterKnife.bind(this, itemView);
-        BaseApplication.getAppComponent().inject(this);
-
-        this.clickListener = clickListener;
     }
 
 
     public void bind() {
         Timber.d("scpQuizAds showing");
 //        appodealNativeMediaView.setVisibility(View.GONE);
-        appodealNativeAdView.setVisibility(View.GONE);
+//        appodealNativeAdView.setVisibility(View.GONE);
 
         scpArtAdView.setVisibility(View.VISIBLE);
 
@@ -193,22 +176,22 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     public void bind(final int appodealAdIndex) {
         Timber.d("appodealAdIndex: %s", appodealAdIndex);
 
-        final List<NativeAd> nativeAdsList = Appodeal.getNativeAds(Constants.NUM_OF_NATIVE_ADS_PER_SCREEN);
-        Timber.d("nativeAdsList.size(): %s", nativeAdsList.size());
-        if (nativeAdsList.size() <= appodealAdIndex) {
-            Timber.d("No appodeal ads loaded yet for index: %s", appodealAdIndex);
-            return;
-        }
-        scpArtAdView.setVisibility(View.GONE);
-        appodealNativeAdView.setVisibility(View.VISIBLE);
-        final NativeAd nativeAd = nativeAdsList.get(appodealAdIndex);
-        appodealNativeAdView.setNativeAd(nativeAd);
+//        final List<NativeAd> nativeAdsList = Appodeal.getNativeAds(Constants.NUM_OF_NATIVE_ADS_PER_SCREEN);
+//        Timber.d("nativeAdsList.size(): %s", nativeAdsList.size());
+//        if (nativeAdsList.size() <= appodealAdIndex) {
+//            Timber.d("No appodeal ads loaded yet for index: %s", appodealAdIndex);
+//            return;
+//        }
+//        scpArtAdView.setVisibility(View.GONE);
+//        appodealNativeAdView.setVisibility(View.VISIBLE);
+//        final NativeAd nativeAd = nativeAdsList.get(appodealAdIndex);
+//        appodealNativeAdView.setNativeAd(nativeAd);
     }
 
     public void bind(@NotNull final MyNativeBanner scpArtAd) {
         Timber.d("scpArtAd: %s", scpArtAd);
 //        appodealNativeMediaView.setVisibility(View.GONE);
-        appodealNativeAdView.setVisibility(View.GONE);
+//        appodealNativeAdView.setVisibility(View.GONE);
 
         scpArtAdView.setVisibility(View.VISIBLE);
 
@@ -235,7 +218,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         ctaTextView.setText(scpArtAd.getCtaButtonText());
 
         progressCenter.setVisibility(View.VISIBLE);
-        Timber.d("imageUrl: %s", BuildConfig.SCP_READER_API_URL + scpArtAd.getImageUrl());
+        Timber.d("imageUrl: %s%s", BuildConfig.SCP_READER_API_URL, scpArtAd.getImageUrl());
         Glide.with(mainImageView.getContext())
                 .load(BuildConfig.SCP_READER_API_URL + scpArtAd.getImageUrl())
                 .error(R.drawable.art_scp_default_ads)

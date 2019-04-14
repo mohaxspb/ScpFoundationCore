@@ -1,7 +1,5 @@
 package ru.kuchanov.scpcore.di;
 
-import org.jetbrains.annotations.NotNull;
-
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -31,7 +29,6 @@ import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 import ru.kuchanov.scpcore.ui.adapter.ImagesPagerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerCardDesignAdapter;
-import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.CC3LicenseDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
@@ -154,8 +151,6 @@ public interface AppComponent {
     void inject(SettingsBottomSheetDialogFragment dialogFragment);
 
     void inject(CC3LicenseDialogFragment dialogFragment);
-
-    void inject(AdsSettingsBottomSheetDialogFragment dialogFragment);
 
     void inject(ArticlesListAdapter adapter);
 

@@ -1,12 +1,12 @@
 package ru.kuchanov.scpcore.ui.holder.article;
 
-import com.google.android.flexbox.FlexboxLayout;
-
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
+
+import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.List;
 

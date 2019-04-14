@@ -259,8 +259,7 @@ public class ArticleAdapter
         //or banners enabled or native disabled
         final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         if (mMyPreferenceManager.isHasAnySubscription()
-                || !mMyPreferenceManager.isTimeToShowBannerAds()
-                || mMyPreferenceManager.isBannerInArticleEnabled()) {
+                || !mMyPreferenceManager.isTimeToShowBannerAds()) {
             return;
         }
         if (mAdsModelsList.isEmpty()) {
@@ -341,7 +340,7 @@ public class ArticleAdapter
             case TYPE_NATIVE_APPODEAL:
             case TYPE_NATIVE_SCP_QUIZ:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_native_container, parent, false);
-                return new NativeAdsArticleListHolder(view, mTextItemsClickListener);
+                return new NativeAdsArticleListHolder(view);
             default:
                 throw new IllegalArgumentException("unexpected type: " + viewType);
         }

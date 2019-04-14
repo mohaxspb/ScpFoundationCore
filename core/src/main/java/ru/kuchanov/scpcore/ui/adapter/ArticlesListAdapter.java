@@ -258,8 +258,7 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         //do not add native ads items if user has subscription or banners temporary disabled
         //or banners enabled or native disabled
         if (mMyPreferenceManager.isHasAnySubscription()
-                || !mMyPreferenceManager.isTimeToShowBannerAds()
-                || mMyPreferenceManager.isBannerInArticlesListsEnabled()) {
+                || !mMyPreferenceManager.isTimeToShowBannerAds()) {
             return;
         }
         if (mAdsModelsList.isEmpty()) {
@@ -432,7 +431,7 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case ArticleListNodeType.NATIVE_ADS_APPODEAL:
             case ArticleListNodeType.NATIVE_ADS_ART:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_native_container, parent, false);
-                viewHolder = new NativeAdsArticleListHolder(view, mArticleClickListener);
+                viewHolder = new NativeAdsArticleListHolder(view);
                 break;
             default:
                 throw new IllegalArgumentException("unexpected viewType: " + viewType);
@@ -494,8 +493,6 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         void onOfflineClick(Article article);
 
         void onTagClick(ArticleTag tag);
-
-        void onAdsSettingsClick();
 
         void onRewardedVideoClick();
 
