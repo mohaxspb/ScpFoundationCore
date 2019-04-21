@@ -5,16 +5,18 @@ import android.graphics.ColorFilter;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.CustomViewTarget;
 import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.request.target.ViewTarget;
+import com.bumptech.glide.request.transition.Transition;
 
 import javax.inject.Inject;
 
@@ -36,7 +38,7 @@ public class URLImageParser implements Html.ImageGetter {
     @Inject
     MyPreferenceManager myPreferenceManager;
 
-    public URLImageParser(TextView textView) {
+    URLImageParser(TextView textView) {
         BaseApplication.getAppComponent().inject(this);
         mTextView = textView;
     }
@@ -51,25 +53,35 @@ public class URLImageParser implements Html.ImageGetter {
             Glide
                     .with(mTextView.getContext())
                     .load(source)
-                    .listener(new RequestListener<String, GlideDrawable>() {
+                    .listener(new RequestListener<Drawable>() {
                         @Override
-                        public boolean onException(Exception e, String s, Target<GlideDrawable> glideDrawableTarget, boolean b) {
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                             return false;
                         }
 
                         @Override
-                        public boolean onResourceReady(GlideDrawable d, String s, Target<GlideDrawable> glideDrawableTarget, boolean b, boolean b2) {
-                            setProperImageSize(urlDrawable, d);
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            setProperImageSize(urlDrawable, resource);
 
                             mTextView.invalidate();
                             mTextView.setText(mTextView.getText());
                             return true;
                         }
                     })
-                    .into(new ViewTarget<TextView, GlideDrawable>(mTextView) {
+                    .into(new CustomViewTarget<TextView, Drawable>(mTextView) {
                         @Override
-                        public void onResourceReady(GlideDrawable d, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                            setProperImageSize(urlDrawable, d);
+                        protected void onResourceCleared(@Nullable Drawable placeholder) {
+
+                        }
+
+                        @Override
+                        public void onLoadFailed(@Nullable Drawable errorDrawable) {
+
+                        }
+
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            setProperImageSize(urlDrawable, resource);
 
                             mTextView.invalidate();
                             mTextView.setText(mTextView.getText());
@@ -80,35 +92,46 @@ public class URLImageParser implements Html.ImageGetter {
             Glide
                     .with(mTextView.getContext())
                     .load(holderId)
-                    .listener(new RequestListener<Integer, GlideDrawable>() {
+                    .listener(new RequestListener<Drawable>() {
                         @Override
-                        public boolean onException(Exception e, Integer s, Target<GlideDrawable> glideDrawableTarget, boolean b) {
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                             return false;
                         }
 
                         @Override
-                        public boolean onResourceReady(GlideDrawable d, Integer s, Target<GlideDrawable> glideDrawableTarget, boolean b, boolean b2) {
-                            setProperImageSize(urlDrawable, d);
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            setProperImageSize(urlDrawable, resource);
 
                             mTextView.invalidate();
                             mTextView.setText(mTextView.getText());
                             return true;
                         }
                     })
-                    .into(new ViewTarget<TextView, GlideDrawable>(mTextView) {
+                    .into(new CustomViewTarget<TextView, Drawable>(mTextView) {
                         @Override
-                        public void onResourceReady(GlideDrawable d, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                            setProperImageSize(urlDrawable, d);
+                        protected void onResourceCleared(@Nullable Drawable placeholder) {
+
+                        }
+
+                        @Override
+                        public void onLoadFailed(@Nullable Drawable errorDrawable) {
+
+                        }
+
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            setProperImageSize(urlDrawable, resource);
 
                             mTextView.invalidate();
                             mTextView.setText(mTextView.getText());
                         }
+
                     });
         }
         return urlDrawable;
     }
 
-    private void setProperImageSize(UrlDrawable urlDrawable, GlideDrawable resource) {
+    private void setProperImageSize(UrlDrawable urlDrawable, Drawable resource) {
         int width = resource.getIntrinsicWidth();
         int height = resource.getIntrinsicHeight();
 
@@ -124,49 +147,12 @@ public class URLImageParser implements Html.ImageGetter {
         urlDrawable.drawable = resource;
     }
 
-    private class UrlDrawable extends GlideDrawable {
-        public GlideDrawable drawable;
+    private class UrlDrawable extends Drawable {
+        public Drawable drawable;
         public Drawable placeHolder;
 
-        public UrlDrawable() {
+        UrlDrawable() {
             super();
-        }
-
-        @Override
-        public boolean isAnimated() {
-            if (drawable != null) {
-                return drawable.isAnimated();
-            }
-            return false;
-        }
-
-        @Override
-        public void setLoopCount(int i) {
-            if (drawable != null) {
-                drawable.setLoopCount(i);
-            }
-        }
-
-        @Override
-        public void start() {
-            if (drawable != null) {
-                drawable.start();
-            }
-        }
-
-        @Override
-        public void stop() {
-            if (drawable != null) {
-                drawable.stop();
-            }
-        }
-
-        @Override
-        public boolean isRunning() {
-            if (drawable != null) {
-                return drawable.isRunning();
-            }
-            return false;
         }
 
         @Override
@@ -195,7 +181,6 @@ public class URLImageParser implements Html.ImageGetter {
         public void draw(@NonNull Canvas canvas) {
             if (drawable != null) {
                 drawable.draw(canvas);
-                drawable.start();
             } else {
                 placeHolder.draw(canvas);
             }

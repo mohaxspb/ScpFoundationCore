@@ -236,8 +236,8 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
 
             headerViewHolder.name.setText(user.fullName);
             Glide.with(this)
-                    .load(user.avatar)
                     .asBitmap()
+                    .load(user.avatar)
                     .centerCrop()
                     .into(new BitmapImageViewTarget(headerViewHolder.avatar) {
                         @Override

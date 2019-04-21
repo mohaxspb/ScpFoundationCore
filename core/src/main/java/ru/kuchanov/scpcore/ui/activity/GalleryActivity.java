@@ -3,6 +3,7 @@ package ru.kuchanov.scpcore.ui.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,9 +16,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.Collections;
@@ -42,6 +43,8 @@ import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.GALLERY_BANNER_DISABLED;
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
+
+//import com.bumptech.glide.request.animation.GlideAnimation;
 
 public class GalleryActivity
         extends BaseDrawerActivity<GalleryScreenMvp.View, GalleryScreenMvp.Presenter>
@@ -253,12 +256,24 @@ public class GalleryActivity
             if (mPagerAdapter.getData().isEmpty()) {
                 return true;
             }
-            mPagerAdapter.downloadImage(GalleryActivity.this, mViewPager.getCurrentItem(),
-                    new SimpleTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) {
+            mPagerAdapter.downloadImage(
+                    GalleryActivity.this,
+                    mViewPager.getCurrentItem(),
+                    new CustomTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) {
                         @Override
-                        public void onResourceReady(final Bitmap resource, final GlideAnimation glideAnimation) {
-                            final String desc = mPagerAdapter.getData().get(mViewPager.getCurrentItem()).getGalleryImageTranslations().get(0).getTranslation();
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                            final String desc = mPagerAdapter
+                                    .getData()
+                                    .get(mViewPager.getCurrentItem())
+                                    .getGalleryImageTranslations()
+                                    .get(0)
+                                    .getTranslation();
                             IntentUtils.shareBitmapWithText(GalleryActivity.this, desc, resource);
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+
                         }
                     }
             );
@@ -267,15 +282,22 @@ public class GalleryActivity
             if (mPagerAdapter.getData().isEmpty()) {
                 return true;
             }
-            mPagerAdapter.downloadImage(GalleryActivity.this, mViewPager.getCurrentItem(),
-                    new SimpleTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) {
+            mPagerAdapter.downloadImage(
+                    GalleryActivity.this,
+                    mViewPager.getCurrentItem(),
+                    new CustomTarget<Bitmap>() {
                         @Override
-                        public void onResourceReady(final Bitmap resource, final GlideAnimation glideAnimation) {
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                             if (StorageUtils.saveImageToGallery(GalleryActivity.this, resource) != null) {
                                 Toast.makeText(GalleryActivity.this, R.string.image_saved, Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(GalleryActivity.this, R.string.image_saving_error, Toast.LENGTH_SHORT).show();
                             }
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+
                         }
                     }
             );

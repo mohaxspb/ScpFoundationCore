@@ -61,7 +61,7 @@ public class IntentUtils {
                 );
     }
 
-    public static void shareBitmapWithText(final AppCompatActivity activity, final String text, final Bitmap bitmap) {
+    public static void shareBitmapWithText(final Context activity, final String text, final Bitmap bitmap) {
         final String pathOfBmp = StorageUtils.saveImageToGallery(activity, bitmap);
         if (pathOfBmp == null) {
             Toast.makeText(activity, R.string.error_getting_path_to_image, Toast.LENGTH_SHORT).show();

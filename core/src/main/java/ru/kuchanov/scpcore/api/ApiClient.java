@@ -646,9 +646,10 @@ public class ApiClient {
                 if (mPreferencesManager.isImagesCacheEnabled()) {
                     try {
                         final Bitmap bitmap = Glide.with(context)
-                                .load(realmString.val)
                                 .asBitmap()
-                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                                .load(realmString.val)
+//                                .into(new Cus)
+//                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                                 .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                                 .get();
 
@@ -664,7 +665,7 @@ public class ApiClient {
                 } else {
                     Glide.with(context)
                             .load(realmString.val)
-                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+//                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .preload();
                 }
             }

@@ -1,5 +1,6 @@
 package ru.kuchanov.scpcore.ui.holder.article;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -10,8 +11,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -143,33 +144,47 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         Glide.with(mainImageView.getContext())
                 .load(R.drawable.ic_scp_quiz_banner)
                 .fitCenter()
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .listener(new RequestListener<Integer, GlideDrawable>() {
+//                .crossFade()
+//                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .listener(new RequestListener<Drawable>() {
                     @Override
-                    public boolean onException(
-                            final Exception e,
-                            final Integer model,
-                            final Target<GlideDrawable> target,
-                            final boolean isFirstResource
-                    ) {
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         Timber.e(e, "ERROR while load image for scp quiz");
                         progressCenter.setVisibility(View.GONE);
                         return false;
                     }
 
                     @Override
-                    public boolean onResourceReady(
-                            final GlideDrawable resource,
-                            final Integer model,
-                            final Target<GlideDrawable> target,
-                            final boolean isFromMemoryCache,
-                            final boolean isFirstResource
-                    ) {
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                         progressCenter.setVisibility(View.GONE);
                         return false;
                     }
                 })
+//                .listener(new RequestListener<Integer, GlideDrawable>() {
+//                    @Override
+//                    public boolean onException(
+//                            final Exception e,
+//                            final Integer model,
+//                            final Target<GlideDrawable> target,
+//                            final boolean isFirstResource
+//                    ) {
+//                        Timber.e(e, "ERROR while load image for scp quiz");
+//                        progressCenter.setVisibility(View.GONE);
+//                        return false;
+//                    }
+//
+//                    @Override
+//                    public boolean onResourceReady(
+//                            final GlideDrawable resource,
+//                            final Integer model,
+//                            final Target<GlideDrawable> target,
+//                            final boolean isFromMemoryCache,
+//                            final boolean isFirstResource
+//                    ) {
+//                        progressCenter.setVisibility(View.GONE);
+//                        return false;
+//                    }
+//                })
                 .into(mainImageView);
     }
 
@@ -209,8 +224,8 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
                 .load(BuildConfig.SCP_READER_API_URL + scpArtAd.getLogoUrl())
                 .error(R.drawable.ic_scp_art_ad_img)
                 .fitCenter()
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+//                .crossFade()
+//                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(logoImageView);
 
         titleTextView.setText(scpArtAd.getTitle());
@@ -223,33 +238,47 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
                 .load(BuildConfig.SCP_READER_API_URL + scpArtAd.getImageUrl())
                 .error(R.drawable.art_scp_default_ads)
                 .fitCenter()
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .listener(new RequestListener<String, GlideDrawable>() {
+//                .crossFade()
+//                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .listener(new RequestListener<Drawable>() {
                     @Override
-                    public boolean onException(
-                            final Exception e,
-                            final String model,
-                            final Target<GlideDrawable> target,
-                            final boolean isFirstResource
-                    ) {
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         Timber.e(e, "ERROR while load image for scp art");
                         progressCenter.setVisibility(View.GONE);
                         return false;
                     }
 
                     @Override
-                    public boolean onResourceReady(
-                            final GlideDrawable resource,
-                            final String model,
-                            final Target<GlideDrawable> target,
-                            final boolean isFromMemoryCache,
-                            final boolean isFirstResource
-                    ) {
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                         progressCenter.setVisibility(View.GONE);
                         return false;
                     }
                 })
+//                .listener(new RequestListener<String, GlideDrawable>() {
+//                    @Override
+//                    public boolean onException(
+//                            final Exception e,
+//                            final String model,
+//                            final Target<GlideDrawable> target,
+//                            final boolean isFirstResource
+//                    ) {
+//                        Timber.e(e, "ERROR while load image for scp art");
+//                        progressCenter.setVisibility(View.GONE);
+//                        return false;
+//                    }
+//
+//                    @Override
+//                    public boolean onResourceReady(
+//                            final GlideDrawable resource,
+//                            final String model,
+//                            final Target<GlideDrawable> target,
+//                            final boolean isFromMemoryCache,
+//                            final boolean isFirstResource
+//                    ) {
+//                        progressCenter.setVisibility(View.GONE);
+//                        return false;
+//                    }
+//                })
                 .into(mainImageView);
     }
 }

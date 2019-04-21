@@ -191,16 +191,18 @@ class LeaderboardFragment :
         with(userDataView) {
             Glide.with(context)
                     .load(user.avatar)
-                    .asBitmap()
+//                    .asBitmap()
                     .centerCrop()
                     .error(R.mipmap.ic_launcher)
-                    .into(object : BitmapImageViewTarget(avatarImageView) {
-                        override fun setResource(resource: Bitmap) {
-                            val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(context.resources, resource)
-                            circularBitmapDrawable.isCircular = true
-                            avatarImageView.setImageDrawable(circularBitmapDrawable)
-                        }
-                    })
+                    .circleCrop()
+                    .into(avatarImageView)
+//                    .into(object : BitmapImageViewTarget(avatarImageView) {
+//                        override fun setResource(resource: Bitmap) {
+//                            val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(context.resources, resource)
+//                            circularBitmapDrawable.isCircular = true
+//                            avatarImageView.setImageDrawable(circularBitmapDrawable)
+//                        }
+//                    })
 
             nameTextView.text = user.fullName
             Timber.d("user.numOfReadArticles: ${user.numOfReadArticles}")
