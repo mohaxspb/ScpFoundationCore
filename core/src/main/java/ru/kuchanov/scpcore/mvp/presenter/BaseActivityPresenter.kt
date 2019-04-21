@@ -42,7 +42,7 @@ import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.ui.activity.BaseActivity.RC_SIGN_IN
 import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity
 import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment
-import rx.Observable
+import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.subscribeBy
 import rx.schedulers.Schedulers
@@ -99,7 +99,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                     mDbProviderFactory.dbProvider
                             .saveArticlesFromFirebase(ArrayList(map.values))
                             .subscribeBy(
-                                    onNext = { Timber.d("articles in realm updated!") },
+                                    onSuccess = { Timber.d("articles in realm updated!") },
                                     onError = { Timber.e(it) }
                             )
                 }
@@ -162,6 +162,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
     override fun startFirebaseLogin(provider: Constants.Firebase.SocialProvider, id: String) {
         view.showProgressDialog(R.string.login_in_progress_custom_token)
         mApiClient.getAuthInFirebaseWithSocialProviderObservable(provider, id)
+                .doOnSuccess { Timber.d("onSuccess after getAuthInFirebaseWithSocialProviderObservable: $it") }
                 .flatMap<FirebaseUser> { firebaseUser ->
                     if (TextUtils.isEmpty(firebaseUser.email)) {
                         mApiClient.getAuthInFirebaseWithSocialProviderObservable(provider, id)
@@ -175,9 +176,9 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                 .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
                                 .subscribeOn(AndroidSchedulers.mainThread())
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .flatMap { Observable.just(firebaseAuth.currentUser) }
+                                .flatMap { Single.just(firebaseAuth.currentUser) }
                     } else {
-                        Observable.just(firebaseUser)
+                        Single.just(firebaseUser)
                     }
                 }
                 .flatMap { mApiClient.userObjectFromFirebaseObservable }
@@ -199,14 +200,14 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                                     .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
                                                     .subscribeOn(AndroidSchedulers.mainThread())
                                                     .observeOn(AndroidSchedulers.mainThread())
-                                                    .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
+                                                    .flatMap { Single.just(FirebaseAuth.getInstance().currentUser) }
                                         } else {
-                                            Observable.just(it)
+                                            Single.just(it)
                                         }
                                     }
                                     .flatMap { mApiClient.userObjectFromFirebaseObservable }
                                     .flatMap {
-                                        Observable.error<FirebaseObjectUser>(
+                                        Single.error<FirebaseObjectUser>(
                                                 ScpLoginException(
                                                         BaseApplication.getAppInstance()
                                                                 .getString(
@@ -245,9 +246,9 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                         .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
                                         .subscribeOn(AndroidSchedulers.mainThread())
                                         .observeOn(AndroidSchedulers.mainThread())
-                                        .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
+                                        .flatMap { Single.just(FirebaseAuth.getInstance().currentUser) }
                             } else {
-                                Observable.just(firebaseUser)
+                                Single.just(firebaseUser)
                             }
                                     .flatMap { mApiClient.userObjectFromFirebaseObservable }
                                     .flatMap { mApiClient.writeUserToFirebaseObservable(userToWriteToDb) }
@@ -270,13 +271,13 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                         .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
                                         .subscribeOn(AndroidSchedulers.mainThread())
                                         .observeOn(AndroidSchedulers.mainThread())
-                                        .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
+                                        .flatMap { Single.just(FirebaseAuth.getInstance().currentUser) }
                             } else {
-                                Observable.just(firebaseUser)
+                                Single.just(firebaseUser)
                             }
                                     .flatMap { mApiClient.userObjectFromFirebaseObservable }
                                     .flatMap { mApiClient.updateFirebaseUsersSocialProvidersObservable(userObjectInFirebase.socialProviders) }
-                                    .flatMap<FirebaseObjectUser> { Observable.just(userObjectInFirebase) }
+                                    .flatMap<FirebaseObjectUser> { Single.just(userObjectInFirebase) }
                         }
 
                         //in case of unrewarded user we should add score and disable ads temporary too
@@ -296,9 +297,9 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                         .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
                                         .subscribeOn(AndroidSchedulers.mainThread())
                                         .observeOn(AndroidSchedulers.mainThread())
-                                        .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
+                                        .flatMap { Single.just(FirebaseAuth.getInstance().currentUser) }
                             } else {
-                                Observable.just(firebaseUser)
+                                Single.just(firebaseUser)
                             }
                                     .flatMap { mApiClient.userObjectFromFirebaseObservable }
                                     .flatMap { mApiClient.incrementScoreInFirebaseObservable(score) }
@@ -306,7 +307,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                     .flatMap {
                                         userObjectInFirebase.score += score
                                         userObjectInFirebase.signInRewardGained = true
-                                        Observable.just(userObjectInFirebase)
+                                        Single.just(userObjectInFirebase)
                                     }
                         }
 
@@ -320,22 +321,22 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                     .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
                                     .subscribeOn(AndroidSchedulers.mainThread())
                                     .observeOn(AndroidSchedulers.mainThread())
-                                    .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
+                                    .flatMap { Single.just(FirebaseAuth.getInstance().currentUser) }
                         } else {
-                            Observable.just(firebaseUser)
+                            Single.just(firebaseUser)
                         }
                                 .flatMap { mApiClient.userObjectFromFirebaseObservable }
-                                .flatMap { Observable.just<FirebaseObjectUser>(userObjectInFirebase) }
+                                .flatMap { Single.just<FirebaseObjectUser>(userObjectInFirebase) }
                     }
                 }
                 //save user articles to realm
                 .flatMap { userObjectInFirebase ->
                     if (userObjectInFirebase.articles == null)
-                        Observable.just(userObjectInFirebase)
+                        Single.just(userObjectInFirebase)
                     else
                         mDbProviderFactory.dbProvider
                                 .saveArticlesFromFirebase(ArrayList(userObjectInFirebase.articles.values))
-                                .flatMap { Observable.just(userObjectInFirebase) }
+                                .flatMap { Single.just(userObjectInFirebase) }
                 }
                 //save user to realm
                 .flatMap { userObjectInFirebase -> mDbProviderFactory.dbProvider.saveUser(userObjectInFirebase.toRealmUser()) }
@@ -363,7 +364,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                     refreshToken = it.refreshToken
                                 }
                             }
-                            .toObservable()
+//                            .toObservable()
                             .map { userInRealm }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -387,7 +388,10 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                         ScpLoginException(
                                                 BaseApplication.getAppInstance().getString(
                                                         R.string.error_login_firebase_connection,
-                                                        e.message)))
+                                                        e.message
+                                                )
+                                        )
+                                )
                             }
                         }
                 )
