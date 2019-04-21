@@ -209,7 +209,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         //increment scoreInFirebase
         mApiClient
-                .incrementScoreInFirebaseObservable(totalScoreToAdd)
+                .incrementScoreInFirebase(totalScoreToAdd)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(newTotalScore -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))

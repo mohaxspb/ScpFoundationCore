@@ -1014,9 +1014,9 @@ public class DbProvider {
         );
     }
 
-    public Observable<Integer> updateUserScore(final int totalScore) {
+    public Single<Integer> updateUserScore(final int totalScore) {
         Timber.d("updateUserScore: %s", totalScore);
-        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
+        return Single.create(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //check if we have app in db and update
                     final User user = realm.where(User.class).findFirst();
@@ -1027,8 +1027,7 @@ public class DbProvider {
                     }
                 },
                 () -> {
-                    subscriber.onNext(totalScore);
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(totalScore);
                     mRealm.close();
                 },
                 e -> {

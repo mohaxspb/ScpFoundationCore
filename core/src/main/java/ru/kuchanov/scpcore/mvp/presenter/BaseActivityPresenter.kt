@@ -121,7 +121,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                     mDbProviderFactory.dbProvider
                             .updateUserScore(score)
                             .subscribeBy(
-                                    onNext = { Timber.d("score in realm updated!") },
+                                    onSuccess = { Timber.d("score in realm updated!") },
                                     onError = { Timber.e(it) }
                             )
                 }
@@ -302,7 +302,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                 Single.just(firebaseUser)
                             }
                                     .flatMap { mApiClient.userObjectFromFirebaseObservable }
-                                    .flatMap { mApiClient.incrementScoreInFirebaseObservable(score) }
+                                    .flatMap { mApiClient.incrementScoreInFirebase(score) }
                                     .flatMap<Boolean> { mApiClient.setUserRewardedForAuthInFirebaseObservable() }
                                     .flatMap {
                                         userObjectInFirebase.score += score

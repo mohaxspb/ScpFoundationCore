@@ -1046,6 +1046,7 @@ public class ApiClient {
                             subscriber.onSuccess(user);
                         } else {
                             // If sign in fails, display a message to the user.
+                            Timber.e(task.getException(), "error while google login");
                             subscriber.onError(task.getException());
                         }
                     });
@@ -1258,7 +1259,7 @@ public class ApiClient {
      * @param scoreToAdd score to add to user
      * @return Observable, that emits user total score
      */
-    public Single<Integer> incrementScoreInFirebaseObservable(final int scoreToAdd) {
+    public Single<Integer> incrementScoreInFirebase(final int scoreToAdd) {
         return Single.create(subscriber -> {
             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser != null) {
@@ -1327,8 +1328,8 @@ public class ApiClient {
         });
     }
 
-    public Observable<Article> writeArticleToFirebase(final Article article) {
-        return Observable.unsafeCreate(subscriber -> {
+    public Single<Article> writeArticleToFirebase(final Article article) {
+        return Single.create(subscriber -> {
             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser == null) {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
@@ -1358,8 +1359,7 @@ public class ApiClient {
 
             reference.setValue(articleInFirebase, (databaseError, databaseReference) -> {
                 if (databaseError == null) {
-                    subscriber.onNext(article);
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(article);
                 } else {
                     subscriber.onError(databaseError.toException());
                 }
@@ -1367,8 +1367,8 @@ public class ApiClient {
         });
     }
 
-    public Observable<ArticleInFirebase> getArticleFromFirebase(final Article article) {
-        return Observable.unsafeCreate(subscriber -> {
+    public Single<ArticleInFirebase> getArticleFromFirebase(final Article article) {
+        return Single.create(subscriber -> {
             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser == null) {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
@@ -1390,8 +1390,7 @@ public class ApiClient {
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
-                    subscriber.onNext(dataSnapshot.getValue(ArticleInFirebase.class));
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(dataSnapshot.getValue(ArticleInFirebase.class));
                 }
 
                 @Override
@@ -1402,8 +1401,8 @@ public class ApiClient {
         });
     }
 
-    public Observable<Integer> getUserScoreFromFirebase() {
-        return Observable.unsafeCreate(subscriber -> {
+    public Single<Integer> getUserScoreFromFirebase() {
+        return Single.create(subscriber -> {
             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser == null) {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
@@ -1417,8 +1416,7 @@ public class ApiClient {
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
-                    subscriber.onNext(dataSnapshot.getValue(Integer.class));
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(dataSnapshot.getValue(Integer.class));
                 }
 
                 @Override
@@ -1459,9 +1457,9 @@ public class ApiClient {
         });
     }
 
-    public Observable<Boolean> isUserJoinedVkGroup(final String id) {
+    public Single<Boolean> isUserJoinedVkGroup(final String id) {
         Timber.d("isUserJoinedVkGroup id: %s", id);
-        return Observable.unsafeCreate(subscriber -> {
+        return Single.create(subscriber -> {
             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser == null) {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
@@ -1478,8 +1476,7 @@ public class ApiClient {
                 public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                     final VkGroupToJoin data = dataSnapshot.getValue(VkGroupToJoin.class);
                     Timber.d("dataSnapshot.getValue(): %s", data);
-                    subscriber.onNext(data != null);
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(data != null);
                 }
 
                 @Override
@@ -1490,8 +1487,9 @@ public class ApiClient {
         });
     }
 
-    public Observable<Void> addJoinedVkGroup(final String id) {
-        return Observable.unsafeCreate(subscriber -> {
+    //todo remove null from chain
+    public Single<Void> addJoinedVkGroup(final String id) {
+        return Single.create(subscriber -> {
             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser == null) {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
@@ -1505,8 +1503,7 @@ public class ApiClient {
                     .child(id);
             reference.setValue(new VkGroupToJoin(id), (databaseError, databaseReference) -> {
                 if (databaseError == null) {
-                    subscriber.onNext(null);
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(null);
                 } else {
                     subscriber.onError(databaseError.toException());
                 }
@@ -1514,11 +1511,11 @@ public class ApiClient {
         });
     }
 
-    public Observable<Boolean> isUserInstallApp(final String packageNameWithDots) {
+    public Single<Boolean> isUserInstallApp(final String packageNameWithDots) {
         //as firebase can't have dots in ref path we must replace it...
         final String id = packageNameWithDots.replaceAll("\\.", "____");
         Timber.d("id: %s", id);
-        return Observable.unsafeCreate(subscriber -> {
+        return Single.create(subscriber -> {
             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser == null) {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
@@ -1535,8 +1532,7 @@ public class ApiClient {
                 public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                     final PlayMarketApplication data = dataSnapshot.getValue(PlayMarketApplication.class);
                     Timber.d("dataSnapshot.getValue(): %s", data);
-                    subscriber.onNext(data != null);
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(data != null);
                 }
 
                 @Override
@@ -1547,10 +1543,11 @@ public class ApiClient {
         });
     }
 
-    public Observable<Void> addInstalledApp(final String packageNameWithDots) {
+    //todo remove null from chain
+    public Single<Void> addInstalledApp(final String packageNameWithDots) {
         //as firebase can't have dots in ref path we must replace it...
         final String id = packageNameWithDots.replaceAll("\\.", "____");
-        return Observable.unsafeCreate(subscriber -> {
+        return Single.create(subscriber -> {
             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser == null) {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
@@ -1564,8 +1561,7 @@ public class ApiClient {
                     .child(id);
             reference.setValue(new PlayMarketApplication(id), (databaseError, databaseReference) -> {
                 if (databaseError == null) {
-                    subscriber.onNext(null);
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(null);
                 } else {
                     subscriber.onError(databaseError.toException());
                 }
@@ -1573,8 +1569,8 @@ public class ApiClient {
         });
     }
 
-    public Observable<Void> addRewardedInapp(final String sku) {
-        return Observable.unsafeCreate(subscriber -> {
+    public Single<Void> addRewardedInapp(final String sku) {
+        return Single.create(subscriber -> {
             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser == null) {
                 subscriber.onError(new IllegalArgumentException("firebase user is null"));
@@ -1588,8 +1584,7 @@ public class ApiClient {
                     .child(sku);
             reference.push().setValue(true, (databaseError, databaseReference) -> {
                 if (databaseError == null) {
-                    subscriber.onNext(null);
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(null);
                 } else {
                     subscriber.onError(databaseError.toException());
                 }
