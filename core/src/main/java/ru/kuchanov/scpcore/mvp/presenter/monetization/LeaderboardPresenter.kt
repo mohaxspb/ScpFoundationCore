@@ -93,7 +93,7 @@ class LeaderboardPresenter(
 
         Single
                 .zip(
-                        inAppHelper.getInAppsListToBuyObservable(inAppService).toSingle(),
+                        inAppHelper.getInAppsListToBuyObservable(inAppService),
                         Single.just(mDbProviderFactory.dbProvider.userUnmanaged)
                 ) { inApps: List<Subscription>, user: User? ->
                     Pair(

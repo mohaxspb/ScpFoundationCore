@@ -342,8 +342,9 @@ public class InAppHelper {
         });
     }
 
-    public Observable<List<Subscription>> getInAppsListToBuyObservable(final IInAppBillingService mInAppBillingService) {
-        return Observable.unsafeCreate(subscriber -> {
+    public Single<List<Subscription>> getInAppsListToBuyObservable(final IInAppBillingService mInAppBillingService) {
+        Timber.d("getInAppsListToBuyObservable: %s", mInAppBillingService);
+        return Single.create(subscriber -> {
             try {
                 //get all subs detailed info
                 final List<String> skuList = new ArrayList<>();
@@ -371,8 +372,7 @@ public class InAppHelper {
                     }
                     Collections.sort(allSubscriptions, Subscription.COMPARATOR_PRICE);
 
-                    subscriber.onNext(allSubscriptions);
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(allSubscriptions);
                 } else {
                     subscriber.onError(new IllegalStateException("ownedItemsBundle RESPONSE_CODE is not 0: " + responseCode));
                 }

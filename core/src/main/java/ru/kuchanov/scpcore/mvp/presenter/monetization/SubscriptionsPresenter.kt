@@ -62,7 +62,7 @@ class SubscriptionsPresenter(
         Single.zip(
             inAppHelper.validateSubsObservable(service).toSingle(),
             inAppHelper.getSubsListToBuyObservable(service, skuList).toSingle(),
-            inAppHelper.getInAppsListToBuyObservable(service).toSingle()
+            inAppHelper.getInAppsListToBuyObservable(service)
         ) { t1: List<Item>, t2: List<Subscription>, t3: List<Subscription> -> Triple(t1, t2, t3) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

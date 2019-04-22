@@ -116,6 +116,8 @@ class LeaderboardFragment :
                 showUpdateDate(updateTime)
                 showUserPosition(userPositionOnLeaderboard)
             }
+        } else {
+            mPresenter.updateLeaderboardFromApi(0)
         }
 
         refresh.setOnClickListener { getPresenter().loadInitialData() }
