@@ -67,8 +67,8 @@ public class ApiClientImpl extends ApiClient {
     }
 
     @Override
-    public Observable<String> getRandomUrl() {
-        return Observable.unsafeCreate(subscriber -> {
+    public Single<String> getRandomUrl() {
+        return Single.create(subscriber -> {
             final Request.Builder request = new Request.Builder();
             request.url(mConstantValues.getRandomPageUrl());
             request.get();
@@ -93,8 +93,7 @@ public class ApiClientImpl extends ApiClient {
                             .getElementsByTag("iframe").first();
                     final String randomURL = aTag.attr("src").replace("http://snippets.wdfiles.com/local--code/code:iframe-redirect#", "");
                     Timber.d("randomURL = %s", randomURL);
-                    subscriber.onNext(randomURL);
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(randomURL);
                 } else {
                     subscriber.onError(new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse)));
                 }

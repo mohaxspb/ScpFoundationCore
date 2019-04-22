@@ -52,7 +52,7 @@ android {
         buildConfigField('int', 'TIMEOUT_SECONDS_READ', '60')
         buildConfigField('int', 'TIMEOUT_SECONDS_WRITE', '60')
 
-        buildConfigField('String', 'SCP_API_URL', '"https://scpdb.org/"')
+        buildConfigField('String', 'SCP_API_URL', '"https://wikidot.scpdb.org/"')
 
         //fixme delete it
         buildConfigField('String', 'EN_SCP_API_URL', '"http://home.helenbot.com/"')
