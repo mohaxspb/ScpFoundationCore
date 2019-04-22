@@ -1,7 +1,8 @@
 package ru.dante.scpfoundation.api;
 
+import android.text.TextUtils;
+
 import com.google.gson.Gson;
-import com.google.gson.JsonParser;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -14,6 +15,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.ConstantValues;
@@ -21,7 +23,6 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.api.service.EnScpSiteApi;
 import ru.kuchanov.scpcore.api.service.ScpReaderAuthApi;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import rx.Observable;
 import rx.Single;
 import timber.log.Timber;
 
@@ -57,24 +58,25 @@ public class ApiClientImpl extends ApiClient {
     }
 
     @Override
-    public Observable<String> getRandomUrl() {
-        return Observable.unsafeCreate(subscriber -> {
+    public Single<String> getRandomUrl() {
+        Timber.d("getRandomUrl");
+        return Single.create(subscriber -> {
                     final Request request = new Request.Builder()
-                            .url("https://scpdb.org/api/wikidot_random_page")
+                            .url(mConstantValues.getRandomPageUrl())
                             .build();
 
                     try {
                         final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                                .addInterceptor(new HttpLoggingInterceptor(message -> Timber.d(message)))
                                 .followRedirects(false)
                                 .build();
                         final Response response = okHttpClient.newCall(request).execute();
-                        final ResponseBody body = response.body();
-                        if (body != null) {
-                            final String responseBody = body.string();
-                            //{"name":"scp-2320"}
-                            final String scp = new JsonParser().parse(responseBody).getAsJsonObject().get("name").getAsString();
-                            subscriber.onNext(mConstantValues.getBaseApiUrl() + "/" + scp);
-                            subscriber.onCompleted();
+//                        final ResponseBody body = response.body();
+                        Timber.d("getRandomUrl headers: %s", response.headers("Location"));
+                        Timber.d("getRandomUrl headers: %s", response.headers().toString());
+                        final String locationHeader = response.headers("Location").get(0);
+                        if(!TextUtils.isEmpty(locationHeader)){
+                            subscriber.onSuccess(response.headers("Location").get(0));
                         } else {
                             subscriber.onError(new IOException(BaseApplication.getAppInstance().getString(ru.kuchanov.scpcore.R.string.error_parse)));
                         }

@@ -31,7 +31,9 @@ public interface Constants {
          */
         String SEARCH_URL = "/search:site/a/p/q/%1$s/p/%2$s";
         //        String RANDOM_PAGE_SCRIPT_URL = "https://node.scpfoundation.net/wikidot_random_page";
-        String RANDOM_PAGE_SCRIPT_URL = "https://scpdb.org/api/wikidot_random_page";
+//        String RANDOM_PAGE_SCRIPT_URL = "https://scpdb.org/api/wikidot_random_page";
+        String RANDOM_PAGE_SCRIPT_URL = "http://wikidot.scpdb.org/wikidot_random_page";
+
 
         int NUM_OF_ARTICLES_ON_RECENT_PAGE = 30;
         int NUM_OF_ARTICLES_ON_RATED_PAGE = 20;

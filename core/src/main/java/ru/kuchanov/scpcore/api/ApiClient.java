@@ -168,8 +168,8 @@ public class ApiClient {
         return mScpReaderApi.getAllBanners();
     }
 
-    public Observable<String> getRandomUrl() {
-        return Observable.unsafeCreate(subscriber -> {
+    public Single<String> getRandomUrl() {
+        return Single.create(subscriber -> {
             final Request.Builder request = new Request.Builder();
             request.url(mConstantValues.getRandomPageUrl());
             request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
@@ -188,8 +188,7 @@ public class ApiClient {
                 final String randomURL = requestResult.url().url().toString();
                 Timber.d("randomUrl = %s", randomURL);
 
-                subscriber.onNext(randomURL);
-                subscriber.onCompleted();
+                subscriber.onSuccess(randomURL);
             } catch (final IOException e) {
                 Timber.e(e);
                 subscriber.onError(e);

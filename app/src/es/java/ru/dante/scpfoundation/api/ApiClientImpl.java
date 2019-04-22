@@ -66,9 +66,9 @@ public class ApiClientImpl extends ApiClient {
     }
 
     @Override
-    public Observable<String> getRandomUrl() {
+    public Single<String> getRandomUrl() {
         Timber.d("getRandomUrl");
-        return Observable.unsafeCreate(subscriber -> {
+        return Single.create(subscriber -> {
             final Request.Builder request = new Request.Builder();
             request.url(mConstantValues.getRandomPageUrl());
             request.get();
@@ -90,8 +90,7 @@ public class ApiClientImpl extends ApiClient {
                     html = html.substring(0, html.indexOf("\""));
                     final String randomURL = html;
                     Timber.d("randomUrl = %s", randomURL);
-                    subscriber.onNext(randomURL);
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(randomURL);
                 } else {
                     subscriber.onError(new ScpParseException(MyApplicationImpl.getAppInstance().getString(R.string.error_parse)));
                 }
