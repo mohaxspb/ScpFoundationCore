@@ -1,13 +1,5 @@
 package ru.kuchanov.scpcore.receivers;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
-import com.google.gson.Gson;
-
-import org.joda.time.Duration;
-
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,6 +9,14 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.widget.Toast;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
+import com.google.gson.Gson;
+
+import org.joda.time.Duration;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -42,6 +42,7 @@ import ru.kuchanov.scpcore.util.Entry;
 import ru.kuchanov.scpcore.util.RemoteConfigJsonModel;
 import ru.kuchanov.scpcore.util.StorageUtils;
 import rx.Observable;
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -117,14 +118,18 @@ public class AppInstallReceiver extends BroadcastReceiver {
         //increment scoreInFirebase
         mApiClient
                 .isUserInstallApp(packageName)
-                .flatMap(isUserInstallApp -> isUserInstallApp ?
-                                             Observable.empty() :
-                                             mApiClient.incrementScoreInFirebaseObservable(totalScoreToAdd)
-                                                     .flatMap(newTotalScore -> mApiClient.addInstalledApp(packageName).flatMap(aVoid -> Observable.just(newTotalScore)))
+                .flatMapObservable(isUserInstallApp -> isUserInstallApp ?
+                        Observable.empty() :
+                        mApiClient.incrementScoreInFirebase(totalScoreToAdd)
+                                .flatMap(newTotalScore -> mApiClient
+                                        .addInstalledApp(packageName)
+                                        .flatMap(aVoid -> Single.just(newTotalScore))
+                                )
+                                .toObservable()
                 )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(newTotalScore -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
+                .flatMapSingle(newTotalScore -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
                 .subscribe(
                         newTotalScore -> {
                             Timber.d("new total score is: %s", newTotalScore);

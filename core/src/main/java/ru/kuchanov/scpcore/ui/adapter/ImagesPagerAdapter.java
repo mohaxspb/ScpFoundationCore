@@ -1,17 +1,11 @@
 package ru.kuchanov.scpcore.ui.adapter;
 
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
@@ -25,6 +19,13 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.target.Target;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -73,9 +74,10 @@ public class ImagesPagerAdapter extends PagerAdapter {
         BaseApplication.getAppComponent().inject(this);
     }
 
-    public void downloadImage(final Context context, final int position, final SimpleTarget<Bitmap> target) {
+    public void downloadImage(final Context context, final int position, final CustomTarget<Bitmap> target) {
         Toast.makeText(context, R.string.image_loading, Toast.LENGTH_SHORT).show();
-        final String imageUrl = GalleryImage.getApiImageAddress(mData.get(position)); ;
+        final String imageUrl = GalleryImage.getApiImageAddress(mData.get(position));
+        ;
 
         File file = null;
         if (!TextUtils.isEmpty(imageUrl)) {
@@ -83,8 +85,20 @@ public class ImagesPagerAdapter extends PagerAdapter {
         }
 
         Glide.with(context)
-                .load(file != null && file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
                 .asBitmap()
+                .load(file != null && file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
+                .listener(new RequestListener<Bitmap>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                        IntentUtils.shareBitmapWithText(context, "", resource);
+                        return true;
+                    }
+                })
                 .into(target);
     }
 
@@ -213,7 +227,7 @@ public class ImagesPagerAdapter extends PagerAdapter {
         final String imageUrl = GalleryImage.getApiImageAddress(galleryImage);
         Timber.d("imageUrl: %s", imageUrl);
         //remove delay
-        Glide.clear(imageView);
+//        Glide.clear(imageView);
 
         File file = null;
         if (!TextUtils.isEmpty(imageUrl)) {
@@ -224,9 +238,9 @@ public class ImagesPagerAdapter extends PagerAdapter {
                 .load(file != null && file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
                 .fitCenter()
                 .thumbnail(imageUrl.endsWith("gif") ? 1f : .1f)
-                .listener(new RequestListener<String, GlideDrawable>() {
+                .listener(new RequestListener<Drawable>() {
                     @Override
-                    public boolean onException(final Exception e, final String model, final Target<GlideDrawable> target, final boolean isFirstResource) {
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         Timber.e(e);
                         progressBar.animate().alpha(0f).setDuration(250).setListener(new AnimatorListenerAdapter() {
                             @Override
@@ -239,7 +253,7 @@ public class ImagesPagerAdapter extends PagerAdapter {
                     }
 
                     @Override
-                    public boolean onResourceReady(final GlideDrawable resource, final String model, final Target<GlideDrawable> target, final boolean isFromMemoryCache, boolean isFirstResource) {
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                         Timber.d("onResourceReady");
                         progressBar.animate().alpha(0f).setDuration(250).setListener(new AnimatorListenerAdapter() {
                             @Override
@@ -251,7 +265,34 @@ public class ImagesPagerAdapter extends PagerAdapter {
                         return false;
                     }
                 })
-                .diskCacheStrategy(imageUrl.endsWith("gif") ? DiskCacheStrategy.SOURCE : DiskCacheStrategy.RESULT)
+//                .listener(new RequestListener<String, GlideDrawable>() {
+//                    @Override
+//                    public boolean onException(final Exception e, final String model, final Target<GlideDrawable> target, final boolean isFirstResource) {
+//                        Timber.e(e);
+//                        progressBar.animate().alpha(0f).setDuration(250).setListener(new AnimatorListenerAdapter() {
+//                            @Override
+//                            public void onAnimationEnd(Animator animation) {
+//                                progressBar.setAlpha(1f);
+//                                progressBar.setVisibility(View.GONE);
+//                            }
+//                        });
+//                        return false;
+//                    }
+//
+//                    @Override
+//                    public boolean onResourceReady(final GlideDrawable resource, final String model, final Target<GlideDrawable> target, final boolean isFromMemoryCache, boolean isFirstResource) {
+//                        Timber.d("onResourceReady");
+//                        progressBar.animate().alpha(0f).setDuration(250).setListener(new AnimatorListenerAdapter() {
+//                            @Override
+//                            public void onAnimationEnd(Animator animation) {
+//                                progressBar.setAlpha(1f);
+//                                progressBar.setVisibility(View.GONE);
+//                            }
+//                        });
+//                        return false;
+//                    }
+//                })
+//                .diskCacheStrategy(imageUrl.endsWith("gif") ? DiskCacheStrategy.SOURCE : DiskCacheStrategy.RESULT)
                 .into(imageView);
 
         container.addView(itemView);
@@ -276,7 +317,7 @@ public class ImagesPagerAdapter extends PagerAdapter {
 //            customProgressBar.hide();
 
             // Try to clear resources used for displaying this view
-            Glide.clear((View) ((View) view).findViewById(R.id.image));
+//            Glide.clear((View) ((View) view).findViewById(R.id.image));
             // Remove any resources used by this view
             unbindDrawables((View) view);
             // Invalidate the object

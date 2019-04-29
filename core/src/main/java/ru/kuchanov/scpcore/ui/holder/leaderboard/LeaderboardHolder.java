@@ -55,8 +55,8 @@ public class LeaderboardHolder extends RecyclerView.ViewHolder {
         level.setText(context.getString(R.string.level, userLevel.getId()));
 
         Glide.with(image.getContext())
-                .load(data.avatar)
                 .asBitmap()
+                .load(data.avatar)
                 .centerCrop()
                 .into(new BitmapImageViewTarget(image) {
                     @Override

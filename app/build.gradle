@@ -51,7 +51,7 @@ android {
         }
     }
 
-    flavorDimensions "lang", "mode"
+    flavorDimensions "lang", "mode", "chanel"
 
     productFlavors {
         prod {
@@ -70,6 +70,18 @@ android {
             aaptOptions.cruncherEnabled = false
             //only package russian translations, and xxhdpi resources
             resConfigs("ru", "xxhdpi")
+        }
+
+        gp {
+            dimension "chanel"
+            //todo
+
+        }
+
+        amazon {
+            dimension "chanel"
+            //todo
+
         }
 
         ru {
@@ -166,28 +178,28 @@ android {
     }
 }
 
-configurations {
-    //dev
-    ruDevReleaseCompile
-    enDevReleaseCompile
-    plDevReleaseCompile
-    deDevReleaseCompile
-    frDevReleaseCompile
-    esDevReleaseCompile
-    italyDevReleaseCompile
-    ptDevReleaseCompile
-    chDevReleaseCompile
-    //prod
-    ruProdReleaseCompile
-    enProdReleaseCompile
-    plProdReleaseCompile
-    deProdReleaseCompile
-    frProdReleaseCompile
-    esProdReleaseCompile
-    italyProdReleaseCompile
-    ptProdReleaseCompile
-    chProdReleaseCompile
-}
+//configurations {
+//    //dev
+//    ruDevReleaseCompile
+//    enDevReleaseCompile
+//    plDevReleaseCompile
+//    deDevReleaseCompile
+//    frDevReleaseCompile
+//    esDevReleaseCompile
+//    italyDevReleaseCompile
+//    ptDevReleaseCompile
+//    chDevReleaseCompile
+//    //prod
+//    ruProdReleaseCompile
+//    enProdReleaseCompile
+//    plProdReleaseCompile
+//    deProdReleaseCompile
+//    frProdReleaseCompile
+//    esProdReleaseCompile
+//    italyProdReleaseCompile
+//    ptProdReleaseCompile
+//    chProdReleaseCompile
+//}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -198,7 +210,7 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
     //need to compile...
-    implementation 'com.google.firebase:firebase-core:16.0.6'
+    implementation 'com.google.firebase:firebase-core:16.0.8'
 
     //core module
     implementation project(':core')

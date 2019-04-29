@@ -411,14 +411,13 @@ public class InAppHelper {
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMapSingle(integer -> mApiClient
-                        .incrementScoreInFirebaseObservable(Constants.LEVEL_UP_SCORE_TO_ADD)
+                        .incrementScoreInFirebase(Constants.LEVEL_UP_SCORE_TO_ADD)
                         .observeOn(Schedulers.io())
                         .flatMap(newTotalScore -> mApiClient
                                 .addRewardedInapp(sku)
                                 .flatMap(aVoid -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
                         )
                         .doOnError(throwable -> mMyPreferenceManager.addUnsyncedScore(Constants.LEVEL_UP_SCORE_TO_ADD))
-                        .toSingle()
                 )
                 .toSingle()
                 .subscribeOn(Schedulers.io())

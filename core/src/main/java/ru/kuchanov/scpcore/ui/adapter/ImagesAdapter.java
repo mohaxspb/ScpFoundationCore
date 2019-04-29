@@ -1,12 +1,15 @@
 package ru.kuchanov.scpcore.ui.adapter;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -93,27 +96,39 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             Glide.with(context)
                     .load(file != null && file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
                     .error(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
-                    .crossFade()
+//                    .crossFade()
                     .centerCrop()
-                    .listener(new RequestListener<String, GlideDrawable>() {
+//                    .listener(new RequestListener<String, GlideDrawable>() {
+//                        @Override
+//                        public boolean onException(
+//                                final Exception e,
+//                                final String model,
+//                                final Target<GlideDrawable> target,
+//                                final boolean isFirstResource
+//                        ) {
+//                            return false;
+//                        }
+//
+//                        @Override
+//                        public boolean onResourceReady(
+//                                final GlideDrawable resource,
+//                                final String model,
+//                                final Target<GlideDrawable> target,
+//                                final boolean isFromMemoryCache,
+//                                final boolean isFirstResource
+//                        ) {
+//                            imageView.setOnClickListener(v -> mImageClickListener.onItemClick(getAdapterPosition(), imageView));
+//                            return false;
+//                        }
+//                    })
+                    .listener(new RequestListener<Drawable>() {
                         @Override
-                        public boolean onException(
-                                final Exception e,
-                                final String model,
-                                final Target<GlideDrawable> target,
-                                final boolean isFirstResource
-                        ) {
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                             return false;
                         }
 
                         @Override
-                        public boolean onResourceReady(
-                                final GlideDrawable resource,
-                                final String model,
-                                final Target<GlideDrawable> target,
-                                final boolean isFromMemoryCache,
-                                final boolean isFirstResource
-                        ) {
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                             imageView.setOnClickListener(v -> mImageClickListener.onItemClick(getAdapterPosition(), imageView));
                             return false;
                         }
