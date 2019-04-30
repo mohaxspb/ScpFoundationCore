@@ -146,6 +146,10 @@ public class InAppHelper {
         return skus;
     }
 
+    public void test() {
+        Timber.d("GP test method called!");
+    }
+
     private Observable<List<Item>> getValidatedOwnedSubsObservable(final IInAppBillingService mInAppBillingService) {
         return Observable.<List<Item>>unsafeCreate(subscriber -> {
             try {
@@ -431,19 +435,19 @@ public class InAppHelper {
 
                     mMyPreferenceManager.setLastTimeSubscriptionsValidated(System.currentTimeMillis());
 
-                    @InAppHelper.SubscriptionType final int type = InAppHelper.getSubscriptionTypeFromItemsList(validatedItems);
+                    @SubscriptionType final int type = InAppHelper.getSubscriptionTypeFromItemsList(validatedItems);
                     Timber.d("subscription type: %s", type);
                     switch (type) {
-                        case InAppHelper.SubscriptionType.NONE:
+                        case SubscriptionType.NONE:
                             mMyPreferenceManager.setHasNoAdsSubscription(false);
                             mMyPreferenceManager.setHasSubscription(false);
                             break;
-                        case InAppHelper.SubscriptionType.NO_ADS: {
+                        case SubscriptionType.NO_ADS: {
                             mMyPreferenceManager.setHasNoAdsSubscription(true);
                             mMyPreferenceManager.setHasSubscription(false);
                             break;
                         }
-                        case InAppHelper.SubscriptionType.FULL_VERSION: {
+                        case SubscriptionType.FULL_VERSION: {
                             mMyPreferenceManager.setHasSubscription(true);
                             mMyPreferenceManager.setHasNoAdsSubscription(true);
                             break;

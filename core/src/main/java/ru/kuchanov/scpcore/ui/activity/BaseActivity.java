@@ -228,6 +228,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 );
 
         //app invite
+        //fixme remove it. It's deprecated
         FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())
                 .addOnSuccessListener(this, data -> {
                     Timber.d("FirebaseAppInvite onSuccessListener");
@@ -264,6 +265,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     }
                 })
                 .addOnFailureListener(this, e -> Timber.e(e, "getDynamicLink:onFailure"));
+
+        mInAppHelper.test();
     }
 
     @Override
