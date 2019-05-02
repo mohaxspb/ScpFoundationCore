@@ -3,7 +3,7 @@ package ru.kuchanov.scpcore.mvp.contract.monetization
 import com.android.vending.billing.IInAppBillingService
 import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
-import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper.SubscriptionType
 import ru.kuchanov.scpcore.mvp.base.BaseMvp
 import ru.kuchanov.scpcore.mvp.contract.FragmentToolbarStateSetter
 
@@ -27,7 +27,7 @@ interface SubscriptionsContract : BaseMvp {
         var owned: List<Item>?
         var subsToBuy: List<Subscription>?
         var inAppsToBuy: List<Subscription>?
-        @InAppHelper.SubscriptionType
+        @SubscriptionType
         var type: Int
 
         fun getMarketData(service: IInAppBillingService)

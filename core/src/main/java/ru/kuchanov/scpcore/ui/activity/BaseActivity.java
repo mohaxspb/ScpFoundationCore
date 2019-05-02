@@ -28,6 +28,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+//import com.amazon.device.iap.PurchasingService;
 import com.android.vending.billing.IInAppBillingService;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.ads.AdView;
@@ -268,6 +269,21 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
         mInAppHelper.test();
     }
+
+//    private SampleIapManager sampleIapManager;
+//
+//    private void setupIAPOnCreate() {
+////        sampleIapManager = new SampleIapManager(this);
+//
+////        final SamplePurchasingListener purchasingListener = new SamplePurchasingListener(sampleIapManager);
+//        Timber.d( "onCreate: registering PurchasingListener");
+//
+////        PurchasingService.registerListener(this.getApplicationContext(), purchasingListener);
+//
+//        PurchasingService.registerListener(this.getApplicationContext(), null);
+//
+//        Timber.d( "IS_SANDBOX_MODE:" + PurchasingService.IS_SANDBOX_MODE);
+//    }
 
     @Override
     public void showOfferLoginForLevelUpPopup() {

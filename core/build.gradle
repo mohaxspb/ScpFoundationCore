@@ -128,7 +128,9 @@ android {
     dependencies {
         String supportLibraryVersion = '28.0.0'
 
-        api fileTree(dir: 'libs', include: ['*.jar'])
+//        api fileTree(dir: 'libs', include: ['*.jar'])
+        amazonApi fileTree(dir: 'libs/amazon/inAppPurchase', include: ['*.jar'])
+//        api fileTree(dir: 'libs/amazon/inAppPurchase', include: ['*.jar'])
         //kotlin
         api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
         //support libs

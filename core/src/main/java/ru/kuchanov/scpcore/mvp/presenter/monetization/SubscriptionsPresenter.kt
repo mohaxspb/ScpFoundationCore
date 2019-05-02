@@ -12,6 +12,7 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager
 import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper.SubscriptionType
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
 import rx.Single
@@ -46,7 +47,7 @@ class SubscriptionsPresenter(
     override var owned: List<Item>? = null
     override var subsToBuy: List<Subscription>? = null
     override var inAppsToBuy: List<Subscription>? = null
-    @InAppHelper.SubscriptionType
+    @SubscriptionType
     override var type: Int = InAppHelper.SubscriptionType.NONE
 
     override fun getMarketData(service: IInAppBillingService) {
