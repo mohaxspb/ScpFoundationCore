@@ -76,6 +76,7 @@ import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable;
 import ru.kuchanov.scpcore.manager.MyNotificationManager;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil.*;
 import ru.kuchanov.scpcore.monetization.util.admob.AdMobHelper;
 import ru.kuchanov.scpcore.monetization.util.admob.MyAdListener;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
@@ -268,7 +269,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 })
                 .addOnFailureListener(this, e -> Timber.e(e, "getDynamicLink:onFailure"));
 
-        mInAppHelper.test();
+//        mInAppHelper.test();
     }
 
 //    private SampleIapManager sampleIapManager;
@@ -579,7 +580,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     final int randomInt = new Random().nextInt(modificator);
                     if (randomInt > 1) {
                         presenter.onPurchaseClick(
-                                InAppHelper.getNewSubsSkus().get(0),
+                                mInAppHelper.getNewSubsSkus().get(0),
                                 this,
                                 true
                         );
@@ -672,12 +673,12 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         validatedItems -> {
-                            @InAppHelper.SubscriptionType final int type = InAppHelper.getSubscriptionTypeFromItemsList(validatedItems);
+                            @SubscriptionType final int type = mInAppHelper.getSubscriptionTypeFromItemsList(validatedItems);
                             switch (type) {
-                                case InAppHelper.SubscriptionType.NONE:
+                                case SubscriptionType.NONE:
                                     break;
-                                case InAppHelper.SubscriptionType.NO_ADS:
-                                case InAppHelper.SubscriptionType.FULL_VERSION: {
+                                case SubscriptionType.NO_ADS:
+                                case SubscriptionType.FULL_VERSION: {
                                     //remove banner
                                     if (mAdView != null) {
                                         mAdView.setEnabled(false);
@@ -871,7 +872,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             return;
         }
         showProgressDialog(R.string.wait);
-        mInAppHelper.getSubsListToBuyObservable(InAppHelper.getFreeTrailSubsSkus())
+        mInAppHelper.getSubsListToBuyObservable(mInAppHelper.getFreeTrailSubsSkus())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

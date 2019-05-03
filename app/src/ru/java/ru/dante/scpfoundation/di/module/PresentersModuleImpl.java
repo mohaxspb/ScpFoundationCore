@@ -19,7 +19,6 @@ import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.di.module.PresentersModule;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 
 /**
  * Created by mohax on 13.07.2017.

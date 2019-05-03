@@ -131,7 +131,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         }
 
         final String type;
-        if (InAppHelper.getNewInAppsSkus().contains(id)) {
+        if (mInAppHelper.getNewInAppsSkus().contains(id)) {
             type = InappPurchaseUtil.InappType.IN_APP;
         } else {
             type = InappPurchaseUtil.InappType.SUBS;

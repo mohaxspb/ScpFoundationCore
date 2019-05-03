@@ -36,6 +36,7 @@ import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.db.model.SocialProviderModel
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
 import ru.kuchanov.scpcore.monetization.model.PurchaseData
+import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
@@ -51,7 +52,6 @@ import java.util.*
 
 /**
  * Created by mohax on 23.03.2017.
- *
  *
  * for scp_ru
  */
@@ -153,7 +153,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
         })
 
         //update MyNativeBanners
-        updateMyNativeBanners();
+        updateMyNativeBanners()
     }
 
     /**
@@ -581,7 +581,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
             val responseCode = data.getIntExtra("RESPONSE_CODE", 0)
             val purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA")
 
-            if (resultCode == Activity.RESULT_OK && responseCode == InAppHelper.RESULT_OK) {
+            if (resultCode == Activity.RESULT_OK && responseCode == InappPurchaseUtil.RESULT_OK) {
                 try {
                     val jo = JSONObject(purchaseData)
                     val sku = jo.getString("productId")
@@ -612,7 +612,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 val item = GsonBuilder().create().fromJson(purchaseData, PurchaseData::class.java)
                 Timber.d("You have bought the %s", item.productId)
 
-                if (item.productId == InAppHelper.getNewInAppsSkus().first()) {
+                if (item.productId == mInAppHelper.getNewInAppsSkus().first()) {
                     //levelUp 5
                     //add 10 000 score
                     inAppHelper.consumeInApp(item.productId, item.purchaseToken)
@@ -639,7 +639,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 } else {
                     Timber.wtf("Unexpected item.productId: ${item.productId}")
                 }
-            } else if (data?.getIntExtra("RESPONSE_CODE", 0) == InAppHelper.RESULT_ITEM_ALREADY_OWNED) {
+            } else if (data?.getIntExtra("RESPONSE_CODE", 0) == InappPurchaseUtil.RESULT_ITEM_ALREADY_OWNED) {
                 val message = "RESPONSE_CODE is: InAppHelper.RESULT_ITEM_ALREADY_OWNED"
                 Timber.wtf(message)
                 view.iInAppBillingService?.let { onLevelUpRetryClick(it) }
@@ -647,7 +647,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
             } else {
                 val message = "Unexpected resultCode: $resultCode/${data?.extras?.keySet()?.map { "$it/${data.extras[it]}" }}"
                 Timber.wtf(message)
-                if (data?.getIntExtra("RESPONSE_CODE", 0) != InAppHelper.RESULT_USER_CANCELED) {
+                if (data?.getIntExtra("RESPONSE_CODE", 0) != InappPurchaseUtil.RESULT_USER_CANCELED) {
                     view.showMessage(message)
                 }
             }

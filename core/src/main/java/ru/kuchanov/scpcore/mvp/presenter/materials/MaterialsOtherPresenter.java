@@ -12,7 +12,6 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsOtherMvp;
 import ru.kuchanov.scpcore.mvp.presenter.articleslists.BaseObjectsArticlesPresenter;
-import rx.Observable;
 import rx.Single;
 
 /**

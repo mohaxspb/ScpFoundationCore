@@ -86,9 +86,9 @@ class LeaderboardPresenter(
         view.showRefreshButton(false)
         view.showUpdateDate(updateTime)
 
-        val skuList = InAppHelper.getNewSubsSkus()
+        val skuList = mInAppHelper.getNewSubsSkus().toMutableList()
         if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
-            skuList.addAll(InAppHelper.getNewNoAdsSubsSkus())
+            skuList.addAll(mInAppHelper.getNewNoAdsSubsSkus())
         }
 
         Single
