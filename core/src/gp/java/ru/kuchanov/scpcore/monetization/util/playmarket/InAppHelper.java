@@ -6,17 +6,15 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringDef;
 import android.util.Pair;
 
 import com.android.vending.billing.IInAppBillingService;
 import com.google.gson.GsonBuilder;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,7 +32,6 @@ import ru.kuchanov.scpcore.monetization.model.Item;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
 import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil;
 import ru.kuchanov.scpcore.ui.activity.BaseActivity;
-import rx.Observable;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -87,6 +84,7 @@ public class InAppHelper implements InappPurchaseUtil {
         mApiClient = apiClient;
     }
 
+    //todo call it from activity
     public void setInAppBillingService(@Nullable final IInAppBillingService iInAppBillingService) {
         mInAppBillingService = iInAppBillingService;
     }
@@ -206,44 +204,8 @@ public class InAppHelper implements InappPurchaseUtil {
                 });
     }
 
-//    public Observable<List<Item>> getOwnedInAppsObservable(final IInAppBillingService mInAppBillingService) {
-//        return Observable.unsafeCreate(subscriber -> {
-//            try {
-//                final Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "inapp", null);
-//
-//                for (final String key : ownedItemsBundle.keySet()) {
-//                    Timber.d("ownedItems bundle: %s/%s", key, ownedItemsBundle.get(key));
-//                }
-//                if (ownedItemsBundle.getInt("RESPONSE_CODE") == RESULT_OK) {
-//                    final List<String> ownedSkus = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
-//                    final List<String> purchaseDataList = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_DATA_LIST");
-//                    final List<String> signatureList = ownedItemsBundle.getStringArrayList("INAPP_DATA_SIGNATURE_LIST");
-//                    final String continuationToken = ownedItemsBundle.getString("INAPP_CONTINUATION_TOKEN");
-//
-//                    if (ownedSkus == null || purchaseDataList == null || signatureList == null) {
-//                        subscriber.onError(new IllegalStateException("some of owned items info is null while get owned items"));
-//                    } else {
-//                        final List<Item> ownedItemsList = new ArrayList<>();
-//                        for (int i = 0; i < purchaseDataList.size(); ++i) {
-//                            final String purchaseData = purchaseDataList.get(i);
-//                            final String signature = signatureList.get(i);
-//                            final String sku = ownedSkus.get(i);
-//                            ownedItemsList.add(new Item(purchaseData, signature, sku, continuationToken));
-//                        }
-//                        Timber.d("ownedItemsList: %s", ownedItemsList);
-//                        subscriber.onNext(ownedItemsList);
-//                        subscriber.onCompleted();
-//                    }
-//                } else {
-//                    subscriber.onError(new IllegalStateException("ownedItemsBundle.getInt(\"RESPONSE_CODE\") is not 0"));
-//                }
-//            } catch (final RemoteException e) {
-//                Timber.e(e);
-//                subscriber.onError(e);
-//            }
-//        });
-//    }
 
+    @NotNull
     @Override
     public Single<List<Item>> getInAppHistoryObservable() {
         return Single.create(subscriber -> {
@@ -288,8 +250,9 @@ public class InAppHelper implements InappPurchaseUtil {
         });
     }
 
+    @NotNull
     @Override
-    public Single<List<Subscription>> getSubsListToBuyObservable(final List<String> skus) {
+    public Single<List<Subscription>> getSubsListToBuyObservable(@NotNull final List<String> skus) {
         return Single.create(subscriber -> {
             try {
                 //get all subs detailed info
@@ -327,6 +290,7 @@ public class InAppHelper implements InappPurchaseUtil {
         });
     }
 
+    @NotNull
     @Override
     public Single<List<Subscription>> getInAppsListToBuyObservable() {
         Timber.d("getInAppsListToBuyObservable");
@@ -368,8 +332,9 @@ public class InAppHelper implements InappPurchaseUtil {
         });
     }
 
+    @NotNull
     @Override
-    public Single<Integer> consumeInApp(final String sku, final String token) {
+    public Single<Integer> consumeInApp(@NotNull final String sku, @NotNull final String token) {
         final String packageName = BaseApplication.getAppInstance().getPackageName();
 
         return mApiClient.validateProduct(packageName, sku, token)
@@ -406,6 +371,7 @@ public class InAppHelper implements InappPurchaseUtil {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    @NotNull
     @Override
     public Single<List<Item>> validateSubsObservable() {
         return getValidatedOwnedSubsObservable()
@@ -439,10 +405,11 @@ public class InAppHelper implements InappPurchaseUtil {
                 });
     }
 
+    @NotNull
     @Override
     public Single<IntentSender> intentSenderSingle(
-            @InappType final String type,
-            final String sku
+            @NotNull @InappType final String type,
+            @NotNull final String sku
     ) {
         return Single.fromCallable(() -> mInAppBillingService.getBuyIntent(
                 API_VERSION_3,
@@ -479,8 +446,8 @@ public class InAppHelper implements InappPurchaseUtil {
 
     @Override
     public void startPurchase(
-            final IntentSender intentSender,
-            final BaseActivity activity,
+            @NotNull final IntentSender intentSender,
+            @NotNull final BaseActivity activity,
             final int requestCode
     ) {
         try {
