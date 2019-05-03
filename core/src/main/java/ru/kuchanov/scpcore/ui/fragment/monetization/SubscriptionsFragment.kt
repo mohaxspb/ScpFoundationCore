@@ -33,6 +33,7 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager.Keys
 import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsScreenContract
 import ru.kuchanov.scpcore.mvp.presenter.monetization.SubscriptionsPresenter
@@ -44,10 +45,14 @@ import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment
 import ru.kuchanov.scpcore.util.SystemUtils
 import timber.log.Timber
+import javax.inject.Inject
 
 class SubscriptionsFragment :
         BaseFragment<SubscriptionsContract.View, SubscriptionsContract.Presenter>(),
         SubscriptionsContract.View, SharedPreferences.OnSharedPreferenceChangeListener {
+
+    @Inject
+    lateinit var inAppHelper: InAppHelper
 
     private lateinit var adapter: ListDelegationAdapter<List<MyListItem>>
 
@@ -100,7 +105,7 @@ class SubscriptionsFragment :
                 {
                     baseActivity?.getIInAppBillingService()?.let {
                         this@SubscriptionsFragment.getPresenter().onPurchaseClick(
-                                InAppHelper.getNewInAppsSkus().first(),
+                                inAppHelper.getNewInAppsSkus().first(),
                                 baseActivity,
                                 false
                         )
@@ -249,12 +254,12 @@ class SubscriptionsFragment :
 
         val subsFullOneMonth = toBuy
                 .asSequence()
-                .filter { it.productId !in InAppHelper.getNewNoAdsSubsSkus() }
+                .filter { it.productId !in inAppHelper.getNewNoAdsSubsSkus() }
                 .first { SubscriptionsPresenter.getMonthFromSkuId(it.productId) == 1 }
 
         toBuy.sortedWith(Comparator { t1, t2 -> t1.price_amount_micros.compareTo(t2.price_amount_micros) })
                 .forEach {
-                    if (noAdsSubsEnabled && (it.productId in InAppHelper.getNewNoAdsSubsSkus())) {
+                    if (noAdsSubsEnabled && (it.productId in inAppHelper.getNewNoAdsSubsSkus())) {
                         items.add(
                                 LabelViewModel(
                                         R.string.subs_no_ads_label,
