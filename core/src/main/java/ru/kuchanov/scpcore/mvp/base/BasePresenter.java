@@ -24,6 +24,7 @@ import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
+import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.LoginActions;
 import ru.kuchanov.scpcore.ui.activity.BaseActivity;
@@ -131,9 +132,9 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 
         final String type;
         if (InAppHelper.getNewInAppsSkus().contains(id)) {
-            type = InAppHelper.InappType.IN_APP;
+            type = InappPurchaseUtil.InappType.IN_APP;
         } else {
-            type = InAppHelper.InappType.SUBS;
+            type = InappPurchaseUtil.InappType.SUBS;
         }
 
         final int requestCode;
@@ -142,7 +143,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         } else {
             requestCode = REQUEST_CODE_SUBSCRIPTION;
         }
-        mInAppHelper.intentSenderSingle(baseActivity.getIInAppBillingService(), type, id)
+        mInAppHelper.intentSenderSingle(type, id)
                 .subscribe(
                         intentSender -> mInAppHelper.startPurchase(intentSender, baseActivity, requestCode),
                         e -> {
@@ -154,11 +155,10 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 
     @Override
     public void onLevelUpRetryClick(@NotNull final IInAppBillingService inAppBillingService) {
-        mInAppHelper.getInAppHistoryObservable(inAppBillingService)
+        mInAppHelper.getInAppHistoryObservable()
                 .flatMap(items -> mInAppHelper.consumeInApp(
                         items.get(0).sku,
-                        items.get(0).purchaseData.purchaseToken,
-                        inAppBillingService
+                        items.get(0).purchaseData.purchaseToken
                 ))
                 .map(response -> mDbProviderFactory.getDbProvider().getScore())
                 .doOnSubscribe(() -> getView().showProgressDialog(R.string.wait))

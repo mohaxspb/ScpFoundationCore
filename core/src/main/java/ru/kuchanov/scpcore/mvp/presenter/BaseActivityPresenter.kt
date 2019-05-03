@@ -615,7 +615,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 if (item.productId == InAppHelper.getNewInAppsSkus().first()) {
                     //levelUp 5
                     //add 10 000 score
-                    inAppHelper.consumeInApp(item.productId, item.purchaseToken, view.iInAppBillingService)
+                    inAppHelper.consumeInApp(item.productId, item.purchaseToken)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeBy(

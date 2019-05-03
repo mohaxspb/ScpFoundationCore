@@ -1,0 +1,31 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="ru.kuchanov.scpcore">
+
+    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
+    <!--<uses-permission android:name="android.permission.INTERNET" />-->
+    <!--<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />-->
+    <!--<uses-permission android:name="android.permission.WAKE_LOCK" />-->
+    <!--<uses-permission android:name="com.android.vending.BILLING" />-->
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+    <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />-->
+    <!-- To allow starting foreground services on Android P+ - https://developer.android.com/preview/behavior-changes#fg-svc -->
+    <!--<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />-->
+
+    <application
+        android:allowBackup="true"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="p">
+
+        <receiver
+            android:name="com.amazon.device.iap.ResponseReceiver"
+            android:permission="com.amazon.inapp.purchasing.Permission.NOTIFY">
+            <intent-filter>
+                <action android:name="com.amazon.inapp.purchasing.NOTIFY" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>

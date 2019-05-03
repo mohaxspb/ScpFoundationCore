@@ -75,7 +75,6 @@ public class InAppHelper {
             InappType.SUBS
     })
     public @interface InappType {
-
         String IN_APP = "inapp";
         String SUBS = "subs";
     }
@@ -87,7 +86,6 @@ public class InAppHelper {
             SubscriptionType.NONE
     })
     public @interface SubscriptionType {
-
         int NONE = -1;
         int NO_ADS = 0;
         int FULL_VERSION = 1;
@@ -223,43 +221,43 @@ public class InAppHelper {
                 });
     }
 
-    public Observable<List<Item>> getOwnedInAppsObservable(final IInAppBillingService mInAppBillingService) {
-        return Observable.unsafeCreate(subscriber -> {
-            try {
-                final Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "inapp", null);
-
-                for (final String key : ownedItemsBundle.keySet()) {
-                    Timber.d("ownedItems bundle: %s/%s", key, ownedItemsBundle.get(key));
-                }
-                if (ownedItemsBundle.getInt("RESPONSE_CODE") == RESULT_OK) {
-                    final List<String> ownedSkus = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
-                    final List<String> purchaseDataList = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_DATA_LIST");
-                    final List<String> signatureList = ownedItemsBundle.getStringArrayList("INAPP_DATA_SIGNATURE_LIST");
-                    final String continuationToken = ownedItemsBundle.getString("INAPP_CONTINUATION_TOKEN");
-
-                    if (ownedSkus == null || purchaseDataList == null || signatureList == null) {
-                        subscriber.onError(new IllegalStateException("some of owned items info is null while get owned items"));
-                    } else {
-                        final List<Item> ownedItemsList = new ArrayList<>();
-                        for (int i = 0; i < purchaseDataList.size(); ++i) {
-                            final String purchaseData = purchaseDataList.get(i);
-                            final String signature = signatureList.get(i);
-                            final String sku = ownedSkus.get(i);
-                            ownedItemsList.add(new Item(purchaseData, signature, sku, continuationToken));
-                        }
-                        Timber.d("ownedItemsList: %s", ownedItemsList);
-                        subscriber.onNext(ownedItemsList);
-                        subscriber.onCompleted();
-                    }
-                } else {
-                    subscriber.onError(new IllegalStateException("ownedItemsBundle.getInt(\"RESPONSE_CODE\") is not 0"));
-                }
-            } catch (final RemoteException e) {
-                Timber.e(e);
-                subscriber.onError(e);
-            }
-        });
-    }
+//    public Observable<List<Item>> getOwnedInAppsObservable(final IInAppBillingService mInAppBillingService) {
+//        return Observable.unsafeCreate(subscriber -> {
+//            try {
+//                final Bundle ownedItemsBundle = mInAppBillingService.getPurchases(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "inapp", null);
+//
+//                for (final String key : ownedItemsBundle.keySet()) {
+//                    Timber.d("ownedItems bundle: %s/%s", key, ownedItemsBundle.get(key));
+//                }
+//                if (ownedItemsBundle.getInt("RESPONSE_CODE") == RESULT_OK) {
+//                    final List<String> ownedSkus = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
+//                    final List<String> purchaseDataList = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_DATA_LIST");
+//                    final List<String> signatureList = ownedItemsBundle.getStringArrayList("INAPP_DATA_SIGNATURE_LIST");
+//                    final String continuationToken = ownedItemsBundle.getString("INAPP_CONTINUATION_TOKEN");
+//
+//                    if (ownedSkus == null || purchaseDataList == null || signatureList == null) {
+//                        subscriber.onError(new IllegalStateException("some of owned items info is null while get owned items"));
+//                    } else {
+//                        final List<Item> ownedItemsList = new ArrayList<>();
+//                        for (int i = 0; i < purchaseDataList.size(); ++i) {
+//                            final String purchaseData = purchaseDataList.get(i);
+//                            final String signature = signatureList.get(i);
+//                            final String sku = ownedSkus.get(i);
+//                            ownedItemsList.add(new Item(purchaseData, signature, sku, continuationToken));
+//                        }
+//                        Timber.d("ownedItemsList: %s", ownedItemsList);
+//                        subscriber.onNext(ownedItemsList);
+//                        subscriber.onCompleted();
+//                    }
+//                } else {
+//                    subscriber.onError(new IllegalStateException("ownedItemsBundle.getInt(\"RESPONSE_CODE\") is not 0"));
+//                }
+//            } catch (final RemoteException e) {
+//                Timber.e(e);
+//                subscriber.onError(e);
+//            }
+//        });
+//    }
 
     public Single<List<Item>> getInAppHistoryObservable(final IInAppBillingService mInAppBillingService) {
         return Single.create(subscriber -> {

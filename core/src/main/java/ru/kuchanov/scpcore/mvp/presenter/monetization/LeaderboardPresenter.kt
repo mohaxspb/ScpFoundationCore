@@ -93,7 +93,7 @@ class LeaderboardPresenter(
 
         Single
                 .zip(
-                        inAppHelper.getInAppsListToBuyObservable(inAppService),
+                        inAppHelper.getInAppsListToBuyObservable(),
                         Single.just(mDbProviderFactory.dbProvider.userUnmanaged)
                 ) { inApps: List<Subscription>, user: User? ->
                     Pair(
@@ -256,7 +256,7 @@ class LeaderboardPresenter(
                         onError = {
                             Timber.e(it)
                             view.showError(it)
-                            view.enableSwipeRefresh(!data.isEmpty())
+                            view.enableSwipeRefresh(data.isNotEmpty())
                             view.showRefreshButton(data.isEmpty())
                             view.showProgressCenter(false)
                             view.showBottomProgress(false)

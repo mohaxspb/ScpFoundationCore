@@ -6,6 +6,7 @@
       <w>crashlytics</w>
       <w>firebase</w>
       <w>gson</w>
+      <w>inapp</w>
       <w>interstitials</w>
       <w>kuchanov</w>
       <w>leaderboard</w>
@@ -14,7 +15,9 @@
       <w>mohax</w>
       <w>monetization</w>
       <w>readen</w>
+      <w>scpcore</w>
       <w>scpfoundation</w>
+      <w>skus</w>
       <w>unlogined</w>
       <w>unsynced</w>
     </words>

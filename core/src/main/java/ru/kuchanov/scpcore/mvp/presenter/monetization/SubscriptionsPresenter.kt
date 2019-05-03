@@ -11,8 +11,8 @@ import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
 import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
+import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
-import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper.SubscriptionType
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
 import rx.Single
@@ -47,8 +47,8 @@ class SubscriptionsPresenter(
     override var owned: List<Item>? = null
     override var subsToBuy: List<Subscription>? = null
     override var inAppsToBuy: List<Subscription>? = null
-    @SubscriptionType
-    override var type: Int = InAppHelper.SubscriptionType.NONE
+    @InappPurchaseUtil.SubscriptionType
+    override var type: Int = InappPurchaseUtil.SubscriptionType.NONE
 
     override fun getMarketData(service: IInAppBillingService) {
         Timber.d("getMarketData")
@@ -61,9 +61,9 @@ class SubscriptionsPresenter(
         }
 
         Single.zip(
-            inAppHelper.validateSubsObservable(service).toSingle(),
-            inAppHelper.getSubsListToBuyObservable(service, skuList).toSingle(),
-            inAppHelper.getInAppsListToBuyObservable(service)
+            inAppHelper.validateSubsObservable(),
+            inAppHelper.getSubsListToBuyObservable(skuList),
+            inAppHelper.getInAppsListToBuyObservable()
         ) { t1: List<Item>, t2: List<Subscription>, t3: List<Subscription> -> Triple(t1, t2, t3) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

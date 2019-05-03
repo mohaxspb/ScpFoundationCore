@@ -209,7 +209,6 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
 
             headerViewHolder.levelContainer.setOnClickListener(view -> mInAppHelper
                     .intentSenderSingle(
-                            getIInAppBillingService(),
                             InAppHelper.InappType.IN_APP,
                             InAppHelper.getNewInAppsSkus().get(0)
                     )

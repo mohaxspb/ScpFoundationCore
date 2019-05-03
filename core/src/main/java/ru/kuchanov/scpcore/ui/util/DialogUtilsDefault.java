@@ -1,9 +1,9 @@
 package ru.kuchanov.scpcore.ui.util;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-
 import android.content.Context;
 import android.os.Bundle;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +99,7 @@ public class DialogUtilsDefault extends ru.kuchanov.scpcore.downloads.DialogUtil
         final DialogUtils dialogUtils = new DialogUtils(mConstantValues);
         dialogUtils.showProgressDialog(context, R.string.wait);
         final InAppHelper mInAppHelper = new InAppHelper(mPreferenceManager, mDbProviderFactory, mApiClient);
-        mInAppHelper.getSubsListToBuyObservable(baseActivity.getIInAppBillingService(), InAppHelper.getFreeTrailSubsSkus())
+        mInAppHelper.getSubsListToBuyObservable(InAppHelper.getFreeTrailSubsSkus())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

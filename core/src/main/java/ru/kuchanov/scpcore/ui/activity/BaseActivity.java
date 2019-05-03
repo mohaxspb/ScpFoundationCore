@@ -28,7 +28,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-//import com.amazon.device.iap.PurchasingService;
 import com.android.vending.billing.IInAppBillingService;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.ads.AdView;
@@ -105,6 +104,8 @@ import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.StartScreen;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.UserPropertyKey;
 import static ru.kuchanov.scpcore.manager.MyPreferenceManager.IMAGES_DISABLED_PERIOD;
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
+
+//import com.amazon.device.iap.PurchasingService;
 
 /**
  * Created by mohax on 31.12.2016.
@@ -666,7 +667,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     public void updateOwnedMarketItems() {
         Timber.d("updateOwnedMarketItems");
         mInAppHelper
-                .validateSubsObservable(mService)
+                .validateSubsObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -870,7 +871,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             return;
         }
         showProgressDialog(R.string.wait);
-        mInAppHelper.getSubsListToBuyObservable(mService, InAppHelper.getFreeTrailSubsSkus())
+        mInAppHelper.getSubsListToBuyObservable(InAppHelper.getFreeTrailSubsSkus())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
