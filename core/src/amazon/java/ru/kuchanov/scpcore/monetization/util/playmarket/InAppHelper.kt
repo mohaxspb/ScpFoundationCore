@@ -42,7 +42,8 @@ class InAppHelper constructor(
         PurchasingService.getPurchaseUpdates(false)
 
         //todo check skus
-        PurchasingService.getProductData(getNewSubsSkus().toMutableSet())
+//        PurchasingService.getProductData(getNewSubsSkus().toMutableSet())
+        PurchasingService.getProductData(mutableSetOf("full_1month_050519_0"))
     }
 
     override fun getInAppHistoryObservable(): Single<List<Item>> {
