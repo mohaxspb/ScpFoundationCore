@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.di;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -12,6 +14,7 @@ import ru.kuchanov.scpcore.di.module.PresentersModule;
 import ru.kuchanov.scpcore.di.module.StorageModule;
 import ru.kuchanov.scpcore.monetization.util.admob.MyAdListener;
 import ru.kuchanov.scpcore.monetization.util.appodeal.MyAppodealInterstitialCallbacks;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.receivers.AppInstallReceiver;
 import ru.kuchanov.scpcore.receivers.ReceiverBoot;
 import ru.kuchanov.scpcore.receivers.ReceiverTimer;
@@ -197,4 +200,6 @@ public interface AppComponent {
     void inject(URLImageParser urlImageParser);
 
     DbProviderFactory getDbProviderFactory();
+
+    void inject(InAppHelper inAppHelper);
 }

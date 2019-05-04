@@ -270,6 +270,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 .addOnFailureListener(this, e -> Timber.e(e, "getDynamicLink:onFailure"));
 
 //        mInAppHelper.test();
+
+        mInAppHelper.onActivate(this);
     }
 
 //    private SampleIapManager sampleIapManager;
@@ -955,6 +957,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         setUpBanner();
 
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+
+        mInAppHelper.onResume();
     }
 
     @Override

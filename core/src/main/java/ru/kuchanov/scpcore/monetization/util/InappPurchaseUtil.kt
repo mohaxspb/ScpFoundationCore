@@ -13,7 +13,6 @@ import java.util.*
 
 interface InappPurchaseUtil {
 
-
     @Retention(AnnotationRetention.SOURCE)
     @StringDef(InappType.IN_APP, InappType.SUBS)
     annotation class InappType {
@@ -32,6 +31,10 @@ interface InappPurchaseUtil {
             const val FULL_VERSION = 1
         }
     }
+
+    fun onActivate(activity: BaseActivity<*, *>)
+
+    fun onResume()
 
     fun getInAppHistoryObservable(): Single<List<Item>>
 

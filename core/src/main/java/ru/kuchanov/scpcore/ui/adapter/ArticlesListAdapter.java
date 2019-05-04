@@ -305,8 +305,8 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             nativeAdsSource = Constants.NativeAdsSource.values()[(int) config.getLong(NATIVE_ADS_LISTS_SOURCE_V2)];
             artBanners = dbProvider.getEnabledArtBanners();
         }
-        Timber.d("nativeAdsSource: %s", nativeAdsSource);
-        Timber.d("artBanners: %s", artBanners);
+//        Timber.d("nativeAdsSource: %s", nativeAdsSource);
+//        Timber.d("artBanners: %s", artBanners);
 
         int appodealIndex = 0;
         final List<MyListItem> adsModelsList = new ArrayList<>();
