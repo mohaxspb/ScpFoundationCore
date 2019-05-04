@@ -9,6 +9,8 @@ import org.joda.time.format.PeriodFormatter;
 
 import java.util.Comparator;
 
+import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil;
+
 /**
  * Created by mohax on 14.01.2017.
  * <p>
@@ -23,7 +25,7 @@ public class Subscription {
      */
     public String productId;
 
-    @InAppHelper.InappType
+    @InappPurchaseUtil.InappType
     public String type;
 
     /**
@@ -117,26 +119,30 @@ public class Subscription {
     @Override
     public String toString() {
         return "Subscription{" +
-               "productId='" + productId + '\'' +
-               ", type='" + type + '\'' +
-               ", price='" + price + '\'' +
-               ", price_amount_micros=" + price_amount_micros +
-               ", price_currency_code='" + price_currency_code + '\'' +
-               ", title='" + title + '\'' +
-               ", description='" + description + '\'' +
-               ", subscriptionPeriod='" + subscriptionPeriod + '\'' +
-               ", freeTrialPeriod='" + freeTrialPeriod + '\'' +
-               ", introductoryPrice='" + introductoryPrice + '\'' +
-               ", introductoryPriceAmountMicros=" + introductoryPriceAmountMicros +
-               ", introductoryPricePeriod='" + introductoryPricePeriod + '\'' +
-               ", introductoryPriceCycles=" + introductoryPriceCycles +
-               '}';
+                "productId='" + productId + '\'' +
+                ", type='" + type + '\'' +
+                ", price='" + price + '\'' +
+                ", price_amount_micros=" + price_amount_micros +
+                ", price_currency_code='" + price_currency_code + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", subscriptionPeriod='" + subscriptionPeriod + '\'' +
+                ", freeTrialPeriod='" + freeTrialPeriod + '\'' +
+                ", introductoryPrice='" + introductoryPrice + '\'' +
+                ", introductoryPriceAmountMicros=" + introductoryPriceAmountMicros +
+                ", introductoryPricePeriod='" + introductoryPricePeriod + '\'' +
+                ", introductoryPriceCycles=" + introductoryPriceCycles +
+                '}';
     }
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (o == null || getClass() != o.getClass()) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         final Subscription item = (Subscription) o;
 

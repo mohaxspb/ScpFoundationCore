@@ -605,16 +605,17 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         );
     }
 
+    //fixme uncomment it!
     public void updateMyNativeBanners() {
-        mApiClient
-                .getAllBanners()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(banners -> mDbProviderFactory.getDbProvider().saveBanners(banners))
-                .subscribe(
-                        banners -> Timber.d("updateMyNativeBanners onSuccess: %s", banners.size()),
-                        e -> Timber.e(e, "Error while updateMyNativeBanners")
-                );
+//        mApiClient
+//                .getAllBanners()
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .flatMap(banners -> mDbProviderFactory.getDbProvider().saveBanners(banners))
+//                .subscribe(
+//                        banners -> Timber.d("updateMyNativeBanners onSuccess: %s", banners.size()),
+//                        e -> Timber.e(e, "Error while updateMyNativeBanners")
+//                );
     }
 
     public static int getTotalScoreToAddFromAction(

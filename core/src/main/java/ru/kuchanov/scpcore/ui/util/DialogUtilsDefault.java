@@ -17,6 +17,7 @@ import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.downloads.DownloadEntry;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.service.DownloadAllServiceDefault;
 import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
@@ -98,7 +99,7 @@ public class DialogUtilsDefault extends ru.kuchanov.scpcore.downloads.DialogUtil
         final DialogUtils dialogUtils = new DialogUtils(mConstantValues);
         dialogUtils.showProgressDialog(context, R.string.wait);
         final InAppHelper mInAppHelper = new InAppHelper(mPreferenceManager, mDbProviderFactory, mApiClient);
-        mInAppHelper.getSubsListToBuyObservable(InAppHelper.getFreeTrailSubsSkus())
+        mInAppHelper.getSubsListToBuyObservable(mInAppHelper.getFreeTrailSubsSkus())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
