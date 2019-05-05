@@ -1,7 +1,6 @@
 package ru.kuchanov.scpcore.monetization.util.playmarket
 
 import android.content.IntentSender
-import com.amazon.device.iap.PurchasingListener
 import com.amazon.device.iap.PurchasingService
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.R
@@ -14,7 +13,6 @@ import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
 import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import rx.Single
 import timber.log.Timber
-import javax.inject.Inject
 
 class InAppHelper constructor(
         val preferenceManager: MyPreferenceManager,
@@ -22,7 +20,6 @@ class InAppHelper constructor(
         val apiClient: ApiClient
 ) : InappPurchaseUtil {
 
-    //    @Inject
     private val purchaseListener = PurchaseListenerImpl()
 
     init {
@@ -42,8 +39,7 @@ class InAppHelper constructor(
         PurchasingService.getPurchaseUpdates(false)
 
         //todo check skus
-//        PurchasingService.getProductData(getNewSubsSkus().toMutableSet())
-        PurchasingService.getProductData(mutableSetOf("full_1month_050519_0"))
+        PurchasingService.getProductData(getNewSubsSkus().toMutableSet())
     }
 
     override fun getInAppHistoryObservable(): Single<List<Item>> {
