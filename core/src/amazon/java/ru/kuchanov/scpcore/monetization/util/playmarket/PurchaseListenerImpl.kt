@@ -2,28 +2,92 @@ package ru.kuchanov.scpcore.monetization.util.playmarket
 
 import com.amazon.device.iap.PurchasingListener
 import com.amazon.device.iap.PurchasingService
-import com.amazon.device.iap.model.ProductDataResponse
-import com.amazon.device.iap.model.PurchaseResponse
+import com.amazon.device.iap.model.*
+import com.amazon.device.iap.model.ProductType.*
 import com.amazon.device.iap.model.PurchaseResponse.RequestStatus.*
-import com.amazon.device.iap.model.PurchaseUpdatesResponse
-import com.amazon.device.iap.model.UserDataResponse
+import com.jakewharton.rxrelay.BehaviorRelay
+import com.jakewharton.rxrelay.PublishRelay
+import ru.kuchanov.scpcore.monetization.model.Item
+import ru.kuchanov.scpcore.monetization.model.Subscription
+import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
 import timber.log.Timber
 
 
-class PurchaseListenerImpl : PurchasingListener {
+class PurchaseListenerImpl(
+//        val subscriptionsRelay: PublishRelay<List<Subscription>>,
+//        val inappsRelay: PublishRelay<List<Subscription>>
+        private val subscriptionsRelay: BehaviorRelay<List<Subscription>>,
+        private val inappsRelay: BehaviorRelay<List<Subscription>>
+) : PurchasingListener {
 
     private var currentUserId: String? = null
     private var currentMarketplace: String? = null
 
-    var reset = false
+    private var reset = false
 
     override fun onProductDataResponse(productDataResponse: ProductDataResponse?) {
         Timber.d("onProductDataResponse: %s", productDataResponse)
-        //todo
 
         when (productDataResponse?.requestStatus) {
             ProductDataResponse.RequestStatus.SUCCESSFUL -> {
                 Timber.d("onProductDataResponse SUCCESSFUL")
+//                productDataResponse.productData.entries.forEach {
+//                    Timber.d("${it.key}/${it.value.productType}/${it.value.title}")
+//                }
+
+                val products = productDataResponse.productData.values
+                //we load different types separately
+                when (products.firstOrNull()?.productType) {
+                    CONSUMABLE -> {
+                        val consumables = products.map {
+                            Subscription(
+                                    it.sku,
+                                    InappPurchaseUtil.InappType.IN_APP,
+                                    it.price,
+//                                    it.price.toLong(), //price_amount_micros
+                                    0,
+                                    "N/A", //price_currency_code
+                                    it.title,
+                                    it.description,
+                                    null,
+                                    null,
+                                    null,
+                                    0,
+                                    null,
+                                    0
+                            )
+                        }
+                        inappsRelay.call(consumables)
+                    }
+                    ENTITLED -> {
+                        //we do not use it in this app
+                    }
+                    SUBSCRIPTION -> {
+                        val subscriptions = products.map {
+                            Subscription(
+                                    it.sku,
+                                    InappPurchaseUtil.InappType.SUBS,
+                                    it.price,
+//                                    it.price.toLong(), //price_amount_micros
+                                    0,
+                                    "N/A", //price_currency_code
+                                    it.title,
+                                    it.description,
+                                    null,
+                                    null,
+                                    null,
+                                    0,
+                                    null,
+                                    0
+                            )
+                        }
+                        subscriptionsRelay.call(subscriptions)
+                    }
+                    null -> {
+                        //do nothing...
+                    }
+                }
+
             }
             ProductDataResponse.RequestStatus.FAILED -> {
                 Timber.d("onProductDataResponse FAILED")

@@ -2,6 +2,8 @@ package ru.kuchanov.scpcore.monetization.util.playmarket
 
 import android.content.IntentSender
 import com.amazon.device.iap.PurchasingService
+import com.jakewharton.rxrelay.BehaviorRelay
+import com.jakewharton.rxrelay.PublishRelay
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.api.ApiClient
@@ -12,6 +14,7 @@ import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
 import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import rx.Single
+import rx.lang.kotlin.subscribeBy
 import timber.log.Timber
 
 class InAppHelper constructor(
@@ -20,11 +23,23 @@ class InAppHelper constructor(
         val apiClient: ApiClient
 ) : InappPurchaseUtil {
 
-    private val purchaseListener = PurchaseListenerImpl()
+//    private val subscriptionsRelay = PublishRelay.create<List<Subscription>>()
+//    private val inappsRelay = PublishRelay.create<List<Subscription>>()
+private val subscriptionsRelay = BehaviorRelay.create<List<Subscription>>()
+    private val inappsRelay = BehaviorRelay.create<List<Subscription>>()
+
+    private val purchaseListener = PurchaseListenerImpl(subscriptionsRelay, inappsRelay)
 
     init {
         Timber.d("InAppHelper created!")
         BaseApplication.getAppComponent().inject(this)
+
+        subscriptionsRelay.subscribeBy(
+              onNext =   { Timber.d("subscriptionsRelay: $it") }
+        )
+        inappsRelay.subscribeBy(
+                onNext =   { Timber.d("inappsRelay: $it") }
+        )
     }
 
     override fun onActivate(activity: BaseActivity<*, *>) {
@@ -38,8 +53,8 @@ class InAppHelper constructor(
 
         PurchasingService.getPurchaseUpdates(false)
 
-        //todo check skus
-        PurchasingService.getProductData(getNewSubsSkus().toMutableSet())
+//        PurchasingService.getProductData(getNewSubsSkus().toMutableSet())
+//        PurchasingService.getProductData(getNewInAppsSkus().toMutableSet())
     }
 
     override fun getInAppHistoryObservable(): Single<List<Item>> {
@@ -50,12 +65,23 @@ class InAppHelper constructor(
 
     override fun getSubsListToBuyObservable(skus: List<String>): Single<List<Subscription>> {
         //todo
-        return Single.just(listOf())
+        Timber.d("getSubsListToBuyObservable: $skus")
+
+//        PurchasingService.getProductData(getNewSubsSkus().toMutableSet())
+        PurchasingService.getProductData(skus.toMutableSet())
+
+        return subscriptionsRelay.toSingle()
+
+//        return Single.just(listOf())
     }
 
     override fun getInAppsListToBuyObservable(): Single<List<Subscription>> {
         //todo
-        return Single.just(listOf())
+        PurchasingService.getProductData(getNewInAppsSkus().toMutableSet())
+
+        return inappsRelay.toSingle()
+
+//        return Single.just(listOf())
     }
 
     override fun consumeInApp(sku: String, token: String): Single<Int> {
