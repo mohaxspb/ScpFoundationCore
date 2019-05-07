@@ -2,22 +2,21 @@ package ru.kuchanov.scpcore.monetization.util.playmarket
 
 import com.amazon.device.iap.PurchasingListener
 import com.amazon.device.iap.PurchasingService
-import com.amazon.device.iap.model.*
+import com.amazon.device.iap.model.ProductDataResponse
 import com.amazon.device.iap.model.ProductType.*
+import com.amazon.device.iap.model.PurchaseResponse
 import com.amazon.device.iap.model.PurchaseResponse.RequestStatus.*
-import com.jakewharton.rxrelay.BehaviorRelay
+import com.amazon.device.iap.model.PurchaseUpdatesResponse
+import com.amazon.device.iap.model.UserDataResponse
 import com.jakewharton.rxrelay.PublishRelay
-import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
 import timber.log.Timber
 
 
 class PurchaseListenerImpl(
-//        val subscriptionsRelay: PublishRelay<List<Subscription>>,
-//        val inappsRelay: PublishRelay<List<Subscription>>
-        private val subscriptionsRelay: BehaviorRelay<List<Subscription>>,
-        private val inappsRelay: BehaviorRelay<List<Subscription>>
+        val subscriptionsRelay: PublishRelay<List<Subscription>>,
+        val inappsRelay: PublishRelay<List<Subscription>>
 ) : PurchasingListener {
 
     private var currentUserId: String? = null

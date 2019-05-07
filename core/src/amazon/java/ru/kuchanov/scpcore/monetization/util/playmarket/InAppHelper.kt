@@ -2,7 +2,6 @@ package ru.kuchanov.scpcore.monetization.util.playmarket
 
 import android.content.IntentSender
 import com.amazon.device.iap.PurchasingService
-import com.jakewharton.rxrelay.BehaviorRelay
 import com.jakewharton.rxrelay.PublishRelay
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.R
@@ -23,10 +22,8 @@ class InAppHelper constructor(
         val apiClient: ApiClient
 ) : InappPurchaseUtil {
 
-    //    private val subscriptionsRelay = PublishRelay.create<List<Subscription>>()
-//    private val inappsRelay = PublishRelay.create<List<Subscription>>()
-    private val subscriptionsRelay = BehaviorRelay.create<List<Subscription>>()
-    private val inappsRelay = BehaviorRelay.create<List<Subscription>>()
+    private val subscriptionsRelay = PublishRelay.create<List<Subscription>>()
+    private val inappsRelay = PublishRelay.create<List<Subscription>>()
 
     private val purchaseListener = PurchaseListenerImpl(subscriptionsRelay, inappsRelay)
 
