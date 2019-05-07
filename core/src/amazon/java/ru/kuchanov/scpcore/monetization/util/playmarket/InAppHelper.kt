@@ -23,9 +23,9 @@ class InAppHelper constructor(
         val apiClient: ApiClient
 ) : InappPurchaseUtil {
 
-//    private val subscriptionsRelay = PublishRelay.create<List<Subscription>>()
+    //    private val subscriptionsRelay = PublishRelay.create<List<Subscription>>()
 //    private val inappsRelay = PublishRelay.create<List<Subscription>>()
-private val subscriptionsRelay = BehaviorRelay.create<List<Subscription>>()
+    private val subscriptionsRelay = BehaviorRelay.create<List<Subscription>>()
     private val inappsRelay = BehaviorRelay.create<List<Subscription>>()
 
     private val purchaseListener = PurchaseListenerImpl(subscriptionsRelay, inappsRelay)
@@ -35,10 +35,10 @@ private val subscriptionsRelay = BehaviorRelay.create<List<Subscription>>()
         BaseApplication.getAppComponent().inject(this)
 
         subscriptionsRelay.subscribeBy(
-              onNext =   { Timber.d("subscriptionsRelay: $it") }
+                onNext = { Timber.d("subscriptionsRelay: $it") }
         )
         inappsRelay.subscribeBy(
-                onNext =   { Timber.d("inappsRelay: $it") }
+                onNext = { Timber.d("inappsRelay: $it") }
         )
     }
 
@@ -70,7 +70,12 @@ private val subscriptionsRelay = BehaviorRelay.create<List<Subscription>>()
 //        PurchasingService.getProductData(getNewSubsSkus().toMutableSet())
         PurchasingService.getProductData(skus.toMutableSet())
 
-        return subscriptionsRelay.toSingle()
+        return subscriptionsRelay
+//                .doOnNext { Timber.d("getSubsListToBuyObservable onNext: $it") }
+                .take(1)
+                .toSingle()
+//                .doOnError { Timber.e("getSubsListToBuyObservable onError: $it") }
+//                .toSingle()
 
 //        return Single.just(listOf())
     }
@@ -79,7 +84,9 @@ private val subscriptionsRelay = BehaviorRelay.create<List<Subscription>>()
         //todo
         PurchasingService.getProductData(getNewInAppsSkus().toMutableSet())
 
-        return inappsRelay.toSingle()
+        return inappsRelay
+                .take(1)
+                .toSingle()
 
 //        return Single.just(listOf())
     }

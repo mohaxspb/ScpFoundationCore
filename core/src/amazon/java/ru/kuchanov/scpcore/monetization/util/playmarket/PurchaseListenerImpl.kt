@@ -64,12 +64,16 @@ class PurchaseListenerImpl(
                     }
                     SUBSCRIPTION -> {
                         val subscriptions = products.map {
+                            val re = Regex("[^\\d.,]")
+                            val priceParsed = re.replace(it.price, "").replace(",", ".")
+                            Timber.d("priceParsed: $priceParsed")
+                            val priceAsDouble = priceParsed.toDouble()
+                            val priceAsMicros = (priceAsDouble * 1000000L).toLong()
                             Subscription(
                                     it.sku,
                                     InappPurchaseUtil.InappType.SUBS,
                                     it.price,
-//                                    it.price.toLong(), //price_amount_micros
-                                    0,
+                                    priceAsMicros,//price_amount_micros
                                     "N/A", //price_currency_code
                                     it.title,
                                     it.description,
