@@ -67,8 +67,7 @@ class SubscriptionsFragment :
                 return@subscribe
             }
             if (connected!! && !getPresenter().isDataLoaded && isAdded && activity is BaseActivity<*, *>) {
-                (activity as? BaseActivity<*, *>)?.getIInAppBillingService()
-                        ?.let { presenter.getMarketData(it) }
+                presenter.getMarketData()
             }
         }
 
@@ -83,13 +82,11 @@ class SubscriptionsFragment :
             if (id == ID_FREE_ADS_DISABLE) {
                 navigateToDisableAds()
             } else {
-                baseActivity?.getIInAppBillingService()?.let {
                     this@SubscriptionsFragment.getPresenter().onPurchaseClick(
                             id,
                             baseActivity,
                             false
                     )
-                }
             }
         })
         delegateManager.addDelegate(CurSubsDelegate(
@@ -97,38 +94,28 @@ class SubscriptionsFragment :
                     getPresenter().onCurrentSubscriptionClick(it)
                 },
                 {
-                    baseActivity?.getIInAppBillingService()
-                            ?.apply { this@SubscriptionsFragment.getPresenter().getMarketData(this) }
+                    this@SubscriptionsFragment.getPresenter().getMarketData()
                 }
         ))
         delegateManager.addDelegate(CurSubsEmptyDelegate(
                 {
-                    baseActivity?.getIInAppBillingService()?.let {
                         this@SubscriptionsFragment.getPresenter().onPurchaseClick(
                                 inAppHelper.getNewInAppsSkus().first(),
                                 baseActivity,
                                 false
                         )
-                    }
                 },
                 {
-                    baseActivity?.getIInAppBillingService()
-                            ?.apply { this@SubscriptionsFragment.getPresenter().getMarketData(this) }
+                    this@SubscriptionsFragment.getPresenter().getMarketData()
                 }
         ))
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter
 
-        refresh.setOnClickListener {
-            baseActivity?.getIInAppBillingService()?.apply {
-                getPresenter().getMarketData(
-                        this
-                )
-            }
-        }
+        refresh.setOnClickListener { getPresenter().getMarketData() }
 
         if (presenter.owned == null) {
-            baseActivity?.getIInAppBillingService()?.apply { getPresenter().getMarketData(this) }
+             getPresenter().getMarketData()
         } else {
             showProgressCenter(false)
             presenter.apply { showData(owned!!, subsToBuy!!, inAppsToBuy!!, type) }
@@ -353,8 +340,7 @@ class SubscriptionsFragment :
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
             Keys.HAS_NO_ADS_SUBSCRIPTION, Keys.HAS_SUBSCRIPTION -> {
-                baseActivity?.getIInAppBillingService()
-                        ?.apply { this@SubscriptionsFragment.getPresenter().getMarketData(this) }
+               this@SubscriptionsFragment.getPresenter().getMarketData()
             }
             else -> {
                 //do nothing

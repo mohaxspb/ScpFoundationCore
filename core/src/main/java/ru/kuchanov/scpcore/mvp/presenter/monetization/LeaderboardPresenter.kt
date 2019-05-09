@@ -1,6 +1,5 @@
 package ru.kuchanov.scpcore.mvp.presenter.monetization
 
-import com.android.vending.billing.IInAppBillingService
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
@@ -64,8 +63,6 @@ class LeaderboardPresenter(
 
     override var userPositionOnLeaderboard: String? = null
 
-    override var inAppService: IInAppBillingService? = null
-
     private var updated = false
 
     override var updateTime = myPreferencesManager.leaderboardUpdateDate.time
@@ -74,14 +71,14 @@ class LeaderboardPresenter(
 
     override fun loadInitialData() {
         Timber.d("loadInitialData")
-        if (inAppService == null) {
-            view.showMessage(R.string.google_services_not_connected)
-            view.showProgressCenter(false)
-            view.enableSwipeRefresh(false)
-            view.showSwipeRefreshProgress(false)
-            view.showRefreshButton(true)
-            return
-        }
+//        if (inAppService == null) {
+//            view.showMessage(R.string.google_services_not_connected)
+//            view.showProgressCenter(false)
+//            view.enableSwipeRefresh(false)
+//            view.showSwipeRefreshProgress(false)
+//            view.showRefreshButton(true)
+//            return
+//        }
         view.showProgressCenter(true)
         view.showRefreshButton(false)
         view.showUpdateDate(updateTime)

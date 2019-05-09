@@ -1,9 +1,6 @@
 package ru.kuchanov.scpcore.mvp.base;
 
-import com.android.vending.billing.IInAppBillingService;
-
 import android.content.Intent;
-import android.support.annotation.Nullable;
 
 import ru.kuchanov.scpcore.mvp.contract.LoginActions;
 
@@ -16,8 +13,6 @@ public interface BaseActivityMvp {
 
     interface View extends BaseMvp.View, LoginActions.View, MonetizationActions {
 
-        @Nullable
-        IInAppBillingService getIInAppBillingService();
     }
 
     interface Presenter<V extends View> extends BaseMvp.Presenter<V>, LoginActions.Presenter {

@@ -1,6 +1,5 @@
 package ru.kuchanov.scpcore.mvp.contract.monetization
 
-import com.android.vending.billing.IInAppBillingService
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.leaderboard.LeaderboardUserViewModel
 import ru.kuchanov.scpcore.db.model.User
@@ -37,7 +36,6 @@ interface LeaderboardContract : BaseMvp {
         var myUser: User?
         var userPositionOnLeaderboard: String?
         var inApps: List<Subscription>
-        var inAppService: IInAppBillingService?
         val updateTime: Long
         var readArticlesCount: Int
 

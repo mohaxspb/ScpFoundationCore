@@ -4,13 +4,11 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
-import com.android.vending.billing.IInAppBillingService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 import com.vk.sdk.VKSdk;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import ru.kuchanov.scpcore.BaseApplication;
@@ -154,7 +152,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     }
 
     @Override
-    public void onLevelUpRetryClick(@NotNull final IInAppBillingService inAppBillingService) {
+    public void onLevelUpRetryClick() {
         mInAppHelper.getInAppHistoryObservable()
                 .flatMap(items -> mInAppHelper.consumeInApp(
                         items.get(0).sku,

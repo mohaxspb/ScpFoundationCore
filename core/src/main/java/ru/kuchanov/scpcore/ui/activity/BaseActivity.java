@@ -2,17 +2,13 @@ package ru.kuchanov.scpcore.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.app.DialogFragment;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,7 +24,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.android.vending.billing.IInAppBillingService;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -73,10 +68,9 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.User;
-import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable;
 import ru.kuchanov.scpcore.manager.MyNotificationManager;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil.*;
+import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil.SubscriptionType;
 import ru.kuchanov.scpcore.monetization.util.admob.AdMobHelper;
 import ru.kuchanov.scpcore.monetization.util.admob.MyAdListener;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
@@ -100,7 +94,6 @@ import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventName;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventParam;
-import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventValue;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.StartScreen;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.UserPropertyKey;
 import static ru.kuchanov.scpcore.manager.MyPreferenceManager.IMAGES_DISABLED_PERIOD;
@@ -165,9 +158,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Inject
     protected InAppHelper mInAppHelper;
 
-    //inapps and ads
-    private IInAppBillingService mService;
-
     private InterstitialAd mInterstitialAd;
 
     @NonNull
@@ -210,11 +200,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
         //setAlarm for notification
         mMyNotificationManager.checkAlarm();
-
-        //initAds subs service
-        final Intent serviceIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
-        serviceIntent.setPackage("com.android.vending");
-        bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
 
         //ads
         initAds();
@@ -612,59 +597,59 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         }
     }
 
-    @Override
-    @Nullable
-    public IInAppBillingService getIInAppBillingService() {
-        return mService;
-    }
+//    @Override
+//    @Nullable
+//    public IInAppBillingService getIInAppBillingService() {
+//        return mService;
+//    }
 
-    private final ServiceConnection mServiceConn = new ServiceConnection() {
-        @Override
-        public void onServiceDisconnected(final ComponentName name) {
-            Timber.d("onServiceDisconnected");
-            mService = null;
-            InAppBillingServiceConnectionObservable.getInstance().getServiceStatusObservable().onNext(false);
-        }
-
-        @Override
-        public void onServiceConnected(final ComponentName name, final IBinder service) {
-            Timber.d("onServiceConnected");
-            mService = IInAppBillingService.Stub.asInterface(service);
-            InAppBillingServiceConnectionObservable.getInstance().getServiceStatusObservable().onNext(true);
-            //update invalidated subs list every some hours
-            if (mMyPreferenceManager.isTimeToValidateSubscriptions()) {
-                updateOwnedMarketItems();
-            }
-
-            //offer free trial every week for non subscribed users
-            //check here as we need to have connected service
-            if (!mMyPreferenceManager.isHasAnySubscription() && mMyPreferenceManager.isTimeToPeriodicalOfferFreeTrial()) {
-                final Bundle bundle = new Bundle();
-                bundle.putString(EventParam.PLACE, EventValue.PERIODICAL);
-                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
-
-                showOfferFreeTrialSubscriptionPopup();
-                mMyPreferenceManager.setLastTimePeriodicalFreeTrialOffered(System.currentTimeMillis());
-            }
-
-            //check here along with onUserChange as there can be situation when data from DB gained,
-            //but service not connected yet
-            //check if user score is greter than 1000 and offer him/her a free trial if there is no subscription owned
-            if (!mMyPreferenceManager.isHasAnySubscription()
-                    && mPresenter.getUser() != null
-                    && mPresenter.getUser().score >= 1000
-                    //do not show it after level up gain, where we add 10000 score
-                    && mPresenter.getUser().score < 10000
-                    && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
-                final Bundle bundle = new Bundle();
-                bundle.putString(EventParam.PLACE, EventValue.SCORE_1000_REACHED);
-                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
-
-                showOfferFreeTrialSubscriptionPopup();
-                mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score();
-            }
-        }
-    };
+//    private final ServiceConnection mServiceConn = new ServiceConnection() {
+//        @Override
+//        public void onServiceDisconnected(final ComponentName name) {
+//            Timber.d("onServiceDisconnected");
+//            mService = null;
+//            InAppBillingServiceConnectionObservable.getInstance().getServiceStatusObservable().onNext(false);
+//        }
+//
+//        @Override
+//        public void onServiceConnected(final ComponentName name, final IBinder service) {
+//            Timber.d("onServiceConnected");
+//            mService = IInAppBillingService.Stub.asInterface(service);
+//            InAppBillingServiceConnectionObservable.getInstance().getServiceStatusObservable().onNext(true);
+//            //update invalidated subs list every some hours
+//            if (mMyPreferenceManager.isTimeToValidateSubscriptions()) {
+//                updateOwnedMarketItems();
+//            }
+//
+//            //offer free trial every week for non subscribed users
+//            //check here as we need to have connected service
+//            if (!mMyPreferenceManager.isHasAnySubscription() && mMyPreferenceManager.isTimeToPeriodicalOfferFreeTrial()) {
+//                final Bundle bundle = new Bundle();
+//                bundle.putString(EventParam.PLACE, EventValue.PERIODICAL);
+//                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+//
+//                showOfferFreeTrialSubscriptionPopup();
+//                mMyPreferenceManager.setLastTimePeriodicalFreeTrialOffered(System.currentTimeMillis());
+//            }
+//
+//            //check here along with onUserChange as there can be situation when data from DB gained,
+//            //but service not connected yet
+//            //check if user score is greter than 1000 and offer him/her a free trial if there is no subscription owned
+//            if (!mMyPreferenceManager.isHasAnySubscription()
+//                    && mPresenter.getUser() != null
+//                    && mPresenter.getUser().score >= 1000
+//                    //do not show it after level up gain, where we add 10000 score
+//                    && mPresenter.getUser().score < 10000
+//                    && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
+//                final Bundle bundle = new Bundle();
+//                bundle.putString(EventParam.PLACE, EventValue.SCORE_1000_REACHED);
+//                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+//
+//                showOfferFreeTrialSubscriptionPopup();
+//                mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score();
+//            }
+//        }
+//    };
 
     @Override
     public void updateOwnedMarketItems() {
@@ -1003,9 +988,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     protected void onDestroy() {
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
         super.onDestroy();
-        if (mService != null) {
-            unbindService(mServiceConn);
-        }
+//        if (mService != null) {
+//            unbindService(mServiceConn);
+//        }
     }
 
     @Override

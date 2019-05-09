@@ -2,7 +2,6 @@
 
 package ru.kuchanov.scpcore.mvp.presenter.monetization
 
-import com.android.vending.billing.IInAppBillingService
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.api.ApiClient
@@ -50,7 +49,7 @@ class SubscriptionsPresenter(
     @InappPurchaseUtil.SubscriptionType
     override var type: Int = InappPurchaseUtil.SubscriptionType.NONE
 
-    override fun getMarketData(service: IInAppBillingService) {
+    override fun getMarketData() {
         Timber.d("getMarketData")
         view.showProgressCenter(true)
         view.showRefreshButton(false)

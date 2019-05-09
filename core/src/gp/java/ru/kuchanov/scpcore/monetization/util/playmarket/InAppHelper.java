@@ -89,6 +89,69 @@ public class InAppHelper implements InappPurchaseUtil {
         mInAppBillingService = iInAppBillingService;
     }
 
+    //fixme check it
+
+    private final ServiceConnection mServiceConn = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(final ComponentName name) {
+            Timber.d("onServiceDisconnected");
+            mService = null;
+            InAppBillingServiceConnectionObservable.getInstance().getServiceStatusObservable().onNext(false);
+        }
+
+        @Override
+        public void onServiceConnected(final ComponentName name, final IBinder service) {
+            Timber.d("onServiceConnected");
+            mService = IInAppBillingService.Stub.asInterface(service);
+            InAppBillingServiceConnectionObservable.getInstance().getServiceStatusObservable().onNext(true);
+            //update invalidated subs list every some hours
+            if (mMyPreferenceManager.isTimeToValidateSubscriptions()) {
+                updateOwnedMarketItems();
+            }
+
+            //offer free trial every week for non subscribed users
+            //check here as we need to have connected service
+            if (!mMyPreferenceManager.isHasAnySubscription() && mMyPreferenceManager.isTimeToPeriodicalOfferFreeTrial()) {
+                final Bundle bundle = new Bundle();
+                bundle.putString(EventParam.PLACE, EventValue.PERIODICAL);
+                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+
+                showOfferFreeTrialSubscriptionPopup();
+                mMyPreferenceManager.setLastTimePeriodicalFreeTrialOffered(System.currentTimeMillis());
+            }
+
+            //check here along with onUserChange as there can be situation when data from DB gained,
+            //but service not connected yet
+            //check if user score is greter than 1000 and offer him/her a free trial if there is no subscription owned
+            if (!mMyPreferenceManager.isHasAnySubscription()
+                    && mPresenter.getUser() != null
+                    && mPresenter.getUser().score >= 1000
+                    //do not show it after level up gain, where we add 10000 score
+                    && mPresenter.getUser().score < 10000
+                    && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
+                final Bundle bundle = new Bundle();
+                bundle.putString(EventParam.PLACE, EventValue.SCORE_1000_REACHED);
+                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+
+                showOfferFreeTrialSubscriptionPopup();
+                mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score();
+            }
+        }
+    };
+
+    public void onActivityCreate(Activity activity){
+        //initAds subs service
+        final Intent serviceIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
+        serviceIntent.setPackage("com.android.vending");
+        activity.bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
+    }
+
+    public void onActivityDestroy(){
+        if (mService != null) {
+            unbindService(mServiceConn);
+        }
+    }
+
     @SubscriptionType
     public static int getSubscriptionTypeFromItemsList(@NonNull final Iterable<Item> ownedItems) {
         final Context context = BaseApplication.getAppInstance();

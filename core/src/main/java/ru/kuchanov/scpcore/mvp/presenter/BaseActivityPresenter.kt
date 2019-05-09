@@ -642,8 +642,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
             } else if (data?.getIntExtra("RESPONSE_CODE", 0) == InappPurchaseUtil.RESULT_ITEM_ALREADY_OWNED) {
                 val message = "RESPONSE_CODE is: InAppHelper.RESULT_ITEM_ALREADY_OWNED"
                 Timber.wtf(message)
-                view.iInAppBillingService?.let { onLevelUpRetryClick(it) }
-                        ?: view.showInAppErrorDialog(BaseApplication.getAppInstance().getString(R.string.error_unexpected))
+                onLevelUpRetryClick()
             } else {
                 val message = "Unexpected resultCode: $resultCode/${data?.extras?.keySet()?.map { "$it/${data.extras[it]}" }}"
                 Timber.wtf(message)

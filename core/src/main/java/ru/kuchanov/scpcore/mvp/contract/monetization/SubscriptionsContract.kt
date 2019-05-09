@@ -1,6 +1,5 @@
 package ru.kuchanov.scpcore.mvp.contract.monetization
 
-import com.android.vending.billing.IInAppBillingService
 import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
@@ -30,7 +29,7 @@ interface SubscriptionsContract : BaseMvp {
         @InappPurchaseUtil.SubscriptionType
         var type: Int
 
-        fun getMarketData(service: IInAppBillingService)
+        fun getMarketData()
         var isDataLoaded: Boolean
         fun onCurrentSubscriptionClick(id: String)
     }
