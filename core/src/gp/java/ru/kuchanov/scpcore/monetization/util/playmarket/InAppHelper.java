@@ -1,16 +1,21 @@
 package ru.kuchanov.scpcore.monetization.util.playmarket;
 
+import android.app.Activity;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Pair;
 
 import com.android.vending.billing.IInAppBillingService;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.GsonBuilder;
 
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +32,7 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
+import ru.kuchanov.scpcore.manager.InAppBillingServiceConnectionObservable;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Item;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
@@ -84,25 +90,36 @@ public class InAppHelper implements InappPurchaseUtil {
         mApiClient = apiClient;
     }
 
-    //todo call it from activity
-    public void setInAppBillingService(@Nullable final IInAppBillingService iInAppBillingService) {
-        mInAppBillingService = iInAppBillingService;
-    }
+    //call it from activity
+//    public void setInAppBillingService(@Nullable final IInAppBillingService iInAppBillingService) {
+//        mInAppBillingService = iInAppBillingService;
+//    }
 
     //fixme check it
+
+
+    @Override
+    public void onActivate(@NotNull BaseActivity<?, ?> activity) {
+        //todo
+    }
+
+    @Override
+    public void onResume() {
+        //nothing to do?..
+    }
 
     private final ServiceConnection mServiceConn = new ServiceConnection() {
         @Override
         public void onServiceDisconnected(final ComponentName name) {
             Timber.d("onServiceDisconnected");
-            mService = null;
+            mInAppBillingService = null;
             InAppBillingServiceConnectionObservable.getInstance().getServiceStatusObservable().onNext(false);
         }
 
         @Override
         public void onServiceConnected(final ComponentName name, final IBinder service) {
             Timber.d("onServiceConnected");
-            mService = IInAppBillingService.Stub.asInterface(service);
+            mInAppBillingService = IInAppBillingService.Stub.asInterface(service);
             InAppBillingServiceConnectionObservable.getInstance().getServiceStatusObservable().onNext(true);
             //update invalidated subs list every some hours
             if (mMyPreferenceManager.isTimeToValidateSubscriptions()) {
@@ -113,8 +130,8 @@ public class InAppHelper implements InappPurchaseUtil {
             //check here as we need to have connected service
             if (!mMyPreferenceManager.isHasAnySubscription() && mMyPreferenceManager.isTimeToPeriodicalOfferFreeTrial()) {
                 final Bundle bundle = new Bundle();
-                bundle.putString(EventParam.PLACE, EventValue.PERIODICAL);
-                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+                bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.EventValue.PERIODICAL);
+                FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
                 showOfferFreeTrialSubscriptionPopup();
                 mMyPreferenceManager.setLastTimePeriodicalFreeTrialOffered(System.currentTimeMillis());
@@ -130,8 +147,8 @@ public class InAppHelper implements InappPurchaseUtil {
                     && mPresenter.getUser().score < 10000
                     && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
                 final Bundle bundle = new Bundle();
-                bundle.putString(EventParam.PLACE, EventValue.SCORE_1000_REACHED);
-                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+                bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.EventValue.SCORE_1000_REACHED);
+                FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
                 showOfferFreeTrialSubscriptionPopup();
                 mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score();
@@ -146,50 +163,50 @@ public class InAppHelper implements InappPurchaseUtil {
         activity.bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
     }
 
-    public void onActivityDestroy(){
-        if (mService != null) {
-            unbindService(mServiceConn);
+    public void onActivityDestroy(Activity activity){
+        if (mInAppBillingService != null) {
+            activity.unbindService(mServiceConn);
         }
     }
 
-    @SubscriptionType
-    public static int getSubscriptionTypeFromItemsList(@NonNull final Iterable<Item> ownedItems) {
-        final Context context = BaseApplication.getAppInstance();
-        //add old old donate subs, new ones and one with free trial period
-        final Collection<String> fullVersionSkus = new ArrayList<>(Arrays.asList(context.getString(R.string.old_skus).split(",")));
-        Collections.addAll(fullVersionSkus, context.getString(R.string.ver_2_skus).split(","));
-        Collections.addAll(fullVersionSkus, context.getString(R.string.ver3_skus).split(","));
-        Collections.addAll(fullVersionSkus, context.getString(R.string.subs_free_trial).split(","));
-        Collections.addAll(fullVersionSkus, context.getString(R.string.ver3_subs_free_trial).split(","));
-        Collections.addAll(fullVersionSkus, context.getString(R.string.ver4_skus).split(","));
-        Collections.addAll(fullVersionSkus, context.getString(R.string.ver4_subs_free_trial).split(","));
+//    @SubscriptionType
+//    public static int getSubscriptionTypeFromItemsList(@NonNull final Iterable<Item> ownedItems) {
+//        final Context context = BaseApplication.getAppInstance();
+//        //add old old donate subs, new ones and one with free trial period
+//        final Collection<String> fullVersionSkus = new ArrayList<>(Arrays.asList(context.getString(R.string.old_skus).split(",")));
+//        Collections.addAll(fullVersionSkus, context.getString(R.string.ver_2_skus).split(","));
+//        Collections.addAll(fullVersionSkus, context.getString(R.string.ver3_skus).split(","));
+//        Collections.addAll(fullVersionSkus, context.getString(R.string.subs_free_trial).split(","));
+//        Collections.addAll(fullVersionSkus, context.getString(R.string.ver3_subs_free_trial).split(","));
+//        Collections.addAll(fullVersionSkus, context.getString(R.string.ver4_skus).split(","));
+//        Collections.addAll(fullVersionSkus, context.getString(R.string.ver4_subs_free_trial).split(","));
+//
+//        final Collection<String> noAdsSkus = new ArrayList<>();
+//        noAdsSkus.add(context.getString(R.string.subs_no_ads_old));
+//        noAdsSkus.add(context.getString(R.string.subs_no_ads_ver_2));
+//        noAdsSkus.add(context.getString(R.string.ver3_subs_no_ads));
+//        noAdsSkus.add(context.getString(R.string.ver4_subs_no_ads));
+//
+//        final List<String> ownedSkus = getSkuListFromItemsList(ownedItems);
+//        noAdsSkus.retainAll(ownedSkus);
+//        fullVersionSkus.retainAll(ownedSkus);
+//
+//        @SubscriptionType final int type = fullVersionSkus.isEmpty()
+//                ? noAdsSkus.isEmpty()
+//                ? SubscriptionType.NONE
+//                : SubscriptionType.NO_ADS
+//                : SubscriptionType.FULL_VERSION;
+//
+//        return type;
+//    }
 
-        final Collection<String> noAdsSkus = new ArrayList<>();
-        noAdsSkus.add(context.getString(R.string.subs_no_ads_old));
-        noAdsSkus.add(context.getString(R.string.subs_no_ads_ver_2));
-        noAdsSkus.add(context.getString(R.string.ver3_subs_no_ads));
-        noAdsSkus.add(context.getString(R.string.ver4_subs_no_ads));
-
-        final List<String> ownedSkus = getSkuListFromItemsList(ownedItems);
-        noAdsSkus.retainAll(ownedSkus);
-        fullVersionSkus.retainAll(ownedSkus);
-
-        @SubscriptionType final int type = fullVersionSkus.isEmpty()
-                ? noAdsSkus.isEmpty()
-                ? SubscriptionType.NONE
-                : SubscriptionType.NO_ADS
-                : SubscriptionType.FULL_VERSION;
-
-        return type;
-    }
-
-    private static List<String> getSkuListFromItemsList(@NonNull final Iterable<Item> ownedItems) {
-        final List<String> skus = new ArrayList<>();
-        for (final Item item : ownedItems) {
-            skus.add(item.sku);
-        }
-        return skus;
-    }
+//    private static List<String> getSkuListFromItemsList(@NonNull final Iterable<Item> ownedItems) {
+//        final List<String> skus = new ArrayList<>();
+//        for (final Item item : ownedItems) {
+//            skus.add(item.sku);
+//        }
+//        return skus;
+//    }
 
     public void test() {
         Timber.d("GP test method called!");
@@ -443,7 +460,7 @@ public class InAppHelper implements InappPurchaseUtil {
 
                     mMyPreferenceManager.setLastTimeSubscriptionsValidated(System.currentTimeMillis());
 
-                    @SubscriptionType final int type = InAppHelper.getSubscriptionTypeFromItemsList(validatedItems);
+                    @SubscriptionType final int type = InappPurchaseUtil.getSubscriptionTypeFromItemsList(validatedItems);
                     Timber.d("subscription type: %s", type);
                     switch (type) {
                         case SubscriptionType.NONE:
@@ -529,19 +546,27 @@ public class InAppHelper implements InappPurchaseUtil {
         }
     }
 
-    public static List<String> getNewSubsSkus() {
+    @Override
+    @NotNull
+    public List<String> getNewSubsSkus() {
         return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver4_skus).split(",")));
     }
 
-    public static List<String> getFreeTrailSubsSkus() {
+    @Override
+    @NotNull
+    public List<String> getFreeTrailSubsSkus() {
         return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver4_subs_free_trial).split(",")));
     }
 
-    public static List<String> getNewNoAdsSubsSkus() {
+    @Override
+    @NotNull
+    public List<String> getNewNoAdsSubsSkus() {
         return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver4_subs_no_ads).split(",")));
     }
 
-    public static List<String> getNewInAppsSkus() {
+    @Override
+    @NotNull
+    public List<String> getNewInAppsSkus() {
         return new ArrayList<>(Arrays.asList(BaseApplication.getAppInstance().getString(R.string.ver4_inapp_skus).split(",")));
     }
 }
