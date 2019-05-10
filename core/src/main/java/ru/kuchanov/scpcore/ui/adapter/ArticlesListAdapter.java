@@ -343,11 +343,13 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             );
                             break;
                         case ART:
-                            adsModelsList.add(
-                                    isArticle
-                                            ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())), false)
-                                            : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())))
-                            );
+                            if (!artBanners.isEmpty()) {
+                                adsModelsList.add(
+                                        isArticle
+                                                ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())), false)
+                                                : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())))
+                                );
+                            }
                             break;
                         default:
                             throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);

@@ -254,25 +254,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 })
                 .addOnFailureListener(this, e -> Timber.e(e, "getDynamicLink:onFailure"));
 
-//        mInAppHelper.test();
-
         mInAppHelper.onActivate(this);
     }
-
-//    private SampleIapManager sampleIapManager;
-//
-//    private void setupIAPOnCreate() {
-////        sampleIapManager = new SampleIapManager(this);
-//
-////        final SamplePurchasingListener purchasingListener = new SamplePurchasingListener(sampleIapManager);
-//        Timber.d( "onCreate: registering PurchasingListener");
-//
-////        PurchasingService.registerListener(this.getApplicationContext(), purchasingListener);
-//
-//        PurchasingService.registerListener(this.getApplicationContext(), null);
-//
-//        Timber.d( "IS_SANDBOX_MODE:" + PurchasingService.IS_SANDBOX_MODE);
-//    }
 
     @Override
     public void showOfferLoginForLevelUpPopup() {
@@ -988,9 +971,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     protected void onDestroy() {
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
         super.onDestroy();
-//        if (mService != null) {
-//            unbindService(mServiceConn);
-//        }
+        mInAppHelper.onActivityDestroy(this);
     }
 
     @Override

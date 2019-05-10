@@ -1,5 +1,6 @@
 package ru.kuchanov.scpcore.monetization.util
 
+import android.app.Activity
 import android.content.IntentSender
 import android.support.annotation.IntDef
 import android.support.annotation.StringDef
@@ -34,6 +35,8 @@ interface InappPurchaseUtil {
 
     fun onActivate(activity: BaseActivity<*, *>)
 
+    fun onActivityDestroy(activity: Activity)
+
     fun onResume()
 
     fun getInAppHistoryObservable(): Single<List<Item>>
@@ -63,7 +66,7 @@ interface InappPurchaseUtil {
     fun getNewInAppsSkus(): List<String>
 
     @SubscriptionType
-    fun getSubscriptionTypeFromItemsList(ownedItems: List<Item>): Int {
+    fun getSubscriptionTypeFromItemsList( ownedItems: List<Item>): Int {
         val context = BaseApplication.getAppInstance()
         //add old old donate subs, new ones and one with free trial period
 //        val fullVersionSkus = mutableListOf<String>(*context.getString(R.string.old_skus).split(",").toTypedArray())
