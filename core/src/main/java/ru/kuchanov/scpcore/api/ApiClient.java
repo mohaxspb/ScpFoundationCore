@@ -627,6 +627,7 @@ public class ApiClient {
                 .observeOn(Schedulers.io())
                 .map(article -> {
                     //download all images
+                    Timber.d("download images");
                     downloadImagesOnDisk(article);
 
                     return article;
@@ -642,6 +643,7 @@ public class ApiClient {
             final Context context = BaseApplication.getAppInstance();
             for (final RealmString realmString : article.imagesUrls) {
                 if (mPreferencesManager.isImagesCacheEnabled()) {
+                    Timber.d("start download images");
                     try {
                         final Bitmap bitmap = Glide.with(context)
                                 .asBitmap()
