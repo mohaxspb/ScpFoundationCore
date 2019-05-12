@@ -277,6 +277,18 @@ public class ArticleAdapter
                 break;
             }
 
+            Timber.d(
+                    "mArticlesAndAds/mAdsModelsList/i/interval/(i / interval) - 1: %s/%s/%s/%s/%s",
+                    mViewModels.size(),
+                    mAdsModelsList.size(),
+                    i,
+                    interval,
+                    (i / interval) - 1
+            );
+            if (mViewModels.isEmpty() || mAdsModelsList.isEmpty() || i < 0) {
+                break;
+            }
+
             mViewModels.add(i, mAdsModelsList.get((i / interval) - 1));
         }
     }

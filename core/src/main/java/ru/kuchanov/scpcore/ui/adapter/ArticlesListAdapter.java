@@ -276,10 +276,18 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             } else if (i / interval > Constants.NUM_OF_NATIVE_ADS_PER_SCREEN) {
                 break;
             }
-            if (mArticlesAndAds.isEmpty() || i < 0) {
+            if (mArticlesAndAds.isEmpty() || mAdsModelsList.isEmpty() || i < 0) {
                 break;
             }
-            mArticlesAndAds.add(i, mAdsModelsList.get((i / interval) - 1));
+            Timber.d(
+                    "mArticlesAndAds/mAdsModelsList/i/interval/(i / interval) - 1: %s/%s/%s/%s/%s",
+                    mArticlesAndAds.size(),
+                    mAdsModelsList.size(),
+                    i,
+                    interval,
+                    (i / interval) - 1
+            );
+                mArticlesAndAds.add(i, mAdsModelsList.get((i / interval) - 1));
         }
     }
 
