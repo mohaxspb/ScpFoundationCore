@@ -271,6 +271,54 @@ public class ParseHtmlUtils {
             @NotNull final ConstantValues constantValues
     ) throws Exception {
         try {
+//            Timber.d("pageContent.children().size(): %s", pageContent.children().size());
+//            for (Element element : pageContent.children()) {
+//                Timber.d("pageContent element: %s", element.tagName());
+//            }
+
+            //unwrap element in divs with text-alignment
+            for (Element element : pageContent.children()) {
+                if (element.tagName().equals("div")
+                        && element.hasAttr("style")
+                        && element.attr("style").contains("text-align")) {
+                    element.unwrap();
+                }
+            }
+
+            //remove rating bar
+            int rating = 0;
+            final Element rateDiv = pageContent.getElementsByClass("page-rate-widget-box").first();
+            if (rateDiv != null) {
+                final Element spanWithRating = rateDiv.getElementsByClass("rate-points").first();
+                if (spanWithRating != null) {
+                    final Element ratingSpan = spanWithRating.getElementsByClass("number").first();
+//                    Timber.d("ratingSpan: %s", ratingSpan);
+                    if (ratingSpan != null && !TextUtils.isEmpty(ratingSpan.text())) {
+                        try {
+                            rating = Integer.parseInt(ratingSpan.text().substring(1, ratingSpan.text().length()));
+//                            Timber.d("rating: %s", rating);
+                        } catch (final Exception e) {
+                            Timber.e(e);
+                        }
+                    }
+                }
+
+                final Element span1 = rateDiv.getElementsByClass("rateup").first();
+                span1.remove();
+                final Element span2 = rateDiv.getElementsByClass("ratedown").first();
+                span2.remove();
+                final Element span3 = rateDiv.getElementsByClass("cancel").first();
+                span3.remove();
+
+                final Elements heritageDiv = rateDiv.parent().getElementsByClass("heritage-emblem");
+                if (heritageDiv != null && !heritageDiv.isEmpty()) {
+                    heritageDiv.first().remove();
+                }
+            }
+
+//            Timber.d("pageContent.children().size(): %s", pageContent.children().size());
+//            Timber.d(" pageContent.children().first().tagName(): %s", pageContent.children().first().tagName());
+
             //some article are in div... I.e. http://scp-wiki-cn.wikidot.com/taboo
             //so check it and extract text
             if (pageContent.children().size() == 1
@@ -323,36 +371,6 @@ public class ParseHtmlUtils {
 
                 final String id = onclickAttr.substring(onclickAttr.indexOf("bibitem-"), onclickAttr.lastIndexOf("'"));
                 aTag.attr("href", id);
-            }
-            //remove rating bar
-            int rating = 0;
-            final Element rateDiv = pageContent.getElementsByClass("page-rate-widget-box").first();
-            if (rateDiv != null) {
-                final Element spanWithRating = rateDiv.getElementsByClass("rate-points").first();
-                if (spanWithRating != null) {
-                    final Element ratingSpan = spanWithRating.getElementsByClass("number").first();
-//                    Timber.d("ratingSpan: %s", ratingSpan);
-                    if (ratingSpan != null && !TextUtils.isEmpty(ratingSpan.text())) {
-                        try {
-                            rating = Integer.parseInt(ratingSpan.text().substring(1, ratingSpan.text().length()));
-//                            Timber.d("rating: %s", rating);
-                        } catch (final Exception e) {
-                            Timber.e(e);
-                        }
-                    }
-                }
-
-                final Element span1 = rateDiv.getElementsByClass("rateup").first();
-                span1.remove();
-                final Element span2 = rateDiv.getElementsByClass("ratedown").first();
-                span2.remove();
-                final Element span3 = rateDiv.getElementsByClass("cancel").first();
-                span3.remove();
-
-                final Elements heritageDiv = rateDiv.parent().getElementsByClass("heritage-emblem");
-                if (heritageDiv != null && !heritageDiv.isEmpty()) {
-                    heritageDiv.first().remove();
-                }
             }
             //remove something more
             final Element svernut = pageContent.getElementById("toc-action-bar");

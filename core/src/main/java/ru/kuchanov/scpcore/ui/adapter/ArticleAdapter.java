@@ -115,6 +115,11 @@ public class ArticleAdapter
         final List<String> articlesTextParts = new ArrayList<>(RealmString.toStringList(article.textParts));
         final @ParseHtmlUtils.TextType List<String> articlesTextPartsTypes = new ArrayList<>(RealmString.toStringList(article.textPartsTypes));
 
+//        Timber.d("articlesTextPartsTypes: %s", articlesTextPartsTypes);
+//        for (String text: articlesTextParts){
+//            Timber.d("articlesTextParts: %s", text);
+//        }
+
         articlesTextParts.add(0, article.title);
         articlesTextPartsTypes.add(0, ParseHtmlUtils.TextType.TITLE);
         //DO NOT USE THIS VALUE!!!

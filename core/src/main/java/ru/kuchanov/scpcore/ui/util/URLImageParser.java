@@ -45,6 +45,7 @@ public class URLImageParser implements Html.ImageGetter {
 
     @Override
     public Drawable getDrawable(String source) {
+        Timber.d("getDrawable source: %s", source);
         final UrlDrawable urlDrawable = new UrlDrawable();
         int holderId = AttributeGetter.getDrawableId(mTextView.getContext(), R.attr.iconEmptyImage);
         urlDrawable.placeHolder = ContextCompat.getDrawable(mTextView.getContext(), holderId);
@@ -180,7 +181,16 @@ public class URLImageParser implements Html.ImageGetter {
         @Override
         public void draw(@NonNull Canvas canvas) {
             if (drawable != null) {
-                drawable.draw(canvas);
+//                Timber.d("draw canvas: %s/%s", canvas.getHeight(), canvas.getWidth());
+//                Timber.d("draw drawable: %s/%s", drawable.getMinimumHeight(), drawable.getMinimumWidth());
+//                Timber.d("draw drawable: %s", drawable.getBounds());
+//                Timber.d("draw drawable: %s/%s", DimensionUtils.getScreenHeight(), DimensionUtils.getScreenWidth());
+                try {
+//                    drawable = resizeToScreenSize(drawable);
+                    drawable.draw(canvas);
+                } catch (Exception e) {
+                    Timber.e(e, "Error while draw on canvas");
+                }
             } else {
                 placeHolder.draw(canvas);
             }
@@ -194,5 +204,29 @@ public class URLImageParser implements Html.ImageGetter {
             }
             return super.getCurrent();
         }
+
+//        private Drawable resizeToScreenSize(Drawable image) {
+//            int screenHeight = DimensionUtils.getScreenHeight();
+//            int screenWidth = DimensionUtils.getScreenWidth();
+//            int drawableHeight = image.getIntrinsicHeight();
+//            int drawableWidth = image.getIntrinsicWidth();
+//
+//            int desiredHeight = drawableHeight;
+//            int desiredWidth = drawableWidth;
+//            if (desiredHeight > screenHeight) {
+//                float multiplier = (float) desiredHeight / screenHeight;
+//                Timber.d("multiplier: %s", multiplier);
+//                desiredHeight = (int) (desiredHeight/multiplier);
+//                desiredWidth = (int) (desiredWidth/multiplier);
+//            } else if (desiredWidth > screenWidth) {
+//                float multiplier = (float) desiredWidth / screenWidth;
+//                Timber.d("multiplier: %s", multiplier);
+//                desiredHeight = (int) (desiredHeight/multiplier);
+//                desiredWidth = (int) (desiredWidth/multiplier);
+//            }
+//            Bitmap b = ((BitmapDrawable) image).getBitmap();
+//            Bitmap bitmapResized = Bitmap.createScaledBitmap(b, desiredWidth, desiredHeight, false);
+//            return new BitmapDrawable(BaseApplication.getAppInstance().getResources(), bitmapResized);
+//        }
     }
 }
