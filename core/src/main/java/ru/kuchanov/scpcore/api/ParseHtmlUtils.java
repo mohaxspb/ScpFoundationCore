@@ -218,10 +218,31 @@ public class ParseHtmlUtils {
         spoilerParts.add(elementExpanded.text().replaceAll("\\p{Z}", " "));
 //        Timber.d("spoilerParts: %s", spoilerParts.get(1));
 
+//        Timber.d("elementUnfolded.children().size(): %s", elementUnfolded.children().size());
+//        Timber.d("elementUnfolded.children().get(1).hasText(): %s", elementUnfolded.children().get(1).hasText());
+//        Timber.d("elementUnfolded: %s", elementUnfolded.html());
+
         final Element elementContent = elementUnfolded.getElementsByClass("collapsible-block-content").first();
-        if (elementContent != null) {
+        if (elementContent != null && elementContent.hasText()) {
+            Timber.d("elementContent != null && elementContent.hasText()");
             spoilerParts.add(elementContent.html());
+        }
+        //see spoiler in fucking scp-3003
+        else if (elementContent != null
+                && !elementContent.hasText()
+                && elementUnfolded.children().size() > 2
+                && elementUnfolded.children().get(2).hasText()
+        ) {
+            Timber.d("elementContent != null\n" +
+                    "                && !elementContent.hasText()\n" +
+                    "                && elementUnfolded.children().size() > 1\n" +
+                    "                && elementUnfolded.children().get(1).hasText()");
+            elementExpanded.parent().remove();
+            elementContent.remove();
+            unwrapTextAlignmentDivs(elementUnfolded.children().first());
+            spoilerParts.add(elementUnfolded.html());
         } else {
+            Timber.wtf("ERROR WHILE PARSING SPOILER CONTENT. Please, let developers know about it, if you see this message)");
             spoilerParts.add("ERROR WHILE PARSING SPOILER CONTENT. Please, let developers know about it, if you see this message)");
         }
         return spoilerParts;
@@ -264,6 +285,17 @@ public class ParseHtmlUtils {
         }
     }
 
+    private static void unwrapTextAlignmentDivs(Element element) {
+        if (element.tagName().equals("div")
+                && element.hasAttr("style")
+                && element.attr("style").contains("text-align")) {
+            element.unwrap();
+        }
+        for (Element child : element.children()) {
+            unwrapTextAlignmentDivs(child);
+        }
+    }
+
     public static Article parseArticle(
             @NotNull final String url,
             @NotNull final Document doc,
@@ -278,12 +310,9 @@ public class ParseHtmlUtils {
 
             //unwrap element in divs with text-alignment
             for (Element element : pageContent.children()) {
-                if (element.tagName().equals("div")
-                        && element.hasAttr("style")
-                        && element.attr("style").contains("text-align")) {
-                    element.unwrap();
-                }
+                unwrapTextAlignmentDivs(element);
             }
+
 
             //remove rating bar
             int rating = 0;
