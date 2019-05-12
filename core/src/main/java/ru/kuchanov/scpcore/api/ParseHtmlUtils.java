@@ -225,6 +225,7 @@ public class ParseHtmlUtils {
         final Element elementContent = elementUnfolded.getElementsByClass("collapsible-block-content").first();
         if (elementContent != null && elementContent.hasText()) {
             Timber.d("elementContent != null && elementContent.hasText()");
+            unwrapTextAlignmentDivs(elementContent);
             spoilerParts.add(elementContent.html());
         }
         //see spoiler in fucking scp-3003
@@ -286,12 +287,19 @@ public class ParseHtmlUtils {
     }
 
     private static void unwrapTextAlignmentDivs(Element element) {
+        Elements children = element.children();
         if (element.tagName().equals("div")
                 && element.hasAttr("style")
                 && element.attr("style").contains("text-align")) {
             element.unwrap();
         }
-        for (Element child : element.children()) {
+        if (element.tagName().equals("div")
+                && element.hasAttr("style")
+                && element.attr("style").contains("float")
+                && !element.className().equals("scp-image-block")) {
+            element.unwrap();
+        }
+        for (Element child : children) {
             unwrapTextAlignmentDivs(child);
         }
     }
@@ -487,16 +495,6 @@ public class ParseHtmlUtils {
 //                    Timber.d("nextSibling.nodeName(): %s", nextSibling.nodeName());
                 if (nextSibling != null && !nextSibling.toString().equals(" ") && nextSibling.nodeName().equals("#text")) {
                     element.after(new Element("div").appendChild(nextSibling));
-                }
-
-                //also fix scp-3000, where image and spoiler are in div tag, fucking shit! Web monkeys, ARGH!!!
-                if (!element.children().isEmpty() && element.children().size() == 2
-                        && element.child(0).tagName().equals("img") && element.child(1).className().equals("collapsible-block")) {
-                    final Node imgTag = element.childNode(0);
-                    final Node spoiler = element.childNode(1);
-                    element.before(imgTag);
-                    element.after(spoiler);
-                    element.remove();
                 }
             }
 
