@@ -1,5 +1,6 @@
 package ru.kuchanov.scpcore.monetization.util.playmarket
 
+import android.app.Activity
 import android.content.IntentSender
 import com.amazon.device.iap.PurchasingService
 import com.jakewharton.rxrelay.PublishRelay
@@ -52,6 +53,10 @@ class InAppHelper constructor(
 
 //        PurchasingService.getProductData(getNewSubsSkus().toMutableSet())
 //        PurchasingService.getProductData(getNewInAppsSkus().toMutableSet())
+    }
+
+    override fun onActivityDestroy(activity: Activity) {
+        Timber.d("onActivityDestroy")
     }
 
     override fun getInAppHistoryObservable(): Single<List<Item>> {
