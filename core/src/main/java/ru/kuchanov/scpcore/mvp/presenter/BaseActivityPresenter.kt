@@ -501,7 +501,9 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                         Timber.e("Firebase user exists, do nothing as we do not implement connect VK acc to Firebase as social provider")
                     } else {
                         startFirebaseLogin(
-                                Constants.Firebase.SocialProvider.VK, VKAccessToken.currentToken().accessToken)
+                                Constants.Firebase.SocialProvider.VK,
+                                VKAccessToken.currentToken().accessToken
+                        )
                     }
                 } else {
                     view.showMessage(R.string.error_login_no_email)
