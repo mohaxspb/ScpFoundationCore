@@ -49,10 +49,10 @@ interface InappPurchaseUtil {
 
     fun validateSubsObservable(): Single<List<Item>>
 
-    fun intentSenderSingle(@InappType type: String, sku: String): Single<IntentSender>
+    fun intentSenderSingle(@InappType type: String, sku: String): Single<IntentSenderWrapper>
 
     fun startPurchase(
-            intentSender: IntentSender,
+            intentSender: IntentSenderWrapper,
             activity: BaseActivity<*, *>,
             requestCode: Int
     )
@@ -66,7 +66,7 @@ interface InappPurchaseUtil {
     fun getNewInAppsSkus(): List<String>
 
     @SubscriptionType
-    fun getSubscriptionTypeFromItemsList( ownedItems: List<Item>): Int {
+    fun getSubscriptionTypeFromItemsList(ownedItems: List<Item>): Int {
         val context = BaseApplication.getAppInstance()
         //add old old donate subs, new ones and one with free trial period
 //        val fullVersionSkus = mutableListOf<String>(*context.getString(R.string.old_skus).split(",").toTypedArray())
@@ -113,3 +113,8 @@ interface InappPurchaseUtil {
         const val RESULT_ITEM_ALREADY_OWNED = 7 // - Failure to purchase since item is already owned
     }
 }
+
+class IntentSenderWrapper(
+        val intentSender: IntentSender?,
+        val sku: String
+)

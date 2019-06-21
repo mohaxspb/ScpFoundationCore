@@ -1,8 +1,8 @@
 package ru.kuchanov.scpcore.monetization.util.playmarket
 
 import android.app.Activity
-import android.content.IntentSender
 import com.amazon.device.iap.PurchasingService
+import com.amazon.device.iap.model.RequestId
 import com.jakewharton.rxrelay.PublishRelay
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.R
@@ -12,6 +12,7 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager
 import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
+import ru.kuchanov.scpcore.monetization.util.IntentSenderWrapper
 import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import rx.Single
 import rx.lang.kotlin.subscribeBy
@@ -66,10 +67,8 @@ class InAppHelper constructor(
     }
 
     override fun getSubsListToBuyObservable(skus: List<String>): Single<List<Subscription>> {
-        //todo
         Timber.d("getSubsListToBuyObservable: $skus")
 
-//        PurchasingService.getProductData(getNewSubsSkus().toMutableSet())
         PurchasingService.getProductData(skus.toMutableSet())
 
         return subscriptionsRelay
@@ -77,9 +76,6 @@ class InAppHelper constructor(
                 .take(1)
                 .toSingle()
 //                .doOnError { Timber.e("getSubsListToBuyObservable onError: $it") }
-//                .toSingle()
-
-//        return Single.just(listOf())
     }
 
     override fun getInAppsListToBuyObservable(): Single<List<Subscription>> {
@@ -103,14 +99,16 @@ class InAppHelper constructor(
         return Single.just(listOf())
     }
 
-    override fun intentSenderSingle(type: String, sku: String): Single<IntentSender> {
-        //todo
-        return Single.error(IllegalStateException("Not supported for Amazon!"))
+    override fun intentSenderSingle(type: String, sku: String): Single<IntentSenderWrapper> {
+        return Single.just(IntentSenderWrapper(null, sku))
     }
 
-    override fun startPurchase(intentSender: IntentSender, activity: BaseActivity<*, *>, requestCode: Int) {
+    override fun startPurchase(intentSender: IntentSenderWrapper, activity: BaseActivity<*, *>, requestCode: Int) {
         //todo
-        Timber.wtf("Not supported for Amazon!")
+//        Timber.wtf("Not supported for Amazon!")
+
+       val requestId: RequestId = PurchasingService.purchase(intentSender.sku);
+        Timber.d("onBuyOrangeClick: requestId ($requestId)");
     }
 
     override fun getNewSubsSkus(): List<String> =

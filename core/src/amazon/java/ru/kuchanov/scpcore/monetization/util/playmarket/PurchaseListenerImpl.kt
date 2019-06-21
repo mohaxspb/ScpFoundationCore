@@ -2,16 +2,14 @@ package ru.kuchanov.scpcore.monetization.util.playmarket
 
 import com.amazon.device.iap.PurchasingListener
 import com.amazon.device.iap.PurchasingService
-import com.amazon.device.iap.model.ProductDataResponse
+import com.amazon.device.iap.model.*
 import com.amazon.device.iap.model.ProductType.*
-import com.amazon.device.iap.model.PurchaseResponse
 import com.amazon.device.iap.model.PurchaseResponse.RequestStatus.*
-import com.amazon.device.iap.model.PurchaseUpdatesResponse
-import com.amazon.device.iap.model.UserDataResponse
 import com.jakewharton.rxrelay.PublishRelay
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
 import timber.log.Timber
+import com.amazon.device.iap.model.FulfillmentResult
 
 
 class PurchaseListenerImpl(
@@ -110,7 +108,12 @@ class PurchaseListenerImpl(
 
         when (purchaseResponse?.requestStatus) {
             SUCCESSFUL -> {
-                Timber.d("onPurchaseResponse SUCCESSFUL")
+                val receipt = purchaseResponse.receipt
+                Timber.d("onPurchaseResponse SUCCESSFUL: ${receipt.toJSON()}")
+
+//                iapManager.setAmazonUserId(response.getUserData().getUserId(), response.getUserData().getMarketplace());
+                iapManager.handleReceipt(receipt, response.getUserData());
+                iapManager.refreshOranges();
             }
             FAILED -> {
                 Timber.d("onPurchaseResponse FAILED")
@@ -179,5 +182,101 @@ class PurchaseListenerImpl(
                 Timber.d("onUserDataResponse userDataResponse?.requestStatus is NULL")
             }
         }
+    }
+
+    /////////////////////////sdfsdfsdfsdfsdf
+
+
+    fun handleReceipt(receipt: Receipt, userData: UserData) {
+        when (receipt.productType!!) {
+            CONSUMABLE ->
+                // try to do your application logic to fulfill the customer purchase
+                handleConsumablePurchase(receipt, userData)
+            ENTITLED -> {
+                //noting to do in Reader app
+            }
+            SUBSCRIPTION -> {
+                //todo
+            }
+        }
+    }
+
+    /**
+     * This method contains the business logic to fulfill the customer's
+     * purchase based on the receipt received from InAppPurchase SDK's
+     * [PurchasingListener.onPurchaseResponse] or
+     * [PurchasingListener.onPurchaseUpdates] method.
+     *
+     *
+     * @param receipt
+     * @param userData
+     */
+    fun handleConsumablePurchase(receipt: Receipt, userData: UserData) {
+        try {
+            if (receipt.isCanceled) {
+                revokeConsumablePurchase(receipt, userData)
+            } else {
+                // We strongly recommend that you verify the receipt server-side
+                if (!verifyReceiptFromYourService(receipt.receiptId, userData)) {
+                    // if the purchase cannot be verified,
+                    // show relevant error message to the customer.
+                    //todo show error message
+                    Timber.d("Purchase cannot be verified, please retry later.")
+                    return
+                }
+                if (receiptAlreadyFulfilled(receipt.receiptId, userData)) {
+                    // if the receipt was fulfilled before, just notify Amazon
+                    // Appstore it's Fulfilled again.
+                    PurchasingService.notifyFulfillment(receipt.receiptId, FulfillmentResult.FULFILLED)
+                    return
+                }
+
+                grantConsumablePurchase(receipt, userData)
+            }
+            return
+        } catch (e: Throwable) {
+            mainActivity.showMessage("Purchase cannot be completed, please retry")
+        }
+
+        //
+    }
+
+    private fun verifyReceiptFromYourService(receiptId: String?, userData: UserData): Boolean {
+        //todo check on server somehow
+        //later, I think
+        return true
+    }
+
+    /**
+     * Developer should implement de-duplication logic based on the receiptId
+     * received from Amazon Appstore. The receiptId is a unique identifier for
+     * every purchase, but the same purchase receipt can be pushed to your app
+     * multiple times in the event of connectivity issue while calling
+     * notifyFulfillment. So if the given receiptId was tracked and fulfilled by
+     * the app before, you should not grant the purchase content to the customer
+     * again, otherwise you are giving the item for free.
+     *
+     *
+     * @param receiptId
+     * @param userData
+     * @return
+     */
+    private fun receiptAlreadyFulfilled(receiptId: String, userData: UserData): Boolean {
+        // TODO Following is a simple de-duplication logic implementation using
+        // local SQLite database. We strongly recommend that you save purchase
+        // information and implement the de-duplication logic on your server
+        // side.
+
+        val receiptRecord = dataSource.getPurchaseRecord(receiptId, userData.userId) ?: return false
+
+        // Return true only if there is no local record for the receipt id/user
+        // id or the receipt id is not marked as FULFILLED/UNAVAILABLE.
+        return !(PurchaseStatus.FULFILLED === receiptRecord.getStatus() || PurchaseStatus.UNAVAILABLE === receiptRecord.getStatus())
+
+    }
+
+    private fun revokeConsumablePurchase(receipt: Receipt, userData: UserData) {
+        //noting to do, I think...
+        //see com.amazon.sample.iap.consumable.SampleIapManager#revokeConsumablePurchase() for details
     }
 }
