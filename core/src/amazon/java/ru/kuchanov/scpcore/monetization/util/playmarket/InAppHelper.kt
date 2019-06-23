@@ -27,7 +27,11 @@ class InAppHelper constructor(
     private val subscriptionsRelay = PublishRelay.create<List<Subscription>>()
     private val inappsRelay = PublishRelay.create<List<Subscription>>()
 
-    private val purchaseListener = PurchaseListenerImpl(subscriptionsRelay, inappsRelay)
+    private val purchaseListener = PurchaseListenerImpl(
+            subscriptionsRelay,
+            inappsRelay,
+            preferenceManager.preferences
+    )
 
     init {
         Timber.d("InAppHelper created!")
@@ -107,7 +111,7 @@ class InAppHelper constructor(
         //todo
 //        Timber.wtf("Not supported for Amazon!")
 
-       val requestId: RequestId = PurchasingService.purchase(intentSender.sku);
+        val requestId: RequestId = PurchasingService.purchase(intentSender.sku);
         Timber.d("onBuyOrangeClick: requestId ($requestId)");
     }
 

@@ -2,7 +2,6 @@ package ru.kuchanov.scpcore.manager;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
@@ -152,12 +151,25 @@ public class MyPreferenceManager {
 
     private final SharedPreferences mPreferences;
 
-    public MyPreferenceManager(@NotNull final Context context, @NotNull final Gson gson) {
+    public MyPreferenceManager(
+            @NotNull final Context context,
+            @NotNull final SharedPreferences preferences,
+            @NotNull final Gson gson
+    ) {
         super();
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        mPreferences = preferences;
         mGson = gson;
 
         fixFontNamesIssue(context);
+    }
+
+    /**
+     * Dirty hack to avoid different realizations of DI stuff for different flavors...
+     * Should be fixed somehow...
+     */
+    @Deprecated
+    public SharedPreferences getPreferences() {
+        return mPreferences;
     }
 
     private void fixFontNamesIssue(@NotNull final Context context) {

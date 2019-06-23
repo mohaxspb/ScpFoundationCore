@@ -33,8 +33,12 @@ public class StorageModule {
 
     @Provides
     @Singleton
-    MyPreferenceManager providesPreferenceManager(final Context context, final Gson gson) {
-        return new MyPreferenceManager(context, gson);
+    MyPreferenceManager providesPreferenceManager(
+            final Context context,
+            final SharedPreferences preferences,
+            final Gson gson
+    ) {
+        return new MyPreferenceManager(context, preferences, gson);
     }
 
     @Provides

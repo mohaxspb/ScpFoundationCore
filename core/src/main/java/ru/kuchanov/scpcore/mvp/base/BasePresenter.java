@@ -120,8 +120,12 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     }
 
     @Override
-    public void onPurchaseClick(final String id, final BaseActivity baseActivity, final boolean ignoreUserCheck) {
-        Timber.d("onPurchaseClick: $id, $baseActivity, $ignoreUserCheck");
+    public void onPurchaseClick(
+            final String id,
+            final BaseActivity baseActivity,
+            final boolean ignoreUserCheck
+    ) {
+        Timber.d("onPurchaseClick: %s, %s", id, ignoreUserCheck);
         //show warning if user not logged in
         if (!ignoreUserCheck && mUser == null) {
             getView().showOfferLoginForLevelUpPopup();
