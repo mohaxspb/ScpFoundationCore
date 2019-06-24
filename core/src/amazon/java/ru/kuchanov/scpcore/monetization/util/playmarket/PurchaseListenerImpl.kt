@@ -10,7 +10,6 @@ import com.jakewharton.rxrelay.PublishRelay
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
 import timber.log.Timber
-import com.amazon.device.iap.model.FulfillmentResult
 
 
 enum class AmazonPurchaseStatus {
@@ -18,9 +17,10 @@ enum class AmazonPurchaseStatus {
 }
 
 class PurchaseListenerImpl(
-        val subscriptionsRelay: PublishRelay<List<Subscription>>,
-        val inappsRelay: PublishRelay<List<Subscription>>,
-        val preferences: SharedPreferences
+        private val subscriptionsToBuyRelay: PublishRelay<List<Subscription>>,
+        private val inappsToBuyRelay: PublishRelay<List<Subscription>>,
+        private val inappsBoughtRelay: PublishRelay<Subscription>,
+        private val preferences: SharedPreferences
 ) : PurchasingListener {
 
     private var currentUserId: String? = null
@@ -60,7 +60,7 @@ class PurchaseListenerImpl(
                                     0
                             )
                         }
-                        inappsRelay.call(consumables)
+                        inappsToBuyRelay.call(consumables)
                     }
                     ENTITLED -> {
                         //we do not use it in this app
@@ -88,7 +88,7 @@ class PurchaseListenerImpl(
                                     0
                             )
                         }
-                        subscriptionsRelay.call(subscriptions)
+                        subscriptionsToBuyRelay.call(subscriptions)
                     }
                     null -> {
                         //do nothing...
@@ -200,6 +200,7 @@ class PurchaseListenerImpl(
 
 
     private fun handleReceipt(receipt: Receipt, userData: UserData) {
+        Timber.d("handleReceipt: $receipt")
         when (receipt.productType!!) {
             CONSUMABLE ->
                 // try to do your application logic to fulfill the customer purchase
@@ -234,18 +235,16 @@ class PurchaseListenerImpl(
                     // show relevant error message to the customer.
                     //todo show error message
                     Timber.e("Purchase cannot be verified, please retry later.")
-                    return
+                } else {
+                    if (receiptIsAlreadyFulfilled(receipt.receiptId, userData)) {
+                        // if the receipt was fulfilled before, just notify Amazon
+                        // Appstore it's Fulfilled again.
+                        PurchasingService.notifyFulfillment(receipt.receiptId, FulfillmentResult.FULFILLED)
+                    } else {
+                        grantConsumablePurchase(receipt, userData)
+                    }
                 }
-                if (receiptAlreadyFulfilled(receipt.receiptId, userData)) {
-                    // if the receipt was fulfilled before, just notify Amazon
-                    // Appstore it's Fulfilled again.
-                    PurchasingService.notifyFulfillment(receipt.receiptId, FulfillmentResult.FULFILLED)
-                    return
-                }
-
-                grantConsumablePurchase(receipt, userData)
             }
-            return
         } catch (e: Throwable) {
             //todo show error message
             Timber.e(e, "Purchase cannot be completed, please retry")
@@ -263,43 +262,12 @@ class PurchaseListenerImpl(
             // robust
 
             // create the purchase information in your app/your server,
-            // And grant the purchase to customer - give one orange to customer
-            // in this case
-            saveAmazonReceiptForUser(receipt.receiptId, userData.userId, AmazonPurchaseStatus.PAID)
-//            val mySku = MySku.fromSku(receipt.sku, userIapData.getAmazonMarketplace())
-//            // Verify that the SKU is still applicable.
-//            if (mySku == null) {
-//                Timber.w("The SKU [${receipt.sku}] in the receipt is not valid anymore ")
-//                // if the sku is not applicable anymore, call
-//                // PurchasingService.notifyFulfillment with status "UNAVAILABLE"
-//                saveAmazonReceiptForUser(receipt.receiptId, userData.userId, AmazonPurchaseStatus.UNAVAILABLE)
-//                PurchasingService.notifyFulfillment(receipt.receiptId, FulfillmentResult.UNAVAILABLE)
-//                return
-//            }
+            // And grant the purchase to customer - give one orange to customer in this case
+//            saveAmazonReceiptForUser(receipt.receiptId, userData.userId, AmazonPurchaseStatus.PAID)
 
-//            if (saveAmazonReceiptForUser(receipt.receiptId, userData.userId, AmazonPurchaseStatus.FULFILLED)) {
-//                // Update purchase status in SQLite database success
-//                //todo add points
-////                userIapData.setRemainingOranges(userIapData.getRemainingOranges() + 1)
-//                //some more shit, motherfucker
-////                saveUserIapData()
-//                Timber.i("Successfuly update purchase from PAID->FULFILLED for receipt id ${receipt.receiptId}")
-//                // update the status to Amazon Appstore. Once receive Fulfilled
-//                // status for the purchase, Amazon will not try to send the
-//                // purchase receipt to application any more
-//                PurchasingService.notifyFulfillment(receipt.receiptId, FulfillmentResult.FULFILLED)
-//            } else {
-//                // Update purchase status in SQLite database failed - Status
-//                // already changed.
-//                // Usually means the same receipt was updated by another
-//                // onPurchaseResponse or onPurchaseUpdatesResponse callback.
-//                // simply swallow the error and log it in this sample code
-//                Timber.w("Failed to update purchase from PAID->FULFILLED for receipt id ${receipt.receiptId}, Status already changed.")
-//            }
-
-            saveAmazonReceiptForUser(receipt.receiptId, userData.userId, AmazonPurchaseStatus.FULFILLED)
             // Update purchase status in SQLite database success
-            //todo add points
+            saveAmazonReceiptForUser(receipt.receiptId, userData.userId, AmazonPurchaseStatus.FULFILLED)
+
             //userIapData.setRemainingOranges(userIapData.getRemainingOranges() + 1)
             //some more shit, motherfucker
             //saveUserIapData()
@@ -308,6 +276,25 @@ class PurchaseListenerImpl(
             // status for the purchase, Amazon will not try to send the
             // purchase receipt to application any more
             PurchasingService.notifyFulfillment(receipt.receiptId, FulfillmentResult.FULFILLED)
+
+            //todo add points
+            inappsBoughtRelay.call(
+                    Subscription(
+                            receipt.sku,
+                            InappPurchaseUtil.InappType.IN_APP,
+                            "N/A", //receipt.price,
+                            -1,//price_amount_micros
+                            "N/A", //price_currency_code
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            0,
+                            null,
+                            0
+                    )
+            )
         } catch (e: Throwable) {
             // If for any reason the app is not able to fulfill the purchase,
             // add your own error handling code here.
@@ -337,20 +324,27 @@ class PurchaseListenerImpl(
      * @param userData
      * @return
      */
-    private fun receiptAlreadyFulfilled(receiptId: String, userData: UserData): Boolean {
+    private fun receiptIsAlreadyFulfilled(receiptId: String, userData: UserData): Boolean {
         // Following is a simple de-duplication logic implementation using
         // local prefs. We strongly recommend that you save purchase
         // information and implement the de-duplication logic on your server
         // side.
-
         val receiptRecord = getCachedAmazonInappStatusForReceiptIdAndUserId(receiptId, userData.userId)
-                ?: return false
 
         // Return true only if there is no local record for the receipt id/user
         // id or the receipt id is not marked as FULFILLED/UNAVAILABLE.
-        return !(AmazonPurchaseStatus.FULFILLED == receiptRecord || AmazonPurchaseStatus.UNAVAILABLE == receiptRecord)
-    }
 
+        Timber.d("receiptRecord: $receiptRecord")
+        val receiptIsNotExists = receiptRecord == null
+        val isFullfilledAlready = receiptRecord == AmazonPurchaseStatus.FULFILLED
+        Timber.d("receiptIsNotExists: $receiptIsNotExists")
+        Timber.d("isNotFullfilledAlready: $isFullfilledAlready")
+        if (receiptIsNotExists) {
+            return false
+        } else {
+            return isFullfilledAlready
+        }
+    }
 
     private fun saveAmazonReceiptForUser(
             receiptId: String,
@@ -365,6 +359,7 @@ class PurchaseListenerImpl(
             userId: String
     ): AmazonPurchaseStatus? {
         val statusFromPrefs = preferences.getString("${receiptId}_$userId", null)
+        Timber.d("getCachedAmazonInappStatusForReceiptIdAndUserId: $statusFromPrefs")
         return statusFromPrefs?.let { AmazonPurchaseStatus.valueOf(it) }
     }
 

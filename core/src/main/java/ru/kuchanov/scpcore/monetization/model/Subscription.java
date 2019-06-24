@@ -2,6 +2,7 @@ package ru.kuchanov.scpcore.monetization.model;
 
 import android.text.TextUtils;
 
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.Days;
 import org.joda.time.Period;
 import org.joda.time.format.ISOPeriodFormat;
@@ -116,6 +117,7 @@ public class Subscription {
         this.introductoryPriceCycles = introductoryPriceCycles;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "Subscription{" +

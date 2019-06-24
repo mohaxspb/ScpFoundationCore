@@ -146,8 +146,12 @@ public abstract class BasePresenter<V extends BaseMvp.View>
             requestCode = REQUEST_CODE_SUBSCRIPTION;
         }
         mInAppHelper.intentSenderSingle(type, id)
+                .flatMap(intentSender -> mInAppHelper.startPurchase(intentSender, baseActivity, requestCode))
                 .subscribe(
-                        intentSender -> mInAppHelper.startPurchase(intentSender, baseActivity, requestCode),
+                        subscription -> {
+                            //do noting... seems to be...
+                            getView().showMessage(context.getString(R.string.score_increased, context.getResources().getQuantityString(R.plurals.plurals_score, totalScoreToAdd, totalScoreToAdd)));
+                        },
                         e -> {
                             Timber.e(e);
                             getView().showError(e);
@@ -158,10 +162,12 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     @Override
     public void onLevelUpRetryClick() {
         mInAppHelper.getInAppHistoryObservable()
-                .flatMap(items -> mInAppHelper.consumeInApp(
-                        items.get(0).sku,
-                        items.get(0).purchaseData.purchaseToken
-                ))
+                .flatMap(
+                        items -> mInAppHelper.consumeInApp(
+                                items.get(0).sku,
+                                items.get(0).purchaseData.purchaseToken
+                        )
+                )
                 .map(response -> mDbProviderFactory.getDbProvider().getScore())
                 .doOnSubscribe(() -> getView().showProgressDialog(R.string.wait))
                 .doOnEach(notification -> getView().dismissProgressDialog())

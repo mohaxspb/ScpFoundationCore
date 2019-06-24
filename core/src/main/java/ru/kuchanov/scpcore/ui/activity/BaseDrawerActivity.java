@@ -212,12 +212,15 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                             InappPurchaseUtil.InappType.IN_APP,
                             mInAppHelper.getNewInAppsSkus().get(0)
                     )
+                    .flatMap(intentSender -> mInAppHelper.startPurchase(
+                            intentSender,
+                            this,
+                            REQUEST_CODE_INAPP
+                    ))
                     .subscribe(
-                            intentSender -> mInAppHelper.startPurchase(
-                                    intentSender,
-                                    this,
-                                    REQUEST_CODE_INAPP
-                            ),
+                            subscription -> {
+                                //do noting... seems to be...
+                            },
                             e -> {
                                 Timber.e(e);
                                 showError(e);

@@ -55,7 +55,7 @@ interface InappPurchaseUtil {
             intentSender: IntentSenderWrapper,
             activity: BaseActivity<*, *>,
             requestCode: Int
-    )
+    ): Single<Subscription>
 
     fun getFreeTrailSubsSkus(): List<String>
 

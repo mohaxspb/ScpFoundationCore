@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.monetization.model;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Created by mohax on 03.06.2017.
  * <p>
@@ -21,6 +23,7 @@ public class PurchaseData {
 
     public String purchaseToken;
 
+    @NotNull
     @Override
     public String toString() {
         return "PurchaseData{" +

@@ -1258,9 +1258,10 @@ public class ApiClient {
 
     /**
      * @param scoreToAdd score to add to user
-     * @return Observable, that emits user total score
+     * @return Single, that emits user total score
      */
     public Single<Integer> incrementScoreInFirebase(final int scoreToAdd) {
+        Timber.d("incrementScoreInFirebase: %s", scoreToAdd);
         return Single.create(subscriber -> {
             final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if (firebaseUser != null) {
@@ -1270,6 +1271,7 @@ public class ApiClient {
                         .child(firebaseUser.getUid())
                         .child(Constants.Firebase.Refs.SCORE)
                         .runTransaction(new Transaction.Handler() {
+                            @NotNull
                             @Override
                             public Transaction.Result doTransaction(@NonNull final MutableData mutableData) {
                                 Integer p = mutableData.getValue(Integer.class);

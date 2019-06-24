@@ -5,6 +5,7 @@ import com.amazon.device.iap.PurchasingService
 import com.amazon.device.iap.model.RequestId
 import com.jakewharton.rxrelay.PublishRelay
 import ru.kuchanov.scpcore.BaseApplication
+import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.api.ApiClient
 import ru.kuchanov.scpcore.db.DbProviderFactory
@@ -16,6 +17,7 @@ import ru.kuchanov.scpcore.monetization.util.IntentSenderWrapper
 import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import rx.Single
 import rx.lang.kotlin.subscribeBy
+import rx.schedulers.Schedulers
 import timber.log.Timber
 
 class InAppHelper constructor(
@@ -24,12 +26,14 @@ class InAppHelper constructor(
         val apiClient: ApiClient
 ) : InappPurchaseUtil {
 
-    private val subscriptionsRelay = PublishRelay.create<List<Subscription>>()
-    private val inappsRelay = PublishRelay.create<List<Subscription>>()
+    private val subscriptionsToBuyRelay = PublishRelay.create<List<Subscription>>()
+    private val inappsToBuyRelay = PublishRelay.create<List<Subscription>>()
+    private val inappsBoughtRelay = PublishRelay.create<Subscription>()
 
     private val purchaseListener = PurchaseListenerImpl(
-            subscriptionsRelay,
-            inappsRelay,
+            subscriptionsToBuyRelay,
+            inappsToBuyRelay,
+            inappsBoughtRelay,
             preferenceManager.preferences
     )
 
@@ -37,11 +41,14 @@ class InAppHelper constructor(
         Timber.d("InAppHelper created!")
         BaseApplication.getAppComponent().inject(this)
 
-        subscriptionsRelay.subscribeBy(
-                onNext = { Timber.d("subscriptionsRelay: $it") }
+        subscriptionsToBuyRelay.subscribeBy(
+                onNext = { Timber.d("subscriptionsToBuyRelay: $it") }
         )
-        inappsRelay.subscribeBy(
-                onNext = { Timber.d("inappsRelay: $it") }
+        inappsToBuyRelay.subscribeBy(
+                onNext = { Timber.d("inappsToBuyRelay: $it") }
+        )
+        inappsBoughtRelay.subscribeBy(
+                onNext = { Timber.d("inappsBoughtRelay: $it") }
         )
     }
 
@@ -75,7 +82,7 @@ class InAppHelper constructor(
 
         PurchasingService.getProductData(skus.toMutableSet())
 
-        return subscriptionsRelay
+        return subscriptionsToBuyRelay
 //                .doOnNext { Timber.d("getSubsListToBuyObservable onNext: $it") }
                 .take(1)
                 .toSingle()
@@ -83,18 +90,15 @@ class InAppHelper constructor(
     }
 
     override fun getInAppsListToBuyObservable(): Single<List<Subscription>> {
-        //todo
         PurchasingService.getProductData(getNewInAppsSkus().toMutableSet())
 
-        return inappsRelay
+        return inappsToBuyRelay
                 .take(1)
                 .toSingle()
-
-//        return Single.just(listOf())
     }
 
     override fun consumeInApp(sku: String, token: String): Single<Int> {
-        //todo
+        //noting to do for amazon
         return Single.just(-1)
     }
 
@@ -107,13 +111,42 @@ class InAppHelper constructor(
         return Single.just(IntentSenderWrapper(null, sku))
     }
 
-    override fun startPurchase(intentSender: IntentSenderWrapper, activity: BaseActivity<*, *>, requestCode: Int) {
-        //todo
-//        Timber.wtf("Not supported for Amazon!")
+//    override fun startPurchase(intentSender: IntentSenderWrapper, activity: BaseActivity<*, *>, requestCode: Int) {
+//        //todo
+////        Timber.wtf("Not supported for Amazon!")
+//
+//        val requestId: RequestId = PurchasingService.purchase(intentSender.sku);
+//        Timber.d("onBuyOrangeClick: requestId ($requestId)");
+//    }
 
-        val requestId: RequestId = PurchasingService.purchase(intentSender.sku);
-        Timber.d("onBuyOrangeClick: requestId ($requestId)");
+    override fun startPurchase(
+            intentSender: IntentSenderWrapper,
+            activity: BaseActivity<*, *>,
+            requestCode: Int
+    ): Single<Subscription> {
+        val requestId: RequestId = PurchasingService.purchase(intentSender.sku)
+        Timber.d("onBuyOrangeClick: requestId ($requestId)")
+        return inappsBoughtRelay
+                .take(1)
+                .toSingle()
+                .doOnEach { Timber.d("inappsBoughtRelay single doOnEach: $it") }
+                .flatMap { subscription -> levelUpInapp(subscription.productId).map { subscription } }
     }
+
+    private fun levelUpInapp(sku: String): Single<Int> =
+            apiClient
+                    .incrementScoreInFirebase(Constants.LEVEL_UP_SCORE_TO_ADD)
+                    .observeOn(Schedulers.io())
+                    .flatMap { newTotalScore ->
+                        apiClient
+                                .addRewardedInapp(sku)
+                                .flatMap { dbProviderFactory.dbProvider.updateUserScore(newTotalScore) }
+                    }
+                    .doOnError {
+                        Timber.e(it, "Error while increase user score from levelUp inapp")
+                        preferenceManager.addUnsyncedScore(Constants.LEVEL_UP_SCORE_TO_ADD)
+                    }
+
 
     override fun getNewSubsSkus(): List<String> =
             BaseApplication.getAppInstance().getString(R.string.ver4_skus).split(",")
