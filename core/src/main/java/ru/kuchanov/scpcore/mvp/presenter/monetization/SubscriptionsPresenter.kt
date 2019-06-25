@@ -62,7 +62,7 @@ class SubscriptionsPresenter(
         Single.zip(
                 inAppHelper.validateSubsObservable().doOnSuccess { Timber.d ("validateSubsObservable: $it")},
                 inAppHelper.getSubsListToBuyObservable(skuList).doOnSuccess { Timber.d ("getSubsListToBuyObservable: $it")},
-                inAppHelper.getInAppsListToBuyObservable().doOnSuccess { Timber.d ("getInAppsListToBuyObservable: $it")}
+                inAppHelper.getInAppsListToBuy().doOnSuccess { Timber.d ("getInAppsListToBuy: $it")}
         ) { t1: List<Item>, t2: List<Subscription>, t3: List<Subscription> -> Triple(t1, t2, t3) }
                 .doOnSuccess {
                     Timber.d("getMarketData: ${it.first}")

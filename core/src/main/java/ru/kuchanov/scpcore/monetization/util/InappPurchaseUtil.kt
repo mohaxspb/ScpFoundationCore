@@ -43,7 +43,7 @@ interface InappPurchaseUtil {
 
     fun getSubsListToBuyObservable(skus: List<String>): Single<List<Subscription>>
 
-    fun getInAppsListToBuyObservable(): Single<List<Subscription>>
+    fun getInAppsListToBuy(): Single<List<Subscription>>
 
     fun consumeInApp(sku: String, token: String): Single<Int>
 

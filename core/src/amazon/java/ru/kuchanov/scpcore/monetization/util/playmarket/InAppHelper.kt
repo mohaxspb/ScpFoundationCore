@@ -5,7 +5,6 @@ import com.amazon.device.iap.PurchasingService
 import com.amazon.device.iap.model.RequestId
 import com.jakewharton.rxrelay.PublishRelay
 import ru.kuchanov.scpcore.BaseApplication
-import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.api.ApiClient
 import ru.kuchanov.scpcore.db.DbProviderFactory
@@ -17,7 +16,6 @@ import ru.kuchanov.scpcore.monetization.util.IntentSenderWrapper
 import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import rx.Single
 import rx.lang.kotlin.subscribeBy
-import rx.schedulers.Schedulers
 import timber.log.Timber
 
 class InAppHelper constructor(
@@ -89,7 +87,7 @@ class InAppHelper constructor(
 //                .doOnError { Timber.e("getSubsListToBuyObservable onError: $it") }
     }
 
-    override fun getInAppsListToBuyObservable(): Single<List<Subscription>> {
+    override fun getInAppsListToBuy(): Single<List<Subscription>> {
         PurchasingService.getProductData(getNewInAppsSkus().toMutableSet())
 
         return inappsToBuyRelay
@@ -111,14 +109,6 @@ class InAppHelper constructor(
         return Single.just(IntentSenderWrapper(null, sku))
     }
 
-//    override fun startPurchase(intentSender: IntentSenderWrapper, activity: BaseActivity<*, *>, requestCode: Int) {
-//        //todo
-////        Timber.wtf("Not supported for Amazon!")
-//
-//        val requestId: RequestId = PurchasingService.purchase(intentSender.sku);
-//        Timber.d("onBuyOrangeClick: requestId ($requestId)");
-//    }
-
     override fun startPurchase(
             intentSender: IntentSenderWrapper,
             activity: BaseActivity<*, *>,
@@ -130,23 +120,7 @@ class InAppHelper constructor(
                 .take(1)
                 .toSingle()
                 .doOnEach { Timber.d("inappsBoughtRelay single doOnEach: $it") }
-                .flatMap { subscription -> levelUpInapp(subscription.productId).map { subscription } }
     }
-
-    private fun levelUpInapp(sku: String): Single<Int> =
-            apiClient
-                    .incrementScoreInFirebase(Constants.LEVEL_UP_SCORE_TO_ADD)
-                    .observeOn(Schedulers.io())
-                    .flatMap { newTotalScore ->
-                        apiClient
-                                .addRewardedInapp(sku)
-                                .flatMap { dbProviderFactory.dbProvider.updateUserScore(newTotalScore) }
-                    }
-                    .doOnError {
-                        Timber.e(it, "Error while increase user score from levelUp inapp")
-                        preferenceManager.addUnsyncedScore(Constants.LEVEL_UP_SCORE_TO_ADD)
-                    }
-
 
     override fun getNewSubsSkus(): List<String> =
             BaseApplication.getAppInstance().getString(R.string.ver4_skus).split(",")

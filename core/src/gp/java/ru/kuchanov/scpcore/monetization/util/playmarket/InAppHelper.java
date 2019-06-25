@@ -369,7 +369,7 @@ public class InAppHelper implements InappPurchaseUtil {
     @NotNull
     @Override
     public Single<List<Subscription>> getInAppsListToBuyObservable() {
-        Timber.d("getInAppsListToBuyObservable");
+        Timber.d("getInAppsListToBuy");
         return Single.create(subscriber -> {
             try {
                 //get all subs detailed info

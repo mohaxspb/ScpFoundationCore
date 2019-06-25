@@ -113,7 +113,7 @@ class LeaderboardFragment :
                 showUserPosition(userPositionOnLeaderboard)
             }
         } else {
-            mPresenter.updateLeaderboardFromApi(0)
+            mPresenter.loadInitialData()
         }
 
         refresh.setOnClickListener { getPresenter().loadInitialData() }

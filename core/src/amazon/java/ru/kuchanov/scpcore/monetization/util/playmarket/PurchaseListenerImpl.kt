@@ -47,8 +47,7 @@ class PurchaseListenerImpl(
                                     it.sku,
                                     InappPurchaseUtil.InappType.IN_APP,
                                     it.price,
-//                                    it.price.toLong(), //price_amount_micros
-                                    0,
+                                    0, //price_amount_micros
                                     "N/A", //price_currency_code
                                     it.title,
                                     it.description,

@@ -149,8 +149,10 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                 .flatMap(intentSender -> mInAppHelper.startPurchase(intentSender, baseActivity, requestCode))
                 .subscribe(
                         subscription -> {
-                            //do noting... seems to be...
-                            getView().showMessage(context.getString(R.string.score_increased, context.getResources().getQuantityString(R.plurals.plurals_score, totalScoreToAdd, totalScoreToAdd)));
+                            //update user score and
+                            //show message if need (for GP we show it in other place, so check it)
+                            //fixme check duplicated score for GP
+                            updateUserScoreForInapp(subscription.productId);
                         },
                         e -> {
                             Timber.e(e);
@@ -484,7 +486,10 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 
 
     @Override
-    public void updateUserScoreForScoreAction(@ScoreAction final String action, @Nullable final AddScoreListener addScoreListener) {
+    public void updateUserScoreForScoreAction(
+            @ScoreAction final String action,
+            @Nullable final AddScoreListener addScoreListener
+    ) {
         Timber.d("updateUserScore: %s", action);
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
@@ -557,8 +562,11 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     }
 
     /**
-     * check if user logged in, calculate final score to add value from modificators, if user do not have subscription we increment unsynced score if user has subscription we increment score in firebase while incrementing we check if user already received score from group and if so - do not
-     * increment it
+     * check if user logged in, calculate final score to add value from modificators,
+     * if user do not have subscription we increment unsynced score
+     * if user has subscription we increment score in firebase
+     * while incrementing we check if user already received score from group and if so -
+     * do not increment it
      */
     @Override
     public void updateUserScoreForScoreAction(@ScoreAction final String action) {

@@ -207,24 +207,11 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                     .show()
             );
 
-            headerViewHolder.levelContainer.setOnClickListener(view -> mInAppHelper
-                    .intentSenderSingle(
-                            InappPurchaseUtil.InappType.IN_APP,
-                            mInAppHelper.getNewInAppsSkus().get(0)
-                    )
-                    .flatMap(intentSender -> mInAppHelper.startPurchase(
-                            intentSender,
+            headerViewHolder.levelContainer.setOnClickListener(view ->
+                    mPresenter.onPurchaseClick(
+                            mInAppHelper.getNewInAppsSkus().get(0),
                             this,
-                            REQUEST_CODE_INAPP
-                    ))
-                    .subscribe(
-                            subscription -> {
-                                //do noting... seems to be...
-                            },
-                            e -> {
-                                Timber.e(e);
-                                showError(e);
-                            }
+                            false
                     )
             );
 

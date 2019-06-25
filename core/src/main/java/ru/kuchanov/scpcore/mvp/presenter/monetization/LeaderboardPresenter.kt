@@ -90,7 +90,7 @@ class LeaderboardPresenter(
 
         Single
                 .zip(
-                        inAppHelper.getInAppsListToBuyObservable(),
+                        inAppHelper.getInAppsListToBuy(),
                         Single.just(mDbProviderFactory.dbProvider.userUnmanaged)
                 ) { inApps: List<Subscription>, user: User? ->
                     Pair(
@@ -308,7 +308,10 @@ class LeaderboardPresenter(
 
     override fun onRewardedVideoClick() = view.onRewardedVideoClick()
 
-    private fun createViewModels(users: List<LeaderboardUser>, inApps: List<Subscription>): List<MyListItem> {
+    private fun createViewModels(
+            users: List<LeaderboardUser>,
+            inApps: List<Subscription>
+    ): List<MyListItem> {
         val viewModels = mutableListOf<MyListItem>()
 
         viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
@@ -374,8 +377,11 @@ class LeaderboardPresenter(
                 LabelViewModel(
                         R.string.leaderboard_inapp_label,
                         textColor = R.color.material_green_500,
-                        bgColor = R.color.freeAdsBackgroundColor))
+                        bgColor = R.color.freeAdsBackgroundColor
+                )
+        )
         val levelUpInApp = inApps.firstOrNull()
+        Timber.d("levelUpInApp: $levelUpInApp")
         monetizationViewModels.add(
                 InAppViewModel(
                         R.string.leaderboard_inapp_title,
@@ -383,7 +389,9 @@ class LeaderboardPresenter(
                         levelUpInApp?.price ?: "N/A",
                         levelUpInApp?.productId ?: "N/A",
                         R.drawable.ic_leaderbord_levelup_icon,
-                        R.color.freeAdsBackgroundColor))
+                        R.color.freeAdsBackgroundColor
+                )
+        )
         //appodeal rewarded video
         val score: Int = FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_REWARDED_VIDEO).toInt()
         monetizationViewModels.add(
@@ -394,7 +402,9 @@ class LeaderboardPresenter(
                                 score
                         ),
                         textColor = R.color.material_green_500,
-                        bgColor = R.color.freeAdsBackgroundColor))
+                        bgColor = R.color.freeAdsBackgroundColor
+                )
+        )
         monetizationViewModels.add(
                 InAppViewModel(
                         R.string.leaderboard_inapp_title,
@@ -402,7 +412,9 @@ class LeaderboardPresenter(
                         "FREE",
                         APPODEAL_ID,
                         R.drawable.ic_inspect,
-                        R.color.freeAdsBackgroundColor))
+                        R.color.freeAdsBackgroundColor
+                )
+        )
 
         return monetizationViewModels
     }
