@@ -22,23 +22,16 @@ import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
-import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.LoginActions;
-import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import rx.Observable;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-import static ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP;
-import static ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment.REQUEST_CODE_SUBSCRIPTION;
-
 /**
  * Created by y.kuchanov on 21.12.16.
- * <p>
- * for scp_ru
  */
 public abstract class BasePresenter<V extends BaseMvp.View>
         extends MvpNullObjectBasePresenter<V>
@@ -120,54 +113,12 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     }
 
     @Override
-    public void onPurchaseClick(
-            final String id,
-            final BaseActivity baseActivity,
-            final boolean ignoreUserCheck
-    ) {
-        Timber.d("onPurchaseClick: %s, %s", id, ignoreUserCheck);
-        //show warning if user not logged in
-        if (!ignoreUserCheck && mUser == null) {
-            getView().showOfferLoginForLevelUpPopup();
-            return;
-        }
-
-        final String type;
-        if (mInAppHelper.getNewInAppsSkus().contains(id)) {
-            type = InappPurchaseUtil.InappType.IN_APP;
-        } else {
-            type = InappPurchaseUtil.InappType.SUBS;
-        }
-
-        final int requestCode;
-        if (type.equals(InAppHelper.InappType.IN_APP)) {
-            requestCode = REQUEST_CODE_INAPP;
-        } else {
-            requestCode = REQUEST_CODE_SUBSCRIPTION;
-        }
-        mInAppHelper.intentSenderSingle(type, id)
-                .flatMap(intentSender -> mInAppHelper.startPurchase(intentSender, baseActivity, requestCode))
-                .subscribe(
-                        subscription -> {
-                            //update user score and
-                            //show message if need (for GP we show it in other place, so check it)
-                            //fixme check duplicated score for GP
-                            updateUserScoreForInapp(subscription.productId);
-                        },
-                        e -> {
-                            Timber.e(e);
-                            getView().showError(e);
-                        }
-                );
-    }
-
-    @Override
     public void onLevelUpRetryClick() {
         mInAppHelper.getInAppHistoryObservable()
                 .flatMap(
                         items -> mInAppHelper.consumeInApp(
-                                items.get(0).sku,
-                                items.get(0).purchaseData.purchaseToken
+                                items.get(0).getSku(),
+                                items.get(0).getPurchaseData().getPurchaseToken()
                         )
                 )
                 .map(response -> mDbProviderFactory.getDbProvider().getScore())

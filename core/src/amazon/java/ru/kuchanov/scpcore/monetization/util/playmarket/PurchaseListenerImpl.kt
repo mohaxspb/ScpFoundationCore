@@ -1,7 +1,6 @@
 package ru.kuchanov.scpcore.monetization.util.playmarket
 
 import android.content.SharedPreferences
-import android.util.Log
 import com.amazon.device.iap.PurchasingListener
 import com.amazon.device.iap.PurchasingService
 import com.amazon.device.iap.model.*
@@ -11,8 +10,6 @@ import com.jakewharton.rxrelay.PublishRelay
 import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
-import rx.Observable
-import rx.Single
 import timber.log.Timber
 
 
@@ -24,7 +21,7 @@ class PurchaseListenerImpl(
         private val subscriptionsToBuyRelay: PublishRelay<List<Subscription>>,
         private val inappsToBuyRelay: PublishRelay<List<Subscription>>,
         private val inappsBoughtRelay: PublishRelay<Subscription>,
-        private val ownedSubsRelay: PublishRelay<List<Subscription>>,
+        private val ownedSubsRelay: PublishRelay<List<Item>>,
         private val preferences: SharedPreferences
 ) : PurchasingListener {
 
@@ -157,11 +154,10 @@ class PurchaseListenerImpl(
                         .receipts
                         .filter { it.productType == SUBSCRIPTION }
                         .filter { !it.isCanceled }
-                ownedSubsRelay.call(ownedNonCanceledSubs.map {
-                    Item(
+                ownedSubsRelay.call(ownedNonCanceledSubs.map { Item(sku = it.sku) })
 
-                    )
-                })
+                //todo handle non consumed levelUp inapps
+
                 if (purchaseUpdatesResponse.hasMore()) {
                     PurchasingService.getPurchaseUpdates(false)
                 }
@@ -287,16 +283,17 @@ class PurchaseListenerImpl(
 
     private fun grantSubscriptionPurchase(receipt: Receipt, userData: UserData) {
         Timber.d("grantSubscriptionPurchase: $receipt")
-        //todo
 
         try {
             //todo
             // Set the purchase status to fulfilled for your application
 //            saveSubscriptionRecord(receipt, userData.userId)
+            ownedSubsRelay.call(listOf(Item(sku = receipt.sku)))
             PurchasingService.notifyFulfillment(receipt.receiptId, FulfillmentResult.FULFILLED)
         } catch (e: Throwable) {
             // If for any reason the app is not able to fulfill the purchase,
             // add your own error handling code here.
+            //todo handle error
             Timber.e(e, "Failed to grant subscription purchase")
         }
 

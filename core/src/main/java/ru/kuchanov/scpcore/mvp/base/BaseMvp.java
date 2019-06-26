@@ -11,12 +11,9 @@ import org.jetbrains.annotations.Nullable;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
-import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 
 /**
  * Created by mohax on 14.01.2017.
- * <p>
- * for scp_ru
  */
 public interface BaseMvp {
 
@@ -60,8 +57,6 @@ public interface BaseMvp {
         User getUser();
 
         void onUserChanged(User user);
-
-        void onPurchaseClick(String id, BaseActivity baseActivity, boolean ignoreUserCheck);
 
         void onLevelUpRetryClick();
 

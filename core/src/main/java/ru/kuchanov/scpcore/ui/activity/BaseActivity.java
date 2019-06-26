@@ -551,7 +551,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     if (randomInt > 1) {
                         presenter.onPurchaseClick(
                                 mInAppHelper.getNewSubsSkus().get(0),
-                                this,
                                 true
                         );
                     } else {

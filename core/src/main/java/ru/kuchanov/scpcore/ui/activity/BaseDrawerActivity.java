@@ -32,7 +32,6 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.api.model.remoteconfig.LevelsJson;
 import ru.kuchanov.scpcore.db.model.User;
-import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil;
 import ru.kuchanov.scpcore.mvp.contract.DrawerMvp;
 import ru.kuchanov.scpcore.ui.holder.drawer.HeaderViewHolderLogined;
 import ru.kuchanov.scpcore.ui.holder.drawer.HeaderViewHolderUnlogined;
@@ -210,7 +209,6 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
             headerViewHolder.levelContainer.setOnClickListener(view ->
                     mPresenter.onPurchaseClick(
                             mInAppHelper.getNewInAppsSkus().get(0),
-                            this,
                             false
                     )
             );

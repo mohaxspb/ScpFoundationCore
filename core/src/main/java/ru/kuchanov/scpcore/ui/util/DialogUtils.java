@@ -1,15 +1,14 @@
 package ru.kuchanov.scpcore.ui.util;
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.gson.GsonBuilder;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-
-import org.jetbrains.annotations.NotNull;
-
 import android.content.Context;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.LinearLayoutManager;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.gson.GsonBuilder;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -118,7 +117,8 @@ public class DialogUtils {
                 .content(baseActivity.getString(R.string.dialog_offer_free_trial_subscription_content, freeTrialDays, freeTrialDays))
                 .positiveText(R.string.yes_bliad)
                 .onPositive((dialog, which) -> baseActivity.getPresenter().onPurchaseClick(
-                        sku, baseActivity, false
+                        sku,
+                        false
                 ))
                 .negativeText(android.R.string.cancel)
                 .onNegative((dialog, which) -> dialog.dismiss())

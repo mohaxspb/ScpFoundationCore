@@ -97,7 +97,7 @@ class LeaderboardFragment :
         delegateManager.addDelegate(InAppDelegate { id ->
             when (id) {
                 LeaderboardPresenter.APPODEAL_ID -> presenter.onRewardedVideoClick()
-                else -> baseActivity?.let { presenter.onPurchaseClick(id, it, false) }
+                else -> baseActivity?.getPresenter()?.onPurchaseClick(id, false)
             }
         })
 

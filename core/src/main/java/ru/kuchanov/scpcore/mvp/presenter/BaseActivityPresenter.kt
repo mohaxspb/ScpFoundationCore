@@ -40,6 +40,7 @@ import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
+import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import ru.kuchanov.scpcore.ui.activity.BaseActivity.RC_SIGN_IN
 import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity
 import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment
@@ -485,6 +486,43 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                             }
                     )
         }
+    }
+
+    override fun onPurchaseClick(
+            id: String,
+            ignoreUserCheck: Boolean
+    ) {
+        Timber.d("onPurchaseClick: %s, %s", id, ignoreUserCheck)
+        //show warning if user not logged in
+        if (!ignoreUserCheck && user == null) {
+            view.showOfferLoginForLevelUpPopup()
+            return
+        }
+
+        val type = if (mInAppHelper.getNewInAppsSkus().contains(id)) {
+            InappPurchaseUtil.InappType.IN_APP
+        } else {
+            InappPurchaseUtil.InappType.SUBS
+        }
+
+        mInAppHelper.intentSenderSingle(type, id)
+                .flatMap { intentSender -> mInAppHelper.startPurchase(intentSender) }
+                .subscribe(
+                        { subscription ->
+                            if (subscription.type == InappPurchaseUtil.InappType.IN_APP) {
+                                //update user score and
+                                //show message if need (for GP we show it in other place, so check it)
+                                //fixme check duplicated score for GP
+                                updateUserScoreForInapp(subscription.productId)
+                            } else if (subscription.type == InappPurchaseUtil.InappType.SUBS) {
+                                view.updateOwnedMarketItems()
+                            }
+                        },
+                        { e ->
+                            Timber.e(e)
+                            view.showError(e)
+                        }
+                )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {

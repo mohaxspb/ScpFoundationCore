@@ -72,8 +72,7 @@ class InAppHelper constructor(
     }
 
     override fun getInAppHistoryObservable(): Single<List<Item>> {
-        //todo
-
+        //for amazon we don't (seems to be) have situation with unconsumed levelUps...
         return Single.just(listOf())
     }
 
@@ -138,21 +137,41 @@ class InAppHelper constructor(
                 .toSingle()
     }
 
-    override fun intentSenderSingle(type: String, sku: String): Single<IntentSenderWrapper> {
-        return Single.just(IntentSenderWrapper(null, sku))
+    override fun intentSenderSingle(@InappPurchaseUtil.InappType type: String, sku: String): Single<IntentSenderWrapper> {
+        return Single.just(IntentSenderWrapper(null, type, sku))
     }
 
     override fun startPurchase(
-            intentSender: IntentSenderWrapper,
-            activity: BaseActivity<*, *>,
-            requestCode: Int
+            intentSender: IntentSenderWrapper
     ): Single<Subscription> {
         val requestId: RequestId = PurchasingService.purchase(intentSender.sku)
         Timber.d("onBuyOrangeClick: requestId ($requestId)")
-        return inappsBoughtRelay
-                .take(1)
-                .toSingle()
-                .doOnEach { Timber.d("inappsBoughtRelay single doOnEach: $it") }
+        return when(intentSender.type){
+            InappPurchaseUtil.InappType.IN_APP-> inappsBoughtRelay
+                    .take(1)
+                    .toSingle()
+                    .doOnEach { Timber.d("inappsBoughtRelay single doOnEach: $it") }
+            InappPurchaseUtil.InappType.SUBS -> ownedSubsRelay
+                    .take(1)
+                    .map { it.first() }
+                    .map { Subscription(
+                            it.sku,
+                            InappPurchaseUtil.InappType.SUBS,
+                            null,
+                            0, //price_amount_micros
+                            null, //price_currency_code
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            0,
+                            null,
+                            0
+                    ) }
+                    .toSingle()
+            else -> throw IllegalArgumentException("Unexpected type: ${intentSender.type}")
+        }
     }
 
     override fun getNewSubsSkus(): List<String> =

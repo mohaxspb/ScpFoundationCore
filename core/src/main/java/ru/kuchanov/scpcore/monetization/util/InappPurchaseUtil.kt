@@ -10,7 +10,7 @@ import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import rx.Single
-import java.util.*
+import timber.log.Timber
 
 interface InappPurchaseUtil {
 
@@ -51,11 +51,7 @@ interface InappPurchaseUtil {
 
     fun intentSenderSingle(@InappType type: String, sku: String): Single<IntentSenderWrapper>
 
-    fun startPurchase(
-            intentSender: IntentSenderWrapper,
-            activity: BaseActivity<*, *>,
-            requestCode: Int
-    ): Single<Subscription>
+    fun startPurchase(intentSender: IntentSenderWrapper): Single<Subscription>
 
     fun getFreeTrailSubsSkus(): List<String>
 
@@ -84,9 +80,14 @@ interface InappPurchaseUtil {
         noAdsSkus += context.getString(R.string.ver3_subs_no_ads)
         noAdsSkus += context.getString(R.string.ver4_subs_no_ads)
 
-        val ownedSkus = getSkuListFromItemsList(ownedItems)
+        val ownedSkus = ownedItems.map { it.sku }
         noAdsSkus.retainAll(ownedSkus)
         fullVersionSkus.retainAll(ownedSkus)
+
+        Timber.d("ownedItems: $ownedItems")
+        Timber.d("ownedSkus: $ownedSkus")
+        Timber.d("noAdsSkus: $noAdsSkus")
+        Timber.d("fullVersionSkus: $fullVersionSkus")
 
         return if (fullVersionSkus.isEmpty())
             if (noAdsSkus.isEmpty())
@@ -95,14 +96,6 @@ interface InappPurchaseUtil {
                 SubscriptionType.NO_ADS
         else
             SubscriptionType.FULL_VERSION
-    }
-
-    private fun getSkuListFromItemsList(ownedItems: List<Item>): List<String> {
-        val skus = ArrayList<String>()
-        for (item in ownedItems) {
-            skus.add(item.sku)
-        }
-        return skus
     }
 
     companion object {
@@ -114,7 +107,8 @@ interface InappPurchaseUtil {
     }
 }
 
-class IntentSenderWrapper(
+data class IntentSenderWrapper(
         val intentSender: IntentSender?,
+        val type: String,
         val sku: String
 )

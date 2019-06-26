@@ -25,6 +25,8 @@ public interface BaseActivityMvp {
 
         void onInviteSent(String inviteId);
 
+        void onPurchaseClick(String id, boolean ignoreUserCheck);
+
         /**
          *
          * @return true if handled in presenter

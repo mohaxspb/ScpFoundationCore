@@ -83,9 +83,8 @@ class SubscriptionsFragment :
                     if (id == ID_FREE_ADS_DISABLE) {
                         navigateToDisableAds()
                     } else {
-                        this@SubscriptionsFragment.getPresenter().onPurchaseClick(
+                        this@SubscriptionsFragment.baseActivity?.getPresenter()?.onPurchaseClick(
                                 id,
-                                baseActivity,
                                 false
                         )
                     }
@@ -104,9 +103,8 @@ class SubscriptionsFragment :
         delegateManager.addDelegate(
                 CurSubsEmptyDelegate(
                         {
-                            this@SubscriptionsFragment.getPresenter().onPurchaseClick(
+                            this@SubscriptionsFragment.baseActivity?.getPresenter()?.onPurchaseClick(
                                     inAppHelper.getNewInAppsSkus().first(),
-                                    baseActivity,
                                     false
                             )
                         },
@@ -193,6 +191,8 @@ class SubscriptionsFragment :
                     owned.any { it.sku.contains("1") } -> owned.find { it.sku.contains("1") }
                     else -> throw IllegalArgumentException("unexpected subs period")
                 } ?: throw IllegalArgumentException("item is null! wtf?!")
+
+                Timber.d("ownedItem: $item")
 
                 @StringRes
                 val title: Int
