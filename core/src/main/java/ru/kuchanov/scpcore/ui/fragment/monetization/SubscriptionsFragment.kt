@@ -78,44 +78,50 @@ class SubscriptionsFragment :
         delegateManager.addDelegate(TextDelegate())
         delegateManager.addDelegate(LabelDelegate())
         delegateManager.addDelegate(LabelWithPercentDelegate())
-        delegateManager.addDelegate(InAppDelegate { id ->
-            if (id == ID_FREE_ADS_DISABLE) {
-                navigateToDisableAds()
-            } else {
-                    this@SubscriptionsFragment.getPresenter().onPurchaseClick(
-                            id,
-                            baseActivity,
-                            false
-                    )
-            }
-        })
-        delegateManager.addDelegate(CurSubsDelegate(
-                {
-                    getPresenter().onCurrentSubscriptionClick(it)
-                },
-                {
-                    this@SubscriptionsFragment.getPresenter().getMarketData()
-                }
-        ))
-        delegateManager.addDelegate(CurSubsEmptyDelegate(
-                {
+        delegateManager.addDelegate(
+                InAppDelegate { id ->
+                    if (id == ID_FREE_ADS_DISABLE) {
+                        navigateToDisableAds()
+                    } else {
                         this@SubscriptionsFragment.getPresenter().onPurchaseClick(
-                                inAppHelper.getNewInAppsSkus().first(),
+                                id,
                                 baseActivity,
                                 false
                         )
-                },
-                {
-                    this@SubscriptionsFragment.getPresenter().getMarketData()
+                    }
                 }
-        ))
+        )
+        delegateManager.addDelegate(
+                CurSubsDelegate(
+                        {
+                            getPresenter().onCurrentSubscriptionClick(it)
+                        },
+                        {
+                            this@SubscriptionsFragment.getPresenter().getMarketData()
+                        }
+                )
+        )
+        delegateManager.addDelegate(
+                CurSubsEmptyDelegate(
+                        {
+                            this@SubscriptionsFragment.getPresenter().onPurchaseClick(
+                                    inAppHelper.getNewInAppsSkus().first(),
+                                    baseActivity,
+                                    false
+                            )
+                        },
+                        {
+                            this@SubscriptionsFragment.getPresenter().getMarketData()
+                        }
+                )
+        )
         adapter = ListDelegationAdapter(delegateManager)
         recyclerView.adapter = adapter
 
         refresh.setOnClickListener { getPresenter().getMarketData() }
 
         if (presenter.owned == null) {
-             getPresenter().getMarketData()
+            getPresenter().getMarketData()
         } else {
             showProgressCenter(false)
             presenter.apply { showData(owned!!, subsToBuy!!, inAppsToBuy!!, type) }
@@ -244,7 +250,11 @@ class SubscriptionsFragment :
                 .filter { it.productId !in inAppHelper.getNewNoAdsSubsSkus() }
                 .first { SubscriptionsPresenter.getMonthFromSkuId(it.productId) == 1 }
 
-        toBuy.sortedWith(Comparator { t1, t2 -> t1.price_amount_micros.compareTo(t2.price_amount_micros) })
+        toBuy.sortedWith(
+                Comparator { t1, t2 ->
+                    t1.price_amount_micros.compareTo(t2.price_amount_micros)
+                }
+        )
                 .forEach {
                     if (noAdsSubsEnabled && (it.productId in inAppHelper.getNewNoAdsSubsSkus())) {
                         items.add(
@@ -340,7 +350,7 @@ class SubscriptionsFragment :
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
             Keys.HAS_NO_ADS_SUBSCRIPTION, Keys.HAS_SUBSCRIPTION -> {
-               this@SubscriptionsFragment.getPresenter().getMarketData()
+                this@SubscriptionsFragment.getPresenter().getMarketData()
             }
             else -> {
                 //do nothing

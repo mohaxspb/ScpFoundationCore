@@ -27,11 +27,13 @@ class InAppHelper constructor(
     private val subscriptionsToBuyRelay = PublishRelay.create<List<Subscription>>()
     private val inappsToBuyRelay = PublishRelay.create<List<Subscription>>()
     private val inappsBoughtRelay = PublishRelay.create<Subscription>()
+    private val ownedSubsRelay = PublishRelay.create<List<Item>>()
 
     private val purchaseListener = PurchaseListenerImpl(
             subscriptionsToBuyRelay,
             inappsToBuyRelay,
             inappsBoughtRelay,
+            ownedSubsRelay,
             preferenceManager.preferences
     )
 
@@ -59,7 +61,7 @@ class InAppHelper constructor(
     override fun onResume() {
         PurchasingService.getUserData()
 
-        PurchasingService.getPurchaseUpdates(false)
+//        PurchasingService.getPurchaseUpdates(false)
 
 //        PurchasingService.getProductData(getNewSubsSkus().toMutableSet())
 //        PurchasingService.getProductData(getNewInAppsSkus().toMutableSet())
@@ -101,8 +103,39 @@ class InAppHelper constructor(
     }
 
     override fun validateSubsObservable(): Single<List<Item>> {
-        //todo
-        return Single.just(listOf())
+        return getValidatedOwnedSubsObservable()
+                .flatMap { validatedItems ->
+                    Timber.d("market validatedItems: %s", validatedItems)
+
+                    preferenceManager.setLastTimeSubscriptionsValidated(System.currentTimeMillis())
+
+                    @InappPurchaseUtil.SubscriptionType val type = getSubscriptionTypeFromItemsList(validatedItems)
+                    Timber.d("subscription type: %s", type)
+                    when (type) {
+                        InappPurchaseUtil.SubscriptionType.NONE -> {
+                            preferenceManager.isHasNoAdsSubscription = false
+                            preferenceManager.isHasSubscription = false
+                        }
+                        InappPurchaseUtil.SubscriptionType.NO_ADS -> {
+                            preferenceManager.isHasNoAdsSubscription = true
+                            preferenceManager.isHasSubscription = false
+                        }
+                        InappPurchaseUtil.SubscriptionType.FULL_VERSION -> {
+                            preferenceManager.isHasSubscription = true
+                            preferenceManager.isHasNoAdsSubscription = true
+                        }
+                        else -> throw IllegalArgumentException("unexpected type: $type")
+                    }
+
+                    Single.just<List<Item>>(validatedItems)
+                }
+    }
+
+    private fun getValidatedOwnedSubsObservable(): Single<List<Item>> {
+        PurchasingService.getPurchaseUpdates(true)
+        return ownedSubsRelay
+                .take(1)
+                .toSingle()
     }
 
     override fun intentSenderSingle(type: String, sku: String): Single<IntentSenderWrapper> {

@@ -1,14 +1,18 @@
 package ru.kuchanov.scpcore.monetization.util.playmarket
 
 import android.content.SharedPreferences
+import android.util.Log
 import com.amazon.device.iap.PurchasingListener
 import com.amazon.device.iap.PurchasingService
 import com.amazon.device.iap.model.*
 import com.amazon.device.iap.model.ProductType.*
 import com.amazon.device.iap.model.PurchaseResponse.RequestStatus.*
 import com.jakewharton.rxrelay.PublishRelay
+import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
+import rx.Observable
+import rx.Single
 import timber.log.Timber
 
 
@@ -20,23 +24,22 @@ class PurchaseListenerImpl(
         private val subscriptionsToBuyRelay: PublishRelay<List<Subscription>>,
         private val inappsToBuyRelay: PublishRelay<List<Subscription>>,
         private val inappsBoughtRelay: PublishRelay<Subscription>,
+        private val ownedSubsRelay: PublishRelay<List<Subscription>>,
         private val preferences: SharedPreferences
 ) : PurchasingListener {
 
     private var currentUserId: String? = null
     private var currentMarketplace: String? = null
 
-    private var reset = false
-
+    /**
+     * Here is list of inapps and subs, available to buy
+     */
     override fun onProductDataResponse(productDataResponse: ProductDataResponse?) {
         Timber.d("onProductDataResponse: %s", productDataResponse)
 
         when (productDataResponse?.requestStatus) {
             ProductDataResponse.RequestStatus.SUCCESSFUL -> {
                 Timber.d("onProductDataResponse SUCCESSFUL")
-//                productDataResponse.productData.entries.forEach {
-//                    Timber.d("${it.key}/${it.value.productType}/${it.value.title}")
-//                }
 
                 val products = productDataResponse.productData.values
                 //we load different types separately
@@ -117,8 +120,6 @@ class PurchaseListenerImpl(
 
 //                iapManager.setAmazonUserId(response.getUserData().getUserId(), response.getUserData().getMarketplace());
                 handleReceipt(receipt, purchaseResponse.userData)
-                //todo update UI in example...
-//                iapManager.refreshOranges();
             }
             FAILED -> {
                 Timber.d("onPurchaseResponse FAILED")
@@ -144,16 +145,25 @@ class PurchaseListenerImpl(
     }
 
     override fun onPurchaseUpdatesResponse(purchaseUpdatesResponse: PurchaseUpdatesResponse?) {
-        Timber.d("onPurchaseUpdatesResponse: %s", purchaseUpdatesResponse)
+        Timber.d("onPurchaseUpdatesResponse: $purchaseUpdatesResponse")
         when (purchaseUpdatesResponse?.requestStatus) {
             PurchaseUpdatesResponse.RequestStatus.SUCCESSFUL -> {
                 Timber.d("purchaseUpdatesResponse?.requestStatus is PurchaseUpdatesResponse.RequestStatus.SUCCESSFUL")
-                for (receipt in purchaseUpdatesResponse.receipts) {
-                    // Process receipts
-                    handleReceipt(receipt, purchaseUpdatesResponse.userData);
-                }
+//                for (receipt in purchaseUpdatesResponse.receipts) {
+//                    // Process receipts
+//                    handleReceipt(receipt, purchaseUpdatesResponse.userData);
+//                }
+                val ownedNonCanceledSubs = purchaseUpdatesResponse
+                        .receipts
+                        .filter { it.productType == SUBSCRIPTION }
+                        .filter { !it.isCanceled }
+                ownedSubsRelay.call(ownedNonCanceledSubs.map {
+                    Item(
+
+                    )
+                })
                 if (purchaseUpdatesResponse.hasMore()) {
-                    PurchasingService.getPurchaseUpdates(reset)
+                    PurchasingService.getPurchaseUpdates(false)
                 }
             }
             PurchaseUpdatesResponse.RequestStatus.FAILED -> {
@@ -173,30 +183,32 @@ class PurchaseListenerImpl(
 
     override fun onUserDataResponse(userDataResponse: UserDataResponse?) {
         Timber.d("onUserDataResponse: %s", userDataResponse)
-        //todo
 
         when (userDataResponse?.requestStatus) {
             UserDataResponse.RequestStatus.SUCCESSFUL -> {
                 Timber.d("onUserDataResponse SUCCESSFUL")
-                currentUserId = userDataResponse.userData.userId
-                currentMarketplace = userDataResponse.userData.marketplace
+                setUserData(userDataResponse.userData.userId, userDataResponse.userData.marketplace)
             }
 
             UserDataResponse.RequestStatus.FAILED -> {
                 Timber.d("onUserDataResponse FAILED")
-
+                setUserData()
             }
             UserDataResponse.RequestStatus.NOT_SUPPORTED -> {
                 Timber.d("onUserDataResponse NOT_SUPPORTED")
+                setUserData()
             }
             null -> {
                 Timber.d("onUserDataResponse userDataResponse?.requestStatus is NULL")
+                setUserData()
             }
         }
     }
 
-    /////////////////////////sdfsdfsdfsdfsdf
-
+    private fun setUserData(userId: String? = null, marketplace: String? = null) {
+        currentUserId = userId
+        currentMarketplace = marketplace
+    }
 
     private fun handleReceipt(receipt: Receipt, userData: UserData) {
         Timber.d("handleReceipt: $receipt")
@@ -208,7 +220,7 @@ class PurchaseListenerImpl(
                 //noting to do in Reader app
             }
             SUBSCRIPTION -> {
-                //todo
+                handleSubscriptionPurchase(receipt, userData)
             }
         }
     }
@@ -228,7 +240,6 @@ class PurchaseListenerImpl(
             if (receipt.isCanceled) {
                 revokeConsumablePurchase(receipt, userData)
             } else {
-                //todo We strongly recommend that you verify the receipt server-side
                 if (!verifyReceiptFromYourService(receipt.receiptId, userData)) {
                     // if the purchase cannot be verified,
                     // show relevant error message to the customer.
@@ -247,12 +258,56 @@ class PurchaseListenerImpl(
         } catch (e: Throwable) {
             //todo show error message
             Timber.e(e, "Purchase cannot be completed, please retry")
-//            mainActivity.showMessage("Purchase cannot be completed, please retry")
         }
     }
 
-    private fun grantConsumablePurchase(receipt: Receipt, userData: UserData) {
+    private fun handleSubscriptionPurchase(receipt: Receipt, userData: UserData) {
+        Timber.d("handleSubscriptionPurchase: $receipt")
+
+        try {
+            if (receipt.isCanceled) {
+                // Check whether this receipt is for an expired or canceled subscription
+                revokeSubscription(receipt, userData)
+            } else {
+                // We strongly recommend that you verify the receipt on server-side.
+                if (!verifyReceiptFromYourService(receipt.receiptId, userData)) {
+                    // if the purchase cannot be verified,
+                    //todo show relevant error message to the customer.
+                    Timber.e("Purchase cannot be verified, please retry later.")
+                } else {
+                    grantSubscriptionPurchase(receipt, userData)
+                }
+            }
+        } catch (e: Throwable) {
+            //todo handle error
+//            mainActivity.showMessage("Purchase cannot be completed, please retry")
+            Timber.e(e, "Purchase cannot be completed, please retry")
+        }
+    }
+
+    private fun grantSubscriptionPurchase(receipt: Receipt, userData: UserData) {
+        Timber.d("grantSubscriptionPurchase: $receipt")
         //todo
+
+        try {
+            //todo
+            // Set the purchase status to fulfilled for your application
+//            saveSubscriptionRecord(receipt, userData.userId)
+            PurchasingService.notifyFulfillment(receipt.receiptId, FulfillmentResult.FULFILLED)
+        } catch (e: Throwable) {
+            // If for any reason the app is not able to fulfill the purchase,
+            // add your own error handling code here.
+            Timber.e(e, "Failed to grant subscription purchase")
+        }
+
+    }
+
+    private fun revokeSubscription(receipt: Receipt, userData: UserData) {
+        Timber.d("revokeSubscription: $receipt")
+        //todo
+    }
+
+    private fun grantConsumablePurchase(receipt: Receipt, userData: UserData) {
         Timber.d("grantConsumablePurchase: $receipt/ $userData")
 
         try {
@@ -276,7 +331,6 @@ class PurchaseListenerImpl(
             // purchase receipt to application any more
             PurchasingService.notifyFulfillment(receipt.receiptId, FulfillmentResult.FULFILLED)
 
-            //todo add points
             inappsBoughtRelay.call(
                     Subscription(
                             receipt.sku,
@@ -299,6 +353,7 @@ class PurchaseListenerImpl(
             // add your own error handling code here.
             // Amazon will try to send the consumable purchase receipt again
             // next time you call PurchasingService.getPurchaseUpdates api
+            //todo handle error
             Timber.e(e, "Failed to grant consumable purchase")
         }
     }

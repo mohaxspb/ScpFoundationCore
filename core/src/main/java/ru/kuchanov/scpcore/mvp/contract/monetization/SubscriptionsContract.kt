@@ -8,9 +8,6 @@ import ru.kuchanov.scpcore.mvp.contract.FragmentToolbarStateSetter
 
 /**
  * Created by y.kuchanov on 21.12.16.
- *
- *
- * for scp_ru
  */
 interface SubscriptionsContract : BaseMvp {
     interface View : BaseMvp.View, FragmentToolbarStateSetter {
