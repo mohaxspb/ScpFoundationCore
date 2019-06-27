@@ -3,6 +3,7 @@ package ru.kuchanov.scpcore.monetization.model;
 import android.text.TextUtils;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joda.time.Days;
 import org.joda.time.Period;
 import org.joda.time.format.ISOPeriodFormat;
@@ -14,8 +15,6 @@ import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil;
 
 /**
  * Created by mohax on 14.01.2017.
- * <p>
- * for scp_ru
  */
 public class Subscription {
 
@@ -41,7 +40,10 @@ public class Subscription {
 
     /**
      * ISO 4217 currency code for price. For example, if price is specified in British pounds sterling, price_currency_code is "GBP".
-     */
+     *
+     * Or null
+     **/
+    @Nullable
     public String price_currency_code;
 
     public String title;
@@ -155,18 +157,6 @@ public class Subscription {
     public int hashCode() {
         return productId.hashCode();
     }
-
-    public static final Comparator<Subscription> COMPARATOR_SKU =
-            (d, d1) -> d.productId.compareTo(d1.productId);
-
-    public static final Comparator<Subscription> COMPARATOR_PRICE = (d, d1) -> {
-        try {
-            return Integer.valueOf(d.price.replaceAll("[^\\d.]", ""))
-                    .compareTo(Integer.valueOf((d1.price.replaceAll("[^\\d.]", ""))));
-        } catch (Exception e) {
-            return d.price.compareTo(d1.price);
-        }
-    };
 
     public static final Comparator<Subscription> COMPARATOR_MONTH = (d, d1) ->
             Integer.valueOf(d.freeTrialPeriodInDays()).compareTo(d1.freeTrialPeriodInDays());

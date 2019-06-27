@@ -72,6 +72,7 @@ interface InappPurchaseUtil {
         fullVersionSkus += context.getString(R.string.subs_free_trial).split(",")
         fullVersionSkus += context.getString(R.string.ver3_subs_free_trial).split(",")
         fullVersionSkus += context.getString(R.string.ver4_skus).split(",")
+        fullVersionSkus += context.getString(R.string.ver4_skus_parent).split(",")
         fullVersionSkus += context.getString(R.string.ver4_subs_free_trial).split(",")
 
         val noAdsSkus = mutableListOf<String>()

@@ -194,10 +194,12 @@ class SubscriptionsFragment :
 
                 Timber.d("ownedItem: $item")
 
+                //todo title icon for all types, as amazon do not return concrete type, just parent
                 @StringRes
                 val title: Int
                 @StringRes
                 val description: Int = R.string.subs_full_description
+                //todo one icon for all types, as amazon do not return concrete type, just parent
                 @DrawableRes
                 val icon: Int
                 when (SubscriptionsPresenter.getMonthFromSkuId(item.sku)) {
@@ -314,10 +316,16 @@ class SubscriptionsFragment :
                         items.add(
                                 LabelWithPercentViewModel(
                                         label,
-                                        if (month != 1) (oneMonthPriceForMonths / 1000000L).toString() + SystemUtils.getCurrencySymbol2(
-                                                it.price_currency_code
-                                        ) else "",
-                                        if (month != 1) percent.toString() else ""
+                                        if (month != 1) {
+                                            (oneMonthPriceForMonths / 1000000L).toString() + SystemUtils.getCurrencySymbol2(it.price_currency_code)
+                                        } else {
+                                            ""
+                                        },
+                                        if (month != 1) {
+                                            percent.toString()
+                                        } else {
+                                            ""
+                                        }
                                 )
                         )
                         items.add(

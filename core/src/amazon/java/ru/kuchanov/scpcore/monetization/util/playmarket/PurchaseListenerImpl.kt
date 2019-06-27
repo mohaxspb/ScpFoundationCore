@@ -66,6 +66,7 @@ class PurchaseListenerImpl(
                     }
                     SUBSCRIPTION -> {
                         val subscriptions = products.map {
+                            Timber.d("price: ${it.price}")
                             val re = Regex("[^\\d.,]")
                             val priceParsed = re.replace(it.price, "").replace(",", ".")
                             Timber.d("priceParsed: $priceParsed")
@@ -76,7 +77,7 @@ class PurchaseListenerImpl(
                                     InappPurchaseUtil.InappType.SUBS,
                                     it.price,
                                     priceAsMicros,//price_amount_micros
-                                    "N/A", //price_currency_code
+                                    null, //price_currency_code
                                     it.title,
                                     it.description,
                                     null,
@@ -120,7 +121,7 @@ class PurchaseListenerImpl(
             }
             FAILED -> {
                 Timber.d("onPurchaseResponse FAILED")
-                //todo
+                //nothing to do
             }
             INVALID_SKU -> {
                 Timber.d("onPurchaseResponse INVALID_SKU")
@@ -128,7 +129,7 @@ class PurchaseListenerImpl(
             }
             ALREADY_PURCHASED -> {
                 Timber.d("onPurchaseResponse ALREADY_PURCHASED")
-                //todo
+                //nothing to do
             }
             NOT_SUPPORTED -> {
                 Timber.d("onPurchaseResponse NOT_SUPPORTED")
