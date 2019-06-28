@@ -100,16 +100,45 @@ class PurchaseListenerImpl(
                         //do nothing...
                     }
                 }
-
             }
             ProductDataResponse.RequestStatus.FAILED -> {
                 Timber.d("onProductDataResponse FAILED")
+                inappsToBuyRelay.call(
+                        SubscriptionsListWrapper(
+                                error = IllegalStateException("onProductDataResponse FAILED")
+                        )
+                )
+                subscriptionsToBuyRelay.call(
+                        SubscriptionsListWrapper(
+                                error = IllegalStateException("onProductDataResponse FAILED")
+                        )
+                )
             }
             ProductDataResponse.RequestStatus.NOT_SUPPORTED -> {
                 Timber.d("onProductDataResponse NOT_SUPPORTED")
+                inappsToBuyRelay.call(
+                        SubscriptionsListWrapper(
+                                error = IllegalStateException("onProductDataResponse NOT_SUPPORTED")
+                        )
+                )
+                subscriptionsToBuyRelay.call(
+                        SubscriptionsListWrapper(
+                                error = IllegalStateException("onProductDataResponse NOT_SUPPORTED")
+                        )
+                )
             }
             null -> {
                 Timber.d("onProductDataResponse productDataResponse?.requestStatus null")
+                inappsToBuyRelay.call(
+                        SubscriptionsListWrapper(
+                                error = IllegalStateException("onProductDataResponse NULL")
+                        )
+                )
+                subscriptionsToBuyRelay.call(
+                        SubscriptionsListWrapper(
+                                error = IllegalStateException("onProductDataResponse NULL")
+                        )
+                )
             }
         }
     }
@@ -131,24 +160,14 @@ class PurchaseListenerImpl(
             }
             INVALID_SKU -> {
                 Timber.d("onPurchaseResponse INVALID_SKU")
-                //todo
                 inappsBoughtRelay.call(
                         SubscriptionWrapper(
-                                Subscription(
-                                        null,
-                                        InappPurchaseUtil.InappType.IN_APP,
-                                        "N/A", //receipt.price,
-                                        -1,//price_amount_micros
-                                        "N/A", //price_currency_code
-                                        null,
-                                        null,
-                                        null,
-                                        null,
-                                        null,
-                                        0,
-                                        null,
-                                        0
-                                )
+                                error = IllegalStateException("onPurchaseResponse INVALID_SKU")
+                        )
+                )
+                ownedSubsRelay.call(
+                        ItemsListWrapper(
+                                error = IllegalStateException("onPurchaseResponse INVALID_SKU")
                         )
                 )
             }
@@ -158,11 +177,29 @@ class PurchaseListenerImpl(
             }
             NOT_SUPPORTED -> {
                 Timber.d("onPurchaseResponse NOT_SUPPORTED")
-                //todo
+                inappsBoughtRelay.call(
+                        SubscriptionWrapper(
+                                error = IllegalStateException("onPurchaseResponse NOT_SUPPORTED")
+                        )
+                )
+                ownedSubsRelay.call(
+                        ItemsListWrapper(
+                                error = IllegalStateException("onPurchaseResponse NOT_SUPPORTED")
+                        )
+                )
             }
             null -> {
                 Timber.d("onPurchaseResponse purchaseResponse?.requestStatus is NULL")
-                //todo
+                inappsBoughtRelay.call(
+                        SubscriptionWrapper(
+                                error = IllegalStateException("onPurchaseResponse NULL")
+                        )
+                )
+                ownedSubsRelay.call(
+                        ItemsListWrapper(
+                                error = IllegalStateException("onPurchaseResponse NULL")
+                        )
+                )
             }
         }
     }
@@ -172,6 +209,7 @@ class PurchaseListenerImpl(
         when (purchaseUpdatesResponse?.requestStatus) {
             PurchaseUpdatesResponse.RequestStatus.SUCCESSFUL -> {
                 Timber.d("purchaseUpdatesResponse?.requestStatus is PurchaseUpdatesResponse.RequestStatus.SUCCESSFUL")
+                //todo think, if we need to handle it... We must handle subs, if we do not handle it in onPurchase response...
 //                for (receipt in purchaseUpdatesResponse.receipts) {
 //                    // Process receipts
 //                    handleReceipt(receipt, purchaseUpdatesResponse.userData);
@@ -190,46 +228,17 @@ class PurchaseListenerImpl(
             }
             PurchaseUpdatesResponse.RequestStatus.FAILED -> {
                 Timber.d("purchaseUpdatesResponse?.requestStatus is PurchaseUpdatesResponse.RequestStatus.FAILED")
-                //todo
+                ownedSubsRelay.call(ItemsListWrapper(error = IllegalStateException("PurchaseUpdatesResponse.RequestStatus.FAILED")))
             }
             PurchaseUpdatesResponse.RequestStatus.NOT_SUPPORTED -> {
                 Timber.d("purchaseUpdatesResponse?.requestStatus is PurchaseUpdatesResponse.RequestStatus.NOT_SUPPORTED")
-                //todo
+                ownedSubsRelay.call(ItemsListWrapper(error = IllegalStateException("PurchaseUpdatesResponse.RequestStatus.NOT_SUPPORTED")))
             }
             null -> {
                 Timber.d("purchaseUpdatesResponse?.requestStatus is NULL")
-                //todo
+                ownedSubsRelay.call(ItemsListWrapper(error = IllegalStateException("PurchaseUpdatesResponse.RequestStatus is null")))
             }
         }
-    }
-
-    override fun onUserDataResponse(userDataResponse: UserDataResponse?) {
-        Timber.d("onUserDataResponse: %s", userDataResponse)
-
-        when (userDataResponse?.requestStatus) {
-            UserDataResponse.RequestStatus.SUCCESSFUL -> {
-                Timber.d("onUserDataResponse SUCCESSFUL")
-                setUserData(userDataResponse.userData.userId, userDataResponse.userData.marketplace)
-            }
-
-            UserDataResponse.RequestStatus.FAILED -> {
-                Timber.d("onUserDataResponse FAILED")
-                setUserData()
-            }
-            UserDataResponse.RequestStatus.NOT_SUPPORTED -> {
-                Timber.d("onUserDataResponse NOT_SUPPORTED")
-                setUserData()
-            }
-            null -> {
-                Timber.d("onUserDataResponse userDataResponse?.requestStatus is NULL")
-                setUserData()
-            }
-        }
-    }
-
-    private fun setUserData(userId: String? = null, marketplace: String? = null) {
-        currentUserId = userId
-        currentMarketplace = marketplace
     }
 
     private fun handleReceipt(receipt: Receipt, userData: UserData) {
@@ -284,20 +293,18 @@ class PurchaseListenerImpl(
     }
 
     private fun handleSubscriptionPurchase(receipt: Receipt, userData: UserData) {
-        Timber.d("handleSubscriptionPurchase: $receipt")
+        Timber.d("handleSubscriptionPurchase: ${receipt.receiptId}")
 
         try {
             if (receipt.isCanceled) {
-                // Check whether this receipt is for an expired or canceled subscription
-                revokeSubscription(receipt, userData)
+                revokeSubscription(receipt)
             } else {
                 // We strongly recommend that you verify the receipt on server-side.
                 if (!verifyReceiptFromYourService(receipt.receiptId, userData)) {
-                    // if the purchase cannot be verified,
-                    //todo show relevant error message to the customer.
                     Timber.e("Purchase cannot be verified, please retry later.")
+                    ownedSubsRelay.call(ItemsListWrapper(error = IllegalStateException("Purchase cannot be verified, please retry later.")))
                 } else {
-                    grantSubscriptionPurchase(receipt, userData)
+                    grantSubscriptionPurchase(receipt)
                 }
             }
         } catch (e: Throwable) {
@@ -306,7 +313,7 @@ class PurchaseListenerImpl(
         }
     }
 
-    private fun grantSubscriptionPurchase(receipt: Receipt, userData: UserData) {
+    private fun grantSubscriptionPurchase(receipt: Receipt) {
         Timber.d("grantSubscriptionPurchase: $receipt")
 
         try {
@@ -321,16 +328,16 @@ class PurchaseListenerImpl(
             Timber.e(e, "Failed to grant subscription purchase")
             ownedSubsRelay.call(ItemsListWrapper(error = e))
         }
-
     }
 
-    private fun revokeSubscription(receipt: Receipt, userData: UserData) {
-        Timber.d("revokeSubscription: $receipt")
+    private fun revokeSubscription(receipt: Receipt) {
+        Timber.d("revokeSubscription: ${receipt.receiptId}")
         //todo
+        //just pass subscription, as in receiver, we just.................. MAYBE, IM NOT SURE
     }
 
     private fun grantConsumablePurchase(receipt: Receipt, userData: UserData) {
-        Timber.d("grantConsumablePurchase: $receipt/ $userData")
+        Timber.d("grantConsumablePurchase: ${receipt.receiptId}")
 
         try {
             // following sample code is a simple implementation, please
@@ -376,16 +383,48 @@ class PurchaseListenerImpl(
             // If for any reason the app is not able to fulfill the purchase,
             // add your own error handling code here.
             // Amazon will try to send the consumable purchase receipt again
-            // next time you call PurchasingService.getPurchaseUpdates api
-            //todo handle error
+            // next time you call PurchasingService.onPurchaseUpdatesResponse api
             Timber.e(e, "Failed to grant consumable purchase")
+            inappsBoughtRelay.call(
+                    SubscriptionWrapper(error = IllegalStateException("Failed to grant consumable purchase"))
+            )
         }
     }
 
     private fun verifyReceiptFromYourService(receiptId: String?, userData: UserData): Boolean {
+        Timber.d("verifyReceiptFromYourService receiptId: $receiptId, userData.userId: ${userData.userId}")
         //todo check on server somehow
         //later, I think
         return true
+    }
+
+    override fun onUserDataResponse(userDataResponse: UserDataResponse?) {
+        Timber.d("onUserDataResponse: %s", userDataResponse)
+
+        when (userDataResponse?.requestStatus) {
+            UserDataResponse.RequestStatus.SUCCESSFUL -> {
+                Timber.d("onUserDataResponse SUCCESSFUL")
+                setUserData(userDataResponse.userData.userId, userDataResponse.userData.marketplace)
+            }
+
+            UserDataResponse.RequestStatus.FAILED -> {
+                Timber.d("onUserDataResponse FAILED")
+                setUserData()
+            }
+            UserDataResponse.RequestStatus.NOT_SUPPORTED -> {
+                Timber.d("onUserDataResponse NOT_SUPPORTED")
+                setUserData()
+            }
+            null -> {
+                Timber.d("onUserDataResponse userDataResponse?.requestStatus is NULL")
+                setUserData()
+            }
+        }
+    }
+
+    private fun setUserData(userId: String? = null, marketplace: String? = null) {
+        currentUserId = userId
+        currentMarketplace = marketplace
     }
 
     /**
@@ -417,6 +456,7 @@ class PurchaseListenerImpl(
         val isFullfilledAlready = receiptRecord == AmazonPurchaseStatus.FULFILLED
         Timber.d("receiptIsNotExists: $receiptIsNotExists")
         Timber.d("isNotFullfilledAlready: $isFullfilledAlready")
+        @Suppress("LiftReturnOrAssignment")
         if (receiptIsNotExists) {
             return false
         } else {
@@ -444,5 +484,6 @@ class PurchaseListenerImpl(
     private fun revokeConsumablePurchase(receipt: Receipt, userData: UserData) {
         //noting to do, I think...
         //see com.amazon.sample.iap.consumable.SampleIapManager#revokeConsumablePurchase() for details
+        Timber.d("revokeConsumablePurchase receiptId: ${receipt.receiptId}, userData.userId: ${userData.userId}")
     }
 }
