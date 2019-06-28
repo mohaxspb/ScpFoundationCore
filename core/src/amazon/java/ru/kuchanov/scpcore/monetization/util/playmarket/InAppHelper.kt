@@ -9,13 +9,10 @@ import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.api.ApiClient
 import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
-import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
-import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
-import ru.kuchanov.scpcore.monetization.util.IntentSenderWrapper
+import ru.kuchanov.scpcore.monetization.util.*
 import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import rx.Single
-import rx.lang.kotlin.subscribeBy
 import timber.log.Timber
 
 class InAppHelper constructor(
@@ -24,10 +21,10 @@ class InAppHelper constructor(
         val apiClient: ApiClient
 ) : InappPurchaseUtil {
 
-    private val subscriptionsToBuyRelay = PublishRelay.create<List<Subscription>>()
-    private val inappsToBuyRelay = PublishRelay.create<List<Subscription>>()
-    private val inappsBoughtRelay = PublishRelay.create<Subscription>()
-    private val ownedSubsRelay = PublishRelay.create<List<Item>>()
+    private val subscriptionsToBuyRelay = PublishRelay.create<SubscriptionsListWrapper>()
+    private val inappsToBuyRelay = PublishRelay.create<SubscriptionsListWrapper>()
+    private val inappsBoughtRelay = PublishRelay.create<SubscriptionWrapper>()
+    private val ownedSubsRelay = PublishRelay.create<ItemsListWrapper>()
 
     private val purchaseListener = PurchaseListenerImpl(
             subscriptionsToBuyRelay,
@@ -41,15 +38,15 @@ class InAppHelper constructor(
         Timber.d("InAppHelper created!")
         BaseApplication.getAppComponent().inject(this)
 
-        subscriptionsToBuyRelay.subscribeBy(
-                onNext = { Timber.d("subscriptionsToBuyRelay: $it") }
-        )
-        inappsToBuyRelay.subscribeBy(
-                onNext = { Timber.d("inappsToBuyRelay: $it") }
-        )
-        inappsBoughtRelay.subscribeBy(
-                onNext = { Timber.d("inappsBoughtRelay: $it") }
-        )
+//        subscriptionsToBuyRelay.subscribeBy(
+//                onNext = { Timber.d("subscriptionsToBuyRelay: $it") }
+//        )
+//        inappsToBuyRelay.subscribeBy(
+//                onNext = { Timber.d("inappsToBuyRelay: $it") }
+//        )
+//        inappsBoughtRelay.subscribeBy(
+//                onNext = { Timber.d("inappsBoughtRelay: $it") }
+//        )
     }
 
     override fun onActivate(activity: BaseActivity<*, *>) {
@@ -71,24 +68,22 @@ class InAppHelper constructor(
         Timber.d("onActivityDestroy")
     }
 
-    override fun getInAppHistoryObservable(): Single<List<Item>> {
+    override fun getInAppHistoryObservable(): Single<ItemsListWrapper> {
         //for amazon we don't (seems to be) have situation with unconsumed levelUps...
-        return Single.just(listOf())
+        return Single.just(ItemsListWrapper())
     }
 
-    override fun getSubsListToBuyObservable(skus: List<String>): Single<List<Subscription>> {
+    override fun getSubsListToBuyObservable(skus: List<String>): Single<SubscriptionsListWrapper> {
         Timber.d("getSubsListToBuyObservable: $skus")
 
         PurchasingService.getProductData(skus.toMutableSet())
 
         return subscriptionsToBuyRelay
-//                .doOnNext { Timber.d("getSubsListToBuyObservable onNext: $it") }
                 .take(1)
                 .toSingle()
-//                .doOnError { Timber.e("getSubsListToBuyObservable onError: $it") }
     }
 
-    override fun getInAppsListToBuy(): Single<List<Subscription>> {
+    override fun getInAppsListToBuy(): Single<SubscriptionsListWrapper> {
         PurchasingService.getProductData(getNewInAppsSkus().toMutableSet())
 
         return inappsToBuyRelay
@@ -101,36 +96,40 @@ class InAppHelper constructor(
         return Single.just(-1)
     }
 
-    override fun validateSubsObservable(): Single<List<Item>> {
+    override fun validateSubsObservable(): Single<ItemsListWrapper> {
         return getValidatedOwnedSubsObservable()
                 .flatMap { validatedItems ->
                     Timber.d("market validatedItems: %s", validatedItems)
 
                     preferenceManager.setLastTimeSubscriptionsValidated(System.currentTimeMillis())
 
-                    @InappPurchaseUtil.SubscriptionType val type = getSubscriptionTypeFromItemsList(validatedItems)
-                    Timber.d("subscription type: %s", type)
-                    when (type) {
-                        InappPurchaseUtil.SubscriptionType.NONE -> {
-                            preferenceManager.isHasNoAdsSubscription = false
-                            preferenceManager.isHasSubscription = false
+                    if (validatedItems.items == null) {
+                        return@flatMap Single.error<ItemsListWrapper>(NullPointerException("Items is null, while validateSubsObservable#flatMap"))
+                    } else {
+                        @InappPurchaseUtil.SubscriptionType val type = getSubscriptionTypeFromItemsList(validatedItems.items)
+                        Timber.d("subscription type: %s", type)
+                        when (type) {
+                            InappPurchaseUtil.SubscriptionType.NONE -> {
+                                preferenceManager.isHasNoAdsSubscription = false
+                                preferenceManager.isHasSubscription = false
+                            }
+                            InappPurchaseUtil.SubscriptionType.NO_ADS -> {
+                                preferenceManager.isHasNoAdsSubscription = true
+                                preferenceManager.isHasSubscription = false
+                            }
+                            InappPurchaseUtil.SubscriptionType.FULL_VERSION -> {
+                                preferenceManager.isHasSubscription = true
+                                preferenceManager.isHasNoAdsSubscription = true
+                            }
+                            else -> throw IllegalArgumentException("unexpected type: $type")
                         }
-                        InappPurchaseUtil.SubscriptionType.NO_ADS -> {
-                            preferenceManager.isHasNoAdsSubscription = true
-                            preferenceManager.isHasSubscription = false
-                        }
-                        InappPurchaseUtil.SubscriptionType.FULL_VERSION -> {
-                            preferenceManager.isHasSubscription = true
-                            preferenceManager.isHasNoAdsSubscription = true
-                        }
-                        else -> throw IllegalArgumentException("unexpected type: $type")
-                    }
 
-                    Single.just<List<Item>>(validatedItems)
+                        return@flatMap Single.just(validatedItems)
+                    }
                 }
     }
 
-    private fun getValidatedOwnedSubsObservable(): Single<List<Item>> {
+    private fun getValidatedOwnedSubsObservable(): Single<ItemsListWrapper> {
         PurchasingService.getPurchaseUpdates(true)
         return ownedSubsRelay
                 .take(1)
@@ -143,32 +142,39 @@ class InAppHelper constructor(
 
     override fun startPurchase(
             intentSender: IntentSenderWrapper
-    ): Single<Subscription> {
+    ): Single<SubscriptionWrapper> {
         val requestId: RequestId = PurchasingService.purchase(intentSender.sku)
         Timber.d("onBuyOrangeClick: requestId ($requestId)")
-        return when(intentSender.type){
-            InappPurchaseUtil.InappType.IN_APP-> inappsBoughtRelay
+        return when (intentSender.type) {
+            InappPurchaseUtil.InappType.IN_APP -> inappsBoughtRelay
                     .take(1)
                     .toSingle()
                     .doOnEach { Timber.d("inappsBoughtRelay single doOnEach: $it") }
             InappPurchaseUtil.InappType.SUBS -> ownedSubsRelay
                     .take(1)
-                    .map { it.first() }
-                    .map { Subscription(
-                            it.sku,
-                            InappPurchaseUtil.InappType.SUBS,
-                            null,
-                            0, //price_amount_micros
-                            null, //price_currency_code
-                            null,
-                            null,
-                            null,
-                            null,
-                            null,
-                            0,
-                            null,
-                            0
-                    ) }
+                    .map {
+                        it.items?.first()
+                                ?: throw NullPointerException("Items is null, while grant subscription")
+                    }
+                    .map {
+                        SubscriptionWrapper(
+                                subscription = Subscription(
+                                        it.sku,
+                                        InappPurchaseUtil.InappType.SUBS,
+                                        null,
+                                        0, //price_amount_micros
+                                        null, //price_currency_code
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        0,
+                                        null,
+                                        0
+                                )
+                        )
+                    }
                     .toSingle()
             else -> throw IllegalArgumentException("Unexpected type: ${intentSender.type}")
         }

@@ -10,18 +10,24 @@ import com.jakewharton.rxrelay.PublishRelay
 import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
+import ru.kuchanov.scpcore.monetization.util.ItemsListWrapper
+import ru.kuchanov.scpcore.monetization.util.SubscriptionWrapper
+import ru.kuchanov.scpcore.monetization.util.SubscriptionsListWrapper
 import timber.log.Timber
 
 
 enum class AmazonPurchaseStatus {
-    PAID, FULFILLED, UNAVAILABLE, UNKNOWN
+    FULFILLED,
+//    PAID,
+//    UNAVAILABLE,
+//    UNKNOWN
 }
 
 class PurchaseListenerImpl(
-        private val subscriptionsToBuyRelay: PublishRelay<List<Subscription>>,
-        private val inappsToBuyRelay: PublishRelay<List<Subscription>>,
-        private val inappsBoughtRelay: PublishRelay<Subscription>,
-        private val ownedSubsRelay: PublishRelay<List<Item>>,
+        private val subscriptionsToBuyRelay: PublishRelay<SubscriptionsListWrapper>,
+        private val inappsToBuyRelay: PublishRelay<SubscriptionsListWrapper>,
+        private val inappsBoughtRelay: PublishRelay<SubscriptionWrapper>,
+        private val ownedSubsRelay: PublishRelay<ItemsListWrapper>,
         private val preferences: SharedPreferences
 ) : PurchasingListener {
 
@@ -32,7 +38,7 @@ class PurchaseListenerImpl(
      * Here is list of inapps and subs, available to buy
      */
     override fun onProductDataResponse(productDataResponse: ProductDataResponse?) {
-        Timber.d("onProductDataResponse: %s", productDataResponse)
+        Timber.d("onProductDataResponse: %s", productDataResponse?.requestStatus?.name)
 
         when (productDataResponse?.requestStatus) {
             ProductDataResponse.RequestStatus.SUCCESSFUL -> {
@@ -59,7 +65,7 @@ class PurchaseListenerImpl(
                                     0
                             )
                         }
-                        inappsToBuyRelay.call(consumables)
+                        inappsToBuyRelay.call(SubscriptionsListWrapper(subscriptions = consumables))
                     }
                     ENTITLED -> {
                         //we do not use it in this app
@@ -88,7 +94,7 @@ class PurchaseListenerImpl(
                                     0
                             )
                         }
-                        subscriptionsToBuyRelay.call(subscriptions)
+                        subscriptionsToBuyRelay.call(SubscriptionsListWrapper(subscriptions = subscriptions))
                     }
                     null -> {
                         //do nothing...
@@ -121,11 +127,30 @@ class PurchaseListenerImpl(
             }
             FAILED -> {
                 Timber.d("onPurchaseResponse FAILED")
-                //nothing to do
+                //nothing to do, as it called when user canceled purchase in amazon UI.
             }
             INVALID_SKU -> {
                 Timber.d("onPurchaseResponse INVALID_SKU")
                 //todo
+                inappsBoughtRelay.call(
+                        SubscriptionWrapper(
+                                Subscription(
+                                        null,
+                                        InappPurchaseUtil.InappType.IN_APP,
+                                        "N/A", //receipt.price,
+                                        -1,//price_amount_micros
+                                        "N/A", //price_currency_code
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        0,
+                                        null,
+                                        0
+                                )
+                        )
+                )
             }
             ALREADY_PURCHASED -> {
                 Timber.d("onPurchaseResponse ALREADY_PURCHASED")
@@ -155,7 +180,7 @@ class PurchaseListenerImpl(
                         .receipts
                         .filter { it.productType == SUBSCRIPTION }
                         .filter { !it.isCanceled }
-                ownedSubsRelay.call(ownedNonCanceledSubs.map { Item(sku = it.sku) })
+                ownedSubsRelay.call(ItemsListWrapper(items = ownedNonCanceledSubs.map { Item(sku = it.sku) }))
 
                 //todo handle non consumed levelUp inapps
 
@@ -226,7 +251,7 @@ class PurchaseListenerImpl(
      * This method contains the business logic to fulfill the customer's
      * purchase based on the receipt received from InAppPurchase SDK's
      * [PurchasingListener.onPurchaseResponse] or
-     * [PurchasingListener.onPurchaseUpdates] method.
+     * [PurchasingListener.onPurchaseUpdatesResponse] method.
      *
      *
      * @param receipt
@@ -240,8 +265,8 @@ class PurchaseListenerImpl(
                 if (!verifyReceiptFromYourService(receipt.receiptId, userData)) {
                     // if the purchase cannot be verified,
                     // show relevant error message to the customer.
-                    //todo show error message
                     Timber.e("Purchase cannot be verified, please retry later.")
+                    inappsBoughtRelay.call(SubscriptionWrapper(error = IllegalStateException("Purchase cannot be verified, please retry later.")))
                 } else {
                     if (receiptIsAlreadyFulfilled(receipt.receiptId, userData)) {
                         // if the receipt was fulfilled before, just notify Amazon
@@ -253,8 +278,8 @@ class PurchaseListenerImpl(
                 }
             }
         } catch (e: Throwable) {
-            //todo show error message
             Timber.e(e, "Purchase cannot be completed, please retry")
+            inappsBoughtRelay.call(SubscriptionWrapper(error = e))
         }
     }
 
@@ -276,9 +301,8 @@ class PurchaseListenerImpl(
                 }
             }
         } catch (e: Throwable) {
-            //todo handle error
-//            mainActivity.showMessage("Purchase cannot be completed, please retry")
             Timber.e(e, "Purchase cannot be completed, please retry")
+            ownedSubsRelay.call(ItemsListWrapper(error = e))
         }
     }
 
@@ -289,13 +313,13 @@ class PurchaseListenerImpl(
             //todo
             // Set the purchase status to fulfilled for your application
 //            saveSubscriptionRecord(receipt, userData.userId)
-            ownedSubsRelay.call(listOf(Item(sku = receipt.sku)))
+            ownedSubsRelay.call(ItemsListWrapper(items = listOf(Item(sku = receipt.sku))))
             PurchasingService.notifyFulfillment(receipt.receiptId, FulfillmentResult.FULFILLED)
         } catch (e: Throwable) {
             // If for any reason the app is not able to fulfill the purchase,
             // add your own error handling code here.
-            //todo handle error
             Timber.e(e, "Failed to grant subscription purchase")
+            ownedSubsRelay.call(ItemsListWrapper(error = e))
         }
 
     }
@@ -330,20 +354,22 @@ class PurchaseListenerImpl(
             PurchasingService.notifyFulfillment(receipt.receiptId, FulfillmentResult.FULFILLED)
 
             inappsBoughtRelay.call(
-                    Subscription(
-                            receipt.sku,
-                            InappPurchaseUtil.InappType.IN_APP,
-                            "N/A", //receipt.price,
-                            -1,//price_amount_micros
-                            "N/A", //price_currency_code
-                            null,
-                            null,
-                            null,
-                            null,
-                            null,
-                            0,
-                            null,
-                            0
+                    SubscriptionWrapper(
+                            Subscription(
+                                    receipt.sku,
+                                    InappPurchaseUtil.InappType.IN_APP,
+                                    "N/A", //receipt.price,
+                                    -1,//price_amount_micros
+                                    "N/A", //price_currency_code
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    0,
+                                    null,
+                                    0
+                            )
                     )
             )
         } catch (e: Throwable) {

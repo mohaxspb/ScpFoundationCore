@@ -39,19 +39,19 @@ interface InappPurchaseUtil {
 
     fun onResume()
 
-    fun getInAppHistoryObservable(): Single<List<Item>>
+    fun getInAppHistoryObservable(): Single<ItemsListWrapper>
 
-    fun getSubsListToBuyObservable(skus: List<String>): Single<List<Subscription>>
+    fun getSubsListToBuyObservable(skus: List<String>): Single<SubscriptionsListWrapper>
 
-    fun getInAppsListToBuy(): Single<List<Subscription>>
+    fun getInAppsListToBuy(): Single<SubscriptionsListWrapper>
 
     fun consumeInApp(sku: String, token: String): Single<Int>
 
-    fun validateSubsObservable(): Single<List<Item>>
+    fun validateSubsObservable(): Single<ItemsListWrapper>
 
     fun intentSenderSingle(@InappType type: String, sku: String): Single<IntentSenderWrapper>
 
-    fun startPurchase(intentSender: IntentSenderWrapper): Single<Subscription>
+    fun startPurchase(intentSender: IntentSenderWrapper): Single<SubscriptionWrapper>
 
     fun getFreeTrailSubsSkus(): List<String>
 
@@ -109,7 +109,22 @@ interface InappPurchaseUtil {
 }
 
 data class IntentSenderWrapper(
-        val intentSender: IntentSender?,
+        val intentSender: IntentSender? = null,
         val type: String,
         val sku: String
+)
+
+data class SubscriptionWrapper(
+        val subscription: Subscription? = null,
+        val error: Throwable? = null
+)
+
+data class SubscriptionsListWrapper(
+        val subscriptions: List<Subscription>? = null,
+        val error: Throwable? = null
+)
+
+data class ItemsListWrapper(
+        val items: List<Item>? = null,
+        val error: Throwable? = null
 )
