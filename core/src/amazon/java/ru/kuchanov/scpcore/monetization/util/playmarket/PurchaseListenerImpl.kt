@@ -206,6 +206,7 @@ class PurchaseListenerImpl(
 
     override fun onPurchaseUpdatesResponse(purchaseUpdatesResponse: PurchaseUpdatesResponse?) {
         Timber.d("onPurchaseUpdatesResponse: $purchaseUpdatesResponse")
+
         when (purchaseUpdatesResponse?.requestStatus) {
             PurchaseUpdatesResponse.RequestStatus.SUCCESSFUL -> {
                 Timber.d("purchaseUpdatesResponse?.requestStatus is PurchaseUpdatesResponse.RequestStatus.SUCCESSFUL")
@@ -304,7 +305,18 @@ class PurchaseListenerImpl(
                     Timber.e("Purchase cannot be verified, please retry later.")
                     ownedSubsRelay.call(ItemsListWrapper(error = IllegalStateException("Purchase cannot be verified, please retry later.")))
                 } else {
-                    grantSubscriptionPurchase(receipt)
+                    try {
+                        //todo
+                        // Set the purchase status to fulfilled for your application
+//                        saveSubscriptionRecord(receipt, userData.userId)
+                        ownedSubsRelay.call(ItemsListWrapper(items = listOf(Item(sku = receipt.sku))))
+                        PurchasingService.notifyFulfillment(receipt.receiptId, FulfillmentResult.FULFILLED)
+                    } catch (e: Throwable) {
+                        // If for any reason the app is not able to fulfill the purchase,
+                        // add your own error handling code here.
+                        Timber.e(e, "Failed to grant subscription purchase")
+                        ownedSubsRelay.call(ItemsListWrapper(error = e))
+                    }
                 }
             }
         } catch (e: Throwable) {
@@ -313,22 +325,6 @@ class PurchaseListenerImpl(
         }
     }
 
-    private fun grantSubscriptionPurchase(receipt: Receipt) {
-        Timber.d("grantSubscriptionPurchase: $receipt")
-
-        try {
-            //todo
-            // Set the purchase status to fulfilled for your application
-//            saveSubscriptionRecord(receipt, userData.userId)
-            ownedSubsRelay.call(ItemsListWrapper(items = listOf(Item(sku = receipt.sku))))
-            PurchasingService.notifyFulfillment(receipt.receiptId, FulfillmentResult.FULFILLED)
-        } catch (e: Throwable) {
-            // If for any reason the app is not able to fulfill the purchase,
-            // add your own error handling code here.
-            Timber.e(e, "Failed to grant subscription purchase")
-            ownedSubsRelay.call(ItemsListWrapper(error = e))
-        }
-    }
 
     private fun revokeSubscription(receipt: Receipt) {
         Timber.d("revokeSubscription: ${receipt.receiptId}")

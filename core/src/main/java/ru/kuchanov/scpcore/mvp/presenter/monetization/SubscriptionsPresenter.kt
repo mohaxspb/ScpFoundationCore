@@ -64,11 +64,11 @@ class SubscriptionsPresenter(
                 inAppHelper.getSubsListToBuyObservable(skuList).doOnSuccess { Timber.d ("getSubsListToBuyObservable: $it")},
                 inAppHelper.getInAppsListToBuy().doOnSuccess { Timber.d ("getInAppsListToBuy: $it")}
         ) { t1: List<Item>, t2: List<Subscription>, t3: List<Subscription> -> Triple(t1, t2, t3) }
-                .doOnSuccess {
-                    Timber.d("getMarketData: ${it.first}")
-                    Timber.d("getMarketData: ${it.second}")
-                    Timber.d("getMarketData: ${it.third}")
-                }
+//                .doOnSuccess {
+//                    Timber.d("getMarketData: ${it.first}")
+//                    Timber.d("getMarketData: ${it.second}")
+//                    Timber.d("getMarketData: ${it.third}")
+//                }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
