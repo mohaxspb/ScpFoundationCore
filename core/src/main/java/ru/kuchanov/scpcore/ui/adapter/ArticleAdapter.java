@@ -115,6 +115,11 @@ public class ArticleAdapter
         final List<String> articlesTextParts = new ArrayList<>(RealmString.toStringList(article.textParts));
         final @ParseHtmlUtils.TextType List<String> articlesTextPartsTypes = new ArrayList<>(RealmString.toStringList(article.textPartsTypes));
 
+//        Timber.d("articlesTextPartsTypes: %s", articlesTextPartsTypes);
+//        for (String text: articlesTextParts){
+//            Timber.d("articlesTextParts: %s", text);
+//        }
+
         articlesTextParts.add(0, article.title);
         articlesTextPartsTypes.add(0, ParseHtmlUtils.TextType.TITLE);
         //DO NOT USE THIS VALUE!!!
@@ -274,6 +279,18 @@ public class ArticleAdapter
             if (i == 0) {
                 continue;
             } else if (i / interval > Constants.NUM_OF_NATIVE_ADS_PER_SCREEN) {
+                break;
+            }
+
+            Timber.d(
+                    "mArticlesAndAds/mAdsModelsList/i/interval/(i / interval) - 1: %s/%s/%s/%s/%s",
+                    mViewModels.size(),
+                    mAdsModelsList.size(),
+                    i,
+                    interval,
+                    (i / interval) - 1
+            );
+            if (mViewModels.isEmpty() || mAdsModelsList.isEmpty() || i < 0) {
                 break;
             }
 

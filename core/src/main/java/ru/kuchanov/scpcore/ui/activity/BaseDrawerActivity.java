@@ -32,7 +32,6 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.api.model.remoteconfig.LevelsJson;
 import ru.kuchanov.scpcore.db.model.User;
-import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.DrawerMvp;
 import ru.kuchanov.scpcore.ui.holder.drawer.HeaderViewHolderLogined;
 import ru.kuchanov.scpcore.ui.holder.drawer.HeaderViewHolderUnlogined;
@@ -182,7 +181,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
 
     @Override
     public void updateUser(@Nullable final User user) {
-        Timber.d("updateUser: %s", user);
+//        Timber.d("updateUser: %s", user);
         if (user != null) {
             for (int i = 0; i < mNavigationView.getHeaderCount(); i++) {
                 mNavigationView.removeHeaderView(mNavigationView.getHeaderView(i));
@@ -207,22 +206,10 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                     .show()
             );
 
-            headerViewHolder.levelContainer.setOnClickListener(view -> mInAppHelper
-                    .intentSenderSingle(
-                            getIInAppBillingService(),
-                            InAppHelper.InappType.IN_APP,
-                            InAppHelper.getNewInAppsSkus().get(0)
-                    )
-                    .subscribe(
-                            intentSender -> mInAppHelper.startPurchase(
-                                    intentSender,
-                                    this,
-                                    REQUEST_CODE_INAPP
-                            ),
-                            e -> {
-                                Timber.e(e);
-                                showError(e);
-                            }
+            headerViewHolder.levelContainer.setOnClickListener(view ->
+                    mPresenter.onPurchaseClick(
+                            mInAppHelper.getNewInAppsSkus().get(0),
+                            false
                     )
             );
 

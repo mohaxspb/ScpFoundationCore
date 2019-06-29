@@ -4,13 +4,11 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
-import com.android.vending.billing.IInAppBillingService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 import com.vk.sdk.VKSdk;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import ru.kuchanov.scpcore.BaseApplication;
@@ -26,20 +24,16 @@ import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.LoginActions;
-import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import rx.Observable;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-import static ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP;
-import static ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment.REQUEST_CODE_SUBSCRIPTION;
+import static ru.kuchanov.scpcore.Constants.LEVEL_UP_SCORE_TO_ADD;
 
 /**
  * Created by y.kuchanov on 21.12.16.
- * <p>
- * for scp_ru
  */
 public abstract class BasePresenter<V extends BaseMvp.View>
         extends MvpNullObjectBasePresenter<V>
@@ -118,59 +112,6 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     @Override
     public User getUser() {
         return mUser;
-    }
-
-    @Override
-    public void onPurchaseClick(final String id, final BaseActivity baseActivity, final boolean ignoreUserCheck) {
-        Timber.d("onPurchaseClick: $id, $baseActivity, $ignoreUserCheck");
-        //show warning if user not logged in
-        if (!ignoreUserCheck && mUser == null) {
-            getView().showOfferLoginForLevelUpPopup();
-            return;
-        }
-
-        final String type;
-        if (InAppHelper.getNewInAppsSkus().contains(id)) {
-            type = InAppHelper.InappType.IN_APP;
-        } else {
-            type = InAppHelper.InappType.SUBS;
-        }
-
-        final int requestCode;
-        if (type.equals(InAppHelper.InappType.IN_APP)) {
-            requestCode = REQUEST_CODE_INAPP;
-        } else {
-            requestCode = REQUEST_CODE_SUBSCRIPTION;
-        }
-        mInAppHelper.intentSenderSingle(baseActivity.getIInAppBillingService(), type, id)
-                .subscribe(
-                        intentSender -> mInAppHelper.startPurchase(intentSender, baseActivity, requestCode),
-                        e -> {
-                            Timber.e(e);
-                            getView().showError(e);
-                        }
-                );
-    }
-
-    @Override
-    public void onLevelUpRetryClick(@NotNull final IInAppBillingService inAppBillingService) {
-        mInAppHelper.getInAppHistoryObservable(inAppBillingService)
-                .flatMap(items -> mInAppHelper.consumeInApp(
-                        items.get(0).sku,
-                        items.get(0).purchaseData.purchaseToken,
-                        inAppBillingService
-                ))
-                .map(response -> mDbProviderFactory.getDbProvider().getScore())
-                .doOnSubscribe(() -> getView().showProgressDialog(R.string.wait))
-                .doOnEach(notification -> getView().dismissProgressDialog())
-                .subscribe(
-                        score -> getView().showMessage(BaseApplication.getAppInstance().getString(R.string.score_num, score)),
-                        e -> {
-                            Timber.e(e);
-                            getView().showError(e);
-                            getView().showInAppErrorDialog(e.getMessage());
-                        }
-                );
     }
 
     @Override
@@ -476,7 +417,10 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 
 
     @Override
-    public void updateUserScoreForScoreAction(@ScoreAction final String action, @Nullable final AddScoreListener addScoreListener) {
+    public void updateUserScoreForScoreAction(
+            @ScoreAction final String action,
+            @Nullable final AddScoreListener addScoreListener
+    ) {
         Timber.d("updateUserScore: %s", action);
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
@@ -513,7 +457,6 @@ public abstract class BasePresenter<V extends BaseMvp.View>
             return;
         }
 
-        //increment scoreInFirebase
         mApiClient.incrementScoreInFirebase(totalScoreToAdd)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -549,8 +492,11 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     }
 
     /**
-     * check if user logged in, calculate final score to add value from modificators, if user do not have subscription we increment unsynced score if user has subscription we increment score in firebase while incrementing we check if user already received score from group and if so - do not
-     * increment it
+     * check if user logged in, calculate final score to add value from modificators,
+     * if user do not have subscription we increment unsynced score
+     * if user has subscription we increment score in firebase
+     * while incrementing we check if user already received score from group and if so -
+     * do not increment it
      */
     @Override
     public void updateUserScoreForScoreAction(@ScoreAction final String action) {
@@ -559,7 +505,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 
     @Override
     public void updateUserScoreForInapp(final String sku) {
-        Timber.d("updateUserScore: %s", sku);
+        Timber.d("updateUserScoreForInapp: %s", sku);
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             Timber.d("user unlogined, do nothing");
@@ -567,7 +513,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         }
 
         //increment scoreInFirebase
-        final int totalScoreToAdd = 10000;
+        final int totalScoreToAdd = LEVEL_UP_SCORE_TO_ADD;
 
         mApiClient
                 .incrementScoreInFirebase(totalScoreToAdd)

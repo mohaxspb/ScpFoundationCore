@@ -2,8 +2,6 @@ package ru.kuchanov.scpcore.ui.fragment.monetization
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Bitmap
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -15,7 +13,6 @@ import android.view.View.VISIBLE
 import android.widget.LinearLayout
 import android.widget.Space
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.google.firebase.auth.FirebaseAuth
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegatesManager
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
@@ -73,7 +70,6 @@ class LeaderboardFragment :
                 return@subscribe
             }
             if (connected && isAdded && activity is BaseActivity<*, *>) {
-                getPresenter().inAppService = (activity as BaseActivity<*, *>).getIInAppBillingService()
                 if (!getPresenter().isDataLoaded) {
                     getPresenter().loadInitialData()
                 }
@@ -101,7 +97,7 @@ class LeaderboardFragment :
         delegateManager.addDelegate(InAppDelegate { id ->
             when (id) {
                 LeaderboardPresenter.APPODEAL_ID -> presenter.onRewardedVideoClick()
-                else -> baseActivity?.let { presenter.onPurchaseClick(id, it, false) }
+                else -> baseActivity?.getPresenter()?.onPurchaseClick(id, false)
             }
         })
 
@@ -117,7 +113,7 @@ class LeaderboardFragment :
                 showUserPosition(userPositionOnLeaderboard)
             }
         } else {
-            mPresenter.updateLeaderboardFromApi(0)
+            mPresenter.loadInitialData()
         }
 
         refresh.setOnClickListener { getPresenter().loadInitialData() }
@@ -158,7 +154,7 @@ class LeaderboardFragment :
         if (!isAdded) {
             return
         }
-        Timber.d("showUser: $myUser")
+//        Timber.d("showUser: $myUser")
         if (myUser == null) {
             val providers = ArrayList<Constants.Firebase.SocialProvider>(Arrays.asList<Constants.Firebase.SocialProvider>(*Constants.Firebase.SocialProvider.values()))
             if (!resources.getBoolean(R.bool.social_login_vk_enabled)) {

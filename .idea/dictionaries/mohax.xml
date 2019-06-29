@@ -2,10 +2,14 @@
   <dictionary name="mohax">
     <words>
       <w>appodeal</w>
+      <w>appstore</w>
       <w>cooldown</w>
       <w>crashlytics</w>
       <w>firebase</w>
+      <w>fullfilled</w>
       <w>gson</w>
+      <w>inapp</w>
+      <w>inapps</w>
       <w>interstitials</w>
       <w>kuchanov</w>
       <w>leaderboard</w>
@@ -14,7 +18,10 @@
       <w>mohax</w>
       <w>monetization</w>
       <w>readen</w>
+      <w>scpcore</w>
       <w>scpfoundation</w>
+      <w>sdktester</w>
+      <w>skus</w>
       <w>unlogined</w>
       <w>unsynced</w>
     </words>

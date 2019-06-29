@@ -218,10 +218,32 @@ public class ParseHtmlUtils {
         spoilerParts.add(elementExpanded.text().replaceAll("\\p{Z}", " "));
 //        Timber.d("spoilerParts: %s", spoilerParts.get(1));
 
+//        Timber.d("elementUnfolded.children().size(): %s", elementUnfolded.children().size());
+//        Timber.d("elementUnfolded.children().get(1).hasText(): %s", elementUnfolded.children().get(1).hasText());
+//        Timber.d("elementUnfolded: %s", elementUnfolded.html());
+
         final Element elementContent = elementUnfolded.getElementsByClass("collapsible-block-content").first();
-        if (elementContent != null) {
+        if (elementContent != null && elementContent.hasText()) {
+            Timber.d("elementContent != null && elementContent.hasText()");
+            unwrapTextAlignmentDivs(elementContent);
             spoilerParts.add(elementContent.html());
+        }
+        //see spoiler in fucking scp-3003
+        else if (elementContent != null
+                && !elementContent.hasText()
+                && elementUnfolded.children().size() > 2
+                && elementUnfolded.children().get(2).hasText()
+        ) {
+            Timber.d("elementContent != null\n" +
+                    "                && !elementContent.hasText()\n" +
+                    "                && elementUnfolded.children().size() > 1\n" +
+                    "                && elementUnfolded.children().get(1).hasText()");
+            elementExpanded.parent().remove();
+            elementContent.remove();
+            unwrapTextAlignmentDivs(elementUnfolded.children().first());
+            spoilerParts.add(elementUnfolded.html());
         } else {
+            Timber.wtf("ERROR WHILE PARSING SPOILER CONTENT. Please, let developers know about it, if you see this message)");
             spoilerParts.add("ERROR WHILE PARSING SPOILER CONTENT. Please, let developers know about it, if you see this message)");
         }
         return spoilerParts;
@@ -264,6 +286,24 @@ public class ParseHtmlUtils {
         }
     }
 
+    private static void unwrapTextAlignmentDivs(Element element) {
+        Elements children = element.children();
+        if (element.tagName().equals("div")
+                && element.hasAttr("style")
+                && element.attr("style").contains("text-align")) {
+            element.unwrap();
+        }
+        if (element.tagName().equals("div")
+                && element.hasAttr("style")
+                && element.attr("style").contains("float")
+                && !element.className().equals("scp-image-block")) {
+            element.unwrap();
+        }
+        for (Element child : children) {
+            unwrapTextAlignmentDivs(child);
+        }
+    }
+
     public static Article parseArticle(
             @NotNull final String url,
             @NotNull final Document doc,
@@ -271,6 +311,51 @@ public class ParseHtmlUtils {
             @NotNull final ConstantValues constantValues
     ) throws Exception {
         try {
+//            Timber.d("pageContent.children().size(): %s", pageContent.children().size());
+//            for (Element element : pageContent.children()) {
+//                Timber.d("pageContent element: %s", element.tagName());
+//            }
+
+            //unwrap element in divs with text-alignment
+            for (Element element : pageContent.children()) {
+                unwrapTextAlignmentDivs(element);
+            }
+
+
+            //remove rating bar
+            int rating = 0;
+            final Element rateDiv = pageContent.getElementsByClass("page-rate-widget-box").first();
+            if (rateDiv != null) {
+                final Element spanWithRating = rateDiv.getElementsByClass("rate-points").first();
+                if (spanWithRating != null) {
+                    final Element ratingSpan = spanWithRating.getElementsByClass("number").first();
+//                    Timber.d("ratingSpan: %s", ratingSpan);
+                    if (ratingSpan != null && !TextUtils.isEmpty(ratingSpan.text())) {
+                        try {
+                            rating = Integer.parseInt(ratingSpan.text().substring(1, ratingSpan.text().length()));
+//                            Timber.d("rating: %s", rating);
+                        } catch (final Exception e) {
+                            Timber.e(e);
+                        }
+                    }
+                }
+
+                final Element span1 = rateDiv.getElementsByClass("rateup").first();
+                span1.remove();
+                final Element span2 = rateDiv.getElementsByClass("ratedown").first();
+                span2.remove();
+                final Element span3 = rateDiv.getElementsByClass("cancel").first();
+                span3.remove();
+
+                final Elements heritageDiv = rateDiv.parent().getElementsByClass("heritage-emblem");
+                if (heritageDiv != null && !heritageDiv.isEmpty()) {
+                    heritageDiv.first().remove();
+                }
+            }
+
+//            Timber.d("pageContent.children().size(): %s", pageContent.children().size());
+//            Timber.d(" pageContent.children().first().tagName(): %s", pageContent.children().first().tagName());
+
             //some article are in div... I.e. http://scp-wiki-cn.wikidot.com/taboo
             //so check it and extract text
             if (pageContent.children().size() == 1
@@ -323,36 +408,6 @@ public class ParseHtmlUtils {
 
                 final String id = onclickAttr.substring(onclickAttr.indexOf("bibitem-"), onclickAttr.lastIndexOf("'"));
                 aTag.attr("href", id);
-            }
-            //remove rating bar
-            int rating = 0;
-            final Element rateDiv = pageContent.getElementsByClass("page-rate-widget-box").first();
-            if (rateDiv != null) {
-                final Element spanWithRating = rateDiv.getElementsByClass("rate-points").first();
-                if (spanWithRating != null) {
-                    final Element ratingSpan = spanWithRating.getElementsByClass("number").first();
-//                    Timber.d("ratingSpan: %s", ratingSpan);
-                    if (ratingSpan != null && !TextUtils.isEmpty(ratingSpan.text())) {
-                        try {
-                            rating = Integer.parseInt(ratingSpan.text().substring(1, ratingSpan.text().length()));
-//                            Timber.d("rating: %s", rating);
-                        } catch (final Exception e) {
-                            Timber.e(e);
-                        }
-                    }
-                }
-
-                final Element span1 = rateDiv.getElementsByClass("rateup").first();
-                span1.remove();
-                final Element span2 = rateDiv.getElementsByClass("ratedown").first();
-                span2.remove();
-                final Element span3 = rateDiv.getElementsByClass("cancel").first();
-                span3.remove();
-
-                final Elements heritageDiv = rateDiv.parent().getElementsByClass("heritage-emblem");
-                if (heritageDiv != null && !heritageDiv.isEmpty()) {
-                    heritageDiv.first().remove();
-                }
             }
             //remove something more
             final Element svernut = pageContent.getElementById("toc-action-bar");
@@ -440,16 +495,6 @@ public class ParseHtmlUtils {
 //                    Timber.d("nextSibling.nodeName(): %s", nextSibling.nodeName());
                 if (nextSibling != null && !nextSibling.toString().equals(" ") && nextSibling.nodeName().equals("#text")) {
                     element.after(new Element("div").appendChild(nextSibling));
-                }
-
-                //also fix scp-3000, where image and spoiler are in div tag, fucking shit! Web monkeys, ARGH!!!
-                if (!element.children().isEmpty() && element.children().size() == 2
-                        && element.child(0).tagName().equals("img") && element.child(1).className().equals("collapsible-block")) {
-                    final Node imgTag = element.childNode(0);
-                    final Node spoiler = element.childNode(1);
-                    element.before(imgTag);
-                    element.after(spoiler);
-                    element.remove();
                 }
             }
 

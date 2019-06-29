@@ -276,10 +276,18 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             } else if (i / interval > Constants.NUM_OF_NATIVE_ADS_PER_SCREEN) {
                 break;
             }
-            if (mArticlesAndAds.isEmpty() || i < 0) {
+            if (mArticlesAndAds.isEmpty() || mAdsModelsList.isEmpty() || i < 0) {
                 break;
             }
-            mArticlesAndAds.add(i, mAdsModelsList.get((i / interval) - 1));
+            Timber.d(
+                    "mArticlesAndAds/mAdsModelsList/i/interval/(i / interval) - 1: %s/%s/%s/%s/%s",
+                    mArticlesAndAds.size(),
+                    mAdsModelsList.size(),
+                    i,
+                    interval,
+                    (i / interval) - 1
+            );
+                mArticlesAndAds.add(i, mAdsModelsList.get((i / interval) - 1));
         }
     }
 
@@ -305,8 +313,8 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             nativeAdsSource = Constants.NativeAdsSource.values()[(int) config.getLong(NATIVE_ADS_LISTS_SOURCE_V2)];
             artBanners = dbProvider.getEnabledArtBanners();
         }
-        Timber.d("nativeAdsSource: %s", nativeAdsSource);
-        Timber.d("artBanners: %s", artBanners);
+//        Timber.d("nativeAdsSource: %s", nativeAdsSource);
+//        Timber.d("artBanners: %s", artBanners);
 
         int appodealIndex = 0;
         final List<MyListItem> adsModelsList = new ArrayList<>();
@@ -343,11 +351,13 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             );
                             break;
                         case ART:
-                            adsModelsList.add(
-                                    isArticle
-                                            ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())), false)
-                                            : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())))
-                            );
+                            if (!artBanners.isEmpty()) {
+                                adsModelsList.add(
+                                        isArticle
+                                                ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())), false)
+                                                : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())))
+                                );
+                            }
                             break;
                         default:
                             throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
@@ -370,11 +380,13 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     );
                     break;
                 case ART:
-                    adsModelsList.add(
-                            isArticle
-                                    ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())), false)
-                                    : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())))
-                    );
+                    if (!artBanners.isEmpty()) {
+                        adsModelsList.add(
+                                isArticle
+                                        ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())), false)
+                                        : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())))
+                        );
+                    }
                     break;
                 default:
                     throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);

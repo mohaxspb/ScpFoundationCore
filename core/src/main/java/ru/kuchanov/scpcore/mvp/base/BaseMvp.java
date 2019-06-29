@@ -2,7 +2,6 @@ package ru.kuchanov.scpcore.mvp.base;
 
 import android.support.annotation.StringRes;
 
-import com.android.vending.billing.IInAppBillingService;
 import com.hannesdorfmann.mosby.mvp.MvpPresenter;
 import com.hannesdorfmann.mosby.mvp.MvpView;
 
@@ -12,12 +11,9 @@ import org.jetbrains.annotations.Nullable;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
-import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 
 /**
  * Created by mohax on 14.01.2017.
- * <p>
- * for scp_ru
  */
 public interface BaseMvp {
 
@@ -48,8 +44,6 @@ public interface BaseMvp {
         void showOfferFreeTrialSubscriptionPopup();
 
         void showOfferLoginForLevelUpPopup();
-
-        void showInAppErrorDialog(@NotNull final String errorMessage);
     }
 
     interface Presenter<V extends MvpView> extends MvpPresenter<V>, DataSyncActions {
@@ -61,10 +55,6 @@ public interface BaseMvp {
         User getUser();
 
         void onUserChanged(User user);
-
-        void onPurchaseClick(String id, BaseActivity baseActivity, boolean ignoreUserCheck);
-
-        void onLevelUpRetryClick(IInAppBillingService inAppBillingService);
 
         void updateUserScoreForScoreAction(@ScoreAction String action, @Nullable BasePresenter.AddScoreListener addScoreListener);
     }

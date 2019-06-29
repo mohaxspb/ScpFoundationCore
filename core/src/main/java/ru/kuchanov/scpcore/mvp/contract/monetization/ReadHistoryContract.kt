@@ -16,7 +16,7 @@ interface ReadHistoryContract : BaseMvp {
         var data: MutableList<MyListItem>
 
         fun loadInitialData()
-        fun onTranactionClicked(articleUrl: String)
-        fun onTranactionDeleteClicked(id: Long)
+        fun onTransactionClicked(articleUrl: String)
+        fun onTransactionDeleteClicked(id: Long)
     }
 }

@@ -16,6 +16,8 @@ import android.util.Base64;
 
 import com.vk.sdk.util.VKUtil;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -53,8 +55,13 @@ public class SystemUtils {
         return currency.getSymbol(currencyLocaleMap.get(currency));
     }
 
-    public static String getCurrencySymbol2(final String currencyCode) {
-        return Currency.getInstance(currencyCode).getSymbol(Locale.getDefault());
+    public static String getCurrencySymbol2(@Nullable final String currencyCode) {
+        Timber.d("getCurrencySymbol2: %s", currencyCode);
+        if (currencyCode == null) {
+            return "";
+        } else {
+            return Currency.getInstance(currencyCode).getSymbol(Locale.getDefault());
+        }
     }
 
     private static String[] getCertificateFingerprints(final Context context) {

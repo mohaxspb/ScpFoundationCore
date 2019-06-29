@@ -102,6 +102,7 @@ public class ArticlePresenter
                             }
                         },
                         e -> {
+                            Timber.e(e, "error, while get article from DB");
                             getView().showCenterProgress(false);
                             getView().enableSwipeRefresh(true);
                             getView().showError(e);
@@ -112,17 +113,6 @@ public class ArticlePresenter
     @Override
     public void getDataFromApi() {
         Timber.d("getDataFromApi: %s", mArticleUrl);
-
-        //fixme remove it
-        if (true) {
-            mDbProviderFactory
-                    .getDbProvider()
-                    .getAllReadHistoryTransactions()
-                    .subscribe(
-                            readHistoryTransactions -> Timber.d("readHistoryTransactions: %s", readHistoryTransactions),
-                            error -> Timber.e(error, "Error while getAllReadHistoryTransactions")
-                    );
-        }
 
         if (TextUtils.isEmpty(mArticleUrl)) {
             return;
@@ -156,7 +146,7 @@ public class ArticlePresenter
                             getView().showSwipeProgress(false);
                         },
                         e -> {
-                            Timber.e(e);
+                            Timber.e(e, "error, while get article from API");
 
                             alreadyRefreshedFromApi = true;
 

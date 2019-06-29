@@ -21,6 +21,7 @@ class MainPresenter(
         apiClient,
         inAppHelper
 ), MainMvp.Presenter {
+
     override fun onFirstViewAttached() {
         mDbProviderFactory
                 .dbProvider

@@ -53,8 +53,8 @@ class ReadHistoryFragment :
 
         val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
         delegateManager.addDelegate(ReadHistoryDelegate(
-                { presenter.onTranactionClicked(it) },
-                { presenter.onTranactionDeleteClicked(it) }
+                { presenter.onTransactionClicked(it) },
+                { presenter.onTransactionDeleteClicked(it) }
         ))
 
         adapter = ListDelegationAdapter(delegateManager)

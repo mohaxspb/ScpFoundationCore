@@ -197,30 +197,31 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
+    //fixme delete it!
     @Deprecated
     private void incrementUserScoreForInvite() {
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            Timber.d("user unlogined, do nothing");
-            return;
-        }
-
-        @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.INVITE;
-        final int totalScoreToAdd = BasePresenter.getTotalScoreToAddFromAction(action, mMyPreferenceManager);
+//        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+//            Timber.d("user unlogined, do nothing");
+//            return;
+//        }
+//
+//        @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.INVITE;
+//        final int totalScoreToAdd = BasePresenter.getTotalScoreToAddFromAction(action, mMyPreferenceManager);
 
         //increment scoreInFirebase
-        mApiClient
-                .incrementScoreInFirebase(totalScoreToAdd)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(newTotalScore -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
-                .subscribe(
-                        newTotalScore -> Timber.d("new total score is: %s", newTotalScore),
-                        e -> {
-                            Timber.e(e, "error while increment userCore from action");
-                            //increment unsynced score to sync it later
-                            mMyPreferenceManager.addUnsyncedScore(totalScoreToAdd);
-                        }
-                );
+//        mApiClient
+//                .incrementScoreInFirebase(totalScoreToAdd)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .flatMap(newTotalScore -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
+//                .subscribe(
+//                        newTotalScore -> Timber.d("new total score is: %s", newTotalScore),
+//                        e -> {
+//                            Timber.e(e, "error while increment userCore from action");
+//                            //increment unsynced score to sync it later
+//                            mMyPreferenceManager.addUnsyncedScore(totalScoreToAdd);
+//                        }
+//                );
     }
 
     @SuppressWarnings("TypeMayBeWeakened")

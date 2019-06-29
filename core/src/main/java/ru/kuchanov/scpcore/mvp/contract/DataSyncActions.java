@@ -9,8 +9,6 @@ import ru.kuchanov.scpcore.db.model.Article;
 
 /**
  * Created by mohax on 24.03.2017.
- * <p>
- * for scp_ru
  */
 public interface DataSyncActions {
 

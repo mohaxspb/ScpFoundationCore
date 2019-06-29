@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 //kotlin
-apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'io.fabric'
@@ -148,7 +148,7 @@ android {
         }
 
         applicationVariants.all { variant ->
-            println('variantApp: ' + variant.getName())
+//            println('variantApp: ' + variant.getName())
 
             fillArrays(variant, false)
             fillApiArrays(variant, false)
@@ -200,6 +200,20 @@ android {
 //    ptProdReleaseCompile
 //    chProdReleaseCompile
 //}
+
+configurations {
+    //dev
+    ruDevAmazonReleaseCompile
+    ruDevGpReleaseCompile
+    enDevAmazonReleaseCompile
+    enDevGpReleaseCompile
+
+    //prod
+    ruProdAmazonReleaseCompile
+    ruProdGpReleaseCompile
+    enProdAmazonReleaseCompile
+    enProdGpReleaseCompile
+}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])

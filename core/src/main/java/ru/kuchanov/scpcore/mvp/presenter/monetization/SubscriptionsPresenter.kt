@@ -2,7 +2,6 @@
 
 package ru.kuchanov.scpcore.mvp.presenter.monetization
 
-import com.android.vending.billing.IInAppBillingService
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.api.ApiClient
@@ -11,6 +10,7 @@ import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
 import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
+import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.SubscriptionsContract
@@ -19,7 +19,6 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.subscribeBy
 import rx.schedulers.Schedulers
 import timber.log.Timber
-import java.util.regex.Pattern
 
 
 /**
@@ -28,15 +27,15 @@ import java.util.regex.Pattern
  * for ScpCore
  */
 class SubscriptionsPresenter(
-    myPreferencesManager: MyPreferenceManager,
-    dbProviderFactory: DbProviderFactory,
-    apiClient: ApiClient,
-    private val inAppHelper: InAppHelper
+        myPreferencesManager: MyPreferenceManager,
+        dbProviderFactory: DbProviderFactory,
+        apiClient: ApiClient,
+        private val inAppHelper: InAppHelper
 ) : BasePresenter<SubscriptionsContract.View>(
-    myPreferencesManager,
-    dbProviderFactory,
-    apiClient,
-    inAppHelper
+        myPreferencesManager,
+        dbProviderFactory,
+        apiClient,
+        inAppHelper
 ), SubscriptionsContract.Presenter {
 
     override var isDataLoaded = false
@@ -46,37 +45,45 @@ class SubscriptionsPresenter(
     override var owned: List<Item>? = null
     override var subsToBuy: List<Subscription>? = null
     override var inAppsToBuy: List<Subscription>? = null
-    @InAppHelper.SubscriptionType
-    override var type: Int = InAppHelper.SubscriptionType.NONE
+    @InappPurchaseUtil.SubscriptionType
+    override var type: Int = InappPurchaseUtil.SubscriptionType.NONE
 
-    override fun getMarketData(service: IInAppBillingService) {
+    override fun getMarketData() {
         Timber.d("getMarketData")
         view.showProgressCenter(true)
         view.showRefreshButton(false)
 
-        val skuList = InAppHelper.getNewSubsSkus()
+        val skuList = mInAppHelper.getNewSubsSkus().toMutableList()
         if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
-            skuList.addAll(InAppHelper.getNewNoAdsSubsSkus())
+            skuList.addAll(mInAppHelper.getNewNoAdsSubsSkus())
         }
 
         Single.zip(
-            inAppHelper.validateSubsObservable(service).toSingle(),
-            inAppHelper.getSubsListToBuyObservable(service, skuList).toSingle(),
-            inAppHelper.getInAppsListToBuyObservable(service)
+                inAppHelper.validateSubsObservable()
+                        /*.doOnSuccess { Timber.d("validateSubsObservable: $it") }*/,
+                inAppHelper.getSubsListToBuyObservable(skuList)
+                        /*.doOnSuccess { Timber.d("getSubsListToBuyObservable: $it") }*/,
+                inAppHelper.getInAppsListToBuy()
+                       /* .doOnSuccess { Timber.d("getInAppsListToBuy: $it") }*/
         ) { t1: List<Item>, t2: List<Subscription>, t3: List<Subscription> -> Triple(t1, t2, t3) }
+//                .doOnSuccess {
+//                    Timber.d("getMarketData: ${it.first}")
+//                    Timber.d("getMarketData: ${it.second}")
+//                    Timber.d("getMarketData: ${it.third}")
+//                }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onSuccess = {
-                        isDataLoaded = true
-                        view.showProgressCenter(false)
-                        view.showRefreshButton(false)
+                        onSuccess = {
+                            isDataLoaded = true
+                            view.showProgressCenter(false)
+                            view.showRefreshButton(false)
 
-                        owned = it.first
-                        subsToBuy = it.second
-                        inAppsToBuy = it.third
-                        type = InAppHelper.getSubscriptionTypeFromItemsList(it.first)
-                        //todo create data and show it in fragment
+                            owned = it.first
+                            subsToBuy = it.second
+                            inAppsToBuy = it.third
+                            type = mInAppHelper.getSubscriptionTypeFromItemsList(it.first)
+                            //todo create data and show it in fragment
 //                            items.clear()
 //                            items.add(TextViewModel(R.string.subs_main_text))
 //                            items.add(TextViewModel(R.string.subs_free_actions_title))
@@ -90,16 +97,16 @@ class SubscriptionsPresenter(
 
 //                            view.showData(items)
 
-                        view.showData(it.first, it.second, it.third, type)
-                    },
-                    onError = {
-                        Timber.e(it, "error getting cur subs")
-                        isDataLoaded = false
+                            view.showData(it.first, it.second, it.third, type)
+                        },
+                        onError = {
+                            Timber.e(it, "error getting cur subs")
+                            isDataLoaded = false
 
-                        view.showError(it)
-                        view.showProgressCenter(false)
-                        view.showRefreshButton(true)
-                    }
+                            view.showError(it)
+                            view.showProgressCenter(false)
+                            view.showRefreshButton(true)
+                        }
                 )
     }
 
@@ -109,15 +116,5 @@ class SubscriptionsPresenter(
         const val ID_FREE_ADS_DISABLE = "ID_FREE_ADS_DISABLE"
         const val ID_CURRENT_SUBS = "ID_CURRENT_SUBS"
         const val ID_CURRENT_SUBS_EMPTY = "ID_CURRENT_SUBS_EMPTY"
-
-        fun getMonthFromSkuId(sku: String): Int {
-            val p = Pattern.compile("\\d+")
-            val m = p.matcher(sku)
-            if (m.find()) {
-                return m.group().toInt()
-            }
-
-            throw IllegalArgumentException("cant find month in sku")
-        }
     }
 }
