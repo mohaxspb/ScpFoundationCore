@@ -187,9 +187,6 @@ class PurchaseListenerImpl(
             ALREADY_PURCHASED -> {
                 Timber.d("onPurchaseResponse ALREADY_PURCHASED")
                 //nothing to do
-//                if (purchaseResponse.receipt?.productType == CONSUMABLE) {
-//                    inappsBoughtRelay.call(SubscriptionWrapper(error = AlreadyPurchasedError()))
-//                }
             }
             NOT_SUPPORTED -> {
                 Timber.d("onPurchaseResponse NOT_SUPPORTED")
