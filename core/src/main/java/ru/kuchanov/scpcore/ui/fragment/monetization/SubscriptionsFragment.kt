@@ -193,33 +193,9 @@ class SubscriptionsFragment :
 
                 Timber.d("ownedItem: $item")
 
-                //title icon for all types, as amazon do not return concrete type, just parent
-                @StringRes
-                val title: Int = R.string.subscription_full_version_title
+                val (@StringRes title, @DrawableRes icon) = inAppHelper.getTitleAndIconForSubsSku(item.sku)
                 @StringRes
                 val description: Int = R.string.subs_full_description
-                //one icon for all types, as amazon do not return concrete type, just parent
-                @DrawableRes
-                val icon: Int = R.drawable.ic_check_circle_black_24dp
-                when (SubscriptionsPresenter.getMonthFromSkuId(item.sku)) {
-                    1 -> {
-//                        title = R.string.subs_1_month_title
-//                        icon = R.drawable.ic_scp_icon_laborant
-                    }
-                    3 -> {
-//                        title = R.string.subs_3_month_title
-//                        icon = R.drawable.ic_scp_icon_mns
-                    }
-                    6 -> {
-//                        title = R.string.subs_6_month_title
-//                        icon = R.drawable.ic_scp_icon_ns
-                    }
-                    12 -> {
-//                        title = R.string.subs_12_month_title
-//                        icon = R.drawable.ic_scp_icon_sns
-                    }
-                    else -> throw IllegalArgumentException("unexpected subs period")
-                }
 
                 items.add(
                         CurSubsViewModel(
@@ -249,7 +225,7 @@ class SubscriptionsFragment :
         val subsFullOneMonth = toBuy
                 .asSequence()
                 .filter { it.productId !in inAppHelper.getNewNoAdsSubsSkus() }
-                .first { SubscriptionsPresenter.getMonthFromSkuId(it.productId) == 1 }
+                .first { inAppHelper.getMonthFromSkuId(it.productId) == 1 }
 
         toBuy.sortedWith(
                 Comparator { t1, t2 ->
@@ -285,7 +261,7 @@ class SubscriptionsFragment :
                         @DrawableRes
                         val icon: Int
 
-                        val month = SubscriptionsPresenter.getMonthFromSkuId(it.productId)
+                        val month = inAppHelper.getMonthFromSkuId(it.productId)
                         when (month) {
                             1 -> {
                                 label = R.string.subs_1_month_label

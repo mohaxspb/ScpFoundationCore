@@ -2,8 +2,10 @@ package ru.kuchanov.scpcore.monetization.util
 
 import android.app.Activity
 import android.content.IntentSender
+import android.support.annotation.DrawableRes
 import android.support.annotation.IntDef
 import android.support.annotation.StringDef
+import android.support.annotation.StringRes
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.monetization.model.Item
@@ -11,6 +13,7 @@ import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import rx.Single
 import timber.log.Timber
+import java.util.regex.Pattern
 
 interface InappPurchaseUtil {
 
@@ -97,6 +100,48 @@ interface InappPurchaseUtil {
                 SubscriptionType.NO_ADS
         else
             SubscriptionType.FULL_VERSION
+    }
+
+    //fixme override in GP realization
+    fun getTitleAndIconForSubsSku(sku: String): Pair<Int, Int> {
+        //title icon for all types, as amazon do not return concrete type, just parent
+        @StringRes
+        val title: Int = R.string.subscription_full_version_title
+
+        //one icon for all types, as amazon do not return concrete type, just parent
+        @DrawableRes
+        val icon: Int = R.drawable.ic_check_circle_black_24dp
+        when (getMonthFromSkuId(sku)) {
+            1 -> {
+//                        title = R.string.subs_1_month_title
+//                        icon = R.drawable.ic_scp_icon_laborant
+            }
+            3 -> {
+//                        title = R.string.subs_3_month_title
+//                        icon = R.drawable.ic_scp_icon_mns
+            }
+            6 -> {
+//                        title = R.string.subs_6_month_title
+//                        icon = R.drawable.ic_scp_icon_ns
+            }
+            12 -> {
+//                        title = R.string.subs_12_month_title
+//                        icon = R.drawable.ic_scp_icon_sns
+            }
+            else -> throw IllegalArgumentException("unexpected subs period")
+        }
+
+        return title to icon
+    }
+
+    fun getMonthFromSkuId(sku: String): Int {
+        val p = Pattern.compile("\\d+")
+        val m = p.matcher(sku)
+        if (m.find()) {
+            return m.group().toInt()
+        }
+
+        throw IllegalArgumentException("cant find month in sku")
     }
 
     companion object {
