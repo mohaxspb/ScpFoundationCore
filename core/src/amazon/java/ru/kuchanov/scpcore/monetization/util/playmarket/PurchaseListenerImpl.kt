@@ -149,10 +149,13 @@ class PurchaseListenerImpl(
         when (purchaseResponse?.requestStatus) {
             SUCCESSFUL -> {
                 val receipt = purchaseResponse.receipt
-                Timber.d("onPurchaseResponse SUCCESSFUL: ${receipt.toJSON()}")
+                Timber.d("onPurchaseResponse SUCCESSFUL: ${receipt.receiptId}")
 
-//                iapManager.setAmazonUserId(response.getUserData().getUserId(), response.getUserData().getMarketplace());
-                handleReceipt(receipt, purchaseResponse.userData)
+                if (receipt.productType == CONSUMABLE) {
+                    handleConsumablePurchase(receipt, purchaseResponse.userData)
+                } else if (receipt.productType == SUBSCRIPTION) {
+                    handleSubscriptionPurchase(receipt, purchaseResponse.userData)
+                }
             }
             FAILED -> {
                 Timber.d("onPurchaseResponse FAILED")
@@ -210,18 +213,25 @@ class PurchaseListenerImpl(
         when (purchaseUpdatesResponse?.requestStatus) {
             PurchaseUpdatesResponse.RequestStatus.SUCCESSFUL -> {
                 Timber.d("purchaseUpdatesResponse?.requestStatus is PurchaseUpdatesResponse.RequestStatus.SUCCESSFUL")
-                //todo think, if we need to handle it... We must handle subs, if we do not handle it in onPurchase response...
-//                for (receipt in purchaseUpdatesResponse.receipts) {
-//                    // Process receipts
-//                    handleReceipt(receipt, purchaseUpdatesResponse.userData);
-//                }
+
+                val userData = purchaseUpdatesResponse.userData
+
                 val ownedNonCanceledSubs = purchaseUpdatesResponse
                         .receipts
                         .filter { it.productType == SUBSCRIPTION }
                         .filter { !it.isCanceled }
+
+                ownedNonCanceledSubs.forEach {
+                    PurchasingService.notifyFulfillment(it.receiptId, FulfillmentResult.FULFILLED)
+                }
+
                 ownedSubsRelay.call(ItemsListWrapper(items = ownedNonCanceledSubs.map { Item(sku = it.sku) }))
 
-                //todo handle non consumed levelUp inapps
+                //handle non consumed levelUp inapps
+                purchaseUpdatesResponse
+                        .receipts
+                        .filter { it.productType == CONSUMABLE }
+                        .forEach { handleConsumablePurchase(it, userData) }
 
                 if (purchaseUpdatesResponse.hasMore()) {
                     PurchasingService.getPurchaseUpdates(false)
@@ -238,21 +248,6 @@ class PurchaseListenerImpl(
             null -> {
                 Timber.d("purchaseUpdatesResponse?.requestStatus is NULL")
                 ownedSubsRelay.call(ItemsListWrapper(error = IllegalStateException("PurchaseUpdatesResponse.RequestStatus is null")))
-            }
-        }
-    }
-
-    private fun handleReceipt(receipt: Receipt, userData: UserData) {
-        Timber.d("handleReceipt: $receipt")
-        when (receipt.productType!!) {
-            CONSUMABLE ->
-                // try to do your application logic to fulfill the customer purchase
-                handleConsumablePurchase(receipt, userData)
-            ENTITLED -> {
-                //noting to do in Reader app
-            }
-            SUBSCRIPTION -> {
-                handleSubscriptionPurchase(receipt, userData)
             }
         }
     }
@@ -298,7 +293,7 @@ class PurchaseListenerImpl(
 
         try {
             if (receipt.isCanceled) {
-                revokeSubscription(receipt)
+                ownedSubsRelay.call(ItemsListWrapper(error = IllegalStateException("Subscription is canceled!")))
             } else {
                 // We strongly recommend that you verify the receipt on server-side.
                 if (!verifyReceiptFromYourService(receipt.receiptId, userData)) {
@@ -306,9 +301,6 @@ class PurchaseListenerImpl(
                     ownedSubsRelay.call(ItemsListWrapper(error = IllegalStateException("Purchase cannot be verified, please retry later.")))
                 } else {
                     try {
-                        //todo
-                        // Set the purchase status to fulfilled for your application
-//                        saveSubscriptionRecord(receipt, userData.userId)
                         ownedSubsRelay.call(ItemsListWrapper(items = listOf(Item(sku = receipt.sku))))
                         PurchasingService.notifyFulfillment(receipt.receiptId, FulfillmentResult.FULFILLED)
                     } catch (e: Throwable) {
@@ -323,13 +315,6 @@ class PurchaseListenerImpl(
             Timber.e(e, "Purchase cannot be completed, please retry")
             ownedSubsRelay.call(ItemsListWrapper(error = e))
         }
-    }
-
-
-    private fun revokeSubscription(receipt: Receipt) {
-        Timber.d("revokeSubscription: ${receipt.receiptId}")
-        //todo
-        //just pass subscription, as in receiver, we just.................. MAYBE, IM NOT SURE
     }
 
     private fun grantConsumablePurchase(receipt: Receipt, userData: UserData) {

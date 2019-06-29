@@ -921,6 +921,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             Timber.wtf("is NOT time to notify about ads");
         }
 
+        if (mMyPreferenceManager.isTimeToValidateSubscriptions()) {
+            updateOwnedMarketItems();
+        }
+
         setUpBanner();
 
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
