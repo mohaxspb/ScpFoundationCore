@@ -35,6 +35,7 @@ import ru.kuchanov.scpcore.api.model.scpreader.CommonUserData
 import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.db.model.SocialProviderModel
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
+import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
 import ru.kuchanov.scpcore.monetization.util.IntentSenderWrapper
 import ru.kuchanov.scpcore.monetization.util.PurchaseFailedError
@@ -509,25 +510,33 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 }
                 .onErrorResumeNext { error ->
                     return@onErrorResumeNext if (error is PurchaseFailedError) {
-                        mInAppHelper.getInAppHistory()
-                                .doOnSubscribe { view.showProgressDialog(R.string.wait) }
-                                .doOnEach { view.dismissProgressDialog() }
-                                .flatMap { mInAppHelper.consumeInApp(it.productId, "") }
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .doOnSuccess {
-                                    val context = BaseApplication.getAppInstance()
-                                    view.showMessage(
-                                            context.getString(
-                                                    R.string.score_increased,
-                                                    context.resources.getQuantityString(
-                                                            R.plurals.plurals_score,
-                                                            LEVEL_UP_SCORE_TO_ADD,
-                                                            LEVEL_UP_SCORE_TO_ADD
-                                                    )
-                                            )
-                                    )
-                                }
-                                .flatMap { mInAppHelper.startPurchase(IntentSenderWrapper(null, type, id)) }
+                        if (type == InappPurchaseUtil.InappType.IN_APP) {
+                            mInAppHelper.getInAppHistory()
+                                    .doOnSubscribe { view.showProgressDialog(R.string.wait) }
+                                    .doOnEach { view.dismissProgressDialog() }
+                                    .flatMap { mInAppHelper.consumeInApp(it.productId, "") }
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .doOnSuccess {
+                                        val context = BaseApplication.getAppInstance()
+                                        view.showMessage(
+                                                context.getString(
+                                                        R.string.score_increased,
+                                                        context.resources.getQuantityString(
+                                                                R.plurals.plurals_score,
+                                                                LEVEL_UP_SCORE_TO_ADD,
+                                                                LEVEL_UP_SCORE_TO_ADD
+                                                        )
+                                                )
+                                        )
+                                    }
+                                    .flatMap { mInAppHelper.startPurchase(IntentSenderWrapper(null, type, id)) }
+                        } else if (type == InappPurchaseUtil.InappType.SUBS) {
+                            mInAppHelper.validateSubsObservable()
+                                    .doOnSuccess { view.showMessage("Subscriptions state updated") }
+                                    .flatMap { Single.error<Subscription>(error) }
+                        } else {
+                            throw error
+                        }
                     } else {
                         throw error
                     }

@@ -154,7 +154,7 @@ class PurchaseListenerImpl(
 //                    inappsBoughtRelay.call(SubscriptionWrapper(error = IllegalStateException("FUCKING SHIT")))
                 } else if (receipt.productType == SUBSCRIPTION) {
                     handleSubscriptionPurchase(receipt, purchaseResponse.userData)
-                    //to test
+//                    to test
 //                    ownedSubsRelay.call(ItemsListWrapper(error = IllegalStateException("FUCKING SHIT")))
                 }
             }
