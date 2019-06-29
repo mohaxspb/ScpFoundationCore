@@ -40,7 +40,6 @@ import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
-import ru.kuchanov.scpcore.ui.activity.BaseActivity
 import ru.kuchanov.scpcore.ui.activity.BaseActivity.RC_SIGN_IN
 import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity
 import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment
@@ -509,15 +508,13 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 .flatMap { intentSender -> mInAppHelper.startPurchase(intentSender) }
                 .subscribe(
                         { subscription ->
-                            subscription.subscription?.let {
-                                if (it.type == InappPurchaseUtil.InappType.IN_APP) {
-                                    //update user score and
-                                    //show message if need (for GP we show it in other place, so check it)
-                                    //fixme check duplicated score for GP
-                                    updateUserScoreForInapp(it.productId)
-                                } else if (it.type == InappPurchaseUtil.InappType.SUBS) {
-                                    view.updateOwnedMarketItems()
-                                }
+                            if (subscription.type == InappPurchaseUtil.InappType.IN_APP) {
+                                //update user score and
+                                //show message if need (for GP we show it in other place, so check it)
+                                //fixme check duplicated score for GP
+                                updateUserScoreForInapp(subscription.productId)
+                            } else if (subscription.type == InappPurchaseUtil.InappType.SUBS) {
+                                view.updateOwnedMarketItems()
                             }
                         },
                         { e ->

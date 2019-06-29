@@ -39,19 +39,19 @@ interface InappPurchaseUtil {
 
     fun onResume()
 
-    fun getInAppHistoryObservable(): Single<ItemsListWrapper>
+    fun getInAppHistoryObservable(): Single<List<Item>>
 
-    fun getSubsListToBuyObservable(skus: List<String>): Single<SubscriptionsListWrapper>
+    fun getSubsListToBuyObservable(skus: List<String>): Single<List<Subscription>>
 
-    fun getInAppsListToBuy(): Single<SubscriptionsListWrapper>
+    fun getInAppsListToBuy(): Single<List<Subscription>>
 
     fun consumeInApp(sku: String, token: String): Single<Int>
 
-    fun validateSubsObservable(): Single<ItemsListWrapper>
+    fun validateSubsObservable(): Single<List<Item>>
 
     fun intentSenderSingle(@InappType type: String, sku: String): Single<IntentSenderWrapper>
 
-    fun startPurchase(intentSender: IntentSenderWrapper): Single<SubscriptionWrapper>
+    fun startPurchase(intentSender: IntentSenderWrapper): Single<Subscription>
 
     fun getFreeTrailSubsSkus(): List<String>
 

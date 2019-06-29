@@ -134,14 +134,13 @@ class SubscriptionsFragment :
         refresh.visibility = if (show) VISIBLE else GONE
     }
 
-    //    override fun showData(items: List<MyListItem>) {
     override fun showData(
             owned: List<Item>,
             toBuy: List<Subscription>,
             inApps: List<Subscription>,
             curSubsType: Int
     ) {
-        Timber.d("showData curSubsType: $curSubsType, owned: $owned, toBuy: $toBuy")
+//        Timber.d("showData curSubsType: $curSubsType, owned: $owned, toBuy: $toBuy")
         val items: MutableList<MyListItem> = mutableListOf()
         items.clear()
         items.add(TextViewModel(R.string.subs_main_text))
