@@ -30,6 +30,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
+import static ru.kuchanov.scpcore.Constants.LEVEL_UP_SCORE_TO_ADD;
+
 /**
  * Created by y.kuchanov on 21.12.16.
  */
@@ -110,28 +112,6 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     @Override
     public User getUser() {
         return mUser;
-    }
-
-    @Override
-    public void onLevelUpRetryClick() {
-        mInAppHelper.getInAppHistoryObservable()
-                .flatMap(
-                        items -> mInAppHelper.consumeInApp(
-                                items.get(0).getSku(),
-                                items.get(0).getPurchaseData().getPurchaseToken()
-                        )
-                )
-                .map(response -> mDbProviderFactory.getDbProvider().getScore())
-                .doOnSubscribe(() -> getView().showProgressDialog(R.string.wait))
-                .doOnEach(notification -> getView().dismissProgressDialog())
-                .subscribe(
-                        score -> getView().showMessage(BaseApplication.getAppInstance().getString(R.string.score_num, score)),
-                        e -> {
-                            Timber.e(e);
-                            getView().showError(e);
-                            getView().showInAppErrorDialog(e.getMessage());
-                        }
-                );
     }
 
     @Override
@@ -477,7 +457,6 @@ public abstract class BasePresenter<V extends BaseMvp.View>
             return;
         }
 
-        //increment scoreInFirebase
         mApiClient.incrementScoreInFirebase(totalScoreToAdd)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -526,7 +505,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 
     @Override
     public void updateUserScoreForInapp(final String sku) {
-        Timber.d("updateUserScore: %s", sku);
+        Timber.d("updateUserScoreForInapp: %s", sku);
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             Timber.d("user unlogined, do nothing");
@@ -534,7 +513,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         }
 
         //increment scoreInFirebase
-        final int totalScoreToAdd = 10000;
+        final int totalScoreToAdd = LEVEL_UP_SCORE_TO_ADD;
 
         mApiClient
                 .incrementScoreInFirebase(totalScoreToAdd)
@@ -572,17 +551,16 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         );
     }
 
-    //fixme uncomment it!
     public void updateMyNativeBanners() {
-//        mApiClient
-//                .getAllBanners()
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .flatMap(banners -> mDbProviderFactory.getDbProvider().saveBanners(banners))
-//                .subscribe(
-//                        banners -> Timber.d("updateMyNativeBanners onSuccess: %s", banners.size()),
-//                        e -> Timber.e(e, "Error while updateMyNativeBanners")
-//                );
+        mApiClient
+                .getAllBanners()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(banners -> mDbProviderFactory.getDbProvider().saveBanners(banners))
+                .subscribe(
+                        banners -> Timber.d("updateMyNativeBanners onSuccess: %s", banners.size()),
+                        e -> Timber.e(e, "Error while updateMyNativeBanners")
+                );
     }
 
     public static int getTotalScoreToAddFromAction(

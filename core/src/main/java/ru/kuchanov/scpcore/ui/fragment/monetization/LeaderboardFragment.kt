@@ -154,7 +154,7 @@ class LeaderboardFragment :
         if (!isAdded) {
             return
         }
-        Timber.d("showUser: $myUser")
+//        Timber.d("showUser: $myUser")
         if (myUser == null) {
             val providers = ArrayList<Constants.Firebase.SocialProvider>(Arrays.asList<Constants.Firebase.SocialProvider>(*Constants.Firebase.SocialProvider.values()))
             if (!resources.getBoolean(R.bool.social_login_vk_enabled)) {

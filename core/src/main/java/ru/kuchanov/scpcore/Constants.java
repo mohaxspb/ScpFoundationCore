@@ -5,8 +5,6 @@ import android.support.annotation.StringRes;
 
 /**
  * Created by mohax on 03.01.2017.
- * <p>
- * for scp_ru
  */
 public interface Constants {
 

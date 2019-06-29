@@ -42,7 +42,7 @@ interface InappPurchaseUtil {
 
     fun onResume()
 
-    fun getInAppHistoryObservable(): Single<List<Item>>
+    fun getInAppHistory(): Single<Subscription>
 
     fun getSubsListToBuyObservable(skus: List<String>): Single<List<Subscription>>
 
@@ -173,3 +173,5 @@ data class ItemsListWrapper(
         val items: List<Item>? = null,
         val error: Throwable? = null
 )
+
+class PurchaseFailedError(message: String) : IllegalStateException(message)

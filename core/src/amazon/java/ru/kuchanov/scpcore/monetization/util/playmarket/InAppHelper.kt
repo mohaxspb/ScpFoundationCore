@@ -5,6 +5,7 @@ import com.amazon.device.iap.PurchasingService
 import com.amazon.device.iap.model.RequestId
 import com.jakewharton.rxrelay.PublishRelay
 import ru.kuchanov.scpcore.BaseApplication
+import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.api.ApiClient
 import ru.kuchanov.scpcore.db.DbProviderFactory
@@ -24,6 +25,7 @@ class InAppHelper constructor(
 
     private val subscriptionsToBuyRelay = PublishRelay.create<SubscriptionsListWrapper>()
     private val inappsToBuyRelay = PublishRelay.create<SubscriptionsListWrapper>()
+
     private val inappsBoughtRelay = PublishRelay.create<SubscriptionWrapper>()
     private val ownedSubsRelay = PublishRelay.create<ItemsListWrapper>()
 
@@ -60,23 +62,35 @@ class InAppHelper constructor(
         PurchasingService.getUserData()
 
 //        PurchasingService.getPurchaseUpdates(false)
-
-//        PurchasingService.getProductData(getNewSubsSkus().toMutableSet())
-//        PurchasingService.getProductData(getNewInAppsSkus().toMutableSet())
     }
 
     override fun onActivityDestroy(activity: Activity) {
         Timber.d("onActivityDestroy")
     }
 
-    override fun getInAppHistoryObservable(): Single<List<Item>> {
-        //for amazon we don't (seems to be) have situation with unconsumed levelUps...
-        return Single.just(listOf())
+    override fun getInAppHistory(): Single<Subscription> {
+        PurchasingService.getPurchaseUpdates(true)
+
+        return inappsBoughtRelay
+                .map { it.subscription ?: throw it.error!! }
+                .take(1)
+                .toSingle()
+    }
+
+    override fun consumeInApp(sku: String, token: String): Single<Int> {
+        val totalScoreToAdd = Constants.LEVEL_UP_SCORE_TO_ADD
+
+        return apiClient
+                .incrementScoreInFirebase(totalScoreToAdd)
+                .flatMap { newTotalScore ->
+                    apiClient
+                            .addRewardedInapp(sku)
+                            .flatMap { dbProviderFactory.dbProvider.updateUserScore(newTotalScore) }
+                }
+                .doOnError { preferenceManager.addUnsyncedScore(totalScoreToAdd) }
     }
 
     override fun getSubsListToBuyObservable(skus: List<String>): Single<List<Subscription>> {
-        Timber.d("getSubsListToBuyObservable: $skus")
-
         PurchasingService.getProductData(skus.toMutableSet())
 
         return subscriptionsToBuyRelay
@@ -92,11 +106,6 @@ class InAppHelper constructor(
                 .map { it.subscriptions ?: throw it.error!! }
                 .take(1)
                 .toSingle()
-    }
-
-    override fun consumeInApp(sku: String, token: String): Single<Int> {
-        //noting to do for amazon
-        return Single.just(-1)
     }
 
     override fun validateSubsObservable(): Single<List<Item>> {
@@ -130,6 +139,7 @@ class InAppHelper constructor(
 
     private fun getValidatedOwnedSubsObservable(): Single<List<Item>> {
         PurchasingService.getPurchaseUpdates(true)
+
         return ownedSubsRelay
                 .map { it.items ?: throw it.error!! }
                 .take(1)
@@ -147,34 +157,38 @@ class InAppHelper constructor(
             intentSender: IntentSenderWrapper
     ): Single<Subscription> {
         val requestId: RequestId = PurchasingService.purchase(intentSender.sku)
-        Timber.d("onBuyOrangeClick: requestId ($requestId)")
+        Timber.d("startPurchase: requestId ($requestId)")
         return when (intentSender.type) {
-            InappPurchaseUtil.InappType.IN_APP -> inappsBoughtRelay
-                    .map { it.subscription ?: throw it.error!! }
-                    .take(1)
-                    .toSingle()
-            InappPurchaseUtil.InappType.SUBS -> ownedSubsRelay
-                    .map { subsWrapper ->
-                        subsWrapper.items?.first()?.let {
-                            Subscription(
-                                    it.sku,
-                                    InappPurchaseUtil.InappType.SUBS,
-                                    null,
-                                    0, //price_amount_micros
-                                    null, //price_currency_code
-                                    null,
-                                    null,
-                                    null,
-                                    null,
-                                    null,
-                                    0,
-                                    null,
-                                    0
-                            )
-                        } ?: throw subsWrapper.error!!
-                    }
-                    .take(1)
-                    .toSingle()
+            InappPurchaseUtil.InappType.IN_APP -> {
+                inappsBoughtRelay
+                        .map { it.subscription ?: throw it.error!! }
+                        .take(1)
+                        .toSingle()
+            }
+            InappPurchaseUtil.InappType.SUBS -> {
+                ownedSubsRelay
+                        .map { subsWrapper ->
+                            subsWrapper.items?.first()?.let {
+                                Subscription(
+                                        it.sku,
+                                        InappPurchaseUtil.InappType.SUBS,
+                                        null,
+                                        0, //price_amount_micros
+                                        null, //price_currency_code
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        0,
+                                        null,
+                                        0
+                                )
+                            } ?: throw subsWrapper.error!!
+                        }
+                        .take(1)
+                        .toSingle()
+            }
             else -> throw IllegalArgumentException("Unexpected type: ${intentSender.type}")
         }
     }

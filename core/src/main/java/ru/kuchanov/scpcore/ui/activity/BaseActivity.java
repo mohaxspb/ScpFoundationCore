@@ -44,7 +44,6 @@ import com.hannesdorfmann.mosby.mvp.MvpActivity;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 
-import org.jetbrains.annotations.NotNull;
 import org.joda.time.Period;
 
 import java.io.IOException;
@@ -855,14 +854,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                             showError(e);
                         }
                 );
-    }
-
-    @Override
-    public void showInAppErrorDialog(@NotNull final String errorMessage) {
-        if (!hasWindowFocus() || isDestroyed() || isFinishing()) {
-            return;
-        }
-        mDialogUtils.showInAppErrorDialog(this, errorMessage);
     }
 
     @Override

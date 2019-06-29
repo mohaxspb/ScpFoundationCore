@@ -298,7 +298,7 @@ class LeaderboardPresenter(
     override fun onUserChanged(user: User?) {
         super.onUserChanged(user)
         myUser = user
-        Timber.d("onUserChanged: $myUser")
+//        Timber.d("onUserChanged: $myUser")
         if (myUser == null) {
             view.showUser(null)
         } else {

@@ -5,8 +5,6 @@ import ru.kuchanov.scpcore.mvp.contract.ActivityToolbarStateSetter
 
 /**
  * Created by y.kuchanov on 21.12.16.
- *
- * for scp_ru
  */
 interface SubscriptionsScreenContract : BaseActivityMvp {
 

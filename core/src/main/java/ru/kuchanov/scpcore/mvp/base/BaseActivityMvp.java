@@ -6,8 +6,6 @@ import ru.kuchanov.scpcore.mvp.contract.LoginActions;
 
 /**
  * Created by mohax on 23.03.2017.
- * <p>
- * for scp_ru
  */
 public interface BaseActivityMvp {
 

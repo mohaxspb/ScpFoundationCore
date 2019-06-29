@@ -9,10 +9,7 @@ import com.amazon.device.iap.model.PurchaseResponse.RequestStatus.*
 import com.jakewharton.rxrelay.PublishRelay
 import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
-import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
-import ru.kuchanov.scpcore.monetization.util.ItemsListWrapper
-import ru.kuchanov.scpcore.monetization.util.SubscriptionWrapper
-import ru.kuchanov.scpcore.monetization.util.SubscriptionsListWrapper
+import ru.kuchanov.scpcore.monetization.util.*
 import timber.log.Timber
 
 
@@ -153,13 +150,26 @@ class PurchaseListenerImpl(
 
                 if (receipt.productType == CONSUMABLE) {
                     handleConsumablePurchase(receipt, purchaseResponse.userData)
+                    //to test
+//                    inappsBoughtRelay.call(SubscriptionWrapper(error = IllegalStateException("FUCKING SHIT")))
                 } else if (receipt.productType == SUBSCRIPTION) {
                     handleSubscriptionPurchase(receipt, purchaseResponse.userData)
+                    //to test
+//                    ownedSubsRelay.call(ItemsListWrapper(error = IllegalStateException("FUCKING SHIT")))
                 }
             }
             FAILED -> {
-                Timber.d("onPurchaseResponse FAILED")
-                //nothing to do, as it called when user canceled purchase in amazon UI.
+//                Timber.d("onPurchaseResponse FAILED")
+                inappsBoughtRelay.call(
+                        SubscriptionWrapper(
+                                error = PurchaseFailedError("onPurchaseResponse FAILED")
+                        )
+                )
+                ownedSubsRelay.call(
+                        ItemsListWrapper(
+                                error = PurchaseFailedError("onPurchaseResponse FAILED")
+                        )
+                )
             }
             INVALID_SKU -> {
                 Timber.d("onPurchaseResponse INVALID_SKU")
@@ -177,6 +187,9 @@ class PurchaseListenerImpl(
             ALREADY_PURCHASED -> {
                 Timber.d("onPurchaseResponse ALREADY_PURCHASED")
                 //nothing to do
+//                if (purchaseResponse.receipt?.productType == CONSUMABLE) {
+//                    inappsBoughtRelay.call(SubscriptionWrapper(error = AlreadyPurchasedError()))
+//                }
             }
             NOT_SUPPORTED -> {
                 Timber.d("onPurchaseResponse NOT_SUPPORTED")
@@ -228,10 +241,13 @@ class PurchaseListenerImpl(
                 ownedSubsRelay.call(ItemsListWrapper(items = ownedNonCanceledSubs.map { Item(sku = it.sku) }))
 
                 //handle non consumed levelUp inapps
-                purchaseUpdatesResponse
+                val inapps = purchaseUpdatesResponse
                         .receipts
+                        .filter { !it.isCanceled }
                         .filter { it.productType == CONSUMABLE }
-                        .forEach { handleConsumablePurchase(it, userData) }
+//                        .forEach { handleConsumablePurchase(it, userData) }
+//                inappsBoughtRelay.call(SubscriptionWrapper(inapps.first()))
+                handleConsumablePurchase(inapps.first(), userData)
 
                 if (purchaseUpdatesResponse.hasMore()) {
                     PurchasingService.getPurchaseUpdates(false)
@@ -263,6 +279,7 @@ class PurchaseListenerImpl(
      * @param userData
      */
     private fun handleConsumablePurchase(receipt: Receipt, userData: UserData) {
+        Timber.d("handleConsumablePurchase: ${receipt.receiptId}")
         try {
             if (receipt.isCanceled) {
                 revokeConsumablePurchase(receipt, userData)
@@ -273,6 +290,7 @@ class PurchaseListenerImpl(
                     Timber.e("Purchase cannot be verified, please retry later.")
                     inappsBoughtRelay.call(SubscriptionWrapper(error = IllegalStateException("Purchase cannot be verified, please retry later.")))
                 } else {
+                    Timber.d("receiptIsAlreadyFulfilled: ${receiptIsAlreadyFulfilled(receipt.receiptId, userData)}")
                     if (receiptIsAlreadyFulfilled(receipt.receiptId, userData)) {
                         // if the receipt was fulfilled before, just notify Amazon
                         // Appstore it's Fulfilled again.
@@ -380,11 +398,11 @@ class PurchaseListenerImpl(
     }
 
     override fun onUserDataResponse(userDataResponse: UserDataResponse?) {
-        Timber.d("onUserDataResponse: %s", userDataResponse)
+//        Timber.d("onUserDataResponse: %s", userDataResponse)
 
         when (userDataResponse?.requestStatus) {
             UserDataResponse.RequestStatus.SUCCESSFUL -> {
-                Timber.d("onUserDataResponse SUCCESSFUL")
+//                Timber.d("onUserDataResponse SUCCESSFUL")
                 setUserData(userDataResponse.userData.userId, userDataResponse.userData.marketplace)
             }
 
@@ -432,12 +450,12 @@ class PurchaseListenerImpl(
         // Return true only if there is no local record for the receipt id/user
         // id or the receipt id is not marked as FULFILLED/UNAVAILABLE.
 
-        Timber.d("receiptRecord: $receiptRecord")
+//        Timber.d("receiptRecord: $receiptRecord")
         val receiptIsNotExists = receiptRecord == null
         val isFullfilledAlready = receiptRecord == AmazonPurchaseStatus.FULFILLED
-        Timber.d("receiptIsNotExists: $receiptIsNotExists")
-        Timber.d("isNotFullfilledAlready: $isFullfilledAlready")
-        @Suppress("LiftReturnOrAssignment")
+//        Timber.d("receiptIsNotExists: $receiptIsNotExists")
+//        Timber.d("isNotFullfilledAlready: $isFullfilledAlready")
+//        @Suppress("LiftReturnOrAssignment")
         if (receiptIsNotExists) {
             return false
         } else {
