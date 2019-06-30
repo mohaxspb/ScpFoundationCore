@@ -11,13 +11,16 @@ buildscript {
         //for butterknife 9 snapshot
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 
+        //mopub
+//        maven { url "https://s3.amazonaws.com/moat-sdk-builds" }
+
         flatDir {
             dirs 'libs'
         }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.4.1'
-        classpath 'com.google.gms:google-services:4.2.0'
+        classpath 'com.google.gms:google-services:4.3.0'
         classpath 'io.realm:realm-gradle-plugin:3.7.2'
         classpath 'com.jakewharton:butterknife-gradle-plugin:9.0.0-SNAPSHOT'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -28,12 +31,15 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
-        google()
         mavenCentral()
         maven { url "https://jitpack.io" }
 
         /** The repository required for AdColony 3.0 and above */
-        maven { url "https://adcolony.bintray.com/AdColony" }
+//        maven { url "https://adcolony.bintray.com/AdColony" }
+
+        //mopub
+        maven { url "https://s3.amazonaws.com/moat-sdk-builds" }
+        google()
 
         flatDir {
             dirs 'libs'

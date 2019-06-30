@@ -37,7 +37,7 @@ android {
     def buildDateTime = project.hasProperty('devBuild') ? 100 : buildVersionCodeFor3Numbers()
 
     defaultConfig {
-        minSdkVersion 17
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode buildDateTime
         versionName version
@@ -220,6 +220,11 @@ android {
 
         //new crash reporting
         api('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') { transitive = true }
+
+        //mopub ads sdk
+//        implementation('com.mopub:mopub-sdk:5.7.1@aar') {
+//            transitive = true
+//        }
 
         //sub project modules
         api('ru.kuchanov.utils:rate:1.2.1@aar') { transitive = true }
