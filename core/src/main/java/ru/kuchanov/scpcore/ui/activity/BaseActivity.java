@@ -41,6 +41,12 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.google.gson.Gson;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
+import com.mopub.common.MoPub;
+import com.mopub.common.SdkConfiguration;
+import com.mopub.common.SdkInitializationListener;
+import com.mopub.common.logging.MoPubLog;
+import com.mopub.mobileads.MoPubErrorCode;
+import com.mopub.mobileads.MoPubView;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 
@@ -135,6 +141,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Nullable
     @BindView(R2.id.banner)
     protected AdView mAdView;
+
+    @Nullable
+    @BindView(R2.id.mopubBanner)
+    protected MoPubView mopubBanner;
 
     @Inject
     protected P mPresenter;
@@ -345,6 +355,21 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         mInterstitialAd.setAdUnitId(getString(R.string.ad_unit_id_interstitial));
         mInterstitialAd.setAdListener(new MyAdListener());
 
+        //mopub
+
+        //fixme set correct adUnitID
+        SdkConfiguration sdkConfiguration = new SdkConfiguration.Builder("b195f8dd8ded45fe847ad89ed1d016da")
+                .withLogLevel(MoPubLog.LogLevel.DEBUG)
+                .withLegitimateInterestAllowed(false)
+                .build();
+
+        MoPub.initializeSdk(this, sdkConfiguration, () -> {
+       /* MoPub SDK initialized.
+       Check if you should show the consent dialog here, and make your ad requests. */
+        });
+
+        //mopub END
+
         //todo rewarded video by admob
 //        Appodeal.setRewardedVideoCallbacks(new MyRewardedVideoCallbacks() {
 //
@@ -397,14 +422,53 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 mAdView.setEnabled(false);
                 mAdView.setVisibility(View.GONE);
             }
+
+            if (mopubBanner != null) {
+                mopubBanner.setEnabled(false);
+                mopubBanner.setVisibility(View.GONE);
+            }
         } else {
-            if (mAdView != null) {
-//                Timber.d("Enable banner! mAdView.isLoading(): %s", mAdView.isLoading());
-                mAdView.setEnabled(true);
-                mAdView.setVisibility(View.VISIBLE);
-                if (!mAdView.isLoading()) {
-                    mAdView.loadAd(AdMobHelper.buildAdRequest(this));
-                }
+//            if (mAdView != null) {
+////                Timber.d("Enable banner! mAdView.isLoading(): %s", mAdView.isLoading());
+//                mAdView.setEnabled(true);
+//                mAdView.setVisibility(View.VISIBLE);
+//                if (!mAdView.isLoading()) {
+//                    mAdView.loadAd(AdMobHelper.buildAdRequest(this));
+//                }
+//            }
+            if (mopubBanner != null) {
+                //todo Enter your Ad Unit ID from www.mopub.com
+                mopubBanner.setVisibility(View.VISIBLE);
+                mopubBanner.setTesting(BuildConfig.DEBUG || BuildConfig.FLAVOR_mode.equals("dev"));
+                mopubBanner.setEnabled(true);
+                mopubBanner.setBannerAdListener(new MoPubView.BannerAdListener() {
+                    @Override
+                    public void onBannerLoaded(MoPubView banner) {
+                        Timber.d("onBannerLoaded");
+                    }
+
+                    @Override
+                    public void onBannerFailed(MoPubView banner, MoPubErrorCode errorCode) {
+                        Timber.d("onBannerFailed: %s", errorCode);
+                    }
+
+                    @Override
+                    public void onBannerClicked(MoPubView banner) {
+                        Timber.d("onBannerClicked");
+                    }
+
+                    @Override
+                    public void onBannerExpanded(MoPubView banner) {
+                        Timber.d("onBannerExpanded");
+                    }
+
+                    @Override
+                    public void onBannerCollapsed(MoPubView banner) {
+                        Timber.d("onBannerCollapsed");
+                    }
+                });
+                mopubBanner.setAdUnitId("b195f8dd8ded45fe847ad89ed1d016da");
+                mopubBanner.loadAd();
             }
         }
     }
@@ -578,60 +642,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         }
     }
 
-//    @Override
-//    @Nullable
-//    public IInAppBillingService getIInAppBillingService() {
-//        return mService;
-//    }
-
-//    private final ServiceConnection mServiceConn = new ServiceConnection() {
-//        @Override
-//        public void onServiceDisconnected(final ComponentName name) {
-//            Timber.d("onServiceDisconnected");
-//            mService = null;
-//            InAppBillingServiceConnectionObservable.getInstance().getServiceStatusObservable().onNext(false);
-//        }
-//
-//        @Override
-//        public void onServiceConnected(final ComponentName name, final IBinder service) {
-//            Timber.d("onServiceConnected");
-//            mService = IInAppBillingService.Stub.asInterface(service);
-//            InAppBillingServiceConnectionObservable.getInstance().getServiceStatusObservable().onNext(true);
-//            //update invalidated subs list every some hours
-//            if (mMyPreferenceManager.isTimeToValidateSubscriptions()) {
-//                updateOwnedMarketItems();
-//            }
-//
-//            //offer free trial every week for non subscribed users
-//            //check here as we need to have connected service
-//            if (!mMyPreferenceManager.isHasAnySubscription() && mMyPreferenceManager.isTimeToPeriodicalOfferFreeTrial()) {
-//                final Bundle bundle = new Bundle();
-//                bundle.putString(EventParam.PLACE, EventValue.PERIODICAL);
-//                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
-//
-//                showOfferFreeTrialSubscriptionPopup();
-//                mMyPreferenceManager.setLastTimePeriodicalFreeTrialOffered(System.currentTimeMillis());
-//            }
-//
-//            //check here along with onUserChange as there can be situation when data from DB gained,
-//            //but service not connected yet
-//            //check if user score is greter than 1000 and offer him/her a free trial if there is no subscription owned
-//            if (!mMyPreferenceManager.isHasAnySubscription()
-//                    && mPresenter.getUser() != null
-//                    && mPresenter.getUser().score >= 1000
-//                    //do not show it after level up gain, where we add 10000 score
-//                    && mPresenter.getUser().score < 10000
-//                    && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
-//                final Bundle bundle = new Bundle();
-//                bundle.putString(EventParam.PLACE, EventValue.SCORE_1000_REACHED);
-//                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
-//
-//                showOfferFreeTrialSubscriptionPopup();
-//                mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score();
-//            }
-//        }
-//    };
-
     @Override
     public void updateOwnedMarketItems() {
         Timber.d("updateOwnedMarketItems");
@@ -652,6 +662,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                                         mAdView.setEnabled(false);
                                         mAdView.setVisibility(View.GONE);
                                     }
+                                    //todo mopub too
                                     break;
                                 }
                                 default:
@@ -965,6 +976,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     protected void onDestroy() {
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
         super.onDestroy();
+        mopubBanner.destroy();
         mInAppHelper.onActivityDestroy(this);
     }
 
@@ -992,7 +1004,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         // can test different config values during development.
         //noinspection ConstantConditions
         final FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
-                .setDeveloperModeEnabled(BuildConfig.FLAVOR.equals("dev"))
+                .setDeveloperModeEnabled(BuildConfig.FLAVOR_mode.equals("dev"))
                 .build();
         remoteConfig.setConfigSettings(configSettings);
 

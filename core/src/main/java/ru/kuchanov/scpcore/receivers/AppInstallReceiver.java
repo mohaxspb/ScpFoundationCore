@@ -172,7 +172,7 @@ public class AppInstallReceiver extends BroadcastReceiver {
             // Enabling developer mode allows many more requests to be made per hour, so developers
             // can test different config values during development.
             final FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
-                    .setDeveloperModeEnabled(BuildConfig.FLAVOR.equals("dev"))
+                    .setDeveloperModeEnabled(BuildConfig.FLAVOR_mode.equals("dev"))
                     .build();
             mFirebaseRemoteConfig.setConfigSettings(configSettings);
 

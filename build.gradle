@@ -12,7 +12,7 @@ buildscript {
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 
         //mopub
-//        maven { url "https://s3.amazonaws.com/moat-sdk-builds" }
+        maven { url "https://s3.amazonaws.com/moat-sdk-builds" }
 
         flatDir {
             dirs 'libs'

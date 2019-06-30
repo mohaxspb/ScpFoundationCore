@@ -222,9 +222,9 @@ android {
         api('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') { transitive = true }
 
         //mopub ads sdk
-//        implementation('com.mopub:mopub-sdk:5.7.1@aar') {
-//            transitive = true
-//        }
+        implementation('com.mopub:mopub-sdk:5.7.1@aar') {
+            transitive = true
+        }
 
         //sub project modules
         api('ru.kuchanov.utils:rate:1.2.1@aar') { transitive = true }

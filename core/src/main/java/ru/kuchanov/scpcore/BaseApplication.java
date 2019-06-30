@@ -128,7 +128,7 @@ public abstract class BaseApplication extends MultiDexApplication {
 
         //subscribe to main push topic
         //noinspection ConstantConditions
-        final String topic = BuildConfig.DEBUG || BuildConfig.FLAVOR.equals("dev")
+        final String topic = BuildConfig.DEBUG || BuildConfig.FLAVOR_mode.equals("dev")
                 ? Constants.Firebase.PushTopics.TEST
                 : Constants.Firebase.PushTopics.MAIN;
         Timber.d("Subscribe to FCM topic: %s", topic);
