@@ -6,19 +6,18 @@ import javax.inject.Inject;
 
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.InterstitialAdListener;
 
 
 /**
  * Created by mohax on 15.01.2017.
- * <p>
- * for scp_ru
  */
-public class MyAdListener extends AdListener {
+public class AdmobInterstitialAdListener extends AdListener implements InterstitialAdListener {
 
     @Inject
     MyPreferenceManager mMyPreferenceManager;
 
-    public MyAdListener() {
+    public AdmobInterstitialAdListener() {
         super();
         BaseApplication.getAppComponent().inject(this);
     }
@@ -30,7 +29,6 @@ public class MyAdListener extends AdListener {
      */
     @Override
     public void onAdClosed() {
-        mMyPreferenceManager.setLastTimeAdsShows(System.currentTimeMillis());
-        mMyPreferenceManager.setNumOfInterstitialsShown(mMyPreferenceManager.getNumOfInterstitialsShown() + 1);
+        onInterstitialClosed(mMyPreferenceManager);
     }
 }

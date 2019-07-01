@@ -21,6 +21,8 @@ import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -32,7 +34,8 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImageTranslation;
-import ru.kuchanov.scpcore.monetization.util.admob.MyAdListener;
+import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.InterstitialAdListener;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.mvp.contract.GalleryScreenMvp;
 import ru.kuchanov.scpcore.ui.adapter.ImagesAdapter;
@@ -130,9 +133,9 @@ public class GalleryActivity
                     final boolean hasSubscription = mMyPreferenceManager.isHasSubscription() || mMyPreferenceManager.isHasNoAdsSubscription();
                     if (!hasSubscription) {
                         if (isAdsLoaded()) {
-                            showInterstitial(new MyAdListener() {
+                            showInterstitial(new InterstitialAdListener() {
                                 @Override
-                                public void onAdClosed() {
+                                public void onInterstitialClosed(@NotNull MyPreferenceManager preferences) {
                                     @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
                                     mPresenter.updateUserScoreForScoreAction(action);
                                     showSnackBarWithAction(Constants.Firebase.CallToActionReason.REMOVE_ADS);

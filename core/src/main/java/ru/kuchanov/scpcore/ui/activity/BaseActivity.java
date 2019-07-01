@@ -43,13 +43,14 @@ import com.google.gson.Gson;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 import com.mopub.common.MoPub;
 import com.mopub.common.SdkConfiguration;
-import com.mopub.common.SdkInitializationListener;
 import com.mopub.common.logging.MoPubLog;
 import com.mopub.mobileads.MoPubErrorCode;
+import com.mopub.mobileads.MoPubInterstitial;
 import com.mopub.mobileads.MoPubView;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.Period;
 
 import java.io.IOException;
@@ -76,8 +77,10 @@ import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.manager.MyNotificationManager;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil.SubscriptionType;
+import ru.kuchanov.scpcore.monetization.util.InterstitialAdListener;
 import ru.kuchanov.scpcore.monetization.util.admob.AdMobHelper;
-import ru.kuchanov.scpcore.monetization.util.admob.MyAdListener;
+import ru.kuchanov.scpcore.monetization.util.admob.AdmobInterstitialAdListener;
+import ru.kuchanov.scpcore.monetization.util.mopub.MopubInterstitialAdListener;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp;
 import ru.kuchanov.scpcore.mvp.base.MonetizationActions;
@@ -104,6 +107,8 @@ import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.UserPropertyKey;
 import static ru.kuchanov.scpcore.manager.MyPreferenceManager.CommonAdsSource.ADMOB;
 import static ru.kuchanov.scpcore.manager.MyPreferenceManager.CommonAdsSource.MOPUB;
 import static ru.kuchanov.scpcore.manager.MyPreferenceManager.IMAGES_DISABLED_PERIOD;
+import static ru.kuchanov.scpcore.monetization.util.mopub.MopubHelper.Constants.BANNER_TEST_ID;
+import static ru.kuchanov.scpcore.monetization.util.mopub.MopubHelper.Constants.INTERSTITIAL_TEST_ID;
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
 
 //import com.amazon.device.iap.PurchasingService;
@@ -169,7 +174,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Inject
     protected InAppHelper mInAppHelper;
 
-    private InterstitialAd mInterstitialAd;
+    //admob
+    private InterstitialAd mAdmobInterstitialAd;
+
+    //mopub
+    private MoPubInterstitial mMopubInterstitialAd;
 
     @NonNull
     @Override
@@ -353,23 +362,27 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         //init frameworks
         MobileAds.initialize(getApplicationContext(), getString(R.string.ads_app_id));
 
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(getString(R.string.ad_unit_id_interstitial));
-        mInterstitialAd.setAdListener(new MyAdListener());
+        mAdmobInterstitialAd = new InterstitialAd(this);
+        mAdmobInterstitialAd.setAdUnitId(getString(R.string.ad_unit_id_interstitial));
+        mAdmobInterstitialAd.setAdListener(new AdmobInterstitialAdListener());
 
         //mopub
 
         //fixme set correct adUnitID
-        SdkConfiguration sdkConfiguration = new SdkConfiguration.Builder("b195f8dd8ded45fe847ad89ed1d016da")
+        SdkConfiguration sdkConfiguration = new SdkConfiguration.Builder(BANNER_TEST_ID)
                 .withLogLevel(MoPubLog.LogLevel.DEBUG)
                 .withLegitimateInterestAllowed(false)
                 .build();
 
         MoPub.initializeSdk(this, sdkConfiguration, () -> {
+            Timber.d("Mopub initialized");
             //MoPub SDK initialized.
             //Check if you should show the consent dialog here, and make your ad requests.
         });
 
+        //fixme set correct adUnitID
+        mMopubInterstitialAd = new MoPubInterstitial(this, INTERSTITIAL_TEST_ID);
+        mMopubInterstitialAd.setInterstitialAdListener(new MopubInterstitialAdListener());
         //mopub END
 
         //todo rewarded video by admob
@@ -435,7 +448,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 mAdView.setEnabled(true);
                 mAdView.setVisibility(View.VISIBLE);
                 if (!mAdView.isLoading()) {
-                    mAdView.loadAd(AdMobHelper.buildAdRequest(this));
+                    mAdView.loadAd(AdMobHelper.buildAdRequest());
                 }
             }
             if (mMyPreferenceManager.getCommonAdsSource() == MOPUB && mopubBanner != null) {
@@ -515,18 +528,26 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public boolean isAdsLoaded() {
-        return mInterstitialAd.isLoaded();
+        switch (mMyPreferenceManager.getCommonAdsSource()) {
+            case MOPUB:
+                return mMopubInterstitialAd.isReady();
+            case ADMOB:
+                return mAdmobInterstitialAd.isLoaded();
+            default:
+                Timber.wtf("UNEXPECTED AD SOURCE!!!");
+                return false;
+        }
     }
 
     /**
-     * ads adsListener with showing SnackBar after ads closing and calls {@link MonetizationActions#showInterstitial(MyAdListener, boolean)}
+     * ads adsListener with showing SnackBar after ads closing
+     * and calls {@link MonetizationActions#showInterstitial(InterstitialAdListener, boolean)}
      */
     @Override
     public void showInterstitial() {
-        final MyAdListener adListener = new MyAdListener() {
+        final InterstitialAdListener adListener = new InterstitialAdListener() {
             @Override
-            public void onAdClosed() {
-                super.onAdClosed();
+            public void onInterstitialClosed(@NotNull MyPreferenceManager preferences) {
                 showSnackBarWithAction(Constants.Firebase.CallToActionReason.REMOVE_ADS);
 
                 @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
@@ -540,12 +561,38 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
      * checks if it's time to show rewarded instead of simple interstitial and it's ready and shows rewarded video or interstitial
      */
     @Override
-    public void showInterstitial(final MyAdListener adListener, final boolean showVideoIfNeedAndCan) {
+    public void showInterstitial(
+            @NotNull final InterstitialAdListener adListener,
+            final boolean showVideoIfNeedAndCan
+    ) {
         //reset offer shown state to notify user before next ad will be shown
         mMyPreferenceManager.setOfferAlreadyShown(false);
-        //add score in activity, that will be shown from close callback of listener
-        mInterstitialAd.setAdListener(adListener);
-        mInterstitialAd.show();
+        switch (mMyPreferenceManager.getCommonAdsSource()) {
+            case MOPUB:
+                mMopubInterstitialAd.setInterstitialAdListener(new MopubInterstitialAdListener() {
+                    @Override
+                    public void onInterstitialClosed(@NotNull MyPreferenceManager preferences) {
+                        super.onInterstitialClosed(preferences);
+                        adListener.onInterstitialClosed(preferences);
+                    }
+                });
+                mMopubInterstitialAd.show();
+                break;
+            case ADMOB:
+                //add score in activity, that will be shown from close callback of listener
+                mAdmobInterstitialAd.setAdListener(new AdmobInterstitialAdListener() {
+                    @Override
+                    public void onInterstitialClosed(@NotNull MyPreferenceManager preferences) {
+                        super.onInterstitialClosed(preferences);
+                        adListener.onInterstitialClosed(preferences);
+                    }
+                });
+                mAdmobInterstitialAd.show();
+                break;
+            default:
+                Timber.wtf("UNEXPECTED AD SOURCE!!!");
+                break;
+        }
     }
 
     @Override
@@ -636,11 +683,26 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void requestNewInterstitial() {
-        Timber.d("requestNewInterstitial loading/loaded: %s/%s", mInterstitialAd.isLoading(), mInterstitialAd.isLoaded());
-        if (mInterstitialAd.isLoading() || mInterstitialAd.isLoaded()) {
-            Timber.d("loading already in progress or already done");
-        } else {
-            mInterstitialAd.loadAd(AdMobHelper.buildAdRequest(this));
+        switch (mMyPreferenceManager.getCommonAdsSource()) {
+            case MOPUB:
+                Timber.d("requestNewInterstitial isReady: %s", mMopubInterstitialAd.isReady());
+                if (mMopubInterstitialAd.isReady()) {
+                    Timber.d("loading already done");
+                } else {
+                    mMopubInterstitialAd.load();
+                }
+                break;
+            case ADMOB:
+                Timber.d("requestNewInterstitial loading/loaded: %s/%s", mAdmobInterstitialAd.isLoading(), mAdmobInterstitialAd.isLoaded());
+                if (mAdmobInterstitialAd.isLoading() || mAdmobInterstitialAd.isLoaded()) {
+                    Timber.d("loading already in progress or already done");
+                } else {
+                    mAdmobInterstitialAd.loadAd(AdMobHelper.buildAdRequest());
+                }
+                break;
+            default:
+                Timber.wtf("UNEXPECTED AD SOURCE!!!");
+                break;
         }
     }
 
@@ -664,7 +726,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                                         mAdView.setEnabled(false);
                                         mAdView.setVisibility(View.GONE);
                                     }
-                                    //todo mopub too
+                                    if (mopubBanner != null) {
+                                        mopubBanner.setEnabled(false);
+                                        mopubBanner.setVisibility(View.GONE);
+                                    }
                                     break;
                                 }
                                 default:
@@ -980,7 +1045,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     protected void onDestroy() {
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
         super.onDestroy();
-        mopubBanner.destroy();
+        if (mopubBanner != null) {
+            mopubBanner.destroy();
+        }
+        mMopubInterstitialAd.destroy();
         mInAppHelper.onActivityDestroy(this);
     }
 
@@ -1041,7 +1109,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         //comment this if you want to use local data
         remoteConfig.fetchAndActivate().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Timber.d("Fetch Succeeded");
+                Timber.d("Fetch succeeded. Updated: %s", task.getResult());
             } else {
                 Timber.e("Fetch Failed");
             }
@@ -1060,10 +1128,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
         if (isTimeToShowAds()) {
             if (isAdsLoaded()) {
-                showInterstitial(new MyAdListener() {
+                showInterstitial(new InterstitialAdListener() {
                     @Override
-                    public void onAdClosed() {
-                        super.onAdClosed();
+                    public void onInterstitialClosed(@NotNull MyPreferenceManager preferences) {
                         intent.putExtra(EXTRA_SHOW_DISABLE_ADS, true);
                         startActivity(intent);
                     }
@@ -1087,11 +1154,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
         if (isTimeToShowAds()) {
             if (isAdsLoaded()) {
-                showInterstitial(new MyAdListener() {
+                showInterstitial(new InterstitialAdListener() {
                     @Override
-                    public void onAdClosed() {
-                        super.onAdClosed();
-
+                    public void onInterstitialClosed(@NotNull MyPreferenceManager preferences) {
                         intent.putExtra(EXTRA_SHOW_DISABLE_ADS, true);
                         startActivity(intent);
                     }
@@ -1111,10 +1176,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
         if (isTimeToShowAds()) {
             if (isAdsLoaded()) {
-                showInterstitial(new MyAdListener() {
+                showInterstitial(new InterstitialAdListener() {
                     @Override
-                    public void onAdClosed() {
-                        super.onAdClosed();
+                    public void onInterstitialClosed(@NotNull MyPreferenceManager preferences) {
                         intent.putExtra(EXTRA_SHOW_DISABLE_ADS, true);
                         startActivity(intent);
                     }
@@ -1135,10 +1199,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
         if (isTimeToShowAds()) {
             if (isAdsLoaded()) {
-                showInterstitial(new MyAdListener() {
+                showInterstitial(new InterstitialAdListener() {
                     @Override
-                    public void onAdClosed() {
-                        super.onAdClosed();
+                    public void onInterstitialClosed(@NotNull MyPreferenceManager preferences) {
                         intent.putExtra(EXTRA_SHOW_DISABLE_ADS, true);
                         startActivity(intent);
                     }
@@ -1158,10 +1221,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
         if (isTimeToShowAds()) {
             if (isAdsLoaded()) {
-                showInterstitial(new MyAdListener() {
+                showInterstitial(new InterstitialAdListener() {
                     @Override
-                    public void onAdClosed() {
-                        super.onAdClosed();
+                    public void onInterstitialClosed(@NotNull MyPreferenceManager preferences) {
                         intent.putExtra(EXTRA_SHOW_DISABLE_ADS, true);
                         startActivity(intent);
                     }
