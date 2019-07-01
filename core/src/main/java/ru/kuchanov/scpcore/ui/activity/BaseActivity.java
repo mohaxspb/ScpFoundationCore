@@ -101,6 +101,8 @@ import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventName;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventParam;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.StartScreen;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.UserPropertyKey;
+import static ru.kuchanov.scpcore.manager.MyPreferenceManager.CommonAdsSource.ADMOB;
+import static ru.kuchanov.scpcore.manager.MyPreferenceManager.CommonAdsSource.MOPUB;
 import static ru.kuchanov.scpcore.manager.MyPreferenceManager.IMAGES_DISABLED_PERIOD;
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
 
@@ -364,8 +366,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 .build();
 
         MoPub.initializeSdk(this, sdkConfiguration, () -> {
-       /* MoPub SDK initialized.
-       Check if you should show the consent dialog here, and make your ad requests. */
+            //MoPub SDK initialized.
+            //Check if you should show the consent dialog here, and make your ad requests.
         });
 
         //mopub END
@@ -428,15 +430,15 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 mopubBanner.setVisibility(View.GONE);
             }
         } else {
-//            if (mAdView != null) {
-////                Timber.d("Enable banner! mAdView.isLoading(): %s", mAdView.isLoading());
-//                mAdView.setEnabled(true);
-//                mAdView.setVisibility(View.VISIBLE);
-//                if (!mAdView.isLoading()) {
-//                    mAdView.loadAd(AdMobHelper.buildAdRequest(this));
-//                }
-//            }
-            if (mopubBanner != null) {
+            if (mMyPreferenceManager.getCommonAdsSource() == ADMOB && mAdView != null) {
+//                Timber.d("Enable banner! mAdView.isLoading(): %s", mAdView.isLoading());
+                mAdView.setEnabled(true);
+                mAdView.setVisibility(View.VISIBLE);
+                if (!mAdView.isLoading()) {
+                    mAdView.loadAd(AdMobHelper.buildAdRequest(this));
+                }
+            }
+            if (mMyPreferenceManager.getCommonAdsSource() == MOPUB && mopubBanner != null) {
                 //todo Enter your Ad Unit ID from www.mopub.com
                 mopubBanner.setVisibility(View.VISIBLE);
                 mopubBanner.setTesting(BuildConfig.DEBUG || BuildConfig.FLAVOR_mode.equals("dev"));
@@ -857,7 +859,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 .subscribe(
                         subscriptions -> {
                             dismissProgressDialog();
-                            mDialogUtils.showFreeTrialSubscriptionOfferDialog(this, subscriptions);
+                            if (!subscriptions.isEmpty()) {
+                                mDialogUtils.showFreeTrialSubscriptionOfferDialog(this, subscriptions);
+                            }
                         },
                         e -> {
                             Timber.e(e);
@@ -1005,6 +1009,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         //noinspection ConstantConditions
         final FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
                 .setDeveloperModeEnabled(BuildConfig.FLAVOR_mode.equals("dev"))
+                .setFetchTimeoutInSeconds(Constants.Firebase.RemoteConfigKeys.CACHE_EXPIRATION_SECONDS)
+                .setMinimumFetchIntervalInSeconds(Period.minutes(60).toStandardSeconds().getSeconds())
                 .build();
         remoteConfig.setConfigSettings(configSettings);
 
@@ -1032,22 +1038,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             Timber.e(e);
         }
 
-        // cacheExpirationSeconds is set to cacheExpiration here, indicating that any previously
-        // fetched and cached config would be considered expired because it would have been fetched
-        // more than cacheExpiration seconds ago. Thus the next fetch would go to the server unless
-        // throttling is in progress. The default expiration duration is 43200 (12 hours).
-        long cacheExpiration = Constants.Firebase.RemoteConfigKeys.CACHE_EXPIRATION_SECONDS; //default 43200
-        if (remoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
-            cacheExpiration = Period.minutes(1).toStandardSeconds().getSeconds();
-
-        }
         //comment this if you want to use local data
-        remoteConfig.fetch(cacheExpiration).addOnCompleteListener(task -> {
+        remoteConfig.fetchAndActivate().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Timber.d("Fetch Succeeded");
-                // Once the config is successfully fetched it must be activated before newly fetched
-                // values are returned.
-                remoteConfig.activateFetched();
             } else {
                 Timber.e("Fetch Failed");
             }
