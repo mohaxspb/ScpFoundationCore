@@ -325,6 +325,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     protected void onStop() {
         super.onStop();
+        MoPub.onStop(this);
         //unsubscribe from firebase;
         mPresenter.onActivityStopped();
     }
@@ -332,6 +333,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     protected void onStart() {
         super.onStart();
+        MoPub.onStart(this);
         //subscribe from firebase;
         mPresenter.onActivityStarted();
     }
@@ -379,6 +381,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             //MoPub SDK initialized.
             //Check if you should show the consent dialog here, and make your ad requests.
         });
+        MoPub.onCreate(this);
 
         //fixme set correct adUnitID
         mMopubInterstitialAd = new MoPubInterstitial(this, INTERSTITIAL_TEST_ID);
@@ -977,8 +980,15 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        MoPub.onRestart(this);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        MoPub.onResume(this);
 
         if (!isAdsLoaded() && mMyPreferenceManager.isTimeToLoadAds()) {
             requestNewInterstitial();
@@ -1006,6 +1016,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     public void onPause() {
         super.onPause();
+        MoPub.onPause(this);
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
 
@@ -1049,6 +1060,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             mopubBanner.destroy();
         }
         mMopubInterstitialAd.destroy();
+        MoPub.onDestroy(this);
+
         mInAppHelper.onActivityDestroy(this);
     }
 
@@ -1119,6 +1132,12 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @Override
     public void onConnectionFailed(@NonNull final ConnectionResult connectionResult) {
         Timber.e("onConnectionFailed: %s", connectionResult);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        MoPub.onBackPressed(this);
     }
 
     public void startArticleActivity(final List<String> urls, final int position) {
