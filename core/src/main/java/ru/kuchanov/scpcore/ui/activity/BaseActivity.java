@@ -83,6 +83,7 @@ import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil.SubscriptionType;
 import ru.kuchanov.scpcore.monetization.util.InterstitialAdListener;
 import ru.kuchanov.scpcore.monetization.util.admob.AdMobHelper;
 import ru.kuchanov.scpcore.monetization.util.admob.AdmobInterstitialAdListener;
+import ru.kuchanov.scpcore.monetization.util.mopub.MopubHelper;
 import ru.kuchanov.scpcore.monetization.util.mopub.MopubInterstitialAdListener;
 import ru.kuchanov.scpcore.monetization.util.mopub.ScpMopubBannerAdListener;
 import ru.kuchanov.scpcore.monetization.util.mopub.ScpMopubRewardedVideoAdListener;
@@ -109,20 +110,13 @@ import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventName;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventParam;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.StartScreen;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.UserPropertyKey;
-import static ru.kuchanov.scpcore.manager.MyPreferenceManager.CommonAdsSource.ADMOB;
-import static ru.kuchanov.scpcore.manager.MyPreferenceManager.CommonAdsSource.MOPUB;
 import static ru.kuchanov.scpcore.manager.MyPreferenceManager.IMAGES_DISABLED_PERIOD;
-import static ru.kuchanov.scpcore.monetization.util.mopub.MopubHelper.Constants.BANNER_TEST_ID;
-import static ru.kuchanov.scpcore.monetization.util.mopub.MopubHelper.Constants.INTERSTITIAL_TEST_ID;
-import static ru.kuchanov.scpcore.monetization.util.mopub.MopubHelper.Constants.REWARDED_VIDEO_TEST_ID;
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
 
 //import com.amazon.device.iap.PurchasingService;
 
 /**
  * Created by mohax on 31.12.2016.
- * <p>
- * for scp_ru
  */
 public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends BaseActivityMvp.Presenter<V>>
         extends MvpActivity<V, P>
@@ -379,9 +373,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         //admob END
 
         //mopub
-        //fixme set correct adUnitID
-        SdkConfiguration sdkConfiguration = new SdkConfiguration.Builder(BANNER_TEST_ID)
-                .withLogLevel(MoPubLog.LogLevel.DEBUG)
+        SdkConfiguration sdkConfiguration = new SdkConfiguration.Builder(MopubHelper.getBannerAdId())
+                .withLogLevel(MoPubLog.LogLevel.NONE)
                 .withLegitimateInterestAllowed(false)
                 .build();
 
@@ -395,19 +388,16 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         //banner
         if (mopubBanner != null) {
             mopubBanner.setBannerAdListener(new ScpMopubBannerAdListener());
-            //fixme set correct adUnitID
-            mopubBanner.setAdUnitId(BANNER_TEST_ID);
+            mopubBanner.setAdUnitId(MopubHelper.getBannerAdId());
             mopubBanner.setTesting(BuildConfig.DEBUG || BuildConfig.FLAVOR_mode.equals("dev"));
         }
 
         //interstitial
-        //fixme set correct adUnitID
-        mMopubInterstitialAd = new MoPubInterstitial(this, INTERSTITIAL_TEST_ID);
+        mMopubInterstitialAd = new MoPubInterstitial(this, MopubHelper.getInterstitialAdId());
         mMopubInterstitialAd.setInterstitialAdListener(new MopubInterstitialAdListener());
 
         //rewarded video
-        //fixme set correct adUnitID
-        MoPubRewardedVideos.loadRewardedVideo(REWARDED_VIDEO_TEST_ID);
+        MoPubRewardedVideos.loadRewardedVideo(MopubHelper.getRewardedVideoAdId());
         MoPubRewardedVideos.setRewardedVideoListener(new ScpMopubRewardedVideoAdListener() {
             @Override
             public void onRewardedVideoCompleted(@NotNull Set<String> adUnitIds, @NotNull MoPubReward reward) {
@@ -469,18 +459,35 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 mopubBanner.setVisibility(View.GONE);
             }
         } else {
-            if (mMyPreferenceManager.getCommonAdsSource() == ADMOB && mAdView != null) {
-//                Timber.d("Enable banner! mAdView.isLoading(): %s", mAdView.isLoading());
-                mAdView.setEnabled(true);
-                mAdView.setVisibility(View.VISIBLE);
-                if (!mAdView.isLoading()) {
-                    mAdView.loadAd(AdMobHelper.buildAdRequest());
-                }
-            }
-            if (mMyPreferenceManager.getCommonAdsSource() == MOPUB && mopubBanner != null) {
-                mopubBanner.setEnabled(true);
-                mopubBanner.setVisibility(View.VISIBLE);
-                mopubBanner.loadAd();
+            switch (mMyPreferenceManager.getCommonAdsSource()) {
+                case MOPUB:
+                    if (mopubBanner != null) {
+                        mopubBanner.setEnabled(true);
+                        mopubBanner.setVisibility(View.VISIBLE);
+                        mopubBanner.loadAd();
+                    }
+                    if (mAdView != null) {
+                        mAdView.setEnabled(false);
+                        mAdView.setVisibility(View.GONE);
+                    }
+                    break;
+                case ADMOB:
+                    if (mAdView != null) {
+//                      Timber.d("Enable banner! mAdView.isLoading(): %s", mAdView.isLoading());
+                        mAdView.setEnabled(true);
+                        mAdView.setVisibility(View.VISIBLE);
+                        if (!mAdView.isLoading()) {
+                            mAdView.loadAd(AdMobHelper.buildAdRequest());
+                        }
+                    }
+                    if (mopubBanner != null) {
+                        mopubBanner.setEnabled(false);
+                        mopubBanner.setVisibility(View.GONE);
+                    }
+                    break;
+                default:
+                    Timber.wtf("UNEXPECTED AD SOURCE!!!");
+                    break;
             }
         }
     }
@@ -510,23 +517,23 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     public void showRewardedVideo() {
         switch (mMyPreferenceManager.getCommonAdsSource()) {
             case MOPUB:
-                //fixme set correct adUnitID
-                if (MoPubRewardedVideos.hasRewardedVideo(REWARDED_VIDEO_TEST_ID)) {
+                if (MoPubRewardedVideos.hasRewardedVideo(MopubHelper.getRewardedVideoAdId())) {
                     FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(
                             Constants.Firebase.Analitics.EventType.REWARD_REQUESTED,
                             null
                     );
-                    //fixme set correct adUnitID
-                    MoPubRewardedVideos.showRewardedVideo(REWARDED_VIDEO_TEST_ID);
+                    MoPubRewardedVideos.showRewardedVideo(MopubHelper.getRewardedVideoAdId());
                 } else {
                     showMessage(R.string.reward_not_loaded_yet);
-                    //fixme set correct adUnitID
-                    MoPubRewardedVideos.loadRewardedVideo(REWARDED_VIDEO_TEST_ID);
+                    MoPubRewardedVideos.loadRewardedVideo(MopubHelper.getRewardedVideoAdId());
                 }
                 break;
             case ADMOB:
                 //todo rewarded video by admob
                 showMessage("Not implemented yet, sorry");
+                break;
+            default:
+                Timber.wtf("UNEXPECTED AD SOURCE!!!");
                 break;
         }
     }
