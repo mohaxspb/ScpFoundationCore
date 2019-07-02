@@ -42,15 +42,17 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.google.gson.Gson;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 import com.mopub.common.MoPub;
+import com.mopub.common.MoPubReward;
 import com.mopub.common.SdkConfiguration;
 import com.mopub.common.logging.MoPubLog;
-import com.mopub.mobileads.MoPubErrorCode;
 import com.mopub.mobileads.MoPubInterstitial;
+import com.mopub.mobileads.MoPubRewardedVideos;
 import com.mopub.mobileads.MoPubView;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 
 import org.jetbrains.annotations.NotNull;
+import org.joda.time.Duration;
 import org.joda.time.Period;
 
 import java.io.IOException;
@@ -62,6 +64,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -81,6 +84,8 @@ import ru.kuchanov.scpcore.monetization.util.InterstitialAdListener;
 import ru.kuchanov.scpcore.monetization.util.admob.AdMobHelper;
 import ru.kuchanov.scpcore.monetization.util.admob.AdmobInterstitialAdListener;
 import ru.kuchanov.scpcore.monetization.util.mopub.MopubInterstitialAdListener;
+import ru.kuchanov.scpcore.monetization.util.mopub.ScpMopubBannerAdListener;
+import ru.kuchanov.scpcore.monetization.util.mopub.ScpMopubRewardedVideoAdListener;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp;
 import ru.kuchanov.scpcore.mvp.base.MonetizationActions;
@@ -109,6 +114,7 @@ import static ru.kuchanov.scpcore.manager.MyPreferenceManager.CommonAdsSource.MO
 import static ru.kuchanov.scpcore.manager.MyPreferenceManager.IMAGES_DISABLED_PERIOD;
 import static ru.kuchanov.scpcore.monetization.util.mopub.MopubHelper.Constants.BANNER_TEST_ID;
 import static ru.kuchanov.scpcore.monetization.util.mopub.MopubHelper.Constants.INTERSTITIAL_TEST_ID;
+import static ru.kuchanov.scpcore.monetization.util.mopub.MopubHelper.Constants.REWARDED_VIDEO_TEST_ID;
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
 
 //import com.amazon.device.iap.PurchasingService;
@@ -368,8 +374,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         mAdmobInterstitialAd.setAdUnitId(getString(R.string.ad_unit_id_interstitial));
         mAdmobInterstitialAd.setAdListener(new AdmobInterstitialAdListener());
 
-        //mopub
+        //todo rewarded video by admob
 
+        //admob END
+
+        //mopub
         //fixme set correct adUnitID
         SdkConfiguration sdkConfiguration = new SdkConfiguration.Builder(BANNER_TEST_ID)
                 .withLogLevel(MoPubLog.LogLevel.DEBUG)
@@ -383,32 +392,46 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         });
         MoPub.onCreate(this);
 
+        //banner
+        if (mopubBanner != null) {
+            mopubBanner.setBannerAdListener(new ScpMopubBannerAdListener());
+            //fixme set correct adUnitID
+            mopubBanner.setAdUnitId(BANNER_TEST_ID);
+            mopubBanner.setTesting(BuildConfig.DEBUG || BuildConfig.FLAVOR_mode.equals("dev"));
+        }
+
+        //interstitial
         //fixme set correct adUnitID
         mMopubInterstitialAd = new MoPubInterstitial(this, INTERSTITIAL_TEST_ID);
         mMopubInterstitialAd.setInterstitialAdListener(new MopubInterstitialAdListener());
+
+        //rewarded video
+        //fixme set correct adUnitID
+        MoPubRewardedVideos.loadRewardedVideo(REWARDED_VIDEO_TEST_ID);
+        MoPubRewardedVideos.setRewardedVideoListener(new ScpMopubRewardedVideoAdListener() {
+            @Override
+            public void onRewardedVideoCompleted(@NotNull Set<String> adUnitIds, @NotNull MoPubReward reward) {
+                super.onRewardedVideoCompleted(adUnitIds, reward);
+
+                final long numOfMillis = FirebaseRemoteConfig.getInstance()
+                        .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
+                final long hours = Duration.millis(numOfMillis).toStandardHours().getHours();
+                showMessage(getString(R.string.ads_reward_gained, hours));
+
+                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(
+                        Constants.Firebase.Analitics.EventType.REWARD_GAINED,
+                        null
+                );
+
+                @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.REWARDED_VIDEO;
+                mPresenter.updateUserScoreForScoreAction(action);
+
+                mRoot.postDelayed(() -> mMyPreferenceManager.applyAwardFromAds(), Constants.POST_DELAYED_MILLIS);
+            }
+        });
         //mopub END
 
-        //todo rewarded video by admob
-//        Appodeal.setRewardedVideoCallbacks(new MyRewardedVideoCallbacks() {
-//
-//            @Override
-//            public void onRewardedVideoClosed(final boolean b) {
-//                super.onRewardedVideoClosed(b);
-//
-//                final long numOfMillis = FirebaseRemoteConfig.getInstance()
-//                        .getLong(Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
-//                final long hours = Duration.millis(numOfMillis).toStandardHours().getHours();
-//                showMessage(getString(R.string.ads_reward_gained, hours));
-//
-//                FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventType.REWARD_GAINED, null);
-//
-//                @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.REWARDED_VIDEO;
-//                mPresenter.updateUserScoreForScoreAction(action);
-//
-//                mRoot.postDelayed(() -> mMyPreferenceManager.applyAwardFromAds(), Constants.POST_DELAYED_MILLIS);
-//            }
-//        });
-
+        //todo native video by admov/mopub
 //        final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
 //        if (config.getBoolean(NATIVE_ADS_LISTS_ENABLED)) {
 //            Appodeal.setNativeCallbacks(new MyAppodealNativeCallbacks());
@@ -455,37 +478,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 }
             }
             if (mMyPreferenceManager.getCommonAdsSource() == MOPUB && mopubBanner != null) {
-                //todo Enter your Ad Unit ID from www.mopub.com
-                mopubBanner.setVisibility(View.VISIBLE);
-                mopubBanner.setTesting(BuildConfig.DEBUG || BuildConfig.FLAVOR_mode.equals("dev"));
                 mopubBanner.setEnabled(true);
-                mopubBanner.setBannerAdListener(new MoPubView.BannerAdListener() {
-                    @Override
-                    public void onBannerLoaded(MoPubView banner) {
-                        Timber.d("onBannerLoaded");
-                    }
-
-                    @Override
-                    public void onBannerFailed(MoPubView banner, MoPubErrorCode errorCode) {
-                        Timber.d("onBannerFailed: %s", errorCode);
-                    }
-
-                    @Override
-                    public void onBannerClicked(MoPubView banner) {
-                        Timber.d("onBannerClicked");
-                    }
-
-                    @Override
-                    public void onBannerExpanded(MoPubView banner) {
-                        Timber.d("onBannerExpanded");
-                    }
-
-                    @Override
-                    public void onBannerCollapsed(MoPubView banner) {
-                        Timber.d("onBannerCollapsed");
-                    }
-                });
-                mopubBanner.setAdUnitId("b195f8dd8ded45fe847ad89ed1d016da");
+                mopubBanner.setVisibility(View.VISIBLE);
                 mopubBanner.loadAd();
             }
         }
@@ -514,14 +508,27 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Override
     public void showRewardedVideo() {
-        //todo rewarded video by admob
-//        if (Appodeal.isLoaded(Appodeal.REWARDED_VIDEO)) {
-//            FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(EventType.REWARD_REQUESTED, null);
-//
-//            Appodeal.show(this, Appodeal.REWARDED_VIDEO);
-//        } else {
-//            showMessage(R.string.reward_not_loaded_yet);
-//        }
+        switch (mMyPreferenceManager.getCommonAdsSource()) {
+            case MOPUB:
+                //fixme set correct adUnitID
+                if (MoPubRewardedVideos.hasRewardedVideo(REWARDED_VIDEO_TEST_ID)) {
+                    FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(
+                            Constants.Firebase.Analitics.EventType.REWARD_REQUESTED,
+                            null
+                    );
+                    //fixme set correct adUnitID
+                    MoPubRewardedVideos.showRewardedVideo(REWARDED_VIDEO_TEST_ID);
+                } else {
+                    showMessage(R.string.reward_not_loaded_yet);
+                    //fixme set correct adUnitID
+                    MoPubRewardedVideos.loadRewardedVideo(REWARDED_VIDEO_TEST_ID);
+                }
+                break;
+            case ADMOB:
+                //todo rewarded video by admob
+                showMessage("Not implemented yet, sorry");
+                break;
+        }
     }
 
     @Override
