@@ -61,6 +61,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
 //    @BindView(R2.id.appodealNativeAdViewAppWall)
 //    NativeAdViewAppWall appodealNativeAdView;
 
+    @Deprecated
     @BindView(R2.id.scpArtAdView)
     View scpArtAdView;
 
@@ -144,8 +145,6 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         Glide.with(mainImageView.getContext())
                 .load(R.drawable.ic_scp_quiz_banner)
                 .fitCenter()
-//                .crossFade()
-//                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -160,31 +159,6 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
                         return false;
                     }
                 })
-//                .listener(new RequestListener<Integer, GlideDrawable>() {
-//                    @Override
-//                    public boolean onException(
-//                            final Exception e,
-//                            final Integer model,
-//                            final Target<GlideDrawable> target,
-//                            final boolean isFirstResource
-//                    ) {
-//                        Timber.e(e, "ERROR while load image for scp quiz");
-//                        progressCenter.setVisibility(View.GONE);
-//                        return false;
-//                    }
-//
-//                    @Override
-//                    public boolean onResourceReady(
-//                            final GlideDrawable resource,
-//                            final Integer model,
-//                            final Target<GlideDrawable> target,
-//                            final boolean isFromMemoryCache,
-//                            final boolean isFirstResource
-//                    ) {
-//                        progressCenter.setVisibility(View.GONE);
-//                        return false;
-//                    }
-//                })
                 .into(mainImageView);
     }
 
@@ -224,8 +198,6 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
                 .load(BuildConfig.SCP_READER_API_URL + scpArtAd.getLogoUrl())
                 .error(R.drawable.ic_scp_art_ad_img)
                 .fitCenter()
-//                .crossFade()
-//                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(logoImageView);
 
         titleTextView.setText(scpArtAd.getTitle());
@@ -238,8 +210,6 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
                 .load(BuildConfig.SCP_READER_API_URL + scpArtAd.getImageUrl())
                 .error(R.drawable.art_scp_default_ads)
                 .fitCenter()
-//                .crossFade()
-//                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -254,31 +224,6 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
                         return false;
                     }
                 })
-//                .listener(new RequestListener<String, GlideDrawable>() {
-//                    @Override
-//                    public boolean onException(
-//                            final Exception e,
-//                            final String model,
-//                            final Target<GlideDrawable> target,
-//                            final boolean isFirstResource
-//                    ) {
-//                        Timber.e(e, "ERROR while load image for scp art");
-//                        progressCenter.setVisibility(View.GONE);
-//                        return false;
-//                    }
-//
-//                    @Override
-//                    public boolean onResourceReady(
-//                            final GlideDrawable resource,
-//                            final String model,
-//                            final Target<GlideDrawable> target,
-//                            final boolean isFromMemoryCache,
-//                            final boolean isFirstResource
-//                    ) {
-//                        progressCenter.setVisibility(View.GONE);
-//                        return false;
-//                    }
-//                })
                 .into(mainImageView);
     }
 }

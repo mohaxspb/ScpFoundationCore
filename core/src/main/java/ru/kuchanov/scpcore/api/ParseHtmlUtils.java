@@ -142,8 +142,10 @@ public class ParseHtmlUtils {
         String TITLE = "TITLE";
         String TAGS = "TAGS";
         String TABS = "TABS";
+        @Deprecated
         String NATIVE_ADS_APPODEAL = "NATIVE_ADS_APPODEAL";
         String NATIVE_ADS_SCP_QUIZ = "NATIVE_ADS_SCP_QUIZ";
+        @Deprecated
         String NATIVE_ADS_ART = "NATIVE_ADS_ART";
     }
 

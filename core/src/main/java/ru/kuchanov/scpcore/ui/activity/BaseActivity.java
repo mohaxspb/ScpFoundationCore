@@ -21,6 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -85,6 +86,7 @@ import ru.kuchanov.scpcore.monetization.util.admob.AdMobHelper;
 import ru.kuchanov.scpcore.monetization.util.admob.AdmobInterstitialAdListener;
 import ru.kuchanov.scpcore.monetization.util.mopub.MopubHelper;
 import ru.kuchanov.scpcore.monetization.util.mopub.MopubInterstitialAdListener;
+import ru.kuchanov.scpcore.monetization.util.mopub.MopubNativeManager;
 import ru.kuchanov.scpcore.monetization.util.mopub.ScpMopubBannerAdListener;
 import ru.kuchanov.scpcore.monetization.util.mopub.ScpMopubRewardedVideoAdListener;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
@@ -112,8 +114,6 @@ import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.StartScreen;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.UserPropertyKey;
 import static ru.kuchanov.scpcore.manager.MyPreferenceManager.IMAGES_DISABLED_PERIOD;
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
-
-//import com.amazon.device.iap.PurchasingService;
 
 /**
  * Created by mohax on 31.12.2016.
@@ -145,6 +145,11 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @BindView(R2.id.toolBar)
     protected Toolbar mToolbar;
 
+    //fixme test
+    @Nullable
+    @BindView(R2.id.banner_container)
+    protected ViewGroup bannerContainer;
+
     @Nullable
     @BindView(R2.id.banner)
     protected AdView mAdView;
@@ -173,6 +178,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Inject
     protected InAppHelper mInAppHelper;
+
+    @Inject
+    protected MopubNativeManager mopubNativeManager;
 
     //admob
     private InterstitialAd mAdmobInterstitialAd;
@@ -373,6 +381,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         //admob END
 
         //mopub
+        MoPub.onCreate(this);
         SdkConfiguration sdkConfiguration = new SdkConfiguration.Builder(MopubHelper.getBannerAdId())
                 .withLogLevel(MoPubLog.LogLevel.NONE)
                 .withLegitimateInterestAllowed(false)
@@ -382,8 +391,33 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             Timber.d("Mopub initialized");
             //MoPub SDK initialized.
             //Check if you should show the consent dialog here, and make your ad requests.
+
+            //native ads
+
+            mopubNativeManager.requestNativeAd();
+//            mopubNativeManager.getNativeAdsWithUpdates()
+//                    .subscribe(
+//                            nativeAds -> {
+//                                Timber.d("nativeAds: %s", nativeAds.size());
+//                                View convertView = bannerContainer.findViewById(R.id.nativeOuterView);
+//                                View v = mopubNativeManager.getRenderedNativeAdsView(
+//                                        nativeAds.get(0),
+//                                        bannerContainer,
+//                                        convertView
+//                                );
+//                                if (convertView != null) {
+//                                    bannerContainer.removeViewInLayout(convertView);
+//                                }
+//                                bannerContainer.addView(v, bannerContainer.indexOfChild(mToolbar));
+//                                if (nativeAds.size() < 3) {
+//                                    mopubNativeManager.requestNativeAd();
+//                                }
+//                            },
+//                            error -> Timber.e(error, "Must not happen")
+//                    );
+
+            //native ads END
         });
-        MoPub.onCreate(this);
 
         //banner
         if (mopubBanner != null) {
@@ -419,9 +453,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 mRoot.postDelayed(() -> mMyPreferenceManager.applyAwardFromAds(), Constants.POST_DELAYED_MILLIS);
             }
         });
+
         //mopub END
 
-        //todo native video by admov/mopub
+        //todo native ads
 //        final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
 //        if (config.getBoolean(NATIVE_ADS_LISTS_ENABLED)) {
 //            Appodeal.setNativeCallbacks(new MyAppodealNativeCallbacks());

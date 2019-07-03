@@ -16,7 +16,13 @@ public interface Constants {
     int LEVEL_UP_SCORE_TO_ADD = 10000;
 
     enum NativeAdsSource {
-        ALL, APPODEAL, SCP_QUIZ, ART
+        ALL,
+        @Deprecated
+        APPODEAL,
+        SCP_QUIZ,
+        @Deprecated
+        ART,
+        MOPUB
     }
 
     interface Api {

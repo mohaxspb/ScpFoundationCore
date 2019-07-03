@@ -43,11 +43,6 @@ import timber.log.Timber;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_INTERVAL;
 import static ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter.createAdsModelsList;
 
-/**
- * Created by Dante on 17.01.2016.
- * <p>
- * for scp_ru
- */
 public class ArticleAdapter
         extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements ArticleSpoilerHolder.SpoilerClickListener, ArticleTabsHolder.MyTabClickListener {
@@ -67,10 +62,12 @@ public class ArticleAdapter
 
     private static final int TYPE_TABS = 6;
 
+    @Deprecated
     private static final int TYPE_NATIVE_APPODEAL = 7;
 
     private static final int TYPE_NATIVE_SCP_QUIZ = 9;
 
+    @Deprecated
     private static final int TYPE_NATIVE_SCP_ART = 10;
 
     @Inject

@@ -47,11 +47,6 @@ import timber.log.Timber;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_INTERVAL;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_SOURCE_V2;
 
-/**
- * Created by Dante on 17.01.2016.
- * <p>
- * for scp_ru
- */
 public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public SortType getSortType() {
@@ -100,9 +95,12 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public @interface ArticleListNodeType {
 
         int ARTICLE = 0;
+        @Deprecated
         int NATIVE_ADS_APPODEAL = 2;
         int NATIVE_ADS_SCP_QUIZ = 3;
+        @Deprecated
         int NATIVE_ADS_ART = 4;
+        int NATIVE_ADS_MOPUB = 5;
     }
 
     @Inject
@@ -110,6 +108,9 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Inject
     DbProviderFactory mDbProviderFactory;
+
+    @Inject
+    FirebaseRemoteConfig remoteConfig;
 
     protected List<Article> mData;
 
@@ -287,7 +288,7 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     interval,
                     (i / interval) - 1
             );
-                mArticlesAndAds.add(i, mAdsModelsList.get((i / interval) - 1));
+            mArticlesAndAds.add(i, mAdsModelsList.get((i / interval) - 1));
         }
     }
 
@@ -295,7 +296,6 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Timber.d("createAdsModelsList");
         final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         final Constants.NativeAdsSource nativeAdsSource;
-
 
         final DbProvider dbProvider = BaseApplication.getAppComponent().getDbProviderFactory().getDbProvider();
 
@@ -508,6 +508,6 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         void onRewardedVideoClick();
 
-        //todo add listeners for native ads clicks - we'll use it to mesure banner/native effectivnes
+        //todo add listeners for native ads clicks - we'll use it to measure banner/native effectiveness
     }
 }
