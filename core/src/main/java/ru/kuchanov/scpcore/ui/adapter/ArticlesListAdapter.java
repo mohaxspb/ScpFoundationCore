@@ -91,15 +91,13 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
             ArticleListNodeType.ARTICLE,
-            ArticleListNodeType.NATIVE_ADS_APPODEAL,
             ArticleListNodeType.NATIVE_ADS_SCP_QUIZ,
+            ArticleListNodeType.NATIVE_ADS_MOPUB,
             ArticleListNodeType.NATIVE_ADS_ART
     })
     public @interface ArticleListNodeType {
 
         int ARTICLE = 0;
-        @Deprecated
-        int NATIVE_ADS_APPODEAL = 2;
         int NATIVE_ADS_SCP_QUIZ = 3;
         @Deprecated
         int NATIVE_ADS_ART = 4;
@@ -350,82 +348,72 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             nativeAdsSources.get(new Random().nextInt(nativeAdsSources.size()));
                     Timber.d("nativeAdsSources: %s", nativeAdsSources);
                     Timber.d("randomNativeAdsSource: %s", randomNativeAdsSource);
-                    switch (randomNativeAdsSource) {
-                        case APPODEAL:
-                            //fixme delete
-//                            adsModelsList.add(
-//                                    isArticle
-//                                            ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL, appodealIndex, false)
-//                                            : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex)
-//                            );
-//                            appodealIndex++;
-                            break;
-                        case SCP_QUIZ:
-                            adsModelsList.add(
-                                    isArticle
-                                            ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_SCP_QUIZ, new Random().nextInt(), false)
-                                            : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_SCP_QUIZ, new Random().nextInt())
-                            );
-                            break;
-                        case ART:
-                            if (!artBanners.isEmpty()) {
-                                adsModelsList.add(
-                                        isArticle
-                                                ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())), false)
-                                                : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())))
-                                );
-                            }
-                            break;
-                        case MOPUB:
-                            if (appodealIndex >= loadedNativeAdsCount) {
-                                break;
-                            }
-                            adsModelsList.add(
-                                    isArticle
-                                            ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL, appodealIndex, false)
-                                            : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex)
-                            );
-                            appodealIndex++;
-                            break;
-                        default:
-                            throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
-                    }
+                    fillAdsModelsListForNativeAdsSource(
+                            randomNativeAdsSource,
+                            isArticle,
+                            adsModelsList,
+                            artBanners,
+                            appodealIndex,
+                            loadedNativeAdsCount
+                    );
                     break;
                 }
-                case APPODEAL:
-                    //todo change to MOPUB
-                    if (appodealIndex >= loadedNativeAdsCount) {
-                        break;
-                    }
-                    adsModelsList.add(
-                            isArticle
-                                    ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL, appodealIndex, false)
-                                    : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex)
-                    );
-                    appodealIndex++;
-                    break;
-                case SCP_QUIZ:
-                    adsModelsList.add(
-                            isArticle
-                                    ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_SCP_QUIZ, new Random().nextInt(), false)
-                                    : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_SCP_QUIZ, new Random().nextInt())
-                    );
-                    break;
-                case ART:
-                    if (!artBanners.isEmpty()) {
-                        adsModelsList.add(
-                                isArticle
-                                        ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())), false)
-                                        : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())))
-                        );
-                    }
-                    break;
                 default:
-                    throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
+                    fillAdsModelsListForNativeAdsSource(
+                            nativeAdsSource,
+                            isArticle,
+                            adsModelsList,
+                            artBanners,
+                            appodealIndex,
+                            loadedNativeAdsCount
+                    );
+                    break;
             }
         }
 
         return adsModelsList;
+    }
+
+    private static void fillAdsModelsListForNativeAdsSource(
+            Constants.NativeAdsSource nativeAdsSource,
+            final boolean isArticle,
+            final List<MyListItem> adsModelsList,
+            final List<MyNativeBanner> artBanners,
+            int appodealIndex,
+            final int loadedNativeAdsCount
+    ) {
+        switch (nativeAdsSource) {
+            case SCP_QUIZ:
+                adsModelsList.add(
+                        isArticle
+                                ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_SCP_QUIZ, new Random().nextInt(), false)
+                                : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_SCP_QUIZ, new Random().nextInt())
+                );
+                break;
+            //fixme delete it
+            case ART:
+                if (!artBanners.isEmpty()) {
+                    adsModelsList.add(
+                            isArticle
+                                    ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())), false)
+                                    : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())))
+                    );
+                }
+                break;
+            case MOPUB:
+                if (appodealIndex >= loadedNativeAdsCount) {
+                    break;
+                }
+                adsModelsList.add(
+                        isArticle
+                                ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_MOPUB, appodealIndex, false)
+                                : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_MOPUB, appodealIndex)
+                );
+                appodealIndex++;
+                break;
+            default:
+                throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
+        }
     }
 
     @Override
@@ -472,7 +460,8 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
                 break;
             case ArticleListNodeType.NATIVE_ADS_SCP_QUIZ:
-            case ArticleListNodeType.NATIVE_ADS_APPODEAL:
+            case ArticleListNodeType.NATIVE_ADS_MOPUB:
+                //fixme delete it
             case ArticleListNodeType.NATIVE_ADS_ART:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_native_container, parent, false);
                 viewHolder = new NativeAdsArticleListHolder(view, mArticleClickListener);
@@ -495,9 +484,10 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 holderArticle.setShouldShowPreview(shouldShowPreview);
                 holderArticle.setShouldShowPopupOnFavoriteClick(shouldShowPopupOnFavoriteClick);
                 break;
-            case ArticleListNodeType.NATIVE_ADS_APPODEAL:
+            case ArticleListNodeType.NATIVE_ADS_MOPUB:
                 ((NativeAdsArticleListHolder) holder).bind((Integer) articlesListModel.data);
                 break;
+            //fixme delete it
             case ArticleListNodeType.NATIVE_ADS_ART:
                 ((NativeAdsArticleListHolder) holder).bind((MyNativeBanner) articlesListModel.data);
                 break;

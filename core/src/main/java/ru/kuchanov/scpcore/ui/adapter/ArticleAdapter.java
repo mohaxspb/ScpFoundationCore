@@ -63,11 +63,11 @@ public class ArticleAdapter
 
     private static final int TYPE_TABS = 6;
 
-    @Deprecated
-    private static final int TYPE_NATIVE_APPODEAL = 7;
+    private static final int TYPE_NATIVE_MOPUB = 7;
 
     private static final int TYPE_NATIVE_SCP_QUIZ = 9;
 
+    //fixme delete it
     @Deprecated
     private static final int TYPE_NATIVE_SCP_ART = 10;
 
@@ -318,10 +318,11 @@ public class ArticleAdapter
                 return TYPE_TAGS;
             case ParseHtmlUtils.TextType.TABS:
                 return TYPE_TABS;
-            case ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL:
-                return TYPE_NATIVE_APPODEAL;
+            case ParseHtmlUtils.TextType.NATIVE_ADS_MOPUB:
+                return TYPE_NATIVE_MOPUB;
             case ParseHtmlUtils.TextType.NATIVE_ADS_SCP_QUIZ:
                 return TYPE_NATIVE_SCP_QUIZ;
+                //fixme delete it
             case ParseHtmlUtils.TextType.NATIVE_ADS_ART:
                 return TYPE_NATIVE_SCP_ART;
             default:
@@ -355,8 +356,9 @@ public class ArticleAdapter
             case TYPE_TABS:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_tabs, parent, false);
                 return new ArticleTabsHolder(view, this);
+                //fixme delete it
             case TYPE_NATIVE_SCP_ART:
-            case TYPE_NATIVE_APPODEAL:
+            case TYPE_NATIVE_MOPUB:
             case TYPE_NATIVE_SCP_QUIZ:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_native_container, parent, false);
                 return new NativeAdsArticleListHolder(view, mTextItemsClickListener);
@@ -391,13 +393,14 @@ public class ArticleAdapter
             case TYPE_TABS:
                 ((ArticleTabsHolder) holder).bind((TabsViewModel) textPartViewModel.data);
                 break;
-            case TYPE_NATIVE_APPODEAL: {
+            case TYPE_NATIVE_MOPUB: {
                 ((NativeAdsArticleListHolder) holder).bind((Integer) textPartViewModel.data);
             }
             break;
             case TYPE_NATIVE_SCP_QUIZ:
                 ((NativeAdsArticleListHolder) holder).bind();
                 break;
+                //fixme delete it
             case TYPE_NATIVE_SCP_ART:
                 ((NativeAdsArticleListHolder) holder).bind((MyNativeBanner) textPartViewModel.data);
                 break;

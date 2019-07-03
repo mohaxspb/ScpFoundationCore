@@ -131,7 +131,7 @@ public class ParseHtmlUtils {
             TextType.TEXT, TextType.SPOILER, TextType.IMAGE,
             TextType.TABLE, TextType.TITLE, TextType.TAGS,
             TextType.TABS,
-            TextType.NATIVE_ADS_APPODEAL, TextType.NATIVE_ADS_SCP_QUIZ, TextType.NATIVE_ADS_ART
+            TextType.NATIVE_ADS_MOPUB, TextType.NATIVE_ADS_SCP_QUIZ, TextType.NATIVE_ADS_ART
     })
     public @interface TextType {
 
@@ -142,11 +142,10 @@ public class ParseHtmlUtils {
         String TITLE = "TITLE";
         String TAGS = "TAGS";
         String TABS = "TABS";
-        @Deprecated
-        String NATIVE_ADS_APPODEAL = "NATIVE_ADS_APPODEAL";
         String NATIVE_ADS_SCP_QUIZ = "NATIVE_ADS_SCP_QUIZ";
         @Deprecated
         String NATIVE_ADS_ART = "NATIVE_ADS_ART";
+        String NATIVE_ADS_MOPUB = "NATIVE_ADS_MOPUB";
     }
 
     public static List<String> getArticlesTextParts(final String html) {

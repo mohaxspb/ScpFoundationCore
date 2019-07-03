@@ -16,15 +16,18 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.mopub.nativeads.NativeAd;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.ConstantValues;
@@ -33,6 +36,9 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.MyNativeBanner;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.mopub.MopubNativeManager;
+import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
+import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
@@ -44,12 +50,15 @@ import timber.log.Timber;
 public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
 
     @Inject
-    protected MyPreferenceManager mMyPreferenceManager;
+    MyPreferenceManager mMyPreferenceManager;
 
     @Inject
-    protected ConstantValues mConstantValues;
+    ConstantValues mConstantValues;
 
-//    private ArticlesListAdapter.ArticleClickListener mArticleClickListener;
+    @Inject
+    MopubNativeManager mopubNativeManager;
+
+    private ArticlesListAdapter.ArticleClickListener mArticleClickListener;
 
     @BindView(R2.id.container)
     ViewGroup container;
@@ -58,12 +67,8 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     @BindView(R2.id.nativeAdViewContainer)
     View nativeAdViewContainer;
 
-//    @BindView(R2.id.appodealNativeAdViewAppWall)
-//    NativeAdViewAppWall appodealNativeAdView;
-
-    @Deprecated
     @BindView(R2.id.scpArtAdView)
-    View scpArtAdView;
+    View scpNativeAdView;
 
     @BindView(R2.id.ratingBar)
     View ratingBar;
@@ -86,43 +91,61 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     @BindView(R2.id.progressCenter)
     ProgressBar progressCenter;
 
-//    private SetTextViewHTML.TextItemsClickListener clickListener;
+    @BindView(R2.id.mopubNativeAdsContainer)
+    ViewGroup mopubNativeAdsContainer;
 
-//    @OnClick(R2.id.adsSettingsContainer)
-//    void onAdsSettingsClick() {
-//        if (mArticleClickListener != null) {
-//            mArticleClickListener.onAdsSettingsClick();
-//        }
-//        if (clickListener != null) {
-//            clickListener.onAdsSettingsClick();
-//        }
-//    }
 
-//    @OnClick(R2.id.rewardedVideoContainer)
-//    void onRewardedVideoClick() {
-//        if (mArticleClickListener != null) {
-//            mArticleClickListener.onRewardedVideoClick();
-//        }
-//        if (clickListener != null) {
-//            clickListener.onRewardedVideoClick();
-//        }
-//    }
+    private SetTextViewHTML.TextItemsClickListener clickListener;
 
-    public NativeAdsArticleListHolder(final View itemView) {
+    @OnClick(R2.id.adsSettingsContainer)
+    void onAdsSettingsClick() {
+        if (mArticleClickListener != null) {
+            mArticleClickListener.onAdsSettingsClick();
+        }
+        if (clickListener != null) {
+            clickListener.onAdsSettingsClick();
+        }
+    }
+
+    @OnClick(R2.id.rewardedVideoContainer)
+    void onRewardedVideoClick() {
+        if (mArticleClickListener != null) {
+            mArticleClickListener.onRewardedVideoClick();
+        }
+        if (clickListener != null) {
+            clickListener.onRewardedVideoClick();
+        }
+    }
+
+    public NativeAdsArticleListHolder(
+            final View itemView,
+            final ArticlesListAdapter.ArticleClickListener clickListener
+    ) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         BaseApplication.getAppComponent().inject(this);
+
+        mArticleClickListener = clickListener;
+    }
+
+    public NativeAdsArticleListHolder(
+            final View itemView,
+            final SetTextViewHTML.TextItemsClickListener clickListener
+    ) {
+        super(itemView);
+        ButterKnife.bind(this, itemView);
+        BaseApplication.getAppComponent().inject(this);
+
+        this.clickListener = clickListener;
     }
 
 
     public void bind() {
         Timber.d("scpQuizAds showing");
-//        appodealNativeMediaView.setVisibility(View.GONE);
-//        appodealNativeAdView.setVisibility(View.GONE);
 
-        scpArtAdView.setVisibility(View.VISIBLE);
+        scpNativeAdView.setVisibility(View.VISIBLE);
 
-        scpArtAdView.setOnClickListener(v -> {
+        scpNativeAdView.setOnClickListener(v -> {
             FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
                     Constants.Firebase.Analitics.EventName.SCP_QUIZ_CLICKED,
                     new Bundle()
@@ -162,29 +185,37 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
                 .into(mainImageView);
     }
 
-    public void bind(final int appodealAdIndex) {
-        Timber.d("appodealAdIndex: %s", appodealAdIndex);
+    public void bind(final int nativeAdIndex) {
+        Timber.d("nativeAdIndex: %s", nativeAdIndex);
 
-//        final List<NativeAd> nativeAdsList = Appodeal.getNativeAds(Constants.NUM_OF_NATIVE_ADS_PER_SCREEN);
+        final List<NativeAd> nativeAdsList = mopubNativeManager.getNativeAds();
 //        Timber.d("nativeAdsList.size(): %s", nativeAdsList.size());
-//        if (nativeAdsList.size() <= appodealAdIndex) {
-//            Timber.d("No appodeal ads loaded yet for index: %s", appodealAdIndex);
-//            return;
-//        }
-//        scpArtAdView.setVisibility(View.GONE);
-//        appodealNativeAdView.setVisibility(View.VISIBLE);
-//        final NativeAd nativeAd = nativeAdsList.get(appodealAdIndex);
-//        appodealNativeAdView.setNativeAd(nativeAd);
+        if (nativeAdsList.size() <= nativeAdIndex) {
+            Timber.d("No native ads loaded yet for index: %s", nativeAdIndex);
+            return;
+        }
+        scpNativeAdView.setVisibility(View.GONE);
+        mopubNativeAdsContainer.setVisibility(View.VISIBLE);
+        final NativeAd nativeAd = nativeAdsList.get(nativeAdIndex);
+        View convertView = mopubNativeAdsContainer.getChildAt(0);
+        View renderedNativeAd = mopubNativeManager.getRenderedNativeAdsView(
+                nativeAd,
+                mopubNativeAdsContainer,
+                convertView
+        );
+        if (convertView != null) {
+            mopubNativeAdsContainer.removeAllViews();
+        }
+        mopubNativeAdsContainer.addView(renderedNativeAd);
     }
 
     public void bind(@NotNull final MyNativeBanner scpArtAd) {
         Timber.d("scpArtAd: %s", scpArtAd);
-//        appodealNativeMediaView.setVisibility(View.GONE);
-//        appodealNativeAdView.setVisibility(View.GONE);
+        mopubNativeAdsContainer.setVisibility(View.GONE);
 
-        scpArtAdView.setVisibility(View.VISIBLE);
+        scpNativeAdView.setVisibility(View.VISIBLE);
 
-        scpArtAdView.setOnClickListener(v -> {
+        scpNativeAdView.setOnClickListener(v -> {
             Timber.d("MyNativeBanner: onClick %s", scpArtAd);
             FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
                     Constants.Firebase.Analitics.EventName.SCP_ART_CLICKED,

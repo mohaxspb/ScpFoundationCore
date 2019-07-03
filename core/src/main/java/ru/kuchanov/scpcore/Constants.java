@@ -17,8 +17,6 @@ public interface Constants {
 
     enum NativeAdsSource {
         ALL,
-        @Deprecated
-        APPODEAL,
         SCP_QUIZ,
         @Deprecated
         ART,
