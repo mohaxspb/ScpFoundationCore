@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <include layout="@layout/native_ads_scp_art" />
 
-    <!--<com.appodeal.ads.native_ad.views.NativeAdViewAppWall-->
-        <!--android:id="@+id/appodealNativeAdViewAppWall"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--/>-->
+    <!--mopub native ads container-->
+    <FrameLayout
+        android:id="@+id/mopubNativeAdsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-    <!--<include-->
-        <!--layout="@layout/native_ads_buttons"/>-->
+    <include layout="@layout/native_ads_buttons" />
 
 </LinearLayout>

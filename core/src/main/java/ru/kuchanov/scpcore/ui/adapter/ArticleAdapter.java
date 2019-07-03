@@ -26,6 +26,7 @@ import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.MyNativeBanner;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.mopub.MopubNativeManager;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleImageHolder;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleSpoilerHolder;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleTableHolder;
@@ -72,6 +73,9 @@ public class ArticleAdapter
 
     @Inject
     MyPreferenceManager mMyPreferenceManager;
+
+    @Inject
+    MopubNativeManager mopubNativeManager;
 
     private final List<MyListItem> mAdsModelsList = new ArrayList<>();
 
@@ -261,11 +265,12 @@ public class ArticleAdapter
         //or banners enabled or native disabled
         final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         if (mMyPreferenceManager.isHasAnySubscription()
-                || !mMyPreferenceManager.isTimeToShowBannerAds()) {
+                || !mMyPreferenceManager.isTimeToShowBannerAds()
+                || mMyPreferenceManager.isBannerInArticleEnabled()) {
             return;
         }
         if (mAdsModelsList.isEmpty()) {
-            mAdsModelsList.addAll(createAdsModelsList(true, mMyPreferenceManager));
+            mAdsModelsList.addAll(createAdsModelsList(true, mopubNativeManager));
         }
 
         // Loop through the items array and place a new Native Express ad in every ith position in
@@ -354,7 +359,7 @@ public class ArticleAdapter
             case TYPE_NATIVE_APPODEAL:
             case TYPE_NATIVE_SCP_QUIZ:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_native_container, parent, false);
-                return new NativeAdsArticleListHolder(view);
+                return new NativeAdsArticleListHolder(view, mTextItemsClickListener);
             default:
                 throw new IllegalArgumentException("unexpected type: " + viewType);
         }

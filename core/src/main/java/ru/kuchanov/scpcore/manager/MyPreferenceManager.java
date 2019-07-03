@@ -25,10 +25,14 @@ import ru.kuchanov.scpcore.ui.util.FontUtils;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.APP_INSTALL_REWARD_IN_MILLIS;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.ARTICLE_BANNER_DISABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.AUTH_COOLDOWN_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_SHARE_APP_REWARD;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.INVITE_REWARD_IN_MILLIS;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_IN_ARTICLE_ENABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO_MODIFICATOR;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS;
@@ -36,8 +40,6 @@ import static ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment.Li
 
 /**
  * Created by y.kuchanov on 22.12.16.
- * <p>
- * for scp_ru
  */
 public class MyPreferenceManager {
 
@@ -104,6 +106,8 @@ public class MyPreferenceManager {
         String TIME_FOR_WHICH_BANNERS_DISABLED = "TIME_FOR_WHICH_BANNERS_DISABLED";
         String ADS_NUM_OF_INTERSTITIALS_SHOWN = "ADS_NUM_OF_INTERSTITIALS_SHOWN";
         String ADS_REWARDED_DESCRIPTION_IS_SHOWN = "ADS_REWARDED_DESCRIPTION_IS_SHOWN";
+        String ADS_BANNER_IN_ARTICLES_LISTS = "ADS_BANNER_IN_ARTICLES_LISTS";
+        String ADS_BANNER_IN_ARTICLE = "ADS_BANNER_IN_ARTICLE";
 
         String OFFER_ALREADY_SHOWN = "OFFER_ALREADY_SHOWN";
 
@@ -337,6 +341,33 @@ public class MyPreferenceManager {
     }
 
     //ads
+
+
+    /**
+     * @return user settings of remote config value (banner is enabled and native is disabled)
+     */
+    public boolean isBannerInArticlesListsEnabled() {
+        final boolean bannerIsEnabled = !remoteConfig.getBoolean(MAIN_BANNER_DISABLED);
+        final boolean nativeIsEnabled = remoteConfig.getBoolean(NATIVE_ADS_LISTS_ENABLED);
+        return mPreferences.getBoolean(Keys.ADS_BANNER_IN_ARTICLES_LISTS, bannerIsEnabled && !nativeIsEnabled);
+    }
+
+    /**
+     * @return user settings of remote config value (banner is enabled and native is disabled)
+     */
+    public boolean isBannerInArticleEnabled() {
+        final boolean bannerIsEnabled = !remoteConfig.getBoolean(ARTICLE_BANNER_DISABLED);
+        final boolean nativeIsEnabled = remoteConfig.getBoolean(NATIVE_IN_ARTICLE_ENABLED);
+        return mPreferences.getBoolean(Keys.ADS_BANNER_IN_ARTICLE, bannerIsEnabled && !nativeIsEnabled);
+    }
+
+    public void setBannerInArticlesListsEnabled(final boolean enabled) {
+        mPreferences.edit().putBoolean(Keys.ADS_BANNER_IN_ARTICLES_LISTS, enabled).apply();
+    }
+
+    public void setBannerInArticleEnabled(final boolean enabled) {
+        mPreferences.edit().putBoolean(Keys.ADS_BANNER_IN_ARTICLE, enabled).apply();
+    }
 
     public boolean isTimeToShowAds() {
         return System.currentTimeMillis() - getLastTimeAdsShows() >=

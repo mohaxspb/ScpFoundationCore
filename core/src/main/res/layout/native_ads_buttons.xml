@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:baselineAligned="false"
+    android:orientation="horizontal">
+
+    <FrameLayout
+        android:id="@+id/adsSettingsContainer"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="?selectableItemBackground"
+        android:padding="@dimen/defaultMargin">
+
+        <TextView
+            android:id="@+id/adsSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableStart="?iconAdsSettings24dp"
+            android:drawablePadding="@dimen/defaultMarginSmall"
+            android:gravity="center"
+            android:text="@string/settings_ads_title" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/rewardedVideoContainer"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="?selectableItemBackground"
+        android:padding="@dimen/defaultMargin">
+
+        <TextView
+            android:id="@+id/rewardedVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableStart="?iconVideo24dp"
+            android:drawablePadding="@dimen/defaultMarginSmall"
+            android:gravity="center"
+            android:text="@string/remove_ads" />
+    </FrameLayout>
+
+</LinearLayout>

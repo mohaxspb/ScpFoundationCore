@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.jakewharton.rxrelay.PublishRelay
 import com.mopub.nativeads.*
+import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
 import timber.log.Timber
 import java.util.*
@@ -25,6 +26,10 @@ class MopubNativeManager @Inject constructor(val context: Context) {
             //todo put into Map to handle cache (time stamp to clear after 1 hour)
             nativeAds += nativeAd
             nativeAdsRelay.call(nativeAds)
+
+            if (nativeAds.size < Constants.NUM_OF_NATIVE_ADS_PER_SCREEN) {
+                requestNativeAd();
+            }
         }
 
         override fun onNativeFail(errorCode: NativeErrorCode) {
@@ -47,8 +52,8 @@ class MopubNativeManager @Inject constructor(val context: Context) {
     fun getNativeAdsWithUpdates() =
             nativeAdsRelay.asObservable()
 
-    //fixme make private
     fun requestNativeAd() {
+        Timber.d("requestNativeAd")
         moPubNative.makeRequest(mRequestParameters)
     }
 

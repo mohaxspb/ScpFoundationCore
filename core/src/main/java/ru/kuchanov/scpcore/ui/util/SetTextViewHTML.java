@@ -265,5 +265,7 @@ public class SetTextViewHTML {
         void onTabSelected(TabsViewModel tabsViewModel);
 
         void onRewardedVideoClick();
+
+        void onAdsSettingsClick();
     }
 }

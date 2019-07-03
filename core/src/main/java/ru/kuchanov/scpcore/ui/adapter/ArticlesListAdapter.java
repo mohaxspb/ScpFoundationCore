@@ -12,6 +12,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.db.model.MyNativeBanner;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.mopub.MopubNativeManager;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.holder.article.NativeAdsArticleListHolder;
 import ru.kuchanov.scpcore.ui.holder.articlelist.HolderMax;
@@ -111,6 +114,9 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Inject
     FirebaseRemoteConfig remoteConfig;
+
+    @Inject
+    MopubNativeManager mopubNativeManager;
 
     protected List<Article> mData;
 
@@ -259,11 +265,13 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         //do not add native ads items if user has subscription or banners temporary disabled
         //or banners enabled or native disabled
         if (mMyPreferenceManager.isHasAnySubscription()
-                || !mMyPreferenceManager.isTimeToShowBannerAds()) {
+                || !mMyPreferenceManager.isTimeToShowBannerAds()
+                || mMyPreferenceManager.isBannerInArticlesListsEnabled()) {
+            Timber.d("Do not add native ads.");
             return;
         }
         if (mAdsModelsList.isEmpty()) {
-            mAdsModelsList.addAll(createAdsModelsList(false, mMyPreferenceManager));
+            mAdsModelsList.addAll(createAdsModelsList(false, mopubNativeManager));
         }
 
         // Loop through the items array and place a new Native Express ad in every ith position in
@@ -280,6 +288,9 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if (mArticlesAndAds.isEmpty() || mAdsModelsList.isEmpty() || i < 0) {
                 break;
             }
+            if (((i / interval) - 1) >= mAdsModelsList.size()) {
+                break;
+            }
             Timber.d(
                     "mArticlesAndAds/mAdsModelsList/i/interval/(i / interval) - 1: %s/%s/%s/%s/%s",
                     mArticlesAndAds.size(),
@@ -288,11 +299,15 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     interval,
                     (i / interval) - 1
             );
-            mArticlesAndAds.add(i, mAdsModelsList.get((i / interval) - 1));
+            MyListItem adsModel = mAdsModelsList.get((i / interval) - 1);
+            mArticlesAndAds.add(i, adsModel);
         }
     }
 
-    public static List<MyListItem> createAdsModelsList(final boolean isArticle, final MyPreferenceManager myPreferenceManager) {
+    public static List<MyListItem> createAdsModelsList(
+            final boolean isArticle,
+            @NotNull final MopubNativeManager mopubNativeManager
+    ) {
         Timber.d("createAdsModelsList");
         final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         final Constants.NativeAdsSource nativeAdsSource;
@@ -317,6 +332,7 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 //        Timber.d("artBanners: %s", artBanners);
 
         int appodealIndex = 0;
+        final int loadedNativeAdsCount = mopubNativeManager.getNativeAds().size();
         final List<MyListItem> adsModelsList = new ArrayList<>();
         for (int i = 0; i < Constants.NUM_OF_NATIVE_ADS_PER_SCREEN; i++) {
             switch (nativeAdsSource) {
@@ -336,12 +352,13 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     Timber.d("randomNativeAdsSource: %s", randomNativeAdsSource);
                     switch (randomNativeAdsSource) {
                         case APPODEAL:
-                            adsModelsList.add(
-                                    isArticle
-                                            ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL, appodealIndex, false)
-                                            : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex)
-                            );
-                            appodealIndex++;
+                            //fixme delete
+//                            adsModelsList.add(
+//                                    isArticle
+//                                            ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL, appodealIndex, false)
+//                                            : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex)
+//                            );
+//                            appodealIndex++;
                             break;
                         case SCP_QUIZ:
                             adsModelsList.add(
@@ -359,12 +376,27 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                 );
                             }
                             break;
+                        case MOPUB:
+                            if (appodealIndex >= loadedNativeAdsCount) {
+                                break;
+                            }
+                            adsModelsList.add(
+                                    isArticle
+                                            ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL, appodealIndex, false)
+                                            : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_APPODEAL, appodealIndex)
+                            );
+                            appodealIndex++;
+                            break;
                         default:
                             throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
                     }
                     break;
                 }
                 case APPODEAL:
+                    //todo change to MOPUB
+                    if (appodealIndex >= loadedNativeAdsCount) {
+                        break;
+                    }
                     adsModelsList.add(
                             isArticle
                                     ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL, appodealIndex, false)
@@ -443,7 +475,7 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case ArticleListNodeType.NATIVE_ADS_APPODEAL:
             case ArticleListNodeType.NATIVE_ADS_ART:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_native_container, parent, false);
-                viewHolder = new NativeAdsArticleListHolder(view);
+                viewHolder = new NativeAdsArticleListHolder(view, mArticleClickListener);
                 break;
             default:
                 throw new IllegalArgumentException("unexpected viewType: " + viewType);
@@ -507,6 +539,8 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         void onTagClick(ArticleTag tag);
 
         void onRewardedVideoClick();
+
+        void onAdsSettingsClick();
 
         //todo add listeners for native ads clicks - we'll use it to measure banner/native effectiveness
     }

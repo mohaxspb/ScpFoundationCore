@@ -30,8 +30,6 @@ import timber.log.Timber;
 
 /**
  * Created by mohax on 01.01.2017.
- * <p>
- * for scp_ru
  */
 public abstract class BaseApplication extends MultiDexApplication {
 
@@ -45,6 +43,10 @@ public abstract class BaseApplication extends MultiDexApplication {
 
     public static BaseApplication getAppInstance() {
         return sAppInstance;
+    }
+
+    public static boolean isTestingMode() {
+        return BuildConfig.DEBUG || BuildConfig.FLAVOR_mode.equals("dev");
     }
 
     public RefWatcher getRefWatcher() {
@@ -127,8 +129,7 @@ public abstract class BaseApplication extends MultiDexApplication {
         Realm.init(this);
 
         //subscribe to main push topic
-        //noinspection ConstantConditions
-        final String topic = BuildConfig.DEBUG || BuildConfig.FLAVOR_mode.equals("dev")
+        final String topic = isTestingMode()
                 ? Constants.Firebase.PushTopics.TEST
                 : Constants.Firebase.PushTopics.MAIN;
         Timber.d("Subscribe to FCM topic: %s", topic);

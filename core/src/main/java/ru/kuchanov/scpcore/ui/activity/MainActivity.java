@@ -462,6 +462,6 @@ public class MainActivity
 
     @Override
     public boolean isBannerEnabled() {
-        return true;
+        return mMyPreferenceManager.isBannerInArticlesListsEnabled();
     }
 }

@@ -273,11 +273,9 @@
     <string name="remove_ads_for_free_for_hours"><![CDATA[Por algumas horas de <br/><b><font color=#4CAF50>gratuito</font></b>]]></string>
 
     <!---->
-    <string name="contacts_info"><![CDATA[Lembramos que você pode acompanhar o andamento do projeto no <b>GitHub</b> e <b>Trello</b>. Você pode entrar em contato conosco através do grupo em <b>VK</b> ou por <b>e-mail</b>. Aqui estão os links:
+    <string name="contacts_info"><![CDATA[Lembramos que você pode acompanhar o andamento do projeto no <b>GitHub</b>. Você pode entrar em contato conosco através do grupo em <b>VK</b> ou por <b>e-mail</b>. Aqui estão os links:
 	<br/><br/>
 	GitHub: <a href="https://github.com/mohaxspb/ScpFoundationRu.git">Repositório ScpFoundationRu</a>
-	<br/><br/>
-	Trello: <a href="https://trello.com/b/K96g075n/scp">Uma placa com uma lista de tarefas a implementar</a>
 	<br/><br/>
 	ВКонтакте: <a href="https://vk.com/scp_foundation_app">Grupo de aplicação</a>
 	<br/><br/>

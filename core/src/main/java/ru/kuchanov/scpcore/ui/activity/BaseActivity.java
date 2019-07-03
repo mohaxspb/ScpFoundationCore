@@ -21,7 +21,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -71,6 +70,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.Constants;
@@ -94,6 +94,7 @@ import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp;
 import ru.kuchanov.scpcore.mvp.base.MonetizationActions;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.ui.adapter.SocialLoginAdapter;
+import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
@@ -112,6 +113,7 @@ import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventName;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventParam;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.StartScreen;
 import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.UserPropertyKey;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED;
 import static ru.kuchanov.scpcore.manager.MyPreferenceManager.IMAGES_DISABLED_PERIOD;
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
 
@@ -145,11 +147,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
     @BindView(R2.id.toolBar)
     protected Toolbar mToolbar;
 
-    //fixme test
-    @Nullable
-    @BindView(R2.id.banner_container)
-    protected ViewGroup bannerContainer;
-
     @Nullable
     @BindView(R2.id.banner)
     protected AdView mAdView;
@@ -181,6 +178,9 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
 
     @Inject
     protected MopubNativeManager mopubNativeManager;
+
+    @Inject
+    protected FirebaseRemoteConfig remoteConfig;
 
     //admob
     private InterstitialAd mAdmobInterstitialAd;
@@ -377,6 +377,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         mAdmobInterstitialAd.setAdListener(new AdmobInterstitialAdListener());
 
         //todo rewarded video by admob
+        //and native, if they do it
 
         //admob END
 
@@ -392,38 +393,30 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             //MoPub SDK initialized.
             //Check if you should show the consent dialog here, and make your ad requests.
 
+            //banner
+            if (mopubBanner != null) {
+                mopubBanner.loadAd();
+            }
+
+            //interstitial
+            if (!isAdsLoaded() && mMyPreferenceManager.isTimeToLoadAds()) {
+                requestNewInterstitial();
+            }
+
             //native ads
-
-            mopubNativeManager.requestNativeAd();
-//            mopubNativeManager.getNativeAdsWithUpdates()
-//                    .subscribe(
-//                            nativeAds -> {
-//                                Timber.d("nativeAds: %s", nativeAds.size());
-//                                View convertView = bannerContainer.findViewById(R.id.nativeOuterView);
-//                                View v = mopubNativeManager.getRenderedNativeAdsView(
-//                                        nativeAds.get(0),
-//                                        bannerContainer,
-//                                        convertView
-//                                );
-//                                if (convertView != null) {
-//                                    bannerContainer.removeViewInLayout(convertView);
-//                                }
-//                                bannerContainer.addView(v, bannerContainer.indexOfChild(mToolbar));
-//                                if (nativeAds.size() < 3) {
-//                                    mopubNativeManager.requestNativeAd();
-//                                }
-//                            },
-//                            error -> Timber.e(error, "Must not happen")
-//                    );
-
-            //native ads END
+            //todo
+            if (remoteConfig.getBoolean(NATIVE_ADS_LISTS_ENABLED)
+                    && mMyPreferenceManager.isTimeToShowBannerAds()
+                    && !isBannerEnabled()) {
+                mopubNativeManager.requestNativeAd();
+            }
         });
 
         //banner
         if (mopubBanner != null) {
             mopubBanner.setBannerAdListener(new ScpMopubBannerAdListener());
             mopubBanner.setAdUnitId(MopubHelper.getBannerAdId());
-            mopubBanner.setTesting(BuildConfig.DEBUG || BuildConfig.FLAVOR_mode.equals("dev"));
+            mopubBanner.setTesting(BaseApplication.isTestingMode());
         }
 
         //interstitial
@@ -455,13 +448,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         });
 
         //mopub END
-
-        //todo native ads
-//        final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-//        if (config.getBoolean(NATIVE_ADS_LISTS_ENABLED)) {
-//            Appodeal.setNativeCallbacks(new MyAppodealNativeCallbacks());
-//            Appodeal.cache(this, Appodeal.NATIVE, Constants.NUM_OF_NATIVE_ADS_PER_SCREEN);
-//        }
 
         if (!isAdsLoaded() && mMyPreferenceManager.isTimeToLoadAds()) {
             requestNewInterstitial();
@@ -499,7 +485,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                     if (mopubBanner != null) {
                         mopubBanner.setEnabled(true);
                         mopubBanner.setVisibility(View.VISIBLE);
-                        mopubBanner.loadAd();
                     }
                     if (mAdView != null) {
                         mAdView.setEnabled(false);
@@ -1022,6 +1007,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         } else if (i == R.id.appLangVersions) {
             mDialogUtils.showAllAppLangVariantsDialog(this);
             return true;
+        } else if (i == R.id.removeAds) {
+            final BottomSheetDialogFragment subsDF = AdsSettingsBottomSheetDialogFragment.newInstance();
+            subsDF.show(getSupportFragmentManager(), subsDF.getTag());
+            return true;
         } else {
             Timber.wtf("unexpected id: %s", item.getItemId());
             return super.onOptionsItemSelected(item);
@@ -1080,6 +1069,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             case MyPreferenceManager.Keys.NIGHT_MODE:
                 recreate();
                 break;
+            case MyPreferenceManager.Keys.ADS_BANNER_IN_ARTICLE:
+            case MyPreferenceManager.Keys.ADS_BANNER_IN_ARTICLES_LISTS:
             case MyPreferenceManager.Keys.TIME_FOR_WHICH_BANNERS_DISABLED:
                 //check if there is banner in layout
                 setUpBanner();

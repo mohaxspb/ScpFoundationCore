@@ -704,7 +704,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
 //                val item = GsonBuilder().create().fromJson(purchaseData, PurchaseData::class.java)
 //                Timber.d("You have bought the %s", item.productId)
 //
-//                if (item.productId == mInAppHelper.getNewInAppsSkus().first()) {
+//                if (item.productId == inAppHelper.getNewInAppsSkus().first()) {
 //                    //levelUp 5
 //                    //add 10 000 score
 //                    inAppHelper.consumeInApp(item.productId, item.purchaseToken)

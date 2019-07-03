@@ -6,7 +6,7 @@ import timber.log.Timber
 
 class ScpMopubBannerAdListener : MoPubView.BannerAdListener {
     override fun onBannerLoaded(banner: MoPubView) {
-        Timber.d("onBannerLoaded")
+//        Timber.d("onBannerLoaded")
     }
 
     override fun onBannerFailed(banner: MoPubView, errorCode: MoPubErrorCode) {
@@ -14,14 +14,14 @@ class ScpMopubBannerAdListener : MoPubView.BannerAdListener {
     }
 
     override fun onBannerClicked(banner: MoPubView) {
-        Timber.d("onBannerClicked")
+//        Timber.d("onBannerClicked")
     }
 
     override fun onBannerExpanded(banner: MoPubView) {
-        Timber.d("onBannerExpanded")
+//        Timber.d("onBannerExpanded")
     }
 
     override fun onBannerCollapsed(banner: MoPubView) {
-        Timber.d("onBannerCollapsed")
+//        Timber.d("onBannerCollapsed")
     }
 }

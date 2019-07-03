@@ -2,6 +2,7 @@ package ru.kuchanov.scpcore.ui.fragment.articleslists;
 
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,14 +22,13 @@ import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
 import ru.kuchanov.scpcore.mvp.base.BaseArticlesListMvp;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
+import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.fragment.BaseListFragment;
 import ru.kuchanov.scpcore.ui.util.EndlessRecyclerViewScrollListener;
 import timber.log.Timber;
 
 /**
  * Created by mohax on 03.01.2017.
- * <p>
- * for scp_ru
  */
 public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.View, P extends BaseArticlesListMvp.Presenter<V>>
         extends BaseListFragment<V, P> {
@@ -224,6 +224,15 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
                     return;
                 }
                 getBaseActivity().startRewardedVideoFlow();
+            }
+
+            @Override
+            public void onAdsSettingsClick() {
+                if (!isAdded()) {
+                    return;
+                }
+                final BottomSheetDialogFragment dialogFragment = AdsSettingsBottomSheetDialogFragment.newInstance();
+                dialogFragment.show(getActivity().getSupportFragmentManager(), dialogFragment.getTag());
             }
         });
         getAdapter().setHasStableIds(true);
