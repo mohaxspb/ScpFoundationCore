@@ -5,15 +5,20 @@ import android.view.View
 import android.view.ViewGroup
 import com.jakewharton.rxrelay.PublishRelay
 import com.mopub.nativeads.*
+import org.joda.time.Period
 import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
+import rx.Observable
+import rx.Single
+import rx.lang.kotlin.subscribeBy
 import timber.log.Timber
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MopubNativeManager @Inject constructor(val context: Context) {
 
-    val nativeAds = mutableListOf<NativeAd>()
+    private val nativeAdsWithTime = mutableMapOf<Long, NativeAd>()
 
     private val nativeAdsRelay = PublishRelay.create<List<NativeAd>>()
 
@@ -23,17 +28,23 @@ class MopubNativeManager @Inject constructor(val context: Context) {
 
             nativeAd.setMoPubNativeEventListener(eventListener)
 
-            //todo put into Map to handle cache (time stamp to clear after 1 hour)
-            nativeAds += nativeAd
-            nativeAdsRelay.call(nativeAds)
+            //put into Map to handle cache (time stamp to clear after 1 hour)
+            nativeAdsWithTime[System.currentTimeMillis()] = nativeAd
 
-            if (nativeAds.size < Constants.NUM_OF_NATIVE_ADS_PER_SCREEN) {
-                requestNativeAd();
+            nativeAdsRelay.call(nativeAdsWithTime.values.toList())
+
+            if (nativeAdsWithTime.size < Constants.NUM_OF_NATIVE_ADS_PER_SCREEN) {
+                requestNativeAd()
             }
         }
 
         override fun onNativeFail(errorCode: NativeErrorCode) {
             Timber.d("onNativeFailL: %s", errorCode)
+
+            //request one more after some minutes
+            Single.just(true)
+                    .delay(5, TimeUnit.MINUTES)
+                    .subscribeBy { requestNativeAd() }
         }
     }
 
@@ -44,15 +55,37 @@ class MopubNativeManager @Inject constructor(val context: Context) {
     }
 
     fun activate() {
-        //todo start making requests until we get 3 ads.
+        //start making requests until we get 3 ads.
+        requestNativeAd()
+
         //also handle cache
-        //todo so it should be main method to cal
+        //each 10 minutes check if native ad is older than 1 hour and delete it and request new one
+        Observable.interval(10, 10, TimeUnit.MINUTES)
+                .map {
+                    nativeAdsWithTime
+                            .filter {
+                                val hourInMillis = Period.hours(1).toStandardDuration().millis
+                                System.currentTimeMillis() - it.key > hourInMillis
+                            }
+                }
+                .subscribeBy(
+                        onNext = {
+                            nativeAdsWithTime.clear()
+                            nativeAdsWithTime.putAll(it)
+                            if (nativeAdsWithTime.size < Constants.NUM_OF_NATIVE_ADS_PER_SCREEN) {
+                                requestNativeAd()
+                            }
+                        },
+                        onError = { Timber.e(it, "Unexpected error while clear native ads map") }
+                )
     }
+
+    fun getNativeAds() = nativeAdsWithTime.values.toList()
 
     fun getNativeAdsWithUpdates() =
             nativeAdsRelay.asObservable()
 
-    fun requestNativeAd() {
+    private fun requestNativeAd() {
         Timber.d("requestNativeAd")
         moPubNative.makeRequest(mRequestParameters)
     }

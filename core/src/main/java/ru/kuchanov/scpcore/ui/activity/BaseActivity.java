@@ -404,11 +404,10 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             }
 
             //native ads
-            //todo
             if (remoteConfig.getBoolean(NATIVE_ADS_LISTS_ENABLED)
                     && mMyPreferenceManager.isTimeToShowBannerAds()
                     && !isBannerEnabled()) {
-                mopubNativeManager.requestNativeAd();
+                mopubNativeManager.activate();
             }
         });
 

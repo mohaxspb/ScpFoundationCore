@@ -326,6 +326,10 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             nativeAdsSource = Constants.NativeAdsSource.values()[(int) config.getLong(NATIVE_ADS_LISTS_SOURCE_V2)];
             artBanners = dbProvider.getEnabledArtBanners();
         }
+
+        //test mopub
+//        nativeAdsSource = Constants.NativeAdsSource.MOPUB;
+
 //        Timber.d("nativeAdsSource: %s", nativeAdsSource);
 //        Timber.d("artBanners: %s", artBanners);
 
@@ -353,7 +357,7 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             isArticle,
                             adsModelsList,
                             artBanners,
-                            appodealIndex,
+                            appodealIndex++,
                             loadedNativeAdsCount
                     );
                     break;
@@ -364,7 +368,7 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             isArticle,
                             adsModelsList,
                             artBanners,
-                            appodealIndex,
+                            appodealIndex++,
                             loadedNativeAdsCount
                     );
                     break;
@@ -382,6 +386,7 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             int appodealIndex,
             final int loadedNativeAdsCount
     ) {
+//        Timber.d("fillAdsModelsListForNativeAdsSource: %s", appodealIndex);
         switch (nativeAdsSource) {
             case SCP_QUIZ:
                 adsModelsList.add(
@@ -409,7 +414,6 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                 ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_MOPUB, appodealIndex, false)
                                 : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_MOPUB, appodealIndex)
                 );
-                appodealIndex++;
                 break;
             default:
                 throw new IllegalArgumentException("unexpected native ads source: " + nativeAdsSource);
