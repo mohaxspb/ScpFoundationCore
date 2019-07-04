@@ -151,11 +151,12 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
                     Constants.Firebase.Analytics.EventName.SCP_QUIZ_CLICKED,
                     new Bundle()
             );
-            final String url = String.format(
-                    Locale.getDefault(),
-                    Constants.Urls.SCP_QUIZ_MARKET_URL,
-                    mConstantValues.getAppLang()
-            );
+//            final String url = String.format(
+//                    Locale.getDefault(),
+//                    Constants.Urls.SCP_QUIZ_MARKET_URL,
+//                    mConstantValues.getAppLang()
+//            );
+            final String url = Constants.Urls.LANDING_PAGE;
             IntentUtils.openUrl(url);
         });
 

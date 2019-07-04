@@ -86,6 +86,8 @@ public interface Constants {
         String[] ALL_LINKS_ARRAY = {MAIN, RATE, NEW_ARTICLES, EXPERIMENTS, INCEDENTS, INTERVIEWS, OTHERS, STORIES, LEAKS, OBJECTS_1, OBJECTS_2, OBJECTS_3, OBJECTS_RU, NEWS};
         String BASE_API_URL = "http://scpfoundation.ru";
         String SCP_QUIZ_MARKET_URL = "https://play.google.com/store/apps/details?id=ru.kuchanov.scpquiz&utm_source=scpReader&utm_medium=nativeAds&utm_campaign=%1$s";
+
+        String LANDING_PAGE = "https://scpfoundation.app";
     }
 
     interface Firebase {
