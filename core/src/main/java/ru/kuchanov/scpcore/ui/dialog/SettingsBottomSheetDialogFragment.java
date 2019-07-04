@@ -359,8 +359,8 @@ public class SettingsBottomSheetDialogFragment
         SubscriptionsActivity.start(getActivity());
 
         final Bundle bundle = new Bundle();
-        bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.StartScreen.INNER_DOWNLOADS_FROM_SETTINGS);
-        FirebaseAnalytics.getInstance(getActivity()).logEvent(Constants.Firebase.Analitics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
+        bundle.putString(Constants.Firebase.Analytics.EventParam.PLACE, Constants.Firebase.Analytics.StartScreen.INNER_DOWNLOADS_FROM_SETTINGS);
+        FirebaseAnalytics.getInstance(getActivity()).logEvent(Constants.Firebase.Analytics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
     }
 
     @OnClick(R2.id.clearImagesButton)
@@ -385,8 +385,8 @@ public class SettingsBottomSheetDialogFragment
         SubscriptionsActivity.start(getActivity());
 
         final Bundle bundle = new Bundle();
-        bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.StartScreen.AUTO_SYNC_FROM_SETTINGS);
-        FirebaseAnalytics.getInstance(getActivity()).logEvent(Constants.Firebase.Analitics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
+        bundle.putString(Constants.Firebase.Analytics.EventParam.PLACE, Constants.Firebase.Analytics.StartScreen.AUTO_SYNC_FROM_SETTINGS);
+        FirebaseAnalytics.getInstance(getActivity()).logEvent(Constants.Firebase.Analytics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
     }
 
     @OnClick(R2.id.sync)

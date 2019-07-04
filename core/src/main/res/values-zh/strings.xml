@@ -130,10 +130,6 @@
     <string name="dialog_free_ads_disable_title">移除广告</string>
     <string name="start_market_error">无法启动应用商店</string>
     <string name="thanks_for_supporting_us">开发者感谢您的支持！</string>
-    <string name="invitation_message">加入基金会！</string>
-    <string name="invitation_cta">加入我们！</string>
-    <string name="invitation_title">SCP机密数据！</string>
-    <string name="invite_friends">邀请您的朋友加入来获得%1$d小时的无广告时间以及%2$d点数！！</string>
     <string name="watch_video_to_disable_ads">观看一个视频来获得%1$d小时的无广告时间以及%2$d点数</string>
     <string name="app_install_ads_disable_title">尝试我们的其它应用，获得%1$d小时的无广告时间以及%2$d点数！</string>
     <string name="vk_group_join_ads_disable_title">加入VK社区，获得%1$d小时的无广告时间以及%2$d点数！</string>
@@ -261,10 +257,7 @@
     <string name="bibliography">参考书目</string>
 
     <!---->
-    <string name="your_invite_received">您的基金会邀请已被接受！</string>
-    <string name="invite_received_reward_message">您已获得%1$d小时的无广告时间以及%2$d点数！</string>
     <string name="ads_disabled_for_some_hours">您已获得%d小时的无广告时间！</string>
-    <string name="drawer_item_invite_friends">邀请朋友！</string>
 
     <!---->
     <string name="settings_ads_banner_in_lists">在文档列表中插入广告横幅</string>
@@ -310,7 +303,6 @@
     <string name="subs_leaderboard_activity_title">排行榜</string>
     <string name="subs_activity_title">支持开发者</string>
     <string name="subs_level_5_description">10000点数，排名上升并提升离线文档上限至200篇</string>
-    <string name="free_ads_invite_title">邀请你的朋友使用应用</string>
     <string name="free_ads_rewarded_video_title">观看视频</string>
     <string name="free_ads_auth_title">登录</string>
     <string name="free_ads_simple_subtitle">我们会关闭广告%1$d小时并赠送%2$d积分</string>

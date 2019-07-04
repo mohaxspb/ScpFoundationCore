@@ -5,7 +5,6 @@ import android.support.annotation.StringRes;
 import com.hannesdorfmann.mosby.mvp.MvpPresenter;
 import com.hannesdorfmann.mosby.mvp.MvpView;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import ru.kuchanov.scpcore.Constants;

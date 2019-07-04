@@ -19,10 +19,6 @@ public interface BaseActivityMvp {
 
         void onActivityStopped();
 
-        void onInviteReceived(String inviteId);
-
-        void onInviteSent(String inviteId);
-
         void onPurchaseClick(String id, boolean ignoreUserCheck);
 
         /**

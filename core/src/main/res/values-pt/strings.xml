@@ -130,10 +130,6 @@
     <string name="dialog_free_ads_disable_title">Desabilitando anúncios</string>
     <string name="start_market_error">Falha ao iniciar PlayMarket</string>
     <string name="thanks_for_supporting_us">Os desenvolvedores são gratos pelo seu apoio!</string>
-    <string name="invitation_message">Junte-se ao fundo!</string>
-    <string name="invitation_cta">Junte-se a nós!</string>
-    <string name="invitation_title">Os materiais secretos da Fundação SCP!</string>
-    <string name="invite_friends">Convide seus amigos para o aplicativo para desativar os anúncios por %1$d horas e obter %2$d pontos!</string>
     <string name="watch_video_to_disable_ads">Assista ao vídeo para desativar anúncios por %1$d horas e obter %2$d pontos!</string>
     <string name="app_install_ads_disable_title">Instalação os nossos conclusões apps para desativar anúncios por %1$d horas e obter %2$d pontos!!</string>
     <string name="vk_group_join_ads_disable_title">Junte-se ao grupo VK para desativar os anúncios por %1$d horas e obter %2$d pontos!</string>
@@ -257,10 +253,7 @@
     <string name="bibliography">Bibliografia</string>
 
     <!---->
-    <string name="your_invite_received">Seu convite para o fundo é aceito!</string>
-    <string name="invite_received_reward_message">Publicidade é desativado por %1$d horas, %2$d pontos adicionados!</string>
     <string name="ads_disabled_for_some_hours">A publicidade está desligada por %d horas!</string>
-    <string name="drawer_item_invite_friends">Convide seus amigos!</string>
 
     <!---->
     <string name="settings_ads_banner_in_lists">Banner na lista de artigos</string>
@@ -309,7 +302,6 @@
     <string name="subs_leaderboard_activity_title">Leaderboard</string>
     <string name="subs_activity_title">Suporte ao desenvolvedor</string>
     <string name="subs_level_5_description">10000 pontos, aumento de rating e aumento do limite de artigos offline em 200 artigos</string>
-    <string name="free_ads_invite_title">Convide seus amigos para o aplicativo</string>
     <string name="free_ads_rewarded_video_title">Assista ao vídeo</string>
     <string name="free_ads_auth_title">Autorizar</string>
     <string name="free_ads_simple_subtitle">E nós vamos desligar o anúncio por %1$d horas e dar-lhe %2$d pontos</string>

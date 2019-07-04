@@ -129,10 +129,6 @@
     <string name="dialog_free_ads_disable_title">Désactivation de publicité</string>
     <string name="start_market_error">Impossible de démarrer PlayMarket</string>
     <string name="thanks_for_supporting_us">Les développeurs sont reconnaissants pour votre soutien!</string>
-    <string name="invitation_message">Rejoindre le fonds!</string>
-    <string name="invitation_cta">Joignez-vous à nous!</string>
-    <string name="invitation_title">Fondation X-Files SCP!</string>
-    <string name="invite_friends">Invitez amis dans l\'application pour désactiver la publicité au %1$d heures et la réception %2$d points!!</string>
     <string name="watch_video_to_disable_ads">Regardez la vidéo pour désactiver la publicité au %1$d heures et la réception %2$d points!</string>
     <string name="app_install_ads_disable_title">Installez nos autres applications pour désactiver la publicité au %1$d heures et la réception %2$d points!</string>
     <string name="vk_group_join_ads_disable_title">Rejoignez le groupe VK pour désactiver la publicité au %1$d heures et la réception %2$d points!</string>
@@ -257,10 +253,7 @@
     <string name="bibliography">Bibliographie</string>
 
     <!---->
-    <string name="your_invite_received">Votre invitation au fonds est acceptée!</string>
-    <string name="invite_received_reward_message">La publicité est éteinte pendant %1$d heures, %2$d points ajoutés!</string>
     <string name="ads_disabled_for_some_hours">La publicité est éteinte pendant %d heures!</string>
-    <string name="drawer_item_invite_friends">Invitez vos amis!</string>
 
     <!---->
     <string name="settings_ads_banner_in_lists">La bannière dans la liste des articles</string>
@@ -309,7 +302,6 @@ Traduit Lucie.]]></string>
     <string name="subs_leaderboard_activity_title">Leaderboard</string>
     <string name="subs_activity_title">Support développeur</string>
     <string name="subs_level_5_description">10000 points, augmentant la notation et augmentant la limite des articles hors ligne sur 200 articles</string>
-    <string name="free_ads_invite_title">Invitez vos amis à application</string>
     <string name="free_ads_rewarded_video_title">Regarde la vidéo</string>
     <string name="free_ads_auth_title">Connectez-vous</string>
     <string name="free_ads_simple_subtitle">Et nous allons éteindre l\'annonce pendant %1$d heures et vous donner %2$d points</string>

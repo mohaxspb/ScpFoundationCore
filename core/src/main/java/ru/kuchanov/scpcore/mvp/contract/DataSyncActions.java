@@ -16,8 +16,7 @@ public interface DataSyncActions {
     @StringDef({
             ScoreAction.FAVORITE, ScoreAction.READ, ScoreAction.INTERSTITIAL_SHOWN,
             ScoreAction.VK_GROUP, ScoreAction.OUR_APP, ScoreAction.REWARDED_VIDEO,
-            ScoreAction.AUTH, ScoreAction.INVITE, ScoreAction.VK_APP_SHARE,
-            ScoreAction.NONE
+            ScoreAction.AUTH, ScoreAction.VK_APP_SHARE, ScoreAction.NONE
     })
     @interface ScoreAction {
 
@@ -28,7 +27,6 @@ public interface DataSyncActions {
         String OUR_APP = "OUR_APP";
         String REWARDED_VIDEO = "REWARDED_VIDEO";
         String AUTH = "AUTH";
-        String INVITE = "INVITE";
         String VK_APP_SHARE = "VK_APP_SHARE";
         String NONE = "NONE";
     }
@@ -40,8 +38,6 @@ public interface DataSyncActions {
     void updateUserScoreForVkGroup(String id);
 
     void updateUserScoreForScoreAction(@ScoreAction String action);
-
-    void updateUserScoreForInapp(String sku);
 
     void checkIfUserJoinedAppVkGroup();
 }

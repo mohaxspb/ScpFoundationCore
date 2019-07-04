@@ -166,8 +166,8 @@ class AdsSettingsBottomSheetDialogFragment : BaseBottomSheetDialogFragment(), Sh
         baseActivity.createPresenter().onPurchaseClick(noAdsSku, true)
 
         val bundle = Bundle()
-        bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.StartScreen.REMOVE_ADS_SETTINGS)
-        FirebaseAnalytics.getInstance(getBaseActivity()).logEvent(Constants.Firebase.Analitics.EventName.SUBSCRIPTIONS_SHOWN, bundle)
+        bundle.putString(Constants.Firebase.Analytics.EventParam.PLACE, Constants.Firebase.Analytics.StartScreen.REMOVE_ADS_SETTINGS)
+        FirebaseAnalytics.getInstance(getBaseActivity()).logEvent(Constants.Firebase.Analytics.EventName.SUBSCRIPTIONS_SHOWN, bundle)
     }
 
     @OnClick(R2.id.removeAdsForFree)

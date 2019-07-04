@@ -29,7 +29,6 @@ import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.ARTICLE_BA
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.AUTH_COOLDOWN_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_SHARE_APP_REWARD;
-import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.INVITE_REWARD_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_IN_ARTICLE_ENABLED;
@@ -437,28 +436,6 @@ public class MyPreferenceManager {
         }
         return CommonAdsSource.valueOf(commonAdsSource);
     }
-
-    //invite
-    public boolean isInviteAlreadyReceived() {
-        return mPreferences.getBoolean(Keys.INVITE_ALREADY_RECEIVED, false);
-    }
-
-    public void setInviteAlreadyReceived() {
-        mPreferences.edit().putBoolean(Keys.INVITE_ALREADY_RECEIVED, true).apply();
-    }
-
-    public void applyAwardForInvite() {
-        final long time = remoteConfig.getLong(INVITE_REWARD_IN_MILLIS);
-
-        increaseLastTimeAdsShows(time);
-        //also set time for which we should disable banners
-        increaseTimeForWhichBannersDisabled(time);
-
-        //I think we do not need it
-//        setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
-    }
-
-    //invite END
 
     public void setLastTimeAdsShows(final long timeInMillis) {
         mPreferences.edit().putLong(Keys.ADS_LAST_TIME_SHOWS, timeInMillis).apply();

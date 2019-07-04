@@ -199,9 +199,7 @@ public class GalleryActivity
         Timber.d("onNavigationItemClicked with id: %s", id);
         String link = null;
 
-        if (id == R.id.invite) {
-            IntentUtils.firebaseInvite(this);
-        } else if (id == R.id.leaderboard) {
+        if (id == R.id.leaderboard) {
             SubscriptionsActivity.start(this, SubscriptionsActivity.TYPE_LEADERBOARD);
         } else if (id == R.id.about) {
             link = mConstantValues.getAbout();

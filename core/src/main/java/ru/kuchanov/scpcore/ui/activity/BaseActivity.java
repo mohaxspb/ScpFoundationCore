@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -28,14 +27,11 @@ import com.facebook.login.LoginManager;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.appinvite.FirebaseAppInvite;
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
@@ -109,10 +105,10 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventName;
-import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventParam;
-import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.StartScreen;
-import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.UserPropertyKey;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analytics.EventName;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analytics.EventParam;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analytics.StartScreen;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analytics.UserPropertyKey;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED;
 import static ru.kuchanov.scpcore.manager.MyPreferenceManager.IMAGES_DISABLED_PERIOD;
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
@@ -221,7 +217,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .addApi(AppInvite.API)
                 .build();
 
         mPresenter.onCreate();
@@ -242,45 +237,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                                 instanceIdResult.getToken()
                         )
                 );
-
-        //app invite
-        //fixme remove it. It's deprecated
-        FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())
-                .addOnSuccessListener(this, data -> {
-                    Timber.d("FirebaseAppInvite onSuccessListener");
-                    if (data == null) {
-                        Timber.d("getInvitation: no data");
-                        return;
-                    }
-
-                    // Get the deep link
-                    Uri deepLink = data.getLink();
-                    Timber.d("deepLink: %s", deepLink);
-
-                    // Extract invite
-                    FirebaseAppInvite invite = FirebaseAppInvite.getInvitation(data);
-                    if (invite != null) {
-                        String invitationId = invite.getInvitationId();
-                        Timber.d("invitationId: %s", invitationId);
-                        //check if it's first receive if so
-                        //send ID to server to send push/remove IDs pair
-                        //then mark as not after handle
-                        if (!mMyPreferenceManager.isInviteAlreadyReceived()) {
-//                            mMyPreferenceManager.setInviteAlreadyReceived(true);
-                            FirebaseAnalytics.getInstance(BaseActivity.this)
-                                    .logEvent(EventName.INVITE_RECEIVED, null);
-                            FirebaseAnalytics.getInstance(BaseActivity.this).setUserProperty(
-                                    UserPropertyKey.INVITED,
-                                    "true"
-                            );
-                        } else {
-                            Timber.d("attempt to receive already received invite! Ata-ta, %%USER_NAME%%!");
-                        }
-                        mPresenter.onInviteReceived(invitationId);
-                        mMyPreferenceManager.setInviteAlreadyReceived();
-                    }
-                })
-                .addOnFailureListener(this, e -> Timber.e(e, "getDynamicLink:onFailure"));
 
         mInAppHelper.onActivate(this);
     }
@@ -435,7 +391,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 showMessage(getString(R.string.ads_reward_gained, hours));
 
                 FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(
-                        Constants.Firebase.Analitics.EventType.REWARD_GAINED,
+                        Constants.Firebase.Analytics.EventType.REWARD_GAINED,
                         null
                 );
 
@@ -538,7 +494,7 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
             case MOPUB:
                 if (MoPubRewardedVideos.hasRewardedVideo(MopubHelper.getRewardedVideoAdId())) {
                     FirebaseAnalytics.getInstance(BaseActivity.this).logEvent(
-                            Constants.Firebase.Analitics.EventType.REWARD_REQUESTED,
+                            Constants.Firebase.Analytics.EventType.REWARD_REQUESTED,
                             null
                     );
                     MoPubRewardedVideos.showRewardedVideo(MopubHelper.getRewardedVideoAdId());
@@ -937,8 +893,8 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
                 .positiveText(R.string.yes_bliad)
                 .onPositive((dialog, which) -> {
                     Bundle bundle = new Bundle();
-                    bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.StartScreen.AFTER_LEVEL_UP);
-                    FirebaseAnalytics.getInstance(this).logEvent(Constants.Firebase.Analitics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
+                    bundle.putString(Constants.Firebase.Analytics.EventParam.PLACE, Constants.Firebase.Analytics.StartScreen.AFTER_LEVEL_UP);
+                    FirebaseAnalytics.getInstance(this).logEvent(Constants.Firebase.Analytics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
 
                     SubscriptionsActivity.start(BaseActivity.this);
                 })

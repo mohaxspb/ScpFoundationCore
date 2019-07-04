@@ -56,8 +56,6 @@ ext {
 
             variant.resValue('string', 'firebase_db_url', properties.get("firebaseUri"))
 
-            variant.resValue('string', 'firebase_deep_link', properties.get("firebaseDeepLink"))
-
             //our APIs data
             variant.resValue('string', 'tools_api_url', properties.get("vpsApiAddress"))
             variant.buildConfigField('String', 'TOOLS_API_URL', '"' + properties.get("vpsApiAddress") + '"')

@@ -1655,24 +1655,6 @@ public class ApiClient {
         return mScpReaderApi.validateSubscription(packageName, sku, purchaseToken);
     }
 
-    public Observable<Boolean> inviteReceived(final String inviteId, final boolean newOne) {
-        return mVpsServer.onInviteReceived(
-                VpsServer.InviteAction.RECEIVED,
-                inviteId,
-                mConstantValues.getAppLang(),
-                newOne
-        ).map(onInviteReceivedResponse -> onInviteReceivedResponse.status);
-    }
-
-    public Observable<Boolean> inviteSent(final String inviteId, final String fcmToken) {
-        return mVpsServer.onInviteSent(
-                VpsServer.InviteAction.SENT,
-                inviteId,
-                mConstantValues.getAppLang(),
-                fcmToken
-        ).map(onInviteReceivedResponse -> onInviteReceivedResponse.status);
-    }
-
     protected String getScpServerWiki() {
         return "scp-ru";
     }
