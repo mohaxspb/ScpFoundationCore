@@ -306,7 +306,9 @@ Trello: <a href="https://trello.com/b/K96g075n/scp"> Uygulanacak görevlerin lis
 <br/><br/>
 E-mail: <a href="mailto:neva.spb.rx@gmail.com">Sorularınız için</a>
 <br/><br/>
-Uygulamamızı kullandığınız için teşekkürler!]]></string>
+Uygulamamızı kullandığınız için teşekkürler!
+<br/><br/>
+Tarafından çevrildi <b>Boris_191</b>.]]></string>
     <string name="subs_main_text"> Burada kuruluştan özel izin alabilir ve geliştiricilere yardım edebilirsiniz. Uygulamamız <![CDATA[<a href="https://github.com/mohaxspb/ScpFoundationCore">açık kaynak kodu</a>]]> ve <![CDATA[<a href="https://www.youtube.com/watch?v=5RuwbKvLDs0">havalı bulut senkronizasyonu</a>]]> var. Beğendiyseniz, geliştiricileri destekleyebilirsiniz. Uygulamayı sürdürmek için bağışlara ihtiyaç var. Hem paranız olmasa bile, sadece reklamlara bakmanız bile bizi destekleyecektir. Miktarı az ya da çok- her bağışı kabul ediyoruz. Teşekkürler!</string>
     <string name="subs_free_actions_title">Bedavaya reklamları kapat!</string>
     <string name="subs_free_actions_card_title">Bizi destekle</string>
