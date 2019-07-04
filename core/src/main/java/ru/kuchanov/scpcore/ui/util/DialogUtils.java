@@ -85,10 +85,13 @@ public class DialogUtils {
                 ).langs;
         final AppLangVersionsAdapter adapter = new AppLangVersionsAdapter(appLangVersions);
         adapter.setCallbacks(position -> {
-            final String linkToMarket = "https://play.google.com/store/apps/details?id="
-                                        + appLangVersions.get(position).appPackage
-                                        + "&utm_source=scpReader&utm_medium=appLangsVersions&utm_campaign="
-                                        + mConstantValues.getAppLang();
+//            final String linkToMarket = "https://play.google.com/store/apps/details?id="
+//                                        + appLangVersions.get(position).appPackage
+//                                        + "&utm_source=scpReader&utm_medium=appLangsVersions&utm_campaign="
+//                                        + mConstantValues.getAppLang();
+
+            final String linkToMarket = Constants.Urls.LANDING_PAGE;
+
             IntentUtils.openUrl(linkToMarket);
         });
 

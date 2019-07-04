@@ -187,8 +187,8 @@ android {
         //vk
         api 'com.vk:androidsdk:1.6.9'
         //facebook
-        api 'com.facebook.android:facebook-core:4.38.1'
-        api 'com.facebook.android:facebook-login:4.38.1'
+        api 'com.facebook.android:facebook-core:5.1.1'
+        api 'com.facebook.android:facebook-login:5.1.1'
         //firebase
         //WARNNING!!! There are bug with version update suggestions for firebase libs!
         //some versions are not yet released and failed to load.
@@ -227,10 +227,6 @@ android {
         api('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') { transitive = true }
 
         //mopub ads sdk
-//        api('com.mopub:mopub-sdk:5.7.1@aar') {
-//            transitive = true
-//        }
-
         // For banners
         api('com.mopub:mopub-sdk-banner:+@aar') {
             transitive = true
