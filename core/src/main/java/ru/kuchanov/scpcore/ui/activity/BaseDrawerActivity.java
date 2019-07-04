@@ -37,9 +37,9 @@ import ru.kuchanov.scpcore.ui.holder.drawer.HeaderViewHolderLogined;
 import ru.kuchanov.scpcore.ui.holder.drawer.HeaderViewHolderUnlogined;
 import timber.log.Timber;
 
-import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventName;
-import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventParam;
-import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.StartScreen;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analytics.EventName;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analytics.EventParam;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analytics.StartScreen;
 
 /**
  * Created by mohax on 02.01.2017.
@@ -278,11 +278,11 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                     && mPresenter.getUser().score < 10000
                     && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
                 final Bundle bundle = new Bundle();
-                bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
-                        Constants.Firebase.Analitics.EventValue.SCORE_1000_REACHED
+                bundle.putString(Constants.Firebase.Analytics.EventParam.PLACE,
+                        Constants.Firebase.Analytics.EventValue.SCORE_1000_REACHED
                 );
                 FirebaseAnalytics.getInstance(this)
-                        .logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+                        .logEvent(Constants.Firebase.Analytics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
                 mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score();
                 showOfferFreeTrialSubscriptionPopup();

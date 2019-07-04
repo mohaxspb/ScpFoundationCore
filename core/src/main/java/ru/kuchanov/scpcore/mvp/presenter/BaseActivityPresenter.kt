@@ -8,14 +8,11 @@ import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
-import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.android.gms.auth.api.Auth
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
-import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.vk.sdk.VKAccessToken
 import com.vk.sdk.VKCallback
@@ -59,7 +56,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
         myPreferencesManager: MyPreferenceManager,
         dbProviderFactory: DbProviderFactory,
         apiClient: ApiClient,
-        private val inAppHelper: InAppHelper
+        inAppHelper: InAppHelper
 ) : BasePresenter<V>(
         myPreferencesManager,
         dbProviderFactory,
@@ -458,35 +455,6 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
         }
     }
 
-    override fun onInviteReceived(inviteId: String) {
-        //After invite receive we'll check if it's first time invite received and,
-        //if so, send its ID to server, which will check for ID existing and will send push to sender and delete inviteID-pushID pair,
-        //else we'll send to server command to delete IDs pair, to prevent collecting useless data.
-        mApiClient.inviteReceived(inviteId, !myPreferencesManager.isInviteAlreadyReceived)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                        onNext = { Timber.d("invite id successfully sent to server") },
-                        onError = { Timber.e(it) }
-                )
-    }
-
-    override fun onInviteSent(inviteId: String) {
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
-            Timber.d("onInviteSent: ${it.result?.token}")
-            mApiClient.inviteSent(inviteId, it.result?.token)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(
-                            onNext = { Timber.d("invite id and fcmToken successfully sent to server") },
-                            onError = { e ->
-                                Timber.e(e)
-                                view.showError(e)
-                            }
-                    )
-        }
-    }
-
     override fun onPurchaseClick(
             id: String,
             ignoreUserCheck: Boolean
@@ -510,32 +478,34 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 }
                 .onErrorResumeNext { error ->
                     return@onErrorResumeNext if (error is PurchaseFailedError) {
-                        if (type == InappPurchaseUtil.InappType.IN_APP) {
-                            mInAppHelper.getInAppHistory()
-                                    .doOnSubscribe { view.showProgressDialog(R.string.wait) }
-                                    .doOnEach { view.dismissProgressDialog() }
-                                    .flatMap { mInAppHelper.consumeInApp(it.productId, "") }
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .doOnSuccess {
-                                        val context = BaseApplication.getAppInstance()
-                                        view.showMessage(
-                                                context.getString(
-                                                        R.string.score_increased,
-                                                        context.resources.getQuantityString(
-                                                                R.plurals.plurals_score,
-                                                                LEVEL_UP_SCORE_TO_ADD,
-                                                                LEVEL_UP_SCORE_TO_ADD
-                                                        )
-                                                )
-                                        )
-                                    }
-                                    .flatMap { mInAppHelper.startPurchase(IntentSenderWrapper(null, type, id)) }
-                        } else if (type == InappPurchaseUtil.InappType.SUBS) {
-                            mInAppHelper.validateSubsObservable()
-                                    .doOnSuccess { view.showMessage("Subscriptions state updated") }
-                                    .flatMap { Single.error<Subscription>(error) }
-                        } else {
-                            throw error
+                        when (type) {
+                            InappPurchaseUtil.InappType.IN_APP -> {
+                                mInAppHelper.getInAppHistory()
+                                        .doOnSubscribe { view.showProgressDialog(R.string.wait) }
+                                        .doOnEach { view.dismissProgressDialog() }
+                                        .flatMap { mInAppHelper.consumeInApp(it.productId, "") }
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .doOnSuccess {
+                                            val context = BaseApplication.getAppInstance()
+                                            view.showMessage(
+                                                    context.getString(
+                                                            R.string.score_increased,
+                                                            context.resources.getQuantityString(
+                                                                    R.plurals.plurals_score,
+                                                                    LEVEL_UP_SCORE_TO_ADD,
+                                                                    LEVEL_UP_SCORE_TO_ADD
+                                                            )
+                                                    )
+                                            )
+                                        }
+                                        .flatMap { mInAppHelper.startPurchase(IntentSenderWrapper(null, type, id)) }
+                            }
+                            InappPurchaseUtil.InappType.SUBS -> {
+                                mInAppHelper.validateSubsObservable()
+                                        .doOnSuccess { view.showMessage("Subscriptions state updated") }
+                                        .flatMap { Single.error<Subscription>(error) }
+                            }
+                            else -> throw error
                         }
                     } else {
                         throw error
@@ -644,26 +614,6 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 logoutUser()
                 return true
             }
-        } else if (requestCode == Constants.Firebase.REQUEST_INVITE) {
-            if (resultCode == Activity.RESULT_OK) {
-                // Get the invitation IDs of all sent messages
-                val ids = AppInviteInvitation.getInvitationIds(resultCode, data!!)
-                for (id in ids) {
-                    Timber.d("onActivityResult: sent invitation %s", id)
-                    //todo we need to be able to send multiple IDs in one request
-                    onInviteSent(id)
-
-                    FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
-                            Constants.Firebase.Analitics.EventName.INVITE_SENT,
-                            null
-                    )
-                }
-            } else {
-                // Sending failed or it was canceled, show failure message to the user
-                Timber.d("invitation failed for some reason")
-            }
-
-            return true
         } else if (requestCode == SubscriptionsFragment.REQUEST_CODE_SUBSCRIPTION) {
             if (data == null) {
                 view.showMessageLong("Error while parse result, please try again")

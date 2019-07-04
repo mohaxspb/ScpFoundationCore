@@ -90,8 +90,6 @@ public interface Constants {
 
     interface Firebase {
 
-        int INVITE_CTA_MAX_LENGTH = 20;
-
         enum CallToActionReason {
             REMOVE_ADS,
             ENABLE_AUTO_SYNC,
@@ -128,7 +126,6 @@ public interface Constants {
 
         interface PushDataKeys {
 
-            String INVITE_ID = "inviteId";
             String TITLE = "title";
             String MESSAGE = "message";
             String URL = "url";
@@ -156,7 +153,6 @@ public interface Constants {
             String NUM_OF_SYNC_ATTEMPTS_BEFORE_CALL_TO_ACTION = "num_of_sync_attempts_before_call_to_action";
             String COMMON_ADS_SOURCE = "common_ads_source";
             //enabled options
-            String FREE_INVITES_ENABLED = "free_invites_enabled";
             String FREE_APPS_INSTALL_ENABLED = "free_apps_install_enabled";
             String FREE_REWARDED_VIDEO_ENABLED = "free_rewarded_video_enabled";
             String FREE_VK_GROUPS_ENABLED = "free_vk_groups_enabled";
@@ -171,7 +167,6 @@ public interface Constants {
             String FREE_VK_SHARE_APP_REWARD = "free_vk_share_app_reward";
             String REWARDED_VIDEO_COOLDOWN_IN_MILLIS = "rewarded_video_cooldown_in_millis";
             String AUTH_COOLDOWN_IN_MILLIS = "auth_cooldown_in_millis";
-            String INVITE_REWARD_IN_MILLIS = "invite_reward_in_millis";
             //native ads
             String NATIVE_ADS_LISTS_ENABLED = "native_ads_lists_enabled";
             String NATIVE_IN_ARTICLE_ENABLED = "native_in_article_enabled";
@@ -194,7 +189,6 @@ public interface Constants {
             String SCORE_ACTION_OUR_APP = "score_action_our_app";
             String SCORE_ACTION_REWARDED_VIDEO = "score_action_rewarded_video";
             String SCORE_ACTION_AUTH = "score_action_auth";
-            String SCORE_ACTION_INVITE = "score_action_invite";
             String SCORE_ACTION_NONE = "score_action_none";
             String LEVELS_JSON = "levels_json";
             //downloads
@@ -214,15 +208,11 @@ public interface Constants {
             long CACHE_EXPIRATION_SECONDS = 20000;
         }
 
-        int REQUEST_INVITE = 1024;
-
-        interface Analitics {
+        interface Analytics {
 
             interface EventName {
 
                 String FREE_TRIAL_OFFER_SHOWN = "FREE_TRIAL_OFFER_SHOWN";
-                String INVITE_SENT = "INVITE_SENT";
-                String INVITE_RECEIVED = "INVITE_RECEIVED";
                 String SUBSCRIPTIONS_SHOWN = "SUBSCRIPTIONS_SHOWN";
                 String MASS_DOWNLOAD = "MASS_DOWNLOAD";
                 String VK_GROUP_JOINED = "VK_GROUP_JOINED";
@@ -268,7 +258,6 @@ public interface Constants {
 
             interface UserPropertyKey {
 
-                String INVITED = "INVITED";
                 String SUBSCRIBED = "SUBSCRIBED";
             }
         }

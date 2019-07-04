@@ -98,7 +98,7 @@ public class AppInstallReceiver extends BroadcastReceiver {
 
             final Bundle bundle = new Bundle();
             bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, packageName);
-            FirebaseAnalytics.getInstance(context).logEvent(Constants.Firebase.Analitics.EventName.APP_INSTALLED, bundle);
+            FirebaseAnalytics.getInstance(context).logEvent(Constants.Firebase.Analytics.EventName.APP_INSTALLED, bundle);
         }
     }
 

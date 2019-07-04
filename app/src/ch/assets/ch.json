@@ -14,10 +14,6 @@
         "value": 86400000
       },
       {
-        "key": "free_invites_enabled",
-        "value": false
-      },
-      {
         "key": "free_vk_groups_enabled",
         "value": false
       },
@@ -140,14 +136,6 @@
       {
         "key": "auth_cooldown_in_millis",
         "value": 7200000
-      },
-      {
-        "key": "score_action_invite",
-        "value": 100
-      },
-      {
-        "key": "invite_reward_in_millis",
-        "value": 86400000
       },
       {
         "key": "native_ads_lists_interval",

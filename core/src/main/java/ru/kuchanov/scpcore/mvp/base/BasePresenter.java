@@ -30,8 +30,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-import static ru.kuchanov.scpcore.Constants.LEVEL_UP_SCORE_TO_ADD;
-
 /**
  * Created by y.kuchanov on 21.12.16.
  */
@@ -504,40 +502,6 @@ public abstract class BasePresenter<V extends BaseMvp.View>
     }
 
     @Override
-    public void updateUserScoreForInapp(final String sku) {
-        Timber.d("updateUserScoreForInapp: %s", sku);
-
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            Timber.d("user unlogined, do nothing");
-            return;
-        }
-
-        //increment scoreInFirebase
-        final int totalScoreToAdd = LEVEL_UP_SCORE_TO_ADD;
-
-        mApiClient
-                .incrementScoreInFirebase(totalScoreToAdd)
-                .flatMap(newTotalScore -> mApiClient
-                        .addRewardedInapp(sku)
-                        .flatMap(aVoid -> mDbProviderFactory.getDbProvider().updateUserScore(newTotalScore))
-                )
-                //TODO need to realize it as we realize vk groups and apps - write inapps to json and check if we need to add score for it
-                .subscribe(
-                        newTotalScore -> {
-                            Timber.d("new total score is: %s", newTotalScore);
-                            final Context context = BaseApplication.getAppInstance();
-                            getView().showMessage(context.getString(R.string.score_increased, context.getResources().getQuantityString(R.plurals.plurals_score, totalScoreToAdd, totalScoreToAdd)));
-                        },
-                        e -> {
-                            Timber.e(e, "error while increment userCore from inapp");
-                            getView().showError(e);
-                            //increment unsynced score to sync it later
-                            myPreferencesManager.addUnsyncedScore(totalScoreToAdd);
-                        }
-                );
-    }
-
-    @Override
     public void checkIfUserJoinedAppVkGroup() {
 //        Timber.d("checkIfUserJoinedAppVkGroup");
         if (!VKSdk.isLoggedIn() || !myPreferencesManager.isTimeToCheckAppVkGroupJoined()) {
@@ -592,9 +556,6 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                 break;
             case ScoreAction.AUTH:
                 score = remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_AUTH);
-                break;
-            case ScoreAction.INVITE:
-                score = remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_INVITE);
                 break;
             case ScoreAction.VK_APP_SHARE:
                 score = remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_VK_SHARE_APP);

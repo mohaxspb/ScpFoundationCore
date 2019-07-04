@@ -7,22 +7,15 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.StringRes;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
-
-import com.google.android.gms.appinvite.AppInviteInvitation;
 
 import java.util.List;
 
 import ru.kuchanov.scpcore.BaseApplication;
-import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 
 /**
  * Created by mohax on 08.01.2017.
- * <p>
- * for scp_ru
  */
 public class IntentUtils {
 
@@ -76,29 +69,6 @@ public class IntentUtils {
 
         if (checkIntent(activity, intent)) {
             activity.startActivity(intent);
-        } else {
-            Toast.makeText(activity, activity.getString(R.string.error_no_activity_to_handle_intent), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    //fixme remove it, as Invites deprecated
-    @Deprecated()
-    public static void firebaseInvite(final FragmentActivity activity) {
-        String message = activity.getString(R.string.invitation_message);
-        if (message.length() > Constants.Firebase.INVITE_CTA_MAX_LENGTH) {
-            message = message.substring(0, Constants.Firebase.INVITE_CTA_MAX_LENGTH);
-        }
-        String cta = activity.getString(R.string.invitation_cta);
-        if (cta.length() > Constants.Firebase.INVITE_CTA_MAX_LENGTH) {
-            cta = cta.substring(0, Constants.Firebase.INVITE_CTA_MAX_LENGTH);
-        }
-        final Intent intent = new AppInviteInvitation.IntentBuilder(activity.getString(R.string.invitation_title))
-                .setMessage(message)
-                .setCallToActionText(cta)
-                .setDeepLink(Uri.parse(activity.getString(R.string.firebase_deep_link)))
-                .build();
-        if (checkIntent(activity, intent)) {
-            activity.startActivityForResult(intent, Constants.Firebase.REQUEST_INVITE);
         } else {
             Toast.makeText(activity, activity.getString(R.string.error_no_activity_to_handle_intent), Toast.LENGTH_SHORT).show();
         }

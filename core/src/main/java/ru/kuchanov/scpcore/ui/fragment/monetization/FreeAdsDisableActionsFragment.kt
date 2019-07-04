@@ -52,7 +52,6 @@ class FreeAdsDisableActionsFragment :
         recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         val delegateManager = AdapterDelegatesManager<List<MyListItem>>()
         delegateManager.addDelegate(DividerDelegate())
-        delegateManager.addDelegate(InviteFriendsDelegate { presenter.onInviteFriendsClick() })
         delegateManager.addDelegate(RewardedVideoDelegate { presenter.onRewardedVideoClick() })
         delegateManager.addDelegate(DisableAdsForAuthDelegate { presenter.onAuthClick() })
         delegateManager.addDelegate(LabelDelegate())
@@ -77,14 +76,6 @@ class FreeAdsDisableActionsFragment :
     override fun onDestroy() {
         super.onDestroy()
         presenter.onDestroy()
-    }
-
-    override fun onInviteFriendsClick() {
-        if (FirebaseAuth.getInstance().currentUser == null) {
-            baseActivity?.showOfferLoginPopup { _, _ -> IntentUtils.firebaseInvite(activity) }
-        } else {
-            IntentUtils.firebaseInvite(activity)
-        }
     }
 
     override fun onRewardedVideoClick() {
@@ -124,7 +115,7 @@ class FreeAdsDisableActionsFragment :
         builder.setShareDialogListener(object : VKShareDialog.VKShareDialogListener {
             override fun onVkShareComplete(postId: Int) {
                 FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
-                    Constants.Firebase.Analitics.EventName.VK_APP_SHARED,
+                    Constants.Firebase.Analytics.EventName.VK_APP_SHARED,
                     Bundle()
                 )
 

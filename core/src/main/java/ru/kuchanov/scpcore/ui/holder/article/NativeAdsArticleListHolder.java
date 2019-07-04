@@ -148,7 +148,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
 
         scpNativeAdView.setOnClickListener(v -> {
             FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
-                    Constants.Firebase.Analitics.EventName.SCP_QUIZ_CLICKED,
+                    Constants.Firebase.Analytics.EventName.SCP_QUIZ_CLICKED,
                     new Bundle()
             );
             final String url = String.format(
@@ -220,7 +220,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         scpNativeAdView.setOnClickListener(v -> {
             Timber.d("MyNativeBanner: onClick %s", scpNativeBanner);
             FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
-                    Constants.Firebase.Analitics.EventName.SCP_NATIVE_CLICKED,
+                    Constants.Firebase.Analytics.EventName.SCP_NATIVE_CLICKED,
                     new Bundle()
             );
             IntentUtils.openUrl(scpNativeBanner.getRedirectUrl());
