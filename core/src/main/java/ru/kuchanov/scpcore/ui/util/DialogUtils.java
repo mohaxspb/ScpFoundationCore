@@ -67,10 +67,14 @@ public class DialogUtils {
                 .title(version.title)
                 .positiveText(R.string.open_play_market)
                 .onPositive((dialog1, which) -> {
-                    final String linkToMarket = "https://play.google.com/store/apps/details?id="
-                                                + version.appPackage
-                                                + "&utm_source=scpReader&utm_medium=appLangsVersions&utm_campaign="
-                                                + mConstantValues.getAppLang();
+//                    final String linkToMarket = "https://play.google.com/store/apps/details?id="
+//                            + version.appPackage
+//                            + "&utm_source=scpReader&utm_medium=appLangsVersions&utm_campaign="
+//                            + mConstantValues.getAppLang();
+                    final String linkToMarket = Constants.Urls.LANDING_PAGE
+                            + "?utm_source=scpReader_" + mConstantValues.getAppLang()
+                            + "&utm_medium=directLink&utm_campaign="
+                            + version.appPackage;
                     IntentUtils.openUrl(linkToMarket);
                 })
                 .build()
@@ -90,7 +94,10 @@ public class DialogUtils {
 //                                        + "&utm_source=scpReader&utm_medium=appLangsVersions&utm_campaign="
 //                                        + mConstantValues.getAppLang();
 
-            final String linkToMarket = Constants.Urls.LANDING_PAGE;
+            final String linkToMarket = Constants.Urls.LANDING_PAGE
+                    + "?utm_source=scpReader_" + mConstantValues.getAppLang()
+                    + "&utm_medium=directLink&utm_campaign="
+                    + appLangVersions.get(position).appPackage;
 
             IntentUtils.openUrl(linkToMarket);
         });
