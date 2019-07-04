@@ -1,18 +1,19 @@
 buildscript {
 
-    ext.kotlin_version = '1.3.40'
+    ext.kotlin_version = '1.3.41'
 
     repositories {
         google()
         jcenter()
         mavenCentral()
         maven { url "https://jitpack.io" }
-        maven { url 'https://maven.fabric.io/public'}
+
+        maven { url 'https://maven.fabric.io/public' }
         //for butterknife 9 snapshot
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 
         //mopub
-        maven { url "https://s3.amazonaws.com/moat-sdk-builds" }
+//        maven { url "https://s3.amazonaws.com/moat-sdk-builds" }
 
         flatDir {
             dirs 'libs'
@@ -28,18 +29,16 @@ buildscript {
     }
 }
 
+
 allprojects {
     repositories {
+        google()
         jcenter()
         mavenCentral()
         maven { url "https://jitpack.io" }
 
-        /** The repository required for AdColony 3.0 and above */
-//        maven { url "https://adcolony.bintray.com/AdColony" }
-
         //mopub
         maven { url "https://s3.amazonaws.com/moat-sdk-builds" }
-        google()
 
         flatDir {
             dirs 'libs'

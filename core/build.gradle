@@ -206,7 +206,7 @@ android {
         api 'com.google.android.gms:play-services-auth:16.0.1'
 
         //AppMetrica
-        api 'com.yandex.android:mobmetricalib:3.2.2'
+        api 'com.yandex.android:mobmetricalib:3.6.4'
         //recyclerView fast scroller
         api 'xyz.danoz:recyclerviewfastscroller:0.1.3'
         //circular progress
@@ -228,9 +228,25 @@ android {
         api('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') { transitive = true }
 
         //mopub ads sdk
-        api('com.mopub:mopub-sdk:5.7.1@aar') {
+//        api('com.mopub:mopub-sdk:5.7.1@aar') {
+//            transitive = true
+//        }
+
+        // For banners
+        api('com.mopub:mopub-sdk-banner:+@aar') {
             transitive = true
         }
+
+        // For rewarded videos. This will automatically also include interstitials
+        api('com.mopub:mopub-sdk-rewardedvideo:5.7.1@aar') {
+            transitive = true
+        }
+
+        // For native video. This will automatically also include native static
+        api('com.mopub:mopub-sdk-native-video:5.7.1@aar') {
+            transitive = true
+        }
+        //mopub ads END
 
         //sub project modules
         api('ru.kuchanov.utils:rate:1.2.1@aar') { transitive = true }
