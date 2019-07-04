@@ -43,8 +43,6 @@ import static ru.kuchanov.scpcore.Constants.Firebase.Analytics.StartScreen;
 
 /**
  * Created by mohax on 02.01.2017.
- * <p>
- * for scp_ru
  */
 public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends DrawerMvp.Presenter<V>>
         extends BaseActivity<V, P>
@@ -114,8 +112,6 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
     }
 
     private void setupNavigationView(@Nullable final Bundle savedInstanceState) {
-        mNavigationView.getMenu().findItem(R.id.gallery).setVisible(mMyPreferenceManager.imagesEnabled());
-
         mNavigationView.setNavigationItemSelectedListener(item -> {
             mPresenter.onNavigationItemClicked(item.getItemId());
             mDrawerLayout.closeDrawer(GravityCompat.START);

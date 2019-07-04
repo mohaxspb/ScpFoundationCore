@@ -156,7 +156,9 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
 //                    Constants.Urls.SCP_QUIZ_MARKET_URL,
 //                    mConstantValues.getAppLang()
 //            );
-            final String url = Constants.Urls.LANDING_PAGE;
+            final String url = Constants.Urls.LANDING_PAGE
+                    + "?utm_source=scpReader_" + mConstantValues.getAppLang()
+                    + "&utm_medium=directLink&utm_campaign=scpQuizBanner";
             IntentUtils.openUrl(url);
         });
 

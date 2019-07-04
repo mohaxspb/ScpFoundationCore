@@ -6,23 +6,13 @@ import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 
 /**
  * Created by y.kuchanov on 21.12.16.
- * <p>
- * for scp_ru
  */
 public interface GalleryScreenMvp extends DrawerMvp {
     interface View extends DrawerMvp.View {
         void showData(List<GalleryImage> data);
-
-        void showCenterProgress(boolean show);
-
-        void showEmptyPlaceholder(boolean show);
     }
 
     interface Presenter extends DrawerMvp.Presenter<View> {
-        void updateData();
-
-        void getDataFromDb();
-
         List<GalleryImage> getData();
 
         void setData(List<GalleryImage> data);

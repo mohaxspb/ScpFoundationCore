@@ -123,8 +123,6 @@ public class ArticleActivity
             link = Constants.Urls.OFFLINE;
         } else if (id == R.id.read) {
             link = Constants.Urls.READ;
-        } else if (id == R.id.gallery) {
-            startGalleryActivity();
         } else if (id == R.id.siteSearch) {
             link = Constants.Urls.SEARCH;
         } else if (id == R.id.tagsSearch) {

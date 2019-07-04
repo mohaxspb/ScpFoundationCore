@@ -1185,28 +1185,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         startActivity(intent);
     }
 
-    public void startGalleryActivity() {
-        final Intent intent = new Intent(this, getGalleryActivityClass());
-
-        if (isTimeToShowAds()) {
-            if (isAdsLoaded()) {
-                showInterstitial(new InterstitialAdListener() {
-                    @Override
-                    public void onInterstitialClosed(@NotNull MyPreferenceManager preferences) {
-                        intent.putExtra(EXTRA_SHOW_DISABLE_ADS, true);
-                        startActivity(intent);
-                    }
-                }, true);
-                return;
-            } else {
-                Timber.d("Ads not loaded yet");
-            }
-        } else {
-            Timber.d("it's not time to showInterstitial ads");
-        }
-        startActivity(intent);
-    }
-
     public void startTagsSearchActivity(final List<ArticleTag> tagList) {
         final Intent intent = new Intent(BaseActivity.this, getTagsSearchActivityClass());
         intent.putExtra(EXTRA_TAGS, new ArrayList<>(ArticleTag.getStringsFromTags(tagList)));

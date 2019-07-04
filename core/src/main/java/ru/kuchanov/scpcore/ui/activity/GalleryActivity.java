@@ -13,7 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.bumptech.glide.request.target.CustomTarget;
@@ -27,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
@@ -47,8 +45,6 @@ import timber.log.Timber;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.GALLERY_BANNER_DISABLED;
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
 
-//import com.bumptech.glide.request.animation.GlideAnimation;
-
 public class GalleryActivity
         extends BaseDrawerActivity<GalleryScreenMvp.View, GalleryScreenMvp.Presenter>
         implements GalleryScreenMvp.View {
@@ -66,14 +62,8 @@ public class GalleryActivity
     @BindView(R2.id.bottomSheet)
     View mBottomSheet;
 
-    @BindView(R2.id.progressCenter)
-    View mProgressContainer;
-
     @BindView(R2.id.placeHolder)
     View mPlaceHolder;
-
-    @BindView(R2.id.refresh)
-    Button mRefresh;
 
     private ImagesPagerAdapter mPagerAdapter;
 
@@ -168,9 +158,6 @@ public class GalleryActivity
         if (mPresenter.getData() != null) {
             mPagerAdapter.setData(mPresenter.getData());
             mRecyclerAdapter.setData(mPresenter.getData());
-        } else {
-            mPresenter.getDataFromDb();
-            mPresenter.updateData();
         }
     }
 
@@ -227,9 +214,6 @@ public class GalleryActivity
             link = Constants.Urls.OFFLINE;
         } else if (id == R.id.read) {
             link = Constants.Urls.READ;
-        } else if (id == R.id.gallery) {
-            //nothing to do
-            return true;
         } else if (id == R.id.siteSearch) {
             link = Constants.Urls.SEARCH;
         } else if (id == R.id.tagsSearch) {
@@ -314,21 +298,6 @@ public class GalleryActivity
         mRecyclerAdapter.setData(data);
 
         mViewPager.setCurrentItem(mCurPosition);
-    }
-
-    @Override
-    public void showCenterProgress(final boolean show) {
-        mProgressContainer.setVisibility(show ? View.VISIBLE : View.GONE);
-    }
-
-    @Override
-    public void showEmptyPlaceholder(final boolean show) {
-        mPlaceHolder.setVisibility(show ? View.VISIBLE : View.GONE);
-    }
-
-    @OnClick(R2.id.refresh)
-    public void onRefreshClicked() {
-        mPresenter.updateData();
     }
 
     @Override
