@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.list_item_free_ads_app.view.*
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.VkGroupToJoinViewModel
+import timber.log.Timber
 
 /**
  * Created by mohax on 27.01.2018.
@@ -45,6 +46,7 @@ class VkGroupToJoinDelegate(
             titleTextView.setTextColor(ContextCompat.getColor(context, item.textColor))
             descriptionTextView.text = item.subtitle
             descriptionTextView.setTextColor(ContextCompat.getColor(context, item.textColor))
+            Timber.d("item.iconUrl: %s", item.iconUrl)
             Glide.with(context)
                     .load(item.iconUrl)
                     .fitCenter()

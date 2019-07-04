@@ -20,13 +20,15 @@ import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.DividerDelegate
 import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.LabelDelegate
-import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.*
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.DisableAdsForAuthDelegate
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.RewardedVideoDelegate
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.VkGroupToJoinDelegate
+import ru.kuchanov.scpcore.controller.adapter.delegate.monetization.freeadsdisable.VkShareAppDelegate
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions
 import ru.kuchanov.scpcore.mvp.contract.monetization.FreeAdsDisableActionsContract
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment
-import ru.kuchanov.scpcore.util.IntentUtils
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -55,7 +57,6 @@ class FreeAdsDisableActionsFragment :
         delegateManager.addDelegate(RewardedVideoDelegate { presenter.onRewardedVideoClick() })
         delegateManager.addDelegate(DisableAdsForAuthDelegate { presenter.onAuthClick() })
         delegateManager.addDelegate(LabelDelegate())
-        delegateManager.addDelegate(AppToInstallDelegate { presenter.onAppInstallClick(it) })
         delegateManager.addDelegate(VkGroupToJoinDelegate { presenter.onVkGroupClick(it) })
         delegateManager.addDelegate(VkShareAppDelegate { presenter.onVkShareAppClick() })
 
@@ -88,19 +89,6 @@ class FreeAdsDisableActionsFragment :
 
     override fun onAuthClick() = baseActivity?.showLoginProvidersPopup() ?: Unit
 
-
-    override fun onAppInstallClick(id: String) {
-        if (FirebaseAuth.getInstance().currentUser == null) {
-            baseActivity?.showOfferLoginPopup { _, _ ->
-                val linkToMarket = "https://play.google.com/store/apps/details?id=$id&utm_source=scpReader&utm_medium=free_ads_disable&utm_campaign=${constantValues.appLang}"
-                IntentUtils.openUrl(linkToMarket)
-            }
-        } else {
-            val linkToMarket = "https://play.google.com/store/apps/details?id=$id&utm_source=scpReader&utm_medium=free_ads_disable&utm_campaign=${constantValues.appLang}"
-            IntentUtils.openUrl(linkToMarket)
-        }
-    }
-
     override fun showVkShareDialog() {
         val builder = VKShareDialogBuilder()
         builder.setText(getString(R.string.share_app_vk_text))
@@ -109,29 +97,28 @@ class FreeAdsDisableActionsFragment :
         photos.add(VKApiPhoto(VK_APP_SHARE_IMAGE))
         builder.setUploadedPhotos(photos)
         builder.setAttachmentLink(
-            getString(R.string.app_name),
-            getString(R.string.share_app_vk_link, BaseApplication.getAppInstance().packageName)
+                getString(R.string.app_name),
+                getString(R.string.share_app_vk_link, BaseApplication.getAppInstance().packageName)
         )
         builder.setShareDialogListener(object : VKShareDialog.VKShareDialogListener {
             override fun onVkShareComplete(postId: Int) {
                 FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
-                    Constants.Firebase.Analytics.EventName.VK_APP_SHARED,
-                    Bundle()
+                        Constants.Firebase.Analytics.EventName.VK_APP_SHARED,
+                        Bundle()
                 )
 
                 presenter.applyAwardFromVkShare()
 
                 presenter.updateUserScoreForScoreAction(
-                    DataSyncActions.ScoreAction.VK_APP_SHARE,
-                    object : BasePresenter.AddScoreListener {
-                        override fun onSuccess() {
-                            presenter.createData()
-                            showData(presenter.data)
+                        DataSyncActions.ScoreAction.VK_APP_SHARE,
+                        object : BasePresenter.AddScoreListener {
+                            override fun onSuccess() {
+                                presenter.createData()
+                                showData(presenter.data)
+                            }
+
+                            override fun onError() {}
                         }
-
-                        override fun onError() {}
-
-                    }
                 )
             }
 
@@ -160,5 +147,3 @@ class FreeAdsDisableActionsFragment :
         const val VK_APP_SHARE_IMAGE = "photo-599638_456239255"
     }
 }
-
-

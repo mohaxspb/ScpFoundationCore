@@ -1,9 +1,9 @@
 package ru.kuchanov.scpcore.monetization.model;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Created by mohax on 24.02.2017.
- * <p>
- * for pacanskiypublic
  */
 public class VkGroupToJoin extends BaseModel {
 
@@ -21,6 +21,7 @@ public class VkGroupToJoin extends BaseModel {
     public VkGroupToJoin() {
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "VkGroupToJoin{" +

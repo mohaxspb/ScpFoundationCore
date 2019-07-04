@@ -14,7 +14,6 @@ import ru.kuchanov.scpcore.monetization.util.admob.AdmobInterstitialAdListener;
 import ru.kuchanov.scpcore.monetization.util.appodeal.MyAppodealInterstitialCallbacks;
 import ru.kuchanov.scpcore.monetization.util.mopub.MopubInterstitialAdListener;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
-import ru.kuchanov.scpcore.receivers.AppInstallReceiver;
 import ru.kuchanov.scpcore.receivers.ReceiverBoot;
 import ru.kuchanov.scpcore.receivers.ReceiverTimer;
 import ru.kuchanov.scpcore.service.DownloadAllServiceDefault;
@@ -186,8 +185,6 @@ public interface AppComponent {
     void inject(ReceiverTimer receiver);
 
     void inject(ReceiverBoot receiver);
-
-    void inject(AppInstallReceiver receiver);
 
     void inject(AdmobInterstitialAdListener adListener);
 

@@ -76,7 +76,11 @@ class MopubNativeManager @Inject constructor(val context: Context) {
                                 requestNativeAd()
                             }
                         },
-                        onError = { Timber.e(it, "Unexpected error while clear native ads map") }
+                        onError = {
+                            //fixme there is error. Maybe, we need to unsubscribe while in background...
+                            //test with smaller interval
+                            Timber.e(it, "Unexpected error while clear native ads map")
+                        }
                 )
     }
 

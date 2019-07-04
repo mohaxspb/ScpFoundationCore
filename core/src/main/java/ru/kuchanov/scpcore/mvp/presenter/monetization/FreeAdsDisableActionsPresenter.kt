@@ -18,19 +18,19 @@ import ru.kuchanov.scpcore.api.ApiClient
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.DividerViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.LabelViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.*
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.DisableAdsForAuthViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.RewardedVideoViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.VkGroupToJoinViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.VkShareAppViewModel
 import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.manager.MyNotificationManager
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
-import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse
-import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.FreeAdsDisableActionsContract
 import ru.kuchanov.scpcore.util.DimensionUtils
-import ru.kuchanov.scpcore.util.IntentUtils
 import ru.kuchanov.scpcore.util.SystemUtils
 import rx.lang.kotlin.subscribeBy
 import timber.log.Timber
@@ -102,51 +102,7 @@ class FreeAdsDisableActionsPresenter(
                     ))
             data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(4)))
         }
-        if (config.getBoolean(FREE_APPS_INSTALL_ENABLED)) {
-            val jsonString = config.getString(APPS_TO_INSTALL_JSON)
 
-            var applications: List<PlayMarketApplication>? = null
-            try {
-                applications = mGson.fromJson(jsonString, ApplicationsResponse::class.java).items
-            } catch (e: Exception) {
-                Timber.e(e)
-            }
-
-            if (applications != null) {
-                val availableAppsToInstall = mutableListOf<PlayMarketApplication>()
-                for (application in applications) {
-                    if (mMyPreferenceManager.isAppInstalledForPackage(application.id)) {
-                        continue
-                    }
-                    if (IntentUtils.isPackageInstalled(context, application.id)) {
-                        continue
-                    }
-                    availableAppsToInstall.add(application)
-                }
-                if (availableAppsToInstall.isNotEmpty()) {
-                    val numOfMillis = config.getLong(APP_INSTALL_REWARD_IN_MILLIS)
-                    val hours = Duration.millis(numOfMillis).toStandardHours().hours
-                    val score = config.getLong(SCORE_ACTION_OUR_APP).toInt()
-
-                    data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(4)))
-                    data.add(
-                            LabelViewModel(
-                                    R.string.free_ads_app_install_label,
-                                    bgColor = R.color.freeAdsBackgroundColor,
-                                    textColor = R.color.freeAdsTextColor))
-                    data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(4)))
-
-                    data.addAll(availableAppsToInstall.map {
-                        AppToInstallViewModel(
-                                it.id,
-                                context.getString(R.string.free_ads_app_install_title, hours, score),
-                                it.name,
-                                it.imageUrl
-                        )
-                    })
-                }
-            }
-        }
         if (config.getBoolean(FREE_VK_GROUPS_ENABLED)) {
             val jsonString = config.getString(VK_GROUPS_TO_JOIN_JSON)
 
@@ -172,17 +128,22 @@ class FreeAdsDisableActionsPresenter(
                             LabelViewModel(
                                     R.string.free_ads_vk_group_label,
                                     bgColor = R.color.freeAdsBackgroundColor,
-                                    textColor = R.color.freeAdsTextColor))
+                                    textColor = R.color.freeAdsTextColor
+                            )
+                    )
                     data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(4)))
 
-                    data.addAll(availableItems.map {
-                        VkGroupToJoinViewModel(
-                                it.id,
-                                context.getString(R.string.free_ads_vk_group_title, hours, score),
-                                it.name,
-                                it.imageUrl
-                        )
-                    })
+                    data.addAll(
+                            availableItems.map {
+                                Timber.d("VkGroupToJoinViewModel: $it")
+                                VkGroupToJoinViewModel(
+                                        it.id,
+                                        context.getString(R.string.free_ads_vk_group_title, hours, score),
+                                        it.name,
+                                        it.imageUrl
+                                )
+                            }
+                    )
                 }
             }
         }
@@ -224,13 +185,6 @@ class FreeAdsDisableActionsPresenter(
             return
         }
         view.onAuthClick()
-    }
-
-    override fun onAppInstallClick(id: String) {
-        if (isNeedToOfferFreeTrial()) {
-            return
-        }
-        view.onAppInstallClick(id)
     }
 
     override fun onVkGroupClick(id: String) {

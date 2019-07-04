@@ -16,15 +16,12 @@ import java.util.Date;
 
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
-import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
-import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.util.FontUtils;
 import timber.log.Timber;
 
-import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.APP_INSTALL_REWARD_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.ARTICLE_BANNER_DISABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.AUTH_COOLDOWN_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD;
@@ -124,7 +121,6 @@ public class MyPreferenceManager {
         String AUTO_SYNC_ATTEMPTS = "AUTO_SYNC_ATTEMPTS";
         String UNSYNCED_SCORE = "UNSYNCED_SCORE";
         String UNSYNCED_VK_GROUPS = "UNSYNCED_VK_GROUPS";
-        String UNSYNCED_APPS = "UNSYNCED_APPS";
 
         //offline access
         String OFFLINE_RANDOM = "OFFLINE_RANDOM";
@@ -134,7 +130,6 @@ public class MyPreferenceManager {
         String SAVE_NEW_ARTICLES_ENABLED = "SAVE_NEW_ARTICLES_ENABLED";
 
         //score awards
-        String PACKAGE_INSTALLED = "PACKAGE_INSTALLED";
         String VK_GROUP_JOINED = "VK_GROUP_JOINED";
         String APP_VK_GROUP_JOINED_LAST_TIME_CHECKED = "APP_VK_GROUP_JOINED_LAST_TIME_CHECKED";
         String APP_VK_GROUP_JOINED = "APP_VK_GROUP_JOINED";
@@ -505,31 +500,6 @@ public class MyPreferenceManager {
         return mPreferences.getLong(Keys.TIME_FOR_WHICH_BANNERS_DISABLED, 0);
     }
 
-    //app installs
-    public boolean isAppInstalledForPackage(final String packageName) {
-        return mPreferences.getBoolean(Keys.PACKAGE_INSTALLED + packageName, false);
-    }
-
-    public void setAppInstalledForPackage(final String packageName) {
-        mPreferences.edit().putBoolean(Keys.PACKAGE_INSTALLED + packageName, true).apply();
-    }
-
-    public void applyAwardForAppInstall() {
-//        long time = System.currentTimeMillis() +
-//                remoteConfig.getLong(APP_INSTALL_REWARD_IN_MILLIS);
-//
-//        setLastTimeAdsShows(time);
-//        //also set time for which we should disable banners
-//        setTimeForWhichBannersDisabled(time);
-        final long time = remoteConfig.getLong(APP_INSTALL_REWARD_IN_MILLIS);
-
-        increaseLastTimeAdsShows(time);
-        //also set time for which we should disable banners
-        increaseTimeForWhichBannersDisabled(time);
-
-        setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
-    }
-
     //vk groups join
     public boolean isVkGroupJoined(final String id) {
         return mPreferences.getBoolean(Keys.VK_GROUP_JOINED + id, false);
@@ -713,33 +683,6 @@ public class MyPreferenceManager {
         VkGroupsToJoinResponse data = null;
         try {
             data = mGson.fromJson(mPreferences.getString(Keys.UNSYNCED_VK_GROUPS, null), VkGroupsToJoinResponse.class);
-        } catch (final Exception e) {
-            Timber.e(e);
-        }
-        return data;
-    }
-
-    public void addUnsyncedApp(final String id) {
-        ApplicationsResponse data = getUnsyncedAppsJson();
-        if (data == null) {
-            data = new ApplicationsResponse();
-            data.items = new ArrayList<>();
-        }
-        final PlayMarketApplication item = new PlayMarketApplication(id);
-        if (!data.items.contains(item)) {
-            data.items.add(item);
-            mPreferences.edit().putString(Keys.UNSYNCED_APPS, mGson.toJson(data)).apply();
-        }
-    }
-
-    public void deleteUnsyncedApps() {
-        mPreferences.edit().remove(Keys.UNSYNCED_APPS).apply();
-    }
-
-    public ApplicationsResponse getUnsyncedAppsJson() {
-        ApplicationsResponse data = null;
-        try {
-            data = mGson.fromJson(mPreferences.getString(Keys.UNSYNCED_APPS, null), ApplicationsResponse.class);
         } catch (final Exception e) {
             Timber.e(e);
         }

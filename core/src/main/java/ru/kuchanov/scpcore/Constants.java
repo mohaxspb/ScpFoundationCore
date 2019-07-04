@@ -138,7 +138,6 @@ public interface Constants {
             String ARTICLES = "articles";
             String SCORE = "score";
             String VK_GROUPS = "vkGroups";
-            String APPS = "apps";
             String INAPP = "inapp";
             String SOCIAL_PROVIDER = "socialProviders";
             String SIGN_IN_REWARD_GAINED = "signInRewardGained";
@@ -153,16 +152,13 @@ public interface Constants {
             String NUM_OF_SYNC_ATTEMPTS_BEFORE_CALL_TO_ACTION = "num_of_sync_attempts_before_call_to_action";
             String COMMON_ADS_SOURCE = "common_ads_source";
             //enabled options
-            String FREE_APPS_INSTALL_ENABLED = "free_apps_install_enabled";
             String FREE_REWARDED_VIDEO_ENABLED = "free_rewarded_video_enabled";
             String FREE_VK_GROUPS_ENABLED = "free_vk_groups_enabled";
             String FREE_VK_SHARE_APP_ENABLED = "free_vk_share_app_enabled";
             String FREE_AUTH_ENABLED = "free_auth_enabled";
             //actions variants
-            String APPS_TO_INSTALL_JSON = "apps_to_install_json";
             String VK_GROUPS_TO_JOIN_JSON = "vk_groups_to_join_json";
             //disable ads
-            String APP_INSTALL_REWARD_IN_MILLIS = "app_install_reward_in_millis";
             String FREE_VK_GROUPS_JOIN_REWARD = "free_vk_groups_join_reward";
             String FREE_VK_SHARE_APP_REWARD = "free_vk_share_app_reward";
             String REWARDED_VIDEO_COOLDOWN_IN_MILLIS = "rewarded_video_cooldown_in_millis";
@@ -186,7 +182,6 @@ public interface Constants {
             String SCORE_ACTION_INTERSTITIAL_SHOWN = "score_action_interstitial_shown";
             String SCORE_ACTION_VK_GROUP = "score_action_vk_group";
             String SCORE_ACTION_VK_SHARE_APP = "score_action_vk_share_app";
-            String SCORE_ACTION_OUR_APP = "score_action_our_app";
             String SCORE_ACTION_REWARDED_VIDEO = "score_action_rewarded_video";
             String SCORE_ACTION_AUTH = "score_action_auth";
             String SCORE_ACTION_NONE = "score_action_none";
@@ -216,7 +211,6 @@ public interface Constants {
                 String SUBSCRIPTIONS_SHOWN = "SUBSCRIPTIONS_SHOWN";
                 String MASS_DOWNLOAD = "MASS_DOWNLOAD";
                 String VK_GROUP_JOINED = "VK_GROUP_JOINED";
-                String APP_INSTALLED = "APP_INSTALLED";
                 String VK_APP_SHARED = "VK_APP_SHARED";
                 String SCP_NATIVE_CLICKED = "SCP_NATIVE_CLICKED";
                 String SCP_QUIZ_CLICKED = "SCP_QUIZ_CLICKED";
