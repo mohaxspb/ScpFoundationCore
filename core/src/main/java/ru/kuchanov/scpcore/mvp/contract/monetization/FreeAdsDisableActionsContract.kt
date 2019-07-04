@@ -13,7 +13,6 @@ interface FreeAdsDisableActionsContract : BaseMvp {
         fun showData(data: List<MyListItem>)
         fun onRewardedVideoClick()
         fun onAuthClick()
-        fun onAppInstallClick(id: String)
         fun onVkLoginAttempt()
         fun showVkShareDialog()
     }
@@ -24,7 +23,6 @@ interface FreeAdsDisableActionsContract : BaseMvp {
         fun createData()
         fun onRewardedVideoClick()
         fun onAuthClick()
-        fun onAppInstallClick(id: String)
         fun onVkGroupClick(id: String)
         fun onVkShareAppClick()
         fun onDestroy()

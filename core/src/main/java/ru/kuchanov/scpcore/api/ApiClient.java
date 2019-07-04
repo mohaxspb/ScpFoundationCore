@@ -84,7 +84,6 @@ import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
 import ru.kuchanov.scpcore.util.DimensionUtils;
 import rx.Observable;
@@ -1505,64 +1504,6 @@ public class ApiClient {
                     .child(Constants.Firebase.Refs.VK_GROUPS)
                     .child(id);
             reference.setValue(new VkGroupToJoin(id), (databaseError, databaseReference) -> {
-                if (databaseError == null) {
-                    subscriber.onSuccess(null);
-                } else {
-                    subscriber.onError(databaseError.toException());
-                }
-            });
-        });
-    }
-
-    public Single<Boolean> isUserInstallApp(final String packageNameWithDots) {
-        //as firebase can't have dots in ref path we must replace it...
-        final String id = packageNameWithDots.replaceAll("\\.", "____");
-        Timber.d("id: %s", id);
-        return Single.create(subscriber -> {
-            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-            if (firebaseUser == null) {
-                subscriber.onError(new IllegalArgumentException("firebase user is null"));
-                return;
-            }
-            final FirebaseDatabase database = FirebaseDatabase.getInstance();
-            final DatabaseReference reference = database.getReference()
-                    .child(Constants.Firebase.Refs.USERS)
-                    .child(firebaseUser.getUid())
-                    .child(Constants.Firebase.Refs.APPS)
-                    .child(id);
-            reference.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
-                    final PlayMarketApplication data = dataSnapshot.getValue(PlayMarketApplication.class);
-                    Timber.d("dataSnapshot.getValue(): %s", data);
-                    subscriber.onSuccess(data != null);
-                }
-
-                @Override
-                public void onCancelled(@NonNull final DatabaseError databaseError) {
-                    subscriber.onError(databaseError.toException());
-                }
-            });
-        });
-    }
-
-    //todo remove null from chain
-    public Single<Void> addInstalledApp(final String packageNameWithDots) {
-        //as firebase can't have dots in ref path we must replace it...
-        final String id = packageNameWithDots.replaceAll("\\.", "____");
-        return Single.create(subscriber -> {
-            final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-            if (firebaseUser == null) {
-                subscriber.onError(new IllegalArgumentException("firebase user is null"));
-                return;
-            }
-            final FirebaseDatabase database = FirebaseDatabase.getInstance();
-            final DatabaseReference reference = database.getReference()
-                    .child(Constants.Firebase.Refs.USERS)
-                    .child(firebaseUser.getUid())
-                    .child(Constants.Firebase.Refs.APPS)
-                    .child(id);
-            reference.setValue(new PlayMarketApplication(id), (databaseError, databaseReference) -> {
                 if (databaseError == null) {
                     subscriber.onSuccess(null);
                 } else {

@@ -10,6 +10,7 @@ import ru.kuchanov.scpcore.Constants
 import ru.kuchanov.scpcore.R
 import rx.Observable
 import rx.Single
+import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.subscribeBy
 import timber.log.Timber
 import java.util.*
@@ -65,18 +66,24 @@ class MopubNativeManager @Inject constructor(val context: Context) {
                     nativeAdsWithTime
                             .filter {
                                 val hourInMillis = Period.hours(1).toStandardDuration().millis
-                                System.currentTimeMillis() - it.key > hourInMillis
+                                System.currentTimeMillis() - it.key < hourInMillis
                             }
                 }
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                         onNext = {
+                            Timber.d("NativeAds cache handle: ${it.size}/${nativeAdsWithTime.size}")
                             nativeAdsWithTime.clear()
                             nativeAdsWithTime.putAll(it)
                             if (nativeAdsWithTime.size < Constants.NUM_OF_NATIVE_ADS_PER_SCREEN) {
                                 requestNativeAd()
                             }
                         },
-                        onError = { Timber.e(it, "Unexpected error while clear native ads map") }
+                        onError = {
+                            //test with smaller interval
+                            Timber.e(it, "Unexpected error while clear native ads map")
+                        }
                 )
     }
 

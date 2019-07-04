@@ -20,7 +20,6 @@ import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.User;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
-import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.LoginActions;
@@ -297,47 +296,6 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                                 });
                     }
                 })
-                //add unsynced score for apps
-                .flatMap(artsAndScoreAdded -> {
-                    ApplicationsResponse unsyncedScore = myPreferencesManager.getUnsyncedAppsJson();
-                    if (unsyncedScore == null) {
-                        //no need to update something
-                        return Observable.just(artsAndScoreAdded);
-                    } else {
-                        //get uninstalled apps that we must sync
-                        @ScoreAction
-                        String action = ScoreAction.OUR_APP;
-                        int actionScore = getTotalScoreToAddFromAction(action, myPreferencesManager);
-                        return Observable.from(unsyncedScore.items)
-                                .map(item -> item.id)
-                                .doOnNext(id -> Timber.d("application id to check: %s", id))
-                                .flatMap(itemId -> mApiClient.isUserInstallApp(itemId)
-                                        .flatMapObservable(isUserInstallApp -> isUserInstallApp ?
-                                                Observable.empty() :
-                                                //TODO add error handling
-                                                mApiClient.incrementScoreInFirebase(actionScore)
-                                                        .flatMap(newTotalScore -> mDbProviderFactory.getDbProvider()
-                                                                .updateUserScore(newTotalScore))
-                                                        .flatMap(newTotalScore ->
-                                                                mApiClient
-                                                                        .addInstalledApp(itemId)
-                                                                        .flatMap(aVoid -> Single.just(actionScore))
-
-                                                        )
-                                                        .toObservable()
-                                        )
-                                )
-                                .toList()
-                                .flatMap(integers -> {
-                                    myPreferencesManager.deleteUnsyncedApps();
-                                    return Observable.just(new Pair<>(
-                                                    artsAndScoreAdded.first,
-                                                    artsAndScoreAdded.second + actionScore * integers.size()
-                                            )
-                                    );
-                                });
-                    }
-                })
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -465,7 +423,6 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                             final Context context = BaseApplication.getAppInstance();
                             if (action.equals(ScoreAction.REWARDED_VIDEO)
                                     || action.equals(ScoreAction.VK_GROUP)
-                                    || action.equals(ScoreAction.OUR_APP)
                                     || action.equals(ScoreAction.VK_APP_SHARE)) {
                                 getView().showMessage(context.getString(R.string.score_increased, context.getResources().getQuantityString(R.plurals.plurals_score, totalScoreToAdd, totalScoreToAdd)));
                             }
@@ -550,9 +507,6 @@ public abstract class BasePresenter<V extends BaseMvp.View>
                 break;
             case ScoreAction.VK_GROUP:
                 score = remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_VK_GROUP);
-                break;
-            case ScoreAction.OUR_APP:
-                score = remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_OUR_APP);
                 break;
             case ScoreAction.AUTH:
                 score = remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_AUTH);

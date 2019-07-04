@@ -2,24 +2,12 @@
   "defaultsMap": {
     "entry": [
       {
-        "key": "free_apps_install_enabled",
-        "value": true
-      },
-      {
-        "key": "apps_to_install_json",
-        "value": "{            \"items\": [            {            \"id\": \"ru.kuchanov.vjux\",            \"name\": \"Котик Вжух - Кот волшебник Мем\",            \"description\": \"Вжух и ты волшебник, создай свой вжух взмахом руки.\",            \"imageUrl\":            \"https\/\/lh3.googleusercontent.com\/5P7o006Il-iA8e6TjNYvogcObxC0rHj69VljyLd0YvbC6YhvlDCh6BS0jaKmznWbUSk=w300-rw\"            }            ]            }"
-      },
-      {
-        "key": "app_install_reward_in_millis",
-        "value": 86400000
-      },
-      {
         "key": "free_vk_groups_enabled",
         "value": false
       },
       {
         "key": "vk_groups_to_join_json",
-        "value": "{            \"items\": [            {            \"id\": \"599638\",            \"name\": \"SCP Foundation RU\/ENG. Приложение для Android\",            \"description\": \"Официальная группа приложения в ВК. Тут вы найдёте самые последние            новости о развитии приложения, а также разный контент по вселенной SCP\",            \"imageUrl\": \"https:\/\/pp.userapi.com\/c604519\/v604519296\/46aa\/i9Y7zDF_J5M.jpg\"            },            {            \"id\": \"54904072\",            \"name\": \"DeusEX Mohito\",            \"description\": \"Немного юмора, всякое интересное и т.д.\",            \"imageUrl\": \"https:\/\/pp.userapi.com\/c639829\/v639829296\/5462\/Chzn6rgbuL8.jpg\"            }            ]            }"
+        "value": "{   \"items\": [     {       \"id\": \"599638\",       \"name\": \"SCP Foundation RU/ENG. Приложение для Android\",       \"description\": \"Официальная группа приложения в ВК. Тут вы найдёте самые последние новости о развитии приложения, а также разный контент по вселенной SCP\",       \"imageUrl\": \"https://sun1-89.userapi.com/c604519/v604519296/46aa/i9Y7zDF_J5M.jpg\"     },     {       \"id\": \"29463565\",       \"name\": \"SCP Foundation\",       \"description\": \"Официальное представительство SCP Foundation ВКонтакте.\",       \"imageUrl\": \"https://pp.userapi.com/c11266/g29463565/a_8f7f014e.jpg\"     },     {       \"id\": \"124930073\",       \"name\": \"ЭКСТРАМЕРНЫЙ РАШН ФЕНДОМ ФО SCP\",       \"description\": \"Мемасики и шутейки про Фонд SCP\",       \"imageUrl\": \"https://pp.userapi.com/c852220/v852220342/12d9b9/3kQLAK_81TM.jpg\"     }   ] }"
       },
       {
         "key": "free_vk_groups_join_reward",
@@ -71,10 +59,6 @@
       },
       {
         "key": "score_action_vk_group",
-        "value": 50
-      },
-      {
-        "key": "score_action_our_app",
         "value": 50
       },
       {

@@ -54,6 +54,7 @@ class DisableAdsForAuthDelegate(
             descriptionTextView.text = item.subtitle
             descriptionTextView.setTextColor(ContextCompat.getColor(context, item.textColor))
             iconImageView.setImageResource(item.icon)
+            iconImageView.setColorFilter(ContextCompat.getColor(context, R.color.freeAdsTextColor))
             cardView.setOnClickListener { clickListener() }
         }
     }
