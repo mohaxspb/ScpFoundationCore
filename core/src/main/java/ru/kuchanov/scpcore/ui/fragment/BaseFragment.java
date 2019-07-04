@@ -38,8 +38,6 @@ import timber.log.Timber;
 
 /**
  * Created by mohax on 03.01.2017.
- * <p>
- * for scp_ru
  */
 public abstract class BaseFragment<V extends BaseMvp.View, P extends BaseMvp.Presenter<V>>
         extends MvpFragment<V, P>

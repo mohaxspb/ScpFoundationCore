@@ -16,7 +16,11 @@ public interface Constants {
     int LEVEL_UP_SCORE_TO_ADD = 10000;
 
     enum NativeAdsSource {
-        ALL, APPODEAL, SCP_QUIZ, ART
+        ALL,
+        SCP_QUIZ,
+        @Deprecated
+        ART,
+        MOPUB
     }
 
     interface Api {
@@ -152,6 +156,7 @@ public interface Constants {
             String PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS = "period_between_interstitial_in_millis";
             String NUM_OF_INTERSITIAL_BETWEEN_REWARDED = "num_of_intersitial_between_rewarded";
             String NUM_OF_SYNC_ATTEMPTS_BEFORE_CALL_TO_ACTION = "num_of_sync_attempts_before_call_to_action";
+            String COMMON_ADS_SOURCE = "common_ads_source";
             //enabled options
             String FREE_INVITES_ENABLED = "free_invites_enabled";
             String FREE_APPS_INSTALL_ENABLED = "free_apps_install_enabled";

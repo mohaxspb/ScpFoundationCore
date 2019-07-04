@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView android:id="@+id/nativeAdViewContainer"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nativeAdViewContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardBackgroundColor="?artListCardBackgroundColor"
@@ -16,13 +16,13 @@
 
         <include layout="@layout/native_ads_scp_art" />
 
-        <!--<com.appodeal.ads.native_ad.views.NativeAdViewAppWall-->
-            <!--android:id="@+id/appodealNativeAdViewAppWall"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--/>-->
+        <!--mopub native ads container-->
+        <FrameLayout
+            android:id="@+id/mopubNativeAdsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-        <!--<include layout="@layout/native_ads_buttons" />-->
+        <include layout="@layout/native_ads_buttons" />
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

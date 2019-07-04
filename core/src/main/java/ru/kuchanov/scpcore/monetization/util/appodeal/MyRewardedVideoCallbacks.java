@@ -2,8 +2,6 @@ package ru.kuchanov.scpcore.monetization.util.appodeal;
 
 /**
  * Created by mohax on 12.03.2017.
- * <p>
- * for scp_ru
  */
 //todo extend from admob
 public class MyRewardedVideoCallbacks {

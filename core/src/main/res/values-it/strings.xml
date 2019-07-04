@@ -274,11 +274,9 @@
     <string name="remove_ads_for_free_for_hours"><![CDATA[Per qualche ora<br/><b><font color=#4CAF50>LIBERO</font></b>]]></string>
 
     <!---->
-    <string name="contacts_info"><![CDATA[Vi ricordiamo che è possibile monitorare i progressi del progetto a <b>GitHub</b> e in <b>Trello</b>. Potete contattarci tramite <b>e-mail</b>. Ecco i link:
+    <string name="contacts_info"><![CDATA[Vi ricordiamo che è possibile monitorare i progressi del progetto a <b>GitHub</b>. Potete contattarci tramite <b>e-mail</b>. Ecco i link:
 <br/><br/>
 GitHub: <a href="https://github.com/mohaxspb/ScpFoundationCore.git">Repository ScpFoundationCore</a>
-<br/><br/>
-Trello: <a href="https://trello.com/b/K96g075n/scp">Una scheda con un elenco di attività da implementare</a>
 <br/><br/>
 E-mail: <a href="mailto:neva.spb.rx@gmail.com">Per tutte le domande</a>
 <br/><br/>

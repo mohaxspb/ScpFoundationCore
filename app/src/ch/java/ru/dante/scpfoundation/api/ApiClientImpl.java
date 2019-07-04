@@ -75,7 +75,7 @@ public class ApiClientImpl extends ApiClient {
             try {
                 final OkHttpClient client = new OkHttpClient.Builder()
                         .addInterceptor(new HttpLoggingInterceptor(
-                                message -> Timber.d(message)).setLevel(BuildConfig.FLAVOR.equals("dev")
+                                message -> Timber.d(message)).setLevel(BuildConfig.FLAVOR_mode.equals("dev")
                                 ? HttpLoggingInterceptor.Level.BODY
                                 : HttpLoggingInterceptor.Level.NONE)
                         )

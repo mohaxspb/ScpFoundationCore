@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -45,6 +46,7 @@ import ru.kuchanov.scpcore.mvp.contract.article.ArticleMvp;
 import ru.kuchanov.scpcore.ui.activity.GalleryActivity;
 import ru.kuchanov.scpcore.ui.activity.MainActivity;
 import ru.kuchanov.scpcore.ui.adapter.ArticleAdapter;
+import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.fragment.BaseFragment;
 import ru.kuchanov.scpcore.ui.model.SpoilerViewModel;
 import ru.kuchanov.scpcore.ui.model.TabsViewModel;
@@ -57,8 +59,6 @@ import timber.log.Timber;
 
 /**
  * Created by mohax on 03.01.2017.
- * <p>
- * for scp_ru
  */
 public class ArticleFragment
         extends BaseFragment<ArticleMvp.View, ArticleMvp.Presenter>
@@ -518,6 +518,15 @@ public class ArticleFragment
     }
 
     @Override
+    public void onAdsSettingsClick() {
+        if (!isAdded()) {
+            return;
+        }
+        final BottomSheetDialogFragment subsDF = AdsSettingsBottomSheetDialogFragment.newInstance();
+        subsDF.show(getActivity().getSupportFragmentManager(), subsDF.getTag());
+    }
+
+    @Override
     public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
         //ignore facebook spam
         if (key.startsWith("com.facebook")) {
@@ -529,6 +538,9 @@ public class ArticleFragment
             case MyPreferenceManager.Keys.DESIGN_FONT_PATH:
             case MyPreferenceManager.Keys.IS_TEXT_SELECTABLE:
                 mAdapter.notifyDataSetChanged();
+                break;
+            case MyPreferenceManager.Keys.ADS_BANNER_IN_ARTICLE:
+                showData(mPresenter.getData());
                 break;
             case MyPreferenceManager.Keys.TIME_FOR_WHICH_BANNERS_DISABLED:
                 final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd EEE HH:mm:ss", Locale.getDefault());

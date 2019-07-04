@@ -18,7 +18,7 @@ android {
 
     defaultConfig {
         applicationId "ru.dante.scpfoundation"
-        minSdkVersion 17
+        minSdkVersion 21
         targetSdkVersion 28
 
         // Enabling multidex support.
@@ -173,8 +173,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
     }
 }
 

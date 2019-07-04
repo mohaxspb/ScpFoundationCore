@@ -1,7 +1,5 @@
 package ru.kuchanov.scpcore.di;
 
-import org.jetbrains.annotations.NotNull;
-
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -12,8 +10,9 @@ import ru.kuchanov.scpcore.di.module.NetModule;
 import ru.kuchanov.scpcore.di.module.NotificationModule;
 import ru.kuchanov.scpcore.di.module.PresentersModule;
 import ru.kuchanov.scpcore.di.module.StorageModule;
-import ru.kuchanov.scpcore.monetization.util.admob.MyAdListener;
+import ru.kuchanov.scpcore.monetization.util.admob.AdmobInterstitialAdListener;
 import ru.kuchanov.scpcore.monetization.util.appodeal.MyAppodealInterstitialCallbacks;
+import ru.kuchanov.scpcore.monetization.util.mopub.MopubInterstitialAdListener;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.receivers.AppInstallReceiver;
 import ru.kuchanov.scpcore.receivers.ReceiverBoot;
@@ -32,6 +31,7 @@ import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 import ru.kuchanov.scpcore.ui.adapter.ImagesPagerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerAdapter;
 import ru.kuchanov.scpcore.ui.adapter.SettingsSpinnerCardDesignAdapter;
+import ru.kuchanov.scpcore.ui.dialog.AdsSettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.CC3LicenseDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.NewVersionDialogFragment;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
@@ -189,7 +189,9 @@ public interface AppComponent {
 
     void inject(AppInstallReceiver receiver);
 
-    void inject(MyAdListener adListener);
+    void inject(AdmobInterstitialAdListener adListener);
+
+    void inject(MopubInterstitialAdListener mopubInterstitialAdListener);
 
     void inject(MyAppodealInterstitialCallbacks callbacks);
 
@@ -200,6 +202,8 @@ public interface AppComponent {
     void inject(URLImageParser urlImageParser);
 
     DbProviderFactory getDbProviderFactory();
+
+    void inject(AdsSettingsBottomSheetDialogFragment dialogFragment);
 
     void inject(InAppHelper inAppHelper);
 }

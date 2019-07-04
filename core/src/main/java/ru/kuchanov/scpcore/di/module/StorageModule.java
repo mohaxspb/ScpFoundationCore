@@ -1,5 +1,6 @@
 package ru.kuchanov.scpcore.di.module;
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 
 import android.content.Context;
@@ -19,8 +20,6 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 
 /**
  * Created by y.kuchanov on 22.12.16.
- * <p>
- * for scp_ru
  */
 @Module
 public class StorageModule {
@@ -33,12 +32,19 @@ public class StorageModule {
 
     @Provides
     @Singleton
+    FirebaseRemoteConfig providesRemoteConfig() {
+        return FirebaseRemoteConfig.getInstance();
+    }
+
+    @Provides
+    @Singleton
     MyPreferenceManager providesPreferenceManager(
             final Context context,
             final SharedPreferences preferences,
-            final Gson gson
+            final Gson gson,
+            final FirebaseRemoteConfig remoteConfig
     ) {
-        return new MyPreferenceManager(context, preferences, gson);
+        return new MyPreferenceManager(context, preferences, gson, remoteConfig);
     }
 
     @Provides

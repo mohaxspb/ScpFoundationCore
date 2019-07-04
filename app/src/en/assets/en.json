@@ -212,6 +212,10 @@
       {
         "key": "images_enabled",
         "value": false
+      },
+      {
+        "key": "common_ads_source",
+        "value": "MOPUB"
       }
     ]
   }

@@ -24,8 +24,15 @@
             android:id="@+id/banner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             ads:adSize="SMART_BANNER"
             ads:adUnitId="@string/ad_unit_id_main_screen_banner" />
+
+        <com.mopub.mobileads.MoPubView
+            android:id="@+id/mopubBanner"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:visibility="gone" />
 
         <android.support.design.widget.CoordinatorLayout
             android:id="@+id/coordinatorLayout"

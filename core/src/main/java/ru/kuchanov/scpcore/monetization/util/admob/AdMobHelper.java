@@ -6,6 +6,7 @@ import android.provider.Settings;
 
 import com.google.android.gms.ads.AdRequest;
 
+import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.BuildConfig;
 import ru.kuchanov.scpcore.util.SystemUtils;
 
@@ -16,13 +17,12 @@ import ru.kuchanov.scpcore.util.SystemUtils;
  */
 public class AdMobHelper {
 
-    //TODO remove context from args, use application instance
-    public static AdRequest buildAdRequest(final Context context) {
+    public static AdRequest buildAdRequest() {
         final AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
 
-        if (BuildConfig.FLAVOR.equals("dev")) {
+        if (BuildConfig.FLAVOR_mode.equals("dev")) {
             @SuppressLint("HardwareIds")
-            final String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+            final String androidId = Settings.Secure.getString(BaseApplication.getAppInstance().getContentResolver(), Settings.Secure.ANDROID_ID);
             String deviceId = SystemUtils.MD5(androidId);
             if (deviceId != null) {
                 deviceId = deviceId.toUpperCase();

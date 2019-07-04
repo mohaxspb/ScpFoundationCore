@@ -277,11 +277,9 @@
     <string name="remove_ads_for_free_for_hours"><![CDATA[数小时内\n<b><font color=#4CAF50>免费</font></b>]]></string>
 
     <!---->
-    <string name="contacts_info"><![CDATA[您可以在<b>GitHub</b>和<b>Trello</b>上追踪项目进度。您可以通过<b>电子邮件</b>联系我们。以下是链接：
+    <string name="contacts_info"><![CDATA[您可以在<b>GitHub</b> 上追踪项目进度。您可以通过<b>电子邮件</b>联系我们。以下是链接：
 	<br/><br/>
 	GitHub: <a href="https://github.com/mohaxspb/ScpFoundationCore.git">Repository ScpFoundationCore</a>
-<br/><br/>
-	Trello: <a href="https://trello.com/b/K96g075n/scp">待实现的任务列表</a>
 <br/><br/>
 	E-mail: <a href="mailto:neva.spb.rx@gmail.com">如有疑问</a>
 <br/><br/>

@@ -50,8 +50,6 @@ import timber.log.Timber;
 
 /**
  * Created by mohax on 14.03.2017.
- * <p>
- * for scp_ru
  */
 public class ImagesPagerAdapter extends PagerAdapter {
 
@@ -77,7 +75,6 @@ public class ImagesPagerAdapter extends PagerAdapter {
     public void downloadImage(final Context context, final int position, final CustomTarget<Bitmap> target) {
         Toast.makeText(context, R.string.image_loading, Toast.LENGTH_SHORT).show();
         final String imageUrl = GalleryImage.getApiImageAddress(mData.get(position));
-        ;
 
         File file = null;
         if (!TextUtils.isEmpty(imageUrl)) {
@@ -214,6 +211,11 @@ public class ImagesPagerAdapter extends PagerAdapter {
                 public void onRewardedVideoClick() {
                     ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
                 }
+
+                @Override
+                public void onAdsSettingsClick() {
+                    ((BaseActivity) context).showError(new IllegalStateException("not implemented"));
+                }
             });
         }
 
@@ -332,8 +334,8 @@ public class ImagesPagerAdapter extends PagerAdapter {
      * children of the view before invalidating the provided view itself.
      *
      * @param view The view for which to unbind resource.
-     *             <p>
-     *             from http://stackoverflow.com/questions/37789091/viewpager-inside-recyclerview-as-row-item
+     * <p>
+     * from http://stackoverflow.com/questions/37789091/viewpager-inside-recyclerview-as-row-item
      */
     private void unbindDrawables(final View view) {
         if (view.getBackground() != null) {

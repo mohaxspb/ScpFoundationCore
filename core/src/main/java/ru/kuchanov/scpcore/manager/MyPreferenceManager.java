@@ -25,10 +25,14 @@ import ru.kuchanov.scpcore.ui.util.FontUtils;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.APP_INSTALL_REWARD_IN_MILLIS;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.ARTICLE_BANNER_DISABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.AUTH_COOLDOWN_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_SHARE_APP_REWARD;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.INVITE_REWARD_IN_MILLIS;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED;
+import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_IN_ARTICLE_ENABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO_MODIFICATOR;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS;
@@ -36,10 +40,12 @@ import static ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment.Li
 
 /**
  * Created by y.kuchanov on 22.12.16.
- * <p>
- * for scp_ru
  */
 public class MyPreferenceManager {
+
+    public enum CommonAdsSource {
+        MOPUB, ADMOB
+    }
 
     /**
      * check if user joined app vk group each 1 day
@@ -100,8 +106,12 @@ public class MyPreferenceManager {
         String TIME_FOR_WHICH_BANNERS_DISABLED = "TIME_FOR_WHICH_BANNERS_DISABLED";
         String ADS_NUM_OF_INTERSTITIALS_SHOWN = "ADS_NUM_OF_INTERSTITIALS_SHOWN";
         String ADS_REWARDED_DESCRIPTION_IS_SHOWN = "ADS_REWARDED_DESCRIPTION_IS_SHOWN";
+        String ADS_BANNER_IN_ARTICLES_LISTS = "ADS_BANNER_IN_ARTICLES_LISTS";
+        String ADS_BANNER_IN_ARTICLE = "ADS_BANNER_IN_ARTICLE";
 
         String OFFER_ALREADY_SHOWN = "OFFER_ALREADY_SHOWN";
+
+        String COMMON_ADS_SOURCE = "COMMON_ADS_SOURCE";
         //subscriptions
         String HAS_SUBSCRIPTION = "HAS_SUBSCRIPTION";
         String HAS_NO_ADS_SUBSCRIPTION = "HAS_NO_ADS_SUBSCRIPTION";
@@ -151,14 +161,18 @@ public class MyPreferenceManager {
 
     private final SharedPreferences mPreferences;
 
+    private final FirebaseRemoteConfig remoteConfig;
+
     public MyPreferenceManager(
             @NotNull final Context context,
             @NotNull final SharedPreferences preferences,
-            @NotNull final Gson gson
+            @NotNull final Gson gson,
+            @NotNull final FirebaseRemoteConfig remoteConfig
     ) {
         super();
         mPreferences = preferences;
         mGson = gson;
+        this.remoteConfig = remoteConfig;
 
         fixFontNamesIssue(context);
     }
@@ -328,9 +342,36 @@ public class MyPreferenceManager {
 
     //ads
 
+
+    /**
+     * @return user settings of remote config value (banner is enabled and native is disabled)
+     */
+    public boolean isBannerInArticlesListsEnabled() {
+        final boolean bannerIsEnabled = !remoteConfig.getBoolean(MAIN_BANNER_DISABLED);
+        final boolean nativeIsEnabled = remoteConfig.getBoolean(NATIVE_ADS_LISTS_ENABLED);
+        return mPreferences.getBoolean(Keys.ADS_BANNER_IN_ARTICLES_LISTS, bannerIsEnabled && !nativeIsEnabled);
+    }
+
+    /**
+     * @return user settings of remote config value (banner is enabled and native is disabled)
+     */
+    public boolean isBannerInArticleEnabled() {
+        final boolean bannerIsEnabled = !remoteConfig.getBoolean(ARTICLE_BANNER_DISABLED);
+        final boolean nativeIsEnabled = remoteConfig.getBoolean(NATIVE_IN_ARTICLE_ENABLED);
+        return mPreferences.getBoolean(Keys.ADS_BANNER_IN_ARTICLE, bannerIsEnabled && !nativeIsEnabled);
+    }
+
+    public void setBannerInArticlesListsEnabled(final boolean enabled) {
+        mPreferences.edit().putBoolean(Keys.ADS_BANNER_IN_ARTICLES_LISTS, enabled).apply();
+    }
+
+    public void setBannerInArticleEnabled(final boolean enabled) {
+        mPreferences.edit().putBoolean(Keys.ADS_BANNER_IN_ARTICLE, enabled).apply();
+    }
+
     public boolean isTimeToShowAds() {
         return System.currentTimeMillis() - getLastTimeAdsShows() >=
-                FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS);
+                remoteConfig.getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS);
     }
 
     /**
@@ -338,7 +379,7 @@ public class MyPreferenceManager {
      */
     public boolean isTimeToLoadAds() {
         //i.e. 1 hour - (17:56-17:00) = 4 min, which we compare to 5 min
-        return FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS) -
+        return remoteConfig.getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS) -
                 (System.currentTimeMillis() - getLastTimeAdsShows())
                 <= PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS;
     }
@@ -348,7 +389,7 @@ public class MyPreferenceManager {
      */
     public boolean isTimeToNotifyAboutSoonAdsShowing() {
         //i.e. 1 hour - (17:56-17:00) = 4 min, which we compare to 5 min
-        return FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS) -
+        return remoteConfig.getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS) -
                 (System.currentTimeMillis() - getLastTimeAdsShows())
                 <= PERIOD_WHEN_WE_NOTIFY_ABOUT_ADS && !isOfferAlreadyShown();
     }
@@ -364,11 +405,11 @@ public class MyPreferenceManager {
     public void applyAwardFromAds() {
         Timber.d("applyAwardFromAds");
 //        long time = System.currentTimeMillis()
-//                + FirebaseRemoteConfig.getInstance().getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
+//                + remoteConfig.getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
 //        setLastTimeAdsShows(time);
 //        //also set time for which we should disable banners
 //        setTimeForWhichBannersDisabled(time);
-        final long time = FirebaseRemoteConfig.getInstance().getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
+        final long time = remoteConfig.getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
         increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
         increaseTimeForWhichBannersDisabled(time);
@@ -385,8 +426,16 @@ public class MyPreferenceManager {
     }
 
     public int getOfferSubscriptionInsteadOfRewardedVideoModificator() {
-        final Long modificator = FirebaseRemoteConfig.getInstance().getLong(OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO_MODIFICATOR);
+        final Long modificator = remoteConfig.getLong(OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO_MODIFICATOR);
         return modificator == null ? 5 + 1 : modificator.intValue() + 1;
+    }
+
+    public CommonAdsSource getCommonAdsSource() {
+        String commonAdsSource = remoteConfig.getString(Constants.Firebase.RemoteConfigKeys.COMMON_ADS_SOURCE);
+        if (commonAdsSource == null) {
+            commonAdsSource = mPreferences.getString(Keys.COMMON_ADS_SOURCE, CommonAdsSource.MOPUB.name());
+        }
+        return CommonAdsSource.valueOf(commonAdsSource);
     }
 
     //invite
@@ -399,7 +448,7 @@ public class MyPreferenceManager {
     }
 
     public void applyAwardForInvite() {
-        final long time = FirebaseRemoteConfig.getInstance().getLong(INVITE_REWARD_IN_MILLIS);
+        final long time = remoteConfig.getLong(INVITE_REWARD_IN_MILLIS);
 
         increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
@@ -447,7 +496,7 @@ public class MyPreferenceManager {
 
     public boolean isTimeToShowVideoInsteadOfInterstitial() {
         return getNumOfInterstitialsShown() >=
-                FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_INTERSITIAL_BETWEEN_REWARDED);
+                remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_INTERSITIAL_BETWEEN_REWARDED);
     }
 
     /**
@@ -490,12 +539,12 @@ public class MyPreferenceManager {
 
     public void applyAwardForAppInstall() {
 //        long time = System.currentTimeMillis() +
-//                FirebaseRemoteConfig.getInstance().getLong(APP_INSTALL_REWARD_IN_MILLIS);
+//                remoteConfig.getLong(APP_INSTALL_REWARD_IN_MILLIS);
 //
 //        setLastTimeAdsShows(time);
 //        //also set time for which we should disable banners
 //        setTimeForWhichBannersDisabled(time);
-        final long time = FirebaseRemoteConfig.getInstance().getLong(APP_INSTALL_REWARD_IN_MILLIS);
+        final long time = remoteConfig.getLong(APP_INSTALL_REWARD_IN_MILLIS);
 
         increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
@@ -511,7 +560,7 @@ public class MyPreferenceManager {
 
     public void setVkGroupJoined(final String id) {
         mPreferences.edit().putBoolean(Keys.VK_GROUP_JOINED + id, true).apply();
-        if (id.equals(FirebaseRemoteConfig.getInstance().getString(Constants.Firebase.RemoteConfigKeys.VK_APP_GROUP_ID))) {
+        if (id.equals(remoteConfig.getString(Constants.Firebase.RemoteConfigKeys.VK_APP_GROUP_ID))) {
             setAppVkGroupJoined(true);
         }
     }
@@ -526,11 +575,11 @@ public class MyPreferenceManager {
 
     public void applyAwardVkGroupJoined() {
 //        long time = System.currentTimeMillis()
-//                + FirebaseRemoteConfig.getInstance().getLong(FREE_VK_GROUPS_JOIN_REWARD);
+//                + remoteConfig.getLong(FREE_VK_GROUPS_JOIN_REWARD);
 //        setLastTimeAdsShows(time);
 //        //also set time for which we should disable banners
 //        setTimeForWhichBannersDisabled(time);
-        final long time = FirebaseRemoteConfig.getInstance().getLong(FREE_VK_GROUPS_JOIN_REWARD);
+        final long time = remoteConfig.getLong(FREE_VK_GROUPS_JOIN_REWARD);
         increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
         increaseTimeForWhichBannersDisabled(time);
@@ -539,7 +588,7 @@ public class MyPreferenceManager {
     }
 
     public void applyAwardVkShareApp() {
-        final long time = FirebaseRemoteConfig.getInstance().getLong(FREE_VK_SHARE_APP_REWARD);
+        final long time = remoteConfig.getLong(FREE_VK_SHARE_APP_REWARD);
         increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
         increaseTimeForWhichBannersDisabled(time);
@@ -549,11 +598,11 @@ public class MyPreferenceManager {
 
     public void applyAwardSignIn() {
 //        long time = System.currentTimeMillis()
-//                + FirebaseRemoteConfig.getInstance().getLong(AUTH_COOLDOWN_IN_MILLIS);
+//                + remoteConfig.getLong(AUTH_COOLDOWN_IN_MILLIS);
 //        setLastTimeAdsShows(time);
 //        //also set time for which we should disable banners
 //        setTimeForWhichBannersDisabled(time);
-        final long time = FirebaseRemoteConfig.getInstance().getLong(AUTH_COOLDOWN_IN_MILLIS);
+        final long time = remoteConfig.getLong(AUTH_COOLDOWN_IN_MILLIS);
         increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
         increaseTimeForWhichBannersDisabled(time);
@@ -641,15 +690,15 @@ public class MyPreferenceManager {
     //subscriptions end
 
     public boolean isDownloadAllEnabledForFree() {
-        return FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_ALL_ENABLED_FOR_FREE);
+        return remoteConfig.getBoolean(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_ALL_ENABLED_FOR_FREE);
     }
 
     public int getScorePerArt() {
-        return (int) FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_SCORE_PER_ARTICLE);
+        return (int) remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_SCORE_PER_ARTICLE);
     }
 
     public int getFreeOfflineLimit() {
-        return (int) FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_FREE_ARTICLES_LIMIT);
+        return (int) remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_FREE_ARTICLES_LIMIT);
     }
 
     //auto sync
@@ -821,7 +870,6 @@ public class MyPreferenceManager {
     }
 
     public boolean imagesEnabled() {
-        final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
         final boolean enabledInRemoteConfig = remoteConfig.getBoolean(Constants.Firebase.RemoteConfigKeys.IMAGES_ENABLED);
         final long periodFromFirstLaunch = System.currentTimeMillis() - getFirstLaunchTime();
         final boolean enoughTimeLeftFromFirstLaunch = periodFromFirstLaunch >= IMAGES_DISABLED_PERIOD;

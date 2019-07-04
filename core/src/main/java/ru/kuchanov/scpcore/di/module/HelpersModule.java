@@ -1,5 +1,7 @@
 package ru.kuchanov.scpcore.di.module;
 
+import android.content.Context;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -8,6 +10,7 @@ import ru.kuchanov.scpcore.ConstantValues;
 import ru.kuchanov.scpcore.api.ApiClient;
 import ru.kuchanov.scpcore.db.DbProviderFactory;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.mopub.MopubNativeManager;
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.service.DownloadAllServiceDefault;
 import ru.kuchanov.scpcore.ui.activity.MaterialsActivity;
@@ -18,8 +21,6 @@ import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 
 /**
  * Created by y.kuchanov on 22.12.16.
- * <p>
- * for scp_ru
  */
 @Module
 public class HelpersModule {
@@ -74,5 +75,11 @@ public class HelpersModule {
             final ApiClient apiClient
     ) {
         return new InAppHelper(preferenceManager, dbProviderFactory, apiClient);
+    }
+
+    @Provides
+    @Singleton
+    MopubNativeManager providesMopubNativeManager(Context context) {
+        return new MopubNativeManager(context);
     }
 }

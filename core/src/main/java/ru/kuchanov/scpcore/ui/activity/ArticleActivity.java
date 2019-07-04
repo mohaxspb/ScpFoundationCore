@@ -179,6 +179,6 @@ public class ArticleActivity
 
     @Override
     public boolean isBannerEnabled() {
-        return true;
+        return mMyPreferenceManager.isBannerInArticleEnabled();
     }
 }
