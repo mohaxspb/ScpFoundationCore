@@ -43,7 +43,6 @@
                 android:padding="@dimen/defaultMarginSmall"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_addfriends"
-                android:tint="@color/freeAdsTextColor"
                 tools:ignore="ContentDescription"
                 />
 
@@ -66,7 +65,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/freeAdsTextColor"
-                    android:textSize="14sp"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="@dimen/margin_tiny"
                     tools:ignore="MissingPrefix"
                     tools:text="Пригласи друзей в приложение"
                     />

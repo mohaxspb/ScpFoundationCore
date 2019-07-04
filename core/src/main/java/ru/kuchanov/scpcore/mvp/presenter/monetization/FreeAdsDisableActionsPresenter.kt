@@ -135,11 +135,11 @@ class FreeAdsDisableActionsPresenter(
 
                     data.addAll(
                             availableItems.map {
-                                Timber.d("VkGroupToJoinViewModel: $it")
+//                                Timber.d("VkGroupToJoinViewModel: $it")
                                 VkGroupToJoinViewModel(
                                         it.id,
-                                        context.getString(R.string.free_ads_vk_group_title, hours, score),
                                         it.name,
+                                        context.getString(R.string.free_ads_vk_group_title, hours, score),
                                         it.imageUrl
                                 )
                             }
@@ -165,8 +165,8 @@ class FreeAdsDisableActionsPresenter(
             data.add(
                     VkShareAppViewModel(
                             SystemUtils.getPackageInfo().packageName,
-                            context.getString(R.string.free_ads_vk_group_title, hours, score),
                             context.getString(R.string.app_name),
+                            context.getString(R.string.free_ads_vk_group_title, hours, score),
                             "https://lh3.googleusercontent.com//nxy_ouZM-1PTsve_PXDI9-CoErm1Q2XRwKML7_967K-eR5TmVlI5RHDUJsc4WhjsLaI=w300-rw"
                     ))
         }
