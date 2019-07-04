@@ -320,9 +320,6 @@ public class MainActivity
             mCurrentSelectedDrawerItemId = id;
             showFragment(ReadArticlesFragment.newInstance(), ReadArticlesFragment.TAG);
             return true;
-        } else if (id == R.id.gallery) {
-            startGalleryActivity();
-            return false;
         } else if (id == R.id.siteSearch) {
             mCurrentSelectedDrawerItemId = id;
             showFragment(SiteSearchArticlesFragment.newInstance(), SiteSearchArticlesFragment.TAG);

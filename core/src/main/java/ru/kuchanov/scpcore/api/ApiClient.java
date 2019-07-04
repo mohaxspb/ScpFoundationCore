@@ -81,7 +81,6 @@ import ru.kuchanov.scpcore.db.model.MyNativeBanner;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.db.model.SocialProviderModel;
 import ru.kuchanov.scpcore.db.model.User;
-import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.downloads.ScpParseException;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
@@ -994,10 +993,6 @@ public class ApiClient {
                 break;
         }
         return type;
-    }
-
-    public Single<List<GalleryImage>> getGallery() {
-        return mScpReaderApi.getGallery();
     }
 
     private Single<VKApiUser> getUserDataFromVk() {

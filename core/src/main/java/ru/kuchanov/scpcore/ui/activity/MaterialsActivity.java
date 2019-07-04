@@ -17,7 +17,6 @@ import ru.kuchanov.scpcore.mvp.contract.materials.MaterialsScreenMvp;
 import ru.kuchanov.scpcore.ui.dialog.TextSizeDialogFragment;
 import ru.kuchanov.scpcore.ui.fragment.article.ArticleFragment;
 import ru.kuchanov.scpcore.ui.fragment.materials.MaterialsAllFragment;
-import ru.kuchanov.scpcore.util.IntentUtils;
 import timber.log.Timber;
 
 import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_DISABLE_ADS;
@@ -109,8 +108,6 @@ public class MaterialsActivity
             link = Constants.Urls.OFFLINE;
         } else if (id == R.id.read) {
             link = Constants.Urls.READ;
-        } else if (id == R.id.gallery) {
-            startGalleryActivity();
         } else if (id == R.id.siteSearch) {
             link = Constants.Urls.SEARCH;
         } else if (id == R.id.tagsSearch) {

@@ -9,18 +9,12 @@ import ru.kuchanov.scpcore.api.model.response.LeaderboardUsersUpdateDates;
 import ru.kuchanov.scpcore.api.model.response.PurchaseValidateResponse;
 import ru.kuchanov.scpcore.db.model.LeaderboardUser;
 import ru.kuchanov.scpcore.db.model.MyNativeBanner;
-import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import rx.Single;
 
 /**
  * Created by mohax on 06.05.2017.
- * <p>
- * for scp_ru
  */
 public interface ScpReaderApi {
-
-    @GET("gallery/all")
-    Single<List<GalleryImage>> getGallery();
 
     @GET("firebase/{langEnum}/users/leaderboard")
     Single<List<LeaderboardUser>> getLeaderboardUsers(
