@@ -18,8 +18,6 @@ public interface Constants {
     enum NativeAdsSource {
         ALL,
         SCP_QUIZ,
-        @Deprecated
-        ART,
         MOPUB
     }
 
@@ -179,7 +177,6 @@ public interface Constants {
             String NATIVE_IN_ARTICLE_ENABLED = "native_in_article_enabled";
             String NATIVE_ADS_LISTS_INTERVAL = "native_ads_lists_interval";
             String NATIVE_ADS_LISTS_SOURCE_V2 = "native_ads_lists_source_v2";
-            String ADS_SCP_ART_ENABLED = "ads_scp_art_enabled";
             //banners
             String GALLERY_BANNER_DISABLED = "gallery_banner_disabled";
             String MAIN_BANNER_DISABLED = "main_banner_disabled";
@@ -231,7 +228,7 @@ public interface Constants {
                 String VK_GROUP_JOINED = "VK_GROUP_JOINED";
                 String APP_INSTALLED = "APP_INSTALLED";
                 String VK_APP_SHARED = "VK_APP_SHARED";
-                String SCP_ART_CLICKED = "SCP_ART_CLICKED";
+                String SCP_NATIVE_CLICKED = "SCP_NATIVE_CLICKED";
                 String SCP_QUIZ_CLICKED = "SCP_QUIZ_CLICKED";
             }
 

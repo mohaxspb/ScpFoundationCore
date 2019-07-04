@@ -67,7 +67,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     @BindView(R2.id.nativeAdViewContainer)
     View nativeAdViewContainer;
 
-    @BindView(R2.id.scpArtAdView)
+    @BindView(R2.id.scpNativeAdView)
     View scpNativeAdView;
 
     @BindView(R2.id.ratingBar)
@@ -139,7 +139,8 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         this.clickListener = clickListener;
     }
 
-
+    //fixme delete it and use bind(MyNativeBanner banner) for quiz
+    @Deprecated
     public void bind() {
         Timber.d("scpQuizAds showing");
 
@@ -209,36 +210,37 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         mopubNativeAdsContainer.addView(renderedNativeAd);
     }
 
-    public void bind(@NotNull final MyNativeBanner scpArtAd) {
-        Timber.d("scpArtAd: %s", scpArtAd);
+    //todo use it for quiz banners
+    public void bind(@NotNull final MyNativeBanner scpNativeBanner) {
+        Timber.d("scpNativeBanner: %s", scpNativeBanner);
         mopubNativeAdsContainer.setVisibility(View.GONE);
 
         scpNativeAdView.setVisibility(View.VISIBLE);
 
         scpNativeAdView.setOnClickListener(v -> {
-            Timber.d("MyNativeBanner: onClick %s", scpArtAd);
+            Timber.d("MyNativeBanner: onClick %s", scpNativeBanner);
             FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
-                    Constants.Firebase.Analitics.EventName.SCP_ART_CLICKED,
+                    Constants.Firebase.Analitics.EventName.SCP_NATIVE_CLICKED,
                     new Bundle()
             );
-            IntentUtils.openUrl(scpArtAd.getRedirectUrl());
+            IntentUtils.openUrl(scpNativeBanner.getRedirectUrl());
         });
 
         ratingBar.setVisibility(View.VISIBLE);
         Glide.with(logoImageView.getContext())
-                .load(BuildConfig.SCP_READER_API_URL + scpArtAd.getLogoUrl())
+                .load(BuildConfig.SCP_READER_API_URL + scpNativeBanner.getLogoUrl())
                 .error(R.drawable.ic_scp_art_ad_img)
                 .fitCenter()
                 .into(logoImageView);
 
-        titleTextView.setText(scpArtAd.getTitle());
-        subtitleTextView.setText(scpArtAd.getSubTitle());
-        ctaTextView.setText(scpArtAd.getCtaButtonText());
+        titleTextView.setText(scpNativeBanner.getTitle());
+        subtitleTextView.setText(scpNativeBanner.getSubTitle());
+        ctaTextView.setText(scpNativeBanner.getCtaButtonText());
 
         progressCenter.setVisibility(View.VISIBLE);
-        Timber.d("imageUrl: %s%s", BuildConfig.SCP_READER_API_URL, scpArtAd.getImageUrl());
+        Timber.d("imageUrl: %s%s", BuildConfig.SCP_READER_API_URL, scpNativeBanner.getImageUrl());
         Glide.with(mainImageView.getContext())
-                .load(BuildConfig.SCP_READER_API_URL + scpArtAd.getImageUrl())
+                .load(BuildConfig.SCP_READER_API_URL + scpNativeBanner.getImageUrl())
                 .error(R.drawable.art_scp_default_ads)
                 .fitCenter()
                 .listener(new RequestListener<Drawable>() {

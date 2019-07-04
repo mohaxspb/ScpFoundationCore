@@ -92,15 +92,12 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @IntDef({
             ArticleListNodeType.ARTICLE,
             ArticleListNodeType.NATIVE_ADS_SCP_QUIZ,
-            ArticleListNodeType.NATIVE_ADS_MOPUB,
-            ArticleListNodeType.NATIVE_ADS_ART
+            ArticleListNodeType.NATIVE_ADS_MOPUB
     })
     public @interface ArticleListNodeType {
 
         int ARTICLE = 0;
         int NATIVE_ADS_SCP_QUIZ = 3;
-        @Deprecated
-        int NATIVE_ADS_ART = 4;
         int NATIVE_ADS_MOPUB = 5;
     }
 
@@ -316,7 +313,7 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         final String bannerAuthorEmail = BuildConfig.BANNER_AUTHOR_EMAIL;
         if (firebaseUser != null && bannerAuthorEmail.equals(firebaseUser.getEmail())) {
-            nativeAdsSource = Constants.NativeAdsSource.ART;
+            nativeAdsSource = Constants.NativeAdsSource.SCP_QUIZ;
 //            Timber.d("dbProvider.getAllArtBanners(): %s", dbProvider.getAllArtBanners());
 //            Timber.d("dbProvider.getEnabledArtBanners(): %s", dbProvider.getEnabledArtBanners());
 //            Timber.d("dbProvider.getQuizBanners(): %s", dbProvider.getQuizBanners());
@@ -343,10 +340,6 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     final List<Constants.NativeAdsSource> nativeAdsSources =
                             new ArrayList<>(Arrays.asList(Constants.NativeAdsSource.values()));
                     nativeAdsSources.remove(Constants.NativeAdsSource.ALL);
-
-                    if (!config.getBoolean(Constants.Firebase.RemoteConfigKeys.ADS_SCP_ART_ENABLED)) {
-                        nativeAdsSources.remove(Constants.NativeAdsSource.ART);
-                    }
 
                     final Constants.NativeAdsSource randomNativeAdsSource =
                             nativeAdsSources.get(new Random().nextInt(nativeAdsSources.size()));
@@ -394,16 +387,6 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                 ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_SCP_QUIZ, new Random().nextInt(), false)
                                 : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_SCP_QUIZ, new Random().nextInt())
                 );
-                break;
-            //fixme delete it
-            case ART:
-                if (!artBanners.isEmpty()) {
-                    adsModelsList.add(
-                            isArticle
-                                    ? new ArticleTextPartViewModel(ParseHtmlUtils.TextType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())), false)
-                                    : new ArticlesListModel(ArticleListNodeType.NATIVE_ADS_ART, artBanners.get(new Random().nextInt(artBanners.size())))
-                    );
-                }
                 break;
             case MOPUB:
                 if (appodealIndex >= loadedNativeAdsCount) {
@@ -465,8 +448,6 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 break;
             case ArticleListNodeType.NATIVE_ADS_SCP_QUIZ:
             case ArticleListNodeType.NATIVE_ADS_MOPUB:
-                //fixme delete it
-            case ArticleListNodeType.NATIVE_ADS_ART:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_native_container, parent, false);
                 viewHolder = new NativeAdsArticleListHolder(view, mArticleClickListener);
                 break;
@@ -490,10 +471,6 @@ public class ArticlesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 break;
             case ArticleListNodeType.NATIVE_ADS_MOPUB:
                 ((NativeAdsArticleListHolder) holder).bind((Integer) articlesListModel.data);
-                break;
-            //fixme delete it
-            case ArticleListNodeType.NATIVE_ADS_ART:
-                ((NativeAdsArticleListHolder) holder).bind((MyNativeBanner) articlesListModel.data);
                 break;
             case ArticleListNodeType.NATIVE_ADS_SCP_QUIZ:
                 ((NativeAdsArticleListHolder) holder).bind();
