@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="download_art_list">Makale listesi yükleniyor.</string>
+    <string name="download_all_title">Ne indirilecek?</string>
+    <!--<string name="download">İndir</string>-->
+    <string name="stop_download">Yüklemeyi durdur</string>
+    <string name="download_objects_title">Objeler yükleniyor</string>
+    <string name="error_notification_title">Hata</string>
+    <string name="error_notification_objects_list_download_content">Obje listesi indirilemedi.</string>
+    <string name="download_complete_title">İndirme tamamlandı.</string>
+    <string name="download_complete_title_content">%1$d \‘den %2$d indirildi. Hatalar: %3$d</string>
+    <string name="download_progress_content">%1$d/%2$d indirildi. Hatalar: %3$d</string>
+    <string name="error_notification_recent_list_download_content">Makale listesini yüklerken hata oluştu</string>
+    <string name="notification_recent_list_title">Makale listesini indir</string>
+    <string name="download_recent_title">Makale indir</string>
+    <string name="downlad_art_list_range">Kaç tane indirilecek?</string>
+    <string name="increase_limit">Limiti azalt/çoğalt</string>
+    <string name="user_limit">Limitin: %s</string>
+    <string name="selected">Seçilen: %d</string>
+    <string name="no_limit">Limit Yok!</string>
+    <string name="download_all_with_limit">En son çıkan %d adet yeni makale yakın zamanda değiştirilen makalelerin listesinden indirecek (\"yeni makaleler\" listesi)</string>
+    <!--<string name="limit_description">Limit, cihazınızda depolanabilecek çevrimdışı makale sayısını kısıtlar. Size şu anda kısıtlama yok! Eğer abone olursanız, olmayacak. Aboneliğiniz yoksa, bir gün yetkilenmemiş ajanlar için %1$d ve yetkilenmiş olanlar için %2$d + (puan sayısı/%3$d) ile sınırlandırılacak.</string>-->
+    <string name="limit_description_disabled_free_downloads">Sınır, çevrimdışı modda okunacak cihazda saklanabilecek maksimum makale sayısını limitler.  En az makale sayısı- %1$d\’dir. Limit abone olarak kaldırılabilir veya kazandığın puanla yükseltilebilir. Her %2$d adet puan için bir tane daha makale saklayabilirsin! </string>
+
+    <!--download dialog-->
+    <string name="download_all">Hepsini indir</string>
+    <!--<string name="info">Bilgi</string>-->
+
+    <string name="type_1">I. Seri </string>
+    <string name="type_2">II. Seri</string>
+    <string name="type_3">III. Seri</string>
+    <string name="type_4">IV. Seri</string>
+    <string name="type_5">V. Seri</string>
+    <string name="type_ru">RU Serisi</string>
+
+    <string name="type_fr">FR Serisi</string>
+    <string name="type_jp">JP Serisi</string>
+    <string name="type_es">ES Serisi</string>
+    <string name="type_pl">PL Serisi</string>
+    <string name="type_de">DE Serisi</string>
+
+    <string name="type_all">Tümü</string>
+
+    <string name="type_experiments">Deney Kayıtları</string>
+    <string name="type_incidents">Kaza Kayıtları</string>
+    <string name="type_interviews">Röportajlar </string>
+    <string name="type_archive">Arşivlenmiş SCP’\ler</string>
+    <string name="type_jokes">Şaka SCP’\leri</string>
+    <string name="type_other">Diğer maddeler</string>
+
+    <string name="error_notification_download_failed">Error occurred: %s</string>
+</resources>
