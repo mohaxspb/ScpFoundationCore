@@ -103,7 +103,7 @@
       },
       {
         "key": "no_ads_subs_enabled",
-        "value": true
+        "value": false
       },
       {
         "key": "app_lang_versions",
@@ -158,20 +158,8 @@
         "value": 100
       },
       {
-        "key": "ads_scp_art",
-        "value": "{   \"ads\": [     {       \"id\": \"1\",       \"imgUrl\": \"https:\/\/sun9-7.userapi.com\/c840624\/v840624412\/7fa95\/2665G5s1zkk.jpg\"     },     {       \"id\": \"2\",       \"imgUrl\": \"https:\/\/sun9-1.userapi.com\/c840624\/v840624412\/7fa9f\/c4na9MdYI44.jpg\"     },     {       \"id\": \"3\",       \"imgUrl\": \"https:\/\/sun9-1.userapi.com\/c840624\/v840624412\/7faa9\/Rzodx3GnUlA.jpg\"     },     {       \"id\": \"4\",       \"imgUrl\": \"https:\/\/sun9-8.userapi.com\/c840624\/v840624412\/7fab3\/ZOMRJNLo4Es.jpg\"     },     {       \"id\": \"5\",       \"imgUrl\": \"https:\/\/sun9-7.userapi.com\/c840624\/v840624412\/7fabd\/H20kc7VP758.jpg\"     },     {       \"id\": \"6\",       \"imgUrl\": \"https:\/\/sun9-1.userapi.com\/c840624\/v840624412\/7fac7\/avuBb5958L0.jpg\"     },     {       \"id\": \"7\",       \"imgUrl\": \"https:\/\/sun9-1.userapi.com\/c840624\/v840624412\/7fad1\/9mSQkgVCyys.jpg\"     },     {       \"id\": \"8\",       \"imgUrl\": \"https:\/\/sun9-8.userapi.com\/c840624\/v840624412\/7fadb\/mjbQwUzMOpA.jpg\"     }   ] }"
-      },
-      {
         "key": "native_ads_lists_source_v2",
         "value": 1
-      },
-      {
-        "key": "ads_scp_art_v2",
-        "value": "{ \"ads\": [ { \"id\": 0, \"imgUrl\": \"https://i.imgur.com/ogoIvbn.jpg\", \"logoUrl\": \"https://i.imgur.com/9euyUkm.png\", \"title\": \"Идет набор сотрудников класса D\", \"subTitle\": \"Предложение ограниченно. Прием заявок будет проводиться 11-12 августа на стенде SCP Foundation\", \"ctaButtonText\": \"Участвовать\" } ] }"
-      },
-      {
-        "key": "ads_scp_art_v3",
-        "value": "{   \"ads\": [     {       \"id\": 1,       \"imgUrl\": \"https://scpfoundation.app/scp/scp-art/bookShop.jpg\",       \"logoUrl\": \"https://scpfoundation.app/scp/scp-art/scpLogoSite.png\",       \"title\": \"Книги SCP Foundation уже в продаже!\",       \"subTitle\": \"Спрашивайте в книжных магазинах своего города или закажите доставку в любой уголок страны\",       \"ctaButtonText\": \"Подробнее\",       \"redirectUrl\": \"http://artscp.com/promo\"     },     {       \"id\": 2,       \"imgUrl\": \"https://scpfoundation.app/scp/scp-art/vk.jpg\",       \"logoUrl\": \"https://scpfoundation.app/scp/scp-art/scpLogoSite.png\",       \"title\": \"Сообщество SCP Foundation Вконтакте\",       \"subTitle\": \"Официальное сообщество вселенной SCP Foundation.Свежие иллюстрации и новости из мира SCP\",       \"ctaButtonText\": \"Вступить!\",       \"redirectUrl\": \"https://vk.com/artscp\"     },     {       \"id\": 3,       \"imgUrl\": \"https://scpfoundation.app/scp/scp-art/fb.jpg\",       \"logoUrl\": \"https://scpfoundation.app/scp/scp-art/scpLogoSite.png\",       \"title\": \"Сообщество SCP Foundation в Facebook\",       \"subTitle\": \"Официальное сообщество вселенной SCP Foundation.Свежие иллюстрации и новости из мира SCP\",       \"ctaButtonText\": \"Вступить!\",       \"redirectUrl\": \"https://www.facebook.com/artscp.project\"     }   ] }"
       },
       {
         "key": "offer_subs_instead_of_rewarded_video_modificator",

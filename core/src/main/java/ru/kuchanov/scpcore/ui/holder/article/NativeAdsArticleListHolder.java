@@ -21,7 +21,6 @@ import com.mopub.nativeads.NativeAd;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -232,7 +231,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         ratingBar.setVisibility(View.VISIBLE);
         Glide.with(logoImageView.getContext())
                 .load(BuildConfig.SCP_READER_API_URL + scpNativeBanner.getLogoUrl())
-                .error(R.drawable.ic_scp_art_ad_img)
+                .error(R.drawable.ic_scp_ad_img)
                 .fitCenter()
                 .into(logoImageView);
 
@@ -244,7 +243,7 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         Timber.d("imageUrl: %s%s", BuildConfig.SCP_READER_API_URL, scpNativeBanner.getImageUrl());
         Glide.with(mainImageView.getContext())
                 .load(BuildConfig.SCP_READER_API_URL + scpNativeBanner.getImageUrl())
-                .error(R.drawable.art_scp_default_ads)
+                .error(R.drawable.ic_scp_quiz_banner)
                 .fitCenter()
                 .listener(new RequestListener<Drawable>() {
                     @Override

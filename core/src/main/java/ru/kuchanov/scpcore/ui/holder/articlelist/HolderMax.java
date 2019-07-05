@@ -26,8 +26,6 @@ import ru.kuchanov.scpcore.util.DateUtils;
 
 /**
  * Created by mohax on 11.06.2017.
- * <p>
- * for ScpFoundationRu
  */
 public class HolderMax extends HolderMin {
 
@@ -81,7 +79,7 @@ public class HolderMax extends HolderMin {
         } else {
 //            Glide.clear(image);
             Glide.with(context)
-                    .load(R.drawable.ic_default_image_big)
+                    .load(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
                     .placeholder(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
                     .error(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
                     .centerCrop()

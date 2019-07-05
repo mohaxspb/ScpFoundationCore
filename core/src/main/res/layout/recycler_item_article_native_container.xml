@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <include layout="@layout/native_ads_scp_art" />
+    <include layout="@layout/native_ads_scp" />
 
     <!--mopub native ads container-->
     <FrameLayout

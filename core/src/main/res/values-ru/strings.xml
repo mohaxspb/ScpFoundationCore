@@ -1,4 +1,5 @@
 <resources>
+    <string name="scp_ad_cta"></string>
     <!--drawer items-->
     <string name="drawer_item_1">Об организации</string>
     <string name="drawer_item_2">Новости</string>
