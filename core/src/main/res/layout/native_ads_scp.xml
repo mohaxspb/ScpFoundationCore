@@ -22,7 +22,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="@dimen/defaultMargin"
             android:padding="@dimen/defaultMarginSmall"
-            android:src="@drawable/ic_scp_art_ad_img"
+            android:src="@drawable/ic_scp_ad_img"
             tools:ignore="ContentDescription" />
 
         <LinearLayout
@@ -35,7 +35,7 @@
                 android:id="@+id/titleTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/scp_art_ad_title"
+                android:text="@string/scp_quiz_banner_title"
                 android:textSize="16sp" />
 
             <io.techery.properratingbar.ProperRatingBar
@@ -70,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginBottom="@dimen/defaultMarginSmall"
-            android:src="@drawable/art_scp_default_ads"
+            android:src="@drawable/ic_scp_quiz_banner"
             tools:ignore="ContentDescription" />
 
         <ProgressBar
@@ -101,7 +101,7 @@
             android:paddingBottom="@dimen/defaultMarginSmall"
             android:paddingStart="@dimen/defaultMarginSmall"
             android:paddingTop="@dimen/defaultMarginSmall"
-            android:text="@string/scp_art_ad_description"
+            android:text="@string/scp_quiz_banner_subtitle"
             android:textSize="12sp"
             tools:ignore="RtlSymmetry" />
 
@@ -112,7 +112,7 @@
             android:layout_gravity="center_vertical"
             android:background="@drawable/ad_cta"
             android:padding="@dimen/defaultMarginSmall"
-            android:text="@string/scp_art_ad_cta" />
+            android:text="@string/scp_ad_cta" />
     </LinearLayout>
 
 </LinearLayout>

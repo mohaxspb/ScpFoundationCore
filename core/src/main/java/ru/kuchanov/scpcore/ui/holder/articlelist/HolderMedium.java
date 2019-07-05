@@ -10,8 +10,6 @@ import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 
 /**
  * Created by mohax on 11.06.2017.
- * <p>
- * for ScpFoundationRu
  */
 public class HolderMedium extends HolderMax {
 

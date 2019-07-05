@@ -12,10 +12,8 @@
     <string name="google_services_not_connected" translatable="false">Google Services is not connected</string>
     <string name="error_unexpected" translatable="false">Unexpected error</string>
     <string name="share_app_vk_link" translatable="false">https://play.google.com/store/apps/details?id=%s</string>
-    <string name="scp_art_ad_title" translatable="false">Книги SCP Foundation уже в продаже!</string>
     <string name="ad" translatable="false">Ad</string>
-    <string name="scp_art_ad_description" translatable="false">Спрашивайте в книжных магазинах своего города или закажите доставку в любой уголок страны</string>
-    <string name="scp_art_ad_cta" translatable="false">Подробнее</string>
+    <string name="scp_ad_cta" translatable="false">Подробнее</string>
     <string name="login" translatable="false">Login</string>
     <!--drawer items-->
     <string name="drawer_item_1">SCP Kuruluşu Hakkında</string>

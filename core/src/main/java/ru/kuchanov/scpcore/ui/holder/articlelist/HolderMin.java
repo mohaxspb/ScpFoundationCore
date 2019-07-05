@@ -25,8 +25,6 @@ import ru.kuchanov.scpcore.util.AttributeGetter;
 
 /**
  * Created by mohax on 11.06.2017.
- * <p>
- * for ScpFoundationRu
  */
 public class HolderMin extends RecyclerView.ViewHolder {
 
