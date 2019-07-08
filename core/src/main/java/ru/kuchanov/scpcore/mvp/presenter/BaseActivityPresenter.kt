@@ -34,14 +34,13 @@ import ru.kuchanov.scpcore.db.model.SocialProviderModel
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
-import ru.kuchanov.scpcore.monetization.util.IntentSenderWrapper
 import ru.kuchanov.scpcore.monetization.util.PurchaseFailedError
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.ui.activity.BaseActivity.RC_SIGN_IN
-import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity
-import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment
+import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP
+import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment.Companion.REQUEST_CODE_SUBSCRIPTION
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.subscribeBy
@@ -466,21 +465,26 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
             return
         }
 
-        val type = if (mInAppHelper.getNewInAppsSkus().contains(id)) {
-            InappPurchaseUtil.InappType.IN_APP
+        @InappPurchaseUtil.InappType
+        val type: String
+        if (mInAppHelper.getNewInAppsSkus().contains(id)) {
+            type = InappPurchaseUtil.InappType.IN_APP
         } else {
-            InappPurchaseUtil.InappType.SUBS
+            type = InappPurchaseUtil.InappType.SUBS
         }
 
         mInAppHelper.intentSenderSingle(type, id)
                 .flatMap { intentSender ->
-                    mInAppHelper.startPurchase(intentSender)
+                    mInAppHelper.startPurchase(
+                            intentSender
+                    )
                 }
                 .onErrorResumeNext { error ->
                     return@onErrorResumeNext if (error is PurchaseFailedError) {
                         when (type) {
                             InappPurchaseUtil.InappType.IN_APP -> {
-                                mInAppHelper.getInAppHistory()
+                                mInAppHelper
+                                        .getInAppHistory()
                                         .doOnSubscribe { view.showProgressDialog(R.string.wait) }
                                         .doOnEach { view.dismissProgressDialog() }
                                         .flatMap { mInAppHelper.consumeInApp(it.productId, "") }
@@ -498,10 +502,14 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                                     )
                                             )
                                         }
-                                        .flatMap { mInAppHelper.startPurchase(IntentSenderWrapper(null, type, id)) }
+                                        .flatMap { mInAppHelper.intentSenderSingle(type, id) }
+                                        .flatMap {
+                                            mInAppHelper.startPurchase(it)
+                                        }
                             }
                             InappPurchaseUtil.InappType.SUBS -> {
-                                mInAppHelper.validateSubsObservable()
+                                mInAppHelper
+                                        .validateSubsObservable()
                                         .doOnSuccess { view.showMessage("Subscriptions state updated") }
                                         .flatMap { Single.error<Subscription>(error) }
                             }
@@ -614,7 +622,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 logoutUser()
                 return true
             }
-        } else if (requestCode == SubscriptionsFragment.REQUEST_CODE_SUBSCRIPTION) {
+        } else if (requestCode == REQUEST_CODE_SUBSCRIPTION) {
             if (data == null) {
                 view.showMessageLong("Error while parse result, please try again")
                 return true
@@ -638,7 +646,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 view.showMessageLong("Error: response code is not \"0\". Please try again")
             }
             return true
-        } else if (requestCode == BaseDrawerActivity.REQUEST_CODE_INAPP) {
+        } else if (requestCode == REQUEST_CODE_INAPP) {
             Timber.d("REQUEST_CODE_INAPP resultCode == Activity.RESULT_OK: ${resultCode == Activity.RESULT_OK}")
             //todo check for GP
 //            if (resultCode == Activity.RESULT_OK) {

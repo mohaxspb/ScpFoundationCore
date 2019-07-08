@@ -55,6 +55,9 @@ public interface BaseMvp {
 
         void onUserChanged(User user);
 
-        void updateUserScoreForScoreAction(@ScoreAction String action, @Nullable BasePresenter.AddScoreListener addScoreListener);
+        void updateUserScoreForScoreAction(
+                @ScoreAction String action,
+                @Nullable BasePresenter.AddScoreListener addScoreListener
+        );
     }
 }

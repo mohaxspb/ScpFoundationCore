@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SimpleItemAnimator
 import android.view.LayoutInflater
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.LinearLayout
@@ -120,7 +119,7 @@ class LeaderboardFragment :
     }
 
     override fun showProgressCenter(show: Boolean) {
-        progressContainer.visibility = if (show) View.VISIBLE else View.GONE
+        progressContainer.visibility = if (show) VISIBLE else GONE
     }
 
     override fun showData(data: List<MyListItem>) {
@@ -156,7 +155,7 @@ class LeaderboardFragment :
         }
 //        Timber.d("showUser: $myUser")
         if (myUser == null) {
-            val providers = ArrayList<Constants.Firebase.SocialProvider>(Arrays.asList<Constants.Firebase.SocialProvider>(*Constants.Firebase.SocialProvider.values()))
+            val providers = mutableListOf(*Constants.Firebase.SocialProvider.values())
             if (!resources.getBoolean(R.bool.social_login_vk_enabled)) {
                 providers.remove(Constants.Firebase.SocialProvider.VK)
             }
@@ -180,8 +179,8 @@ class LeaderboardFragment :
                 (endView.layoutParams as LinearLayout.LayoutParams).weight = 1f
             }
 
-            userDataView.visibility = View.GONE
-            loginView.visibility = View.VISIBLE
+            userDataView.visibility = GONE
+            loginView.visibility = VISIBLE
             return
         }
         val user = myUser.user
@@ -217,19 +216,19 @@ class LeaderboardFragment :
             levelNumTextView.text = level.id.toString()
             levelTextView.text = context.getString(R.string.level_num, level.id)
             if (levelViewModel.isMaxLevel) {
-                maxLevelTextView.visibility = View.VISIBLE
+                maxLevelTextView.visibility = VISIBLE
                 experienceProgressBar.max = 1
                 experienceProgressBar.progress = 1
                 expToNextLevelTextView.text = ""
             } else {
-                maxLevelTextView.visibility = View.GONE
+                maxLevelTextView.visibility = GONE
                 experienceProgressBar.max = levelViewModel.nextLevelScore
                 experienceProgressBar.progress = user.score - level.score
                 expToNextLevelTextView.text = context.getString(R.string.score_num, levelViewModel.scoreToNextLevel)
             }
         }
-        loginView.visibility = View.GONE
-        userDataView.visibility = View.VISIBLE
+        loginView.visibility = GONE
+        userDataView.visibility = VISIBLE
     }
 
     override fun showUpdateDate(lastUpdated: Long) {
