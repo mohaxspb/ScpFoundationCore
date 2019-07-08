@@ -10,9 +10,9 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.annotation.NonNull;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
-import android.util.Pair;
+import android.support.annotation.StringRes;
 
 import com.android.vending.billing.IInAppBillingService;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -22,10 +22,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import kotlin.NotImplementedError;
+import kotlin.Pair;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
@@ -37,16 +38,18 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Item;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
 import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil;
+import ru.kuchanov.scpcore.monetization.util.IntentSenderWrapper;
 import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
+import static ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP;
+import static ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment.REQUEST_CODE_SUBSCRIPTION;
+
 /**
  * Created by mohax on 02.02.2017.
- * <p>
- * for scp_ru
  */
 public class InAppHelper implements InappPurchaseUtil {
 
@@ -130,10 +133,16 @@ public class InAppHelper implements InappPurchaseUtil {
 
             //offer free trial every week for non subscribed users
             //check here as we need to have connected service
-            if (!mMyPreferenceManager.isHasAnySubscription() && mMyPreferenceManager.isTimeToPeriodicalOfferFreeTrial()) {
+            if (!mMyPreferenceManager.isHasAnySubscription()
+                    && mMyPreferenceManager.isTimeToPeriodicalOfferFreeTrial()) {
                 final Bundle bundle = new Bundle();
-                bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.EventValue.PERIODICAL);
-                FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+                bundle.putString(
+                        Constants.Firebase.Analytics.EventParam.PLACE,
+                        Constants.Firebase.Analytics.EventValue.PERIODICAL
+                );
+                FirebaseAnalytics
+                        .getInstance(BaseApplication.getAppInstance())
+                        .logEvent(Constants.Firebase.Analytics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
                 baseActivity.showOfferFreeTrialSubscriptionPopup();
                 mMyPreferenceManager.setLastTimePeriodicalFreeTrialOffered(System.currentTimeMillis());
@@ -149,8 +158,13 @@ public class InAppHelper implements InappPurchaseUtil {
                     && baseActivity.getPresenter().getUser().score < 10000
                     && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
                 final Bundle bundle = new Bundle();
-                bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.EventValue.SCORE_1000_REACHED);
-                FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+                bundle.putString(
+                        Constants.Firebase.Analytics.EventParam.PLACE,
+                        Constants.Firebase.Analytics.EventValue.SCORE_1000_REACHED
+                );
+                FirebaseAnalytics
+                        .getInstance(BaseApplication.getAppInstance())
+                        .logEvent(Constants.Firebase.Analytics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
                 baseActivity.showOfferFreeTrialSubscriptionPopup();
                 mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score();
@@ -164,48 +178,6 @@ public class InAppHelper implements InappPurchaseUtil {
             activity.unbindService(mServiceConn);
         }
         baseActivity = null;
-    }
-
-    //fixme remove it, while rewrite to kotlin
-    @Override
-    @SubscriptionType
-    public int getSubscriptionTypeFromItemsList(@NonNull final List<? extends Item> ownedItems) {
-
-        final Context context = BaseApplication.getAppInstance();
-        //add old old donate subs, new ones and one with free trial period
-        final Collection<String> fullVersionSkus = new ArrayList<>(Arrays.asList(context.getString(R.string.old_skus).split(",")));
-        Collections.addAll(fullVersionSkus, context.getString(R.string.ver_2_skus).split(","));
-        Collections.addAll(fullVersionSkus, context.getString(R.string.ver3_skus).split(","));
-        Collections.addAll(fullVersionSkus, context.getString(R.string.subs_free_trial).split(","));
-        Collections.addAll(fullVersionSkus, context.getString(R.string.ver3_subs_free_trial).split(","));
-        Collections.addAll(fullVersionSkus, context.getString(R.string.ver4_skus).split(","));
-        Collections.addAll(fullVersionSkus, context.getString(R.string.ver4_subs_free_trial).split(","));
-
-        final Collection<String> noAdsSkus = new ArrayList<>();
-        noAdsSkus.add(context.getString(R.string.subs_no_ads_old));
-        noAdsSkus.add(context.getString(R.string.subs_no_ads_ver_2));
-        noAdsSkus.add(context.getString(R.string.ver3_subs_no_ads));
-        noAdsSkus.add(context.getString(R.string.ver4_subs_no_ads));
-
-        final List<String> ownedSkus = getSkuListFromItemsList(ownedItems);
-        noAdsSkus.retainAll(ownedSkus);
-        fullVersionSkus.retainAll(ownedSkus);
-
-        @SubscriptionType final int type = fullVersionSkus.isEmpty()
-                ? noAdsSkus.isEmpty()
-                ? SubscriptionType.NONE
-                : SubscriptionType.NO_ADS
-                : SubscriptionType.FULL_VERSION;
-
-        return type;
-    }
-
-    private static List<String> getSkuListFromItemsList(@NonNull final List<? extends Item> ownedItems) {
-        final List<String> skus = new ArrayList<>();
-        for (final Item item : ownedItems) {
-            skus.add(item.sku);
-        }
-        return skus;
     }
 
     private Single<List<Item>> getValidatedOwnedSubsObservable() {
@@ -254,20 +226,20 @@ public class InAppHelper implements InappPurchaseUtil {
                 .flatMap(items -> {
                     final List<Item> validatedItems = new ArrayList<>();
                     for (final Item item : items) {
-                        Timber.d("validate item: %s", item.sku);
+                        Timber.d("validate item: %s", item.getSku());
                         final PurchaseValidateResponse purchaseValidateResponse = mApiClient.validateSubscription(
                                 BaseApplication.getAppInstance().getPackageName(),
-                                item.sku,
-                                item.purchaseData.purchaseToken
+                                item.getSku(),
+                                item.getPurchaseData().getPurchaseToken()
                         ).toBlocking().value();
                         switch (purchaseValidateResponse.getStatus()) {
                             case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_VALID:
-                                Timber.d("Item successfully validated: %s", item.sku);
+                                Timber.d("Item successfully validated: %s", item.getSku());
                                 validatedItems.add(item);
                                 break;
                             case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_INVALID:
 //                                    return Observable.error(new IllegalStateException("Purchase state is INVALID"));
-                                Timber.e("Invalid subs: %s", item.sku);
+                                Timber.e("Invalid subs: %s", item.getSku());
                                 break;
                             case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_GOOGLE_SERVER_ERROR:
                                 //if there is error we should cancel subs validating
@@ -280,10 +252,9 @@ public class InAppHelper implements InappPurchaseUtil {
                 });
     }
 
-
     @NotNull
     @Override
-    public Single<List<Item>> getInAppHistoryObservable() {
+    public Single<Subscription> getInAppHistory() {
         return Single.create(subscriber -> {
             try {
                 final Bundle bundle = mInAppBillingService.getPurchaseHistory(
@@ -314,7 +285,29 @@ public class InAppHelper implements InappPurchaseUtil {
                             ownedItemsList.add(new Item(purchaseData, signature, sku, continuationToken));
                         }
                         Timber.d("ownedItemsList: %s", ownedItemsList);
-                        subscriber.onSuccess(ownedItemsList);
+                        if (ownedItemsList.isEmpty()) {
+                            subscriber.onError(new IllegalStateException("OwnedItems list is empty! WTF?!"));
+                        } else {
+                            final Item item = ownedItemsList.get(0);
+                            subscriber.onSuccess(
+                                    new Subscription(
+                                            item.getSku(),
+                                            InappPurchaseUtil.InappType.IN_APP,
+                                            "N/A", //price,
+                                            -1,//price_amount_micros
+                                            "N/A", //price_currency_code
+                                            null,
+                                            null,
+                                            null,
+                                            null,
+                                            null,
+                                            0,
+                                            null,
+                                            0,
+                                            item.getPurchaseData().getPurchaseToken()
+                                    )
+                            );
+                        }
                     }
                 } else {
                     subscriber.onError(new IllegalStateException("ownedItemsBundle RESPONSE_CODE is not 0: " + bundle.getInt("RESPONSE_CODE")));
@@ -368,7 +361,7 @@ public class InAppHelper implements InappPurchaseUtil {
 
     @NotNull
     @Override
-    public Single<List<Subscription>> getInAppsListToBuyObservable() {
+    public Single<List<Subscription>> getInAppsListToBuy() {
         Timber.d("getInAppsListToBuy");
         return Single.create(subscriber -> {
             try {
@@ -483,7 +476,7 @@ public class InAppHelper implements InappPurchaseUtil {
 
     @NotNull
     @Override
-    public Single<IntentSender> intentSenderSingle(
+    public Single<IntentSenderWrapper> intentSenderSingle(
             @NotNull @InappType final String type,
             @NotNull final String sku
     ) {
@@ -496,15 +489,22 @@ public class InAppHelper implements InappPurchaseUtil {
         ))
                 .map(bundle -> new Pair<>(bundle, bundle.getInt("RESPONSE_CODE")))
                 .flatMap(bundleResponseCodePair -> {
-                    Timber.d("bundleResponseCodePair: %s/%s", bundleResponseCodePair.first, bundleResponseCodePair.second);
-                    if (bundleResponseCodePair.second == RESULT_OK) {
-                        final PendingIntent pendingIntent = bundleResponseCodePair.first.getParcelable("BUY_INTENT");
-                        return Single.just(pendingIntent.getIntentSender());
-                    } else if (bundleResponseCodePair.second == RESULT_ITEM_ALREADY_OWNED) {
-                        return getInAppHistoryObservable()
+                    Timber.d("bundleResponseCodePair: %s/%s", bundleResponseCodePair.getFirst(), bundleResponseCodePair.getSecond());
+                    if (bundleResponseCodePair.getSecond() == RESULT_OK) {
+                        final PendingIntent pendingIntent = bundleResponseCodePair.getFirst().getParcelable("BUY_INTENT");
+                        return Single
+                                .just(
+                                        new IntentSenderWrapper(
+                                                pendingIntent.getIntentSender(),
+                                                type,
+                                                sku
+                                        )
+                                );
+                    } else if (bundleResponseCodePair.getSecond() == RESULT_ITEM_ALREADY_OWNED) {
+                        return getInAppHistory()
                                 .flatMap(itemsOwned -> consumeInApp(
-                                        itemsOwned.get(0).sku,
-                                        itemsOwned.get(0).purchaseData.purchaseToken
+                                        itemsOwned.productId,
+                                        itemsOwned.purchaseToken
                                 ))
                                 .flatMap(integer -> intentSenderSingle(
                                         type,
@@ -513,7 +513,7 @@ public class InAppHelper implements InappPurchaseUtil {
                     } else {
                         return Single.error(
                                 new IllegalStateException(
-                                        "RESPONSE_CODE is not OK: " + bundleResponseCodePair.second
+                                        "RESPONSE_CODE is not OK: " + bundleResponseCodePair.getSecond()
                                 )
                         );
                     }
@@ -521,14 +521,19 @@ public class InAppHelper implements InappPurchaseUtil {
     }
 
     @Override
-    public void startPurchase(
-            @NotNull final IntentSender intentSender,
-            @NotNull final BaseActivity activity,
-            final int requestCode
+    public Single<Subscription> startPurchase(
+            @NotNull final IntentSenderWrapper intentSender
     ) {
+        int requestCode = -1;
+        if (intentSender.getType().equals(InappType.IN_APP)) {
+            requestCode = REQUEST_CODE_INAPP;
+        } else if (intentSender.getType().equals(InappType.SUBS)) {
+            requestCode = REQUEST_CODE_SUBSCRIPTION;
+        }
+
         try {
-            activity.startIntentSenderForResult(
-                    intentSender,
+            baseActivity.startIntentSenderForResult(
+                    intentSender.getIntentSender(),
                     requestCode,
                     new Intent(),
                     0,
@@ -538,8 +543,39 @@ public class InAppHelper implements InappPurchaseUtil {
             );
         } catch (final IntentSender.SendIntentException e) {
             Timber.wtf(e);
-            activity.showError(e);
+            baseActivity.showError(e);
         }
+    }
+
+    @NotNull
+    @Override
+    public Pair<Integer, Integer> getTitleAndIconForSubsSku(@NotNull final String sku) {
+        @StringRes
+        int title;
+        @DrawableRes
+        int icon;
+        switch (getMonthFromSkuId(sku)) {
+            case 1:
+                title = R.string.subs_1_month_title;
+                icon = R.drawable.ic_scp_icon_laborant;
+                break;
+            case 3:
+                title = R.string.subs_3_month_title;
+                icon = R.drawable.ic_scp_icon_mns;
+                break;
+            case 6:
+                title = R.string.subs_6_month_title;
+                icon = R.drawable.ic_scp_icon_ns;
+                break;
+            case 12:
+                title = R.string.subs_12_month_title;
+                icon = R.drawable.ic_scp_icon_sns;
+                break;
+            default:
+                throw new IllegalArgumentException("unexpected subs period");
+        }
+
+        return new Pair<>(title, icon);
     }
 
     @Override
