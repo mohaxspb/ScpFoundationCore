@@ -61,7 +61,6 @@ public interface Constants {
         String OBJECTS_2 = "http://scpfoundation.ru/scp-list-2";
         String OBJECTS_3 = "http://scpfoundation.ru/scp-list-3";
         String OBJECTS_4 = "http://scpfoundation.ru/scp-list-4";
-        //fixme insert correct url.
         String OBJECTS_5 = "http://scpfoundation.ru/scp-list-5";
         String OBJECTS_RU = "http://scpfoundation.ru/scp-list-ru";
 

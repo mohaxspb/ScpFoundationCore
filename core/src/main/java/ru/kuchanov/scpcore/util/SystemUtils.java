@@ -2,14 +2,11 @@ package ru.kuchanov.scpcore.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import android.net.Uri;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Base64;
@@ -18,10 +15,8 @@ import com.vk.sdk.util.VKUtil;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Locale;
 import java.util.SortedMap;
@@ -32,8 +27,6 @@ import timber.log.Timber;
 
 /**
  * Created by mohax on 01.01.2017.
- * <p>
- * for scp_ru
  */
 public class SystemUtils {
 
@@ -126,30 +119,5 @@ public class SystemUtils {
 
     public static Spanned coloredTextForSnackBar(final Context context, @StringRes final int text) {
         return coloredTextForSnackBar(context, context.getString(text));
-    }
-
-    //fixme delete
-    private static void sendEmailWithAttachedFiles(final String[] langs) {
-        final Intent sendEmailIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-        sendEmailIntent.setType("message/rfc822");
-        sendEmailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"mohax.spb@gmail.com"});
-        sendEmailIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
-        sendEmailIntent.putExtra(Intent.EXTRA_TEXT, "Body");
-        final ArrayList<Uri> uris = new ArrayList<>();
-
-        for (final String lang : langs) {
-            final File root = new File(BaseApplication.getAppInstance().getFilesDir(), "test");
-            final File filelocation = new File(root, lang + ".json");
-            final Uri path = FileProvider.getUriForFile(
-                    BaseApplication.getAppInstance(),
-                    "ru.kuchanov.scpcore.fileprovider",
-                    filelocation
-            );
-            uris.add(path);
-        }
-        Timber.d("uris: %s", uris);
-
-        sendEmailIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-        BaseApplication.getAppInstance().startActivity(sendEmailIntent);
     }
 }

@@ -108,7 +108,6 @@ public class InAppHelper implements InappPurchaseUtil {
         mApiClient = apiClient;
     }
 
-    //fixme check it
     @Override
     public void onActivate(@NotNull final BaseActivity<?, ?> activity) {
         baseActivity = activity;
