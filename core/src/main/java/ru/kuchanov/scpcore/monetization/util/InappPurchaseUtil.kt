@@ -6,6 +6,7 @@ import android.support.annotation.DrawableRes
 import android.support.annotation.IntDef
 import android.support.annotation.StringDef
 import android.support.annotation.StringRes
+import com.jakewharton.rxrelay.PublishRelay
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.monetization.model.Item
@@ -63,6 +64,10 @@ interface InappPurchaseUtil {
     fun getNewNoAdsSubsSkus(): List<String>
 
     fun getNewInAppsSkus(): List<String>
+
+    fun getBoughtInappRelay(): PublishRelay<SubscriptionWrapper>
+
+    fun getOwnedSubsRelay(): PublishRelay<ItemsListWrapper>
 
     @SubscriptionType
     @JvmDefault
@@ -143,7 +148,7 @@ data class IntentSenderWrapper(
 
 data class SubscriptionWrapper(
         val subscription: Subscription? = null,
-        val error: Throwable? = null
+        val error: Error? = null
 )
 
 data class SubscriptionsListWrapper(
@@ -153,7 +158,7 @@ data class SubscriptionsListWrapper(
 
 data class ItemsListWrapper(
         val items: List<Item>? = null,
-        val error: Throwable? = null
+        val error: Error? = null
 )
 
 class PurchaseFailedError(message: String) : IllegalStateException(message)

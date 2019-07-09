@@ -32,8 +32,10 @@ import ru.kuchanov.scpcore.api.model.scpreader.CommonUserData
 import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.db.model.SocialProviderModel
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
+import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
+import ru.kuchanov.scpcore.monetization.util.ItemsListWrapper
 import ru.kuchanov.scpcore.monetization.util.PurchaseFailedError
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp
@@ -467,15 +469,15 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
 
         @InappPurchaseUtil.InappType
         val type: String
-        if (mInAppHelper.getNewInAppsSkus().contains(id)) {
+        if (inAppHelper.getNewInAppsSkus().contains(id)) {
             type = InappPurchaseUtil.InappType.IN_APP
         } else {
             type = InappPurchaseUtil.InappType.SUBS
         }
 
-        mInAppHelper.intentSenderSingle(type, id)
+        inAppHelper.intentSenderSingle(type, id)
                 .flatMap { intentSender ->
-                    mInAppHelper.startPurchase(
+                    inAppHelper.startPurchase(
                             intentSender
                     )
                 }
@@ -483,11 +485,11 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                     return@onErrorResumeNext if (error is PurchaseFailedError) {
                         when (type) {
                             InappPurchaseUtil.InappType.IN_APP -> {
-                                mInAppHelper
+                                inAppHelper
                                         .getInAppHistory()
                                         .doOnSubscribe { view.showProgressDialog(R.string.wait) }
                                         .doOnEach { view.dismissProgressDialog() }
-                                        .flatMap { mInAppHelper.consumeInApp(it.productId, "") }
+                                        .flatMap { inAppHelper.consumeInApp(it.productId, "") }
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .doOnSuccess {
                                             val context = BaseApplication.getAppInstance()
@@ -502,13 +504,13 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                                     )
                                             )
                                         }
-                                        .flatMap { mInAppHelper.intentSenderSingle(type, id) }
+                                        .flatMap { inAppHelper.intentSenderSingle(type, id) }
                                         .flatMap {
-                                            mInAppHelper.startPurchase(it)
+                                            inAppHelper.startPurchase(it)
                                         }
                             }
                             InappPurchaseUtil.InappType.SUBS -> {
-                                mInAppHelper
+                                inAppHelper
                                         .validateSubsObservable()
                                         .doOnSuccess { view.showMessage("Subscriptions state updated") }
                                         .flatMap { Single.error<Subscription>(error) }
@@ -521,7 +523,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 }
                 .flatMap { subscription ->
                     if (subscription.type == InappPurchaseUtil.InappType.IN_APP) {
-                        mInAppHelper
+                        inAppHelper
                                 .consumeInApp(subscription.productId, "")
                                 .map { subscription }
                     } else {
@@ -548,7 +550,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 .subscribeBy(
                         onSuccess = {},
                         onError = { e ->
-                            Timber.e(e, "error while purchse clicked")
+                            Timber.e(e, "error while purchase clicked")
                             view.showError(e)
                         }
                 )
@@ -636,14 +638,24 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                     val sku = jo.getString("productId")
                     Timber.d("You have bought the %s", sku)
 
-                    //validate subs list
-                    view.updateOwnedMarketItems()
+                    inAppHelper.getOwnedSubsRelay()
+                            .call(ItemsListWrapper(listOf(Item(sku = sku))))
                 } catch (e: JSONException) {
                     Timber.e(e, "Failed to parse purchase data.")
-                    view.showError(e)
+                    inAppHelper.getOwnedSubsRelay()
+                            .call(
+                                    ItemsListWrapper(
+                                            error = Error("Failed to parse purchase data.", e)
+                                    )
+                            )
                 }
             } else {
-                view.showMessageLong("Error: response code is not \"0\". Please try again")
+                inAppHelper.getOwnedSubsRelay()
+                        .call(
+                                ItemsListWrapper(
+                                        error = Error("Error: response code is not \"0\". Please try again")
+                                )
+                        )
             }
             return true
         } else if (requestCode == REQUEST_CODE_INAPP) {

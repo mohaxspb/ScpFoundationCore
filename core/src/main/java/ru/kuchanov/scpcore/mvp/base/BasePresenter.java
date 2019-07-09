@@ -42,7 +42,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
 
     protected ApiClient mApiClient;
 
-    protected InAppHelper mInAppHelper;
+    protected InAppHelper inAppHelper;
 
     private User mUser;
 
@@ -60,7 +60,7 @@ public abstract class BasePresenter<V extends BaseMvp.View>
         this.myPreferencesManager = myPreferencesManager;
         mDbProviderFactory = dbProviderFactory;
         mApiClient = apiClient;
-        mInAppHelper = inAppHelper;
+        this.inAppHelper = inAppHelper;
 
         if (getUserInConstructor()) {
             getUserFromDb();
