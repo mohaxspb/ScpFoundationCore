@@ -27,29 +27,19 @@ class InAppHelper constructor(
     private val inappsToBuyRelay = PublishRelay.create<SubscriptionsListWrapper>()
 
     private val inappsBoughtRelay = PublishRelay.create<SubscriptionWrapper>()
-    private val ownedSubsRelay = PublishRelay.create<ItemsListWrapper>()
+    private val mOwnedSubsRelay = PublishRelay.create<ItemsListWrapper>()
 
     private val purchaseListener = PurchaseListenerImpl(
             subscriptionsToBuyRelay,
             inappsToBuyRelay,
             inappsBoughtRelay,
-            ownedSubsRelay,
+            getOwnedSubsRelay(),
             preferenceManager.preferences
     )
 
     init {
         Timber.d("InAppHelper created!")
         BaseApplication.getAppComponent().inject(this)
-
-//        subscriptionsToBuyRelay.subscribeBy(
-//                onNext = { Timber.d("subscriptionsToBuyRelay: $it") }
-//        )
-//        inappsToBuyRelay.subscribeBy(
-//                onNext = { Timber.d("inappsToBuyRelay: $it") }
-//        )
-//        inappsBoughtRelay.subscribeBy(
-//                onNext = { Timber.d("inappsBoughtRelay: $it") }
-//        )
     }
 
     override fun onActivate(activity: BaseActivity<*, *>) {
@@ -60,8 +50,6 @@ class InAppHelper constructor(
 
     override fun onResume() {
         PurchasingService.getUserData()
-
-//        PurchasingService.getPurchaseUpdates(false)
     }
 
     override fun onActivityDestroy(activity: Activity) {
@@ -140,7 +128,7 @@ class InAppHelper constructor(
     private fun getValidatedOwnedSubsObservable(): Single<List<Item>> {
         PurchasingService.getPurchaseUpdates(true)
 
-        return ownedSubsRelay
+        return getOwnedSubsRelay()
                 .map { it.items ?: throw it.error!! }
                 .take(1)
                 .toSingle()
@@ -166,7 +154,7 @@ class InAppHelper constructor(
                         .toSingle()
             }
             InappPurchaseUtil.InappType.SUBS -> {
-                ownedSubsRelay
+                getOwnedSubsRelay()
                         .map { subsWrapper ->
                             subsWrapper.items?.first()?.let {
                                 Subscription(
@@ -182,7 +170,8 @@ class InAppHelper constructor(
                                         null,
                                         0,
                                         null,
-                                        0
+                                        0,
+                                        null
                                 )
                             } ?: throw subsWrapper.error!!
                         }
@@ -192,6 +181,10 @@ class InAppHelper constructor(
             else -> throw IllegalArgumentException("Unexpected type: ${intentSender.type}")
         }
     }
+
+    override fun getOwnedSubsRelay(): PublishRelay<ItemsListWrapper> = mOwnedSubsRelay
+
+    override fun getBoughtInappRelay(): PublishRelay<SubscriptionWrapper> = inappsBoughtRelay
 
     override fun getNewSubsSkus(): List<String> =
             BaseApplication.getAppInstance().getString(R.string.ver4_skus).split(",")
