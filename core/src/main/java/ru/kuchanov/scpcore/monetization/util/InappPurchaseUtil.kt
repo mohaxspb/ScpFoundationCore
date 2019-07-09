@@ -161,4 +161,4 @@ data class ItemsListWrapper(
         val error: Error? = null
 )
 
-class PurchaseFailedError(message: String) : IllegalStateException(message)
+class PurchaseFailedError(message: String) : Error(message)
