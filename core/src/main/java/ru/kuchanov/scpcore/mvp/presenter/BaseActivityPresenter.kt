@@ -481,12 +481,13 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 .flatMap { inAppHelper.startPurchase(it) }
                 .onErrorResumeNext { error ->
                     return@onErrorResumeNext if (error is PurchaseFailedError) {
+                        Timber.e(error, "error is PurchaseFailedError")
                         when (type) {
                             InappPurchaseUtil.InappType.IN_APP -> {
                                 inAppHelper
                                         .getInAppHistory()
-                                        .doOnSubscribe { view.showProgressDialog(R.string.wait) }
-                                        .doOnEach { view.dismissProgressDialog() }
+//                                        .doOnSubscribe { view.showProgressDialog(R.string.wait) }
+//                                        .doOnEach { view.dismissProgressDialog() }
                                         .flatMap { inAppHelper.consumeInApp(it.productId, "") }
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .doOnSuccess {
