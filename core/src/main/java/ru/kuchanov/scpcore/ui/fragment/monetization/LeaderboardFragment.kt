@@ -2,20 +2,16 @@ package ru.kuchanov.scpcore.ui.fragment.monetization
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Bitmap
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SimpleItemAnimator
 import android.view.LayoutInflater
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.LinearLayout
 import android.widget.Space
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.google.firebase.auth.FirebaseAuth
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegatesManager
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
@@ -73,7 +69,6 @@ class LeaderboardFragment :
                 return@subscribe
             }
             if (connected && isAdded && activity is BaseActivity<*, *>) {
-                getPresenter().inAppService = (activity as BaseActivity<*, *>).getIInAppBillingService()
                 if (!getPresenter().isDataLoaded) {
                     getPresenter().loadInitialData()
                 }
@@ -101,7 +96,7 @@ class LeaderboardFragment :
         delegateManager.addDelegate(InAppDelegate { id ->
             when (id) {
                 LeaderboardPresenter.APPODEAL_ID -> presenter.onRewardedVideoClick()
-                else -> baseActivity?.let { presenter.onPurchaseClick(id, it, false) }
+                else -> baseActivity?.getPresenter()?.onPurchaseClick(id, false)
             }
         })
 
@@ -116,13 +111,15 @@ class LeaderboardFragment :
                 showUpdateDate(updateTime)
                 showUserPosition(userPositionOnLeaderboard)
             }
+        } else {
+            mPresenter.loadInitialData()
         }
 
         refresh.setOnClickListener { getPresenter().loadInitialData() }
     }
 
     override fun showProgressCenter(show: Boolean) {
-        progressContainer.visibility = if (show) View.VISIBLE else View.GONE
+        progressContainer.visibility = if (show) VISIBLE else GONE
     }
 
     override fun showData(data: List<MyListItem>) {
@@ -156,9 +153,9 @@ class LeaderboardFragment :
         if (!isAdded) {
             return
         }
-        Timber.d("showUser: $myUser")
+//        Timber.d("showUser: $myUser")
         if (myUser == null) {
-            val providers = ArrayList<Constants.Firebase.SocialProvider>(Arrays.asList<Constants.Firebase.SocialProvider>(*Constants.Firebase.SocialProvider.values()))
+            val providers = mutableListOf(*Constants.Firebase.SocialProvider.values())
             if (!resources.getBoolean(R.bool.social_login_vk_enabled)) {
                 providers.remove(Constants.Firebase.SocialProvider.VK)
             }
@@ -182,8 +179,8 @@ class LeaderboardFragment :
                 (endView.layoutParams as LinearLayout.LayoutParams).weight = 1f
             }
 
-            userDataView.visibility = View.GONE
-            loginView.visibility = View.VISIBLE
+            userDataView.visibility = GONE
+            loginView.visibility = VISIBLE
             return
         }
         val user = myUser.user
@@ -191,16 +188,18 @@ class LeaderboardFragment :
         with(userDataView) {
             Glide.with(context)
                     .load(user.avatar)
-                    .asBitmap()
+//                    .asBitmap()
                     .centerCrop()
                     .error(R.mipmap.ic_launcher)
-                    .into(object : BitmapImageViewTarget(avatarImageView) {
-                        override fun setResource(resource: Bitmap) {
-                            val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(context.resources, resource)
-                            circularBitmapDrawable.isCircular = true
-                            avatarImageView.setImageDrawable(circularBitmapDrawable)
-                        }
-                    })
+                    .circleCrop()
+                    .into(avatarImageView)
+//                    .into(object : BitmapImageViewTarget(avatarImageView) {
+//                        override fun setResource(resource: Bitmap) {
+//                            val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(context.resources, resource)
+//                            circularBitmapDrawable.isCircular = true
+//                            avatarImageView.setImageDrawable(circularBitmapDrawable)
+//                        }
+//                    })
 
             nameTextView.text = user.fullName
             Timber.d("user.numOfReadArticles: ${user.numOfReadArticles}")
@@ -217,19 +216,19 @@ class LeaderboardFragment :
             levelNumTextView.text = level.id.toString()
             levelTextView.text = context.getString(R.string.level_num, level.id)
             if (levelViewModel.isMaxLevel) {
-                maxLevelTextView.visibility = View.VISIBLE
+                maxLevelTextView.visibility = VISIBLE
                 experienceProgressBar.max = 1
                 experienceProgressBar.progress = 1
                 expToNextLevelTextView.text = ""
             } else {
-                maxLevelTextView.visibility = View.GONE
+                maxLevelTextView.visibility = GONE
                 experienceProgressBar.max = levelViewModel.nextLevelScore
                 experienceProgressBar.progress = user.score - level.score
                 expToNextLevelTextView.text = context.getString(R.string.score_num, levelViewModel.scoreToNextLevel)
             }
         }
-        loginView.visibility = View.GONE
-        userDataView.visibility = View.VISIBLE
+        loginView.visibility = GONE
+        userDataView.visibility = VISIBLE
     }
 
     override fun showUpdateDate(lastUpdated: Long) {

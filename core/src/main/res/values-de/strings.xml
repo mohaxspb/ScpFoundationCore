@@ -129,10 +129,6 @@
     <string name="dialog_free_ads_disable_title">Deaktiviert Werbung.</string>
     <string name="start_market_error">Fehler beim Starten des Downloads von Play Market.</string>
     <string name="thanks_for_supporting_us">Entwickler sind dankbar für Ihre Unterstützung!</string>
-    <string name="invitation_message">Erlernen Sie SCP!</string>
-    <string name="invitation_cta">Begleiten Sie uns!</string>
-    <string name="invitation_title">Geheime Materialien Fonds SCP!</string>
-    <string name="invite_friends">Lade Freunde zur APP ein zu deaktivieren %1$d Stunden und Empfang von %2$d punkten!!</string>
     <string name="watch_video_to_disable_ads">Sehen Sie sich das Video an, um die anzeigen auszuschalten на %1$d Stunden und Empfang von %2$d Punkten</string>
     <string name="app_install_ads_disable_title">Installieren Sie unsere anderen apps, um werbung zu deaktivieren %1$d Stunden und Empfang von %2$d punkten!</string>
     <string name="vk_group_join_ads_disable_title">Werden Sie Mitglied von VK Um die Werbung zu deaktivieren %1$d Stunden und Empfang von %2$d punkten!</string>
@@ -257,10 +253,7 @@
     <string name="bibliography">Bibliographie</string>
 
     <!---->
-    <string name="your_invite_received">Ihre Einladung zum Fonds wird akzeptiert!</string>
-    <string name="invite_received_reward_message">Werbung ist für %1$d Stunden ausgeschaltet, %2$d Punkte hinzugefügt!</string>
     <string name="ads_disabled_for_some_hours">Die Anzeige ist für %1$d Stunden ausgeschaltet!</string>
-    <string name="drawer_item_invite_friends">Lade deine Freunde ein!</string>
     <!---->
     <string name="settings_ads_banner_in_lists">Das Banner in der Liste der Artikel</string>
     <string name="settings_ads_title">Advertisement-Einstellungen</string>
@@ -272,11 +265,9 @@
     <string name="remove_ads_for_free_for_hours"><![CDATA[Für ein paar stunden<br/><b><font color=#4CAF50>KOSTENLOS</font></b>]]></string>
 
     <!---->
-    <string name="contacts_info"><![CDATA[We remind you that you can monitor the progress of the project at <b>GitHub</b> and in <b>Trello</b>. Vous können nous contacter par <b>email</b>. Hier sind die Links:
+    <string name="contacts_info"><![CDATA[We remind you that you can monitor the progress of the project at <b>GitHub</b>. Vous können nous contacter par <b>email</b>. Hier sind die Links:
 <br/><br/>
 GitHub: <a href="https://github.com/mohaxspb/ScpFoundationCore.git">Repository ScpFoundationCore</a>
-<br/><br/>
-Trello: <a href="https://trello.com/b/K96g075n/scp">Liste der zu implementierende Aufgaben</a>
 <br/><br/>
 E-mail: <a href="mailto:neva.spb.rx@gmail.com">Für alle Fragen</a>
 <br/><br/>
@@ -308,7 +299,6 @@ Vielen Dank für die Nutzung unserer App!]]></string>
     <string name="subs_leaderboard_activity_title">Leaderboard</string>
     <string name="subs_activity_title">Entwickler Support</string>
     <string name="subs_level_5_description">10000 Punkte, die Erhöhung der Bewertung und die Erhöhung der Grenze der Offline-Artikel auf 200 Artikel</string>
-    <string name="free_ads_invite_title">Laden Sie Ihre Freunde zur App ein</string>
     <string name="free_ads_rewarded_video_title">Video ansehen</string>
     <string name="free_ads_auth_title">Log in</string>
     <string name="free_ads_simple_subtitle">Und wir werden schalten Sie die Anzeige bei %1$d Stunde und geben Ihnen %2$d Punkte</string>

@@ -95,9 +95,7 @@ public class ArticleActivity
         Timber.d("onNavigationItemClicked with id: %s", id);
         String link = null;
 
-        if (id == R.id.invite) {
-            IntentUtils.firebaseInvite(this);
-        } else if (id == R.id.leaderboard) {
+        if (id == R.id.leaderboard) {
             SubscriptionsActivity.start(this, SubscriptionsActivity.TYPE_LEADERBOARD);
         } else if (id == R.id.about) {
             link = mConstantValues.getAbout();
@@ -125,8 +123,6 @@ public class ArticleActivity
             link = Constants.Urls.OFFLINE;
         } else if (id == R.id.read) {
             link = Constants.Urls.READ;
-        } else if (id == R.id.gallery) {
-            startGalleryActivity();
         } else if (id == R.id.siteSearch) {
             link = Constants.Urls.SEARCH;
         } else if (id == R.id.tagsSearch) {
@@ -179,8 +175,6 @@ public class ArticleActivity
 
     @Override
     public boolean isBannerEnabled() {
-//        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-//        return !config.getBoolean(ARTICLE_BANNER_DISABLED) && !config.getBoolean(NATIVE_IN_ARTICLE_ENABLED);
         return mMyPreferenceManager.isBannerInArticleEnabled();
     }
 }

@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--no need to translate-->
+    <string name="app_name" translatable="false">SCP Foundation RU On/Offline</string>
+    <string name="market_url" translatable="false">market://details?id=%s</string>
+    <string name="social_provider_facebook_title" translatable="false">Facebook</string>
+    <string name="social_provider_google_title" translatable="false">Google</string>
+    <string name="feedback_email" translatable="false">neva.spb.rx@gmail.com</string>
+    <string name="image_title" translatable="false">scp_image</string>
+    <string name="image_description" translatable="false">Image from gallery of SCP Foundation app</string>
+    <string name="max_level" translatable="false">Max level</string>
+    <string name="google_services_not_connected" translatable="false">Google Services is not connected</string>
+    <string name="error_unexpected" translatable="false">Unexpected error</string>
+    <string name="share_app_vk_link" translatable="false">https://play.google.com/store/apps/details?id=%s</string>
+    <string name="ad" translatable="false">Ad</string>
+    <string name="scp_ad_cta" translatable="false">Подробнее</string>
+    <string name="login" translatable="false">Login</string>
+    <!--drawer items-->
+    <string name="drawer_item_1">SCP Kuruluşu Hakkında</string>
+    <string name="drawer_item_2">Site Haber Merkezi</string>
+    <string name="drawer_item_3">Değerlendirilen Makaleler</string>
+    <string name="drawer_item_4">Yeni Makaleler</string>
+    <string name="drawer_item_5">Rastgele Makale</string>
+    <string name="drawer_item_6">I. Seri</string>
+    <string name="drawer_item_7">II. Seri</string>
+    <string name="drawer_item_8">III. Seri</string>
+    <string name="drawer_item_10">Diğer Dosyalar</string>
+    <string name="drawer_item_12">Favoriler</string>
+    <string name="drawer_item_13">Çevrimdışı Makaleler</string>
+    <string name="drawer_item_14">Galeri</string>
+    <string name="drawer_item_15">Ara</string>
+    <string name="drawer_item_objects4">IV. Seri</string>
+    <string name="drawer_item_read">Makale Oku</string>
+
+    <string name="drawer_item_11">Hikayeler</string>
+    <string name="drawer_item_9">RU Serisi</string>
+    <!--settings-->
+    <string name="settings">Ayarlar</string>
+    <string name="night_mode">Karanlık Mod</string>
+    <string name="text_size">Yazı boyutu</string>
+    <string name="in_apps">Uzun versiyon </string>
+    <string name="day_mode">Aydınlık Mod</string>
+    <string name="unsupported_link">Bu link desteklenmiyor</string>
+    <string name="share">Paylaş</string>
+    <string name="open_with">Tarayıcıda aç</string>
+    <string name="open_comments_with">Yorumları tarayıcıda aç</string>
+    <string name="add_to_favorites">Favorilere ekle</string>
+    <string name="share_link_text">%1$s\n\Uygulamadan gönderildi: \"SCP Foundation\"\nhttps://play.google.com/store/apps/details?id=%2$s</string>
+    <string name="share_choser_text">…kullanarak paylaş</string>
+    <string name="browser_choser_text">…ile aç</string>
+    <string name="favorites_add">Favorilere ekle</string>
+    <string name="favorites_remove">Favorilerden çıkar</string>
+    <string name="text_size_article">Makalelerin yazı boyutu</string>
+    <string name="text_size_lists">Listelerin yazı boyutu</string>
+    <string name="text_size_dialog_title">Ayarların yazı boyutu</string>
+    <string name="close">Kapat</string>
+    <string name="delete">Sil</string>
+    <string name="search">Ara</string>
+
+    <!--drawer items-->
+    <!--TODO maybe use ut instead of upper ones?-->
+    <string name="about_org">SCP Kuruluşu hakkında</string>
+    <string name="news">Haberler</string>
+
+    <!--utils-->
+    <string name="search_hint">İsteği girin</string>
+    <string name="error_no_search_results">Aradığınız için sonuç bulunamadı.</string>
+    <string name="start_download">Makale veri tabanında değil. İndirme başlatılıyor.</string>
+
+    <string name="download">İndir</string>
+
+    <string name="settings_notif_on">Yeni makaleler için bildirimler</string>
+    <string name="settings_notif_led_on">LED gösterge</string>
+    <string name="settings_notif_vibrate_on">Titreşim</string>
+    <string name="settings_notif_sound_on">Bildirim sesi</string>
+    <string name="settings_notification">Bildirim tercihleri</string>
+    <string name="dialog_title_subscriptions">Reklamların kaldırımı, bulut kayıtları ve atmosferik fontları kapatılıyor.</string>
+    <string name="dialog_title_subscriptions_disabled_free_downloads">Reklamların kaldırımı, otomatik bulut senkronizasyonu, sınırsız çevrimdışı makale indirme limiti ve atmosferik fontlar.</string>
+    <string name="current_subscription">Şu anki aboneliğiniz:</string>
+    <string name="no_subscriptions">Boş</string>
+    <string name="refresh">Yenile</string>
+    <string name="i_accept">Kabul ediyorum</string>
+    <string name="error_read_licence">Lisans dosyası açılamadı.</string>
+    <string name="new_version_features">Yeni sürüm</string>
+    <string name="hurray">Yaşasın!</string>
+    <string name="in_progress">Geliştirilmekte</string>
+    <string name="settings_design">Ayarlar tasarımı</string>
+    <string name="settings_design_list_new">Listelerde yeni tasarım</string>
+    <string name="dialog_random_page_title">Kuruluşa bağlan</string>
+    <string name="dialog_random_page_message">Tasviye seviyesi kontrol ediliyor</string>
+    <string name="remove_ads">Reklamları kapat?</string>
+    <string name="yes_bliad">Evet!</string>
+    <string name="app_info">Uygulama hakkında</string>
+    <string name="remove_ads_for_free">Reklamları kapat ve bedava puan kazan!</string>
+    <string name="remove_ads_for_free_disabled_free_downloads">Reklamları kapat, çevrimdışı makele indirme sınırını arttır ve bedava puan kazan!</string>
+    <string name="ads_reward_gained">%d saat boyunca reklam yok!</string>
+    <string name="wait">Bekle…</string>
+    <string name="ads_reward_error_loading">Yükleme başarısız. Tekrar deneyin.</string>
+    <string name="ads_reward_description_title">Talimatlar</string>
+    <string name="ads_reward_description_content">Size bir reklam videosu göstereceğiz ve reklamlar %d saat boyunca kapanacak. Bunu istediğiniz kadar yapabilirsiniz!</string>
+    <string name="ads_reward_ok">Tamamdır!</string>
+    <string name="settings_design_list_type"> Listede makale tasarla</string>
+    <string name="rating">Değerlendirme %d</string>
+    <string name="yes_sir">Evet, efendim!</string>
+    <string name="reward_not_loaded_yet">Yükleme başarısız. Tekrar deneyin.</string>
+    <string name="settings_design_font">Font</string>
+    <string name="login_advantages">Dikkat! Yetkilendirme zorunlu değildir, ancak sevdiğiniz makalelerin bulut senkronizesini sağlar. Bunun dışında, ajan sıralamasına girmenizi de sağlar. İçerik alanının başından başka talimat alabilirsiniz.</string>
+    <string name="login_advantages_title">Neden yetkilendirme tercih edilir?</string>
+    <string name="login_greetings">Hoşgeldin, Ajan %s</string>
+    <string name="error_login_no_email">E-posta adresi olmadan giremeszin.</string>
+    <string name="materials">Diğer dosyalar</string>
+    <string name="only_premium">Sadece abonelik için</string>
+    <string name="activate">Aktive et</string>
+    <string name="info">Bilgi</string>
+    <string name="subs_info">İsteğe bağlı özellikler, reklamları devre dışı bırakma, tüm yazı tiplerini kısıtlama olmadan kullanma, kazanılan tüm puanların 3 ile çarpılımı ve sık kullanılanların ve okumaların bulut senkronizasyonunu içerir. En önemlisi, uygulamayı geliştirmek için geliştiricileri motive edeceksiniz!</string>
+    <string name="subs_info_disabled_free_downloads">İsteğe bağlı özellikler, reklamları devre dışı bırakma, tüm yazı tiplerini kısıtlama olmadan kullanma, kazanılan tüm puanların 3 ile çarpılımı ve sık kullanılanların ve okumaların bulut senkronizasyonunu içerir. En önemlisi, uygulamayı geliştirmek için geliştiricileri motive edeceksiniz!</string>
+
+    <string-array name="fag_items">
+        <item>Yetkilendirme</item>
+        <item>Bulut Senkronizasyonu</item>
+        <item>Değerlendirme Sistemi</item>
+    </string-array>
+
+    <string-array name="fag_items_content">
+        <item>1. Sağda \"Giriş\" yazan yerden giriş yapabilirsiniz.\n
+         2. Ağ üzerinden giriş, ağda belirtilen bir e-posta gerektirir, çünkü sunucunun veritabanında bir kimlik olarak kullanılır.\n
+         3. Okunan ve tercih edilen makaleleri buluta senkronize etmek ve ajan sıralamasına katılmak için yetkilendirme gereklidir.\n</item>
+        <item>1. Yalnızca yetkili ajanlar için çalışır.\n
+        2.İnternet bağlantısı gerektirir.\n
+        3. Aboneliği olan ajanlar için otomatik olarak çalışır.\n
+        4. Ekonomik ajanların manuel olarak senkronize edilmesi gerekir. bkz. \"Ayarlar\".\n
+        5. Makalenin durumu buluta kaydedilir ve okunur ve favorilere eklenir.\n
+        6. Uygulamayı silerseniz senkronize edilmemiş veriler kaybedilir. \n</item>
+        <item>1. Yalnızca yetkili aracılar için çalışır.\n
+        2. İnternet bağlantısı gerektirir.\n
+        3. Aboneliği olan ajanlar için otomatik olarak çalışır.\n
+        4. Ekonomik ajanların manuel olarak senkronize edilmesi gerekir. bkz \"Ayarlar\"\n
+        5. Sık kullanılanlarınıza makaleler eklemek, makaleleri okumak, uygulamaları yüklemek, reklamları görüntülemek ve uygulamada herhangi bir satın alma işlemi yaptığınızda puanlar verilir. Liste genişletilebilir.\n
+        6. Tüm puanlar değiştiricileri uygular - bir aboneliğiniz varsa, alınan tüm puanlar artırılır.\n
+        7. uanlarınızı aldıkça, tasviye seviyeniz artacaktır.\n
+        8. Bir sonraki seviyeye ulaşana kadar sahip olduğun mevcut puan, kullanıcı resminin etrafındaki yeşil çizgiyle gösterilir.\n
+        9. Kullanıcı resmine tıkladığınızda bir sonraki seviyeye kadar olan puanı gösterir.\n
+        10. Kullanıcı resmine tıkladığınızda Ajan değerlendirme tablosu gösterilir. Bu, birkaç dakikada bir güncellenir.</item>
+    </string-array>
+
+    <string name="free">Ücretsiz</string>
+    <string name="dialog_free_ads_disable_title">Reklamları Kaldır</string>
+    <string name="start_market_error">Google Play Store çalıştırılamadı.</string>
+    <string name="thanks_for_supporting_us">Geliştiriciler tarafından desteğiniz konusunda teşekkürler!</string>
+    <string name="watch_video_to_disable_ads">Bir reklam videosu izle ve hem %1$d saat boyunca reklamları engelle, hem de %2$d puan kazan!</string>
+    <string name="app_install_ads_disable_title">Bizim yaptığımız diğer uygulamaları indir ve hem reklamları %1$d saat için kapat, hem de %2$d puan kazan!</string>
+    <string name="vk_group_join_ads_disable_title">VK grubumuza abone ol ve hem reklamları %1$d saat boyunca kapat, hem de %2$d puan kazan!</string>
+    <string name="need_vk_group_access"> Gruplara erişim izni gereklidir. Tekrar giriş yap.</string>
+    <string name="gallery">Galeri</string>
+    <string name="error_login_firebase_connection">Giriş hatası, Lütfen tekrar deneyin. %s</string>
+    <string name="on_user_logined">Hoşgeldiniz, ajan %s</string>
+    <string name="login_in_progress_custom_token"> Sunucuda şifre istemek </string>
+    <string name="error_while_sync"> Makale buluta kaydedilemedi.</string>
+    <string name="sync_fav_success">Makale buluta kaydedildi.</string>
+    <string name="app_cracked"> Bir hackleme girişimi tespit edildi. Protokol ██████ etkin.</string>
+    <string name="auto_sync_disabled">Otomatik bulut senkronizasyonu aktif.</string>
+    <string name="turn_on">Aç</string>
+    <string name="enable_auto_sync"> Otomatik bulut senkronizasyonu etkinleştir </string>
+    <string name="sync">Senkronize et</string>
+    <string name="subscribe">Abone ol</string>
+    <string name="error_while_all_data_sync"> Veriler buluta kaydedilemedi. Hata: %s</string>
+    <string name="all_data_sync_success">Veriler buluta kaydedildi. %1$d makale kaydedildi ve %2$d puan hesabınıza eklendi.</string>
+    <string name="sync_need_auth">Yetkilendirme gerekli.</string>
+    <string name="authorize">Giriş yap</string>
+    <string name="settings_data_sync">Buluta makale kaydet.</string>
+    <string name="all_data_already_synced">Veri zaten senkronize edildi.</string>
+    <string name="image_loading">Resim yükleniyor…</string>
+    <string name="image_saved">Resim kaydedildi</string>
+    <string name="image_saving_error">Resim yüklenirken bir hata oluştu.</string>
+    <!--Shortcuts android 7.1-->
+    <string name="new_short">Yeni</string>
+    <string name="random_short">Rastgele</string>
+    <string name="dialog_level_up_title">Seviye 5 Al</string>
+    <string name="dialog_level_up_content"> Dikkat, personel! Tasviye Seviyesi l sadece dekoratif bir yazıttır. Uzak verileri görmenize veya gizli malzemelere erişmenize izin vermez. 3 şey alırsınız: 10,000 puan, \"5 Clearance\" etiketi, ve size minnettar olacak geliştiricileri desteklediğinizden gelen iç rahatlık.</string>
+    <string name="dialog_level_up_ok_text">Tamam!</string>
+    <string name="cracked_level_title">Sınıf D</string>
+    <string name="cracked_avatar_message"> Bir hackleme girişimi tespit edildi. Protokol ██████ etkin.</string>
+    <string name="leaderboard_dialog_title">Ajan sıralaması</string>
+    <string name="refreshed">%s\'de güncellendi</string>
+    <string name="progress_leaderboard"> Kurumun İK Departmanı ile iletişim kuruluyor… </string>
+    <string name="level">%d Level</string>
+    <!--<string name="i_read_and_accept">Okudum ve kabul ediyorum</string>-->
+    <!--<string name="relogin">Giriş yap</string>-->
+    <string name="warning">Dikkat!</string>
+    <!--<string name="dialog_logout_content"> Çıkış yaptığınızda, seçtiğiniz tüm makaleler sıfırlanır! Makalelerinizi senkronize ettiğinize emin olun. Eğer senkronizasyonu aktif etmediyseniz, ayarlardan edebilirsiniz.</string>-->
+    <string name="dialog_logout_content">Çıkış yapmak istediğinizden emin misiniz? Çıkış yaptığınızda, seçtiğiniz tüm makaleler sıfırlanır! Yetkilendirilmemiş aracılar için derecelendirme sistemi devre dışı bırakılır ve kazanılmış puanınızın avantajlarını kullanamazsınız (veya ek puan alamazsınız)</string>
+    <string name="logout">Çıkış yap</string>
+    <string name="error_getting_path_to_image">Resim kaydedilemedi. Lütfen tekrar deneyin.</string>
+    <string name="faq">SSS</string>
+    <string name="need_login">Yetkilendirme gerekli</string>
+    <string name="need_login_content"> Dikkat, ajanlar! Favori makaleleri eklemek ve kontrol etmek için yetkilendirme yapmanız gerekir. Bu, verilerinizi tüm cihazlarınızda bulut üzerinde senkronize etmenize olanak tanır ve ayrıca puan almanıza ve ajan sıralamasına katılmanıza olanak sağlar.</string>
+    <string name="error_inapp">Veri okunurken bir hata oluştu.</string>
+    <string name="sort">Ayırma</string>
+    <string name="dialog_sort_title">Ayır ve filtrele</string>
+    <string name="dialog_social_login_title">Yetkilendirme</string>
+    <string name="error_login_firebase_user_collision"> Hata - Başka bir kullanıcı bu e-postaya zaten kayıtlı.</string>
+    <string name="tags_search">Etikete göre ara</string>
+    <string name="tags_choosen">Seçilen etiketler</string>
+    <string name="tags_all">Tüm etiketler</string>
+    <string name="tags_search_results">Sonuçlar</string>
+    <string name="tags">Etiketler:</string>
+
+    <string name="profile_score_info">%1$d puanınız var. Seviye atlamak için %2$d puan daha gerekli.</string>
+    <string name="profile_score_info_max_level"> %1$d puanınız var, ve olabilecek en yüksek seviyedesiniz.</string>
+
+    <plurals name="plurals_score">
+        <item quantity="zero">%1$d puan </item>
+        <item quantity="one">%1$d puan </item>
+        <item quantity="two">%1$d puan </item>
+        <item quantity="few">%1$d puan </item>
+        <item quantity="many">%1$d puan </item>
+        <item quantity="other">%1$d puan </item>
+    </plurals>
+
+    <string name="filter_none">Filtre yok</string>
+    <string name="filter_not_read">Sadece okunmayanlar</string>
+    <string name="filter_read">Sadece okunanlar</string>
+    <string name="filter_rating">Değerlendirmeye göre</string>
+    <string name="filter_title">Başlığa göre</string>
+
+    <string name="filter_neutral_or_not_added">Neutral ya da eklenmedi</string>
+    <string name="filter_save">Safe</string>
+    <string name="filter_euclid">Euclid</string>
+    <string name="filter_keter">Keter</string>
+    <string name="filter_thaumiel">Thaumiel</string>
+
+    <string name="notif_new_arts_title">Yeni makaleler: %1$d%2$s</string>
+    <string name="enter">Giriş yap</string>
+    <string name="feedback_title">SCP Veritabanını Değerlendir</string>
+
+    <string name="stories">Hikayeler</string>
+
+    <!--just ignore it, we use it only in ru version-->
+    <string name="materials_archive">Archived SCPs</string>
+    <string name="materials_jokes">Joke SCPs</string>
+    <string name="materials_others">Other</string>
+    <string name="materials_interview">Interviews</string>
+    <string name="materials_incidents">Incidents</string>
+    <string name="materials_experiments">Experiments</string>
+    <string name="materials_kadr">Experiments</string>
+    <!--end of just ignore it, we use it only in ru version-->
+
+    <string name="error_connection">Bağlantı hatası</string>
+    <string name="error_parse">HTML ayrıştırılırken hata oluştu.</string>
+
+    <string name="social_provider_vk_title">VK</string>
+
+    <string-array name="materials_titles">
+        <item>Şaka SCPleri</item>
+        <item>Arşivlenmiş SCPler</item>
+        <item>Açıklanmış SCPler</item>
+        <item>Ekstranormal Olayların Günlüğü</item>
+    </string-array>
+
+    <!--ver 1.0.6+-->
+    <string name="score_increased">%s puan eklendi</string>
+    <string name="random_article_warning"> Sunucu tarafından her birkaç dakikada bir rasgele yeni bir makale oluşturulur.</string>
+    <string name="article_not_translated">Bu makale daha çevirilememiştir.</string>
+    <string name="offer_app_lang_version_content"> Cihaz diliniz - <b>%1$s</b>, makalelerin <b>%2$s</b> diline çevrildiği, desteklenen bir dildir. Yüklemek ister misiniz?\n\Farklı çevirilere sahip uygulamaların listesi her zaman ekranın sağ üst menüsünde bulunur.</string>
+    <string name="open_play_market">Google Play Store\'i açmak ister misiniz?</string>
+    <string name="menuAppLangVersions">Fonun Dalları</string>
+    <!---->
+    <string name="subscription_no_ads_title">Reklamları kapat</string>
+    <string name="subscription_full_version_title">Tam versiyon</string>
+    <string name="attention">Dikkat!</string>
+    <!---->
+    <string name="sign_in_to_disable_ads"> Reklamları %1$d saat boyunca devre dışı bırakmak ve %2$d puan almak için oturum açın (bu, çevrimdışı makaleler sınırınızı artıracak)</string>
+    <string name="dialog_offer_login_to_gain_score_title">Yetkilendirmek ister misiniz?</string>
+    <string name="dialog_offer_login_to_gain_score_content"> Önce yetki vermek ister misiniz? Yetki verdikten sonra, yalnızca reklamı devre dışı bırakmakla  kalmayacak, aynı zamanda puanınız da arttırılacaktır! (Bu sayede ise daha çok çevrimdışı makale okuyabilirsiniz)</string>
+    <string name="dialog_offer_subscription_title">Bizi desteklediğiniz için teşekkürler!</string>
+    <string name="dialog_offer_subscription_content"> Tüm reklamları devre dışı bırakmak ve sınırsız çevrimdışı makaleler, otomatik bulut senkronizasyonu ve tüm fontları almak için bir abonelik satın almak ister misiniz?</string>
+    <!---->
+    <string name="dialog_offer_free_trial_subscription_title">Tam sürümü bedavaya denemek ister misiniz?</string>
+    <string name="dialog_offer_free_trial_subscription_content">Size tam sürümün %1$d günlük deneme sürümünü hediye ediyoruz. %2$d gün boyunca sınırsız çevrimdışı makale, otomatik bulut senkronizasyonu ve tüm fontlara bedava erişiminiz olacak!</string>
+
+    <string name="version"><b>Versiyon: %s</b></string>
+    <string name="snoska">Dipnot %s</string>
+    <string name="bibliography">Bibliyografya</string>
+
+    <!---->
+    <string name="ads_disabled_for_some_hours">Reklamlar %d saat boyunca engellendi!</string>
+
+    <!---->
+    <string name="settings_ads_banner_in_lists">Makaleler listesinde reklam</string>
+    <string name="settings_ads_title">Reklam ayarları</string>
+    <string name="settings_ads_native_in_lists">Makale listesinde reklamlar</string>
+    <string name="settings_ads_native_in_article">Makale içerisinde reklam</string>
+    <string name="settings_ads_banner_in_article">Makale içerisinde banner reklam </string>
+    <string name="disable_all_ads">Tüm reklamları kapat</string>
+    <string name="remove_ads_for_month">1 ay %s ücretli</string>
+    <string name="remove_ads_for_free_for_hours"><![CDATA[Birkaç saat için for<br/><b><font color=#4CAF50>BEDAVA</font></b>]]></string>
+
+    <!---->
+    <string name="contacts_info"><![CDATA[<b>GitHub</b> ve <b>Trello</b> sayesinde uygulamanın gelişimini takip edebilirsiniz. Bizimle <b>email</b>. sayesinde iletişim kurabilirsiniz. İşte linkler:
+<br/><br/>
+GitHub: <a href="https://github.com/mohaxspb/ScpFoundationCore"> ScpFoundationCore deposu</a>
+<br/><br/>
+Trello: <a href="https://trello.com/b/K96g075n/scp"> Uygulanacak görevlerin listesini içeren bir görev panosu </a>
+<br/><br/>
+E-mail: <a href="mailto:neva.spb.rx@gmail.com">Sorularınız için</a>
+<br/><br/>
+Uygulamamızı kullandığınız için teşekkürler!
+<br/><br/>
+Tarafından çevrildi <b>Boris_191</b>.]]></string>
+    <string name="subs_main_text"> Burada kuruluştan özel izin alabilir ve geliştiricilere yardım edebilirsiniz. Uygulamamız <![CDATA[<a href="https://github.com/mohaxspb/ScpFoundationCore">açık kaynak kodu</a>]]> ve <![CDATA[<a href="https://www.youtube.com/watch?v=5RuwbKvLDs0">havalı bulut senkronizasyonu</a>]]> var. Beğendiyseniz, geliştiricileri destekleyebilirsiniz. Uygulamayı sürdürmek için bağışlara ihtiyaç var. Hem paranız olmasa bile, sadece reklamlara bakmanız bile bizi destekleyecektir. Miktarı az ya da çok- her bağışı kabul ediyoruz. Teşekkürler!</string>
+    <string name="subs_free_actions_title">Bedavaya reklamları kapat!</string>
+    <string name="subs_free_actions_card_title">Bizi destekle</string>
+    <string name="subs_free_actions_card_description">Bedavaya reklamları kapat, çevrimdışı makale kapasiteni arttır ve puan kazan!</string>
+    <string name="subs_no_ads_title">“Sessizlik” Protokolü</string>
+    <string name="subs_no_ads_description"> Uygulamada reklam ajanslarının herhangi bir şekilde tezahür etmesini önleyen ajanını başlatır. (kısacası reklamları kapatır)</string>
+    <string name="subs_description"> Reklamları kapatır, otomatik bulut senkronizasyonunu açar, çevrimdışı makalelerin indirme kapasitesini arttırır ve atmosferik fontları açar.</string>
+    <string name="subs_level_5_gain">5. Seviyeye gel </string>
+    <string name="subs_1_month_title"> Laboratuvar asistanı</string>
+    <string name="subs_3_month_title"> Yardımcı Araştırmacı Bilim Adamı</string>
+    <string name="subs_6_month_title">Araştırma Asistanı</string>
+    <string name="subs_12_month_title"> Kıdemli Araştırma Bilimcisi </string>
+    <string name="subs_full_description"> Otomatik bulut senkronizasyonu, reklamları devre dışı bırakma, sınırsız makale indirme ve atmosferik yazı.</string>
+    <string name="subs_no_ads_label">Reklamsız 1 ay</string>
+    <string name="subs_1_month_label">Uzatılmış tam sürüm</string>
+    <string name="subs_3_month_label">3 aylık tam sürüm</string>
+    <string name="subs_6_month_label">Yarım yıllık tam sürüm</string>
+    <string name="subs_12_month_label">Bir yıllık tam sürüm</string>
+    <string name="subs_cur_label">Şu anki aboneliğiniz</string>
+    <string name="subs_level_5_label">5. Seviyeye gel</string>
+    <string name="subs_cur_empty_title">██████ - Atanmadı</string>
+    <string name="subs_level_5_title">5. tolerans düzeyi </string>
+    <string name="subs_percent">-%s%%</string>
+    <string name="subs_leaderboard_activity_title">Liderler Sıralaması</string>
+    <string name="subs_activity_title">Geliştirici Desteği</string>
+    <string name="subs_level_5_description">10.000 puan ve 200 çevrimdışı makale sınırı</string>
+    <string name="free_ads_rewarded_video_title">Videoyu izle</string>
+    <string name="free_ads_auth_title">Giriş yap</string>
+    <string name="free_ads_simple_subtitle">%1$d saat boyunca reklamları kapatacak ve %2$d puan alacaksınız</string>
+    <string name="free_ads_app_install_label">Diğer uygulamalarımızı indir</string>
+    <string name="free_ads_app_install_title">">%1$d saat boyunca reklamları kapatacak ve %2$d puan alacaksınız</string>
+    <string name="free_ads_vk_group_label">VK kanalımıza abone ol</string>
+    <string name="free_ads_vk_group_title">">%1$d saat boyunca reklamları kapatacak ve %2$d puan alacaksınız</string>
+    <string name="free_ads_activity_title">Reklamları kapatma</string>
+    <string name="leaderboard_activity_title"> Derecelendirme ajanları</string>
+    <string name="leaderboard_inapp_title">Sıralamada yukarı çık.</string>
+    <string name="leaderboard_inapp_description"> Meslektaşları geçmek ve sıralamadaki yükseliş için Fon\'daki bağlantılarınızı kullanın.</string>
+    <string name="leaderboard_place">%d sırada</string>
+    <string name="leaderboard_inapp_label">Sıralamada yukarı çık (+ 10,000 puan)</string>
+    <string name="leaderboard_inapp_label_undefined">Sıralamada yukarı çık (+ %d puan)</string>
+    <string name="leaderboard_articles_read">%d sayfa okundu</string>
+    <string name="score_num">%d puan</string>
+    <string name="level_num">%d level</string>
+    <string name="drawer_item_leaderboard">Derecelendirme ajanları </string>
+    <string name="ads_will_be_shown_soon"> Reklam yakında gösterilmeye başlayacak! Önceden devre dışı bırakmak ister misiniz?</string>
+    <string name="need_login_for_level_up_content"> Ajanların derecelendirmesine katılmak için yetki vermis olmanız gerekir.</string>
+
+    <!---->
+    <string name="leaderboard_appodeal_description"> Fonda üst düzey bağlantı yok mu? Uzlaşmacı malzeme bulmaya çalışın ve sıralamada yükselin.</string>
+
+    <!---->
+    <string name="downloads_settings">İndirme ayarları</string>
+    <string name="downloads_force_update"> İndirme sırasında güncelleme metnini zorla </string>
+    <string name="download_inner_depth"> Makaleleri tam indirin </string>
+    <string name="images_cache_enabled"> Görselleri önbelleğe alma</string>
+    <string name="cached_images_count">Önbelleğe alınan görsel sayısı</string>
+    <string name="cached_images_size">Önbelleğe alınan görsel sayısı</string>
+    <string name="clear_cached_images">Önbelleğe alınan görselleri temizle</string>
+    <string name="free_ads_vk_share_label">Uygulamayı VK\'de paylaş</string>
+    <string name="share_app_vk_text"> Fantastik ve ürpertici hikayeleri sever musun? SCP Kurulşu uygulamasını deneyin - tadını çıkarabileceğin binlerce makale var!</string>
+    <string name="need_vk_wall_access">Duvarda paylaşmak için yetkilendirme gereklidir. Lütfen tekrar giriş yapın.</string>
+    <!---->
+    <string name="app_lang_dialog_google_description"> İşte uygulamamızın diğer dillerde farklı versiyonları. İlgili dilin linkine tıklayarak indirebilirsiniz.</string>
+    <string name="scp_quiz_banner_cta">Yükle</string>
+    <string name="scp_quiz_banner_title"> Scp Sınavı. Kendini test et!</string>
+    <string name="scp_quiz_banner_subtitle"> Testi geçme ve kuruluş hakkındaki bilginizi test etme zamanı geldi, hazır mısınız?</string>
+    <string name="no_comments_url_found"> Url bulunamadı. Makaleyi almak için güncellemeye çalışın.</string>
+    <!---->
+    <string name="drawer_item_objects5">5. Seri</string>
+    <string name="error_no_activity_to_handle_intent"> Bu amacı gerçekleştirebilecek uygulama bulunamadı.</string>
+    <string name="download_new_articles">Yeni makaleleri otomatik kaydet</string>
+    <string name="text_is_selectable">Seçilebilir metin</string>
+    <string name="cant_find_next_article">Sonraki makale bulunamadı</string>
+    <string name="dialog_selectable_text_title">Dikkat!</string>
+    <string name="dialog_selectable_text_content"> Bu özellik deneyseldir ve çökmelere neden olabilir ve iç bağlantıların açılmasını önleyebilir.</string>
+    <string name="dialog_inapp_error_title">Hata</string>
+    <string name="dialog_inapp_error_content">Hata: %s</string>
+    <string name="try_again">Tekrar deneyin</string>
+    <string name="ads_removed">Reklamlar kaldırıldı!</string>
+    <string name="add_to_read">Okunmuşlara ekle</string>
+    <string name="remove_from_read">Okunmuşlardan kaldır</string>
+    <string name="read_history">Okuma geçmişi</string>
+    <string name="open">Aç</string>
+    <string name="continue_reading">Okumaya devam et?</string>
+
+</resources>

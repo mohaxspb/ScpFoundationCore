@@ -177,7 +177,7 @@ public abstract class DownloadAllService extends Service {
             stopDownloadAndRemoveNotif();
             return super.onStartCommand(intent, flags, startId);
         }
-        if (intent.getAction().equals(ACTION_STOP)) {
+        if (ACTION_STOP.equals(intent.getAction())) {
             stopDownloadAndRemoveNotif();
             return super.onStartCommand(intent, flags, startId);
         }

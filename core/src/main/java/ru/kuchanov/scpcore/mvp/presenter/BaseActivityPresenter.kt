@@ -8,14 +8,11 @@ import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
-import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.android.gms.auth.api.Auth
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
-import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.GsonBuilder
 import com.vk.sdk.VKAccessToken
@@ -26,6 +23,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
+import ru.kuchanov.scpcore.Constants.LEVEL_UP_SCORE_TO_ADD
 import ru.kuchanov.scpcore.R
 import ru.kuchanov.scpcore.api.ApiClient
 import ru.kuchanov.scpcore.api.error.ScpLoginException
@@ -35,14 +33,20 @@ import ru.kuchanov.scpcore.api.model.scpreader.CommonUserData
 import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.db.model.SocialProviderModel
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
+import ru.kuchanov.scpcore.monetization.model.Item
 import ru.kuchanov.scpcore.monetization.model.PurchaseData
+import ru.kuchanov.scpcore.monetization.model.Subscription
+import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
+import ru.kuchanov.scpcore.monetization.util.ItemsListWrapper
+import ru.kuchanov.scpcore.monetization.util.PurchaseFailedError
+import ru.kuchanov.scpcore.monetization.util.SubscriptionWrapper
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.ui.activity.BaseActivity.RC_SIGN_IN
-import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity
-import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment
-import rx.Observable
+import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP
+import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment.Companion.REQUEST_CODE_SUBSCRIPTION
+import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.subscribeBy
 import rx.schedulers.Schedulers
@@ -51,15 +55,12 @@ import java.util.*
 
 /**
  * Created by mohax on 23.03.2017.
- *
- *
- * for scp_ru
  */
 abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
         myPreferencesManager: MyPreferenceManager,
         dbProviderFactory: DbProviderFactory,
         apiClient: ApiClient,
-        private val inAppHelper: InAppHelper
+        inAppHelper: InAppHelper
 ) : BasePresenter<V>(
         myPreferencesManager,
         dbProviderFactory,
@@ -99,7 +100,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                     mDbProviderFactory.dbProvider
                             .saveArticlesFromFirebase(ArrayList(map.values))
                             .subscribeBy(
-                                    onNext = { Timber.d("articles in realm updated!") },
+                                    onSuccess = { Timber.d("articles in realm updated!") },
                                     onError = { Timber.e(it) }
                             )
                 }
@@ -121,7 +122,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                     mDbProviderFactory.dbProvider
                             .updateUserScore(score)
                             .subscribeBy(
-                                    onNext = { Timber.d("score in realm updated!") },
+                                    onSuccess = { Timber.d("score in realm updated!") },
                                     onError = { Timber.e(it) }
                             )
                 }
@@ -153,7 +154,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
         })
 
         //update MyNativeBanners
-        updateMyNativeBanners();
+        updateMyNativeBanners()
     }
 
     /**
@@ -162,6 +163,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
     override fun startFirebaseLogin(provider: Constants.Firebase.SocialProvider, id: String) {
         view.showProgressDialog(R.string.login_in_progress_custom_token)
         mApiClient.getAuthInFirebaseWithSocialProviderObservable(provider, id)
+                .doOnSuccess { Timber.d("onSuccess after getAuthInFirebaseWithSocialProviderObservable: $it") }
                 .flatMap<FirebaseUser> { firebaseUser ->
                     if (TextUtils.isEmpty(firebaseUser.email)) {
                         mApiClient.getAuthInFirebaseWithSocialProviderObservable(provider, id)
@@ -175,9 +177,9 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                 .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
                                 .subscribeOn(AndroidSchedulers.mainThread())
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .flatMap { Observable.just(firebaseAuth.currentUser) }
+                                .flatMap { Single.just(firebaseAuth.currentUser) }
                     } else {
-                        Observable.just(firebaseUser)
+                        Single.just(firebaseUser)
                     }
                 }
                 .flatMap { mApiClient.userObjectFromFirebaseObservable }
@@ -199,14 +201,14 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                                     .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
                                                     .subscribeOn(AndroidSchedulers.mainThread())
                                                     .observeOn(AndroidSchedulers.mainThread())
-                                                    .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
+                                                    .flatMap { Single.just(FirebaseAuth.getInstance().currentUser) }
                                         } else {
-                                            Observable.just(it)
+                                            Single.just(it)
                                         }
                                     }
                                     .flatMap { mApiClient.userObjectFromFirebaseObservable }
                                     .flatMap {
-                                        Observable.error<FirebaseObjectUser>(
+                                        Single.error<FirebaseObjectUser>(
                                                 ScpLoginException(
                                                         BaseApplication.getAppInstance()
                                                                 .getString(
@@ -245,9 +247,9 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                         .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
                                         .subscribeOn(AndroidSchedulers.mainThread())
                                         .observeOn(AndroidSchedulers.mainThread())
-                                        .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
+                                        .flatMap { Single.just(FirebaseAuth.getInstance().currentUser) }
                             } else {
-                                Observable.just(firebaseUser)
+                                Single.just(firebaseUser)
                             }
                                     .flatMap { mApiClient.userObjectFromFirebaseObservable }
                                     .flatMap { mApiClient.writeUserToFirebaseObservable(userToWriteToDb) }
@@ -270,13 +272,13 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                         .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
                                         .subscribeOn(AndroidSchedulers.mainThread())
                                         .observeOn(AndroidSchedulers.mainThread())
-                                        .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
+                                        .flatMap { Single.just(FirebaseAuth.getInstance().currentUser) }
                             } else {
-                                Observable.just(firebaseUser)
+                                Single.just(firebaseUser)
                             }
                                     .flatMap { mApiClient.userObjectFromFirebaseObservable }
                                     .flatMap { mApiClient.updateFirebaseUsersSocialProvidersObservable(userObjectInFirebase.socialProviders) }
-                                    .flatMap<FirebaseObjectUser> { Observable.just(userObjectInFirebase) }
+                                    .flatMap<FirebaseObjectUser> { Single.just(userObjectInFirebase) }
                         }
 
                         //in case of unrewarded user we should add score and disable ads temporary too
@@ -296,17 +298,17 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                         .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
                                         .subscribeOn(AndroidSchedulers.mainThread())
                                         .observeOn(AndroidSchedulers.mainThread())
-                                        .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
+                                        .flatMap { Single.just(FirebaseAuth.getInstance().currentUser) }
                             } else {
-                                Observable.just(firebaseUser)
+                                Single.just(firebaseUser)
                             }
                                     .flatMap { mApiClient.userObjectFromFirebaseObservable }
-                                    .flatMap { mApiClient.incrementScoreInFirebaseObservable(score) }
+                                    .flatMap { mApiClient.incrementScoreInFirebase(score) }
                                     .flatMap<Boolean> { mApiClient.setUserRewardedForAuthInFirebaseObservable() }
                                     .flatMap {
                                         userObjectInFirebase.score += score
                                         userObjectInFirebase.signInRewardGained = true
-                                        Observable.just(userObjectInFirebase)
+                                        Single.just(userObjectInFirebase)
                                     }
                         }
 
@@ -320,22 +322,22 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                     .flatMap { mApiClient.updateFirebaseUsersEmailObservable() }
                                     .subscribeOn(AndroidSchedulers.mainThread())
                                     .observeOn(AndroidSchedulers.mainThread())
-                                    .flatMap { Observable.just(FirebaseAuth.getInstance().currentUser) }
+                                    .flatMap { Single.just(FirebaseAuth.getInstance().currentUser) }
                         } else {
-                            Observable.just(firebaseUser)
+                            Single.just(firebaseUser)
                         }
                                 .flatMap { mApiClient.userObjectFromFirebaseObservable }
-                                .flatMap { Observable.just<FirebaseObjectUser>(userObjectInFirebase) }
+                                .flatMap { Single.just(userObjectInFirebase) }
                     }
                 }
                 //save user articles to realm
                 .flatMap { userObjectInFirebase ->
                     if (userObjectInFirebase.articles == null)
-                        Observable.just(userObjectInFirebase)
+                        Single.just(userObjectInFirebase)
                     else
                         mDbProviderFactory.dbProvider
                                 .saveArticlesFromFirebase(ArrayList(userObjectInFirebase.articles.values))
-                                .flatMap { Observable.just(userObjectInFirebase) }
+                                .flatMap { Single.just(userObjectInFirebase) }
                 }
                 //save user to realm
                 .flatMap { userObjectInFirebase -> mDbProviderFactory.dbProvider.saveUser(userObjectInFirebase.toRealmUser()) }
@@ -363,7 +365,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                     refreshToken = it.refreshToken
                                 }
                             }
-                            .toObservable()
+//                            .toObservable()
                             .map { userInRealm }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -387,7 +389,10 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                         ScpLoginException(
                                                 BaseApplication.getAppInstance().getString(
                                                         R.string.error_login_firebase_connection,
-                                                        e.message)))
+                                                        e.message
+                                                )
+                                        )
+                                )
                             }
                         }
                 )
@@ -454,33 +459,103 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
         }
     }
 
-    override fun onInviteReceived(inviteId: String) {
-        //After invite receive we'll check if it's first time invite received and,
-        //if so, send its ID to server, which will check for ID existing and will send push to sender and delete inviteID-pushID pair,
-        //else we'll send to server command to delete IDs pair, to prevent collecting useless data.
-        mApiClient.inviteReceived(inviteId, !myPreferencesManager.isInviteAlreadyReceived)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                        onNext = { Timber.d("invite id successfully sent to server") },
-                        onError = { Timber.e(it) }
-                )
-    }
-
-    override fun onInviteSent(inviteId: String) {
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
-            Timber.d("onInviteSent: ${it.result?.token}")
-            mApiClient.inviteSent(inviteId, it.result?.token)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(
-                            onNext = { Timber.d("invite id and fcmToken successfully sent to server") },
-                            onError = { e ->
-                                Timber.e(e)
-                                view.showError(e)
-                            }
-                    )
+    override fun onPurchaseClick(
+            id: String,
+            ignoreUserCheck: Boolean
+    ) {
+        Timber.d("onPurchaseClick: %s, %s", id, ignoreUserCheck)
+        //show warning if user not logged in
+        if (!ignoreUserCheck && user == null) {
+            view.showOfferLoginForLevelUpPopup()
+            return
         }
+
+        @InappPurchaseUtil.InappType
+        val type = if (inAppHelper.getNewInAppsSkus().contains(id)) {
+            InappPurchaseUtil.InappType.IN_APP
+        } else {
+            InappPurchaseUtil.InappType.SUBS
+        }
+
+        inAppHelper.intentSenderSingle(type, id)
+                .flatMap { inAppHelper.startPurchase(it) }
+                .onErrorResumeNext { error ->
+                    return@onErrorResumeNext if (error is PurchaseFailedError) {
+                        Timber.e(error, "error is PurchaseFailedError")
+                        when (type) {
+                            InappPurchaseUtil.InappType.IN_APP -> {
+                                inAppHelper
+                                        .getInAppHistory()
+//                                        .doOnSubscribe { view.showProgressDialog(R.string.wait) }
+//                                        .doOnEach { view.dismissProgressDialog() }
+                                        .flatMap { inAppHelper.consumeInApp(it.productId, "") }
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .doOnSuccess {
+                                            val context = BaseApplication.getAppInstance()
+                                            view.showMessage(
+                                                    context.getString(
+                                                            R.string.score_increased,
+                                                            context.resources.getQuantityString(
+                                                                    R.plurals.plurals_score,
+                                                                    LEVEL_UP_SCORE_TO_ADD,
+                                                                    LEVEL_UP_SCORE_TO_ADD
+                                                            )
+                                                    )
+                                            )
+                                        }
+                                        .flatMap { inAppHelper.intentSenderSingle(type, id) }
+                                        .flatMap {
+                                            inAppHelper.startPurchase(it)
+                                        }
+                            }
+                            InappPurchaseUtil.InappType.SUBS -> {
+                                inAppHelper
+                                        .validateSubsObservable()
+                                        .doOnSuccess { view.showMessage("Subscriptions state updated") }
+                                        .flatMap { Single.error<Subscription>(error) }
+                            }
+                            else -> throw error
+                        }
+                    } else {
+                        throw error
+                    }
+                }
+                .flatMap { subscription ->
+                    if (subscription.type == InappPurchaseUtil.InappType.IN_APP) {
+                        inAppHelper
+                                .consumeInApp(subscription.productId, "")
+                                .map { subscription }
+                    } else {
+                        Single.just(subscription)
+                    }
+                }
+                .doOnSuccess { subscription ->
+                    if (subscription.type == InappPurchaseUtil.InappType.SUBS) {
+                        view.updateOwnedMarketItems()
+                    } else if (subscription.type == InappPurchaseUtil.InappType.IN_APP) {
+                        val context = BaseApplication.getAppInstance()
+                        view.showMessage(
+                                context.getString(
+                                        R.string.score_increased,
+                                        context.resources.getQuantityString(
+                                                R.plurals.plurals_score,
+                                                LEVEL_UP_SCORE_TO_ADD,
+                                                LEVEL_UP_SCORE_TO_ADD
+                                        )
+                                )
+                        )
+                        if (!myPreferencesManager.isHasAnySubscription) {
+                            view.showOfferSubscriptionPopup()
+                        }
+                    }
+                }
+                .subscribeBy(
+                        onSuccess = {},
+                        onError = { e ->
+                            Timber.e(e, "error while purchase clicked")
+                            view.showError(e)
+                        }
+                )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
@@ -497,7 +572,9 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                         Timber.e("Firebase user exists, do nothing as we do not implement connect VK acc to Firebase as social provider")
                     } else {
                         startFirebaseLogin(
-                                Constants.Firebase.SocialProvider.VK, VKAccessToken.currentToken().accessToken)
+                                Constants.Firebase.SocialProvider.VK,
+                                VKAccessToken.currentToken().accessToken
+                        )
                     }
                 } else {
                     view.showMessage(R.string.error_login_no_email)
@@ -549,27 +626,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 logoutUser()
                 return true
             }
-        } else if (requestCode == Constants.Firebase.REQUEST_INVITE) {
-            if (resultCode == Activity.RESULT_OK) {
-                // Get the invitation IDs of all sent messages
-                val ids = AppInviteInvitation.getInvitationIds(resultCode, data!!)
-                for (id in ids) {
-                    Timber.d("onActivityResult: sent invitation %s", id)
-                    //todo we need to be able to send multiple IDs in one request
-                    onInviteSent(id)
-
-                    FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
-                            Constants.Firebase.Analitics.EventName.INVITE_SENT,
-                            null
-                    )
-                }
-            } else {
-                // Sending failed or it was canceled, show failure message to the user
-                Timber.d("invitation failed for some reason")
-            }
-
-            return true
-        } else if (requestCode == SubscriptionsFragment.REQUEST_CODE_SUBSCRIPTION) {
+        } else if (requestCode == REQUEST_CODE_SUBSCRIPTION) {
             if (data == null) {
                 view.showMessageLong("Error while parse result, please try again")
                 return true
@@ -577,75 +634,104 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
             val responseCode = data.getIntExtra("RESPONSE_CODE", 0)
             val purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA")
 
-            if (resultCode == Activity.RESULT_OK && responseCode == InAppHelper.RESULT_OK) {
+            if (resultCode == Activity.RESULT_OK && responseCode == InappPurchaseUtil.RESULT_OK) {
                 try {
                     val jo = JSONObject(purchaseData)
                     val sku = jo.getString("productId")
                     Timber.d("You have bought the %s", sku)
 
-                    //validate subs list
-                    view.updateOwnedMarketItems()
+                    inAppHelper.getOwnedSubsRelay()
+                            .call(ItemsListWrapper(listOf(Item(sku = sku))))
                 } catch (e: JSONException) {
                     Timber.e(e, "Failed to parse purchase data.")
-                    view.showError(e)
+                    inAppHelper.getOwnedSubsRelay()
+                            .call(
+                                    ItemsListWrapper(
+                                            error = Error("Failed to parse purchase data.", e)
+                                    )
+                            )
                 }
             } else {
-                view.showMessageLong("Error: response code is not \"0\". Please try again")
+                inAppHelper.getOwnedSubsRelay()
+                        .call(
+                                ItemsListWrapper(
+                                        error = Error("Error: response code is not \"0\". Please try again")
+                                )
+                        )
             }
             return true
-        } else if (requestCode == BaseDrawerActivity.REQUEST_CODE_INAPP) {
+        } else if (requestCode == REQUEST_CODE_INAPP) {
             Timber.d("REQUEST_CODE_INAPP resultCode == Activity.RESULT_OK: ${resultCode == Activity.RESULT_OK}")
+
             if (resultCode == Activity.RESULT_OK) {
                 if (data == null) {
-                    Timber.d("error_inapp data is NULL")
-                    view.showMessage(R.string.error_inapp)
+                    Timber.e("error_inapp data is NULL")
+
+                    inAppHelper.getBoughtInappRelay()
+                            .call(
+                                    SubscriptionWrapper(
+                                            error = Error(BaseApplication.getAppInstance().getString(R.string.error_inapp))
+                                    )
+                            )
                     return true
                 }
-                //            int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
+                //int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
                 val purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA")
-                //            String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
+                //String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
                 Timber.d("purchaseData %s", purchaseData)
                 val item = GsonBuilder().create().fromJson(purchaseData, PurchaseData::class.java)
                 Timber.d("You have bought the %s", item.productId)
 
-                if (item.productId == InAppHelper.getNewInAppsSkus().first()) {
-                    //levelUp 5
-                    //add 10 000 score
-                    inAppHelper.consumeInApp(item.productId, item.purchaseToken, view.iInAppBillingService)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribeBy(
-                                    onSuccess = {
-                                        Timber.d("consume inapp successful, so update user score")
-                                        updateUserScoreForInapp(item.productId)
-
-                                        if (!myPreferencesManager.isHasAnySubscription) {
-                                            view.showOfferSubscriptionPopup()
-                                        }
-                                    },
-                                    onError = {
-                                        Timber.e(it, "error while consume inapp!")
-                                        view.showError(it)
-                                        view.showInAppErrorDialog(
-                                                it.message
-                                                        ?: BaseApplication.getAppInstance().getString(R.string.error_unexpected)
-                                        )
-                                    }
+                if (item.productId == inAppHelper.getNewInAppsSkus().first()) {
+                    inAppHelper.getBoughtInappRelay().call(
+                            SubscriptionWrapper(
+                                    Subscription(
+                                            item.productId,
+                                            InappPurchaseUtil.InappType.IN_APP,
+                                            "N/A", //receipt.price,
+                                            -1,//price_amount_micros
+                                            "N/A", //price_currency_code
+                                            null,
+                                            null,
+                                            null,
+                                            null,
+                                            null,
+                                            0,
+                                            null,
+                                            0,
+                                            item.purchaseToken
+                                    )
                             )
+                    )
                 } else {
-                    Timber.wtf("Unexpected item.productId: ${item.productId}")
+                    val message = "Unexpected item.productId: ${item.productId}"
+                    Timber.wtf(message)
+                    inAppHelper.getBoughtInappRelay()
+                            .call(
+                                    SubscriptionWrapper(
+                                            error = Error(message)
+                                    )
+                            )
                 }
-            } else if (data?.getIntExtra("RESPONSE_CODE", 0) == InAppHelper.RESULT_ITEM_ALREADY_OWNED) {
+            } else if (data?.getIntExtra("RESPONSE_CODE", 0) == InappPurchaseUtil.RESULT_ITEM_ALREADY_OWNED) {
                 val message = "RESPONSE_CODE is: InAppHelper.RESULT_ITEM_ALREADY_OWNED"
                 Timber.wtf(message)
-                view.iInAppBillingService?.let { onLevelUpRetryClick(it) }
-                        ?: view.showInAppErrorDialog(BaseApplication.getAppInstance().getString(R.string.error_unexpected))
+                inAppHelper.getBoughtInappRelay()
+                        .call(
+                                SubscriptionWrapper(
+                                        error = PurchaseFailedError(message)
+                                )
+                        )
             } else {
-                val message = "Unexpected resultCode: $resultCode/${data?.extras?.keySet()?.map { "$it/${data.extras[it]}" }}"
-                Timber.wtf(message)
-                if (data?.getIntExtra("RESPONSE_CODE", 0) != InAppHelper.RESULT_USER_CANCELED) {
-                    view.showMessage(message)
-                }
+                val extras = data?.extras
+                val keySet = extras?.keySet()
+                val message = "Unexpected resultCode: $resultCode/${keySet?.map { "$it/${extras[it]}" }}"
+                inAppHelper.getBoughtInappRelay()
+                        .call(
+                                SubscriptionWrapper(
+                                        error = Error(message)
+                                )
+                        )
             }
             return true
         } else {

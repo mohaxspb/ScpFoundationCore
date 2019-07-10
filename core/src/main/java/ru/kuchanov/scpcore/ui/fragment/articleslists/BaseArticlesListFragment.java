@@ -1,7 +1,5 @@
 package ru.kuchanov.scpcore.ui.fragment.articleslists;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialogFragment;
@@ -10,6 +8,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,8 +29,6 @@ import timber.log.Timber;
 
 /**
  * Created by mohax on 03.01.2017.
- * <p>
- * for scp_ru
  */
 public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.View, P extends BaseArticlesListMvp.Presenter<V>>
         extends BaseListFragment<V, P> {
@@ -221,20 +219,20 @@ public abstract class BaseArticlesListFragment<V extends BaseArticlesListMvp.Vie
             }
 
             @Override
+            public void onRewardedVideoClick() {
+                if (!isAdded()) {
+                    return;
+                }
+                getBaseActivity().startRewardedVideoFlow();
+            }
+
+            @Override
             public void onAdsSettingsClick() {
                 if (!isAdded()) {
                     return;
                 }
                 final BottomSheetDialogFragment dialogFragment = AdsSettingsBottomSheetDialogFragment.newInstance();
                 dialogFragment.show(getActivity().getSupportFragmentManager(), dialogFragment.getTag());
-            }
-
-            @Override
-            public void onRewardedVideoClick() {
-                if (!isAdded()) {
-                    return;
-                }
-                getBaseActivity().startRewardedVideoFlow();
             }
         });
         getAdapter().setHasStableIds(true);

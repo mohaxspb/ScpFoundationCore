@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 //kotlin
-apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'io.fabric'
@@ -18,7 +18,7 @@ android {
 
     defaultConfig {
         applicationId "ru.dante.scpfoundation"
-        minSdkVersion 17
+        minSdkVersion 21
         targetSdkVersion 28
 
         // Enabling multidex support.
@@ -51,7 +51,7 @@ android {
         }
     }
 
-    flavorDimensions "lang", "mode"
+    flavorDimensions "lang", "mode", "chanel"
 
     productFlavors {
         prod {
@@ -70,6 +70,18 @@ android {
             aaptOptions.cruncherEnabled = false
             //only package russian translations, and xxhdpi resources
             resConfigs("ru", "xxhdpi")
+        }
+
+        gp {
+            dimension "chanel"
+            //todo
+
+        }
+
+        amazon {
+            dimension "chanel"
+            //todo
+
         }
 
         ru {
@@ -136,7 +148,7 @@ android {
         }
 
         applicationVariants.all { variant ->
-            println('variantApp: ' + variant.getName())
+//            println('variantApp: ' + variant.getName())
 
             fillArrays(variant, false)
             fillApiArrays(variant, false)
@@ -161,32 +173,46 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
     }
 }
 
+//configurations {
+//    //dev
+//    ruDevReleaseCompile
+//    enDevReleaseCompile
+//    plDevReleaseCompile
+//    deDevReleaseCompile
+//    frDevReleaseCompile
+//    esDevReleaseCompile
+//    italyDevReleaseCompile
+//    ptDevReleaseCompile
+//    chDevReleaseCompile
+//    //prod
+//    ruProdReleaseCompile
+//    enProdReleaseCompile
+//    plProdReleaseCompile
+//    deProdReleaseCompile
+//    frProdReleaseCompile
+//    esProdReleaseCompile
+//    italyProdReleaseCompile
+//    ptProdReleaseCompile
+//    chProdReleaseCompile
+//}
+
 configurations {
     //dev
-    ruDevReleaseCompile
-    enDevReleaseCompile
-    plDevReleaseCompile
-    deDevReleaseCompile
-    frDevReleaseCompile
-    esDevReleaseCompile
-    italyDevReleaseCompile
-    ptDevReleaseCompile
-    chDevReleaseCompile
+    ruDevAmazonReleaseCompile
+    ruDevGpReleaseCompile
+    enDevAmazonReleaseCompile
+    enDevGpReleaseCompile
+
     //prod
-    ruProdReleaseCompile
-    enProdReleaseCompile
-    plProdReleaseCompile
-    deProdReleaseCompile
-    frProdReleaseCompile
-    esProdReleaseCompile
-    italyProdReleaseCompile
-    ptProdReleaseCompile
-    chProdReleaseCompile
+    ruProdAmazonReleaseCompile
+    ruProdGpReleaseCompile
+    enProdAmazonReleaseCompile
+    enProdGpReleaseCompile
 }
 
 dependencies {
@@ -198,7 +224,7 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
     //need to compile...
-    implementation 'com.google.firebase:firebase-core:16.0.6'
+    implementation 'com.google.firebase:firebase-core:16.0.8'
 
     //core module
     implementation project(':core')

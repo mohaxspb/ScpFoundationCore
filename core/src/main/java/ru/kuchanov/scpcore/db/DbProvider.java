@@ -802,12 +802,11 @@ public class DbProvider {
         return mRealm.where(User.class).findFirst();
     }
 
-    public Observable<User> saveUser(final User user) {
-        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
+    public Single<User> saveUser(final User user) {
+        return Single.create(subscriber -> mRealm.executeTransactionAsync(
                 realm -> realm.insertOrUpdate(user),
                 () -> {
-                    subscriber.onNext(user);
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(user);
                     mRealm.close();
                 },
                 e -> {
@@ -890,8 +889,8 @@ public class DbProvider {
                 .flatMap(realmResults -> Observable.just(mRealm.copyFromRealm(realmResults)));
     }
 
-    public Observable<List<ArticleInFirebase>> saveArticlesFromFirebase(final List<ArticleInFirebase> inFirebaseList) {
-        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
+    public Single<List<ArticleInFirebase>> saveArticlesFromFirebase(final List<ArticleInFirebase> inFirebaseList) {
+        return Single.create(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     Collections.sort(inFirebaseList, (articleInFirebase, t1) ->
                             articleInFirebase.updated < t1.updated ? -1 : articleInFirebase.updated > t1.updated ? 1 : 0);
@@ -931,8 +930,7 @@ public class DbProvider {
                 },
                 () -> {
                     mRealm.close();
-                    subscriber.onNext(inFirebaseList);
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(inFirebaseList);
                 },
                 e -> {
                     mRealm.close();
@@ -1016,9 +1014,9 @@ public class DbProvider {
         );
     }
 
-    public Observable<Integer> updateUserScore(final int totalScore) {
+    public Single<Integer> updateUserScore(final int totalScore) {
         Timber.d("updateUserScore: %s", totalScore);
-        return Observable.unsafeCreate(subscriber -> mRealm.executeTransactionAsync(
+        return Single.create(subscriber -> mRealm.executeTransactionAsync(
                 realm -> {
                     //check if we have app in db and update
                     final User user = realm.where(User.class).findFirst();
@@ -1029,8 +1027,7 @@ public class DbProvider {
                     }
                 },
                 () -> {
-                    subscriber.onNext(totalScore);
-                    subscriber.onCompleted();
+                    subscriber.onSuccess(totalScore);
                     mRealm.close();
                 },
                 e -> {

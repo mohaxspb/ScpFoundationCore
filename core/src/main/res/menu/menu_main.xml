@@ -10,13 +10,11 @@
         android:title="@string/in_apps"
         app:showAsAction="never"
         />
-
     <item
         android:id="@+id/removeAds"
         android:icon="@drawable/ic_offline_pin"
         android:title="@string/settings_ads_title"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/settings"

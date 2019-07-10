@@ -1,11 +1,11 @@
 package ru.kuchanov.scpcore.mvp.base;
 
-import ru.kuchanov.scpcore.monetization.util.admob.MyAdListener;
+import org.jetbrains.annotations.NotNull;
+
+import ru.kuchanov.scpcore.monetization.util.InterstitialAdListener;
 
 /**
  * Created by mohax on 15.01.2017.
- * <p>
- * for scp_ru
  */
 public interface MonetizationActions {
 
@@ -13,7 +13,7 @@ public interface MonetizationActions {
 
     void showInterstitial();
 
-    void showInterstitial(MyAdListener adListener, boolean showVideoIfNeedAndCan);
+    void showInterstitial(@NotNull final InterstitialAdListener adListener, boolean showVideoIfNeedAndCan);
 
     boolean isTimeToShowAds();
 

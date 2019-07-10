@@ -48,11 +48,11 @@ class ReadHistoryPresenter(
                 )
     }
 
-    override fun onTranactionClicked(articleUrl: String) {
+    override fun onTransactionClicked(articleUrl: String) {
         view.openArticle(articleUrl)
     }
 
-    override fun onTranactionDeleteClicked(id: Long) {
+    override fun onTransactionDeleteClicked(id: Long) {
         mDbProviderFactory
                 .dbProvider
                 .deleteReadHistoryTransactionById(id)

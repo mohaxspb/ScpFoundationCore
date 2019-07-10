@@ -31,6 +31,7 @@ class RewardedVideoDelegate(val clickListener: () -> Unit) : AbsListItemAdapterD
             descriptionTextView.text = item.subtitle
             descriptionTextView.setTextColor(ContextCompat.getColor(context, item.textColor))
             iconImageView.setImageResource(item.icon)
+            iconImageView.setColorFilter(ContextCompat.getColor(context, R.color.freeAdsTextColor))
             cardView.setOnClickListener { clickListener() }
         }
     }

@@ -18,19 +18,19 @@ import ru.kuchanov.scpcore.api.ApiClient
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.DividerViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.LabelViewModel
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem
-import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.*
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.DisableAdsForAuthViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.RewardedVideoViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.VkGroupToJoinViewModel
+import ru.kuchanov.scpcore.controller.adapter.viewmodel.monetization.freeadsdisable.VkShareAppViewModel
 import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.manager.MyNotificationManager
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
-import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse
-import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.mvp.contract.monetization.FreeAdsDisableActionsContract
 import ru.kuchanov.scpcore.util.DimensionUtils
-import ru.kuchanov.scpcore.util.IntentUtils
 import ru.kuchanov.scpcore.util.SystemUtils
 import rx.lang.kotlin.subscribeBy
 import timber.log.Timber
@@ -41,17 +41,17 @@ import timber.log.Timber
  * for ScpCore
  */
 class FreeAdsDisableActionsPresenter(
-    val mMyPreferenceManager: MyPreferenceManager,
-    dbProviderFactory: DbProviderFactory,
-    apiClient: ApiClient,
-    private val mGson: Gson,
-    private val mMyNotificationManager: MyNotificationManager,
-    inAppHelper: InAppHelper
+        val mMyPreferenceManager: MyPreferenceManager,
+        dbProviderFactory: DbProviderFactory,
+        apiClient: ApiClient,
+        private val mGson: Gson,
+        private val mMyNotificationManager: MyNotificationManager,
+        inAppHelper: InAppHelper
 ) : BasePresenter<FreeAdsDisableActionsContract.View>(
-    mMyPreferenceManager,
-    dbProviderFactory,
-    apiClient,
-    inAppHelper
+        mMyPreferenceManager,
+        dbProviderFactory,
+        apiClient,
+        inAppHelper
 ), FreeAdsDisableActionsContract.Presenter {
 
     private val firebaseAuth = FirebaseAuth.getInstance()
@@ -85,10 +85,10 @@ class FreeAdsDisableActionsPresenter(
             val hours = Duration.millis(numOfMillis).toStandardHours().hours
             val score = config.getLong(SCORE_ACTION_AUTH).toInt()
             data.add(
-                DisableAdsForAuthViewModel(
-                    R.string.free_ads_auth_title,
-                    context.getString(R.string.free_ads_simple_subtitle, hours, score)
-                ))
+                    DisableAdsForAuthViewModel(
+                            R.string.free_ads_auth_title,
+                            context.getString(R.string.free_ads_simple_subtitle, hours, score)
+                    ))
             data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(4)))
         }
         if (config.getBoolean(FREE_REWARDED_VIDEO_ENABLED)) {
@@ -96,69 +96,13 @@ class FreeAdsDisableActionsPresenter(
             val hours = Duration.millis(numOfMillis).toStandardHours().hours
             val score = config.getLong(SCORE_ACTION_REWARDED_VIDEO).toInt()
             data.add(
-                RewardedVideoViewModel(
-                    R.string.free_ads_rewarded_video_title,
-                    context.getString(R.string.free_ads_simple_subtitle, hours, score)
-                ))
+                    RewardedVideoViewModel(
+                            R.string.free_ads_rewarded_video_title,
+                            context.getString(R.string.free_ads_simple_subtitle, hours, score)
+                    ))
             data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(4)))
         }
-        if (config.getBoolean(FREE_INVITES_ENABLED)) {
-            //set num of rewarded no ads period and score
-            val numOfMillis = config.getLong(INVITE_REWARD_IN_MILLIS)
-            val hours = Duration.millis(numOfMillis).toStandardHours().hours
-            val score = config.getLong(SCORE_ACTION_INVITE).toInt()
-            data.add(
-                InviteFriendsViewModel(
-                    R.string.free_ads_invite_title,
-                    context.getString(R.string.free_ads_simple_subtitle, hours, score)
-                ))
-            data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(4)))
-        }
-        if (config.getBoolean(FREE_APPS_INSTALL_ENABLED)) {
-            val jsonString = config.getString(APPS_TO_INSTALL_JSON)
 
-            var applications: List<PlayMarketApplication>? = null
-            try {
-                applications = mGson.fromJson(jsonString, ApplicationsResponse::class.java).items
-            } catch (e: Exception) {
-                Timber.e(e)
-            }
-
-            if (applications != null) {
-                val availableAppsToInstall = mutableListOf<PlayMarketApplication>()
-                for (application in applications) {
-                    if (mMyPreferenceManager.isAppInstalledForPackage(application.id)) {
-                        continue
-                    }
-                    if (IntentUtils.isPackageInstalled(context, application.id)) {
-                        continue
-                    }
-                    availableAppsToInstall.add(application)
-                }
-                if (!availableAppsToInstall.isEmpty()) {
-                    val numOfMillis = config.getLong(APP_INSTALL_REWARD_IN_MILLIS)
-                    val hours = Duration.millis(numOfMillis).toStandardHours().hours
-                    val score = config.getLong(SCORE_ACTION_OUR_APP).toInt()
-
-                    data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(4)))
-                    data.add(
-                        LabelViewModel(
-                            R.string.free_ads_app_install_label,
-                            bgColor = R.color.freeAdsBackgroundColor,
-                            textColor = R.color.freeAdsTextColor))
-                    data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(4)))
-
-                    data.addAll(availableAppsToInstall.map {
-                        AppToInstallViewModel(
-                            it.id,
-                            context.getString(R.string.free_ads_app_install_title, hours, score),
-                            it.name,
-                            it.imageUrl
-                        )
-                    })
-                }
-            }
-        }
         if (config.getBoolean(FREE_VK_GROUPS_ENABLED)) {
             val jsonString = config.getString(VK_GROUPS_TO_JOIN_JSON)
 
@@ -181,20 +125,25 @@ class FreeAdsDisableActionsPresenter(
 
                     data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(4)))
                     data.add(
-                        LabelViewModel(
-                            R.string.free_ads_vk_group_label,
-                            bgColor = R.color.freeAdsBackgroundColor,
-                            textColor = R.color.freeAdsTextColor))
+                            LabelViewModel(
+                                    R.string.free_ads_vk_group_label,
+                                    bgColor = R.color.freeAdsBackgroundColor,
+                                    textColor = R.color.freeAdsTextColor
+                            )
+                    )
                     data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(4)))
 
-                    data.addAll(availableItems.map {
-                        VkGroupToJoinViewModel(
-                            it.id,
-                            context.getString(R.string.free_ads_vk_group_title, hours, score),
-                            it.name,
-                            it.imageUrl
-                        )
-                    })
+                    data.addAll(
+                            availableItems.map {
+//                                Timber.d("VkGroupToJoinViewModel: $it")
+                                VkGroupToJoinViewModel(
+                                        it.id,
+                                        it.name,
+                                        context.getString(R.string.free_ads_vk_group_title, hours, score),
+                                        it.imageUrl
+                                )
+                            }
+                    )
                 }
             }
         }
@@ -207,28 +156,21 @@ class FreeAdsDisableActionsPresenter(
             data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(4)))
 
             data.add(
-                LabelViewModel(
-                    R.string.free_ads_vk_share_label,
-                    bgColor = R.color.freeAdsBackgroundColor,
-                    textColor = R.color.freeAdsTextColor))
+                    LabelViewModel(
+                            R.string.free_ads_vk_share_label,
+                            bgColor = R.color.freeAdsBackgroundColor,
+                            textColor = R.color.freeAdsTextColor))
             data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(4)))
 
             data.add(
-                VkShareAppViewModel(
-                    SystemUtils.getPackageInfo().packageName,
-                    context.getString(R.string.free_ads_vk_group_title, hours, score),
-                    context.getString(R.string.app_name),
-                    "https://lh3.googleusercontent.com//nxy_ouZM-1PTsve_PXDI9-CoErm1Q2XRwKML7_967K-eR5TmVlI5RHDUJsc4WhjsLaI=w300-rw"
-                ))
+                    VkShareAppViewModel(
+                            SystemUtils.getPackageInfo().packageName,
+                            context.getString(R.string.app_name),
+                            context.getString(R.string.free_ads_vk_group_title, hours, score),
+                            "https://lh3.googleusercontent.com//nxy_ouZM-1PTsve_PXDI9-CoErm1Q2XRwKML7_967K-eR5TmVlI5RHDUJsc4WhjsLaI=w300-rw"
+                    ))
         }
         data.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(12)))
-    }
-
-    override fun onInviteFriendsClick() {
-        if (isNeedToOfferFreeTrial()) {
-            return
-        }
-        view.onInviteFriendsClick()
     }
 
     override fun onRewardedVideoClick() {
@@ -243,13 +185,6 @@ class FreeAdsDisableActionsPresenter(
             return
         }
         view.onAuthClick()
-    }
-
-    override fun onAppInstallClick(id: String) {
-        if (isNeedToOfferFreeTrial()) {
-            return
-        }
-        view.onAppInstallClick(id)
     }
 
     override fun onVkGroupClick(id: String) {
@@ -267,41 +202,41 @@ class FreeAdsDisableActionsPresenter(
         val context: Context = BaseApplication.getAppInstance()
 
         mApiClient.joinVkGroup(id).toSingle().subscribeBy(
-            onSuccess = {
-                if (it) {
-                    Timber.d("Successful group join")
-                    mMyPreferenceManager.setVkGroupJoined(id)
-                    mMyPreferenceManager.applyAwardVkGroupJoined()
+                onSuccess = {
+                    if (it) {
+                        Timber.d("Successful group join")
+                        mMyPreferenceManager.setVkGroupJoined(id)
+                        mMyPreferenceManager.applyAwardVkGroupJoined()
 
-                    val numOfMillis = FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD)
-                    val hours = Duration.millis(numOfMillis).toStandardHours().hours
+                        val numOfMillis = FirebaseRemoteConfig.getInstance().getLong(FREE_VK_GROUPS_JOIN_REWARD)
+                        val hours = Duration.millis(numOfMillis).toStandardHours().hours
 
-                    mMyNotificationManager.showNotificationSimple(
-                        context.getString(R.string.ads_reward_gained, hours),
-                        context.getString(R.string.thanks_for_supporting_us),
-                        NOTIFICATION_ID
-                    )
+                        mMyNotificationManager.showNotificationSimple(
+                                context.getString(R.string.ads_reward_gained, hours),
+                                context.getString(R.string.thanks_for_supporting_us),
+                                NOTIFICATION_ID
+                        )
 
-                    createData()
-                    view.showData(data)
+                        createData()
+                        view.showData(data)
 
-                    val bundle = Bundle()
-                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "group_$id")
-                    FirebaseAnalytics.getInstance(context).logEvent(
-                        Constants.Firebase.Analitics.EventName.VK_GROUP_JOINED,
-                        bundle
-                    )
+                        val bundle = Bundle()
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "group_$id")
+                        FirebaseAnalytics.getInstance(context).logEvent(
+                                Constants.Firebase.Analytics.EventName.VK_GROUP_JOINED,
+                                bundle
+                        )
 
-                    updateUserScoreForVkGroup(id)
-                } else {
-                    Timber.e("error group join")
-                    view.showMessage("error group join")
+                        updateUserScoreForVkGroup(id)
+                    } else {
+                        Timber.e("error group join")
+                        view.showMessage("error group join")
+                    }
+                },
+                onError = {
+                    Timber.e(it, "error while join group")
+                    view.showError(it)
                 }
-            },
-            onError = {
-                Timber.e(it, "error while join group")
-                view.showError(it)
-            }
         )
     }
 
@@ -323,13 +258,13 @@ class FreeAdsDisableActionsPresenter(
     override fun applyAwardFromVkShare() {
         mMyPreferenceManager.applyAwardVkShareApp()
 
-        val numOfMillis = FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD)
+        val numOfMillis = FirebaseRemoteConfig.getInstance().getLong(FREE_VK_GROUPS_JOIN_REWARD)
         val hours = Duration.millis(numOfMillis).toStandardHours().hours
 
         mMyNotificationManager.showNotificationSimple(
-            BaseApplication.getAppInstance().getString(R.string.ads_reward_gained, hours),
-            BaseApplication.getAppInstance().getString(R.string.thanks_for_supporting_us),
-            NOTIFICATION_ID
+                BaseApplication.getAppInstance().getString(R.string.ads_reward_gained, hours),
+                BaseApplication.getAppInstance().getString(R.string.thanks_for_supporting_us),
+                NOTIFICATION_ID
         )
     }
 
@@ -340,10 +275,10 @@ class FreeAdsDisableActionsPresenter(
         val hasSubscription = mMyPreferenceManager.isHasSubscription || mMyPreferenceManager.isHasNoAdsSubscription
         return if (!hasSubscription && mMyPreferenceManager.isTimeOfferFreeTrialFromDisableAdsOption) {
             val bundle = Bundle()
-            bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.EventValue.ADS_DISABLE)
+            bundle.putString(Constants.Firebase.Analytics.EventParam.PLACE, Constants.Firebase.Analytics.EventValue.ADS_DISABLE)
             FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
-                Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN,
-                bundle)
+                    Constants.Firebase.Analytics.EventName.FREE_TRIAL_OFFER_SHOWN,
+                    bundle)
 
             mMyPreferenceManager.setFreeAdsDisableRewardGainedCount(0)
             view.showOfferFreeTrialSubscriptionPopup()

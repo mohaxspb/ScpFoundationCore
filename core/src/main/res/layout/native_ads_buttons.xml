@@ -18,8 +18,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:drawablePadding="@dimen/defaultMarginSmall"
             android:drawableStart="?iconAdsSettings24dp"
+            android:drawablePadding="@dimen/defaultMarginSmall"
             android:gravity="center"
             android:text="@string/settings_ads_title" />
     </FrameLayout>
@@ -37,8 +37,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:drawablePadding="@dimen/defaultMarginSmall"
             android:drawableStart="?iconVideo24dp"
+            android:drawablePadding="@dimen/defaultMarginSmall"
             android:gravity="center"
             android:text="@string/remove_ads" />
     </FrameLayout>

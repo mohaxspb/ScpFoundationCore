@@ -11,10 +11,8 @@
     <string name="google_services_not_connected" translatable="false">Google Services is not connected</string>
     <string name="error_unexpected" translatable="false">Unexpected error</string>
     <string name="share_app_vk_link" translatable="false">https://play.google.com/store/apps/details?id=%s</string>
-    <string name="scp_art_ad_title" translatable="false">Книги SCP Foundation уже в продаже!</string>
     <string name="ad" translatable="false">Ad</string>
-    <string name="scp_art_ad_description" translatable="false">Спрашивайте в книжных магазинах своего города или закажите доставку в любой уголок страны</string>
-    <string name="scp_art_ad_cta" translatable="false">Подробнее</string>
+    <string name="scp_ad_cta" translatable="false">Learn more</string>
     <string name="login" translatable="false">Login</string>
     <!--drawer items-->
     <string name="drawer_item_1">About the SCP Foundation</string>
@@ -148,10 +146,6 @@
     <string name="dialog_free_ads_disable_title">Remove Ads</string>
     <string name="start_market_error">Failed to launch the Google Play Store</string>
     <string name="thanks_for_supporting_us">The developers are very grateful for your support!</string>
-    <string name="invitation_message">Learn about SCPs</string>
-    <string name="invitation_cta">Join us</string>
-    <string name="invitation_title">SCP Foundation secret materials</string>
-    <string name="invite_friends">Invite friends to the app to disable ads for %1$d hours and get %2$d points!</string>
     <string name="watch_video_to_disable_ads">Watch a video ad to disable ads for %1$d hours and get %2$d points!</string>
     <string name="app_install_ads_disable_title">Install our other apps to disable ads for %1$d hours and get %2$d points!</string>
     <string name="vk_group_join_ads_disable_title">Join the VK group to disable ads for %1$d hours and get %2$d points!</string>
@@ -289,10 +283,7 @@
     <string name="bibliography">Bibliography</string>
 
     <!---->
-    <string name="your_invite_received">Your invite was accepted!</string>
-    <string name="invite_received_reward_message">Blocking the manifestation of ads for %1$d hours, and %2$d score added!</string>
     <string name="ads_disabled_for_some_hours">Blocking the manifestation of ads for %d hours!</string>
-    <string name="drawer_item_invite_friends">Invite friends!</string>
 
     <!---->
     <string name="settings_ads_banner_in_lists">Banner in articles list</string>
@@ -305,11 +296,9 @@
     <string name="remove_ads_for_free_for_hours"><![CDATA[For some hours for<br/><b><font color=#4CAF50>FREE</font></b>]]></string>
 
     <!---->
-    <string name="contacts_info"><![CDATA[We want to remind you that you can monitor the progress of the project at <b>GitHub</b> and in <b>Trello</b>. You can contact us through <b>email</b>. Here are the links:
+    <string name="contacts_info"><![CDATA[We want to remind you that you can monitor the progress of the project at <b>GitHub</b>. You can contact us through <b>email</b>. Here are the links:
 <br/><br/>
 GitHub: <a href="https://github.com/mohaxspb/ScpFoundationCore">Repository ScpFoundationCore</a>
-<br/><br/>
-Trello: <a href="https://trello.com/b/K96g075n/scp">A taskboard with a list of tasks to implement</a>
 <br/><br/>
 E-mail: <a href="mailto:neva.spb.rx@gmail.com">For any questions</a>
 <br/><br/>
@@ -340,7 +329,6 @@ Thanks for using our app!]]></string>
     <string name="subs_leaderboard_activity_title">Leaderboard</string>
     <string name="subs_activity_title">Developer Support</string>
     <string name="subs_level_5_description">10,000 points, rating increase and offline limit of 200 articles</string>
-    <string name="free_ads_invite_title">Invite your friends to the app</string>
     <string name="free_ads_rewarded_video_title">Watch the video</string>
     <string name="free_ads_auth_title">Log in</string>
     <string name="free_ads_simple_subtitle">And we will turn off the ad %1$d hour and give you %2$d points</string>
@@ -399,4 +387,5 @@ Thanks for using our app!]]></string>
     <string name="read_history">Read history</string>
     <string name="open">Open</string>
     <string name="continue_reading">Continue reading?</string>
+    <string name="open_landing">Go to our site</string>
 </resources>

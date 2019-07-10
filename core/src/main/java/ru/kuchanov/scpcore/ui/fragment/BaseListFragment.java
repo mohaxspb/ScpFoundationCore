@@ -19,8 +19,6 @@ import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScrol
 
 /**
  * Created by mohax on 03.01.2017.
- * <p>
- * for scp_ru
  */
 public abstract class BaseListFragment<V extends BaseListMvp.View, P extends BaseListMvp.Presenter<V>>
         extends BaseFragment<V, P>

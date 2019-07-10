@@ -1,19 +1,29 @@
 apply from: '../utils.gradle'
 
 ext {
-    fillArrays = { variant, fileIsinRoot ->
-        logger.info("fillArrays: {}", variant.productFlavors[0].name)
+    fillArrays = { variant, fileIsInRoot ->
+//        logger.info("fillArrays: {}", variant.productFlavors[0].name)
+//        println("fillArrays: " + variant.productFlavors[0].name)
+        variant.productFlavors.each {
+            logger.info("fillArrays: {}", it.name)
+            println("fillArrays: " + it.name)
+        }
         def pathToFileWithData
-        if(fileIsinRoot){
+        if (fileIsInRoot) {
             pathToFileWithData = "marketSkus.properties"
             fillSkusData(variant, pathToFileWithData)
         } else {
-            pathToFileWithData = "config/" + variant.productFlavors[0].name + "/marketSkus.properties"
+            pathToFileWithData = "config/" + variant.productFlavors[0].name + "/" + variant.productFlavors[2].name + "/marketSkus.properties"
             def buildTypeName = variant.buildType.name
-            def flavorMergedName = variant.productFlavors[0].name + variant.productFlavors[1].name;
+            def flavorMergedName = variant.productFlavors[0].name + variant.productFlavors[1].name + variant.productFlavors[2].name
+
+            println("pathToFileWithData: " + pathToFileWithData)
+            println("buildTypeName: " + buildTypeName)
+            println("flavorMergedName: " + flavorMergedName)
+            println("getCurrentFlavor(): " + getCurrentFlavor())
 
             if (getCurrentFlavor().equalsIgnoreCase(flavorMergedName) && buildTypeName.equalsIgnoreCase(getCurrentBuildType())) {
-//                logger.lifecycle('flavorName/buildTypeName: {}/{}', flavorMergedName, buildTypeName)
+                logger.lifecycle('flavorName/buildTypeName: {}/{}', flavorMergedName, buildTypeName)
                 fillSkusData(variant, pathToFileWithData)
             }
         }
@@ -31,6 +41,7 @@ ext {
 
             //ver4 purchases and subscriptions 09.18
             variant.resValue('string', 'ver4_skus', properties.get("marketSkusVer4"))
+            variant.resValue('string', 'ver4_skus_parent', properties.get("marketSkusVer4Parent"))
             variant.resValue('string', 'ver4_inapp_skus', properties.get("marketSkusInappVer4"))
             variant.resValue('string', 'ver4_subs_no_ads', properties.get("noAdsSkuVer4"))
             variant.resValue('string', 'ver4_subs_free_trial', properties.get("subsFreeTrialVer4"))

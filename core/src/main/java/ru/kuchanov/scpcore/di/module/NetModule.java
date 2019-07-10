@@ -51,8 +51,6 @@ import timber.log.Timber;
 
 /**
  * Created by y.kuchanov on 22.12.16.
- * <p>
- * for scp_ru
  */
 @Module
 public class NetModule {
@@ -93,10 +91,10 @@ public class NetModule {
     @Singleton
     Interceptor providesLoggingInterceptor() {
         return new HttpLoggingInterceptor(message -> Timber.d(message)).setLevel(
-//                BuildConfig.FLAVOR.equals("dev")
-//                        ?
-//                        HttpLoggingInterceptor.Level.BODY
-//                        :
+                BuildConfig.FLAVOR_mode.equals("dev")
+                        ?
+                        HttpLoggingInterceptor.Level.BODY
+                        :
                         HttpLoggingInterceptor.Level.NONE
         );
     }

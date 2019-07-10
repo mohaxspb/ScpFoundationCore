@@ -1,14 +1,9 @@
 package ru.kuchanov.scpcore.ui.activity;
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,21 +13,27 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
+
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImage;
 import ru.kuchanov.scpcore.db.model.gallery.GalleryImageTranslation;
-import ru.kuchanov.scpcore.monetization.util.admob.MyAdListener;
+import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.InterstitialAdListener;
 import ru.kuchanov.scpcore.mvp.contract.DataSyncActions;
 import ru.kuchanov.scpcore.mvp.contract.GalleryScreenMvp;
 import ru.kuchanov.scpcore.ui.adapter.ImagesAdapter;
@@ -61,14 +62,8 @@ public class GalleryActivity
     @BindView(R2.id.bottomSheet)
     View mBottomSheet;
 
-    @BindView(R2.id.progressCenter)
-    View mProgressContainer;
-
     @BindView(R2.id.placeHolder)
     View mPlaceHolder;
-
-    @BindView(R2.id.refresh)
-    Button mRefresh;
 
     private ImagesPagerAdapter mPagerAdapter;
 
@@ -128,9 +123,9 @@ public class GalleryActivity
                     final boolean hasSubscription = mMyPreferenceManager.isHasSubscription() || mMyPreferenceManager.isHasNoAdsSubscription();
                     if (!hasSubscription) {
                         if (isAdsLoaded()) {
-                            showInterstitial(new MyAdListener() {
+                            showInterstitial(new InterstitialAdListener() {
                                 @Override
-                                public void onAdClosed() {
+                                public void onInterstitialClosed(@NotNull MyPreferenceManager preferences) {
                                     @DataSyncActions.ScoreAction final String action = DataSyncActions.ScoreAction.INTERSTITIAL_SHOWN;
                                     mPresenter.updateUserScoreForScoreAction(action);
                                     showSnackBarWithAction(Constants.Firebase.CallToActionReason.REMOVE_ADS);
@@ -163,9 +158,6 @@ public class GalleryActivity
         if (mPresenter.getData() != null) {
             mPagerAdapter.setData(mPresenter.getData());
             mRecyclerAdapter.setData(mPresenter.getData());
-        } else {
-            mPresenter.getDataFromDb();
-            mPresenter.updateData();
         }
     }
 
@@ -194,9 +186,7 @@ public class GalleryActivity
         Timber.d("onNavigationItemClicked with id: %s", id);
         String link = null;
 
-        if (id == R.id.invite) {
-            IntentUtils.firebaseInvite(this);
-        } else if (id == R.id.leaderboard) {
+        if (id == R.id.leaderboard) {
             SubscriptionsActivity.start(this, SubscriptionsActivity.TYPE_LEADERBOARD);
         } else if (id == R.id.about) {
             link = mConstantValues.getAbout();
@@ -224,9 +214,6 @@ public class GalleryActivity
             link = Constants.Urls.OFFLINE;
         } else if (id == R.id.read) {
             link = Constants.Urls.READ;
-        } else if (id == R.id.gallery) {
-            //nothing to do
-            return true;
         } else if (id == R.id.siteSearch) {
             link = Constants.Urls.SEARCH;
         } else if (id == R.id.tagsSearch) {
@@ -254,12 +241,24 @@ public class GalleryActivity
             if (mPagerAdapter.getData().isEmpty()) {
                 return true;
             }
-            mPagerAdapter.downloadImage(GalleryActivity.this, mViewPager.getCurrentItem(),
-                    new SimpleTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) {
+            mPagerAdapter.downloadImage(
+                    GalleryActivity.this,
+                    mViewPager.getCurrentItem(),
+                    new CustomTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) {
                         @Override
-                        public void onResourceReady(final Bitmap resource, final GlideAnimation glideAnimation) {
-                            final String desc = mPagerAdapter.getData().get(mViewPager.getCurrentItem()).getGalleryImageTranslations().get(0).getTranslation();
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                            final String desc = mPagerAdapter
+                                    .getData()
+                                    .get(mViewPager.getCurrentItem())
+                                    .getGalleryImageTranslations()
+                                    .get(0)
+                                    .getTranslation();
                             IntentUtils.shareBitmapWithText(GalleryActivity.this, desc, resource);
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+
                         }
                     }
             );
@@ -268,15 +267,22 @@ public class GalleryActivity
             if (mPagerAdapter.getData().isEmpty()) {
                 return true;
             }
-            mPagerAdapter.downloadImage(GalleryActivity.this, mViewPager.getCurrentItem(),
-                    new SimpleTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) {
+            mPagerAdapter.downloadImage(
+                    GalleryActivity.this,
+                    mViewPager.getCurrentItem(),
+                    new CustomTarget<Bitmap>() {
                         @Override
-                        public void onResourceReady(final Bitmap resource, final GlideAnimation glideAnimation) {
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                             if (StorageUtils.saveImageToGallery(GalleryActivity.this, resource) != null) {
                                 Toast.makeText(GalleryActivity.this, R.string.image_saved, Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(GalleryActivity.this, R.string.image_saving_error, Toast.LENGTH_SHORT).show();
                             }
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+
                         }
                     }
             );
@@ -292,21 +298,6 @@ public class GalleryActivity
         mRecyclerAdapter.setData(data);
 
         mViewPager.setCurrentItem(mCurPosition);
-    }
-
-    @Override
-    public void showCenterProgress(final boolean show) {
-        mProgressContainer.setVisibility(show ? View.VISIBLE : View.GONE);
-    }
-
-    @Override
-    public void showEmptyPlaceholder(final boolean show) {
-        mPlaceHolder.setVisibility(show ? View.VISIBLE : View.GONE);
-    }
-
-    @OnClick(R2.id.refresh)
-    public void onRefreshClicked() {
-        mPresenter.updateData();
     }
 
     @Override

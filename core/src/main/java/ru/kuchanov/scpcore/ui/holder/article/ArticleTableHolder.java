@@ -72,20 +72,20 @@ public class ArticleTableHolder extends RecyclerView.ViewHolder {
         final String textColor = String.format("#%06X", (0xFFFFFF & AttributeGetter.getColor(context, android.R.attr.textColor)));
 
         String fullHtml = "<!DOCTYPE html>\n" +
-                          "<html>\n" +
-                          "    <head>\n" +
-                          "        <meta charset=\"utf-8\">\n" +
-                          "        <meta name=\"viewport\" content=\"width=device-width, user-scalable=yes\" />" +
-                          "        <style>" +
-                          "table.wiki-content-table{border-collapse:collapse;border-spacing:0;margin:.5em auto}" +
-                          "table.wiki-content-table td{border:1px solid " + textColor + ";color: " + textColor + ";padding:.3em .7em;background-color:" + backgroundColor + "}" +
-                          "table.wiki-content-table th{border:1px solid " + textColor + ";color: " + textColor + ";padding:.3em .7em;background-color:" + backgroundColor + "}" +
-                          "</style>\n" +
-                          "    </head>\n" +
-                          "    <body>";
+                "<html>\n" +
+                "    <head>\n" +
+                "        <meta charset=\"utf-8\">\n" +
+                "        <meta name=\"viewport\" content=\"width=device-width, user-scalable=yes\" />" +
+                "        <style>" +
+                "table.wiki-content-table{border-collapse:collapse;border-spacing:0;margin:.5em auto}" +
+                "table.wiki-content-table td{border:1px solid " + textColor + ";color: " + textColor + ";padding:.3em .7em;background-color:" + backgroundColor + "}" +
+                "table.wiki-content-table th{border:1px solid " + textColor + ";color: " + textColor + ";padding:.3em .7em;background-color:" + backgroundColor + "}" +
+                "</style>\n" +
+                "    </head>\n" +
+                "    <body>";
         fullHtml += (String) viewModel.data;
         fullHtml += "</body>\n" +
-                    "</html>";
+                "</html>";
 
         final WebSettings settings = webView.getSettings();
         settings.setMinimumFontSize(18);

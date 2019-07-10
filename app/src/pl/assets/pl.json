@@ -1,214 +1,179 @@
 {
-    "defaultsMap": {
-        "entry": [
-            {
-                "key": "free_apps_install_enabled",
-                "value": true
-            },
-            {
-                "key": "apps_to_install_json",
-                "value": "{            \"items\": [            {            \"id\": \"ru.spb.android.borscha\",            \"name\": \"Борщ\",            \"description\": \"Генератор юмора. Свежие шутки, приколы, гифки, cамый популярный паблик,            журнал.\",            \"imageUrl\":            \"https:\/\/lh3.googleusercontent.com\/q1Xyzne1iSjQbf2YftlO9hprdmJbYAdcYsmxu3tDhlayvzwR0f3798Ov1s3EVkyNWg=w300-rw\"            },            {            \"id\": \"ru.spb.android.palata6\",            \"name\": \"Палата № 6\",            \"description\": \"Радость, грусть, сочувствие, любовь, страх, безразличие, удовольствие и            другие эмоции\",            \"imageUrl\":            \"https:\/\/lh3.googleusercontent.com\/2oXjwIeltn-wSrZ8zQB3aGTFPW-w9ef-y2Yi_EeOTLLrTO6Jg9VtejzwDtM6iKPv3bh2=w300-rw\"            },            {            \"id\": \"ru.dante.scpfoundation.eng\",            \"name\": \"SCP Foundation EN On\/Offline\",            \"description\": \"Англоязычное приложение для англоязычной части Фонда\",            \"imageUrl\":            \"https:\/\/lh3.googleusercontent.com\/IQuXO0zOC1hBS6YUmBo91-G_2WcYPFc2pjIuxTXr_NvbiH-APDSk_rJcbJTijGxwwtcQ=w300-rw\"            },            {            \"id\": \"ru.kuchanov.vjux\",            \"name\": \"Котик Вжух - Кот волшебник Мем\",            \"description\": \"Вжух и ты волшебник, создай свой вжух взмахом руки.\",            \"imageUrl\":            \"https\/\/lh3.googleusercontent.com\/5P7o006Il-iA8e6TjNYvogcObxC0rHj69VljyLd0YvbC6YhvlDCh6BS0jaKmznWbUSk=w300-rw\"            }            ]            }"
-            },
-            {
-                "key": "app_install_reward_in_millis",
-                "value": 86400000
-            },
-            {
-                "key": "free_invites_enabled",
-                "value": false
-            },
-            {
-                "key": "free_vk_groups_enabled",
-                "value": false
-            },
-            {
-                "key": "vk_groups_to_join_json",
-                "value": "{            \"items\": [            {            \"id\": \"599638\",            \"name\": \"SCP Foundation RU\/ENG. Приложение для Android\",            \"description\": \"Официальная группа приложения в ВК. Тут вы найдёте самые последние            новости о развитии приложения, а также разный контент по вселенной SCP\",            \"imageUrl\": \"https:\/\/pp.userapi.com\/c604519\/v604519296\/46aa\/i9Y7zDF_J5M.jpg\"            },            {            \"id\": \"54904072\",            \"name\": \"DeusEX Mohito\",            \"description\": \"Немного юмора, всякое интересное и т.д.\",            \"imageUrl\": \"https:\/\/pp.userapi.com\/c639829\/v639829296\/5462\/Chzn6rgbuL8.jpg\"            }            ]            }"
-            },
-            {
-                "key": "free_vk_groups_join_reward",
-                "value": 86400000
-            },
-            {
-                "key": "free_rewarded_video_enabled",
-                "value": true
-            },
-            {
-                "key": "period_between_interstitial_in_millis",
-                "value": 3600000
-            },
-            {
-                "key": "rewarded_video_cooldown_in_millis",
-                "value": 7200000
-            },
-            {
-                "key": "num_of_intersitial_between_rewarded",
-                "value": 5
-            },
-            {
-                "key": "num_of_sync_attempts_before_call_to_action",
-                "value": 5
-            },
-            {
-                "key": "num_of_gallery_photos_between_intersitial",
-                "value": 20
-            },
-            {
-                "key": "score_multiplier_subscription",
-                "value": 3
-            },
-            {
-                "key": "score_multiplier_vk_group_app",
-                "value": 2
-            },
-            {
-                "key": "score_action_favorite",
-                "value": 1
-            },
-            {
-                "key": "score_action_read",
-                "value": 1
-            },
-            {
-                "key": "score_action_interstitial_shown",
-                "value": 5
-            },
-            {
-                "key": "score_action_vk_group",
-                "value": 50
-            },
-            {
-                "key": "score_action_our_app",
-                "value": 50
-            },
-            {
-                "key": "score_action_rewarded_video",
-                "value": 50
-            },
-            {
-                "key": "score_action_none",
-                "value": 0
-            },
-            {
-                "key": "vk_app_group_id",
-                "value": 599638
-            },
-            {
-                "key": "levels_json",
-                "value": "{            \"levels\": [            {            \"id\": 0,            \"title\": \"Уровень 0 (Для общего пользования)\",            \"score\" : 0            },            {            \"id\": 1,            \"title\": \"Уровень 1 (Для служебного пользования)\",            \"score\" : 1000            },            {            \"id\": 2,            \"title\": \"Уровень 2 (Ограниченное пользование)\",            \"score\" : 2000            },            {            \"id\": 3,            \"title\": \"Уровень 3 (Секретно)\",            \"score\" : 3000            },            {            \"id\": 4,            \"title\": \"Уровень 4 (Совершенно секретно)\",            \"score\" : 6000            },            {            \"id\": 5,            \"title\": \"Уровень 5 (Таумиэль)\",            \"score\" : 10000            }            ]            }"
-            },
-            {
-                "key": "download_all_enabled_for_free",
-                "value": false
-            },
-            {
-                "key": "download_free_articles_limit",
-                "value": 10
-            },
-            {
-                "key": "download_score_per_article",
-                "value": 50
-            },
-            {
-                "key": "gallery_banner_disabled",
-                "value": false
-            },
-            {
-                "key": "main_banner_disabled",
-                "value": true
-            },
-            {
-                "key": "article_banner_disabled",
-                "value": true
-            },
-            {
-                "key": "no_ads_subs_enabled",
-                "value": false
-            },
-            {
-                "key": "app_lang_versions",
-                "value": "{            \"langs\": [            {            \"code\": \"ru\",            \"title\": \"Русский филиал\",            \"package\": \"ru.dante.scpfoundation\",            \"icon\": \"https:\/\/lh3.googleusercontent.com\/nxy_ouZM-1PTsve_PXDI9-CoErm1Q2XRwKML7_967K-eR5TmVlI5RHDUJsc4WhjsLaI=w300-rw\"            },            {            \"code\": \"en\",            \"title\": \"English version\",            \"package\": \"ru.dante.scpfoundation.eng\",            \"icon\": \"https:\/\/lh3.googleusercontent.com\/dIv6quzx1zwwht9xZHje_vjCGx5zO6r0DxwukqiC1g-9_szMkfsEoFzXLpbxLS5hj4Q=w300-rw\"            },            {            \"code\": \"pl\",            \"title\": \"Polska Filia\",            \"package\": \"ru.dante.scpfoundation.pl\",            \"icon\": \"https:\/\/lh3.googleusercontent.com\/rgAVhH8ouKmkn-Ne6dlJayCATeMoXw_205QYeJVa01bWeu1_iXDOvU9HNKenaiDCbQ=w300-rw\"            },            {            \"code\": \"de\",            \"title\": \"SCP Foundation in Deutschland\",            \"package\": \"ru.dante.scpfoundation.de\",            \"icon\": \"https:\/\/lh3.googleusercontent.com\/UkkT3sSskUzUdQsRs2OM8_vRRCxfuF-MfWbft-shvBf3PiqtimhvH6-n0HuxD4Zgzw=w300-rw\"            },            {            \"code\": \"fr\",            \"title\": \"SCP Foundation Branche Francophone\",            \"package\": \"ru.dante.scpfoundation.fr\",            \"icon\": \"https:\/\/lh3.googleusercontent.com\/kyP6zGVcBNgE8bbBBbXzRRsuapeBwkDt2sRkdaMaeveWJyElUbAoNR3h3Q9D_lDNQhQ=w300-rw\"            },            {            \"code\": \"es\",            \"title\": \"Scp Foundation Spanish\",            \"package\": \"ru.dante.scpfoundation.es\",            \"icon\": \"https:\/\/lh3.googleusercontent.com\/l4In7GH-zQq5ExVxFO2NeqbpXUapeRkMAtWLXzwzNdizV2y7n8DGMb_PuKxyRYPygBU=w300-rw\"            },            {            \"code\": \"it\",            \"title\": \"Scp Foundation Italian\",            \"package\": \"ru.dante.scpfoundation.it\",            \"icon\": \"https:\/\/lh3.googleusercontent.com\/KlX_J6DWFxg1ByjraVRRE3KuGBKlzBvMAjTe89oG8AMKO5wUjMFP-FfwECTV-xAnsw=w300-rw\"            }            ]            }"
-            },
-            {
-                "key": "free_auth_enabled",
-                "value": true
-            },
-            {
-                "key": "score_action_auth",
-                "value": 50
-            },
-            {
-                "key": "auth_cooldown_in_millis",
-                "value": 7200000
-            },
-            {
-                "key": "score_action_invite",
-                "value": 100
-            },
-            {
-                "key": "invite_reward_in_millis",
-                "value": 86400000
-            },
-            {
-                "key": "native_ads_lists_interval",
-                "value": 15
-            },
-            {
-                "key": "native_ads_lists_enabled",
-                "value": true
-            },
-            {
-                "key": "native_ads_lists_source",
-                "value": 2
-            },
-            {
-                "key": "native_in_article_enabled",
-                "value": false
-            },
-            {
-                "key": "offer_subs_instead_of_rewarded_video",
-                "value": false
-            },
-            {
-                "key": "offer_trial_for_year",
-                "value": false
-            },
-            {
-                "key": "free_vk_share_app_enabled",
-                "value": false
-            },
-            {
-                "key": "free_vk_share_app_reward",
-                "value": 86400000
-            },
-            {
-                "key": "score_action_vk_share_app",
-                "value": 100
-            },
-            {
-                "key": "ads_scp_art",
-                "value": "{   \"ads\": [     {       \"id\": \"1\",       \"imgUrl\": \"https:\/\/sun9-7.userapi.com\/c840624\/v840624412\/7fa95\/2665G5s1zkk.jpg\"     },     {       \"id\": \"2\",       \"imgUrl\": \"https:\/\/sun9-1.userapi.com\/c840624\/v840624412\/7fa9f\/c4na9MdYI44.jpg\"     },     {       \"id\": \"3\",       \"imgUrl\": \"https:\/\/sun9-1.userapi.com\/c840624\/v840624412\/7faa9\/Rzodx3GnUlA.jpg\"     },     {       \"id\": \"4\",       \"imgUrl\": \"https:\/\/sun9-8.userapi.com\/c840624\/v840624412\/7fab3\/ZOMRJNLo4Es.jpg\"     },     {       \"id\": \"5\",       \"imgUrl\": \"https:\/\/sun9-7.userapi.com\/c840624\/v840624412\/7fabd\/H20kc7VP758.jpg\"     },     {       \"id\": \"6\",       \"imgUrl\": \"https:\/\/sun9-1.userapi.com\/c840624\/v840624412\/7fac7\/avuBb5958L0.jpg\"     },     {       \"id\": \"7\",       \"imgUrl\": \"https:\/\/sun9-1.userapi.com\/c840624\/v840624412\/7fad1\/9mSQkgVCyys.jpg\"     },     {       \"id\": \"8\",       \"imgUrl\": \"https:\/\/sun9-8.userapi.com\/c840624\/v840624412\/7fadb\/mjbQwUzMOpA.jpg\"     }   ] }"
-            },
-            {
-                "key": "ads_scp_art_enabled",
-                "value": false
-            },
-            {
-                "key": "native_ads_lists_source_v2",
-                "value": 1
-            },
-            {
-                "key": "ads_scp_art_v2",
-                "value": "{ \"ads\": [ { \"id\": 0, \"imgUrl\": \"https://i.imgur.com/ogoIvbn.jpg\", \"logoUrl\": \"https://i.imgur.com/9euyUkm.png\", \"title\": \"Идет набор сотрудников класса D\", \"subTitle\": \"Предложение ограниченно. Прием заявок будет проводиться 11-12 августа на стенде SCP Foundation\", \"ctaButtonText\": \"Участвовать\" } ] }"
-            },
-            {
-                "key": "ads_scp_art_v3",
-                "value": "{   \"ads\": [     {       \"id\": 1,       \"imgUrl\": \"https://scpfoundation.app/scp/scp-art/bookShop.jpg\",       \"logoUrl\": \"https://scpfoundation.app/scp/scp-art/scpLogoSite.png\",       \"title\": \"Книги SCP Foundation уже в продаже!\",       \"subTitle\": \"Спрашивайте в книжных магазинах своего города или закажите доставку в любой уголок страны\",       \"ctaButtonText\": \"Подробнее\",       \"redirectUrl\": \"http://artscp.com/promo\"     },     {       \"id\": 2,       \"imgUrl\": \"https://scpfoundation.app/scp/scp-art/vk.jpg\",       \"logoUrl\": \"https://scpfoundation.app/scp/scp-art/scpLogoSite.png\",       \"title\": \"Сообщество SCP Foundation Вконтакте\",       \"subTitle\": \"Официальное сообщество вселенной SCP Foundation.Свежие иллюстрации и новости из мира SCP\",       \"ctaButtonText\": \"Вступить!\",       \"redirectUrl\": \"https://vk.com/artscp\"     },     {       \"id\": 3,       \"imgUrl\": \"https://scpfoundation.app/scp/scp-art/fb.jpg\",       \"logoUrl\": \"https://scpfoundation.app/scp/scp-art/scpLogoSite.png\",       \"title\": \"Сообщество SCP Foundation в Facebook\",       \"subTitle\": \"Официальное сообщество вселенной SCP Foundation.Свежие иллюстрации и новости из мира SCP\",       \"ctaButtonText\": \"Вступить!\",       \"redirectUrl\": \"https://www.facebook.com/artscp.project\"     }   ] }"
-            },
-            {
-                "key": "offer_subs_instead_of_rewarded_video_modificator",
-                "value": 5
-            }
-        ]
-    }
+  "defaultsMap": {
+    "entry": [
+      {
+        "key": "free_vk_groups_enabled",
+        "value": false
+      },
+      {
+        "key": "vk_groups_to_join_json",
+        "value": "{   \"items\": [     {       \"id\": \"599638\",       \"name\": \"SCP Foundation RU/ENG. Приложение для Android\",       \"description\": \"Официальная группа приложения в ВК. Тут вы найдёте самые последние новости о развитии приложения, а также разный контент по вселенной SCP\",       \"imageUrl\": \"https://sun1-89.userapi.com/c604519/v604519296/46aa/i9Y7zDF_J5M.jpg\"     },     {       \"id\": \"29463565\",       \"name\": \"SCP Foundation\",       \"description\": \"Официальное представительство SCP Foundation ВКонтакте.\",       \"imageUrl\": \"https://pp.userapi.com/c11266/g29463565/a_8f7f014e.jpg\"     },     {       \"id\": \"124930073\",       \"name\": \"ЭКСТРАМЕРНЫЙ РАШН ФЕНДОМ ФО SCP\",       \"description\": \"Мемасики и шутейки про Фонд SCP\",       \"imageUrl\": \"https://pp.userapi.com/c852220/v852220342/12d9b9/3kQLAK_81TM.jpg\"     }   ] }"
+      },
+      {
+        "key": "free_vk_groups_join_reward",
+        "value": 86400000
+      },
+      {
+        "key": "free_rewarded_video_enabled",
+        "value": true
+      },
+      {
+        "key": "period_between_interstitial_in_millis",
+        "value": 3600000
+      },
+      {
+        "key": "rewarded_video_cooldown_in_millis",
+        "value": 7200000
+      },
+      {
+        "key": "num_of_intersitial_between_rewarded",
+        "value": 5
+      },
+      {
+        "key": "num_of_sync_attempts_before_call_to_action",
+        "value": 5
+      },
+      {
+        "key": "num_of_gallery_photos_between_intersitial",
+        "value": 20
+      },
+      {
+        "key": "score_multiplier_subscription",
+        "value": 3
+
+      },
+      {
+        "key": "score_multiplier_vk_group_app",
+        "value": 2
+      },
+      {
+        "key": "score_action_favorite",
+        "value": 1
+      },
+      {
+        "key": "score_action_read",
+        "value": 1
+      },
+      {
+        "key": "score_action_interstitial_shown",
+        "value": 5
+      },
+      {
+        "key": "score_action_vk_group",
+        "value": 50
+      },
+      {
+        "key": "score_action_rewarded_video",
+        "value": 50
+      },
+      {
+        "key": "score_action_none",
+        "value": 0
+      },
+      {
+        "key": "vk_app_group_id",
+        "value": 599638
+      },
+      {
+        "key": "levels_json",
+        "value": "{            \"levels\": [            {            \"id\": 0,            \"title\": \"Уровень 0 (Для общего пользования)\",            \"score\" : 0            },            {            \"id\": 1,            \"title\": \"Уровень 1 (Для служебного пользования)\",            \"score\" : 1000            },            {            \"id\": 2,            \"title\": \"Уровень 2 (Ограниченное пользование)\",            \"score\" : 2000            },            {            \"id\": 3,            \"title\": \"Уровень 3 (Секретно)\",            \"score\" : 3000            },            {            \"id\": 4,            \"title\": \"Уровень 4 (Совершенно секретно)\",            \"score\" : 6000            },            {            \"id\": 5,            \"title\": \"Уровень 5 (Таумиэль)\",            \"score\" : 10000            }            ]            }"
+      },
+      {
+        "key": "download_all_enabled_for_free",
+        "value": false
+      },
+      {
+        "key": "download_free_articles_limit",
+        "value": 10
+      },
+      {
+        "key": "download_score_per_article",
+        "value": 50
+      },
+      {
+        "key": "gallery_banner_disabled",
+        "value": false
+      },
+      {
+        "key": "main_banner_disabled",
+        "value": true
+      },
+      {
+        "key": "article_banner_disabled",
+        "value": true
+      },
+      {
+        "key": "no_ads_subs_enabled",
+        "value": false
+      },
+      {
+        "key": "app_lang_versions",
+        "value": "{            \"langs\": [            {            \"code\": \"ru\",            \"title\": \"Русский филиал\",            \"package\": \"ru.dante.scpfoundation\",            \"icon\": \"https:\/\/lh3.googleusercontent.com\/nxy_ouZM-1PTsve_PXDI9-CoErm1Q2XRwKML7_967K-eR5TmVlI5RHDUJsc4WhjsLaI=w300-rw\"            },            {            \"code\": \"en\",            \"title\": \"English version\",            \"package\": \"ru.dante.scpfoundation.eng\",            \"icon\": \"https:\/\/lh3.googleusercontent.com\/dIv6quzx1zwwht9xZHje_vjCGx5zO6r0DxwukqiC1g-9_szMkfsEoFzXLpbxLS5hj4Q=w300-rw\"            },            {            \"code\": \"pl\",            \"title\": \"Polska Filia\",            \"package\": \"ru.dante.scpfoundation.pl\",            \"icon\": \"https:\/\/lh3.googleusercontent.com\/rgAVhH8ouKmkn-Ne6dlJayCATeMoXw_205QYeJVa01bWeu1_iXDOvU9HNKenaiDCbQ=w300-rw\"            },            {            \"code\": \"de\",            \"title\": \"SCP Foundation in Deutschland\",            \"package\": \"ru.dante.scpfoundation.de\",            \"icon\": \"https:\/\/lh3.googleusercontent.com\/UkkT3sSskUzUdQsRs2OM8_vRRCxfuF-MfWbft-shvBf3PiqtimhvH6-n0HuxD4Zgzw=w300-rw\"            },            {            \"code\": \"fr\",            \"title\": \"SCP Foundation Branche Francophone\",            \"package\": \"ru.dante.scpfoundation.fr\",            \"icon\": \"https:\/\/lh3.googleusercontent.com\/kyP6zGVcBNgE8bbBBbXzRRsuapeBwkDt2sRkdaMaeveWJyElUbAoNR3h3Q9D_lDNQhQ=w300-rw\"            },            {            \"code\": \"es\",            \"title\": \"Scp Foundation Spanish\",            \"package\": \"ru.dante.scpfoundation.es\",            \"icon\": \"https:\/\/lh3.googleusercontent.com\/l4In7GH-zQq5ExVxFO2NeqbpXUapeRkMAtWLXzwzNdizV2y7n8DGMb_PuKxyRYPygBU=w300-rw\"            },            {            \"code\": \"it\",            \"title\": \"Scp Foundation Italian\",            \"package\": \"ru.dante.scpfoundation.it\",            \"icon\": \"https:\/\/lh3.googleusercontent.com\/KlX_J6DWFxg1ByjraVRRE3KuGBKlzBvMAjTe89oG8AMKO5wUjMFP-FfwECTV-xAnsw=w300-rw\"            }            ]            }"
+      },
+      {
+        "key": "free_auth_enabled",
+        "value": true
+      },
+      {
+        "key": "score_action_auth",
+        "value": 50
+      },
+      {
+        "key": "auth_cooldown_in_millis",
+        "value": 7200000
+      },
+      {
+        "key": "native_ads_lists_interval",
+        "value": 15
+      },
+      {
+        "key": "native_ads_lists_enabled",
+        "value": true
+      },
+      {
+        "key": "native_ads_lists_source",
+        "value": 2
+      },
+      {
+        "key": "native_in_article_enabled",
+        "value": false
+      },
+      {
+        "key": "offer_subs_instead_of_rewarded_video",
+        "value": false
+      },
+      {
+        "key": "offer_trial_for_year",
+        "value": false
+      },
+      {
+        "key": "free_vk_share_app_enabled",
+        "value": false
+      },
+      {
+        "key": "free_vk_share_app_reward",
+        "value": 86400000
+      },
+      {
+        "key": "score_action_vk_share_app",
+        "value": 100
+      },
+      {
+        "key": "native_ads_lists_source_v2",
+        "value": 1
+      },
+      {
+        "key": "offer_subs_instead_of_rewarded_video_modificator",
+        "value": 5
+      },
+      {
+        "key": "images_enabled",
+        "value": false
+      },
+      {
+        "key": "common_ads_source",
+        "value": "MOPUB"
+      }
+    ]
+  }
 }

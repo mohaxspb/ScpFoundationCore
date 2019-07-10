@@ -23,9 +23,9 @@ import ru.kuchanov.scpcore.api.ParseHtmlUtils;
 import ru.kuchanov.scpcore.controller.adapter.viewmodel.MyListItem;
 import ru.kuchanov.scpcore.db.model.Article;
 import ru.kuchanov.scpcore.db.model.ArticleTag;
-import ru.kuchanov.scpcore.db.model.MyNativeBanner;
 import ru.kuchanov.scpcore.db.model.RealmString;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.mopub.MopubNativeManager;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleImageHolder;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleSpoilerHolder;
 import ru.kuchanov.scpcore.ui.holder.article.ArticleTableHolder;
@@ -43,11 +43,6 @@ import timber.log.Timber;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_INTERVAL;
 import static ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter.createAdsModelsList;
 
-/**
- * Created by Dante on 17.01.2016.
- * <p>
- * for scp_ru
- */
 public class ArticleAdapter
         extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements ArticleSpoilerHolder.SpoilerClickListener, ArticleTabsHolder.MyTabClickListener {
@@ -67,14 +62,15 @@ public class ArticleAdapter
 
     private static final int TYPE_TABS = 6;
 
-    private static final int TYPE_NATIVE_APPODEAL = 7;
+    private static final int TYPE_NATIVE_MOPUB = 7;
 
     private static final int TYPE_NATIVE_SCP_QUIZ = 9;
 
-    private static final int TYPE_NATIVE_SCP_ART = 10;
-
     @Inject
     MyPreferenceManager mMyPreferenceManager;
+
+    @Inject
+    MopubNativeManager mopubNativeManager;
 
     private final List<MyListItem> mAdsModelsList = new ArrayList<>();
 
@@ -114,6 +110,11 @@ public class ArticleAdapter
 
         final List<String> articlesTextParts = new ArrayList<>(RealmString.toStringList(article.textParts));
         final @ParseHtmlUtils.TextType List<String> articlesTextPartsTypes = new ArrayList<>(RealmString.toStringList(article.textPartsTypes));
+
+//        Timber.d("articlesTextPartsTypes: %s", articlesTextPartsTypes);
+//        for (String text: articlesTextParts){
+//            Timber.d("articlesTextParts: %s", text);
+//        }
 
         articlesTextParts.add(0, article.title);
         articlesTextPartsTypes.add(0, ParseHtmlUtils.TextType.TITLE);
@@ -264,7 +265,7 @@ public class ArticleAdapter
             return;
         }
         if (mAdsModelsList.isEmpty()) {
-            mAdsModelsList.addAll(createAdsModelsList(true, mMyPreferenceManager));
+            mAdsModelsList.addAll(createAdsModelsList(true, mopubNativeManager));
         }
 
         // Loop through the items array and place a new Native Express ad in every ith position in
@@ -275,6 +276,18 @@ public class ArticleAdapter
             if (i == 0) {
                 continue;
             } else if (i / interval > Constants.NUM_OF_NATIVE_ADS_PER_SCREEN) {
+                break;
+            }
+
+            Timber.d(
+                    "mArticlesAndAds/mAdsModelsList/i/interval/(i / interval) - 1: %s/%s/%s/%s/%s",
+                    mViewModels.size(),
+                    mAdsModelsList.size(),
+                    i,
+                    interval,
+                    (i / interval) - 1
+            );
+            if (mViewModels.isEmpty() || mAdsModelsList.isEmpty() || i < 0) {
                 break;
             }
 
@@ -300,12 +313,10 @@ public class ArticleAdapter
                 return TYPE_TAGS;
             case ParseHtmlUtils.TextType.TABS:
                 return TYPE_TABS;
-            case ParseHtmlUtils.TextType.NATIVE_ADS_APPODEAL:
-                return TYPE_NATIVE_APPODEAL;
+            case ParseHtmlUtils.TextType.NATIVE_ADS_MOPUB:
+                return TYPE_NATIVE_MOPUB;
             case ParseHtmlUtils.TextType.NATIVE_ADS_SCP_QUIZ:
                 return TYPE_NATIVE_SCP_QUIZ;
-            case ParseHtmlUtils.TextType.NATIVE_ADS_ART:
-                return TYPE_NATIVE_SCP_ART;
             default:
                 throw new IllegalArgumentException("unexpected type: " + type);
         }
@@ -337,8 +348,7 @@ public class ArticleAdapter
             case TYPE_TABS:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_tabs, parent, false);
                 return new ArticleTabsHolder(view, this);
-            case TYPE_NATIVE_SCP_ART:
-            case TYPE_NATIVE_APPODEAL:
+            case TYPE_NATIVE_MOPUB:
             case TYPE_NATIVE_SCP_QUIZ:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_article_native_container, parent, false);
                 return new NativeAdsArticleListHolder(view, mTextItemsClickListener);
@@ -373,15 +383,11 @@ public class ArticleAdapter
             case TYPE_TABS:
                 ((ArticleTabsHolder) holder).bind((TabsViewModel) textPartViewModel.data);
                 break;
-            case TYPE_NATIVE_APPODEAL: {
+            case TYPE_NATIVE_MOPUB:
                 ((NativeAdsArticleListHolder) holder).bind((Integer) textPartViewModel.data);
-            }
-            break;
+                break;
             case TYPE_NATIVE_SCP_QUIZ:
                 ((NativeAdsArticleListHolder) holder).bind();
-                break;
-            case TYPE_NATIVE_SCP_ART:
-                ((NativeAdsArticleListHolder) holder).bind((MyNativeBanner) textPartViewModel.data);
                 break;
             default:
                 throw new IllegalArgumentException("unexpected item type: " + getItemViewType(position));

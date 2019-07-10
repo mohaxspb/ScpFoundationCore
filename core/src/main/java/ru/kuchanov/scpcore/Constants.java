@@ -5,8 +5,6 @@ import android.support.annotation.StringRes;
 
 /**
  * Created by mohax on 03.01.2017.
- * <p>
- * for scp_ru
  */
 public interface Constants {
 
@@ -18,7 +16,9 @@ public interface Constants {
     int LEVEL_UP_SCORE_TO_ADD = 10000;
 
     enum NativeAdsSource {
-        ALL, APPODEAL, SCP_QUIZ, ART
+        ALL,
+        SCP_QUIZ,
+        MOPUB
     }
 
     interface Api {
@@ -31,7 +31,9 @@ public interface Constants {
          */
         String SEARCH_URL = "/search:site/a/p/q/%1$s/p/%2$s";
         //        String RANDOM_PAGE_SCRIPT_URL = "https://node.scpfoundation.net/wikidot_random_page";
-        String RANDOM_PAGE_SCRIPT_URL = "https://scpdb.org/api/wikidot_random_page";
+//        String RANDOM_PAGE_SCRIPT_URL = "https://scpdb.org/api/wikidot_random_page";
+        String RANDOM_PAGE_SCRIPT_URL = "http://wikidot.scpdb.org/wikidot_random_page";
+
 
         int NUM_OF_ARTICLES_ON_RECENT_PAGE = 30;
         int NUM_OF_ARTICLES_ON_RATED_PAGE = 20;
@@ -45,8 +47,7 @@ public interface Constants {
         String NOT_TRANSLATED_ARTICLE_URL_DELIMITER = "___";
 
         interface ScpReader {
-            public static final String GRANT_TYPE_PASSWORD = "password";
-            public static final String GRANT_TYPE_REFRESH_TOKEN = "refresh_token";
+            String GRANT_TYPE_REFRESH_TOKEN = "refresh_token";
         }
     }
 
@@ -60,7 +61,6 @@ public interface Constants {
         String OBJECTS_2 = "http://scpfoundation.ru/scp-list-2";
         String OBJECTS_3 = "http://scpfoundation.ru/scp-list-3";
         String OBJECTS_4 = "http://scpfoundation.ru/scp-list-4";
-        //fixme insert correct url.
         String OBJECTS_5 = "http://scpfoundation.ru/scp-list-5";
         String OBJECTS_RU = "http://scpfoundation.ru/scp-list-ru";
 
@@ -85,11 +85,11 @@ public interface Constants {
         String[] ALL_LINKS_ARRAY = {MAIN, RATE, NEW_ARTICLES, EXPERIMENTS, INCEDENTS, INTERVIEWS, OTHERS, STORIES, LEAKS, OBJECTS_1, OBJECTS_2, OBJECTS_3, OBJECTS_RU, NEWS};
         String BASE_API_URL = "http://scpfoundation.ru";
         String SCP_QUIZ_MARKET_URL = "https://play.google.com/store/apps/details?id=ru.kuchanov.scpquiz&utm_source=scpReader&utm_medium=nativeAds&utm_campaign=%1$s";
+
+        String LANDING_PAGE = "https://scpfoundation.app";
     }
 
     interface Firebase {
-
-        int INVITE_CTA_MAX_LENGTH = 20;
 
         enum CallToActionReason {
             REMOVE_ADS,
@@ -127,7 +127,6 @@ public interface Constants {
 
         interface PushDataKeys {
 
-            String INVITE_ID = "inviteId";
             String TITLE = "title";
             String MESSAGE = "message";
             String URL = "url";
@@ -140,9 +139,7 @@ public interface Constants {
             String ARTICLES = "articles";
             String SCORE = "score";
             String VK_GROUPS = "vkGroups";
-            String APPS = "apps";
             String INAPP = "inapp";
-            String CRACKED = "cracked";
             String SOCIAL_PROVIDER = "socialProviders";
             String SIGN_IN_REWARD_GAINED = "signInRewardGained";
         }
@@ -154,29 +151,24 @@ public interface Constants {
             String PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS = "period_between_interstitial_in_millis";
             String NUM_OF_INTERSITIAL_BETWEEN_REWARDED = "num_of_intersitial_between_rewarded";
             String NUM_OF_SYNC_ATTEMPTS_BEFORE_CALL_TO_ACTION = "num_of_sync_attempts_before_call_to_action";
+            String COMMON_ADS_SOURCE = "common_ads_source";
             //enabled options
-            String FREE_INVITES_ENABLED = "free_invites_enabled";
-            String FREE_APPS_INSTALL_ENABLED = "free_apps_install_enabled";
             String FREE_REWARDED_VIDEO_ENABLED = "free_rewarded_video_enabled";
             String FREE_VK_GROUPS_ENABLED = "free_vk_groups_enabled";
             String FREE_VK_SHARE_APP_ENABLED = "free_vk_share_app_enabled";
             String FREE_AUTH_ENABLED = "free_auth_enabled";
             //actions variants
-            String APPS_TO_INSTALL_JSON = "apps_to_install_json";
             String VK_GROUPS_TO_JOIN_JSON = "vk_groups_to_join_json";
             //disable ads
-            String APP_INSTALL_REWARD_IN_MILLIS = "app_install_reward_in_millis";
             String FREE_VK_GROUPS_JOIN_REWARD = "free_vk_groups_join_reward";
             String FREE_VK_SHARE_APP_REWARD = "free_vk_share_app_reward";
             String REWARDED_VIDEO_COOLDOWN_IN_MILLIS = "rewarded_video_cooldown_in_millis";
             String AUTH_COOLDOWN_IN_MILLIS = "auth_cooldown_in_millis";
-            String INVITE_REWARD_IN_MILLIS = "invite_reward_in_millis";
             //native ads
             String NATIVE_ADS_LISTS_ENABLED = "native_ads_lists_enabled";
             String NATIVE_IN_ARTICLE_ENABLED = "native_in_article_enabled";
             String NATIVE_ADS_LISTS_INTERVAL = "native_ads_lists_interval";
             String NATIVE_ADS_LISTS_SOURCE_V2 = "native_ads_lists_source_v2";
-            String ADS_SCP_ART_ENABLED = "ads_scp_art_enabled";
             //banners
             String GALLERY_BANNER_DISABLED = "gallery_banner_disabled";
             String MAIN_BANNER_DISABLED = "main_banner_disabled";
@@ -191,10 +183,8 @@ public interface Constants {
             String SCORE_ACTION_INTERSTITIAL_SHOWN = "score_action_interstitial_shown";
             String SCORE_ACTION_VK_GROUP = "score_action_vk_group";
             String SCORE_ACTION_VK_SHARE_APP = "score_action_vk_share_app";
-            String SCORE_ACTION_OUR_APP = "score_action_our_app";
             String SCORE_ACTION_REWARDED_VIDEO = "score_action_rewarded_video";
             String SCORE_ACTION_AUTH = "score_action_auth";
-            String SCORE_ACTION_INVITE = "score_action_invite";
             String SCORE_ACTION_NONE = "score_action_none";
             String LEVELS_JSON = "levels_json";
             //downloads
@@ -207,24 +197,23 @@ public interface Constants {
             String APP_LANG_VERSIONS = "app_lang_versions";
             String OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO_MODIFICATOR = "offer_subs_instead_of_rewarded_video_modificator";
             String OFFER_TRIAL_FOR_YEAR = "offer_trial_for_year";
+
+            //misc
+            String IMAGES_ENABLED = "images_enabled";
+
             long CACHE_EXPIRATION_SECONDS = 20000;
         }
 
-        int REQUEST_INVITE = 1024;
-
-        interface Analitics {
+        interface Analytics {
 
             interface EventName {
 
                 String FREE_TRIAL_OFFER_SHOWN = "FREE_TRIAL_OFFER_SHOWN";
-                String INVITE_SENT = "INVITE_SENT";
-                String INVITE_RECEIVED = "INVITE_RECEIVED";
                 String SUBSCRIPTIONS_SHOWN = "SUBSCRIPTIONS_SHOWN";
                 String MASS_DOWNLOAD = "MASS_DOWNLOAD";
                 String VK_GROUP_JOINED = "VK_GROUP_JOINED";
-                String APP_INSTALLED = "APP_INSTALLED";
                 String VK_APP_SHARED = "VK_APP_SHARED";
-                String SCP_ART_CLICKED = "SCP_ART_CLICKED";
+                String SCP_NATIVE_CLICKED = "SCP_NATIVE_CLICKED";
                 String SCP_QUIZ_CLICKED = "SCP_QUIZ_CLICKED";
             }
 
@@ -264,7 +253,6 @@ public interface Constants {
 
             interface UserPropertyKey {
 
-                String INVITED = "INVITED";
                 String SUBSCRIBED = "SUBSCRIBED";
             }
         }
@@ -272,6 +260,8 @@ public interface Constants {
         interface PushTopics {
 
             String MAIN = "main";
+
+            String TEST = "test";
         }
     }
 }

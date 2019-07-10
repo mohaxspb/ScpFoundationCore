@@ -2,6 +2,8 @@ package ru.kuchanov.scpcore.ui.holder.article;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -12,9 +14,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
@@ -117,110 +118,173 @@ public class ArticleImageHolder extends RecyclerView.ViewHolder {
             mSetTextViewHTML.setText(titleTextView, title, mTextItemsClickListener);
         }
 
-        progressCenter.setVisibility(View.VISIBLE);
-        if (!TextUtils.isEmpty(imageUrl) && imageUrl.endsWith("gif")) {
-            Glide.with(context)
-                    .load(imageUrl)
-                    .asGif()
-                    .error(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
-                    .fitCenter()
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .listener(new RequestListener<String, GifDrawable>() {
-                        @Override
-                        public boolean onException(
-                                final Exception e,
-                                final String model,
-                                final Target<GifDrawable> target,
-                                final boolean isFirstResource
-                        ) {
-                            Timber.e(e, "error while download image by glide");
-                            progressCenter.setVisibility(View.GONE);
-                            return false;
-                        }
+        if (mMyPreferenceManager.imagesEnabled()) {
+            progressCenter.setVisibility(View.VISIBLE);
+            if (!TextUtils.isEmpty(imageUrl) && imageUrl.endsWith("gif")) {
+                Glide.with(context)
+                        .load(imageUrl)
+//                        .asGif()
+                        .error(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
+                        .fitCenter()
+//                        .crossFade()
+//                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                Timber.e(e, "error while download image by glide");
+                                progressCenter.setVisibility(View.GONE);
+                                return false;
+                            }
 
-                        @Override
-                        public boolean onResourceReady(
-                                final GifDrawable resource,
-                                final String model,
-                                final Target<GifDrawable> target,
-                                final boolean isFromMemoryCache,
-                                final boolean isFirstResource
-                        ) {
-                            int width = resource.getIntrinsicWidth();
-                            int height = resource.getIntrinsicHeight();
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                int width = resource.getIntrinsicWidth();
+                                int height = resource.getIntrinsicHeight();
 
-                            final float multiplier = (float) width / height;
+                                final float multiplier = (float) width / height;
 
-                            width = imageView.getMeasuredWidth();
+                                width = imageView.getMeasuredWidth();
 
-                            height = (int) (width / multiplier);
+                                height = (int) (width / multiplier);
 
-                            imageView.getLayoutParams().width = width;
-                            imageView.getLayoutParams().height = height;
+                                imageView.getLayoutParams().width = width;
+                                imageView.getLayoutParams().height = height;
 
-                            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
-                            imageView.setOnClickListener(v -> mTextItemsClickListener.onImageClicked(imageUrl, title));
+                                imageView.setOnClickListener(v -> mTextItemsClickListener.onImageClicked(imageUrl, title));
 
-                            progressCenter.setVisibility(View.GONE);
-                            return false;
-                        }
-                    })
-                    .into(imageView);
-        } else {
-            //search for saved file
-            File file = null;
-            if (!TextUtils.isEmpty(imageUrl)) {
-                file = new File(context.getFilesDir(), "/image/" + ApiClient.formatUrlToFileName(imageUrl));
+                                progressCenter.setVisibility(View.GONE);
+                                return false;
+                            }
+                        })
+//                        .listener(new RequestListener<String, GifDrawable>() {
+//                            @Override
+//                            public boolean onException(
+//                                    final Exception e,
+//                                    final String model,
+//                                    final Target<GifDrawable> target,
+//                                    final boolean isFirstResource
+//                            ) {
+//                                Timber.e(e, "error while download image by glide");
+//                                progressCenter.setVisibility(View.GONE);
+//                                return false;
+//                            }
+//
+//                            @Override
+//                            public boolean onResourceReady(
+//                                    final GifDrawable resource,
+//                                    final String model,
+//                                    final Target<GifDrawable> target,
+//                                    final boolean isFromMemoryCache,
+//                                    final boolean isFirstResource
+//                            ) {
+//                                int width = resource.getIntrinsicWidth();
+//                                int height = resource.getIntrinsicHeight();
+//
+//                                final float multiplier = (float) width / height;
+//
+//                                width = imageView.getMeasuredWidth();
+//
+//                                height = (int) (width / multiplier);
+//
+//                                imageView.getLayoutParams().width = width;
+//                                imageView.getLayoutParams().height = height;
+//
+//                                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+//
+//                                imageView.setOnClickListener(v -> mTextItemsClickListener.onImageClicked(imageUrl, title));
+//
+//                                progressCenter.setVisibility(View.GONE);
+//                                return false;
+//                            }
+//                        })
+                        .into(imageView);
+            } else {
+                //search for saved file
+                File file = null;
+                if (!TextUtils.isEmpty(imageUrl)) {
+                    file = new File(context.getFilesDir(), "/image/" + ApiClient.formatUrlToFileName(imageUrl));
+                }
+                Glide.with(context)
+                        .load(file != null && file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
+                        .error(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
+                        .fitCenter()
+//                        .crossFade()
+//                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                Timber.e(e, "error while download image by glide");
+                                progressCenter.setVisibility(View.GONE);
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                int width = resource.getIntrinsicWidth();
+                                int height = resource.getIntrinsicHeight();
+
+                                final float multiplier = (float) width / height;
+
+                                width = imageView.getMeasuredWidth();
+
+                                height = (int) (width / multiplier);
+
+                                imageView.getLayoutParams().width = width;
+                                imageView.getLayoutParams().height = height;
+
+                                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
+                                imageView.setOnClickListener(v -> mTextItemsClickListener.onImageClicked(imageUrl, title));
+                                progressCenter.setVisibility(View.GONE);
+                                return false;
+                            }
+                        })
+//                        .listener(new RequestListener<String, GlideDrawable>() {
+//                            @Override
+//                            public boolean onException(
+//                                    final Exception e,
+//                                    final String model,
+//                                    final Target<GlideDrawable> target,
+//                                    final boolean isFirstResource
+//                            ) {
+//                                Timber.e(e, "error while download image by glide");
+//                                progressCenter.setVisibility(View.GONE);
+//                                return false;
+//                            }
+//
+//                            @Override
+//                            public boolean onResourceReady(
+//                                    final GlideDrawable resource,
+//                                    final String model,
+//                                    final Target<GlideDrawable> target,
+//                                    final boolean isFromMemoryCache,
+//                                    final boolean isFirstResource
+//                            ) {
+//                                int width = resource.getIntrinsicWidth();
+//                                int height = resource.getIntrinsicHeight();
+//
+//                                final float multiplier = (float) width / height;
+//
+//                                width = imageView.getMeasuredWidth();
+//
+//                                height = (int) (width / multiplier);
+//
+//                                imageView.getLayoutParams().width = width;
+//                                imageView.getLayoutParams().height = height;
+//
+//                                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+//
+//                                imageView.setOnClickListener(v -> mTextItemsClickListener.onImageClicked(imageUrl, title));
+//                                progressCenter.setVisibility(View.GONE);
+//                                return false;
+//                            }
+//                        })
+                        .into(imageView);
             }
-            Glide.with(context)
-                    .load(file != null && file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
-                    .error(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
-                    .fitCenter()
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .listener(new RequestListener<String, GlideDrawable>() {
-                        @Override
-                        public boolean onException(
-                                final Exception e,
-                                final String model,
-                                final Target<GlideDrawable> target,
-                                final boolean isFirstResource
-                        ) {
-                            Timber.e(e, "error while download image by glide");
-                            progressCenter.setVisibility(View.GONE);
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(
-                                final GlideDrawable resource,
-                                final String model,
-                                final Target<GlideDrawable> target,
-                                final boolean isFromMemoryCache,
-                                final boolean isFirstResource
-                        ) {
-                            int width = resource.getIntrinsicWidth();
-                            int height = resource.getIntrinsicHeight();
-
-                            final float multiplier = (float) width / height;
-
-                            width = imageView.getMeasuredWidth();
-
-                            height = (int) (width / multiplier);
-
-                            imageView.getLayoutParams().width = width;
-                            imageView.getLayoutParams().height = height;
-
-                            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-
-                            imageView.setOnClickListener(v -> mTextItemsClickListener.onImageClicked(imageUrl, title));
-                            progressCenter.setVisibility(View.GONE);
-                            return false;
-                        }
-                    })
-                    .into(imageView);
+        } else {
+            imageView.setImageResource(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage));
         }
     }
 }

@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 //kotlin
-apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 //realm
 apply plugin: 'realm-android'
@@ -32,12 +32,12 @@ android {
         exclude 'META-INF/LICENSE'
     }
 
-    flavorDimensions "mode"
+    flavorDimensions "mode", "chanel"
 
     def buildDateTime = project.hasProperty('devBuild') ? 100 : buildVersionCodeFor3Numbers()
 
     defaultConfig {
-        minSdkVersion 17
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode buildDateTime
         versionName version
@@ -52,7 +52,7 @@ android {
         buildConfigField('int', 'TIMEOUT_SECONDS_READ', '60')
         buildConfigField('int', 'TIMEOUT_SECONDS_WRITE', '60')
 
-        buildConfigField('String', 'SCP_API_URL', '"https://scpdb.org/"')
+        buildConfigField('String', 'SCP_API_URL', '"https://wikidot.scpdb.org/"')
 
         //fixme delete it
         buildConfigField('String', 'EN_SCP_API_URL', '"http://home.helenbot.com/"')
@@ -95,6 +95,18 @@ android {
             resConfigs("ru", "xxhdpi")
         }
 
+        gp {
+            dimension "chanel"
+            //todo
+
+        }
+
+        amazon {
+            dimension "chanel"
+            //todo
+
+        }
+
         libraryVariants.all { variant ->
             println("variantCore: " + variant.getName())
 
@@ -110,13 +122,21 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
     }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+        freeCompilerArgs = ['-Xjvm-default=compatibility']
+    }
+
     dependencies {
         String supportLibraryVersion = '28.0.0'
 
-        api fileTree(dir: 'libs', include: ['*.jar'])
+//        api fileTree(dir: 'libs', include: ['*.jar'])
+        amazonApi fileTree(dir: 'libs/amazon/inAppPurchase', include: ['*.jar'])
+//        api fileTree(dir: 'libs/amazon/inAppPurchase', include: ['*.jar'])
         //kotlin
         api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
         //support libs
@@ -133,6 +153,7 @@ android {
         api 'io.reactivex:rxandroid:1.2.1'
         api 'io.reactivex:rxjava:1.3.8'
         api 'io.reactivex:rxkotlin:1.0.0'
+        api 'com.jakewharton.rxrelay:rxrelay:1.2.0'
         //Retrofit
         api('com.squareup.retrofit2:retrofit:2.4.0') { exclude module: 'okhttp' }
         api 'com.squareup.okhttp3:okhttp:3.12.0'
@@ -154,7 +175,7 @@ android {
         }
         kapt "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
         //image
-        api 'com.github.bumptech.glide:glide:3.8.0'
+        api 'com.github.bumptech.glide:glide:4.9.0'
         api 'com.github.chrisbanes:PhotoView:2.1.4'
         api 'de.hdodenhof:circleimageview:2.2.0'
         //mvp
@@ -166,47 +187,25 @@ android {
         //vk
         api 'com.vk:androidsdk:1.6.9'
         //facebook
-        api 'com.facebook.android:facebook-core:4.38.1'
-        api 'com.facebook.android:facebook-login:4.38.1'
+        api 'com.facebook.android:facebook-core:5.1.1'
+        api 'com.facebook.android:facebook-login:5.1.1'
         //firebase
         //WARNNING!!! There are bug with version update suggestions for firebase libs!
         //some versions are not yet released and failed to load.
         //check https://firebase.google.com/support/release-notes/android before update
         //to find latest versions! Also they can use `androidx` dependencies, which may cause conflicts!
-        api 'com.google.firebase:firebase-core:16.0.6'
-        api 'com.google.firebase:firebase-invites:16.0.6'
-        api 'com.google.firebase:firebase-analytics:16.0.6'
-        api 'com.google.firebase:firebase-database:16.0.5'
-        api 'com.google.firebase:firebase-config:16.1.3'
-        api 'com.google.firebase:firebase-ads:17.1.2'
-        api 'com.google.firebase:firebase-auth:16.1.0'
-        api 'com.google.firebase:firebase-messaging:17.3.4'
+        api 'com.google.firebase:firebase-core:16.0.8'
+        api 'com.google.firebase:firebase-analytics:16.4.0'
+        api 'com.google.firebase:firebase-database:16.1.0'
+        api 'com.google.firebase:firebase-config:16.5.0'
+        api 'com.google.firebase:firebase-ads:17.2.0'
+        api 'com.google.firebase:firebase-auth:16.2.1'
+        api 'com.google.firebase:firebase-messaging:17.6.0'
         //google login
         api 'com.google.android.gms:play-services-auth:16.0.1'
 
-        //appodeal
-        implementation 'com.squareup.picasso:picasso:2.5.2' //for Inmobi
-        implementation name: 'adcolony-3.3.4', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-alphab', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-common', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-interstitial', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-interstitialvideo', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-mvdownloads', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-mvjscommon', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-mvnative', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-nativeex', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-playercommon', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-reward', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-videocommon', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-videofeeds', ext: 'aar'
-        implementation name: 'mobvista-8.11.3-videojs', ext: 'aar'
-        implementation name: 'ogury-3.0.13', ext: 'aar'
-        //end of appodeal
         //AppMetrica
-        //we add it here and delete jar from appodeal
-        api 'com.yandex.android:mobmetricalib:3.2.2'
-        // Optional. Play Install Referrer library for better attribution.
-        implementation 'com.android.installreferrer:installreferrer:1.0'
+        api 'com.yandex.android:mobmetricalib:3.6.4'
         //recyclerView fast scroller
         api 'xyz.danoz:recyclerviewfastscroller:0.1.3'
         //circular progress
@@ -226,6 +225,23 @@ android {
 
         //new crash reporting
         api('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') { transitive = true }
+
+        //mopub ads sdk
+        // For banners
+        api('com.mopub:mopub-sdk-banner:+@aar') {
+            transitive = true
+        }
+
+        // For rewarded videos. This will automatically also include interstitials
+        api('com.mopub:mopub-sdk-rewardedvideo:5.7.1@aar') {
+            transitive = true
+        }
+
+        // For native video. This will automatically also include native static
+        api('com.mopub:mopub-sdk-native-video:5.7.1@aar') {
+            transitive = true
+        }
+        //mopub ads END
 
         //sub project modules
         api('ru.kuchanov.utils:rate:1.2.1@aar') { transitive = true }

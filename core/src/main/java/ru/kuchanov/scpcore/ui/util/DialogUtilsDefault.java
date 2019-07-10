@@ -1,9 +1,9 @@
 package ru.kuchanov.scpcore.ui.util;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-
 import android.content.Context;
 import android.os.Bundle;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,8 +71,8 @@ public class DialogUtilsDefault extends ru.kuchanov.scpcore.downloads.DialogUtil
     @Override
     protected void onIncreaseLimitClick(final Context context) {
         final Bundle bundle = new Bundle();
-        bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.StartScreen.DOWNLOAD_DIALOG);
-        FirebaseAnalytics.getInstance(context).logEvent(Constants.Firebase.Analitics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
+        bundle.putString(Constants.Firebase.Analytics.EventParam.PLACE, Constants.Firebase.Analytics.StartScreen.DOWNLOAD_DIALOG);
+        FirebaseAnalytics.getInstance(context).logEvent(Constants.Firebase.Analytics.EventName.SUBSCRIPTIONS_SHOWN, bundle);
 
         SubscriptionsActivity.start(context);
     }
@@ -83,23 +83,23 @@ public class DialogUtilsDefault extends ru.kuchanov.scpcore.downloads.DialogUtil
 
         final Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, type.name);
-        FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(Constants.Firebase.Analitics.EventName.MASS_DOWNLOAD, bundle);
+        FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(Constants.Firebase.Analytics.EventName.MASS_DOWNLOAD, bundle);
     }
 
     @Override
     public void showFreeTrialOfferDialog(final Context context) {
         final Bundle bundle = new Bundle();
-        bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
-                Constants.Firebase.Analitics.EventValue.DOWNLOAD_RANGE
+        bundle.putString(Constants.Firebase.Analytics.EventParam.PLACE,
+                Constants.Firebase.Analytics.EventValue.DOWNLOAD_RANGE
         );
         FirebaseAnalytics.getInstance(context)
-                .logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+                .logEvent(Constants.Firebase.Analytics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
         final BaseActivity baseActivity = (BaseActivity) context;
         final DialogUtils dialogUtils = new DialogUtils(mConstantValues);
         dialogUtils.showProgressDialog(context, R.string.wait);
         final InAppHelper mInAppHelper = new InAppHelper(mPreferenceManager, mDbProviderFactory, mApiClient);
-        mInAppHelper.getSubsListToBuyObservable(baseActivity.getIInAppBillingService(), InAppHelper.getFreeTrailSubsSkus())
+        mInAppHelper.getSubsListToBuyObservable(mInAppHelper.getFreeTrailSubsSkus())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

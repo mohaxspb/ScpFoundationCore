@@ -1,33 +1,31 @@
-[ ![Download](https://api.bintray.com/packages/mohaxspb/scp-core/scp-core/images/download.svg) ](https://bintray.com/mohaxspb/scp-core/scp-core/_latestVersion)
+# SCP Foundatiom Core
 
-# Scp Core
+### Testing
 
-This module used by [ScpFoundationRu](https://github.com/mohaxspb/ScpFoundationRu) project as a core, where most logic is
+- Amazon purchases
 
-# How to use
+1. Download `amazon.sdktester.json` from Amazon developer console
 
-It is published in `jcenter` so you can just use this in `build.gradle(module app)`
+    It should contain something like:
+    ```
+    {
+        "com.amazon.sample.iap.consumables.orange" : {
+            "itemType": "CONSUMABLE",
+            "price": 10.00,
+            "title": "Orange",
+            "description": "An orange",
+            "smallIconUrl": "http://www.amazon.com/orange.jpg"
+        },
+        "com.amazon.sample.iap.subscriptions.mymagazine.month":
+        {
+          "description":"Monthly Subscription to My Magazine",
+          "title":"My Magazine",
+          "itemType":"SUBSCRIPTION",
+          "price":5.0,
+          "subscriptionParent":"com.amazon.sample.iap.subscriptions.mymagazine"
+        }
+    }
+    ```
+2. Push it to device via ADB to path `/mnt/sdcard/`: 
 
-    //use transitive=true to get all lib dependencies
-    compile ('ru.kuchanov.scp:core:1.0.15@aar'){ transitive=true }
-    
-Do not forget to check latest version of module in [releases](https://github.com/mohaxspb/ScpCore/releases) list in this repo.
-    
-# How to update
-
-Use git-flow system for making changes and adding features
-To update lib in maven call
- 
-     gradlew install
-     
-and then 
-
-    gradlew bintrayUpload
-    
-Of course, you need to add auth info to `local.properties` file in project to be able to upload new version
-
-```# for publishing to jcenter
-
-bintray.user={USER_NAME_IN_https://bintray.com}
-bintray.apikey={API_KEY_FROM_https://bintray.com}
-bintray.gpg.password={PASS_FOR_KEY_THAT_WAS_CREATED_BY_gpg}`
+     `adb push [_Your_JSON_File_Folder_]/amazon.sdktester.json /mnt/sdcard/amazon.sdktester.json` 

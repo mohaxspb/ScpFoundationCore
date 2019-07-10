@@ -265,10 +265,7 @@ public class MainActivity
     public boolean onNavigationItemClicked(final int id) {
         Timber.d("onNavigationItemClicked with id: %s", id);
         setToolbarTitleByDrawerItemId(id);
-        if (id == R.id.invite) {
-            IntentUtils.firebaseInvite(this);
-            return false;
-        } else if (id == R.id.leaderboard) {
+        if (id == R.id.leaderboard) {
             SubscriptionsActivity.start(this, SubscriptionsActivity.TYPE_LEADERBOARD);
             return false;
         } else if (id == R.id.about) {
@@ -323,9 +320,6 @@ public class MainActivity
             mCurrentSelectedDrawerItemId = id;
             showFragment(ReadArticlesFragment.newInstance(), ReadArticlesFragment.TAG);
             return true;
-        } else if (id == R.id.gallery) {
-            startGalleryActivity();
-            return false;
         } else if (id == R.id.siteSearch) {
             mCurrentSelectedDrawerItemId = id;
             showFragment(SiteSearchArticlesFragment.newInstance(), SiteSearchArticlesFragment.TAG);

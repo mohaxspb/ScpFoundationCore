@@ -4,8 +4,6 @@ import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp;
 
 /**
  * Created by y.kuchanov on 21.12.16.
- * <p>
- * for scp_ru
  */
 public interface DrawerMvp {
     interface View extends BaseActivityMvp.View {

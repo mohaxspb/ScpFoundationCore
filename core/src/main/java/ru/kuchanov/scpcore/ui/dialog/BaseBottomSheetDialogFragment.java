@@ -23,9 +23,9 @@ import ru.kuchanov.scpcore.ui.activity.SubscriptionsActivity;
 import ru.kuchanov.scpcore.util.AttributeGetter;
 import timber.log.Timber;
 
-import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventName;
-import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventParam;
-import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.StartScreen;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analytics.EventName;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analytics.EventParam;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analytics.StartScreen;
 
 /**
  * Created by mohax on 14.01.2017.

@@ -15,9 +15,9 @@ import rx.Single;
  */
 public interface ScpServer {
 
-    @GET("_api/wikidot_tags_search/find")
+    @GET("tags/find")
     Single<List<ArticleFromSearchTagsOnSite>> getArticlesByTags(@Query("wiki") String wiki, @Query("tag") List<String> tags);
 
-    @GET("_api/wikidot_tags_search/list")
+    @GET("tags/list")
     Single<List<String>> getTagsList(@Query("wiki") String wiki);
 }

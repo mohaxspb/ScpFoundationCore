@@ -2,7 +2,6 @@ package ru.kuchanov.scpcore.manager;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
@@ -17,58 +16,65 @@ import java.util.Date;
 
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
-import ru.kuchanov.scpcore.monetization.model.ApplicationsResponse;
-import ru.kuchanov.scpcore.monetization.model.PlayMarketApplication;
 import ru.kuchanov.scpcore.monetization.model.VkGroupToJoin;
 import ru.kuchanov.scpcore.monetization.model.VkGroupsToJoinResponse;
 import ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment;
 import ru.kuchanov.scpcore.ui.util.FontUtils;
 import timber.log.Timber;
 
-import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.APP_INSTALL_REWARD_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.ARTICLE_BANNER_DISABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.AUTH_COOLDOWN_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_GROUPS_JOIN_REWARD;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.FREE_VK_SHARE_APP_REWARD;
-import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.INVITE_REWARD_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.MAIN_BANNER_DISABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_ADS_LISTS_ENABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.NATIVE_IN_ARTICLE_ENABLED;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO_MODIFICATOR;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS;
 import static ru.kuchanov.scpcore.Constants.Firebase.RemoteConfigKeys.REWARDED_VIDEO_COOLDOWN_IN_MILLIS;
+import static ru.kuchanov.scpcore.ui.dialog.SettingsBottomSheetDialogFragment.ListItemType;
 
 /**
  * Created by y.kuchanov on 22.12.16.
- * <p>
- * for scp_ru
  */
 public class MyPreferenceManager {
+
+    public enum CommonAdsSource {
+        MOPUB, ADMOB
+    }
 
     /**
      * check if user joined app vk group each 1 day
      */
-    private static final long PERIOD_BETWEEN_APP_VK_GROUP_JOINED_CHECK_IN_MILLIS = Period.days(1).toStandardDuration().getMillis(); //Period.days(1).getDays()
+    private static final long PERIOD_BETWEEN_APP_VK_GROUP_JOINED_CHECK_IN_MILLIS =
+            Period.days(1).toStandardDuration().getMillis(); //Period.days(1).getDays()
 
     /**
      * update user subs every 6 hours
      */
-    private static final long PERIOD_BETWEEN_SUBSCRIPTIONS_INVALIDATION_IN_MILLIS = Period.hours(6).toStandardDuration().getMillis();
+    private static final long PERIOD_BETWEEN_SUBSCRIPTIONS_INVALIDATION_IN_MILLIS =
+            Period.hours(6).toStandardDuration().getMillis();
 
     /**
      * used to calculate is it time to request new Interstitial ads (15 min)
      */
-    private static final long PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS = Period.minutes(15).toStandardDuration().getMillis();
+    private static final long PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS =
+            Period.minutes(15).toStandardDuration().getMillis();
 
     /**
      * used to calculate is it time to request new Interstitial ads (15 min)
      */
-    private static final long PERIOD_WHEN_WE_NOTIFY_ABOUT_ADS = Period.minutes(15).toStandardDuration().getMillis();
+    private static final long PERIOD_WHEN_WE_NOTIFY_ABOUT_ADS =
+            Period.minutes(15).toStandardDuration().getMillis();
 
     /**
      * offer free trial every 7 days
      */
-    private static final long FREE_TRIAL_OFFERED_PERIOD = Period.days(7).toStandardDuration().getMillis();
+    private static final long FREE_TRIAL_OFFERED_PERIOD =
+            Period.days(7).toStandardDuration().getMillis();
+
+    public static final long IMAGES_DISABLED_PERIOD =
+            Period.days(1).toStandardDuration().getMillis();
 
     private static final int NUM_OF_DISABLE_ADS_REWARDS_COUNT_BEFORE_OFFER_SHOWING = 3;
 
@@ -76,67 +82,102 @@ public class MyPreferenceManager {
 
     public interface Keys {
 
+        //design
         String NIGHT_MODE = "NIGHT_MODE";
         String TEXT_SCALE_UI = "TEXT_SCALE_UI";
         String TEXT_SCALE_ARTICLE = "TEXT_SCALE_ARTICLE";
         String DESIGN_LIST_TYPE = "DESIGN_LIST_TYPE";
         String IS_TEXT_SELECTABLE = "IS_TEXT_SELECTABLE";
+        String DESIGN_FONT_PATH = "DESIGN_FONT_PATH";
 
+        //new articles notifications
         String NOTIFICATION_IS_ON = "NOTIFICATION_IS_ON";
         String NOTIFICATION_PERIOD = "NOTIFICATION_PERIOD";
         String NOTIFICATION_VIBRATION_IS_ON = "NOTIFICATION_VIBRATION_IS_ON";
         String NOTIFICATION_LED_IS_ON = "NOTIFICATION_LED_IS_ON";
         String NOTIFICATION_SOUND_IS_ON = "NOTIFICATION_SOUND_IS_ON";
 
+        //ads
         String ADS_LAST_TIME_SHOWS = "ADS_LAST_TIME_SHOWS";
         String TIME_FOR_WHICH_BANNERS_DISABLED = "TIME_FOR_WHICH_BANNERS_DISABLED";
         String ADS_NUM_OF_INTERSTITIALS_SHOWN = "ADS_NUM_OF_INTERSTITIALS_SHOWN";
         String ADS_REWARDED_DESCRIPTION_IS_SHOWN = "ADS_REWARDED_DESCRIPTION_IS_SHOWN";
+        String ADS_BANNER_IN_ARTICLES_LISTS = "ADS_BANNER_IN_ARTICLES_LISTS";
+        String ADS_BANNER_IN_ARTICLE = "ADS_BANNER_IN_ARTICLE";
 
-        String LICENCE_ACCEPTED = "LICENCE_ACCEPTED";
-        String CUR_APP_VERSION = "CUR_APP_VERSION";
-        String DESIGN_FONT_PATH = "DESIGN_FONT_PATH";
-        String PACKAGE_INSTALLED = "PACKAGE_INSTALLED";
-        String VK_GROUP_JOINED = "VK_GROUP_JOINED";
+        String OFFER_ALREADY_SHOWN = "OFFER_ALREADY_SHOWN";
+
+        String COMMON_ADS_SOURCE = "COMMON_ADS_SOURCE";
+        //subscriptions
         String HAS_SUBSCRIPTION = "HAS_SUBSCRIPTION";
         String HAS_NO_ADS_SUBSCRIPTION = "HAS_NO_ADS_SUBSCRIPTION";
+
+        String FREE_TRIAL_OFFERED_PERIODICAL = "FREE_TRIAL_OFFERED_PERIODICAL";
+        String FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE = "FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE";
+
+        String LAST_TIME_SUBSCRIPTIONS_INVALIDATED = "LAST_TIME_SUBSCRIPTIONS_INVALIDATED";
+
+        //data sync
         String AUTO_SYNC_ATTEMPTS = "AUTO_SYNC_ATTEMPTS";
         String UNSYNCED_SCORE = "UNSYNCED_SCORE";
         String UNSYNCED_VK_GROUPS = "UNSYNCED_VK_GROUPS";
-        String UNSYNCED_APPS = "UNSYNCED_APPS";
-        String APP_VK_GROUP_JOINED_LAST_TIME_CHECKED = "APP_VK_GROUP_JOINED_LAST_TIME_CHECKED";
-        String APP_VK_GROUP_JOINED = "APP_VK_GROUP_JOINED";
-        String LAST_TIME_SUBSCRIPTIONS_INVALIDATED = "LAST_TIME_SUBSCRIPTIONS_INVALIDATED";
-        String PERSONAL_DATA_ACCEPTED = "PERSONAL_DATA_ACCEPTED";
-        String AWARD_FROM_AUTH_GAINED = "AWARD_FROM_AUTH_GAINED";
-        String FREE_ADS_DISABLE_REWARD_GAINED_COUNT = "FREE_ADS_DISABLE_REWARD_GAINED_COUNT";
-        String FREE_TRIAL_OFFERED_PERIODICAL = "FREE_TRIAL_OFFERED_PERIODICAL";
-        String FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE = "FREE_TRIAL_OFFERED_AFTER_GAIN_1000_SCORE";
-        String INVITE_ALREADY_RECEIVED = "INVITE_ALREADY_RECEIVED";
-        String ADS_BANNER_IN_ARTICLES_LISTS = "ADS_BANNER_IN_ARTICLES_LISTS";
-        String ADS_BANNER_IN_ARTICLE = "ADS_BANNER_IN_ARTICLE";
-        String OFFER_ALREADY_SHOWN = "OFFER_ALREADY_SHOWN";
+
+        //offline access
         String OFFLINE_RANDOM = "OFFLINE_RANDOM";
         String INNER_ARTICLES_DEPTH = "INNER_ARTICLES_DEPTH";
         String DOWNLOAD_FORCE_UPDATE_ENABLED = "DOWNLOAD_FORCE_UPDATE_ENABLED";
         String IMAGES_CACHE_ENABLED = "IMAGES_CACHE_ENABLED";
-        String VK_APP_SHARED = "VK_APP_SHARED";
         String SAVE_NEW_ARTICLES_ENABLED = "SAVE_NEW_ARTICLES_ENABLED";
-        String LEADERBOARD_UPDATE_DATE = "LEADERBOARD_UPDATE_DATE";
+
+        //score awards
+        String VK_GROUP_JOINED = "VK_GROUP_JOINED";
+        String APP_VK_GROUP_JOINED_LAST_TIME_CHECKED = "APP_VK_GROUP_JOINED_LAST_TIME_CHECKED";
+        String APP_VK_GROUP_JOINED = "APP_VK_GROUP_JOINED";
+        String AWARD_FROM_AUTH_GAINED = "AWARD_FROM_AUTH_GAINED";
+        String FREE_ADS_DISABLE_REWARD_GAINED_COUNT = "FREE_ADS_DISABLE_REWARD_GAINED_COUNT";
+        @Deprecated
+        String INVITE_ALREADY_RECEIVED = "INVITE_ALREADY_RECEIVED";
+        String VK_APP_SHARED = "VK_APP_SHARED";
+
+        //API
         String ACCESS_TOKEN = "ACCESS_TOKEN";
         String REFRESH_TOKEN = "REFRESH_TOKEN";
+
+        //misc
+        String CUR_APP_VERSION = "CUR_APP_VERSION";
+        String PERSONAL_DATA_ACCEPTED = "PERSONAL_DATA_ACCEPTED";
+        String FIRST_LAUNCH_TIME = "FIRST_LAUNCH_TIME";
+
+        String LEADERBOARD_UPDATE_DATE = "LEADERBOARD_UPDATE_DATE";
     }
 
     private final Gson mGson;
 
     private final SharedPreferences mPreferences;
 
-    public MyPreferenceManager(@NotNull final Context context, @NotNull final Gson gson) {
+    private final FirebaseRemoteConfig remoteConfig;
+
+    public MyPreferenceManager(
+            @NotNull final Context context,
+            @NotNull final SharedPreferences preferences,
+            @NotNull final Gson gson,
+            @NotNull final FirebaseRemoteConfig remoteConfig
+    ) {
         super();
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        mPreferences = preferences;
         mGson = gson;
+        this.remoteConfig = remoteConfig;
 
         fixFontNamesIssue(context);
+    }
+
+    /**
+     * Dirty hack to avoid different realizations of DI stuff for different flavors...
+     * Should be fixed somehow...
+     */
+    @Deprecated
+    public SharedPreferences getPreferences() {
+        return mPreferences;
     }
 
     private void fixFontNamesIssue(@NotNull final Context context) {
@@ -181,7 +222,12 @@ public class MyPreferenceManager {
 
     //design settings
     public boolean isDesignListNewEnabled() {
-        return !mPreferences.getString(Keys.DESIGN_LIST_TYPE, SettingsBottomSheetDialogFragment.ListItemType.MIDDLE).equals(SettingsBottomSheetDialogFragment.ListItemType.MIN);
+        @SettingsBottomSheetDialogFragment.ListItemType final String listItemType =
+                mPreferences.getString(
+                        Keys.DESIGN_LIST_TYPE,
+                        ListItemType.MIDDLE
+                );
+        return !ListItemType.MIN.equals(listItemType);
     }
 
     public void setListDesignType(@SettingsBottomSheetDialogFragment.ListItemType final String type) {
@@ -190,8 +236,7 @@ public class MyPreferenceManager {
 
     @SettingsBottomSheetDialogFragment.ListItemType
     public String getListDesignType() {
-        @SettingsBottomSheetDialogFragment.ListItemType final String type = mPreferences.getString(Keys.DESIGN_LIST_TYPE, SettingsBottomSheetDialogFragment.ListItemType.MIDDLE);
-        return type;
+        return mPreferences.getString(Keys.DESIGN_LIST_TYPE, ListItemType.MIDDLE);
     }
 
     public void setFontPath(final String type) {
@@ -291,13 +336,13 @@ public class MyPreferenceManager {
 
     //ads
 
+
     /**
      * @return user settings of remote config value (banner is enabled and native is disabled)
      */
     public boolean isBannerInArticlesListsEnabled() {
-        final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-        final boolean bannerIsEnabled = !config.getBoolean(MAIN_BANNER_DISABLED);
-        final boolean nativeIsEnabled = config.getBoolean(NATIVE_ADS_LISTS_ENABLED);
+        final boolean bannerIsEnabled = !remoteConfig.getBoolean(MAIN_BANNER_DISABLED);
+        final boolean nativeIsEnabled = remoteConfig.getBoolean(NATIVE_ADS_LISTS_ENABLED);
         return mPreferences.getBoolean(Keys.ADS_BANNER_IN_ARTICLES_LISTS, bannerIsEnabled && !nativeIsEnabled);
     }
 
@@ -305,9 +350,8 @@ public class MyPreferenceManager {
      * @return user settings of remote config value (banner is enabled and native is disabled)
      */
     public boolean isBannerInArticleEnabled() {
-        final FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-        final boolean bannerIsEnabled = !config.getBoolean(ARTICLE_BANNER_DISABLED);
-        final boolean nativeIsEnabled = config.getBoolean(NATIVE_IN_ARTICLE_ENABLED);
+        final boolean bannerIsEnabled = !remoteConfig.getBoolean(ARTICLE_BANNER_DISABLED);
+        final boolean nativeIsEnabled = remoteConfig.getBoolean(NATIVE_IN_ARTICLE_ENABLED);
         return mPreferences.getBoolean(Keys.ADS_BANNER_IN_ARTICLE, bannerIsEnabled && !nativeIsEnabled);
     }
 
@@ -321,7 +365,7 @@ public class MyPreferenceManager {
 
     public boolean isTimeToShowAds() {
         return System.currentTimeMillis() - getLastTimeAdsShows() >=
-                FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS);
+                remoteConfig.getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS);
     }
 
     /**
@@ -329,7 +373,7 @@ public class MyPreferenceManager {
      */
     public boolean isTimeToLoadAds() {
         //i.e. 1 hour - (17:56-17:00) = 4 min, which we compare to 5 min
-        return FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS) -
+        return remoteConfig.getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS) -
                 (System.currentTimeMillis() - getLastTimeAdsShows())
                 <= PERIOD_BEFORE_INTERSTITIAL_MUST_BE_SHOWN_IN_MILLIS;
     }
@@ -339,7 +383,7 @@ public class MyPreferenceManager {
      */
     public boolean isTimeToNotifyAboutSoonAdsShowing() {
         //i.e. 1 hour - (17:56-17:00) = 4 min, which we compare to 5 min
-        return FirebaseRemoteConfig.getInstance().getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS) -
+        return remoteConfig.getLong(PERIOD_BETWEEN_INTERSTITIAL_IN_MILLIS) -
                 (System.currentTimeMillis() - getLastTimeAdsShows())
                 <= PERIOD_WHEN_WE_NOTIFY_ABOUT_ADS && !isOfferAlreadyShown();
     }
@@ -355,11 +399,11 @@ public class MyPreferenceManager {
     public void applyAwardFromAds() {
         Timber.d("applyAwardFromAds");
 //        long time = System.currentTimeMillis()
-//                + FirebaseRemoteConfig.getInstance().getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
+//                + remoteConfig.getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
 //        setLastTimeAdsShows(time);
 //        //also set time for which we should disable banners
 //        setTimeForWhichBannersDisabled(time);
-        final long time = FirebaseRemoteConfig.getInstance().getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
+        final long time = remoteConfig.getLong(REWARDED_VIDEO_COOLDOWN_IN_MILLIS);
         increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
         increaseTimeForWhichBannersDisabled(time);
@@ -376,31 +420,17 @@ public class MyPreferenceManager {
     }
 
     public int getOfferSubscriptionInsteadOfRewardedVideoModificator() {
-        final Long modificator = FirebaseRemoteConfig.getInstance().getLong(OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO_MODIFICATOR);
+        final Long modificator = remoteConfig.getLong(OFFER_SUBS_INSTEAD_OF_REWARDED_VIDEO_MODIFICATOR);
         return modificator == null ? 5 + 1 : modificator.intValue() + 1;
     }
 
-    //invite
-    public boolean isInviteAlreadyReceived() {
-        return mPreferences.getBoolean(Keys.INVITE_ALREADY_RECEIVED, false);
+    public CommonAdsSource getCommonAdsSource() {
+        String commonAdsSource = remoteConfig.getString(Constants.Firebase.RemoteConfigKeys.COMMON_ADS_SOURCE);
+        if (commonAdsSource == null) {
+            commonAdsSource = mPreferences.getString(Keys.COMMON_ADS_SOURCE, CommonAdsSource.MOPUB.name());
+        }
+        return CommonAdsSource.valueOf(commonAdsSource);
     }
-
-    public void setInviteAlreadyReceived() {
-        mPreferences.edit().putBoolean(Keys.INVITE_ALREADY_RECEIVED, true).apply();
-    }
-
-    public void applyAwardForInvite() {
-        final long time = FirebaseRemoteConfig.getInstance().getLong(INVITE_REWARD_IN_MILLIS);
-
-        increaseLastTimeAdsShows(time);
-        //also set time for which we should disable banners
-        increaseTimeForWhichBannersDisabled(time);
-
-        //I think we do not need it
-//        setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
-    }
-
-    //END invite
 
     public void setLastTimeAdsShows(final long timeInMillis) {
         mPreferences.edit().putLong(Keys.ADS_LAST_TIME_SHOWS, timeInMillis).apply();
@@ -438,7 +468,7 @@ public class MyPreferenceManager {
 
     public boolean isTimeToShowVideoInsteadOfInterstitial() {
         return getNumOfInterstitialsShown() >=
-                FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_INTERSITIAL_BETWEEN_REWARDED);
+                remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.NUM_OF_INTERSITIAL_BETWEEN_REWARDED);
     }
 
     /**
@@ -470,31 +500,6 @@ public class MyPreferenceManager {
         return mPreferences.getLong(Keys.TIME_FOR_WHICH_BANNERS_DISABLED, 0);
     }
 
-    //app installs
-    public boolean isAppInstalledForPackage(final String packageName) {
-        return mPreferences.getBoolean(Keys.PACKAGE_INSTALLED + packageName, false);
-    }
-
-    public void setAppInstalledForPackage(final String packageName) {
-        mPreferences.edit().putBoolean(Keys.PACKAGE_INSTALLED + packageName, true).apply();
-    }
-
-    public void applyAwardForAppInstall() {
-//        long time = System.currentTimeMillis() +
-//                FirebaseRemoteConfig.getInstance().getLong(APP_INSTALL_REWARD_IN_MILLIS);
-//
-//        setLastTimeAdsShows(time);
-//        //also set time for which we should disable banners
-//        setTimeForWhichBannersDisabled(time);
-        final long time = FirebaseRemoteConfig.getInstance().getLong(APP_INSTALL_REWARD_IN_MILLIS);
-
-        increaseLastTimeAdsShows(time);
-        //also set time for which we should disable banners
-        increaseTimeForWhichBannersDisabled(time);
-
-        setFreeAdsDisableRewardGainedCount(getFreeAdsDisableRewardGainedCount() + 1);
-    }
-
     //vk groups join
     public boolean isVkGroupJoined(final String id) {
         return mPreferences.getBoolean(Keys.VK_GROUP_JOINED + id, false);
@@ -502,7 +507,7 @@ public class MyPreferenceManager {
 
     public void setVkGroupJoined(final String id) {
         mPreferences.edit().putBoolean(Keys.VK_GROUP_JOINED + id, true).apply();
-        if (id.equals(FirebaseRemoteConfig.getInstance().getString(Constants.Firebase.RemoteConfigKeys.VK_APP_GROUP_ID))) {
+        if (id.equals(remoteConfig.getString(Constants.Firebase.RemoteConfigKeys.VK_APP_GROUP_ID))) {
             setAppVkGroupJoined(true);
         }
     }
@@ -517,11 +522,11 @@ public class MyPreferenceManager {
 
     public void applyAwardVkGroupJoined() {
 //        long time = System.currentTimeMillis()
-//                + FirebaseRemoteConfig.getInstance().getLong(FREE_VK_GROUPS_JOIN_REWARD);
+//                + remoteConfig.getLong(FREE_VK_GROUPS_JOIN_REWARD);
 //        setLastTimeAdsShows(time);
 //        //also set time for which we should disable banners
 //        setTimeForWhichBannersDisabled(time);
-        final long time = FirebaseRemoteConfig.getInstance().getLong(FREE_VK_GROUPS_JOIN_REWARD);
+        final long time = remoteConfig.getLong(FREE_VK_GROUPS_JOIN_REWARD);
         increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
         increaseTimeForWhichBannersDisabled(time);
@@ -530,7 +535,7 @@ public class MyPreferenceManager {
     }
 
     public void applyAwardVkShareApp() {
-        final long time = FirebaseRemoteConfig.getInstance().getLong(FREE_VK_SHARE_APP_REWARD);
+        final long time = remoteConfig.getLong(FREE_VK_SHARE_APP_REWARD);
         increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
         increaseTimeForWhichBannersDisabled(time);
@@ -540,11 +545,11 @@ public class MyPreferenceManager {
 
     public void applyAwardSignIn() {
 //        long time = System.currentTimeMillis()
-//                + FirebaseRemoteConfig.getInstance().getLong(AUTH_COOLDOWN_IN_MILLIS);
+//                + remoteConfig.getLong(AUTH_COOLDOWN_IN_MILLIS);
 //        setLastTimeAdsShows(time);
 //        //also set time for which we should disable banners
 //        setTimeForWhichBannersDisabled(time);
-        final long time = FirebaseRemoteConfig.getInstance().getLong(AUTH_COOLDOWN_IN_MILLIS);
+        final long time = remoteConfig.getLong(AUTH_COOLDOWN_IN_MILLIS);
         increaseLastTimeAdsShows(time);
         //also set time for which we should disable banners
         increaseTimeForWhichBannersDisabled(time);
@@ -632,15 +637,15 @@ public class MyPreferenceManager {
     //subscriptions end
 
     public boolean isDownloadAllEnabledForFree() {
-        return FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_ALL_ENABLED_FOR_FREE);
+        return remoteConfig.getBoolean(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_ALL_ENABLED_FOR_FREE);
     }
 
     public int getScorePerArt() {
-        return (int) FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_SCORE_PER_ARTICLE);
+        return (int) remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_SCORE_PER_ARTICLE);
     }
 
     public int getFreeOfflineLimit() {
-        return (int) FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_FREE_ARTICLES_LIMIT);
+        return (int) remoteConfig.getLong(Constants.Firebase.RemoteConfigKeys.DOWNLOAD_FREE_ARTICLES_LIMIT);
     }
 
     //auto sync
@@ -678,33 +683,6 @@ public class MyPreferenceManager {
         VkGroupsToJoinResponse data = null;
         try {
             data = mGson.fromJson(mPreferences.getString(Keys.UNSYNCED_VK_GROUPS, null), VkGroupsToJoinResponse.class);
-        } catch (final Exception e) {
-            Timber.e(e);
-        }
-        return data;
-    }
-
-    public void addUnsyncedApp(final String id) {
-        ApplicationsResponse data = getUnsyncedAppsJson();
-        if (data == null) {
-            data = new ApplicationsResponse();
-            data.items = new ArrayList<>();
-        }
-        final PlayMarketApplication item = new PlayMarketApplication(id);
-        if (!data.items.contains(item)) {
-            data.items.add(item);
-            mPreferences.edit().putString(Keys.UNSYNCED_APPS, mGson.toJson(data)).apply();
-        }
-    }
-
-    public void deleteUnsyncedApps() {
-        mPreferences.edit().remove(Keys.UNSYNCED_APPS).apply();
-    }
-
-    public ApplicationsResponse getUnsyncedAppsJson() {
-        ApplicationsResponse data = null;
-        try {
-            data = mGson.fromJson(mPreferences.getString(Keys.UNSYNCED_APPS, null), ApplicationsResponse.class);
         } catch (final Exception e) {
             Timber.e(e);
         }
@@ -798,5 +776,23 @@ public class MyPreferenceManager {
 
     public void setCurAppVersion(final int versionCode) {
         mPreferences.edit().putInt(Keys.CUR_APP_VERSION, versionCode).apply();
+    }
+
+    /**
+     * Use it only for backward compatibility
+     */
+    public void setFirstLaunchTime(final long firstLaunchTime) {
+        mPreferences.edit().putLong(Keys.FIRST_LAUNCH_TIME, firstLaunchTime).apply();
+    }
+
+    public long getFirstLaunchTime() {
+        return mPreferences.getLong(Keys.FIRST_LAUNCH_TIME, 0);
+    }
+
+    public boolean imagesEnabled() {
+        final boolean enabledInRemoteConfig = remoteConfig.getBoolean(Constants.Firebase.RemoteConfigKeys.IMAGES_ENABLED);
+        final long periodFromFirstLaunch = System.currentTimeMillis() - getFirstLaunchTime();
+        final boolean enoughTimeLeftFromFirstLaunch = periodFromFirstLaunch >= IMAGES_DISABLED_PERIOD;
+        return enabledInRemoteConfig || enoughTimeLeftFromFirstLaunch;
     }
 }

@@ -32,20 +32,17 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.api.model.remoteconfig.LevelsJson;
 import ru.kuchanov.scpcore.db.model.User;
-import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper;
 import ru.kuchanov.scpcore.mvp.contract.DrawerMvp;
 import ru.kuchanov.scpcore.ui.holder.drawer.HeaderViewHolderLogined;
 import ru.kuchanov.scpcore.ui.holder.drawer.HeaderViewHolderUnlogined;
 import timber.log.Timber;
 
-import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventName;
-import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.EventParam;
-import static ru.kuchanov.scpcore.Constants.Firebase.Analitics.StartScreen;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analytics.EventName;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analytics.EventParam;
+import static ru.kuchanov.scpcore.Constants.Firebase.Analytics.StartScreen;
 
 /**
  * Created by mohax on 02.01.2017.
- * <p>
- * for scp_ru
  */
 public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends DrawerMvp.Presenter<V>>
         extends BaseActivity<V, P>
@@ -109,6 +106,12 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
             mDrawerLayout.addDrawerListener(mDrawerToggle);
         }
 
+        setupNavigationView(savedInstanceState);
+
+        updateUser(mPresenter.getUser());
+    }
+
+    private void setupNavigationView(@Nullable final Bundle savedInstanceState) {
         mNavigationView.setNavigationItemSelectedListener(item -> {
             mPresenter.onNavigationItemClicked(item.getItemId());
             mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -123,8 +126,6 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
         } else {
             mNavigationView.getMenu().setGroupCheckable(0, false, true);
         }
-
-        updateUser(mPresenter.getUser());
     }
 
     /**
@@ -176,7 +177,7 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
 
     @Override
     public void updateUser(@Nullable final User user) {
-        Timber.d("updateUser: %s", user);
+//        Timber.d("updateUser: %s", user);
         if (user != null) {
             for (int i = 0; i < mNavigationView.getHeaderCount(); i++) {
                 mNavigationView.removeHeaderView(mNavigationView.getHeaderView(i));
@@ -201,22 +202,10 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                     .show()
             );
 
-            headerViewHolder.levelContainer.setOnClickListener(view -> mInAppHelper
-                    .intentSenderSingle(
-                            getIInAppBillingService(),
-                            InAppHelper.InappType.IN_APP,
-                            InAppHelper.getNewInAppsSkus().get(0)
-                    )
-                    .subscribe(
-                            intentSender -> mInAppHelper.startPurchase(
-                                    intentSender,
-                                    this,
-                                    REQUEST_CODE_INAPP
-                            ),
-                            e -> {
-                                Timber.e(e);
-                                showError(e);
-                            }
+            headerViewHolder.levelContainer.setOnClickListener(view ->
+                    mPresenter.onPurchaseClick(
+                            mInAppHelper.getNewInAppsSkus().get(0),
+                            false
                     )
             );
 
@@ -230,8 +219,8 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
 
             headerViewHolder.name.setText(user.fullName);
             Glide.with(this)
-                    .load(user.avatar)
                     .asBitmap()
+                    .load(user.avatar)
                     .centerCrop()
                     .into(new BitmapImageViewTarget(headerViewHolder.avatar) {
                         @Override
@@ -285,11 +274,11 @@ public abstract class BaseDrawerActivity<V extends DrawerMvp.View, P extends Dra
                     && mPresenter.getUser().score < 10000
                     && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
                 final Bundle bundle = new Bundle();
-                bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE,
-                        Constants.Firebase.Analitics.EventValue.SCORE_1000_REACHED
+                bundle.putString(Constants.Firebase.Analytics.EventParam.PLACE,
+                        Constants.Firebase.Analytics.EventValue.SCORE_1000_REACHED
                 );
                 FirebaseAnalytics.getInstance(this)
-                        .logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+                        .logEvent(Constants.Firebase.Analytics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
                 mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score();
                 showOfferFreeTrialSubscriptionPopup();

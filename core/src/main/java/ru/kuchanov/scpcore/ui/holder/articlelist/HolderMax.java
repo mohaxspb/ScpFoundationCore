@@ -26,8 +26,6 @@ import ru.kuchanov.scpcore.util.DateUtils;
 
 /**
  * Created by mohax on 11.06.2017.
- * <p>
- * for ScpFoundationRu
  */
 public class HolderMax extends HolderMin {
 
@@ -63,8 +61,8 @@ public class HolderMax extends HolderMin {
 
         //TODO show them in ViewPager
         //set image
-        if (article.imagesUrls != null && !article.imagesUrls.isEmpty()) {
-            Glide.clear(image);
+        if (article.imagesUrls != null && !article.imagesUrls.isEmpty() && mMyPreferenceManager.imagesEnabled()) {
+//            Glide.clear(image);
 
             final String imageUrl = article.imagesUrls.first().val;
             File file = null;
@@ -75,17 +73,17 @@ public class HolderMax extends HolderMin {
                     .load(file != null && file.exists() ? "file://" + file.getAbsolutePath() : imageUrl)
                     .placeholder(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
                     .error(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
-                    .animate(android.R.anim.fade_in)
+//                    .animate(android.R.anim.fade_in)
                     .centerCrop()
                     .into(image);
         } else {
-            Glide.clear(image);
+//            Glide.clear(image);
             Glide.with(context)
-                    .load(R.drawable.ic_default_image_big)
+                    .load(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
                     .placeholder(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
                     .error(AttributeGetter.getDrawableId(context, R.attr.iconEmptyImage))
                     .centerCrop()
-                    .animate(android.R.anim.fade_in)
+//                    .animate(android.R.anim.fade_in)
                     .into(image);
         }
 

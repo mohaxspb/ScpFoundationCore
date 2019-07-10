@@ -1,6 +1,6 @@
 ext {
     fillApiArrays = { variant, fileIsInRoot ->
-        logger.info("fillApiArrays: {}", variant.productFlavors[0].name)
+//        logger.info("fillApiArrays: {}", variant.productFlavors[0].name)
         def pathToFileWithData
         if(fileIsInRoot){
 //            logger.lifecycle('fileIsInRoot: {}', fileIsInRoot)
@@ -26,6 +26,7 @@ ext {
             variant.resValue('string', 'yandex_metrica_api_key', properties.get("yandexMetricaApiKey"))
 
             //ads
+            //admob
             variant.resValue('string', 'ads_app_id', properties.get("adMobAppId"))
 
             variant.resValue('string', 'ad_unit_id_interstitial', properties.get("adsBannerIdInterstitial"))
@@ -37,6 +38,15 @@ ext {
             variant.resValue('string', 'ad_unit_id_main_screen_banner', properties.get("adsBannerIdMainScreen"))
 
             variant.resValue('string', 'appodeal_app_key', properties.get("appodealAppKey"))
+            //admob END
+
+            //mopub
+            variant.resValue('string', 'mopub_ad_unit_id_banner', properties.get("mopubBannerId"))
+            variant.resValue('string', 'mopub_ad_unit_id_interstitial', properties.get("mopubInterstitialId"))
+            variant.resValue('string', 'mopub_ad_unit_id_rewarded_video', properties.get("mopubRewardedVideoId"))
+            variant.resValue('string', 'mopub_ad_unit_id_native', properties.get("mopubNativeId"))
+            //mopub END
+
             //ads END
 
             variant.resValue('integer', 'com_vk_sdk_AppId', properties.get("vkSdkAppId"))
@@ -45,8 +55,6 @@ ext {
             variant.resValue('string', 'facebook_app_id', properties.get("facebookAppId"))
 
             variant.resValue('string', 'firebase_db_url', properties.get("firebaseUri"))
-
-            variant.resValue('string', 'firebase_deep_link', properties.get("firebaseDeepLink"))
 
             //our APIs data
             variant.resValue('string', 'tools_api_url', properties.get("vpsApiAddress"))

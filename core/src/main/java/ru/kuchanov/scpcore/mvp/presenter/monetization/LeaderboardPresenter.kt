@@ -1,6 +1,5 @@
 package ru.kuchanov.scpcore.mvp.presenter.monetization
 
-import com.android.vending.billing.IInAppBillingService
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import ru.kuchanov.scpcore.BaseApplication
 import ru.kuchanov.scpcore.Constants
@@ -38,7 +37,7 @@ class LeaderboardPresenter(
         myPreferencesManager: MyPreferenceManager,
         dbProviderFactory: DbProviderFactory,
         apiClient: ApiClient,
-        private val inAppHelper: InAppHelper
+        inAppHelper: InAppHelper
 ) : BasePresenter<LeaderboardContract.View>(
         myPreferencesManager,
         dbProviderFactory,
@@ -64,8 +63,6 @@ class LeaderboardPresenter(
 
     override var userPositionOnLeaderboard: String? = null
 
-    override var inAppService: IInAppBillingService? = null
-
     private var updated = false
 
     override var updateTime = myPreferencesManager.leaderboardUpdateDate.time
@@ -74,26 +71,26 @@ class LeaderboardPresenter(
 
     override fun loadInitialData() {
         Timber.d("loadInitialData")
-        if (inAppService == null) {
-            view.showMessage(R.string.google_services_not_connected)
-            view.showProgressCenter(false)
-            view.enableSwipeRefresh(false)
-            view.showSwipeRefreshProgress(false)
-            view.showRefreshButton(true)
-            return
-        }
+//        if (inAppService == null) {
+//            view.showMessage(R.string.google_services_not_connected)
+//            view.showProgressCenter(false)
+//            view.enableSwipeRefresh(false)
+//            view.showSwipeRefreshProgress(false)
+//            view.showRefreshButton(true)
+//            return
+//        }
         view.showProgressCenter(true)
         view.showRefreshButton(false)
         view.showUpdateDate(updateTime)
 
-        val skuList = InAppHelper.getNewSubsSkus()
+        val skuList = inAppHelper.getNewSubsSkus().toMutableList()
         if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
-            skuList.addAll(InAppHelper.getNewNoAdsSubsSkus())
+            skuList.addAll(inAppHelper.getNewNoAdsSubsSkus())
         }
 
         Single
                 .zip(
-                        inAppHelper.getInAppsListToBuyObservable(inAppService).toSingle(),
+                        inAppHelper.getInAppsListToBuy(),
                         Single.just(mDbProviderFactory.dbProvider.userUnmanaged)
                 ) { inApps: List<Subscription>, user: User? ->
                     Pair(
@@ -256,7 +253,7 @@ class LeaderboardPresenter(
                         onError = {
                             Timber.e(it)
                             view.showError(it)
-                            view.enableSwipeRefresh(!data.isEmpty())
+                            view.enableSwipeRefresh(data.isNotEmpty())
                             view.showRefreshButton(data.isEmpty())
                             view.showProgressCenter(false)
                             view.showBottomProgress(false)
@@ -301,7 +298,7 @@ class LeaderboardPresenter(
     override fun onUserChanged(user: User?) {
         super.onUserChanged(user)
         myUser = user
-        Timber.d("onUserChanged: $myUser")
+//        Timber.d("onUserChanged: $myUser")
         if (myUser == null) {
             view.showUser(null)
         } else {
@@ -311,7 +308,10 @@ class LeaderboardPresenter(
 
     override fun onRewardedVideoClick() = view.onRewardedVideoClick()
 
-    private fun createViewModels(users: List<LeaderboardUser>, inApps: List<Subscription>): List<MyListItem> {
+    private fun createViewModels(
+            users: List<LeaderboardUser>,
+            inApps: List<Subscription>
+    ): List<MyListItem> {
         val viewModels = mutableListOf<MyListItem>()
 
         viewModels.add(DividerViewModel(R.color.freeAdsBackgroundColor, DimensionUtils.dpToPx(16)))
@@ -377,8 +377,11 @@ class LeaderboardPresenter(
                 LabelViewModel(
                         R.string.leaderboard_inapp_label,
                         textColor = R.color.material_green_500,
-                        bgColor = R.color.freeAdsBackgroundColor))
+                        bgColor = R.color.freeAdsBackgroundColor
+                )
+        )
         val levelUpInApp = inApps.firstOrNull()
+        Timber.d("levelUpInApp: $levelUpInApp")
         monetizationViewModels.add(
                 InAppViewModel(
                         R.string.leaderboard_inapp_title,
@@ -386,7 +389,9 @@ class LeaderboardPresenter(
                         levelUpInApp?.price ?: "N/A",
                         levelUpInApp?.productId ?: "N/A",
                         R.drawable.ic_leaderbord_levelup_icon,
-                        R.color.freeAdsBackgroundColor))
+                        R.color.freeAdsBackgroundColor
+                )
+        )
         //appodeal rewarded video
         val score: Int = FirebaseRemoteConfig.getInstance().getLong(Constants.Firebase.RemoteConfigKeys.SCORE_ACTION_REWARDED_VIDEO).toInt()
         monetizationViewModels.add(
@@ -397,7 +402,9 @@ class LeaderboardPresenter(
                                 score
                         ),
                         textColor = R.color.material_green_500,
-                        bgColor = R.color.freeAdsBackgroundColor))
+                        bgColor = R.color.freeAdsBackgroundColor
+                )
+        )
         monetizationViewModels.add(
                 InAppViewModel(
                         R.string.leaderboard_inapp_title,
@@ -405,7 +412,9 @@ class LeaderboardPresenter(
                         "FREE",
                         APPODEAL_ID,
                         R.drawable.ic_inspect,
-                        R.color.freeAdsBackgroundColor))
+                        R.color.freeAdsBackgroundColor
+                )
+        )
 
         return monetizationViewModels
     }

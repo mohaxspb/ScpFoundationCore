@@ -31,6 +31,8 @@ class SubscriptionsActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        mInAppHelper.onActivate(this)
+
         val screenToShowType = intent.getIntExtra(EXTRA_TYPE, TYPE_SUBS)
 
         setSupportActionBar(toolbar)

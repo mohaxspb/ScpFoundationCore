@@ -1,5 +1,6 @@
 package ru.kuchanov.scpcore.ui.holder.article;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -9,20 +10,17 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.appodeal.ads.Appodeal;
-import com.appodeal.ads.NativeAd;
-import com.appodeal.ads.native_ad.views.NativeAdViewAppWall;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.mopub.nativeads.NativeAd;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -37,6 +35,7 @@ import ru.kuchanov.scpcore.R;
 import ru.kuchanov.scpcore.R2;
 import ru.kuchanov.scpcore.db.model.MyNativeBanner;
 import ru.kuchanov.scpcore.manager.MyPreferenceManager;
+import ru.kuchanov.scpcore.monetization.util.mopub.MopubNativeManager;
 import ru.kuchanov.scpcore.ui.adapter.ArticlesListAdapter;
 import ru.kuchanov.scpcore.ui.util.SetTextViewHTML;
 import ru.kuchanov.scpcore.util.IntentUtils;
@@ -50,10 +49,13 @@ import timber.log.Timber;
 public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
 
     @Inject
-    protected MyPreferenceManager mMyPreferenceManager;
+    MyPreferenceManager mMyPreferenceManager;
 
     @Inject
-    protected ConstantValues mConstantValues;
+    ConstantValues mConstantValues;
+
+    @Inject
+    MopubNativeManager mopubNativeManager;
 
     private ArticlesListAdapter.ArticleClickListener mArticleClickListener;
 
@@ -64,11 +66,8 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
     @BindView(R2.id.nativeAdViewContainer)
     View nativeAdViewContainer;
 
-    @BindView(R2.id.appodealNativeAdViewAppWall)
-    NativeAdViewAppWall appodealNativeAdView;
-
-    @BindView(R2.id.scpArtAdView)
-    View scpArtAdView;
+    @BindView(R2.id.scpNativeAdView)
+    View scpNativeAdView;
 
     @BindView(R2.id.ratingBar)
     View ratingBar;
@@ -90,6 +89,10 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
 
     @BindView(R2.id.progressCenter)
     ProgressBar progressCenter;
+
+    @BindView(R2.id.mopubNativeAdsContainer)
+    ViewGroup mopubNativeAdsContainer;
+
 
     private SetTextViewHTML.TextItemsClickListener clickListener;
 
@@ -113,7 +116,10 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public NativeAdsArticleListHolder(final View itemView, final ArticlesListAdapter.ArticleClickListener clickListener) {
+    public NativeAdsArticleListHolder(
+            final View itemView,
+            final ArticlesListAdapter.ArticleClickListener clickListener
+    ) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         BaseApplication.getAppComponent().inject(this);
@@ -121,7 +127,10 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         mArticleClickListener = clickListener;
     }
 
-    public NativeAdsArticleListHolder(final View itemView, final SetTextViewHTML.TextItemsClickListener clickListener) {
+    public NativeAdsArticleListHolder(
+            final View itemView,
+            final SetTextViewHTML.TextItemsClickListener clickListener
+    ) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         BaseApplication.getAppComponent().inject(this);
@@ -129,24 +138,26 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         this.clickListener = clickListener;
     }
 
-
+    //fixme delete it and use bind(MyNativeBanner banner) for quiz
+    @Deprecated
     public void bind() {
         Timber.d("scpQuizAds showing");
-//        appodealNativeMediaView.setVisibility(View.GONE);
-        appodealNativeAdView.setVisibility(View.GONE);
 
-        scpArtAdView.setVisibility(View.VISIBLE);
+        scpNativeAdView.setVisibility(View.VISIBLE);
 
-        scpArtAdView.setOnClickListener(v -> {
+        scpNativeAdView.setOnClickListener(v -> {
             FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
-                    Constants.Firebase.Analitics.EventName.SCP_QUIZ_CLICKED,
+                    Constants.Firebase.Analytics.EventName.SCP_QUIZ_CLICKED,
                     new Bundle()
             );
-            final String url = String.format(
-                    Locale.getDefault(),
-                    Constants.Urls.SCP_QUIZ_MARKET_URL,
-                    mConstantValues.getAppLang()
-            );
+//            final String url = String.format(
+//                    Locale.getDefault(),
+//                    Constants.Urls.SCP_QUIZ_MARKET_URL,
+//                    mConstantValues.getAppLang()
+//            );
+            final String url = Constants.Urls.LANDING_PAGE
+                    + "?utm_source=scpReader_" + mConstantValues.getAppLang()
+                    + "&utm_medium=directLink&utm_campaign=scpQuizBanner";
             IntentUtils.openUrl(url);
         });
 
@@ -160,29 +171,16 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
         Glide.with(mainImageView.getContext())
                 .load(R.drawable.ic_scp_quiz_banner)
                 .fitCenter()
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .listener(new RequestListener<Integer, GlideDrawable>() {
+                .listener(new RequestListener<Drawable>() {
                     @Override
-                    public boolean onException(
-                            final Exception e,
-                            final Integer model,
-                            final Target<GlideDrawable> target,
-                            final boolean isFirstResource
-                    ) {
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         Timber.e(e, "ERROR while load image for scp quiz");
                         progressCenter.setVisibility(View.GONE);
                         return false;
                     }
 
                     @Override
-                    public boolean onResourceReady(
-                            final GlideDrawable resource,
-                            final Integer model,
-                            final Target<GlideDrawable> target,
-                            final boolean isFromMemoryCache,
-                            final boolean isFirstResource
-                    ) {
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                         progressCenter.setVisibility(View.GONE);
                         return false;
                     }
@@ -190,79 +188,73 @@ public class NativeAdsArticleListHolder extends RecyclerView.ViewHolder {
                 .into(mainImageView);
     }
 
-    public void bind(final int appodealAdIndex) {
-        Timber.d("appodealAdIndex: %s", appodealAdIndex);
+    public void bind(final int nativeAdIndex) {
+        Timber.d("nativeAdIndex: %s", nativeAdIndex);
 
-        final List<NativeAd> nativeAdsList = Appodeal.getNativeAds(Constants.NUM_OF_NATIVE_ADS_PER_SCREEN);
-        Timber.d("nativeAdsList.size(): %s", nativeAdsList.size());
-        if (nativeAdsList.size() <= appodealAdIndex) {
-            Timber.d("No appodeal ads loaded yet for index: %s", appodealAdIndex);
+        final List<NativeAd> nativeAdsList = mopubNativeManager.getNativeAds();
+//        Timber.d("nativeAdsList.size(): %s", nativeAdsList.size());
+        if (nativeAdsList.size() <= nativeAdIndex) {
+            Timber.d("No native ads loaded yet for index: %s", nativeAdIndex);
             return;
         }
-        scpArtAdView.setVisibility(View.GONE);
-        appodealNativeAdView.setVisibility(View.VISIBLE);
-        final NativeAd nativeAd = nativeAdsList.get(appodealAdIndex);
-        appodealNativeAdView.setNativeAd(nativeAd);
+        scpNativeAdView.setVisibility(View.GONE);
+        mopubNativeAdsContainer.setVisibility(View.VISIBLE);
+        final NativeAd nativeAd = nativeAdsList.get(nativeAdIndex);
+        View convertView = mopubNativeAdsContainer.getChildAt(0);
+        View renderedNativeAd = mopubNativeManager.getRenderedNativeAdsView(
+                nativeAd,
+                mopubNativeAdsContainer,
+                convertView
+        );
+        if (convertView != null) {
+            mopubNativeAdsContainer.removeAllViews();
+        }
+        mopubNativeAdsContainer.addView(renderedNativeAd);
     }
 
-    public void bind(@NotNull final MyNativeBanner scpArtAd) {
-        Timber.d("scpArtAd: %s", scpArtAd);
-//        appodealNativeMediaView.setVisibility(View.GONE);
-        appodealNativeAdView.setVisibility(View.GONE);
+    //todo use it for quiz banners
+    public void bind(@NotNull final MyNativeBanner scpNativeBanner) {
+        Timber.d("scpNativeBanner: %s", scpNativeBanner);
+        mopubNativeAdsContainer.setVisibility(View.GONE);
 
-        scpArtAdView.setVisibility(View.VISIBLE);
+        scpNativeAdView.setVisibility(View.VISIBLE);
 
-        scpArtAdView.setOnClickListener(v -> {
-            Timber.d("MyNativeBanner: onClick %s", scpArtAd);
+        scpNativeAdView.setOnClickListener(v -> {
+            Timber.d("MyNativeBanner: onClick %s", scpNativeBanner);
             FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(
-                    Constants.Firebase.Analitics.EventName.SCP_ART_CLICKED,
+                    Constants.Firebase.Analytics.EventName.SCP_NATIVE_CLICKED,
                     new Bundle()
             );
-            IntentUtils.openUrl(scpArtAd.getRedirectUrl());
+            IntentUtils.openUrl(scpNativeBanner.getRedirectUrl());
         });
 
         ratingBar.setVisibility(View.VISIBLE);
         Glide.with(logoImageView.getContext())
-                .load(BuildConfig.SCP_READER_API_URL + scpArtAd.getLogoUrl())
-                .error(R.drawable.ic_scp_art_ad_img)
+                .load(BuildConfig.SCP_READER_API_URL + scpNativeBanner.getLogoUrl())
+                .error(R.drawable.ic_scp_ad_img)
                 .fitCenter()
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(logoImageView);
 
-        titleTextView.setText(scpArtAd.getTitle());
-        subtitleTextView.setText(scpArtAd.getSubTitle());
-        ctaTextView.setText(scpArtAd.getCtaButtonText());
+        titleTextView.setText(scpNativeBanner.getTitle());
+        subtitleTextView.setText(scpNativeBanner.getSubTitle());
+        ctaTextView.setText(scpNativeBanner.getCtaButtonText());
 
         progressCenter.setVisibility(View.VISIBLE);
-        Timber.d("imageUrl: %s", BuildConfig.SCP_READER_API_URL + scpArtAd.getImageUrl());
+        Timber.d("imageUrl: %s%s", BuildConfig.SCP_READER_API_URL, scpNativeBanner.getImageUrl());
         Glide.with(mainImageView.getContext())
-                .load(BuildConfig.SCP_READER_API_URL + scpArtAd.getImageUrl())
-                .error(R.drawable.art_scp_default_ads)
+                .load(BuildConfig.SCP_READER_API_URL + scpNativeBanner.getImageUrl())
+                .error(R.drawable.ic_scp_quiz_banner)
                 .fitCenter()
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .listener(new RequestListener<String, GlideDrawable>() {
+                .listener(new RequestListener<Drawable>() {
                     @Override
-                    public boolean onException(
-                            final Exception e,
-                            final String model,
-                            final Target<GlideDrawable> target,
-                            final boolean isFirstResource
-                    ) {
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         Timber.e(e, "ERROR while load image for scp art");
                         progressCenter.setVisibility(View.GONE);
                         return false;
                     }
 
                     @Override
-                    public boolean onResourceReady(
-                            final GlideDrawable resource,
-                            final String model,
-                            final Target<GlideDrawable> target,
-                            final boolean isFromMemoryCache,
-                            final boolean isFirstResource
-                    ) {
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                         progressCenter.setVisibility(View.GONE);
                         return false;
                     }

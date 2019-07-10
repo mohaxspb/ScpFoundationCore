@@ -9,17 +9,14 @@ import ru.kuchanov.scpcore.db.model.Article;
 
 /**
  * Created by mohax on 24.03.2017.
- * <p>
- * for scp_ru
  */
 public interface DataSyncActions {
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({
             ScoreAction.FAVORITE, ScoreAction.READ, ScoreAction.INTERSTITIAL_SHOWN,
-            ScoreAction.VK_GROUP, ScoreAction.OUR_APP, ScoreAction.REWARDED_VIDEO,
-            ScoreAction.AUTH, ScoreAction.INVITE, ScoreAction.VK_APP_SHARE,
-            ScoreAction.NONE
+            ScoreAction.VK_GROUP, ScoreAction.REWARDED_VIDEO,
+            ScoreAction.AUTH, ScoreAction.VK_APP_SHARE, ScoreAction.NONE
     })
     @interface ScoreAction {
 
@@ -27,10 +24,8 @@ public interface DataSyncActions {
         String READ = "READ";
         String INTERSTITIAL_SHOWN = "INTERSTITIAL_SHOWN";
         String VK_GROUP = "VK_GROUP";
-        String OUR_APP = "OUR_APP";
         String REWARDED_VIDEO = "REWARDED_VIDEO";
         String AUTH = "AUTH";
-        String INVITE = "INVITE";
         String VK_APP_SHARE = "VK_APP_SHARE";
         String NONE = "NONE";
     }
@@ -42,8 +37,6 @@ public interface DataSyncActions {
     void updateUserScoreForVkGroup(String id);
 
     void updateUserScoreForScoreAction(@ScoreAction String action);
-
-    void updateUserScoreForInapp(String sku);
 
     void checkIfUserJoinedAppVkGroup();
 }

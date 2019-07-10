@@ -14,8 +14,6 @@ import static ru.kuchanov.scpcore.ui.activity.MainActivity.EXTRA_SHOW_ABOUT;
 
 /**
  * Created by Ivan Semkin on 4/23/2017.
- * <p>
- * for ScpFoundationRu
  */
 public class SplashActivity extends AppCompatActivity {
 

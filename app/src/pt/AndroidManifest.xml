@@ -100,15 +100,6 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="ru.kuchanov.scpcore.receivers.AppInstallReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_INSTALL"/>
-                <action android:name="android.intent.action.PACKAGE_ADDED"/>
-
-                <data android:scheme="package"/>
-            </intent-filter>
-        </receiver>
-
         <!--vk-->
         <activity
             android:name="com.vk.sdk.VKServiceActivity"

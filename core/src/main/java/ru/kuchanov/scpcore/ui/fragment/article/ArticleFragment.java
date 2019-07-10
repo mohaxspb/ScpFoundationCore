@@ -59,8 +59,6 @@ import timber.log.Timber;
 
 /**
  * Created by mohax on 03.01.2017.
- * <p>
- * for scp_ru
  */
 public class ArticleFragment
         extends BaseFragment<ArticleMvp.View, ArticleMvp.Presenter>
@@ -85,6 +83,9 @@ public class ArticleFragment
 
     @BindView(R2.id.recyclerView)
     RecyclerView mRecyclerView;
+
+    @Inject
+    MyPreferenceManager myPreferenceManager;
 
     @Inject
     DialogUtils mDialogUtils;
@@ -426,7 +427,9 @@ public class ArticleFragment
         if (!isAdded()) {
             return;
         }
-        GalleryActivity.startForImage(getActivity(), link, description);
+        if (myPreferenceManager.imagesEnabled()) {
+            GalleryActivity.startForImage(getActivity(), link, description);
+        }
     }
 
     @Override
@@ -507,20 +510,20 @@ public class ArticleFragment
     }
 
     @Override
+    public void onRewardedVideoClick() {
+        if (!isAdded()) {
+            return;
+        }
+        getBaseActivity().startRewardedVideoFlow();
+    }
+
+    @Override
     public void onAdsSettingsClick() {
         if (!isAdded()) {
             return;
         }
         final BottomSheetDialogFragment subsDF = AdsSettingsBottomSheetDialogFragment.newInstance();
         subsDF.show(getActivity().getSupportFragmentManager(), subsDF.getTag());
-    }
-
-    @Override
-    public void onRewardedVideoClick() {
-        if (!isAdded()) {
-            return;
-        }
-        getBaseActivity().startRewardedVideoFlow();
     }
 
     @Override

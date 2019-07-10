@@ -1,15 +1,14 @@
 package ru.kuchanov.scpcore.ui.util;
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.gson.GsonBuilder;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-
-import org.jetbrains.annotations.NotNull;
-
 import android.content.Context;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.LinearLayoutManager;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.gson.GsonBuilder;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -66,12 +65,16 @@ public class DialogUtils {
         new MaterialDialog.Builder(context)
                 .content(context.getString(R.string.offer_app_lang_version_content, langName, langName))
                 .title(version.title)
-                .positiveText(R.string.open_play_market)
+                .positiveText(R.string.open_landing)
                 .onPositive((dialog1, which) -> {
-                    final String linkToMarket = "https://play.google.com/store/apps/details?id="
-                                                + version.appPackage
-                                                + "&utm_source=scpReader&utm_medium=appLangsVersions&utm_campaign="
-                                                + mConstantValues.getAppLang();
+//                    final String linkToMarket = "https://play.google.com/store/apps/details?id="
+//                            + version.appPackage
+//                            + "&utm_source=scpReader&utm_medium=appLangsVersions&utm_campaign="
+//                            + mConstantValues.getAppLang();
+                    final String linkToMarket = Constants.Urls.LANDING_PAGE
+                            + "?utm_source=scpReader_" + mConstantValues.getAppLang()
+                            + "&utm_medium=directLink&utm_campaign="
+                            + version.appPackage;
                     IntentUtils.openUrl(linkToMarket);
                 })
                 .build()
@@ -86,10 +89,16 @@ public class DialogUtils {
                 ).langs;
         final AppLangVersionsAdapter adapter = new AppLangVersionsAdapter(appLangVersions);
         adapter.setCallbacks(position -> {
-            final String linkToMarket = "https://play.google.com/store/apps/details?id="
-                                        + appLangVersions.get(position).appPackage
-                                        + "&utm_source=scpReader&utm_medium=appLangsVersions&utm_campaign="
-                                        + mConstantValues.getAppLang();
+//            final String linkToMarket = "https://play.google.com/store/apps/details?id="
+//                                        + appLangVersions.get(position).appPackage
+//                                        + "&utm_source=scpReader&utm_medium=appLangsVersions&utm_campaign="
+//                                        + mConstantValues.getAppLang();
+
+            final String linkToMarket = Constants.Urls.LANDING_PAGE
+                    + "?utm_source=scpReader_" + mConstantValues.getAppLang()
+                    + "&utm_medium=directLink&utm_campaign="
+                    + appLangVersions.get(position).appPackage;
+
             IntentUtils.openUrl(linkToMarket);
         });
 
@@ -118,7 +127,8 @@ public class DialogUtils {
                 .content(baseActivity.getString(R.string.dialog_offer_free_trial_subscription_content, freeTrialDays, freeTrialDays))
                 .positiveText(R.string.yes_bliad)
                 .onPositive((dialog, which) -> baseActivity.getPresenter().onPurchaseClick(
-                        sku, baseActivity, false
+                        sku,
+                        false
                 ))
                 .negativeText(android.R.string.cancel)
                 .onNegative((dialog, which) -> dialog.dismiss())
@@ -177,21 +187,5 @@ public class DialogUtils {
         }
         mProgressDialog.dismiss();
         mProgressDialog = null;
-    }
-
-    public void showInAppErrorDialog(
-            final BaseActivity<? extends BaseActivityMvp.View, ? extends BaseActivityMvp.Presenter<? extends BaseActivityMvp.View>> baseActivity,
-            @NotNull final String errorMessage
-    ) {
-        new MaterialDialog.Builder(baseActivity)
-                .title(R.string.dialog_inapp_error_title)
-                .content(baseActivity.getString(R.string.dialog_inapp_error_content, errorMessage))
-                .positiveText(R.string.try_again)
-                .onPositive((dialog, which) -> baseActivity.getPresenter().onLevelUpRetryClick(baseActivity.getIInAppBillingService()))
-                .negativeText(android.R.string.cancel)
-                .onNegative((dialog, which) -> dialog.dismiss())
-                .cancelable(false)
-                .build()
-                .show();
     }
 }
