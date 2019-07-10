@@ -65,7 +65,7 @@ public class DialogUtils {
         new MaterialDialog.Builder(context)
                 .content(context.getString(R.string.offer_app_lang_version_content, langName, langName))
                 .title(version.title)
-                .positiveText(R.string.open_play_market)
+                .positiveText(R.string.open_landing)
                 .onPositive((dialog1, which) -> {
 //                    final String linkToMarket = "https://play.google.com/store/apps/details?id="
 //                            + version.appPackage
