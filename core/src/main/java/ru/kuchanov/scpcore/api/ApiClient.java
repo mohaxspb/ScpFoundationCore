@@ -93,8 +93,6 @@ import timber.log.Timber;
 
 /**
  * Created by y.kuchanov on 22.12.16.
- * <p>
- * for scp_ru
  */
 public class ApiClient {
 
@@ -911,7 +909,6 @@ public class ApiClient {
     private static String getObjectTypeByImageUrl(final String imageURL) {
         @Article.ObjectType final String type;
 
-        //todo change url for objects 2
         switch (imageURL) {
             case "http://scp-ru.wdfiles.com/local--files/scp-list-4/na.png":
             case "http://scp-ru.wdfiles.com/local--files/scp-list-3/na.png":

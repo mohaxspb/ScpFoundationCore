@@ -82,7 +82,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Timber.d("onMessageReceived: %s", remoteMessage.getData());
         super.onMessageReceived(remoteMessage);
 
-        //todo need to switch by some key-value pair to be able to handle different pushes
+        //need to switch by some key-value pair to be able to handle different pushes
         if (remoteMessage.getNotification() == null) {
             //as we didn't add some pushType params while send push from server we'll think that there is
             //only one type - (04.07.19 - no types, since we remove invites).

@@ -387,4 +387,5 @@ Thanks for using our app!]]></string>
     <string name="read_history">Read history</string>
     <string name="open">Open</string>
     <string name="continue_reading">Continue reading?</string>
+    <string name="open_landing">Go to our site</string>
 </resources>

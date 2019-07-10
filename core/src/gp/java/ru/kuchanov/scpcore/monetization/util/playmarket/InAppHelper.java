@@ -10,22 +10,23 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.annotation.NonNull;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
-import android.util.Pair;
+import android.support.annotation.StringRes;
 
 import com.android.vending.billing.IInAppBillingService;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.GsonBuilder;
+import com.jakewharton.rxrelay.PublishRelay;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import kotlin.Pair;
 import ru.kuchanov.scpcore.BaseApplication;
 import ru.kuchanov.scpcore.Constants;
 import ru.kuchanov.scpcore.R;
@@ -37,16 +38,23 @@ import ru.kuchanov.scpcore.manager.MyPreferenceManager;
 import ru.kuchanov.scpcore.monetization.model.Item;
 import ru.kuchanov.scpcore.monetization.model.Subscription;
 import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil;
+import ru.kuchanov.scpcore.monetization.util.IntentSenderWrapper;
+import ru.kuchanov.scpcore.monetization.util.ItemsListWrapper;
+import ru.kuchanov.scpcore.monetization.util.SubscriptionWrapper;
 import ru.kuchanov.scpcore.ui.activity.BaseActivity;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
+import static ru.kuchanov.scpcore.Constants.Firebase.Refs.INAPP;
+import static ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil.InappType.IN_APP;
+import static ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil.InappType.SUBS;
+import static ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP;
+import static ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment.REQUEST_CODE_SUBSCRIPTION;
+
 /**
  * Created by mohax on 02.02.2017.
- * <p>
- * for scp_ru
  */
 public class InAppHelper implements InappPurchaseUtil {
 
@@ -70,10 +78,17 @@ public class InAppHelper implements InappPurchaseUtil {
 
     public static final int RESULT_ITEM_NOT_OWNED = 8;// - Failure to consume since item is not owned
 
+    private PublishRelay<SubscriptionWrapper> inappBoughtRelay = PublishRelay.create();
+
+    private PublishRelay<ItemsListWrapper> ownedSubsRelay = PublishRelay.create();
+
+    @NotNull
     private final ApiClient mApiClient;
 
+    @NotNull
     private final MyPreferenceManager mMyPreferenceManager;
 
+    @NotNull
     private final DbProviderFactory mDbProviderFactory;
 
     @Nullable
@@ -83,9 +98,9 @@ public class InAppHelper implements InappPurchaseUtil {
     private BaseActivity<?, ?> baseActivity;
 
     public InAppHelper(
-            final MyPreferenceManager preferenceManager,
-            final DbProviderFactory dbProviderFactory,
-            final ApiClient apiClient
+            @NotNull final MyPreferenceManager preferenceManager,
+            @NotNull final DbProviderFactory dbProviderFactory,
+            @NotNull final ApiClient apiClient
     ) {
         super();
         mMyPreferenceManager = preferenceManager;
@@ -93,10 +108,8 @@ public class InAppHelper implements InappPurchaseUtil {
         mApiClient = apiClient;
     }
 
-    //fixme check it
     @Override
     public void onActivate(@NotNull final BaseActivity<?, ?> activity) {
-        //todo
         baseActivity = activity;
 
         //initAds subs service
@@ -130,10 +143,16 @@ public class InAppHelper implements InappPurchaseUtil {
 
             //offer free trial every week for non subscribed users
             //check here as we need to have connected service
-            if (!mMyPreferenceManager.isHasAnySubscription() && mMyPreferenceManager.isTimeToPeriodicalOfferFreeTrial()) {
+            if (!mMyPreferenceManager.isHasAnySubscription()
+                    && mMyPreferenceManager.isTimeToPeriodicalOfferFreeTrial()) {
                 final Bundle bundle = new Bundle();
-                bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.EventValue.PERIODICAL);
-                FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+                bundle.putString(
+                        Constants.Firebase.Analytics.EventParam.PLACE,
+                        Constants.Firebase.Analytics.EventValue.PERIODICAL
+                );
+                FirebaseAnalytics
+                        .getInstance(BaseApplication.getAppInstance())
+                        .logEvent(Constants.Firebase.Analytics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
                 baseActivity.showOfferFreeTrialSubscriptionPopup();
                 mMyPreferenceManager.setLastTimePeriodicalFreeTrialOffered(System.currentTimeMillis());
@@ -149,8 +168,13 @@ public class InAppHelper implements InappPurchaseUtil {
                     && baseActivity.getPresenter().getUser().score < 10000
                     && !mMyPreferenceManager.isFreeTrialOfferedAfterGetting1000Score()) {
                 final Bundle bundle = new Bundle();
-                bundle.putString(Constants.Firebase.Analitics.EventParam.PLACE, Constants.Firebase.Analitics.EventValue.SCORE_1000_REACHED);
-                FirebaseAnalytics.getInstance(BaseApplication.getAppInstance()).logEvent(Constants.Firebase.Analitics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
+                bundle.putString(
+                        Constants.Firebase.Analytics.EventParam.PLACE,
+                        Constants.Firebase.Analytics.EventValue.SCORE_1000_REACHED
+                );
+                FirebaseAnalytics
+                        .getInstance(BaseApplication.getAppInstance())
+                        .logEvent(Constants.Firebase.Analytics.EventName.FREE_TRIAL_OFFER_SHOWN, bundle);
 
                 baseActivity.showOfferFreeTrialSubscriptionPopup();
                 mMyPreferenceManager.setFreeTrialOfferedAfterGetting1000Score();
@@ -166,62 +190,19 @@ public class InAppHelper implements InappPurchaseUtil {
         baseActivity = null;
     }
 
-    //fixme remove it, while rewrite to kotlin
-    @Override
-    @SubscriptionType
-    public int getSubscriptionTypeFromItemsList(@NonNull final List<? extends Item> ownedItems) {
-
-        final Context context = BaseApplication.getAppInstance();
-        //add old old donate subs, new ones and one with free trial period
-        final Collection<String> fullVersionSkus = new ArrayList<>(Arrays.asList(context.getString(R.string.old_skus).split(",")));
-        Collections.addAll(fullVersionSkus, context.getString(R.string.ver_2_skus).split(","));
-        Collections.addAll(fullVersionSkus, context.getString(R.string.ver3_skus).split(","));
-        Collections.addAll(fullVersionSkus, context.getString(R.string.subs_free_trial).split(","));
-        Collections.addAll(fullVersionSkus, context.getString(R.string.ver3_subs_free_trial).split(","));
-        Collections.addAll(fullVersionSkus, context.getString(R.string.ver4_skus).split(","));
-        Collections.addAll(fullVersionSkus, context.getString(R.string.ver4_subs_free_trial).split(","));
-
-        final Collection<String> noAdsSkus = new ArrayList<>();
-        noAdsSkus.add(context.getString(R.string.subs_no_ads_old));
-        noAdsSkus.add(context.getString(R.string.subs_no_ads_ver_2));
-        noAdsSkus.add(context.getString(R.string.ver3_subs_no_ads));
-        noAdsSkus.add(context.getString(R.string.ver4_subs_no_ads));
-
-        final List<String> ownedSkus = getSkuListFromItemsList(ownedItems);
-        noAdsSkus.retainAll(ownedSkus);
-        fullVersionSkus.retainAll(ownedSkus);
-
-        @SubscriptionType final int type = fullVersionSkus.isEmpty()
-                ? noAdsSkus.isEmpty()
-                ? SubscriptionType.NONE
-                : SubscriptionType.NO_ADS
-                : SubscriptionType.FULL_VERSION;
-
-        return type;
-    }
-
-    private static List<String> getSkuListFromItemsList(@NonNull final List<? extends Item> ownedItems) {
-        final List<String> skus = new ArrayList<>();
-        for (final Item item : ownedItems) {
-            skus.add(item.sku);
-        }
-        return skus;
-    }
-
     private Single<List<Item>> getValidatedOwnedSubsObservable() {
         return Single.<List<Item>>create(subscriber -> {
             try {
                 Bundle ownedItemsBundle = mInAppBillingService.getPurchases(
                         API_VERSION_3,
                         BaseApplication.getAppInstance().getPackageName(),
-                        "subs",
+                        SUBS,
                         null
                 );
 
                 Timber.d("ownedItems bundle: %s", ownedItemsBundle);
                 final int playMarketResponseCode = ownedItemsBundle.getInt("RESPONSE_CODE");
                 if (playMarketResponseCode == RESULT_OK) {
-                    //TODO use gson for parsing
                     List<String> ownedSkus = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
                     List<String> purchaseDataList = ownedItemsBundle.getStringArrayList("INAPP_PURCHASE_DATA_LIST");
                     List<String> signatureList = ownedItemsBundle.getStringArrayList("INAPP_DATA_SIGNATURE_LIST");
@@ -254,20 +235,20 @@ public class InAppHelper implements InappPurchaseUtil {
                 .flatMap(items -> {
                     final List<Item> validatedItems = new ArrayList<>();
                     for (final Item item : items) {
-                        Timber.d("validate item: %s", item.sku);
+                        Timber.d("validate item: %s", item.getSku());
                         final PurchaseValidateResponse purchaseValidateResponse = mApiClient.validateSubscription(
                                 BaseApplication.getAppInstance().getPackageName(),
-                                item.sku,
-                                item.purchaseData.purchaseToken
+                                item.getSku(),
+                                item.getPurchaseData().getPurchaseToken()
                         ).toBlocking().value();
                         switch (purchaseValidateResponse.getStatus()) {
                             case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_VALID:
-                                Timber.d("Item successfully validated: %s", item.sku);
+                                Timber.d("Item successfully validated: %s", item.getSku());
                                 validatedItems.add(item);
                                 break;
                             case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_INVALID:
 //                                    return Observable.error(new IllegalStateException("Purchase state is INVALID"));
-                                Timber.e("Invalid subs: %s", item.sku);
+                                Timber.e("Invalid subs: %s", item.getSku());
                                 break;
                             case PurchaseValidateResponse.PurchaseValidationStatus.STATUS_GOOGLE_SERVER_ERROR:
                                 //if there is error we should cancel subs validating
@@ -280,10 +261,9 @@ public class InAppHelper implements InappPurchaseUtil {
                 });
     }
 
-
     @NotNull
     @Override
-    public Single<List<Item>> getInAppHistoryObservable() {
+    public Single<Subscription> getInAppHistory() {
         return Single.create(subscriber -> {
             try {
                 final Bundle bundle = mInAppBillingService.getPurchaseHistory(
@@ -314,7 +294,29 @@ public class InAppHelper implements InappPurchaseUtil {
                             ownedItemsList.add(new Item(purchaseData, signature, sku, continuationToken));
                         }
                         Timber.d("ownedItemsList: %s", ownedItemsList);
-                        subscriber.onSuccess(ownedItemsList);
+                        if (ownedItemsList.isEmpty()) {
+                            subscriber.onError(new IllegalStateException("OwnedItems list is empty! WTF?!"));
+                        } else {
+                            final Item item = ownedItemsList.get(0);
+                            subscriber.onSuccess(
+                                    new Subscription(
+                                            item.getSku(),
+                                            IN_APP,
+                                            "N/A", //price,
+                                            -1,//price_amount_micros
+                                            "N/A", //price_currency_code
+                                            null,
+                                            null,
+                                            null,
+                                            null,
+                                            null,
+                                            0,
+                                            null,
+                                            0,
+                                            item.getPurchaseData().getPurchaseToken()
+                                    )
+                            );
+                        }
                     }
                 } else {
                     subscriber.onError(new IllegalStateException("ownedItemsBundle RESPONSE_CODE is not 0: " + bundle.getInt("RESPONSE_CODE")));
@@ -337,7 +339,7 @@ public class InAppHelper implements InappPurchaseUtil {
                 final Bundle skuDetails = mInAppBillingService.getSkuDetails(
                         API_VERSION_3,
                         BaseApplication.getAppInstance().getPackageName(),
-                        "subs",
+                        SUBS,
                         querySkus
                 );
                 final int responseCodeCode = skuDetails.getInt("RESPONSE_CODE");
@@ -368,20 +370,29 @@ public class InAppHelper implements InappPurchaseUtil {
 
     @NotNull
     @Override
-    public Single<List<Subscription>> getInAppsListToBuyObservable() {
+    public Single<List<Subscription>> getInAppsListToBuy() {
         Timber.d("getInAppsListToBuy");
         return Single.create(subscriber -> {
             try {
                 //get all subs detailed info
-                final ArrayList<String> skuList = new ArrayList<>();
-                //get it from build config
-//                Collections.addAll(skuList, BaseApplication.getAppInstance().getString(R.string.inapp_skus).split(","));
-                Collections.addAll(skuList, BaseApplication.getAppInstance().getString(R.string.ver3_inapp_skus).split(","));
+                final ArrayList<String> skuList = new ArrayList<>(
+                        Arrays.asList(
+                                BaseApplication
+                                        .getAppInstance()
+                                        .getString(R.string.ver3_inapp_skus)
+                                        .split(",")
+                        )
+                );
                 Timber.d("skuList: %s", skuList);
 
                 final Bundle querySkus = new Bundle();
                 querySkus.putStringArrayList("ITEM_ID_LIST", skuList);
-                final Bundle skuDetails = mInAppBillingService.getSkuDetails(API_VERSION_3, BaseApplication.getAppInstance().getPackageName(), "inapp", querySkus);
+                final Bundle skuDetails = mInAppBillingService.getSkuDetails(
+                        API_VERSION_3,
+                        BaseApplication.getAppInstance().getPackageName(),
+                        INAPP,
+                        querySkus
+                );
                 Timber.d("skuDetails: %s", skuDetails);
                 final int responseCode = skuDetails.getInt("RESPONSE_CODE");
                 if (responseCode == RESULT_OK) {
@@ -483,7 +494,7 @@ public class InAppHelper implements InappPurchaseUtil {
 
     @NotNull
     @Override
-    public Single<IntentSender> intentSenderSingle(
+    public Single<IntentSenderWrapper> intentSenderSingle(
             @NotNull @InappType final String type,
             @NotNull final String sku
     ) {
@@ -496,15 +507,22 @@ public class InAppHelper implements InappPurchaseUtil {
         ))
                 .map(bundle -> new Pair<>(bundle, bundle.getInt("RESPONSE_CODE")))
                 .flatMap(bundleResponseCodePair -> {
-                    Timber.d("bundleResponseCodePair: %s/%s", bundleResponseCodePair.first, bundleResponseCodePair.second);
-                    if (bundleResponseCodePair.second == RESULT_OK) {
-                        final PendingIntent pendingIntent = bundleResponseCodePair.first.getParcelable("BUY_INTENT");
-                        return Single.just(pendingIntent.getIntentSender());
-                    } else if (bundleResponseCodePair.second == RESULT_ITEM_ALREADY_OWNED) {
-                        return getInAppHistoryObservable()
+                    Timber.d("bundleResponseCodePair: %s/%s", bundleResponseCodePair.getFirst(), bundleResponseCodePair.getSecond());
+                    if (bundleResponseCodePair.getSecond() == RESULT_OK) {
+                        final PendingIntent pendingIntent = bundleResponseCodePair.getFirst().getParcelable("BUY_INTENT");
+                        return Single
+                                .just(
+                                        new IntentSenderWrapper(
+                                                pendingIntent.getIntentSender(),
+                                                type,
+                                                sku
+                                        )
+                                );
+                    } else if (bundleResponseCodePair.getSecond() == RESULT_ITEM_ALREADY_OWNED) {
+                        return getInAppHistory()
                                 .flatMap(itemsOwned -> consumeInApp(
-                                        itemsOwned.get(0).sku,
-                                        itemsOwned.get(0).purchaseData.purchaseToken
+                                        itemsOwned.productId,
+                                        itemsOwned.purchaseToken
                                 ))
                                 .flatMap(integer -> intentSenderSingle(
                                         type,
@@ -513,22 +531,28 @@ public class InAppHelper implements InappPurchaseUtil {
                     } else {
                         return Single.error(
                                 new IllegalStateException(
-                                        "RESPONSE_CODE is not OK: " + bundleResponseCodePair.second
+                                        "RESPONSE_CODE is not OK: " + bundleResponseCodePair.getSecond()
                                 )
                         );
                     }
                 });
     }
 
+    @NotNull
     @Override
-    public void startPurchase(
-            @NotNull final IntentSender intentSender,
-            @NotNull final BaseActivity activity,
-            final int requestCode
+    public Single<Subscription> startPurchase(
+            @NotNull final IntentSenderWrapper intentSenderWrapper
     ) {
+        int requestCode = -1;
+        if (intentSenderWrapper.getType().equals(IN_APP)) {
+            requestCode = REQUEST_CODE_INAPP;
+        } else if (intentSenderWrapper.getType().equals(SUBS)) {
+            requestCode = REQUEST_CODE_SUBSCRIPTION;
+        }
+
         try {
-            activity.startIntentSenderForResult(
-                    intentSender,
+            baseActivity.startIntentSenderForResult(
+                    intentSenderWrapper.getIntentSender(),
                     requestCode,
                     new Intent(),
                     0,
@@ -536,10 +560,94 @@ public class InAppHelper implements InappPurchaseUtil {
                     0,
                     null
             );
+            switch (intentSenderWrapper.getType()) {
+                case IN_APP:
+                    return inappBoughtRelay
+                            .take(1)
+                            .map(subscriptionWrapper -> {
+                                if (subscriptionWrapper.getSubscription() != null) {
+                                    return subscriptionWrapper.getSubscription();
+                                } else {
+                                    throw subscriptionWrapper.getError();
+                                }
+                            })
+                            .toSingle();
+                case SUBS:
+                    return ownedSubsRelay
+                            .take(1)
+                            .map(itemsListWrapper -> {
+                                if (itemsListWrapper.getItems() != null) {
+                                    return new Subscription(
+                                            itemsListWrapper.getItems().get(0).getSku(),
+                                            InappPurchaseUtil.InappType.SUBS,
+                                            null,
+                                            0, //price_amount_micros
+                                            null, //price_currency_code
+                                            null,
+                                            null,
+                                            null,
+                                            null,
+                                            null,
+                                            0,
+                                            null,
+                                            0,
+                                            null
+                                    );
+                                } else {
+                                    throw itemsListWrapper.getError();
+                                }
+                            })
+                            .toSingle();
+                default:
+                    return Single.error(new IllegalStateException("Unexpected purchase type: " + intentSenderWrapper.getType()));
+            }
         } catch (final IntentSender.SendIntentException e) {
             Timber.wtf(e);
-            activity.showError(e);
+            return Single.error(e);
         }
+    }
+
+    @NotNull
+    @Override
+    public PublishRelay<SubscriptionWrapper> getBoughtInappRelay() {
+        return inappBoughtRelay;
+    }
+
+    @NotNull
+    @Override
+    public PublishRelay<ItemsListWrapper> getOwnedSubsRelay() {
+        return ownedSubsRelay;
+    }
+
+    @NotNull
+    @Override
+    public Pair<Integer, Integer> getTitleAndIconForSubsSku(@NotNull final String sku) {
+        @StringRes
+        int title;
+        @DrawableRes
+        int icon;
+        switch (getMonthFromSkuId(sku)) {
+            case 1:
+                title = R.string.subs_1_month_title;
+                icon = R.drawable.ic_scp_icon_laborant;
+                break;
+            case 3:
+                title = R.string.subs_3_month_title;
+                icon = R.drawable.ic_scp_icon_mns;
+                break;
+            case 6:
+                title = R.string.subs_6_month_title;
+                icon = R.drawable.ic_scp_icon_ns;
+                break;
+            case 12:
+                title = R.string.subs_12_month_title;
+                icon = R.drawable.ic_scp_icon_sns;
+                break;
+            default:
+                throw new IllegalArgumentException("unexpected subs period");
+        }
+
+        return new Pair<>(title, icon);
     }
 
     @Override

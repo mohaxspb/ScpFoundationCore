@@ -30,7 +30,7 @@ class SubscriptionsPresenter(
         myPreferencesManager: MyPreferenceManager,
         dbProviderFactory: DbProviderFactory,
         apiClient: ApiClient,
-        private val inAppHelper: InAppHelper
+       inAppHelper: InAppHelper
 ) : BasePresenter<SubscriptionsContract.View>(
         myPreferencesManager,
         dbProviderFactory,
@@ -53,9 +53,9 @@ class SubscriptionsPresenter(
         view.showProgressCenter(true)
         view.showRefreshButton(false)
 
-        val skuList = mInAppHelper.getNewSubsSkus().toMutableList()
+        val skuList = inAppHelper.getNewSubsSkus().toMutableList()
         if (FirebaseRemoteConfig.getInstance().getBoolean(Constants.Firebase.RemoteConfigKeys.NO_ADS_SUBS_ENABLED)) {
-            skuList.addAll(mInAppHelper.getNewNoAdsSubsSkus())
+            skuList.addAll(inAppHelper.getNewNoAdsSubsSkus())
         }
 
         Single.zip(
@@ -82,7 +82,7 @@ class SubscriptionsPresenter(
                             owned = it.first
                             subsToBuy = it.second
                             inAppsToBuy = it.third
-                            type = mInAppHelper.getSubscriptionTypeFromItemsList(it.first)
+                            type = inAppHelper.getSubscriptionTypeFromItemsList(it.first)
                             //todo create data and show it in fragment
 //                            items.clear()
 //                            items.add(TextViewModel(R.string.subs_main_text))

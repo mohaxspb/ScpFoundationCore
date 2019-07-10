@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.gson.GsonBuilder
 import com.vk.sdk.VKAccessToken
 import com.vk.sdk.VKCallback
 import com.vk.sdk.VKSdk
@@ -32,16 +33,19 @@ import ru.kuchanov.scpcore.api.model.scpreader.CommonUserData
 import ru.kuchanov.scpcore.db.DbProviderFactory
 import ru.kuchanov.scpcore.db.model.SocialProviderModel
 import ru.kuchanov.scpcore.manager.MyPreferenceManager
+import ru.kuchanov.scpcore.monetization.model.Item
+import ru.kuchanov.scpcore.monetization.model.PurchaseData
 import ru.kuchanov.scpcore.monetization.model.Subscription
 import ru.kuchanov.scpcore.monetization.util.InappPurchaseUtil
-import ru.kuchanov.scpcore.monetization.util.IntentSenderWrapper
+import ru.kuchanov.scpcore.monetization.util.ItemsListWrapper
 import ru.kuchanov.scpcore.monetization.util.PurchaseFailedError
+import ru.kuchanov.scpcore.monetization.util.SubscriptionWrapper
 import ru.kuchanov.scpcore.monetization.util.playmarket.InAppHelper
 import ru.kuchanov.scpcore.mvp.base.BaseActivityMvp
 import ru.kuchanov.scpcore.mvp.base.BasePresenter
 import ru.kuchanov.scpcore.ui.activity.BaseActivity.RC_SIGN_IN
-import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity
-import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment
+import ru.kuchanov.scpcore.ui.activity.BaseDrawerActivity.REQUEST_CODE_INAPP
+import ru.kuchanov.scpcore.ui.fragment.monetization.SubscriptionsFragment.Companion.REQUEST_CODE_SUBSCRIPTION
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.subscribeBy
@@ -466,24 +470,25 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
             return
         }
 
-        val type = if (mInAppHelper.getNewInAppsSkus().contains(id)) {
+        @InappPurchaseUtil.InappType
+        val type = if (inAppHelper.getNewInAppsSkus().contains(id)) {
             InappPurchaseUtil.InappType.IN_APP
         } else {
             InappPurchaseUtil.InappType.SUBS
         }
 
-        mInAppHelper.intentSenderSingle(type, id)
-                .flatMap { intentSender ->
-                    mInAppHelper.startPurchase(intentSender)
-                }
+        inAppHelper.intentSenderSingle(type, id)
+                .flatMap { inAppHelper.startPurchase(it) }
                 .onErrorResumeNext { error ->
                     return@onErrorResumeNext if (error is PurchaseFailedError) {
+                        Timber.e(error, "error is PurchaseFailedError")
                         when (type) {
                             InappPurchaseUtil.InappType.IN_APP -> {
-                                mInAppHelper.getInAppHistory()
-                                        .doOnSubscribe { view.showProgressDialog(R.string.wait) }
-                                        .doOnEach { view.dismissProgressDialog() }
-                                        .flatMap { mInAppHelper.consumeInApp(it.productId, "") }
+                                inAppHelper
+                                        .getInAppHistory()
+//                                        .doOnSubscribe { view.showProgressDialog(R.string.wait) }
+//                                        .doOnEach { view.dismissProgressDialog() }
+                                        .flatMap { inAppHelper.consumeInApp(it.productId, "") }
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .doOnSuccess {
                                             val context = BaseApplication.getAppInstance()
@@ -498,10 +503,14 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                                     )
                                             )
                                         }
-                                        .flatMap { mInAppHelper.startPurchase(IntentSenderWrapper(null, type, id)) }
+                                        .flatMap { inAppHelper.intentSenderSingle(type, id) }
+                                        .flatMap {
+                                            inAppHelper.startPurchase(it)
+                                        }
                             }
                             InappPurchaseUtil.InappType.SUBS -> {
-                                mInAppHelper.validateSubsObservable()
+                                inAppHelper
+                                        .validateSubsObservable()
                                         .doOnSuccess { view.showMessage("Subscriptions state updated") }
                                         .flatMap { Single.error<Subscription>(error) }
                             }
@@ -513,7 +522,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 }
                 .flatMap { subscription ->
                     if (subscription.type == InappPurchaseUtil.InappType.IN_APP) {
-                        mInAppHelper
+                        inAppHelper
                                 .consumeInApp(subscription.productId, "")
                                 .map { subscription }
                     } else {
@@ -535,12 +544,15 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                                         )
                                 )
                         )
+                        if (!myPreferencesManager.isHasAnySubscription) {
+                            view.showOfferSubscriptionPopup()
+                        }
                     }
                 }
                 .subscribeBy(
                         onSuccess = {},
                         onError = { e ->
-                            Timber.e(e, "error while purchse clicked")
+                            Timber.e(e, "error while purchase clicked")
                             view.showError(e)
                         }
                 )
@@ -614,7 +626,7 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                 logoutUser()
                 return true
             }
-        } else if (requestCode == SubscriptionsFragment.REQUEST_CODE_SUBSCRIPTION) {
+        } else if (requestCode == REQUEST_CODE_SUBSCRIPTION) {
             if (data == null) {
                 view.showMessageLong("Error while parse result, please try again")
                 return true
@@ -628,70 +640,99 @@ abstract class BaseActivityPresenter<V : BaseActivityMvp.View>(
                     val sku = jo.getString("productId")
                     Timber.d("You have bought the %s", sku)
 
-                    //validate subs list
-                    view.updateOwnedMarketItems()
+                    inAppHelper.getOwnedSubsRelay()
+                            .call(ItemsListWrapper(listOf(Item(sku = sku))))
                 } catch (e: JSONException) {
                     Timber.e(e, "Failed to parse purchase data.")
-                    view.showError(e)
+                    inAppHelper.getOwnedSubsRelay()
+                            .call(
+                                    ItemsListWrapper(
+                                            error = Error("Failed to parse purchase data.", e)
+                                    )
+                            )
                 }
             } else {
-                view.showMessageLong("Error: response code is not \"0\". Please try again")
+                inAppHelper.getOwnedSubsRelay()
+                        .call(
+                                ItemsListWrapper(
+                                        error = Error("Error: response code is not \"0\". Please try again")
+                                )
+                        )
             }
             return true
-        } else if (requestCode == BaseDrawerActivity.REQUEST_CODE_INAPP) {
+        } else if (requestCode == REQUEST_CODE_INAPP) {
             Timber.d("REQUEST_CODE_INAPP resultCode == Activity.RESULT_OK: ${resultCode == Activity.RESULT_OK}")
-            //todo check for GP
-//            if (resultCode == Activity.RESULT_OK) {
-//                if (data == null) {
-//                    Timber.d("error_inapp data is NULL")
-//                    view.showMessage(R.string.error_inapp)
-//                    return true
-//                }
-//                //            int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
-//                val purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA")
-//                //            String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
-//                Timber.d("purchaseData %s", purchaseData)
-//                val item = GsonBuilder().create().fromJson(purchaseData, PurchaseData::class.java)
-//                Timber.d("You have bought the %s", item.productId)
-//
-//                if (item.productId == inAppHelper.getNewInAppsSkus().first()) {
-//                    //levelUp 5
-//                    //add 10 000 score
-//                    inAppHelper.consumeInApp(item.productId, item.purchaseToken)
-//                            .subscribeOn(Schedulers.io())
-//                            .observeOn(AndroidSchedulers.mainThread())
-//                            .subscribeBy(
-//                                    onSuccess = {
-//                                        Timber.d("consume inapp successful, so update user score")
-//                                        updateUserScoreForInapp(item.productId)
-//
-//                                        if (!myPreferencesManager.isHasAnySubscription) {
-//                                            view.showOfferSubscriptionPopup()
-//                                        }
-//                                    },
-//                                    onError = {
-//                                        Timber.e(it, "error while consume inapp!")
-//                                        view.showError(it)
-//                                        view.showInAppErrorDialog(
-//                                                it.message
-//                                                        ?: BaseApplication.getAppInstance().getString(R.string.error_unexpected)
-//                                        )
-//                                    }
-//                            )
-//                } else {
-//                    Timber.wtf("Unexpected item.productId: ${item.productId}")
-//                }
-//            } else if (data?.getIntExtra("RESPONSE_CODE", 0) == InappPurchaseUtil.RESULT_ITEM_ALREADY_OWNED) {
-//                val message = "RESPONSE_CODE is: InAppHelper.RESULT_ITEM_ALREADY_OWNED"
-//                Timber.wtf(message)
-//                onLevelUpRetryClick()
-//            } else {
-//                val message = "Unexpected resultCode: $resultCode/${data?.extras?.keySet()?.map { "$it/${data.extras[it]}" }}"
-//                Timber.wtf(message)
-//                if (data?.getIntExtra("RESPONSE_CODE", 0) != InappPurchaseUtil.RESULT_USER_CANCELED) {
-//                    view.showMessage(message)
-//                }
-//            }
+
+            if (resultCode == Activity.RESULT_OK) {
+                if (data == null) {
+                    Timber.e("error_inapp data is NULL")
+
+                    inAppHelper.getBoughtInappRelay()
+                            .call(
+                                    SubscriptionWrapper(
+                                            error = Error(BaseApplication.getAppInstance().getString(R.string.error_inapp))
+                                    )
+                            )
+                    return true
+                }
+                //int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
+                val purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA")
+                //String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
+                Timber.d("purchaseData %s", purchaseData)
+                val item = GsonBuilder().create().fromJson(purchaseData, PurchaseData::class.java)
+                Timber.d("You have bought the %s", item.productId)
+
+                if (item.productId == inAppHelper.getNewInAppsSkus().first()) {
+                    inAppHelper.getBoughtInappRelay().call(
+                            SubscriptionWrapper(
+                                    Subscription(
+                                            item.productId,
+                                            InappPurchaseUtil.InappType.IN_APP,
+                                            "N/A", //receipt.price,
+                                            -1,//price_amount_micros
+                                            "N/A", //price_currency_code
+                                            null,
+                                            null,
+                                            null,
+                                            null,
+                                            null,
+                                            0,
+                                            null,
+                                            0,
+                                            item.purchaseToken
+                                    )
+                            )
+                    )
+                } else {
+                    val message = "Unexpected item.productId: ${item.productId}"
+                    Timber.wtf(message)
+                    inAppHelper.getBoughtInappRelay()
+                            .call(
+                                    SubscriptionWrapper(
+                                            error = Error(message)
+                                    )
+                            )
+                }
+            } else if (data?.getIntExtra("RESPONSE_CODE", 0) == InappPurchaseUtil.RESULT_ITEM_ALREADY_OWNED) {
+                val message = "RESPONSE_CODE is: InAppHelper.RESULT_ITEM_ALREADY_OWNED"
+                Timber.wtf(message)
+                inAppHelper.getBoughtInappRelay()
+                        .call(
+                                SubscriptionWrapper(
+                                        error = PurchaseFailedError(message)
+                                )
+                        )
+            } else {
+                val extras = data?.extras
+                val keySet = extras?.keySet()
+                val message = "Unexpected resultCode: $resultCode/${keySet?.map { "$it/${extras[it]}" }}"
+                inAppHelper.getBoughtInappRelay()
+                        .call(
+                                SubscriptionWrapper(
+                                        error = Error(message)
+                                )
+                        )
+            }
             return true
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data)

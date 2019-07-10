@@ -22,7 +22,6 @@ public interface BaseActivityMvp {
         void onPurchaseClick(String id, boolean ignoreUserCheck);
 
         /**
-         *
          * @return true if handled in presenter
          */
         boolean onActivityResult(int requestCode, int resultCode, Intent data);

@@ -1234,10 +1234,6 @@ public abstract class BaseActivity<V extends BaseActivityMvp.View, P extends Bas
         return TagSearchActivity.class;
     }
 
-    protected Class getGalleryActivityClass() {
-        return GalleryActivity.class;
-    }
-
     protected Class getMaterialsActivityClass() {
         return MaterialsActivity.class;
     }

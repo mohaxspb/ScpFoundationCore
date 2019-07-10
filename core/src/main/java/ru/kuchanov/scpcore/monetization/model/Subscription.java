@@ -85,6 +85,9 @@ public class Subscription {
      */
     public int introductoryPriceCycles;
 
+    @Nullable
+    public final String purchaseToken;
+
     /**
      * @see <a href="https://developer.android.com/google/play/billing/billing_reference.html#getSkuDetails">docs</a>
      */
@@ -93,7 +96,7 @@ public class Subscription {
             final String type,
             final String price,
             final long price_amount_micros,
-            final String price_currency_code,
+            @Nullable final String price_currency_code,
             final String title,
             final String description,
             final String subscriptionPeriod,
@@ -101,7 +104,8 @@ public class Subscription {
             final String introductoryPrice,
             final long introductoryPriceAmountMicros,
             final String introductoryPricePeriod,
-            final int introductoryPriceCycles
+            final int introductoryPriceCycles,
+            @Nullable final String purchaseToken
     ) {
         super();
         this.productId = productId;
@@ -117,6 +121,7 @@ public class Subscription {
         this.introductoryPriceAmountMicros = introductoryPriceAmountMicros;
         this.introductoryPricePeriod = introductoryPricePeriod;
         this.introductoryPriceCycles = introductoryPriceCycles;
+        this.purchaseToken = purchaseToken;
     }
 
     @NotNull
@@ -176,4 +181,13 @@ public class Subscription {
         final Days days = p.toStandardDays();
         return days.getDays();
     }
+
+    public static final Comparator<Subscription> COMPARATOR_PRICE = (d, d1) -> {
+        try {
+            return Integer.valueOf(d.price.replaceAll("[^\\d.]", ""))
+                    .compareTo(Integer.valueOf((d1.price.replaceAll("[^\\d.]", ""))));
+        } catch (Exception e) {
+            return d.price.compareTo(d1.price);
+        }
+    };
 }

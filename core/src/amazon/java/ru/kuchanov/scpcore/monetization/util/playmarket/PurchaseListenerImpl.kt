@@ -59,7 +59,8 @@ class PurchaseListenerImpl(
                                     null,
                                     0,
                                     null,
-                                    0
+                                    0,
+                                    null
                             )
                         }
                         inappsToBuyRelay.call(SubscriptionsListWrapper(subscriptions = consumables))
@@ -88,7 +89,8 @@ class PurchaseListenerImpl(
                                     null,
                                     0,
                                     null,
-                                    0
+                                    0,
+                                    null
                             )
                         }
                         subscriptionsToBuyRelay.call(SubscriptionsListWrapper(subscriptions = subscriptions))
@@ -175,12 +177,12 @@ class PurchaseListenerImpl(
                 Timber.d("onPurchaseResponse INVALID_SKU")
                 inappsBoughtRelay.call(
                         SubscriptionWrapper(
-                                error = IllegalStateException("onPurchaseResponse INVALID_SKU")
+                                error = Error("onPurchaseResponse INVALID_SKU")
                         )
                 )
                 ownedSubsRelay.call(
                         ItemsListWrapper(
-                                error = IllegalStateException("onPurchaseResponse INVALID_SKU")
+                                error = Error("onPurchaseResponse INVALID_SKU")
                         )
                 )
             }
@@ -192,12 +194,12 @@ class PurchaseListenerImpl(
                 Timber.d("onPurchaseResponse NOT_SUPPORTED")
                 inappsBoughtRelay.call(
                         SubscriptionWrapper(
-                                error = IllegalStateException("onPurchaseResponse NOT_SUPPORTED")
+                                error = Error("onPurchaseResponse NOT_SUPPORTED")
                         )
                 )
                 ownedSubsRelay.call(
                         ItemsListWrapper(
-                                error = IllegalStateException("onPurchaseResponse NOT_SUPPORTED")
+                                error = Error("onPurchaseResponse NOT_SUPPORTED")
                         )
                 )
             }
@@ -205,12 +207,12 @@ class PurchaseListenerImpl(
                 Timber.d("onPurchaseResponse purchaseResponse?.requestStatus is NULL")
                 inappsBoughtRelay.call(
                         SubscriptionWrapper(
-                                error = IllegalStateException("onPurchaseResponse NULL")
+                                error = Error("onPurchaseResponse NULL")
                         )
                 )
                 ownedSubsRelay.call(
                         ItemsListWrapper(
-                                error = IllegalStateException("onPurchaseResponse NULL")
+                                error = Error("onPurchaseResponse NULL")
                         )
                 )
             }
@@ -252,15 +254,15 @@ class PurchaseListenerImpl(
             }
             PurchaseUpdatesResponse.RequestStatus.FAILED -> {
                 Timber.d("purchaseUpdatesResponse?.requestStatus is PurchaseUpdatesResponse.RequestStatus.FAILED")
-                ownedSubsRelay.call(ItemsListWrapper(error = IllegalStateException("PurchaseUpdatesResponse.RequestStatus.FAILED")))
+                ownedSubsRelay.call(ItemsListWrapper(error = Error("PurchaseUpdatesResponse.RequestStatus.FAILED")))
             }
             PurchaseUpdatesResponse.RequestStatus.NOT_SUPPORTED -> {
                 Timber.d("purchaseUpdatesResponse?.requestStatus is PurchaseUpdatesResponse.RequestStatus.NOT_SUPPORTED")
-                ownedSubsRelay.call(ItemsListWrapper(error = IllegalStateException("PurchaseUpdatesResponse.RequestStatus.NOT_SUPPORTED")))
+                ownedSubsRelay.call(ItemsListWrapper(error = Error("PurchaseUpdatesResponse.RequestStatus.NOT_SUPPORTED")))
             }
             null -> {
                 Timber.d("purchaseUpdatesResponse?.requestStatus is NULL")
-                ownedSubsRelay.call(ItemsListWrapper(error = IllegalStateException("PurchaseUpdatesResponse.RequestStatus is null")))
+                ownedSubsRelay.call(ItemsListWrapper(error = Error("PurchaseUpdatesResponse.RequestStatus is null")))
             }
         }
     }
@@ -285,7 +287,7 @@ class PurchaseListenerImpl(
                     // if the purchase cannot be verified,
                     // show relevant error message to the customer.
                     Timber.e("Purchase cannot be verified, please retry later.")
-                    inappsBoughtRelay.call(SubscriptionWrapper(error = IllegalStateException("Purchase cannot be verified, please retry later.")))
+                    inappsBoughtRelay.call(SubscriptionWrapper(error = Error("Purchase cannot be verified, please retry later.")))
                 } else {
                     Timber.d("receiptIsAlreadyFulfilled: ${receiptIsAlreadyFulfilled(receipt.receiptId, userData)}")
                     if (receiptIsAlreadyFulfilled(receipt.receiptId, userData)) {
@@ -299,7 +301,7 @@ class PurchaseListenerImpl(
             }
         } catch (e: Throwable) {
             Timber.e(e, "Purchase cannot be completed, please retry")
-            inappsBoughtRelay.call(SubscriptionWrapper(error = e))
+            inappsBoughtRelay.call(SubscriptionWrapper(error = Error("Purchase cannot be completed, please retry", e)))
         }
     }
 
@@ -308,27 +310,27 @@ class PurchaseListenerImpl(
 
         try {
             if (receipt.isCanceled) {
-                ownedSubsRelay.call(ItemsListWrapper(error = IllegalStateException("Subscription is canceled!")))
+                ownedSubsRelay.call(ItemsListWrapper(error = Error("Subscription is canceled!")))
             } else {
                 // We strongly recommend that you verify the receipt on server-side.
                 if (!verifyReceiptFromYourService(receipt.receiptId, userData)) {
                     Timber.e("Purchase cannot be verified, please retry later.")
-                    ownedSubsRelay.call(ItemsListWrapper(error = IllegalStateException("Purchase cannot be verified, please retry later.")))
+                    ownedSubsRelay.call(ItemsListWrapper(error = Error("Purchase cannot be verified, please retry later.")))
                 } else {
                     try {
                         ownedSubsRelay.call(ItemsListWrapper(items = listOf(Item(sku = receipt.sku))))
                         PurchasingService.notifyFulfillment(receipt.receiptId, FulfillmentResult.FULFILLED)
-                    } catch (e: Throwable) {
+                    } catch (e: Exception) {
                         // If for any reason the app is not able to fulfill the purchase,
                         // add your own error handling code here.
                         Timber.e(e, "Failed to grant subscription purchase")
-                        ownedSubsRelay.call(ItemsListWrapper(error = e))
+                        ownedSubsRelay.call(ItemsListWrapper(error = Error("Failed to grant subscription purchase", e)))
                     }
                 }
             }
         } catch (e: Throwable) {
             Timber.e(e, "Purchase cannot be completed, please retry")
-            ownedSubsRelay.call(ItemsListWrapper(error = e))
+            ownedSubsRelay.call(ItemsListWrapper(error = Error("Purchase cannot be completed, please retry", e)))
         }
     }
 
@@ -371,7 +373,8 @@ class PurchaseListenerImpl(
                                     null,
                                     0,
                                     null,
-                                    0
+                                    0,
+                                    null
                             )
                     )
             )
@@ -382,7 +385,7 @@ class PurchaseListenerImpl(
             // next time you call PurchasingService.onPurchaseUpdatesResponse api
             Timber.e(e, "Failed to grant consumable purchase")
             inappsBoughtRelay.call(
-                    SubscriptionWrapper(error = IllegalStateException("Failed to grant consumable purchase"))
+                    SubscriptionWrapper(error = Error("Failed to grant consumable purchase"))
             )
         }
     }
